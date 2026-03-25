@@ -156,7 +156,7 @@ public: /* methods */
                                      QStringList & failedLocalFiles, const QString & overridePath) const;
 
 private: /* methods */
-    /// the default storage prefix used by MultiMC
+    /// the default storage prefix used by MeshMC
     static QString defaultStoragePrefix();
 
     /// Get the prefix - root of the storage to be used
@@ -177,23 +177,23 @@ protected: /* data */
     /// DEPRECATED URL prefix of the maven repo where the file can be downloaded
     QString m_repositoryURL;
 
-    /// DEPRECATED: MultiMC-specific absolute URL. takes precedence over the implicit maven repo URL, if defined
+    /// DEPRECATED: MeshMC-specific absolute URL. takes precedence over the implicit maven repo URL, if defined
     QString m_absoluteURL;
 
-    /// MultiMC extension - filename override
+    /// MeshMC extension - filename override
     QString m_filename;
 
-    /// DEPRECATED MultiMC extension - display name
+    /// DEPRECATED MeshMC extension - display name
     QString m_displayname;
 
     /**
-     * MultiMC-specific type hint - modifies how the library is treated
+     * MeshMC-specific type hint - modifies how the library is treated
      */
     QString m_hint;
 
     /**
-     * storage - by default the local libraries folder in multimc, but could be elsewhere
-     * MultiMC specific, because of FTB.
+     * storage - by default the local libraries folder in meshmc, but could be elsewhere
+     * MeshMC specific, because of FTB.
      */
     QString m_storagePrefix;
 

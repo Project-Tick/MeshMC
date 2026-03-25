@@ -1,14 +1,14 @@
 <p align="center">
-  <img src="https://avatars2.githubusercontent.com/u/5411890" alt="MultiMC logo"/>
+  <img src="https://avatars2.githubusercontent.com/u/5411890" alt="MeshMC logo"/>
 </p>
 
-MultiMC
+MeshMC
 =======
 
-MultiMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity.
+MeshMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity.
 
 ## Development
-If you want to contribute, talk to us on [Discord](https://discord.gg/multimc) first.
+If you want to contribute, talk to us on [Discord](https://discord.gg/meshmc) first.
 
 While blindly submitting PRs is definitely possible, they're not necessarily going to get accepted.
 
@@ -28,7 +28,7 @@ In general, in order of importance:
 * Keep lists (of arguments, parameters, initializers...) as lists, not paragraphs. It should either read from top to bottom, or left to right. Not both.
 
 ## Translations
-Translations can be done [on crowdin](https://translate.multimc.org). Please avoid making direct pull requests to the translations repository.
+Translations can be done [on crowdin](https://crowdin.com/project/projtlauncher). Please avoid making direct pull requests to the translations repository.
 
 ## License
 Copyright &copy; 2013-2022 MultiMC Contributors

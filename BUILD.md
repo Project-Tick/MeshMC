@@ -11,7 +11,7 @@ Build Instructions
 
 # Note
 
-MultiMC is a portable application and is not supposed to be installed into any system folders.
+MeshMC is a portable application and is not supposed to be installed into any system folders.
 That would be anything outside your home folder. Before running `make install`, make sure
 you set the install path to something you have write access to. Never build this under
 an administrator/root level account. Don't use `sudo`. It won't work and it's not supposed to work.
@@ -20,16 +20,16 @@ Also note that this guide is for development purposes only.
 
 # Branding, identifying marks and API keys
 
-The logo and related assets are All Rights Reserved and may only be used in official builds of MultiMC hosted on multimc.org, and as such, are not, and will not be included in this repository. The source is only provided for the purpose of collaboration. 
+The logo and related assets are All Rights Reserved and may only be used in official builds of MeshMC hosted on projecttick.org, and as such, are not, and will not be included in this repository. The source is only provided for the purpose of collaboration. 
 
-API keys are necessary for Microsoft account functionality. More info in [(Not) Secrets](https://github.com/MultiMC/Launcher/tree/develop/notsecrets)
+API keys are necessary for Microsoft account functionality. More info in [(Not) Secrets](https://github.com/Project-Tick/MeshMC/tree/develop/notsecrets)
 
 # Getting the source
 
 Clone the source code using git and grab all the submodules:
 
 ```
-git clone https://github.com/MultiMC/Launcher.git
+git clone https://github.com/Project-Tick/MeshMC.git
 git submodule init
 git submodule update
 ```
@@ -49,15 +49,15 @@ Getting the project to build and run on Linux is easy if you use any modern and 
 ### Building from command line
 You need a source folder, a build folder and an install folder.
 
-Let's say you want everything in `~/MultiMC/`:
+Let's say you want everything in `~/MeshMC/`:
 
 ```
 # make all the folders
-mkdir ~/MultiMC && cd ~/MultiMC
+mkdir ~/MeshMC && cd ~/MeshMC
 mkdir build
 mkdir install
 # clone the complete source
-git clone --recursive https://github.com/MultiMC/Launcher.git src
+git clone --recursive https://github.com/Project-Tick/MeshMC.git src
 # configure the project
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=../install ../src
@@ -172,12 +172,12 @@ zlib1.dll
 **These build instructions worked for me (Drayshak) on a fresh Windows 8 x64 Professional install. If they don't work for you, let us know on IRC ([Esper/#MultiMC](http://webchat.esper.net/?nick=&channels=MultiMC))!**
 ### Compile from command line on Windows
 1. If you installed Qt with the web installer, there should be a shortcut called `Qt 5.4 for Desktop (MinGW 4.9 32-bit)` in the Start menu on Windows 7 and 10. Best way to find it is to search for it. Do note you cannot just use cmd.exe, you have to use the shortcut, otherwise the proper MinGW software will not be on the PATH.
-2. Once that is open, change into your user directory, and clone MultiMC by doing `git clone --recursive https://github.com/MultiMC/Launcher.git`, and change directory to the folder you cloned to.
+2. Once that is open, change into your user directory, and clone MeshMC by doing `git clone --recursive https://github.com/Project-Tick/MeshMC.git`, and change directory to the folder you cloned to.
 3. Make a build directory, and change directory to the directory and do `cmake -G "MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=C:\Path\that\makes\sense\for\you`. By default, it will install to C:\Program Files (x86), which you might not want, if you want a local installation. If you want to install it to that directory, make sure to run the command window as administrator.
 3. Do `mingw32-make -jX`, where X is the number of cores your CPU has plus one.
 4. Now to wait for it to compile. This could take some time. Hopefully it compiles properly.
-5. Run the command `mingw32-make install`, and it should install MultiMC, to whatever the `-DCMAKE_INSTALL_PREFIX` was.
-6. In most cases, whenever compiling, the OpenSSL dll's aren't put into the directory to where MultiMC installs, meaning you cannot log in. The best way to fix this is just to do `copy C:\OpenSSL-Win32\*.dll C:\Where\you\installed\MultiMC\to`. This should copy the required OpenSSL dll's to log in.
+5. Run the command `mingw32-make install`, and it should install MeshMC, to whatever the `-DCMAKE_INSTALL_PREFIX` was.
+6. In most cases, whenever compiling, the OpenSSL dll's aren't put into the directory to where MeshMC installs, meaning you cannot log in. The best way to fix this is just to do `copy C:\OpenSSL-Win32\*.dll C:\Where\you\installed\MeshMC\to`. This should copy the required OpenSSL dll's to log in.
 
 # macOS
 
@@ -200,7 +200,7 @@ xcode-select --install
 Pick an installation path - this is where the final `.app` will be constructed when you run `make install`. Supply it as the `CMAKE_INSTALL_PREFIX` argument during CMake configuration.
 
 ```
-git clone --recursive https://github.com/MultiMC/Launcher.git
+git clone --recursive https://github.com/Project-Tick/MeshMC.git
 cd Launcher
 mkdir build
 cd build

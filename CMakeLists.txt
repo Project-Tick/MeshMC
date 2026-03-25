@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.25)
 
 if(WIN32)
     # In Qt 5.1+ we have our own main() function, don't autolink to qtmain on Windows
@@ -50,15 +50,51 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Werror=return-type")
 # Fix build with Qt 5.13
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_DEPRECATED_WARNINGS=Y")
 
-##################################### Set Application options #####################################
+################################ 3rd Party Libs ################################
 
-######## Set URLs ########
-set(Launcher_NEWS_RSS_URL "https://multimc.org/rss.xml" CACHE STRING "URL to fetch Launcher's news RSS feed from.")
+# Find the required Qt parts
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5Test REQUIRED)
+find_package(Qt5Xml REQUIRED)
+
+# The Qt5 cmake files don't provide its install paths, so ask qmake.
+include(QMakeQuery)
+query_qmake(QT_INSTALL_PLUGINS QT_PLUGINS_DIR)
+query_qmake(QT_INSTALL_IMPORTS QT_IMPORTS_DIR)
+query_qmake(QT_INSTALL_LIBS QT_LIBS_DIR)
+query_qmake(QT_INSTALL_LIBEXECS QT_LIBEXECS_DIR)
+query_qmake(QT_HOST_DATA QT_DATA_DIR)
+set(QT_MKSPECS_DIR ${QT_DATA_DIR}/mkspecs)
+
+if (Qt5_POSITION_INDEPENDENT_CODE)
+    SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
+####################################### Branding #######################################
+
+set(Launcher_CommonName "MeshMC")
+set(Launcher_AppBinaryName "meshmc")
+set(Launcher_Copyright "Project Tick")
+set(Launcher_Domain "projecttick.org")
+set(Launcher_Name "${Launcher_CommonName}")
+set(Launcher_DisplayName "${Launcher_CommonName} 5")
+set(Launcher_UserAgent "${Launcher_CommonName}/5.0")
+set(Launcher_ConfigFile "meshmc.cfg")
+set(Launcher_Git "https://github.com/Project-Tick/MeshMC")
+
+set(Launcher_Branding_ICNS "branding/MeshMC.icns")
+set(Launcher_Branding_WindowsRC "branding/meshmc.rc")
+set(Launcher_Branding_LogoQRC "branding/logo.qrc")
+
+set(Launcher_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch Launcher's news RSS feed from.")
 
 ######## Set version numbers ########
 set(Launcher_VERSION_MAJOR    0)
-set(Launcher_VERSION_MINOR    6)
-set(Launcher_VERSION_HOTFIX   14)
+set(Launcher_VERSION_MINOR    7)
+set(Launcher_VERSION_HOTFIX   0)
 
 # Build number
 set(Launcher_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
@@ -73,16 +109,22 @@ set(Launcher_UPDATER_BASE "" CACHE STRING "Base URL for the updater.")
 set(Launcher_NOTIFICATION_URL "" CACHE STRING "URL for checking for notifications.")
 
 # The metadata server
-set(Launcher_META_URL "https://meta.multimc.org/v1/" CACHE STRING "URL to fetch Launcher's meta files from.")
+set(Launcher_META_URL "https://meta.projecttick.org/" CACHE STRING "URL to fetch Launcher's meta files from.")
+
+# Microsoft Client ID
+set(Launcher_MICROSOFT_CLIENT_ID "3035382c-8f73-493a-b579-d182905c2864")
 
 # paste.ee API key
-set(Launcher_PASTE_EE_API_KEY "utLvciUouSURFzfjPxLBf5W4ISsUX4pwBDF7N1AfZ" CACHE STRING "API key you can get from paste.ee when you register an account")
+set(Launcher_PASTE_EE_API_KEY "ay2miY3lWxUHEEzYucj5e4YShIuo1aaY43MfwsUAe" CACHE STRING "API key you can get from paste.ee when you register an account")
 
 # Imgur API Client ID
 set(Launcher_IMGUR_CLIENT_ID "5b97b0713fba4a3" CACHE STRING "Client ID you can get from Imgur when you register an application")
 
+# CurseForge API key
+set(Launcher_CURSEFORGE_API_KEY "$2a$10$S7KcKijbCj8mCHUQcn0tgOmtHg0kA8q9FI0niNJJ7knPq0INomzrG" CACHE STRING "API key for the CurseForge API (get one at https://console.curseforge.com/)")
+
 # Google analytics ID
-set(Launcher_ANALYTICS_ID "UA-87731965-2" CACHE STRING "ID you can get from Google analytics")
+set(Launcher_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google analytics")
 
 # Bug tracker URL
 set(Launcher_BUG_TRACKER_URL "" CACHE STRING "URL for the bug tracker.")
@@ -108,37 +150,6 @@ set(Launcher_RELEASE_VERSION_NAME "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_
 #### Custom target to just print the version.
 add_custom_target(version echo "Version: ${Launcher_RELEASE_VERSION_NAME}")
 add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.LAUNCHER_VERSION\\' value=\\'${Launcher_RELEASE_VERSION_NAME}\\']")
-
-################################ 3rd Party Libs ################################
-
-# Find the required Qt parts
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Concurrent REQUIRED)
-find_package(Qt5Network REQUIRED)
-find_package(Qt5Test REQUIRED)
-find_package(Qt5Xml REQUIRED)
-
-# The Qt5 cmake files don't provide its install paths, so ask qmake.
-include(QMakeQuery)
-query_qmake(QT_INSTALL_PLUGINS QT_PLUGINS_DIR)
-query_qmake(QT_INSTALL_IMPORTS QT_IMPORTS_DIR)
-query_qmake(QT_INSTALL_LIBS QT_LIBS_DIR)
-query_qmake(QT_INSTALL_LIBEXECS QT_LIBEXECS_DIR)
-query_qmake(QT_HOST_DATA QT_DATA_DIR)
-set(QT_MKSPECS_DIR ${QT_DATA_DIR}/mkspecs)
-
-if (Qt5_POSITION_INDEPENDENT_CODE)
-    SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
-endif()
-
-####################################### Secrets #######################################
-
-if(Launcher_EMBED_SECRETS)
-    add_subdirectory(secrets)
-else()
-    add_subdirectory(notsecrets)
-endif()
 
 ####################################### Install layout #######################################
 
@@ -175,7 +186,7 @@ if(Launcher_LAYOUT_REAL STREQUAL "mac-bundle")
     # Mac bundle settings
     set(MACOSX_BUNDLE_BUNDLE_NAME "${Launcher_Name}")
     set(MACOSX_BUNDLE_INFO_STRING "${Launcher_Name}:  Minecraft launcher and management utility.")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.multimc.${Launcher_Name}")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.projecttick.${Launcher_Name}")
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_HOTFIX}.${Launcher_VERSION_BUILD}")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_HOTFIX}.${Launcher_VERSION_BUILD}")
     set(MACOSX_BUNDLE_LONG_VERSION_STRING "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_HOTFIX}.${Launcher_VERSION_BUILD}")

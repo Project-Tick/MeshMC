@@ -935,13 +935,11 @@ target_link_libraries(Launcher_logic
     ganalytics
 )
 
-target_link_libraries(Launcher_logic secrets)
-
 add_executable(${Launcher_Name} MACOSX_BUNDLE WIN32 main.cpp ${LAUNCHER_RCS})
 target_link_libraries(${Launcher_Name} Launcher_logic)
 
-if(DEFINED Launcher_APP_BINARY_NAME)
-    set_target_properties(${Launcher_Name} PROPERTIES OUTPUT_NAME "${Launcher_APP_BINARY_NAME}")
+if(DEFINED Launcher_AppBinaryName)
+    set_target_properties(${Launcher_Name} PROPERTIES OUTPUT_NAME "${Launcher_AppBinaryName}")
 endif()
 if(DEFINED Launcher_BINARY_RPATH)
     SET_TARGET_PROPERTIES(${Launcher_Name} PROPERTIES INSTALL_RPATH "${Launcher_BINARY_RPATH}")

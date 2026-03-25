@@ -37,8 +37,6 @@
 
 #include "BuildConfig.h"
 
-#include "Secrets.h"
-
 AccountListPage::AccountListPage(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::AccountListPage)
 {
@@ -74,7 +72,7 @@ AccountListPage::AccountListPage(QWidget *parent)
     updateButtonStates();
 
     // Xbox authentication won't work without a client identifier, so disable the button if it is missing
-    ui->actionAddMicrosoft->setVisible(Secrets::hasMSAClientID());
+    ui->actionAddMicrosoft->setVisible(!BuildConfig.MSAClientID.isEmpty());
 }
 
 AccountListPage::~AccountListPage()
@@ -134,8 +132,8 @@ void AccountListPage::on_actionAddMicrosoft_triggered()
             this,
             tr("Microsoft Accounts not available"),
             tr(
-                "Microsoft accounts are only usable on macOS 10.13 or newer, with fully updated MultiMC.\n\n"
-                "Please update both your operating system and MultiMC."
+                "Microsoft accounts are only usable on macOS 10.13 or newer, with fully updated MeshMC.\n\n"
+                "Please update both your operating system and MeshMC."
             ),
             QMessageBox::Warning
         )->exec();

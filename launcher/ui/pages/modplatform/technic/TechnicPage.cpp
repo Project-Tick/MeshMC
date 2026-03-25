@@ -114,7 +114,7 @@ void TechnicPage::suggestCurrent()
     NetJob *netJob = new NetJob(QString("Technic::PackMeta(%1)").arg(current.name), APPLICATION->network());
     std::shared_ptr<QByteArray> response = std::make_shared<QByteArray>();
     QString slug = current.slug;
-    netJob->addNetAction(Net::Download::makeByteArray(QString("https://api.technicpack.net/modpack/%1?build=multimc").arg(slug), response.get()));
+    netJob->addNetAction(Net::Download::makeByteArray(QString("https://api.technicpack.net/modpack/%1?build=meshmc").arg(slug), response.get()));
     QObject::connect(netJob, &NetJob::succeeded, this, [this, response, slug]
     {
         if (current.slug != slug)

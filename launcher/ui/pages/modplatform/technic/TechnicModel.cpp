@@ -94,12 +94,12 @@ void Technic::ListModel::performSearch()
     NetJob *netJob = new NetJob("Technic::Search", APPLICATION->network());
     QString searchUrl = "";
     if (currentSearchTerm.isEmpty()) {
-        searchUrl = "https://api.technicpack.net/trending?build=multimc";
+        searchUrl = "https://api.technicpack.net/trending?build=meshmc";
     }
     else
     {
         searchUrl = QString(
-            "https://api.technicpack.net/search?build=multimc&q=%1"
+            "https://api.technicpack.net/search?build=meshmc&q=%1"
         ).arg(currentSearchTerm);
     }
     netJob->addNetAction(Net::Download::makeByteArray(QUrl(searchUrl), &response));

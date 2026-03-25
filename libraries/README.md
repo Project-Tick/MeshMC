@@ -61,7 +61,7 @@ mainClass net.minecraft.launchwrapper.Launch
 param --username
 param CENSORED
 param --version
-param MultiMC5
+param MeshMC5
 param --gameDir
 param /home/peterix/minecraft/FTB/17ForgeTest/minecraft
 param --assetsDir
@@ -78,7 +78,7 @@ param --userType
 param mojang
 param --tweakClass
 param cpw.mods.fml.common.launcher.FMLTweaker
-windowTitle MultiMC: 172ForgeTest
+windowTitle MeshMC: 172ForgeTest
 windowParams 854x480
 userName CENSORED
 sessionId token:CENSORED:CENSORED
@@ -158,7 +158,7 @@ Boost Software License - Version 1.0
 
 ## quazip
 
-A zip manipulation library, forked for MultiMC's use.
+A zip manipulation library, forked for MeshMC's use.
 
 LGPL 2.1
 
@@ -169,7 +169,7 @@ Available either under LGPL version 2.1 or later.
 
 ## systeminfo
 
-A MultiMC-specific library for probing system information.
+A MeshMC-specific library for probing system information.
 
 Apache 2.0
 

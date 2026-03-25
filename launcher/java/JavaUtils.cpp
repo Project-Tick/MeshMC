@@ -77,14 +77,14 @@ QProcessEnvironment CleanEnviroment()
             qDebug() << "Env: ignoring" << key << value;
             continue;
         }
-        // filter MultiMC-related things
+        // filter MeshMC-related things
         if(key.startsWith("QT_"))
         {
             qDebug() << "Env: ignoring" << key << value;
             continue;
         }
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-        // Do not pass LD_* variables to java. They were intended for MultiMC
+        // Do not pass LD_* variables to java. They were intended for MeshMC
         if(key.startsWith("LD_"))
         {
             qDebug() << "Env: ignoring" << key << value;
@@ -402,7 +402,7 @@ QList<QString> JavaUtils::FindJavaPaths()
     scanJavaDir("/usr/lib/jvm");
     scanJavaDir("/usr/lib64/jvm");
     scanJavaDir("/usr/lib32/jvm");
-    // javas stored in MultiMC's folder
+    // javas stored in MeshMC's folder
     scanJavaDir("java");
     // manually installed JDKs in /opt
     scanJavaDir("/opt/jdk");

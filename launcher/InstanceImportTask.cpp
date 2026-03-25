@@ -104,10 +104,10 @@ void InstanceImportTask::processZipPack()
     QString root;
     if(!mmcFound.isNull())
     {
-        // process as MultiMC instance/pack
-        qDebug() << "MultiMC:" << mmcFound;
+        // process as MeshMC instance/pack
+        qDebug() << "MeshMC:" << mmcFound;
         root = mmcFound;
-        m_modpackType = ModpackType::MultiMC;
+        m_modpackType = ModpackType::MeshMC;
     }
     else if (technicFound)
     {
@@ -183,8 +183,8 @@ void InstanceImportTask::extractFinished()
         case ModpackType::Flame:
             processFlame();
             return;
-        case ModpackType::MultiMC:
-            processMultiMC();
+        case ModpackType::MeshMC:
+            processMeshMC();
             return;
         case ModpackType::Technic:
             processTechnic();
@@ -310,7 +310,7 @@ void InstanceImportTask::processFlame()
         }
         else
         {
-            // default to something other than the MultiMC default to distinguish these
+            // default to something other than the MeshMC default to distinguish these
             instance.setIconKey("flame");
         }
     }
@@ -418,7 +418,7 @@ void InstanceImportTask::processTechnic()
     packProcessor->run(m_globalSettings, m_instName, m_instIcon, m_stagingPath);
 }
 
-void InstanceImportTask::processMultiMC()
+void InstanceImportTask::processMeshMC()
 {
     QString configPath = FS::PathCombine(m_stagingPath, "instance.cfg");
     auto instanceSettings = std::make_shared<INISettingsObject>(configPath);

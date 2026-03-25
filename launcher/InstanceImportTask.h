@@ -43,7 +43,7 @@ protected:
 
 private:
     void processZipPack();
-    void processMultiMC();
+    void processMeshMC();
     void processFlame();
     void processTechnic();
 
@@ -65,7 +65,7 @@ private: /* data */
     QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
     enum class ModpackType{
         Unknown,
-        MultiMC,
+        MeshMC,
         Flame,
         Technic
     } m_modpackType = ModpackType::Unknown;

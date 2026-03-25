@@ -66,9 +66,11 @@ public:
 
     /**
      * This is used to fetch the news RSS feed.
-     * It defaults in CMakeLists.txt to "https://multimc.org/rss.xml"
+     * It defaults in CMakeLists.txt to "https://projecttick.org/rss.xml"
      */
     QString NEWS_RSS_URL;
+
+    QString MSAClientID;
 
     /**
      * API key you can get from paste.ee when you register an account
@@ -85,6 +87,11 @@ public:
      */
     QString META_URL;
 
+    /**
+     * API key for the CurseForge API
+     */
+    QString CURSEFORGE_API_KEY;
+
     QString BUG_TRACKER_URL;
     QString DISCORD_URL;
     QString SUBREDDIT_URL;
@@ -93,8 +100,8 @@ public:
     QString LIBRARY_BASE = "https://libraries.minecraft.net/";
     QString AUTH_BASE = "https://authserver.mojang.com/";
     QString IMGUR_BASE_URL = "https://api.imgur.com/3/";
-    QString FMLLIBS_BASE_URL = "https://files.multimc.org/fmllibs/";
-    QString TRANSLATIONS_BASE_URL = "https://files.multimc.org/translations/";
+    QString FMLLIBS_BASE_URL = "https://files.projecttick.org/fmllibs/";
+    QString TRANSLATIONS_BASE_URL = "https://i18n.projecttick.org/";
 
     QString MODPACKSCH_API_BASE_URL = "https://api.modpacks.ch/";
 

@@ -25,6 +25,9 @@ struct JavaInstall : public BaseVersion
         return arch;
     }
 
+    using BaseVersion::operator<;
+    using BaseVersion::operator>;
+
     bool operator<(const JavaInstall & rhs);
     bool operator==(const JavaInstall & rhs);
     bool operator>(const JavaInstall & rhs);

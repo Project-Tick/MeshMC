@@ -2,7 +2,9 @@
     path = libraries/libnbtplusplus
     url = https://github.com/MultiMC/libnbtplusplus.git
     pushurl = git@github.com:MultiMC/libnbtplusplus.git
+    ignore = all
 [submodule "libraries/quazip"]
     path = libraries/quazip
     url = https://github.com/MultiMC/quazip.git
     pushurl = git@github.com:MultiMC/quazip.git
+    ignore = all

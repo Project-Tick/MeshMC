@@ -434,7 +434,7 @@ static void upgradeDeprecatedFiles(QString root, QString instanceName)
  */
 bool PackProfile::migratePreComponentConfig()
 {
-    // upgrade the very old files from the beginnings of MultiMC 5
+    // upgrade the very old files from the beginnings of MeshMC
     upgradeDeprecatedFiles(d->m_instance->instanceRoot(), d->m_instance->name());
 
     QList<ComponentPtr> components;

@@ -42,10 +42,12 @@ Config::Config()
     }
 
     VERSION_STR = "@Launcher_VERSION_STRING@";
+    MSAClientID = "@Launcher_MICROSOFT_CLIENT_ID@";
     NEWS_RSS_URL = "@Launcher_NEWS_RSS_URL@";
     PASTE_EE_KEY = "@Launcher_PASTE_EE_API_KEY@";
     IMGUR_CLIENT_ID = "@Launcher_IMGUR_CLIENT_ID@";
     META_URL = "@Launcher_META_URL@";
+    CURSEFORGE_API_KEY = "@Launcher_CURSEFORGE_API_KEY@";
 
     BUG_TRACKER_URL = "@Launcher_BUG_TRACKER_URL@";
     DISCORD_URL = "@Launcher_DISCORD_URL@";

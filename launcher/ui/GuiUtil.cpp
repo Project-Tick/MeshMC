@@ -17,7 +17,7 @@ QString GuiUtil::uploadPaste(const QString &text, QWidget *parentWidget)
 {
     ProgressDialog dialog(parentWidget);
     auto APIKeySetting = APPLICATION->settings()->get("PasteEEAPIKey").toString();
-    if(APIKeySetting == "multimc")
+    if(APIKeySetting == "meshmc")
     {
         APIKeySetting = BuildConfig.PASTE_EE_KEY;
     }

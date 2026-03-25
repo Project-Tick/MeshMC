@@ -44,9 +44,9 @@ void PasteEEPage::loadSettings()
 {
     auto s = APPLICATION->settings();
     QString keyToUse = s->get("PasteEEAPIKey").toString();
-    if(keyToUse == "multimc")
+    if(keyToUse == "meshmc")
     {
-        ui->multimcButton->setChecked(true);
+        ui->meshmcButton->setChecked(true);
     }
     else
     {
@@ -64,7 +64,7 @@ void PasteEEPage::applySettings()
         pasteKeyToUse = ui->customAPIkeyEdit->text();
     else
     {
-        pasteKeyToUse =  "multimc";
+        pasteKeyToUse =  "meshmc";
     }
     s->set("PasteEEAPIKey", pasteKeyToUse);
 }

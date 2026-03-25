@@ -76,8 +76,6 @@
 #include <ganalytics.h>
 #include <sys.h>
 
-#include <Secrets.h>
-
 
 #if defined Q_OS_WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -301,7 +299,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
     QString dirParam = args["dir"].toString();
     if (!dirParam.isEmpty())
     {
-        // the dir param. it makes multimc data path point to whatever the user specified
+        // the dir param. it makes meshmc data path point to whatever the user specified
         // on command line
         adjustedBy += "Command line " + dirParam;
         dataPath = dirParam;
@@ -433,7 +431,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
 #endif
 
     /*
-     * Establish the mechanism for communication with an already running MultiMC that uses the same data path.
+     * Establish the mechanism for communication with an already running MeshMC that uses the same data path.
      * If there is one, tell it what the user actually wanted to do and exit.
      * We want to initialize this before logging to avoid messing with the log of a potential already running copy.
      */
@@ -709,7 +707,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         m_settings->registerSetting("UpdateDialogGeometry", "");
 
         // paste.ee API key
-        m_settings->registerSetting("PasteEEAPIKey", "multimc");
+        m_settings->registerSetting("PasteEEAPIKey", "meshmc");
 
         if(!BuildConfig.ANALYTICS_ID.isEmpty())
         {
@@ -1559,7 +1557,7 @@ void Application::on_windowClose()
 }
 
 QString Application::msaClientId() const {
-    return Secrets::getMSAClientID('-');
+    return BuildConfig.MSAClientID;
 }
 
 void Application::updateProxySettings(QString proxyTypeStr, QString addr, int port, QString user, QString password)

@@ -123,7 +123,7 @@ void LegacyUpgradeTask::copyFinished()
             }
         };
         QStringList rootRemovables = {"modlist", "version", "instMods"};
-        QStringList mcRemovables = {"bin", "MultiMCLauncher.jar", "icon.png"};
+        QStringList mcRemovables = {"bin", "MeshMCLauncher.jar", "icon.png"};
         removeAll(inst.instanceRoot(), rootRemovables);
         removeAll(inst.gameRoot(), mcRemovables);
     }
