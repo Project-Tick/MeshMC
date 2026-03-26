@@ -364,7 +364,7 @@ add_executable(PackageManifest
 )
 target_link_libraries(PackageManifest
     Launcher_logic
-    Qt5::Test
+    Qt6::Test
 )
 target_include_directories(PackageManifest
     PRIVATE ../cmake/UnitTest/
@@ -840,7 +840,7 @@ SET(LAUNCHER_SOURCES
     ui/instanceview/VisualGroup.h
 )
 
-qt5_wrap_ui(LAUNCHER_UI
+qt6_wrap_ui(LAUNCHER_UI
     ui/pages/global/AccountListPage.ui
     ui/pages/global/JavaPage.ui
     ui/pages/global/LauncherPage.ui
@@ -887,7 +887,7 @@ qt5_wrap_ui(LAUNCHER_UI
     ui/dialogs/EditAccountDialog.ui
 )
 
-qt5_add_resources(LAUNCHER_RESOURCES
+qt6_add_resources(LAUNCHER_RESOURCES
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
     resources/pe_dark/pe_dark.qrc
@@ -920,11 +920,13 @@ target_link_libraries(Launcher_logic
     Katabasis
 )
 target_link_libraries(Launcher_logic
-    Qt5::Core
-    Qt5::Xml
-    Qt5::Network
-    Qt5::Concurrent
-    Qt5::Gui
+    Qt6::Core
+    Qt6::Xml
+    Qt6::Network
+    Qt6::NetworkAuth
+    Qt6::Concurrent
+    Qt6::Gui
+    QuaZip::QuaZip
 )
 target_link_libraries(Launcher_logic
     Launcher_iconfix
