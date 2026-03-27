@@ -36,7 +36,7 @@
  * limitations under the License.
  */
 
-#include "LauncherPartLaunch.h"
+#include "MeshMCPartLaunch.h"
 
 #include <QStandardPaths>
 
@@ -46,10 +46,10 @@
 #include "Commandline.h"
 #include "Application.h"
 
-LauncherPartLaunch::LauncherPartLaunch(LaunchTask *parent) : LaunchStep(parent)
+MeshMCPartLaunch::MeshMCPartLaunch(LaunchTask *parent) : LaunchStep(parent)
 {
-    connect(&m_process, &LoggedProcess::log, this, &LauncherPartLaunch::logLines);
-    connect(&m_process, &LoggedProcess::stateChanged, this, &LauncherPartLaunch::on_state);
+    connect(&m_process, &LoggedProcess::log, this, &MeshMCPartLaunch::logLines);
+    connect(&m_process, &LoggedProcess::stateChanged, this, &MeshMCPartLaunch::on_state);
 }
 
 #ifdef Q_OS_WIN
@@ -78,7 +78,7 @@ bool fitsInLocal8bit(const QString & string)
     return string == QString::fromLocal8Bit(string.toLocal8Bit());
 }
 
-void LauncherPartLaunch::executeTask()
+void MeshMCPartLaunch::executeTask()
 {
     auto instance = m_parent->instance();
     std::shared_ptr<MinecraftInstance> minecraftInstance = std::dynamic_pointer_cast<MinecraftInstance>(instance);
@@ -86,7 +86,7 @@ void LauncherPartLaunch::executeTask()
     m_launchScript = minecraftInstance->createLaunchScript(m_session, m_serverToJoin);
     QStringList args = minecraftInstance->javaArguments();
     QString allArgs = args.join(", ");
-    emit logLine("Java Arguments:\n[" + m_parent->censorPrivateInfo(allArgs) + "]\n\n", MessageLevel::Launcher);
+    emit logLine("Java Arguments:\n[" + m_parent->censorPrivateInfo(allArgs) + "]\n\n", MessageLevel::MeshMC);
 
     auto javaPath = FS::ResolveExecutable(instance->settings()->get("JavaPath").toString());
 
@@ -147,7 +147,7 @@ void LauncherPartLaunch::executeTask()
             emitFailed(tr(reason).arg(wrapperCommand));
             return;
         }
-        emit logLine("Wrapper command is:\n" + wrapperCommandStr + "\n\n", MessageLevel::Launcher);
+        emit logLine("Wrapper command is:\n" + wrapperCommandStr + "\n\n", MessageLevel::MeshMC);
         args.prepend(javaPath);
         m_process.start(wrapperCommand, wrapperArgs + args);
     }
@@ -157,7 +157,7 @@ void LauncherPartLaunch::executeTask()
     }
 }
 
-void LauncherPartLaunch::on_state(LoggedProcess::State state)
+void MeshMCPartLaunch::on_state(LoggedProcess::State state)
 {
     switch(state)
     {
@@ -193,10 +193,10 @@ void LauncherPartLaunch::on_state(LoggedProcess::State state)
             break;
         }
         case LoggedProcess::Running:
-            emit logLine(QString("Minecraft process ID: %1\n\n").arg(m_process.processId()), MessageLevel::Launcher);
+            emit logLine(QString("Minecraft process ID: %1\n\n").arg(m_process.processId()), MessageLevel::MeshMC);
             m_parent->setPid(m_process.processId());
             m_parent->instance()->setLastLaunch();
-            // send the launch script to the launcher part
+            // send the launch script to MeshMC part
             m_process.write(m_launchScript.toUtf8());
 
             mayProceed = true;
@@ -207,12 +207,12 @@ void LauncherPartLaunch::on_state(LoggedProcess::State state)
     }
 }
 
-void LauncherPartLaunch::setWorkingDirectory(const QString &wd)
+void MeshMCPartLaunch::setWorkingDirectory(const QString &wd)
 {
     m_process.setWorkingDirectory(wd);
 }
 
-void LauncherPartLaunch::proceed()
+void MeshMCPartLaunch::proceed()
 {
     if(mayProceed)
     {
@@ -222,7 +222,7 @@ void LauncherPartLaunch::proceed()
     }
 }
 
-bool LauncherPartLaunch::abort()
+bool MeshMCPartLaunch::abort()
 {
     if(mayProceed)
     {

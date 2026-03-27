@@ -3,7 +3,7 @@
 #endif
 #include <windows.h>
 
-IDI_ICON1               ICON    DISCARDABLE     "Launcher.ico"
+IDI_ICON1               ICON    DISCARDABLE     "MeshMC.ico"
 1 RT_MANIFEST "MeshMC.manifest"
 
 VS_VERSION_INFO VERSIONINFO
@@ -18,7 +18,7 @@ BEGIN
                         VALUE "CompanyName", "Project Tick"
                         VALUE "FileDescription", "A Minecraft Launcher"
                         VALUE "FileVersion", "1.0.0.0"
-                        VALUE "ProductName", "Launcher"
+                        VALUE "ProductName", "MeshMC"
                         VALUE "ProductVersion", "5"
                 END
         END

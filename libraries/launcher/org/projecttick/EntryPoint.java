@@ -171,20 +171,20 @@ public class EntryPoint
             }
             catch (IOException e)
             {
-                System.err.println("Launcher ABORT due to IO exception:");
+                System.err.println("MeshMC ABORT due to IO exception:");
                 e.printStackTrace();
                 return 1;
             }
             catch (ParseException e)
             {
-                System.err.println("Launcher ABORT due to PARSE exception:");
+                System.err.println("MeshMC ABORT due to PARSE exception:");
                 e.printStackTrace();
                 return 1;
             }
         }
         if(isAborted)
         {
-            System.err.println("Launch aborted by the launcher.");
+            System.err.println("Launch aborted by MeshMC.");
             return 1;
         }
         if(m_launcher != null)
@@ -196,5 +196,5 @@ public class EntryPoint
     }
 
     private ParamBucket m_params = new ParamBucket();
-    private org.projecttick.Launcher m_launcher;
+    private org.projecttick.MeshMC m_launcher;
 }

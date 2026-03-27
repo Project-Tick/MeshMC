@@ -149,13 +149,26 @@ static void loadVersionFile(ModpacksCH::VersionFile & a, QJsonObject & obj)
     a.path = Json::requireString(obj, "path");
     a.name = Json::requireString(obj, "name");
     a.version = Json::requireString(obj, "version");
-    a.url = Json::requireString(obj, "url");
-    a.sha1 = Json::requireString(obj, "sha1");
+    a.url = Json::ensureString(obj, "url", QString());
+    a.sha1 = Json::ensureString(obj, "sha1", QString());
     a.size = Json::requireInteger(obj, "size");
     a.clientOnly = Json::requireBoolean(obj, "clientonly");
     a.serverOnly = Json::requireBoolean(obj, "serveronly");
     a.optional = Json::requireBoolean(obj, "optional");
     a.updated = Json::requireInteger(obj, "updated");
+    // Some files reference CurseForge mods with no direct download URL.
+    // Construct edge CDN URL from CurseForge file ID if available.
+    if(a.url.isEmpty() && obj.contains("curseforge"))
+    {
+        auto cf = Json::requireObject(obj, "curseforge");
+        int cfFileId = Json::requireInteger(cf, "file");
+        // CurseForge edge CDN URL format: files/{first 4 digits}/{remaining digits}/{filename}
+        QString fileIdStr = QString::number(cfFileId);
+        QString prefix = fileIdStr.mid(0, 4);
+        QString suffix = fileIdStr.mid(4);
+        a.url = QString("https://edge.forgecdn.net/files/%1/%2/%3").arg(prefix, suffix, a.name);
+        qDebug() << "Constructed CurseForge CDN URL for" << a.name << ":" << a.url;
+    }
 }
 
 void ModpacksCH::loadVersion(ModpacksCH::Version & m, QJsonObject & obj)

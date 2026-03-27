@@ -285,7 +285,7 @@ QString BaseInstance::name() const
 
 QString BaseInstance::windowTitle() const
 {
-    return BuildConfig.LAUNCHER_NAME + ": " + name().replace(QRegularExpression("[ \n\r\t]+"), " ");
+    return BuildConfig.MESHMC_NAME + ": " + name().replace(QRegularExpression("[ \n\r\t]+"), " ");
 }
 
 // FIXME: why is this here? move it to MinecraftInstance!!!

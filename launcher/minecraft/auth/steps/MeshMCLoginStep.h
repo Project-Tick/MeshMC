@@ -26,12 +26,12 @@
 #include "minecraft/auth/AuthStep.h"
 
 
-class LauncherLoginStep : public AuthStep {
+class MeshMCLoginStep : public AuthStep {
     Q_OBJECT
 
 public:
-    explicit LauncherLoginStep(AccountData *data);
-    virtual ~LauncherLoginStep() noexcept;
+    explicit MeshMCLoginStep(AccountData *data);
+    virtual ~MeshMCLoginStep() noexcept;
 
     void perform() override;
     void rehydrate() override;

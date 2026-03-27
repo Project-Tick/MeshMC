@@ -250,7 +250,7 @@ void LaunchTask::onLogLines(const QStringList &lines, MessageLevel::Enum default
 
 void LaunchTask::onLogLine(QString line, MessageLevel::Enum level)
 {
-    // if the launcher part set a log level, use it
+    // if MeshMC part set a log level, use it
     auto innerLevel = MessageLevel::fromLine(line);
     if(innerLevel != MessageLevel::Unknown)
     {

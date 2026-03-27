@@ -64,7 +64,7 @@ public: /* data */
     QString dependsOnMinecraftVersion;
 
     /// Mojang: DEPRECATED used to version the Mojang version format
-    int minimumLauncherVersion = -1;
+    int minimumMeshMCVersion = -1;
 
     /// Mojang: DEPRECATED version of Minecraft this is
     QString minecraftVersion;

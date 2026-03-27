@@ -315,15 +315,15 @@ void LaunchController::launchInstance()
             }
             resolved_servers = resolved_servers + "]\n\n";
         }
-        m_launcher->prependStep(new TextPrint(m_launcher.get(), resolved_servers, MessageLevel::Launcher));
+        m_launcher->prependStep(new TextPrint(m_launcher.get(), resolved_servers, MessageLevel::MeshMC));
     } else {
         online_mode = "offline";
     }
 
-    m_launcher->prependStep(new TextPrint(m_launcher.get(), "Launched instance in " + online_mode + " mode\n", MessageLevel::Launcher));
+    m_launcher->prependStep(new TextPrint(m_launcher.get(), "Launched instance in " + online_mode + " mode\n", MessageLevel::MeshMC));
 
     // Prepend Version
-    m_launcher->prependStep(new TextPrint(m_launcher.get(), BuildConfig.LAUNCHER_NAME + " version: " + BuildConfig.printableVersionString() + "\n\n", MessageLevel::Launcher));
+    m_launcher->prependStep(new TextPrint(m_launcher.get(), BuildConfig.MESHMC_NAME + " version: " + BuildConfig.printableVersionString() + "\n\n", MessageLevel::MeshMC));
     m_launcher->start();
 }
 

@@ -133,7 +133,7 @@ public class Utils
     }
 
     /**
-     * Log to the launcher console
+     * Log to MeshMC console
      *
      * @param message A String containing the message
      * @param level   A String containing the level name. See MinecraftLauncher::getLevel()
@@ -147,7 +147,7 @@ public class Utils
 
     public static void log(String message)
     {
-        log(message, "Launcher");
+        log(message, "MeshMC");
     }
 
     public static void log()

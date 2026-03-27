@@ -37,7 +37,7 @@
  */
 
 #include <QFileInfo>
-#include <minecraft/launch/LauncherPartLaunch.h>
+#include <minecraft/launch/MeshMCPartLaunch.h>
 #include <QDir>
 #include <settings/Setting.h>
 

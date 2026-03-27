@@ -159,7 +159,7 @@ public:
             QString result;
             result = QApplication::translate("MainWindow", m_text);
             if(result.contains("%1")) {
-                result = result.arg(BuildConfig.LAUNCHER_NAME);
+                result = result.arg(BuildConfig.MESHMC_NAME);
             }
             m_contained->setText(result);
         }
@@ -168,7 +168,7 @@ public:
             QString result;
             result = QApplication::translate("MainWindow", m_tooltip);
             if(result.contains("%1")) {
-                result = result.arg(BuildConfig.LAUNCHER_NAME);
+                result = result.arg(BuildConfig.MESHMC_NAME);
             }
             m_contained->setToolTip(result);
         }
@@ -638,9 +638,9 @@ public:
         }
         MainWindow->resize(800, 600);
         MainWindow->setWindowIcon(APPLICATION->getThemedIcon("logo"));
-        MainWindow->setWindowTitle(BuildConfig.LAUNCHER_DISPLAYNAME);
+        MainWindow->setWindowTitle(BuildConfig.MESHMC_DISPLAYNAME);
 #ifndef QT_NO_ACCESSIBILITY
-        MainWindow->setAccessibleName(BuildConfig.LAUNCHER_NAME);
+        MainWindow->setAccessibleName(BuildConfig.MESHMC_NAME);
 #endif
 
         createMainToolbar(MainWindow);
@@ -671,7 +671,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        QString winTitle = tr("%1 - Version %2", "Launcher - Version X").arg(BuildConfig.LAUNCHER_DISPLAYNAME, BuildConfig.printableVersionString());
+        QString winTitle = tr("%1 - Version %2", "MeshMC - Version X").arg(BuildConfig.MESHMC_DISPLAYNAME, BuildConfig.printableVersionString());
         if (!BuildConfig.BUILD_PLATFORM.isEmpty())
         {
             winTitle += tr(" on %1", "on platform, as in operating system").arg(BuildConfig.BUILD_PLATFORM);
@@ -944,7 +944,7 @@ void MainWindow::showInstanceContextMenu(const QPoint &pos)
     {
         auto group = view->groupNameAt(pos);
 
-        QAction *actionVoid = new QAction(BuildConfig.LAUNCHER_NAME, this);
+        QAction *actionVoid = new QAction(BuildConfig.MESHMC_NAME, this);
         actionVoid->setEnabled(false);
 
         QAction *actionCreateInstance = new QAction(tr("Create instance"), this);
@@ -1451,7 +1451,7 @@ void MainWindow::finalizeInstance(InstancePtr inst)
         CustomMessageBox::selectable(
             this,
             tr("Error"),
-            tr("The launcher cannot download Minecraft or update instances unless you have at least "
+            tr("MeshMC cannot download Minecraft or update instances unless you have at least "
                 "one account added.\nPlease add your Mojang or Minecraft account."),
             QMessageBox::Warning
         )->show();
@@ -1968,19 +1968,19 @@ void MainWindow::checkInstancePathForProblems()
                 "You have now two options: <br/>"
                 " - change the instance folder in the settings <br/>"
                 " - move this installation of %1 to a different folder"
-            ).arg(BuildConfig.LAUNCHER_NAME)
+            ).arg(BuildConfig.MESHMC_NAME)
         );
         warning.setDefaultButton(QMessageBox::Ok);
         warning.exec();
     }
     auto tempFolderText = tr("This is a problem: <br/>"
-                             " - The launcher will likely be deleted without warning by the operating system <br/>"
-                             " - close the launcher now and extract it to a real location, not a temporary folder");
+                             " - MeshMC will likely be deleted without warning by the operating system <br/>"
+                             " - close MeshMC now and extract it to a real location, not a temporary folder");
     QString pathfoldername = QDir(instanceFolder).absolutePath();
     if (pathfoldername.contains("Rar$", Qt::CaseInsensitive))
     {
         QMessageBox warning(this);
-        warning.setText(tr("Your instance folder contains \'Rar$\' - that means you haven't extracted the launcher archive!"));
+        warning.setText(tr("Your instance folder contains \'Rar$\' - that means you haven't extracted MeshMC archive!"));
         warning.setInformativeText(tempFolderText);
         warning.setDefaultButton(QMessageBox::Ok);
         warning.exec();

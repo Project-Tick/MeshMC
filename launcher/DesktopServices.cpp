@@ -156,14 +156,12 @@ bool run(const QString &application, const QStringList &args, const QString &wor
 bool openUrl(const QUrl &url)
 {
     qDebug() << "Opening URL" << url.toString();
-    auto f = [&]()
-    {
-        return QDesktopServices::openUrl(url);
-    };
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-    return IndirectOpen(f);
+    QStringList args;
+    args << url.toString();
+    return QProcess::startDetached("xdg-open", args);
 #else
-    return f();
+    return QDesktopServices::openUrl(url);
 #endif
 }
 

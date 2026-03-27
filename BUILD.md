@@ -81,7 +81,7 @@ You can use IDEs like KDevelop or QtCreator to open the CMake project if you wan
 ### Loading the project in Qt Creator (optional)
 1. Open Qt Creator.
 2. Choose `File->Open File or Project`.
-3. Navigate to the Launcher source folder you cloned and choose CMakeLists.txt.
+3. Navigate to MeshMC source folder you cloned and choose CMakeLists.txt.
 4. Read the instructions that just popped up about a build location and choose one.
 5. You should see "Run CMake" in the window.
     - Make sure that Generator is set to "Unix Generator (Desktop Qt 5.6.x GCC 64bit)".
@@ -89,7 +89,7 @@ You can use IDEs like KDevelop or QtCreator to open the CMake project if you wan
     - You'll see warnings and it might not be clear that it succeeded until you scroll to the bottom of the window.
     - Hit "Finish" if CMake ran successfully.
 6. Cross your fingers and press the Run button (bottom left of Qt Creator).
-    - If the project builds successfully it will run and the Launcher window will pop up.
+    - If the project builds successfully it will run and MeshMC window will pop up.
 
 **If this doesn't work for you, let us know on IRC ([Esper/#MultiMC](http://webchat.esper.net/?nick=&channels=MultiMC))!**
 
@@ -138,7 +138,7 @@ Ensure that OpenSSL, zlib, Java and CMake are on `PATH`.
 ### Loading the project
 1. Open Qt Creator,
 2. Choose File->Open File or Project,
-3. Navigate to the Launcher source folder you cloned and choose CMakeLists.txt,
+3. Navigate to MeshMC source folder you cloned and choose CMakeLists.txt,
 4. Read the instructions that just popped up about a build location and choose one,
 5. If you chose not to add CMake to the system PATH, tell Qt Creator where you installed it,
     - Otherwise you can skip this step.
@@ -148,7 +148,7 @@ Ensure that OpenSSL, zlib, Java and CMake are on `PATH`.
     - You'll see warnings and it might not be clear that it succeeded until you scroll to the bottom of the window.
     - Hit "Finish" if CMake ran successfully.
 7. Cross your fingers and press the Run button (bottom left of Qt Creator)!
-    - If the project builds successfully it will run and the Launcher window will pop up,
+    - If the project builds successfully it will run and MeshMC window will pop up,
     - Test OpenSSL by making an instance and trying to log in. If Qt Creator couldn't find OpenSSL during the CMake stage, login will fail and you'll get an error.
 
 The following .dlls are needed for the app to run (copy them to build directory if you want to be able to move the build to another pc):
@@ -201,7 +201,7 @@ Pick an installation path - this is where the final `.app` will be constructed w
 
 ```
 git clone --recursive https://github.com/Project-Tick/MeshMC.git
-cd Launcher
+cd MeshMC
 mkdir build
 cd build
 cmake \
@@ -211,7 +211,7 @@ cmake \
  -DCMAKE_INSTALL_PREFIX:PATH="$(dirname $PWD)/dist/" \
  -DCMAKE_PREFIX_PATH="/path/to/Qt5.6/" \
  -DQt5_DIR="/path/to/Qt5.6/" \
- -DLauncher_LAYOUT=mac-bundle \
+ -DMeshMC_LAYOUT=mac-bundle \
  -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 \
  ..
 make install

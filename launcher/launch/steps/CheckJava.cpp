@@ -71,7 +71,7 @@ void CheckJava::executeTask()
     }
     else
     {
-        emit logLine("Java path is:\n" + m_javaPath + "\n\n", MessageLevel::Launcher);
+        emit logLine("Java path is:\n" + m_javaPath + "\n\n", MessageLevel::MeshMC);
     }
 
     QFileInfo javaInfo(realJavaPath);
@@ -85,7 +85,7 @@ void CheckJava::executeTask()
     if (javaUnixTime != storedUnixTime || storedVersion.size() == 0 || storedArchitecture.size() == 0 || storedVendor.size() == 0)
     {
         m_JavaChecker = new JavaChecker();
-        emit logLine(QString("Checking Java version..."), MessageLevel::Launcher);
+        emit logLine(QString("Checking Java version..."), MessageLevel::MeshMC);
         connect(m_JavaChecker.get(), &JavaChecker::checkFinished, this, &CheckJava::checkJavaFinished);
         m_JavaChecker->m_path = realJavaPath;
         m_JavaChecker->performCheck();
@@ -110,7 +110,7 @@ void CheckJava::checkJavaFinished(JavaCheckResult result)
             // Error message displayed if java can't start
             emit logLine(QString("Could not start java:"), MessageLevel::Error);
             emit logLines(result.errorLog.split('\n'), MessageLevel::Error);
-            emit logLine("\nCheck your MeshMC Java settings.", MessageLevel::Launcher);
+            emit logLine("\nCheck your MeshMC Java settings.", MessageLevel::MeshMC);
             printSystemInfo(false, false);
             emitFailed(QString("Could not start java!"));
             return;
@@ -119,7 +119,7 @@ void CheckJava::checkJavaFinished(JavaCheckResult result)
         {
             emit logLine(QString("Java checker returned some invalid data MeshMC doesn't understand:"), MessageLevel::Error);
             emit logLines(result.outLog.split('\n'), MessageLevel::Warning);
-            emit logLine("\nMinecraft might not start properly.", MessageLevel::Launcher);
+            emit logLine("\nMinecraft might not start properly.", MessageLevel::MeshMC);
             printSystemInfo(false, false);
             emitSucceeded();
             return;
@@ -140,7 +140,7 @@ void CheckJava::checkJavaFinished(JavaCheckResult result)
 
 void CheckJava::printJavaInfo(const QString& version, const QString& architecture, const QString & vendor)
 {
-    emit logLine(QString("Java is version %1, using %2-bit architecture, from %3.\n\n").arg(version, architecture, vendor), MessageLevel::Launcher);
+    emit logLine(QString("Java is version %1, using %2-bit architecture, from %3.\n\n").arg(version, architecture, vendor), MessageLevel::MeshMC);
     printSystemInfo(true, architecture == "64");
 }
 

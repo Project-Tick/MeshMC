@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 Project Tick
 # SPDX-FileContributor: Project Tick
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Basic start script for running the launcher with the libs packaged with it.
+# Basic start script for running MeshMC with the libs packaged with it.
 
 function printerror {
     printf "$1"
@@ -17,35 +17,35 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 
-LAUNCHER_NAME=@Launcher_Name@
-LAUNCHER_DIR="$(dirname "$(readlink -f "$0")")"
-echo "Launcher Dir: ${LAUNCHER_DIR}"
+MESHMC_NAME=@MeshMC_Name@
+MESHMC_DIR="$(dirname "$(readlink -f "$0")")"
+echo "MeshMC Dir: ${MESHMC_DIR}"
 
 # Set up env - filter out input LD_ variables but pass them in under different names
 export GAME_LIBRARY_PATH=${GAME_LIBRARY_PATH-${LD_LIBRARY_PATH}}
 export GAME_PRELOAD=${GAME_PRELOAD-${LD_PRELOAD}}
-export LD_LIBRARY_PATH="${LAUNCHER_DIR}/bin":$LAUNCHER_LIBRARY_PATH
-export LD_PRELOAD=$LAUNCHER_PRELOAD
-export QT_PLUGIN_PATH="${LAUNCHER_DIR}/plugins"
-export QT_FONTPATH="${LAUNCHER_DIR}/fonts"
+export LD_LIBRARY_PATH="${MESHMC_DIR}/bin":$MESHMC_LIBRARY_PATH
+export LD_PRELOAD=$MESHMC_PRELOAD
+export QT_PLUGIN_PATH="${MESHMC_DIR}/plugins"
+export QT_FONTPATH="${MESHMC_DIR}/fonts"
 
 # Detect missing dependencies...
-DEPS_LIST=`ldd "${LAUNCHER_DIR}"/plugins/*/*.so 2>/dev/null | grep "not found" | sort -u | awk -vORS=", " '{ print $1 }'`
+DEPS_LIST=`ldd "${MESHMC_DIR}"/plugins/*/*.so 2>/dev/null | grep "not found" | sort -u | awk -vORS=", " '{ print $1 }'`
 if [ "x$DEPS_LIST" = "x" ]; then
-    # We have all our dependencies. Run the launcher.
+    # We have all our dependencies. Run MeshMC.
     echo "No missing dependencies found."
 
     # Just to be sure...
-    chmod +x "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}"
+    chmod +x "${MESHMC_DIR}/bin/${MESHMC_NAME}"
 
-    # Run the launcher
-    exec -a "${LAUNCHER_DIR}/${LAUNCHER_NAME}" "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" -d "${LAUNCHER_DIR}" "$@"
+    # Run MeshMC
+    exec -a "${MESHMC_DIR}/${MESHMC_NAME}" "${MESHMC_DIR}/bin/${MESHMC_NAME}" -d "${MESHMC_DIR}" "$@"
 
-    # Run the launcher in valgrind
-    # valgrind --log-file="valgrind.log" --leak-check=full --track-origins=yes "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" -d "${LAUNCHER_DIR}" "$@"
+    # Run MeshMC in valgrind
+    # valgrind --log-file="valgrind.log" --leak-check=full --track-origins=yes "${MESHMC_DIR}/bin/${MESHMC_NAME}" -d "${MESHMC_DIR}" "$@"
 
-    # Run the launcher with callgrind, delay instrumentation
-    # valgrind --log-file="valgrind.log" --tool=callgrind --instr-atstart=no "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" -d "${LAUNCHER_DIR}" "$@"
+    # Run MeshMC with callgrind, delay instrumentation
+    # valgrind --log-file="valgrind.log" --tool=callgrind --instr-atstart=no "${MESHMC_DIR}/bin/${MESHMC_NAME}" -d "${MESHMC_DIR}" "$@"
     # use callgrind_control -i on/off to profile actions
 
     # Exit with launcher's exit code.
@@ -89,7 +89,7 @@ else
         INSTALL_CMD="sudo emerge $COMMAND_LIBS"
     fi
 
-    MESSAGE="Error: The launcher is missing the following libraries that it needs to work correctly:\n\t${DEPS_LIST}\nPlease install them from your distribution's package manager."
+    MESSAGE="Error: MeshMC is missing the following libraries that it needs to work correctly:\n\t${DEPS_LIST}\nPlease install them from your distribution's package manager."
     MESSAGE="$MESSAGE\n\nHint (please apply common sense): $INSTALL_CMD\n"
 
     printerror "$MESSAGE"

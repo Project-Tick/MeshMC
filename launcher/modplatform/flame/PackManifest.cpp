@@ -97,8 +97,27 @@ bool Flame::File::parseFromBytes(const QByteArray& bytes)
         qCritical() << bytes;
         return false;
     }
-    fileName = Json::requireString(obj, "FileNameOnDisk");
-    QString rawUrl = Json::requireString(obj, "DownloadURL");
+    // CurseForge API v1 wraps the file object in "data"
+    if(obj.contains("data"))
+    {
+        obj = Json::requireObject(obj, "data");
+    }
+    // Support both old cursemeta (FileNameOnDisk) and CurseForge API v1 (fileName) field names
+    fileName = Json::ensureString(obj, "fileName", QString());
+    if(fileName.isEmpty())
+    {
+        fileName = Json::requireString(obj, "FileNameOnDisk");
+    }
+    QString rawUrl = Json::ensureString(obj, "downloadUrl", QString());
+    if(rawUrl.isEmpty())
+    {
+        rawUrl = Json::ensureString(obj, "DownloadURL", QString());
+    }
+    if(rawUrl.isEmpty())
+    {
+        qCritical() << "Resolving of" << projectId << fileId << "failed: no download URL provided (mod may have disabled third-party downloads)";
+        return false;
+    }
     url = QUrl(rawUrl, QUrl::TolerantMode);
     if(!url.isValid())
     {

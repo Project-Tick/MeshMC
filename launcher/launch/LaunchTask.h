@@ -124,8 +124,8 @@ signals:
     void requestLogging();
 
 public slots:
-    void onLogLines(const QStringList& lines, MessageLevel::Enum defaultLevel = MessageLevel::Launcher);
-    void onLogLine(QString line, MessageLevel::Enum defaultLevel = MessageLevel::Launcher);
+    void onLogLines(const QStringList& lines, MessageLevel::Enum defaultLevel = MessageLevel::MeshMC);
+    void onLogLine(QString line, MessageLevel::Enum defaultLevel = MessageLevel::MeshMC);
     void onReadyForLaunch();
     void onStepFinished();
     void onProgressReportingRequested();

@@ -383,6 +383,11 @@ void InstanceImportTask::processFlame()
                 case Flame::File::Type::SingleFile:
                 case Flame::File::Type::Mod:
                 {
+                    if(!result.resolved || !result.url.isValid() || result.url.isEmpty())
+                    {
+                        logWarning(tr("Skipping %1 - no download URL available (mod may have restricted downloads)").arg(result.fileName));
+                        break;
+                    }
                     qDebug() << "Will download" << result.url << "to" << path;
                     auto dl = Net::Download::makeFile(result.url, path);
                     m_filesNetJob->addNetAction(dl);

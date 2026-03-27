@@ -327,7 +327,7 @@ void InstanceList::deleteInstance(const InstanceId& id)
         return;
     }
 
-    qDebug() << "Instance" << id << "has been deleted by the launcher.";
+    qDebug() << "Instance" << id << "has been deleted by MeshMC.";
 }
 
 static QMap<InstanceId, InstanceLocator> getIdMapping(const QList<InstancePtr> &list)
@@ -867,7 +867,7 @@ private slots:
 private:
     /*
      * WHY: the whole reason why this uses an exponential backoff retry scheme is antivirus on Windows.
-     * Basically, it starts messing things up while the launcher is extracting/creating instances
+     * Basically, it starts messing things up while MeshMC is extracting/creating instances
      * and causes that horrible failure that is NTFS to lock files in place because they are open.
      */
     ExponentialSeries backoff;
@@ -890,7 +890,7 @@ Task * InstanceList::wrapInstanceTask(InstanceTask * task)
 QString InstanceList::getStagedInstancePath()
 {
     QString key = QUuid::createUuid().toString();
-    QString relPath = FS::PathCombine("_LAUNCHER_TEMP/" , key);
+    QString relPath = FS::PathCombine("_MESHMC_TEMP/" , key);
     QDir rootPath(m_instDir);
     auto path = FS::PathCombine(m_instDir, relPath);
     if(!rootPath.mkpath(relPath))

@@ -88,13 +88,13 @@ set(CORE_SOURCES
 
 add_unit_test(FileSystem
     SOURCES FileSystem_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     DATA testdata
     )
 
 add_unit_test(GZip
     SOURCES GZip_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     )
 
 set(PATHMATCHER_SOURCES
@@ -160,13 +160,13 @@ set(UPDATE_SOURCES
 
 add_unit_test(UpdateChecker
     SOURCES updater/UpdateChecker_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     DATA updater/testdata
     )
 
 add_unit_test(DownloadTask
     SOURCES updater/DownloadTask_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     DATA updater/testdata
     )
 
@@ -221,8 +221,8 @@ set(MINECRAFT_SOURCES
     minecraft/auth/steps/EntitlementsStep.h
     minecraft/auth/steps/GetSkinStep.cpp
     minecraft/auth/steps/GetSkinStep.h
-    minecraft/auth/steps/LauncherLoginStep.cpp
-    minecraft/auth/steps/LauncherLoginStep.h
+    minecraft/auth/steps/MeshMCLoginStep.cpp
+    minecraft/auth/steps/MeshMCLoginStep.h
     minecraft/auth/steps/MinecraftProfileStep.cpp
     minecraft/auth/steps/MinecraftProfileStep.h
     minecraft/auth/steps/MSAStep.cpp
@@ -255,8 +255,8 @@ set(MINECRAFT_SOURCES
     minecraft/launch/DirectJavaLaunch.h
     minecraft/launch/ExtractNatives.cpp
     minecraft/launch/ExtractNatives.h
-    minecraft/launch/LauncherPartLaunch.cpp
-    minecraft/launch/LauncherPartLaunch.h
+    minecraft/launch/MeshMCPartLaunch.cpp
+    minecraft/launch/MeshMCPartLaunch.h
     minecraft/launch/MinecraftServerTarget.cpp
     minecraft/launch/MinecraftServerTarget.h
     minecraft/launch/PrintInstanceInfo.cpp
@@ -346,14 +346,14 @@ set(MINECRAFT_SOURCES
 
 add_unit_test(GradleSpecifier
     SOURCES minecraft/GradleSpecifier_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     )
 
 add_executable(PackageManifest
     mojang/PackageManifest_test.cpp
 )
 target_link_libraries(PackageManifest
-    Launcher_logic
+    MeshMC_logic
     Qt6::Test
 )
 target_include_directories(PackageManifest
@@ -367,25 +367,25 @@ add_test(
 
 add_unit_test(MojangVersionFormat
     SOURCES minecraft/MojangVersionFormat_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     DATA minecraft/testdata
     )
 
 add_unit_test(Library
     SOURCES minecraft/Library_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     )
 
 # FIXME: shares data with FileSystem test
 add_unit_test(ModFolderModel
     SOURCES minecraft/mod/ModFolderModel_test.cpp
     DATA testdata
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     )
 
 add_unit_test(ParseUtils
     SOURCES minecraft/ParseUtils_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     )
 
 # the screenshots feature
@@ -423,7 +423,7 @@ set(SETTINGS_SOURCES
 
 add_unit_test(INIFile
     SOURCES settings/INIFile_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     )
 
 set(JAVA_SOURCES
@@ -443,7 +443,7 @@ set(JAVA_SOURCES
 
 add_unit_test(JavaVersion
     SOURCES java/JavaVersion_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     )
 
 set(TRANSLATIONS_SOURCES
@@ -529,7 +529,7 @@ set(ATLAUNCHER_SOURCES
 
 add_unit_test(Index
     SOURCES meta/Index_test.cpp
-    LIBS Launcher_logic
+    LIBS MeshMC_logic
     )
 
 ################################ COMPILE ################################
@@ -561,7 +561,7 @@ set(LOGIC_SOURCES
     ${ATLAUNCHER_SOURCES}
 )
 
-SET(LAUNCHER_SOURCES
+SET(MESHMC_SOURCES
     # Application base
     Application.h
     Application.cpp
@@ -592,7 +592,7 @@ SET(LAUNCHER_SOURCES
     resources/iOS/iOS.qrc
     resources/flat/flat.qrc
     resources/documents/documents.qrc
-    ../${Launcher_Branding_LogoQRC}
+    ../${MeshMC_Branding_LogoQRC}
 
     # Icons
     icons/MMCIcon.h
@@ -695,8 +695,8 @@ SET(LAUNCHER_SOURCES
     ui/pages/global/LanguagePage.h
     ui/pages/global/MinecraftPage.cpp
     ui/pages/global/MinecraftPage.h
-    ui/pages/global/LauncherPage.cpp
-    ui/pages/global/LauncherPage.h
+    ui/pages/global/MeshMCPage.cpp
+    ui/pages/global/MeshMCPage.h
     ui/pages/global/ProxyPage.cpp
     ui/pages/global/ProxyPage.h
     ui/pages/global/PasteEEPage.cpp
@@ -828,10 +828,10 @@ SET(LAUNCHER_SOURCES
     ui/instanceview/VisualGroup.h
 )
 
-qt6_wrap_ui(LAUNCHER_UI
+qt6_wrap_ui(MESHMC_UI
     ui/pages/global/AccountListPage.ui
     ui/pages/global/JavaPage.ui
-    ui/pages/global/LauncherPage.ui
+    ui/pages/global/MeshMCPage.ui
     ui/pages/global/PasteEEPage.ui
     ui/pages/global/ProxyPage.ui
     ui/pages/global/MinecraftPage.ui
@@ -874,7 +874,7 @@ qt6_wrap_ui(LAUNCHER_UI
     ui/dialogs/EditAccountDialog.ui
 )
 
-qt6_add_resources(LAUNCHER_RESOURCES
+qt6_add_resources(MESHMC_RESOURCES
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
     resources/pe_dark/pe_dark.qrc
@@ -885,19 +885,19 @@ qt6_add_resources(LAUNCHER_RESOURCES
     resources/iOS/iOS.qrc
     resources/flat/flat.qrc
     resources/documents/documents.qrc
-    ../${Launcher_Branding_LogoQRC}
+    ../${MeshMC_Branding_LogoQRC}
 )
 
 ######## Windows resource files ########
 if(WIN32)
-    set(LAUNCHER_RCS ../${Launcher_Branding_WindowsRC})
+    set(MESHMC_RCS ../${MeshMC_Branding_WindowsRC})
 endif()
 
 # Add executable
-add_library(Launcher_logic STATIC ${LOGIC_SOURCES} ${LAUNCHER_SOURCES} ${LAUNCHER_UI} ${LAUNCHER_RESOURCES})
-target_link_libraries(Launcher_logic
+add_library(MeshMC_logic STATIC ${LOGIC_SOURCES} ${MESHMC_SOURCES} ${MESHMC_UI} ${MESHMC_RESOURCES})
+target_link_libraries(MeshMC_logic
     systeminfo
-    Launcher_classparser
+    MeshMC_classparser
     ${NBT_NAME}
     ${ZLIB_LIBRARIES}
     optional-bare
@@ -905,7 +905,7 @@ target_link_libraries(Launcher_logic
     BuildConfig
     Katabasis
 )
-target_link_libraries(Launcher_logic
+target_link_libraries(MeshMC_logic
     Qt6::Core
     Qt6::Xml
     Qt6::Network
@@ -914,31 +914,31 @@ target_link_libraries(Launcher_logic
     Qt6::Gui
     QuaZip::QuaZip
 )
-target_link_libraries(Launcher_logic
-    Launcher_iconfix
+target_link_libraries(MeshMC_logic
+    MeshMC_iconfix
     ${QUAZIP_LIBRARIES}
     hoedown
-    Launcher_rainbow
+    MeshMC_rainbow
     LocalPeer
     ganalytics
 )
 
-add_executable(${Launcher_Name} MACOSX_BUNDLE WIN32 main.cpp ${LAUNCHER_RCS})
-target_link_libraries(${Launcher_Name} Launcher_logic)
+add_executable(${MeshMC_Name} MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
+target_link_libraries(${MeshMC_Name} MeshMC_logic)
 
-if(DEFINED Launcher_AppBinaryName)
-    set_target_properties(${Launcher_Name} PROPERTIES OUTPUT_NAME "${Launcher_AppBinaryName}")
+if(DEFINED MeshMC_AppBinaryName)
+    set_target_properties(${MeshMC_Name} PROPERTIES OUTPUT_NAME "${MeshMC_AppBinaryName}")
 endif()
-if(DEFINED Launcher_BINARY_RPATH)
-    SET_TARGET_PROPERTIES(${Launcher_Name} PROPERTIES INSTALL_RPATH "${Launcher_BINARY_RPATH}")
-endif()
-
-if(DEFINED Launcher_APP_BINARY_DEFS)
-    target_compile_definitions(${Launcher_Name} PRIVATE ${Launcher_APP_BINARY_DEFS})
-    target_compile_definitions(Launcher_logic PRIVATE ${Launcher_APP_BINARY_DEFS})
+if(DEFINED MeshMC_BINARY_RPATH)
+    SET_TARGET_PROPERTIES(${MeshMC_Name} PROPERTIES INSTALL_RPATH "${MeshMC_BINARY_RPATH}")
 endif()
 
-install(TARGETS ${Launcher_Name}
+if(DEFINED MeshMC_APP_BINARY_DEFS)
+    target_compile_definitions(${MeshMC_Name} PRIVATE ${MeshMC_APP_BINARY_DEFS})
+    target_compile_definitions(MeshMC_logic PRIVATE ${MeshMC_APP_BINARY_DEFS})
+endif()
+
+install(TARGETS ${MeshMC_Name}
     BUNDLE DESTINATION ${BUNDLE_DEST_DIR} COMPONENT Runtime
     LIBRARY DESTINATION ${LIBRARY_DEST_DIR} COMPONENT Runtime
     RUNTIME DESTINATION ${BINARY_DEST_DIR} COMPONENT Runtime

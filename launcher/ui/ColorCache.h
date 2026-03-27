@@ -112,7 +112,7 @@ public:
     LogColorCache(QColor front, QColor back)
         : ColorCache(front, back, 1.0)
     {
-        addColor((int)MessageLevel::Launcher, QColor("purple"));
+        addColor((int)MessageLevel::MeshMC, QColor("purple"));
         addColor((int)MessageLevel::Debug, QColor("green"));
         addColor((int)MessageLevel::Warning, QColor("orange"));
         addColor((int)MessageLevel::Error, QColor("red"));

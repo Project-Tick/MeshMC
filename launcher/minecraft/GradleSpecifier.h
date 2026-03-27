@@ -54,14 +54,14 @@ struct GradleSpecifier
             m_invalidValue = value;
             return *this;
         }
-        auto elements = match.capturedTexts();
-        m_groupId = elements[1];
-        m_artifactId = elements[2];
-        m_version = elements[3];
-        m_classifier = elements[4];
-        if(!elements[5].isEmpty())
+        m_groupId = match.captured(1);
+        m_artifactId = match.captured(2);
+        m_version = match.captured(3);
+        m_classifier = match.captured(4);
+        auto ext = match.captured(5);
+        if(!ext.isEmpty())
         {
-            m_extension = elements[5];
+            m_extension = ext;
         }
         return *this;
     }

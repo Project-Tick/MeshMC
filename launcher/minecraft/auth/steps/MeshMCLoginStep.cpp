@@ -19,7 +19,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "LauncherLoginStep.h"
+#include "MeshMCLoginStep.h"
 
 #include <QNetworkRequest>
 
@@ -27,17 +27,17 @@
 #include "minecraft/auth/Parsers.h"
 #include "minecraft/auth/AccountTask.h"
 
-LauncherLoginStep::LauncherLoginStep(AccountData* data) : AuthStep(data) {
+MeshMCLoginStep::MeshMCLoginStep(AccountData* data) : AuthStep(data) {
 
 }
 
-LauncherLoginStep::~LauncherLoginStep() noexcept = default;
+MeshMCLoginStep::~MeshMCLoginStep() noexcept = default;
 
-QString LauncherLoginStep::describe() {
+QString MeshMCLoginStep::describe() {
     return tr("Accessing Mojang services.");
 }
 
-void LauncherLoginStep::perform() {
+void MeshMCLoginStep::perform() {
     auto requestURL = "https://api.minecraftservices.com/launcher/login";
     auto uhs = m_data->mojangservicesToken.extra["uhs"].toString();
     auto xToken = m_data->mojangservicesToken.token;
@@ -54,16 +54,16 @@ void LauncherLoginStep::perform() {
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Accept", "application/json");
     AuthRequest *requestor = new AuthRequest(this);
-    connect(requestor, &AuthRequest::finished, this, &LauncherLoginStep::onRequestDone);
+    connect(requestor, &AuthRequest::finished, this, &MeshMCLoginStep::onRequestDone);
     requestor->post(request, requestBody.toUtf8());
     qDebug() << "Getting Minecraft access token...";
 }
 
-void LauncherLoginStep::rehydrate() {
+void MeshMCLoginStep::rehydrate() {
     // TODO: check the token validity
 }
 
-void LauncherLoginStep::onRequestDone(
+void MeshMCLoginStep::onRequestDone(
     QNetworkReply::NetworkError error,
     QByteArray data,
     QList<QNetworkReply::RawHeaderPair> headers

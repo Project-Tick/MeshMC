@@ -34,7 +34,7 @@ enum Enum
     Unknown, /**< No idea what this is or where it came from */
     StdOut,  /**< Undetermined stderr messages */
     StdErr,  /**< Undetermined stdout messages */
-    Launcher, /**< Launcher Messages */
+    MeshMC, /**< MeshMC Messages */
     Debug,   /**< Debug Messages */
     Info,    /**< Info Messages */
     Message, /**< Standard Messages */

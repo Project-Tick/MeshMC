@@ -261,20 +261,20 @@ void LogPage::on_btnPaste_clicked()
 
     //FIXME: turn this into a proper task and move the upload logic out of GuiUtil!
     m_model->append(
-        MessageLevel::Launcher,
+        MessageLevel::MeshMC,
         QString("%2: Log upload triggered at: %1").arg(
             QDateTime::currentDateTime().toString(Qt::RFC2822Date),
-            BuildConfig.LAUNCHER_NAME
+            BuildConfig.MESHMC_NAME
         )
     );
     auto url = GuiUtil::uploadPaste(m_model->toPlainText(), this);
     if(!url.isEmpty())
     {
         m_model->append(
-            MessageLevel::Launcher,
+            MessageLevel::MeshMC,
             QString("%2: Log uploaded to: %1").arg(
                 url,
-                BuildConfig.LAUNCHER_NAME
+                BuildConfig.MESHMC_NAME
             )
         );
     }
@@ -282,7 +282,7 @@ void LogPage::on_btnPaste_clicked()
     {
         m_model->append(
             MessageLevel::Error,
-            QString("%1: Log upload failed!").arg(BuildConfig.LAUNCHER_NAME)
+            QString("%1: Log upload failed!").arg(BuildConfig.MESHMC_NAME)
         );
     }
 }
@@ -291,7 +291,7 @@ void LogPage::on_btnCopy_clicked()
 {
     if(!m_model)
         return;
-    m_model->append(MessageLevel::Launcher, QString("Clipboard copy at: %1").arg(QDateTime::currentDateTime().toString(Qt::RFC2822Date)));
+    m_model->append(MessageLevel::MeshMC, QString("Clipboard copy at: %1").arg(QDateTime::currentDateTime().toString(Qt::RFC2822Date)));
     GuiUtil::setClipboardText(m_model->toPlainText());
 }
 

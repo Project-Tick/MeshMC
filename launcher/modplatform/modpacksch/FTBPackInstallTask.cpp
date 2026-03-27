@@ -137,6 +137,10 @@ void PackInstallTask::downloadPack()
     jobPtr = new NetJob(tr("Mod download"), APPLICATION->network());
     for(auto file : m_version.files) {
         if(file.serverOnly) continue;
+        if(file.url.isEmpty()) {
+            qWarning() << "Skipping" << file.name << "- no download URL available";
+            continue;
+        }
 
         QFileInfo fileName(file.name);
         auto cacheName = fileName.completeBaseName() + "-" + file.sha1 + "." + fileName.suffix();
@@ -222,6 +226,9 @@ void PackInstallTask::install()
 
         if(target.name == "forge") {
             components->setComponentVersion("net.minecraftforge", target.version, true);
+        }
+        else if(target.name == "neoforge") {
+            components->setComponentVersion("net.neoforged.neoforge", target.version, true);
         }
         else if(target.name == "fabric") {
             components->setComponentVersion("net.fabricmc.fabric-loader", target.version, true);

@@ -28,7 +28,7 @@
 #include "ui/instanceview/AccessibleInstanceView.h"
 
 #include "ui/pages/BasePageProvider.h"
-#include "ui/pages/global/LauncherPage.h"
+#include "ui/pages/global/MeshMCPage.h"
 #include "ui/pages/global/MinecraftPage.h"
 #include "ui/pages/global/JavaPage.h"
 #include "ui/pages/global/LanguagePage.h"
@@ -205,10 +205,10 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         consoleAttached = true;
     }
 #endif
-    setOrganizationName(BuildConfig.LAUNCHER_NAME);
-    setOrganizationDomain(BuildConfig.LAUNCHER_DOMAIN);
-    setApplicationName(BuildConfig.LAUNCHER_NAME);
-    setApplicationDisplayName(BuildConfig.LAUNCHER_DISPLAYNAME);
+    setOrganizationName(BuildConfig.MESHMC_NAME);
+    setOrganizationDomain(BuildConfig.MESHMC_DOMAIN);
+    setApplicationName(BuildConfig.MESHMC_NAME);
+    setApplicationDisplayName(BuildConfig.MESHMC_DISPLAYNAME);
     setApplicationVersion(BuildConfig.printableVersionString());
 
     startTime = QDateTime::currentDateTime();
@@ -268,7 +268,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         parser.addDocumentation("profile", "Use the account specified by its profile name (only valid in combination with --launch)");
         // --alive
         parser.addSwitch("alive");
-        parser.addDocumentation("alive", "Write a small '" + liveCheckFile + "' file after the launcher starts");
+        parser.addDocumentation("alive", "Write a small '" + liveCheckFile + "' file after MeshMC starts");
         // --import
         parser.addOption("import");
         parser.addShortOpt("import", 'I');
@@ -340,17 +340,17 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
     if (!FS::ensureFolderPathExists(dataPath))
     {
         showFatalErrorMessage(
-            "The launcher data folder could not be created.",
+            "MeshMC data folder could not be created.",
             QString(
-                "The launcher data folder could not be created.\n"
+                "MeshMC data folder could not be created.\n"
                 "\n"
 #if defined(Q_OS_MAC)
                 MACOS_HINT
 #endif
-                "Make sure you have the right permissions to the launcher data folder and any folder needed to access it.\n"
+                "Make sure you have the right permissions to MeshMC data folder and any folder needed to access it.\n"
                 "(%1)\n"
                 "\n"
-                "The launcher cannot continue until you fix this problem."
+                "MeshMC cannot continue until you fix this problem."
             ).arg(dataPath)
         );
         return;
@@ -358,17 +358,17 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
     if (!QDir::setCurrent(dataPath))
     {
         showFatalErrorMessage(
-            "The launcher data folder could not be opened.",
+            "MeshMC data folder could not be opened.",
             QString(
-                "The launcher data folder could not be opened.\n"
+                "MeshMC data folder could not be opened.\n"
                 "\n"
 #if defined(Q_OS_MAC)
                 MACOS_HINT
 #endif
-                "Make sure you have the right permissions to the launcher data folder.\n"
+                "Make sure you have the right permissions to MeshMC data folder.\n"
                 "(%1)\n"
                 "\n"
-                "The launcher cannot continue until you fix this problem."
+                "MeshMC cannot continue until you fix this problem."
             ).arg(dataPath)
         );
         return;
@@ -393,15 +393,15 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
     QDir fi(applicationDirPath());
     QString originalData = fi.absolutePath();
     // if the config file exists in Contents/MacOS, then user data is still there and needs to moved
-    if (QFileInfo::exists(FS::PathCombine(originalData, BuildConfig.LAUNCHER_CONFIGFILE)))
+    if (QFileInfo::exists(FS::PathCombine(originalData, BuildConfig.MESHMC_CONFIGFILE)))
     {
         if (!QFileInfo::exists(FS::PathCombine(originalData, "dontmovemacdata")))
         {
             QMessageBox::StandardButton askMoveDialogue;
             askMoveDialogue = QMessageBox::question(
                 nullptr,
-                BuildConfig.LAUNCHER_DISPLAYNAME,
-                "Would you like to move application data to a new data location? It will improve the launcher's performance, but if you switch to older versions it will look like instances have disappeared. If you select no, you can migrate later in settings. You should select yes unless you're commonly switching between different versions (eg. develop and stable).",
+                BuildConfig.MESHMC_DISPLAYNAME,
+                "Would you like to move application data to a new data location? It will improve MeshMC's performance, but if you switch to older versions it will look like instances have disappeared. If you select no, you can migrate later in settings. You should select yes unless you're commonly switching between different versions (eg. develop and stable).",
                 QMessageBox::Yes | QMessageBox::No,
                 QMessageBox::Yes
             );
@@ -410,7 +410,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
                 qDebug() << "On macOS and found config file in old location, moving user data...";
                 QDir dir;
                 QStringList dataFiles {
-                    "*.log", // Launcher log files: ${Launcher_Name}-@.log
+                    "*.log", // MeshMC log files: ${MeshMC}-@.log
                     "accounts.json",
                     "accounts",
                     "assets",
@@ -421,7 +421,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
                     "meta",
                     "metacache",
                     "mods",
-                    BuildConfig.LAUNCHER_CONFIGFILE,
+                    BuildConfig.MESHMC_CONFIGFILE,
                     "themes",
                     "translations"
                 };
@@ -501,7 +501,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
 
     // init the logger
     {
-        static const QString logBase = BuildConfig.LAUNCHER_NAME + "-%0.log";
+        static const QString logBase = BuildConfig.MESHMC_NAME + "-%0.log";
         auto moveFile = [](const QString &oldName, const QString &newName)
         {
             QFile::remove(newName);
@@ -518,9 +518,9 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         if(!logFile->open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
             showFatalErrorMessage(
-                "The launcher data folder is not writable!",
+                "MeshMC data folder is not writable!",
                 QString(
-                    "The launcher couldn't create a log file - the data folder is not writable.\n"
+                    "MeshMC couldn't create a log file - the data folder is not writable.\n"
                     "\n"
     #if defined(Q_OS_MAC)
                     MACOS_HINT
@@ -528,7 +528,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
                     "Make sure you have write permissions to the data folder.\n"
                     "(%1)\n"
                     "\n"
-                    "The launcher cannot continue until you fix this problem."
+                    "MeshMC cannot continue until you fix this problem."
                 ).arg(dataPath)
             );
             return;
@@ -552,7 +552,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         FS::updateTimestamp(m_rootPath);
 #endif
 
-        qDebug() << BuildConfig.LAUNCHER_DISPLAYNAME << ", (c) 2013-2021 " << BuildConfig.LAUNCHER_COPYRIGHT;
+        qDebug() << BuildConfig.MESHMC_DISPLAYNAME << ", (c) 2013-2021 " << BuildConfig.MESHMC_COPYRIGHT;
         qDebug() << "Version                    : " << BuildConfig.printableVersionString();
         qDebug() << "Git commit                 : " << BuildConfig.GIT_COMMIT;
         qDebug() << "Git refspec                : " << BuildConfig.GIT_REFSPEC;
@@ -602,7 +602,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
 
     // Initialize application settings
     {
-        m_settings.reset(new INISettingsObject(BuildConfig.LAUNCHER_CONFIGFILE, this));
+        m_settings.reset(new INISettingsObject(BuildConfig.MESHMC_CONFIGFILE, this));
         // Updates
         m_settings->registerSetting("UpdateChannel", BuildConfig.VERSION_CHANNEL);
         m_settings->registerSetting("AutoUpdate", true);
@@ -697,7 +697,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         m_settings->registerSetting("RecordGameTime", true);
 
         // Minecraft launch method
-        m_settings->registerSetting("MCLaunchMethod", "LauncherPart");
+        m_settings->registerSetting("MCLaunchMethod", "MeshMCPart");
 
         // Wrapper command for launch
         m_settings->registerSetting("WrapperCommand", "");
@@ -741,7 +741,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         // Init page provider
         {
             m_globalSettingsProvider = std::make_shared<GenericPageProvider>(tr("Settings"));
-            m_globalSettingsProvider->addPage<LauncherPage>();
+            m_globalSettingsProvider->addPage<MeshMCPage>();
             m_globalSettingsProvider->addPage<MinecraftPage>();
             m_globalSettingsProvider->addPage<JavaPage>();
             m_globalSettingsProvider->addPage<LanguagePage>();

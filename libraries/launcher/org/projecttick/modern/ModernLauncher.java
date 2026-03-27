@@ -55,7 +55,7 @@
 
 package org.projecttick.modern;
 
-import org.projecttick.Launcher;
+import org.projecttick.MeshMC;
 import org.projecttick.ParamBucket;
 import org.projecttick.Utils;
 
@@ -72,8 +72,8 @@ import java.util.List;
  *
  * Unlike OneSixLauncher which loads the game in-process via reflection,
  * ModernLauncher spawns Minecraft as a separate child process using the
- * Java binary specified by the launcher. This decouples the JVM version
- * running the launcher library from the JVM version required by the game,
+ * Java binary specified by MeshMC. This decouples the JVM version
+ * running MeshMC library from the JVM version required by the game,
  * allowing Minecraft versions that require Java 21+ or newer (e.g., class
  * file version 69.0 / Java 25) to be launched correctly even when the
  * launcher itself runs on an older JVM.
@@ -88,7 +88,7 @@ import java.util.List;
  *   serverAddress - Server address for direct-connect on launch (optional)
  *   serverPort    - Server port for direct-connect on launch (optional)
  */
-public class ModernLauncher implements Launcher
+public class ModernLauncher implements MeshMC
 {
     @Override
     public int launch(ParamBucket params)
@@ -120,7 +120,7 @@ public class ModernLauncher implements Launcher
         // "ext" = native-classifier JARs (e.g. lwjgl-3.x-natives-linux.jar) that
         //         LWJGL 3's SharedLibraryLoader needs to find on the classpath.
         //         OneSixLauncher works without these because it runs in-process and
-        //         the launcher JVM already has them on its own classpath.  For
+        //         MeshMC JVM already has them on its own classpath.  For
         //         ModernLauncher we must include them explicitly.
         List<String> cpEntries  = params.allSafe("cp",  Collections.<String>emptyList());
         List<String> extEntries = params.allSafe("ext", Collections.<String>emptyList());
@@ -194,8 +194,8 @@ public class ModernLauncher implements Launcher
         outPipe.start();
         errPipe.start();
 
-        // Shutdown hook: ensure the game process is terminated if the launcher is
-        // forcefully killed (e.g., SIGKILL from within the launcher UI).
+        // Shutdown hook: ensure the game process is terminated if MeshMC is
+        // forcefully killed (e.g., SIGKILL from within MeshMC UI).
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
         {
             @Override

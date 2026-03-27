@@ -164,7 +164,7 @@ void PrintInstanceInfo::executeTask()
     ::runGlxinfo(log);
 #endif
 
-    logLines(log, MessageLevel::Launcher);
-    logLines(instance->verboseDescription(m_session, m_serverToJoin), MessageLevel::Launcher);
+    logLines(log, MessageLevel::MeshMC);
+    logLines(instance->verboseDescription(m_session, m_serverToJoin), MessageLevel::MeshMC);
     emitSucceeded();
 }

@@ -52,20 +52,20 @@ class SettingsObject;
 
 namespace Ui
 {
-class LauncherPage;
+class MeshMCPage;
 }
 
-class LauncherPage : public QWidget, public BasePage
+class MeshMCPage : public QWidget, public BasePage
 {
     Q_OBJECT
 
 public:
-    explicit LauncherPage(QWidget *parent = 0);
-    ~LauncherPage();
+    explicit MeshMCPage(QWidget *parent = 0);
+    ~MeshMCPage();
 
     QString displayName() const override
     {
-        return "Launcher";
+        return "MeshMC";
     }
     QIcon icon() const override
     {
@@ -77,7 +77,7 @@ public:
     }
     QString helpPage() const override
     {
-        return "Launcher-settings";
+        return "MeshMC-settings";
     }
     bool apply() override;
 
@@ -110,7 +110,7 @@ slots:
     void updateChannelSelectionChanged(int index);
 
 private:
-    Ui::LauncherPage *ui;
+    Ui::MeshMCPage *ui;
 
     /*!
      * Stores the currently selected update channel.

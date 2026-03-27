@@ -152,16 +152,14 @@ void Meta::BaseEntity::load(Net::Mode loadType)
     dl->addValidator(new ParsingValidator(this));
     m_updateTask->addNetAction(dl);
     m_updateStatus = UpdateStatus::InProgress;
-    QObject::connect(m_updateTask.get(), &NetJob::succeeded, [&]()
+    QObject::connect(m_updateTask.get(), &NetJob::succeeded, [this]()
     {
         m_loadStatus = LoadStatus::Remote;
         m_updateStatus = UpdateStatus::Succeeded;
-        m_updateTask.reset();
     });
-    QObject::connect(m_updateTask.get(), &NetJob::failed, [&]()
+    QObject::connect(m_updateTask.get(), &NetJob::failed, [this]()
     {
         m_updateStatus = UpdateStatus::Failed;
-        m_updateTask.reset();
     });
     m_updateTask->start();
 }

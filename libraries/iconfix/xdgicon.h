@@ -32,9 +32,9 @@
 #include <QString>
 #include <QStringList>
 
-#include "launcher_iconfix_export.h"
+#include "meshmc_iconfix_export.h"
 
-class LAUNCHER_ICONFIX_EXPORT XdgIcon
+class MESHMC_ICONFIX_EXPORT XdgIcon
 {
 public:
     static QIcon fromTheme(const QString &iconName, const QIcon &fallback = QIcon());

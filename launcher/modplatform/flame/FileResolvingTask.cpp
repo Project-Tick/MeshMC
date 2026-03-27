@@ -22,10 +22,6 @@
 #include "FileResolvingTask.h"
 #include "Json.h"
 
-namespace {
-    const char * metabase = "https://cursemeta.dries007.net";
-}
-
 Flame::FileResolvingTask::FileResolvingTask(shared_qobject_ptr<QNetworkAccessManager> network, Flame::Manifest& toProcess)
     : m_network(network), m_toProcess(toProcess)
 {
@@ -42,7 +38,7 @@ void Flame::FileResolvingTask::executeTask()
     {
         auto projectIdStr = QString::number(file.projectId);
         auto fileIdStr = QString::number(file.fileId);
-        QString metaurl = QString("%1/%2/%3.json").arg(metabase, projectIdStr, fileIdStr);
+        QString metaurl = QString("https://api.curseforge.com/v1/mods/%1/files/%2").arg(projectIdStr, fileIdStr);
         auto dl = Net::Download::makeByteArray(QUrl(metaurl), &results[index]);
         m_dljob->addNetAction(dl);
         index ++;
@@ -53,32 +49,32 @@ void Flame::FileResolvingTask::executeTask()
 
 void Flame::FileResolvingTask::netJobFinished()
 {
-    bool failed = false;
     int index = 0;
+    int unresolved = 0;
     for(auto & bytes: results)
     {
         auto & out = m_toProcess.files[index];
         try
         {
-            failed &= (!out.parseFromBytes(bytes));
+            if(!out.parseFromBytes(bytes))
+            {
+                unresolved++;
+                qWarning() << "Resolving of" << out.projectId << out.fileId << "failed: mod may have restricted downloads";
+            }
         }
         catch (const JSONValidationError &e)
         {
-
+            unresolved++;
             qCritical() << "Resolving of" << out.projectId << out.fileId << "failed because of a parsing error:";
             qCritical() << e.cause();
             qCritical() << "JSON:";
             qCritical() << bytes;
-            failed = true;
         }
         index++;
     }
-    if(!failed)
+    if(unresolved > 0)
     {
-        emitSucceeded();
+        qWarning() << unresolved << "mod(s) could not be resolved (restricted downloads). They will be skipped.";
     }
-    else
-    {
-        emitFailed(tr("Some mod ID resolving tasks failed."));
-    }
+    emitSucceeded();
 }

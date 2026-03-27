@@ -29,12 +29,12 @@ class Config
 {
 public:
     Config();
-    QString LAUNCHER_NAME;
-    QString LAUNCHER_DISPLAYNAME;
-    QString LAUNCHER_COPYRIGHT;
-    QString LAUNCHER_DOMAIN;
-    QString LAUNCHER_CONFIGFILE;
-    QString LAUNCHER_GIT;
+    QString MESHMC_NAME;
+    QString MESHMC_DISPLAYNAME;
+    QString MESHMC_COPYRIGHT;
+    QString MESHMC_DOMAIN;
+    QString MESHMC_CONFIGFILE;
+    QString MESHMC_GIT;
 
     /// The major version number.
     int VERSION_MAJOR;

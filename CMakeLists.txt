@@ -5,19 +5,19 @@ if(WIN32)
     cmake_policy(SET CMP0020 OLD)
 endif()
 
-project(Launcher)
+project(MeshMC)
 enable_testing()
 
 string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_BUILD_DIR}" IS_IN_SOURCE_BUILD)
 if(IS_IN_SOURCE_BUILD)
-    message(FATAL_ERROR "You are building the Launcher in-source. Please separate the build tree from the source tree.")
+    message(FATAL_ERROR "You are building MeshMC in-source. Please separate the build tree from the source tree.")
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     if(CMAKE_HOST_SYSTEM_VERSION MATCHES ".*[Mm]icrosoft.*" OR
         CMAKE_HOST_SYSTEM_VERSION MATCHES ".*WSL.*"
     )
-        message(FATAL_ERROR "Building the Launcher is not supported in Linux-on-Windows distributions.")
+        message(FATAL_ERROR "Building MeshMC is not supported in Linux-on-Windows distributions.")
     endif()
 endif()
 
@@ -74,123 +74,123 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ####################################### Branding #######################################
 
-set(Launcher_CommonName "MeshMC")
-set(Launcher_AppBinaryName "meshmc")
-set(Launcher_Copyright "Project Tick")
-set(Launcher_Domain "projecttick.org")
-set(Launcher_Name "${Launcher_CommonName}")
-set(Launcher_DisplayName "${Launcher_CommonName} 5")
-set(Launcher_UserAgent "${Launcher_CommonName}/5.0")
-set(Launcher_ConfigFile "meshmc.cfg")
-set(Launcher_Git "https://github.com/Project-Tick/MeshMC")
+set(MeshMC_CommonName "MeshMC")
+set(MeshMC_AppBinaryName "meshmc")
+set(MeshMC_Copyright "Project Tick")
+set(MeshMC_Domain "projecttick.org")
+set(MeshMC_Name "${MeshMC_CommonName}")
+set(MeshMC_DisplayName "${MeshMC_CommonName} 5")
+set(MeshMC_UserAgent "${MeshMC_CommonName}/5.0")
+set(MeshMC_ConfigFile "meshmc.cfg")
+set(MeshMC_Git "https://github.com/Project-Tick/MeshMC")
 
-set(Launcher_Branding_ICNS "branding/MeshMC.icns")
-set(Launcher_Branding_WindowsRC "branding/meshmc.rc")
-set(Launcher_Branding_LogoQRC "branding/logo.qrc")
+set(MeshMC_Branding_ICNS "branding/MeshMC.icns")
+set(MeshMC_Branding_WindowsRC "branding/meshmc.rc")
+set(MeshMC_Branding_LogoQRC "branding/logo.qrc")
 
-set(Launcher_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch Launcher's news RSS feed from.")
+set(MeshMC_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch MeshMC's news RSS feed from.")
 
 ######## Set version numbers ########
-set(Launcher_VERSION_MAJOR    0)
-set(Launcher_VERSION_MINOR    7)
-set(Launcher_VERSION_HOTFIX   0)
+set(MeshMC_VERSION_MAJOR    0)
+set(MeshMC_VERSION_MINOR    7)
+set(MeshMC_VERSION_HOTFIX   0)
 
 # Build number
-set(Launcher_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
+set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
 
 # Build platform.
-set(Launcher_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
+set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
 
 # Channel list URL
-set(Launcher_UPDATER_BASE "" CACHE STRING "Base URL for the updater.")
+set(MeshMC_UPDATER_BASE "" CACHE STRING "Base URL for the updater.")
 
 # Notification URL
-set(Launcher_NOTIFICATION_URL "" CACHE STRING "URL for checking for notifications.")
+set(MeshMC_NOTIFICATION_URL "" CACHE STRING "URL for checking for notifications.")
 
 # The metadata server
-set(Launcher_META_URL "https://meta.projecttick.org/" CACHE STRING "URL to fetch Launcher's meta files from.")
+set(MeshMC_META_URL "https://meta.projecttick.org/" CACHE STRING "URL to fetch MeshMC's meta files from.")
 
 # Microsoft Client ID
-set(Launcher_MICROSOFT_CLIENT_ID "3035382c-8f73-493a-b579-d182905c2864")
+set(MeshMC_MICROSOFT_CLIENT_ID "3035382c-8f73-493a-b579-d182905c2864")
 
 # paste.ee API key
-set(Launcher_PASTE_EE_API_KEY "ay2miY3lWxUHEEzYucj5e4YShIuo1aaY43MfwsUAe" CACHE STRING "API key you can get from paste.ee when you register an account")
+set(MeshMC_PASTE_EE_API_KEY "ay2miY3lWxUHEEzYucj5e4YShIuo1aaY43MfwsUAe" CACHE STRING "API key you can get from paste.ee when you register an account")
 
 # Imgur API Client ID
-set(Launcher_IMGUR_CLIENT_ID "5b97b0713fba4a3" CACHE STRING "Client ID you can get from Imgur when you register an application")
+set(MeshMC_IMGUR_CLIENT_ID "5b97b0713fba4a3" CACHE STRING "Client ID you can get from Imgur when you register an application")
 
 # CurseForge API key
-set(Launcher_CURSEFORGE_API_KEY "$2a$10$S7KcKijbCj8mCHUQcn0tgOmtHg0kA8q9FI0niNJJ7knPq0INomzrG" CACHE STRING "API key for the CurseForge API (get one at https://console.curseforge.com/)")
+set(MeshMC_CURSEFORGE_API_KEY "$2a$10$S7KcKijbCj8mCHUQcn0tgOmtHg0kA8q9FI0niNJJ7knPq0INomzrG" CACHE STRING "API key for the CurseForge API (get one at https://console.curseforge.com/)")
 
 # Google analytics ID
-set(Launcher_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google analytics")
+set(MeshMC_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google analytics")
 
 # Bug tracker URL
-set(Launcher_BUG_TRACKER_URL "" CACHE STRING "URL for the bug tracker.")
+set(MeshMC_BUG_TRACKER_URL "" CACHE STRING "URL for the bug tracker.")
 
 # Discord URL
-set(Launcher_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
+set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
 
 # Subreddit URL
-set(Launcher_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
+set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
 
 # Use the secrets library or a public stub?
-option(Launcher_EMBED_SECRETS "Determines whether to embed secrets. Secrets are separate and non-public." OFF)
+option(MeshMC_EMBED_SECRETS "Determines whether to embed secrets. Secrets are separate and non-public." OFF)
 
 #### Check the current Git commit and branch
 include(GetGitRevisionDescription)
-get_git_head_revision(Launcher_GIT_REFSPEC Launcher_GIT_COMMIT)
+get_git_head_revision(MeshMC_GIT_REFSPEC MeshMC_GIT_COMMIT)
 
-message(STATUS "Git commit: ${Launcher_GIT_COMMIT}")
-message(STATUS "Git refspec: ${Launcher_GIT_REFSPEC}")
+message(STATUS "Git commit: ${MeshMC_GIT_COMMIT}")
+message(STATUS "Git refspec: ${MeshMC_GIT_REFSPEC}")
 
-set(Launcher_RELEASE_VERSION_NAME "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_HOTFIX}")
+set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
 
 #### Custom target to just print the version.
-add_custom_target(version echo "Version: ${Launcher_RELEASE_VERSION_NAME}")
-add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.LAUNCHER_VERSION\\' value=\\'${Launcher_RELEASE_VERSION_NAME}\\']")
+add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")
+add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MESHMC_VERSION\\' value=\\'${MeshMC_RELEASE_VERSION_NAME}\\']")
 
 ####################################### Install layout #######################################
 
 # How to install the build results
-set(Launcher_LAYOUT "auto" CACHE STRING "The layout for the launcher installation (auto, win-bundle, lin-nodeps, mac-bundle)")
-set_property(CACHE Launcher_LAYOUT PROPERTY STRINGS auto win-bundle lin-nodeps mac-bundle)
+set(MeshMC_LAYOUT "auto" CACHE STRING "The layout for MeshMC installation (auto, win-bundle, lin-nodeps, mac-bundle)")
+set_property(CACHE MeshMC_LAYOUT PROPERTY STRINGS auto win-bundle lin-nodeps mac-bundle)
 
-if(Launcher_LAYOUT STREQUAL "auto")
+if(MeshMC_LAYOUT STREQUAL "auto")
     if(UNIX AND APPLE)
-        set(Launcher_LAYOUT_REAL "mac-bundle")
+        set(MeshMC_LAYOUT_REAL "mac-bundle")
     elseif(UNIX)
-        set(Launcher_LAYOUT_REAL "lin-nodeps")
+        set(MeshMC_LAYOUT_REAL "lin-nodeps")
     elseif(WIN32)
-        set(Launcher_LAYOUT_REAL "win-bundle")
+        set(MeshMC_LAYOUT_REAL "win-bundle")
     else()
         message(FATAL_ERROR "Cannot choose a sensible install layout for your platform.")
     endif()
 else()
-    set(Launcher_LAYOUT_REAL ${Launcher_LAYOUT})
+    set(MeshMC_LAYOUT_REAL ${MeshMC_LAYOUT})
 endif()
 
-if(Launcher_LAYOUT_REAL STREQUAL "mac-bundle")
-    set(BINARY_DEST_DIR "${Launcher_Name}.app/Contents/MacOS")
-    set(LIBRARY_DEST_DIR "${Launcher_Name}.app/Contents/MacOS")
-    set(PLUGIN_DEST_DIR "${Launcher_Name}.app/Contents/MacOS")
-    set(RESOURCES_DEST_DIR "${Launcher_Name}.app/Contents/Resources")
-    set(JARS_DEST_DIR "${Launcher_Name}.app/Contents/MacOS/jars")
+if(MeshMC_LAYOUT_REAL STREQUAL "mac-bundle")
+    set(BINARY_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS")
+    set(LIBRARY_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS")
+    set(PLUGIN_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS")
+    set(RESOURCES_DEST_DIR "${MeshMC_Name}.app/Contents/Resources")
+    set(JARS_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS/jars")
 
     set(BUNDLE_DEST_DIR ".")
 
     # Apps to bundle
-    set(APPS "\${CMAKE_INSTALL_PREFIX}/${Launcher_Name}.app")
+    set(APPS "\${CMAKE_INSTALL_PREFIX}/${MeshMC_Name}.app")
 
     # Mac bundle settings
-    set(MACOSX_BUNDLE_BUNDLE_NAME "${Launcher_Name}")
-    set(MACOSX_BUNDLE_INFO_STRING "${Launcher_Name}:  Minecraft launcher and management utility.")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.projecttick.${Launcher_Name}")
-    set(MACOSX_BUNDLE_BUNDLE_VERSION "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_HOTFIX}.${Launcher_VERSION_BUILD}")
-    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_HOTFIX}.${Launcher_VERSION_BUILD}")
-    set(MACOSX_BUNDLE_LONG_VERSION_STRING "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_HOTFIX}.${Launcher_VERSION_BUILD}")
-    set(MACOSX_BUNDLE_ICON_FILE ${Launcher_Name}.icns)
-    set(MACOSX_BUNDLE_COPYRIGHT "Copyright 2015-2021 ${Launcher_Copyright}")
+    set(MACOSX_BUNDLE_BUNDLE_NAME "${MeshMC_Name}")
+    set(MACOSX_BUNDLE_INFO_STRING "${MeshMC_Name}:  Minecraft launcher and management utility.")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.projecttick.${MeshMC_Name}")
+    set(MACOSX_BUNDLE_BUNDLE_VERSION "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}.${MeshMC_VERSION_BUILD}")
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}.${MeshMC_VERSION_BUILD}")
+    set(MACOSX_BUNDLE_LONG_VERSION_STRING "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}.${MeshMC_VERSION_BUILD}")
+    set(MACOSX_BUNDLE_ICON_FILE ${MeshMC_Name}.icns)
+    set(MACOSX_BUNDLE_COPYRIGHT "Copyright 2015-2021 ${MeshMC_Copyright}")
 
     # directories to look for dependencies
     set(DIRS ${QT_LIBS_DIR} ${QT_LIBEXECS_DIR} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -199,9 +199,9 @@ if(Launcher_LAYOUT_REAL STREQUAL "mac-bundle")
     set(INSTALL_BUNDLE "full")
 
     # Add the icon
-    install(FILES ${Launcher_Branding_ICNS} DESTINATION ${RESOURCES_DEST_DIR} RENAME ${Launcher_Name}.icns)
+    install(FILES ${MeshMC_Branding_ICNS} DESTINATION ${RESOURCES_DEST_DIR} RENAME ${MeshMC_Name}.icns)
 
-elseif(Launcher_LAYOUT_REAL STREQUAL "lin-nodeps")
+elseif(MeshMC_LAYOUT_REAL STREQUAL "lin-nodeps")
     set(BINARY_DEST_DIR "bin")
     set(LIBRARY_DEST_DIR "bin")
     set(PLUGIN_DEST_DIR "plugins")
@@ -213,13 +213,13 @@ elseif(Launcher_LAYOUT_REAL STREQUAL "lin-nodeps")
     set(INSTALL_BUNDLE "nodeps")
 
     # Set RPATH
-    SET(Launcher_BINARY_RPATH "$ORIGIN/")
+    SET(MeshMC_BINARY_RPATH "$ORIGIN/")
 
     # Install basic runner script
-    configure_file(launcher/Launcher.in "${CMAKE_CURRENT_BINARY_DIR}/LauncherScript" @ONLY)
-    install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/LauncherScript" DESTINATION ${BUNDLE_DEST_DIR} RENAME ${Launcher_Name})
+    configure_file(launcher/MeshMC.in "${CMAKE_CURRENT_BINARY_DIR}/MeshMCScript" @ONLY)
+    install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/MeshMCScript" DESTINATION ${BUNDLE_DEST_DIR} RENAME ${MeshMC_Name})
 
-elseif(Launcher_LAYOUT_REAL STREQUAL "win-bundle")
+elseif(MeshMC_LAYOUT_REAL STREQUAL "win-bundle")
     set(BINARY_DEST_DIR ".")
     set(LIBRARY_DEST_DIR ".")
     set(PLUGIN_DEST_DIR ".")
@@ -228,7 +228,7 @@ elseif(Launcher_LAYOUT_REAL STREQUAL "win-bundle")
     set(JARS_DEST_DIR "jars")
 
     # Apps to bundle
-    set(APPS "\${CMAKE_INSTALL_PREFIX}/${Launcher_Name}.exe")
+    set(APPS "\${CMAKE_INSTALL_PREFIX}/${MeshMC_Name}.exe")
 
     # directories to look for dependencies
     set(DIRS ${QT_LIBS_DIR} ${QT_LIBEXECS_DIR} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -247,7 +247,7 @@ set_directory_properties(PROPERTIES EP_BASE External)
 option(NBT_BUILD_SHARED "Build NBT shared library" ON)
 option(NBT_USE_ZLIB "Build NBT library with zlib support" OFF)
 option(NBT_BUILD_TESTS "Build NBT library tests" OFF) #FIXME: fix unit tests.
-set(NBT_NAME Launcher_nbt++)
+set(NBT_NAME MeshMC_nbt++)
 set(NBT_DEST_DIR ${LIBRARY_DEST_DIR})
 add_subdirectory(libraries/libnbtplusplus)
 

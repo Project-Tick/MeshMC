@@ -65,14 +65,14 @@ import java.applet.Applet;
 import java.applet.AppletStub;
 import java.net.MalformedURLException;
 
-public class Launcher extends Applet implements AppletStub
+public class MeshMC extends Applet implements AppletStub
 {
     private Applet wrappedApplet;
     private URL documentBase;
     private boolean active = false;
     private final Map<String, String> params;
 
-    public Launcher(Applet applet, URL documentBase)
+    public MeshMC(Applet applet, URL documentBase)
     {
         params = new TreeMap<String, String>();
 

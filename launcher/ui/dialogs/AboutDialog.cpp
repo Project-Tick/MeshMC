@@ -91,7 +91,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AboutDia
 {
     ui->setupUi(this);
 
-    QString launcherName = BuildConfig.LAUNCHER_NAME;
+    QString launcherName = BuildConfig.MESHMC_NAME;
 
     setWindowTitle(tr("About %1").arg(launcherName));
 
@@ -120,10 +120,10 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AboutDia
         ui->channelLabel->setVisible(false);
 
     QString urlText("<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");
-    ui->urlLabel->setText(urlText.arg(BuildConfig.LAUNCHER_GIT));
+    ui->urlLabel->setText(urlText.arg(BuildConfig.MESHMC_GIT));
 
     QString copyText("© 2026 %1");
-    ui->copyLabel->setText(copyText.arg(BuildConfig.LAUNCHER_COPYRIGHT));
+    ui->copyLabel->setText(copyText.arg(BuildConfig.MESHMC_COPYRIGHT));
 
     connect(ui->closeButton, SIGNAL(clicked()), SLOT(close()));
 

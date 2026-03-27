@@ -8,7 +8,7 @@ set(CMAKE_JAVA_COMPILE_FLAGS -target 7 -source 7 -Xlint:deprecation -Xlint:unche
 
 set(SRC
     org/projecttick/EntryPoint.java
-    org/projecttick/Launcher.java
+    org/projecttick/MeshMC.java
     org/projecttick/LegacyFrame.java
     org/projecttick/NotFoundException.java
     org/projecttick/ParamBucket.java
@@ -16,7 +16,7 @@ set(SRC
     org/projecttick/Utils.java
     org/projecttick/onesix/OneSixLauncher.java
     org/projecttick/modern/ModernLauncher.java
-    net/minecraft/Launcher.java
+    net/minecraft/MeshMC.java
 )
 add_jar(NewLaunch ${SRC})
 install_jar(NewLaunch "${JARS_DEST_DIR}")

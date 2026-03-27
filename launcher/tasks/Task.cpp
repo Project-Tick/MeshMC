@@ -86,7 +86,7 @@ void Task::start()
         }
         case State::Running:
         {
-            qWarning() << "The launcher tried to start task" << describe() << "while it was already running!";
+            qWarning() << "MeshMC tried to start task" << describe() << "while it was already running!";
             return;
         }
     }

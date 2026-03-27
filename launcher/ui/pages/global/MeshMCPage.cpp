@@ -36,8 +36,8 @@
  * limitations under the License.
  */
 
-#include "LauncherPage.h"
-#include "ui_LauncherPage.h"
+#include "MeshMCPage.h"
+#include "ui_MeshMCPage.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -64,7 +64,7 @@ enum InstSortMode
     Sort_LastLaunch
 };
 
-LauncherPage::LauncherPage(QWidget *parent) : QWidget(parent), ui(new Ui::LauncherPage)
+MeshMCPage::MeshMCPage(QWidget *parent) : QWidget(parent), ui(new Ui::MeshMCPage)
 {
     ui->setupUi(this);
     auto origForeground = ui->fontPreview->palette().color(ui->fontPreview->foregroundRole());
@@ -81,7 +81,7 @@ LauncherPage::LauncherPage(QWidget *parent) : QWidget(parent), ui(new Ui::Launch
 
     if(BuildConfig.UPDATER_ENABLED)
     {
-        QObject::connect(APPLICATION->updateChecker().get(), &UpdateChecker::channelListLoaded, this, &LauncherPage::refreshUpdateChannelList);
+        QObject::connect(APPLICATION->updateChecker().get(), &UpdateChecker::channelListLoaded, this, &MeshMCPage::refreshUpdateChannelList);
 
         if (APPLICATION->updateChecker()->hasChannels())
         {
@@ -112,19 +112,19 @@ LauncherPage::LauncherPage(QWidget *parent) : QWidget(parent), ui(new Ui::Launch
     }
 }
 
-LauncherPage::~LauncherPage()
+MeshMCPage::~MeshMCPage()
 {
     delete ui;
     delete defaultFormat;
 }
 
-bool LauncherPage::apply()
+bool MeshMCPage::apply()
 {
     applySettings();
     return true;
 }
 
-void LauncherPage::on_instDirBrowseBtn_clicked()
+void MeshMCPage::on_instDirBrowseBtn_clicked()
 {
     QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Instance Folder"), ui->instDirTextBox->text());
 
@@ -156,7 +156,7 @@ void LauncherPage::on_instDirBrowseBtn_clicked()
     }
 }
 
-void LauncherPage::on_iconsDirBrowseBtn_clicked()
+void MeshMCPage::on_iconsDirBrowseBtn_clicked()
 {
     QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Icons Folder"), ui->iconsDirTextBox->text());
 
@@ -167,7 +167,7 @@ void LauncherPage::on_iconsDirBrowseBtn_clicked()
         ui->iconsDirTextBox->setText(cooked_dir);
     }
 }
-void LauncherPage::on_modsDirBrowseBtn_clicked()
+void MeshMCPage::on_modsDirBrowseBtn_clicked()
 {
     QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Mods Folder"), ui->modsDirTextBox->text());
 
@@ -178,7 +178,7 @@ void LauncherPage::on_modsDirBrowseBtn_clicked()
         ui->modsDirTextBox->setText(cooked_dir);
     }
 }
-void LauncherPage::on_migrateDataFolderMacBtn_clicked()
+void MeshMCPage::on_migrateDataFolderMacBtn_clicked()
 {
     QFile file(QDir::current().absolutePath() + "/dontmovemacdata");
     file.remove();
@@ -186,7 +186,7 @@ void LauncherPage::on_migrateDataFolderMacBtn_clicked()
     qApp->quit();
 }
 
-void LauncherPage::refreshUpdateChannelList()
+void MeshMCPage::refreshUpdateChannelList()
 {
     // Stop listening for selection changes. It's going to change a lot while we update it and
     // we don't need to update the
@@ -231,12 +231,12 @@ void LauncherPage::refreshUpdateChannelList()
     ui->updateChannelComboBox->setEnabled(true);
 }
 
-void LauncherPage::updateChannelSelectionChanged(int index)
+void MeshMCPage::updateChannelSelectionChanged(int index)
 {
     refreshUpdateChannelDesc();
 }
 
-void LauncherPage::refreshUpdateChannelDesc()
+void MeshMCPage::refreshUpdateChannelDesc()
 {
     // Get the channel list.
     QList<UpdateChecker::ChannelListEntry> channelList = APPLICATION->updateChecker()->getChannelList();
@@ -258,7 +258,7 @@ void LauncherPage::refreshUpdateChannelDesc()
     }
 }
 
-void LauncherPage::applySettings()
+void MeshMCPage::applySettings()
 {
     auto s = APPLICATION->settings();
 
@@ -354,7 +354,7 @@ void LauncherPage::applySettings()
         s->set("Analytics", ui->analyticsCheck->isChecked());
     }
 }
-void LauncherPage::loadSettings()
+void MeshMCPage::loadSettings()
 {
     auto s = APPLICATION->settings();
     // Updates
@@ -460,7 +460,7 @@ void LauncherPage::loadSettings()
     }
 }
 
-void LauncherPage::refreshFontPreview()
+void MeshMCPage::refreshFontPreview()
 {
     int fontSize = ui->fontSizeBox->value();
     QString fontFamily = ui->consoleFont->currentFont().family();

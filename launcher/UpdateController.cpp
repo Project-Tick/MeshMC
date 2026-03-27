@@ -115,7 +115,7 @@ void UpdateController::installUpdates()
 #ifdef Q_OS_WIN
     QString finishCmd = QApplication::applicationFilePath();
 #elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-    QString finishCmd = FS::PathCombine(m_root, BuildConfig.LAUNCHER_NAME);
+    QString finishCmd = FS::PathCombine(m_root, BuildConfig.MESHMC_NAME);
 #elif defined Q_OS_MAC
     QString finishCmd = QApplication::applicationFilePath();
 #else
@@ -151,7 +151,7 @@ void UpdateController::installUpdates()
             case GoUpdate::Operation::OP_REPLACE:
             {
 #ifdef Q_OS_WIN32
-                QString windowsExeName = BuildConfig.LAUNCHER_NAME + ".exe";
+                QString windowsExeName = BuildConfig.MESHMC_NAME + ".exe";
                 // hack for people renaming the .exe because ... reasons :)
                 if(op.destination == windowsExeName)
                 {
@@ -394,7 +394,7 @@ void UpdateController::fail()
             msg = QObject::tr(
                 "Couldn't replace file %1. Changes will be reverted.\n"
                 "See the %2 log file for details."
-            ).arg(m_failedFile, BuildConfig.LAUNCHER_NAME);
+            ).arg(m_failedFile, BuildConfig.MESHMC_NAME);
             doRollback = true;
             QMessageBox::critical(m_parent, failTitle, msg);
             break;
@@ -404,7 +404,7 @@ void UpdateController::fail()
             msg = QObject::tr(
                 "Couldn't remove file %1. Changes will be reverted.\n"
                 "See the %2 log file for details."
-            ).arg(m_failedFile, BuildConfig.LAUNCHER_NAME);
+            ).arg(m_failedFile, BuildConfig.MESHMC_NAME);
             doRollback = true;
             QMessageBox::critical(m_parent, failTitle, msg);
             break;
@@ -435,7 +435,7 @@ void UpdateController::fail()
         {
             msg = QObject::tr("The rollback failed too.\n"
                 "You will have to repair %1 manually.\n"
-                "Please let us know why and how this happened.").arg(BuildConfig.LAUNCHER_NAME);
+                "Please let us know why and how this happened.").arg(BuildConfig.MESHMC_NAME);
             QMessageBox::critical(m_parent, rollFailTitle, msg);
             qApp->quit();
         }

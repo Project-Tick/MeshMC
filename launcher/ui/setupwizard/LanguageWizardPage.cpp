@@ -65,6 +65,6 @@ bool LanguageWizardPage::validatePage()
 void LanguageWizardPage::retranslate()
 {
     setTitle(tr("Language"));
-    setSubTitle(tr("Select the language to use in %1").arg(BuildConfig.LAUNCHER_NAME));
+    setSubTitle(tr("Select the language to use in %1").arg(BuildConfig.MESHMC_NAME));
     mainWidget->retranslate();
 }

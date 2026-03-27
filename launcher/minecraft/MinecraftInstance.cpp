@@ -43,7 +43,7 @@
 #include "launch/steps/TextPrint.h"
 #include "launch/steps/CheckJava.h"
 
-#include "minecraft/launch/LauncherPartLaunch.h"
+#include "minecraft/launch/MeshMCPartLaunch.h"
 #include "minecraft/launch/DirectJavaLaunch.h"
 #include "minecraft/launch/ModMinecraftJar.h"
 #include "minecraft/launch/ClaimAccount.h"
@@ -567,9 +567,9 @@ QString MinecraftInstance::createLaunchScript(AuthSessionPtr session, MinecraftS
     // Decide between legacy (in-process, applet-based) and modern (subprocess) launch.
     // Instances with the "legacyLaunch" or "alphaLaunch" trait use the classic OneSix
     // applet launcher path which runs everything in-process.  All other instances use
-    // the ModernLauncher which spawns the game as a child process with the configured
+    // the ModernMeshMC which spawns the game as a child process with the configured
     // Java binary, allowing Minecraft versions that require Java 21, 25 or newer to
-    // run even when the launcher library JVM is an older version.
+    // run even when MeshMC library JVM is an older version.
     auto profileTraits = profile->getTraits();
     bool isLegacyApplet = profileTraits.contains("legacyLaunch") || profileTraits.contains("alphaLaunch");
 
@@ -579,7 +579,7 @@ QString MinecraftInstance::createLaunchScript(AuthSessionPtr session, MinecraftS
     }
     else
     {
-        // Pass the configured Java binary path so ModernLauncher can spawn the
+        // Pass the configured Java binary path so ModernMeshMC can spawn the
         // game process with the correct JVM.
         launchScript += "javaPath " + settings()->get("JavaPath").toString() + "\n";
 
@@ -875,7 +875,7 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
 
     // print a header
     {
-        process->appendStep(new TextPrint(pptr, "Minecraft folder is:\n" + gameRoot() + "\n\n", MessageLevel::Launcher));
+        process->appendStep(new TextPrint(pptr, "Minecraft folder is:\n" + gameRoot() + "\n\n", MessageLevel::MeshMC));
     }
 
     // check java
@@ -884,7 +884,7 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
     }
 
     // check launch method
-    QStringList validMethods = {"LauncherPart", "DirectJava"};
+    QStringList validMethods = {"MeshMCPart", "DirectJava"};
     QString method = launchMethod();
     if(!validMethods.contains(method))
     {
@@ -966,9 +966,9 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
     {
         // actually launch the game
         auto method = launchMethod();
-        if(method == "LauncherPart")
+        if(method == "MeshMCPart")
         {
-            auto step = new LauncherPartLaunch(pptr);
+            auto step = new MeshMCPartLaunch(pptr);
             step->setWorkingDirectory(gameRoot());
             step->setAuthSession(session);
             step->setServerToJoin(serverToJoin);

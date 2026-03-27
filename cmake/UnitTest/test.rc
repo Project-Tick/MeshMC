@@ -17,7 +17,7 @@ BEGIN
                         VALUE "CompanyName", "Project Tick"
                         VALUE "FileDescription", "Testcase"
                         VALUE "FileVersion", "1.0.0.0"
-                        VALUE "ProductName", "Launcher Testcase"
+                        VALUE "ProductName", "MeshMC Testcase"
                         VALUE "ProductVersion", "5"
                 END
         END

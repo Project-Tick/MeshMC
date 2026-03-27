@@ -65,7 +65,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OneSixLauncher implements Launcher
+public class OneSixLauncher implements MeshMC
 {
     // parameters, separated from ParamBucket
     private List<String> libraries;

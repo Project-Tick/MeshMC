@@ -68,13 +68,13 @@ void AnalyticsWizardPage::retranslate()
     setSubTitle(tr("We track some anonymous statistics about users."));
     textBrowser->setHtml(tr(
         "<html><body>"
-        "<p>The launcher sends anonymous usage statistics on every start of the application. This helps us decide what platforms and issues to focus on.</p>"
+        "<p>MeshMC sends anonymous usage statistics on every start of the application. This helps us decide what platforms and issues to focus on.</p>"
         "<p>The data is processed by Google Analytics, see their <a href=\"https://support.google.com/analytics/answer/6004245?hl=en\">article on the "
         "matter</a>.</p>"
         "<p>The following data is collected:</p>"
         "<ul><li>A random unique ID of the installation.<br />It is stored in the application settings file.</li>"
         "<li>Anonymized (partial) IP address.</li>"
-        "<li>Launcher version.</li>"
+        "<li>MeshMC version.</li>"
         "<li>Operating system name, version and architecture.</li>"
         "<li>CPU architecture (kernel architecture on linux).</li>"
         "<li>Size of system memory.</li>"

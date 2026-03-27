@@ -27,30 +27,30 @@ const Config BuildConfig;
 Config::Config()
 {
     // Name and copyright
-    LAUNCHER_NAME = "@Launcher_Name@";
-    LAUNCHER_DISPLAYNAME = "@Launcher_DisplayName@";
-    LAUNCHER_COPYRIGHT = "@Launcher_Copyright@";
-    LAUNCHER_DOMAIN = "@Launcher_Domain@";
-    LAUNCHER_CONFIGFILE = "@Launcher_ConfigFile@";
-    LAUNCHER_GIT = "@Launcher_Git@";
+    MESHMC_NAME = "@MeshMC_Name@";
+    MESHMC_DISPLAYNAME = "@MeshMC_DisplayName@";
+    MESHMC_COPYRIGHT = "@MeshMC_Copyright@";
+    MESHMC_DOMAIN = "@MeshMC_Domain@";
+    MESHMC_CONFIGFILE = "@MeshMC_ConfigFile@";
+    MESHMC_GIT = "@MeshMC_Git@";
 
-    USER_AGENT = "@Launcher_UserAgent@";
+    USER_AGENT = "@MeshMC_UserAgent@";
     USER_AGENT_UNCACHED = USER_AGENT + " (Uncached)";
 
     // Version information
-    VERSION_MAJOR = @Launcher_VERSION_MAJOR@;
-    VERSION_MINOR = @Launcher_VERSION_MINOR@;
-    VERSION_HOTFIX = @Launcher_VERSION_HOTFIX@;
-    VERSION_BUILD = @Launcher_VERSION_BUILD@;
+    VERSION_MAJOR = @MeshMC_VERSION_MAJOR@;
+    VERSION_MINOR = @MeshMC_VERSION_MINOR@;
+    VERSION_HOTFIX = @MeshMC_VERSION_HOTFIX@;
+    VERSION_BUILD = @MeshMC_VERSION_BUILD@;
 
-    BUILD_PLATFORM = "@Launcher_BUILD_PLATFORM@";
-    UPDATER_BASE = "@Launcher_UPDATER_BASE@";
-    ANALYTICS_ID = "@Launcher_ANALYTICS_ID@";
-    NOTIFICATION_URL = "@Launcher_NOTIFICATION_URL@";
-    FULL_VERSION_STR = "@Launcher_VERSION_MAJOR@.@Launcher_VERSION_MINOR@.@Launcher_VERSION_BUILD@";
+    BUILD_PLATFORM = "@MeshMC_BUILD_PLATFORM@";
+    UPDATER_BASE = "@MeshMC_UPDATER_BASE@";
+    ANALYTICS_ID = "@MeshMC_ANALYTICS_ID@";
+    NOTIFICATION_URL = "@MeshMC_NOTIFICATION_URL@";
+    FULL_VERSION_STR = "@MeshMC_VERSION_MAJOR@.@MeshMC_VERSION_MINOR@.@MeshMC_VERSION_BUILD@";
 
-    GIT_COMMIT = "@Launcher_GIT_COMMIT@";
-    GIT_REFSPEC = "@Launcher_GIT_REFSPEC@";
+    GIT_COMMIT = "@MeshMC_GIT_COMMIT@";
+    GIT_REFSPEC = "@MeshMC_GIT_REFSPEC@";
     if(GIT_REFSPEC.startsWith("refs/heads/") && !UPDATER_BASE.isEmpty() && !BUILD_PLATFORM.isEmpty() && VERSION_BUILD >= 0)
     {
         VERSION_CHANNEL = GIT_REFSPEC;
@@ -62,17 +62,17 @@ Config::Config()
         VERSION_CHANNEL = QObject::tr("custom");
     }
 
-    VERSION_STR = "@Launcher_VERSION_STRING@";
-    MSAClientID = "@Launcher_MICROSOFT_CLIENT_ID@";
-    NEWS_RSS_URL = "@Launcher_NEWS_RSS_URL@";
-    PASTE_EE_KEY = "@Launcher_PASTE_EE_API_KEY@";
-    IMGUR_CLIENT_ID = "@Launcher_IMGUR_CLIENT_ID@";
-    META_URL = "@Launcher_META_URL@";
-    CURSEFORGE_API_KEY = "@Launcher_CURSEFORGE_API_KEY@";
+    VERSION_STR = "@MeshMC_VERSION_STRING@";
+    MSAClientID = "@MeshMC_MICROSOFT_CLIENT_ID@";
+    NEWS_RSS_URL = "@MeshMC_NEWS_RSS_URL@";
+    PASTE_EE_KEY = "@MeshMC_PASTE_EE_API_KEY@";
+    IMGUR_CLIENT_ID = "@MeshMC_IMGUR_CLIENT_ID@";
+    META_URL = "@MeshMC_META_URL@";
+    CURSEFORGE_API_KEY = "@MeshMC_CURSEFORGE_API_KEY@";
 
-    BUG_TRACKER_URL = "@Launcher_BUG_TRACKER_URL@";
-    DISCORD_URL = "@Launcher_DISCORD_URL@";
-    SUBREDDIT_URL = "@Launcher_SUBREDDIT_URL@";
+    BUG_TRACKER_URL = "@MeshMC_BUG_TRACKER_URL@";
+    DISCORD_URL = "@MeshMC_DISCORD_URL@";
+    SUBREDDIT_URL = "@MeshMC_SUBREDDIT_URL@";
 }
 
 QString Config::printableVersionString() const

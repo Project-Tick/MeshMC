@@ -28,7 +28,7 @@ using namespace Json;
 #include "ParseUtils.h"
 #include <BuildConfig.h>
 
-static const int CURRENT_MINIMUM_LAUNCHER_VERSION = 18;
+static const int CURRENT_MINIMUM_MESHMC_VERSION = 18;
 
 static MojangAssetIndexInfo::Ptr assetIndexFromJson (const QJsonObject &obj);
 static MojangDownloadInfo::Ptr downloadInfoFromJson (const QJsonObject &obj);
@@ -190,17 +190,17 @@ void MojangVersionFormat::readVersionProperties(const QJsonObject &in, VersionFi
     out->releaseTime = timeFromS3Time(in.value("releaseTime").toString(""));
     out->updateTime = timeFromS3Time(in.value("time").toString(""));
 
-    if (in.contains("minimumLauncherVersion"))
+    if (in.contains("minimumMeshMCVersion"))
     {
-        out->minimumLauncherVersion = requireInteger(in.value("minimumLauncherVersion"));
-        if (out->minimumLauncherVersion > CURRENT_MINIMUM_LAUNCHER_VERSION)
+        out->minimumMeshMCVersion = requireInteger(in.value("minimumMeshMCVersion"));
+        if (out->minimumMeshMCVersion > CURRENT_MINIMUM_MESHMC_VERSION)
         {
             out->addProblem(
                 ProblemSeverity::Warning,
-                QObject::tr("The 'minimumLauncherVersion' value of this version (%1) is higher than supported by %3 (%2). It might not work properly!")
-                    .arg(out->minimumLauncherVersion)
-                    .arg(CURRENT_MINIMUM_LAUNCHER_VERSION)
-                    .arg(BuildConfig.LAUNCHER_NAME)
+                QObject::tr("The 'minimumMeshMCVersion' value of this version (%1) is higher than supported by %3 (%2). It might not work properly!")
+                    .arg(out->minimumMeshMCVersion)
+                    .arg(CURRENT_MINIMUM_MESHMC_VERSION)
+                    .arg(BuildConfig.MESHMC_NAME)
             );
         }
     }
@@ -265,9 +265,9 @@ void MojangVersionFormat::writeVersionProperties(const VersionFile* in, QJsonObj
     {
         writeString(out, "time", timeToS3Time(in->updateTime));
     }
-    if(in->minimumLauncherVersion != -1)
+    if(in->minimumMeshMCVersion != -1)
     {
-        out.insert("minimumLauncherVersion", in->minimumLauncherVersion);
+        out.insert("minimumMeshMCVersion", in->minimumMeshMCVersion);
     }
     writeString(out, "assets", in->assets);
     if(in->mojangAssetIndex && in->mojangAssetIndex->known)

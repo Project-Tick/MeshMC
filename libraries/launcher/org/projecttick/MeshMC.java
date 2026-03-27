@@ -15,13 +15,30 @@
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
+ *   Linking this library statically or dynamically with other modules is
+ *   making a combined work based on this library. Thus, the terms and
+ *   conditions of the GNU General Public License cover the whole
+ *   combination.
+ *
+ *   As a special exception, the copyright holders of this library give
+ *   you permission to link this library with independent modules to
+ *   produce an executable, regardless of the license terms of these
+ *   independent modules, and to copy and distribute the resulting
+ *   executable under terms of your choice, provided that you also meet,
+ *   for each linked independent module, the terms and conditions of the
+ *   license of that module. An independent module is a module which is
+ *   not derived from or based on this library. If you modify this
+ *   library, you may extend this exception to your version of the
+ *   library, but you are not obliged to do so. If you do not wish to do
+ *   so, delete this exception statement from your version.
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
- * Copyright 2013-2021 MultiMC Contributors
+ * Copyright 2012-2021 MultiMC Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,48 +53,9 @@
  * limitations under the License.
  */
 
-#pragma once
+package org.projecttick;
 
-#include <launch/LaunchStep.h>
-#include <LoggedProcess.h>
-#include <minecraft/auth/AuthSession.h>
-
-#include "MinecraftServerTarget.h"
-
-class LauncherPartLaunch: public LaunchStep
+public interface MeshMC
 {
-    Q_OBJECT
-public:
-    explicit LauncherPartLaunch(LaunchTask *parent);
-    virtual ~LauncherPartLaunch() {};
-
-    virtual void executeTask();
-    virtual bool abort();
-    virtual void proceed();
-    virtual bool canAbort() const
-    {
-        return true;
-    }
-    void setWorkingDirectory(const QString &wd);
-    void setAuthSession(AuthSessionPtr session)
-    {
-        m_session = session;
-    }
-
-    void setServerToJoin(MinecraftServerTargetPtr serverToJoin)
-    {
-        m_serverToJoin = std::move(serverToJoin);
-    }
-
-private slots:
-    void on_state(LoggedProcess::State state);
-
-private:
-    LoggedProcess m_process;
-    QString m_command;
-    AuthSessionPtr m_session;
-    QString m_launchScript;
-    MinecraftServerTargetPtr m_serverToJoin;
-
-    bool mayProceed = false;
-};
+    abstract int launch(ParamBucket params);
+}

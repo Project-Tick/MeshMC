@@ -55,7 +55,7 @@
 
 package org.projecttick;
 
-import net.minecraft.Launcher;
+import net.minecraft.MeshMC;
 
 import javax.imageio.ImageIO;
 import java.applet.Applet;
@@ -73,7 +73,7 @@ import java.util.Scanner;
 
 public class LegacyFrame extends Frame implements WindowListener
 {
-    private Launcher appletWrap = null;
+    private MeshMC appletWrap = null;
     public LegacyFrame(String title)
     {
         super ( title );
@@ -99,7 +99,7 @@ public class LegacyFrame extends Frame implements WindowListener
     )
     {
         try {
-            appletWrap = new Launcher( mcApplet, new URL ( "http://www.minecraft.net/game" ) );
+            appletWrap = new MeshMC( mcApplet, new URL ( "http://www.minecraft.net/game" ) );
         } catch ( MalformedURLException ignored ) {}
         
         // Implements support for launching in to multiplayer on classic servers using a mpticket
