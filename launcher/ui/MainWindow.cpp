@@ -1,8 +1,27 @@
-/* Copyright 2013-2021 MultiMC Contributors
+/* SPDX-FileCopyrightText: 2026 Project Tick
+ * SPDX-FileContributor: Project Tick
+ * SPDX-License-Identifier: GPL-3.0-or-later
  *
- * Authors: Andrew Okin
- *          Peterix
- *          Orochimarufan <orochimarufan.x3@gmail.com>
+ *   MeshMC - A Custom Launcher for Minecraft
+ *   Copyright (C) 2026 Project Tick
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  
+ *  This file incorporates work covered by the following copyright and
+ *  permission notice:
+ *
+ * Copyright 2013-2021 MultiMC Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +47,7 @@
 
 #include <QtGui/QKeyEvent>
 
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHBoxLayout>
@@ -44,7 +63,7 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QWidgetAction>
 #include <QtWidgets/QProgressDialog>
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 
 #include <BaseInstance.h>
 #include <InstanceList.h>

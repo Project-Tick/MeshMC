@@ -1,4 +1,5 @@
-/*
+/* SPDX-License-Identifier: Unlicense
+ * SPDX-FileCopyrightText: N/A
  * Private includes and definitions
  *
  * Author: Lasse Collin <lasse.collin@tukaani.org>

@@ -1,4 +1,5 @@
-/*
+/* SPDX-License-Identifier: Unlicense
+ * SPDX-FileCopyrightText: N/A
  * Branch/Call/Jump (BCJ) filter decoders
  *
  * Authors: Lasse Collin <lasse.collin@tukaani.org>

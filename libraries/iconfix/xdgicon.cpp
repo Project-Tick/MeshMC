@@ -1,6 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
- *
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ * SPDX-FileCopyrightText: N/A
  * Razor - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *

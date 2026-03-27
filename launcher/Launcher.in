@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2026 Project Tick
+# SPDX-FileContributor: Project Tick
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Basic start script for running the launcher with the libs packaged with it.
 
 function printerror {

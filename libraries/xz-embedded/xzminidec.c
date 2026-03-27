@@ -1,4 +1,5 @@
-/*
+/* SPDX-License-Identifier: Unlicense
+ * SPDX-FileCopyrightText: N/A
  * Simple XZ decoder command line tool
  *
  * Author: Lasse Collin <lasse.collin@tukaani.org>

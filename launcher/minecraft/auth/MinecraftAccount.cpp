@@ -1,6 +1,27 @@
-/* Copyright 2013-2021 MultiMC Contributors
+/* SPDX-FileCopyrightText: 2026 Project Tick
+ * SPDX-FileContributor: Project Tick
+ * SPDX-License-Identifier: GPL-3.0-or-later
  *
- * Authors: Orochimarufan <orochimarufan.x3@gmail.com>
+ *   MeshMC - A Custom Launcher for Minecraft
+ *   Copyright (C) 2026 Project Tick
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  
+ *  This file incorporates work covered by the following copyright and
+ *  permission notice:
+ *
+ * Copyright 2013-2021 MultiMC Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +110,7 @@ shared_qobject_ptr<AccountTask> MinecraftAccount::refresh() {
         return m_currentTask;
     }
 
-        m_currentTask.reset(new MSASilent(&data));
+    m_currentTask.reset(new MSASilent(&data));
 
     connect(m_currentTask.get(), SIGNAL(succeeded()), SLOT(authSucceeded()));
     connect(m_currentTask.get(), SIGNAL(failed(QString)), SLOT(authFailed(QString)));
@@ -118,10 +139,10 @@ void MinecraftAccount::authFailed(QString reason)
         }
         break;
         case AccountTaskState::STATE_FAILED_HARD: {
-                data.msaToken.token = QString();
-                data.msaToken.refresh_token = QString();
-                data.msaToken.validity = Katabasis::Validity::None;
-                data.validity_ = Katabasis::Validity::None;
+            data.msaToken.token = QString();
+            data.msaToken.refresh_token = QString();
+            data.msaToken.validity = Katabasis::Validity::None;
+            data.validity_ = Katabasis::Validity::None;
             emit changed();
         }
         break;

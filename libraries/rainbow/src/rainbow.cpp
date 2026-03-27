@@ -1,9 +1,12 @@
-/* This was part of the KDE project - see KGuiAddons
+/* SPDX-License-Identifier: LGPL-2.0-or-later
+ *
+ * This was part of the KDE project - see KGuiAddons
  * Copyright (C) 2007 Matthew Woehlke <mw_triad@users.sourceforge.net>
  * Copyright (C) 2007 Olaf Schmidt <ojschmidt@kde.org>
  * Copyright (C) 2007 Thomas Zander <zander@kde.org>
  * Copyright (C) 2007 Zack Rusin <zack@kde.org>
  * Copyright (C) 2015 Petr Mrazek <peterix@gmail.com>
+ * Copyright (C) 2026 Project Tick
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

@@ -1,4 +1,5 @@
-/*
+/* SPDX-License-Identifier: Unlicense
+ * SPDX-FileCopyrightText: N/A
  * Definitions for handling the .xz file format
  *
  * Author: Lasse Collin <lasse.collin@tukaani.org>

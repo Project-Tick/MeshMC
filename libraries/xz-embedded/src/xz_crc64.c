@@ -1,4 +1,5 @@
-/*
+/* SPDX-License-Identifier: Unlicense
+ * SPDX-FileCopyrightText: N/A
  * CRC64 using the polynomial from ECMA-182
  *
  * This file is similar to xz_crc32.c. See the comments there.
