@@ -18,12 +18,6 @@ an administrator/root level account. Don't use `sudo`. It won't work and it's no
 Also note that this guide is for development purposes only.  
 **No support is given for building your own fork or special build for any reason whatsoever**.
 
-# Branding, identifying marks and API keys
-
-The logo and related assets are All Rights Reserved and may only be used in official builds of MeshMC hosted on projecttick.org, and as such, are not, and will not be included in this repository. The source is only provided for the purpose of collaboration. 
-
-API keys are necessary for Microsoft account functionality. More info in [(Not) Secrets](https://github.com/Project-Tick/MeshMC/tree/develop/notsecrets)
-
 # Getting the source
 
 Clone the source code using git and grab all the submodules:

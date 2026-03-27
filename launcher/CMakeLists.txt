@@ -592,7 +592,7 @@ SET(MESHMC_SOURCES
     resources/iOS/iOS.qrc
     resources/flat/flat.qrc
     resources/documents/documents.qrc
-    ../${MeshMC_Branding_LogoQRC}
+    ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
 
     # Icons
     icons/MMCIcon.h
@@ -885,7 +885,7 @@ qt6_add_resources(MESHMC_RESOURCES
     resources/iOS/iOS.qrc
     resources/flat/flat.qrc
     resources/documents/documents.qrc
-    ../${MeshMC_Branding_LogoQRC}
+    ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
 )
 
 ######## Windows resource files ########

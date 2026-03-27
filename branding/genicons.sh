@@ -7,12 +7,12 @@ inkscape -w 48 -h 48 -o logo_48.png logo.svg
 inkscape -w 64 -h 64 -o logo_64.png logo.svg
 inkscape -w 128 -h 128 -o logo_128.png logo.svg
 
-convert logo_128.png logo_64.png logo_48.png logo_32.png logo_24.png logo_16.png MeshMC.ico
+convert logo_128.png logo_64.png logo_48.png logo_32.png logo_24.png logo_16.png org.projecttick.MeshMC.ico
 
 inkscape -w 256 -h 256 -o logo_256.png logo.svg
 inkscape -w 512 -h 512 -o logo_512.png logo.svg
 inkscape -w 1024 -h 1024 -o logo_1024.png logo.svg
 
-png2icns MeshMC.icns logo_1024.png logo_512.png logo_256.png logo_128.png logo_32.png logo_16.png
+png2icns org.projecttick.MeshMC.icns logo_1024.png logo_512.png logo_256.png logo_128.png logo_32.png logo_16.png
 
 rm -f logo_*.png

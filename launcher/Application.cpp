@@ -61,6 +61,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QNetworkAccessManager>
+#include <QProcessEnvironment>
+#include <QStandardPaths>
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QList>
@@ -331,6 +333,34 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         QDir foo(FS::PathCombine(applicationDirPath(), "../../Data"));
         dataPath = foo.absolutePath();
         adjustedBy += "Fallback to special Mac location " + dataPath;
+#elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
+        QString portablePath = FS::PathCombine(applicationDirPath(), "portable.txt");
+        if (QFileInfo::exists(portablePath))
+        {
+            dataPath = applicationDirPath();
+            adjustedBy += "Portable mode (portable.txt found), using binary path " + dataPath;
+        }
+        else
+        {
+            QString xdgDataHome = QProcessEnvironment::systemEnvironment().value("XDG_DATA_HOME");
+            if (xdgDataHome.isEmpty())
+                xdgDataHome = QDir::homePath() + "/.local/share";
+            dataPath = FS::PathCombine(xdgDataHome, BuildConfig.MESHMC_NAME);
+            adjustedBy += "Non-portable mode, using XDG data location " + dataPath;
+        }
+#elif defined(Q_OS_WIN32)
+        QString portablePath = FS::PathCombine(applicationDirPath(), "portable.txt");
+        if (QFileInfo::exists(portablePath))
+        {
+            dataPath = applicationDirPath();
+            adjustedBy += "Portable mode (portable.txt found), using binary path " + dataPath;
+        }
+        else
+        {
+            QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+            dataPath = appDataPath;
+            adjustedBy += "Non-portable mode, using AppData location " + dataPath;
+        }
 #else
         dataPath = applicationDirPath();
         adjustedBy += "Fallback to binary path " + dataPath;

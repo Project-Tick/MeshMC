@@ -56,6 +56,30 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Werror=return-type")
 # Fix build with Qt 5.13
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_DEPRECATED_WARNINGS=Y")
 
+option(ENABLE_LTO "Enable Link Time Optimization" off)
+
+if(ENABLE_LTO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
+
+    if(ipo_supported)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_MINSIZEREL TRUE)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO TRUE)
+        if(CMAKE_BUILD_TYPE)
+            if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+                message(STATUS "IPO / LTO enabled")
+            else()
+                message(STATUS "Not enabling IPO / LTO on debug builds")
+            endif()
+        else()
+            message(STATUS "IPO / LTO will only be enabled for release builds")
+        endif()
+    else()
+        message(STATUS "IPO / LTO not supported: <${ipo_error}>")
+    endif()
+endif()
+
 ################################ 3rd Party Libs ################################
 
 # Find the required Qt parts
@@ -74,29 +98,73 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ####################################### Branding #######################################
 
+######## Firstly, please set version numbers ########
+set(MeshMC_VERSION_MAJOR    0)
+set(MeshMC_VERSION_MINOR    7)
+set(MeshMC_VERSION_HOTFIX   0)
+
+set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
+
+######## Please define MeshMC attributes ########
+
 set(MeshMC_CommonName "MeshMC")
 set(MeshMC_AppBinaryName "meshmc")
+set(MeshMC_AppID "org.projecttick.MeshMC")
 set(MeshMC_Copyright "Project Tick")
 set(MeshMC_Domain "projecttick.org")
 set(MeshMC_Name "${MeshMC_CommonName}")
-set(MeshMC_DisplayName "${MeshMC_CommonName} 5")
+set(MeshMC_DisplayName "${MeshMC_CommonName}")
 set(MeshMC_UserAgent "${MeshMC_CommonName}/5.0")
 set(MeshMC_ConfigFile "meshmc.cfg")
 set(MeshMC_Git "https://github.com/Project-Tick/MeshMC")
 
 set(MeshMC_Branding_ICNS "branding/MeshMC.icns")
-set(MeshMC_Branding_WindowsRC "branding/meshmc.rc")
-set(MeshMC_Branding_LogoQRC "branding/logo.qrc")
+set(MeshMC_Branding_WindowsRC "branding/${MeshMC_AppBinaryName}.rc")
+set(MeshMC_Branding_LogoQRC "branding/${MeshMC_AppBinaryName}.qrc")
+
+configure_file(branding/${MeshMC_AppID}.desktop.in ${MeshMC_AppID}.desktop)
+configure_file(branding/${MeshMC_AppID}.metainfo.xml.in ${MeshMC_AppID}.metainfo.xml)
+configure_file(branding/${MeshMC_AppBinaryName}.rc.in ${MeshMC_AppBinaryName}.rc @ONLY)
+configure_file(branding/${MeshMC_AppBinaryName}.qrc.in ${MeshMC_AppBinaryName}.qrc @ONLY)
+configure_file(branding/${MeshMC_CommonName}.manifest.in ${MeshMC_AppBinaryName}.manifest @ONLY)
+configure_file(branding/${MeshMC_AppID}.mime.xml ${MeshMC_AppID}.xml COPYONLY)
+file(COPY branding/${MeshMC_AppID}.svg DESTINATION ${CMAKE_BINARY_DIR})
+
+if(MSVC)
+    set(MeshMC_MSVC_Redist_NSIS_Section [=[
+!ifdef haveNScurl
+Section "Visual Studio Runtime"
+    Var /GLOBAL vc_redist_exe
+    ${If} ${IsNativeARM64}
+        StrCpy $vc_redist_exe "vc_redist.arm64.exe"
+    ${Else}
+        StrCpy $vc_redist_exe "vc_redist.x64.exe"
+    ${EndIf}
+    DetailPrint 'Downloading Microsoft Visual C++ Redistributable...'
+    NScurl::http GET "https://aka.ms/vs/17/release/$vc_redist_exe" "$INSTDIR\vc_redist\$vc_redist_exe" /INSIST /CANCEL /Zone.Identifier /END
+    Pop $0
+    ${If} $0 == "OK"
+        DetailPrint "Download successful"
+        ExecWait "$INSTDIR\vc_redist\$vc_redist_exe /install /passive /norestart"
+    ${Else}
+        DetailPrint "Download failed with error $0"
+    ${EndIf}
+SectionEnd
+!endif
+]=])
+endif()
+
+configure_file(branding/win_install.nsi.in win_install.nsi @ONLY)
+
+######## Please define URLs ########
 
 set(MeshMC_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch MeshMC's news RSS feed from.")
 
-######## Set version numbers ########
-set(MeshMC_VERSION_MAJOR    0)
-set(MeshMC_VERSION_MINOR    7)
-set(MeshMC_VERSION_HOTFIX   0)
-
 # Build number
 set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
+
+# Name to help updater identify valid artifacts
+set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Artifact name to help the updater identify valid artifacts.")
 
 # Build platform.
 set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
@@ -105,7 +173,7 @@ set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platfo
 set(MeshMC_UPDATER_BASE "" CACHE STRING "Base URL for the updater.")
 
 # Notification URL
-set(MeshMC_NOTIFICATION_URL "" CACHE STRING "URL for checking for notifications.")
+set(MeshMC_NOTIFICATION_URL "https://projecttick.org/" CACHE STRING "URL for checking for notifications.")
 
 # The metadata server
 set(MeshMC_META_URL "https://meta.projecttick.org/" CACHE STRING "URL to fetch MeshMC's meta files from.")
@@ -126,7 +194,7 @@ set(MeshMC_CURSEFORGE_API_KEY "$2a$10$S7KcKijbCj8mCHUQcn0tgOmtHg0kA8q9FI0niNJJ7k
 set(MeshMC_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google analytics")
 
 # Bug tracker URL
-set(MeshMC_BUG_TRACKER_URL "" CACHE STRING "URL for the bug tracker.")
+set(MeshMC_BUG_TRACKER_URL "https://github.com/Project-Tick/MeshMC/issues" CACHE STRING "URL for the bug tracker.")
 
 # Discord URL
 set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
@@ -134,17 +202,12 @@ set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
 # Subreddit URL
 set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
 
-# Use the secrets library or a public stub?
-option(MeshMC_EMBED_SECRETS "Determines whether to embed secrets. Secrets are separate and non-public." OFF)
-
 #### Check the current Git commit and branch
 include(GetGitRevisionDescription)
 get_git_head_revision(MeshMC_GIT_REFSPEC MeshMC_GIT_COMMIT)
 
 message(STATUS "Git commit: ${MeshMC_GIT_COMMIT}")
 message(STATUS "Git refspec: ${MeshMC_GIT_REFSPEC}")
-
-set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
 
 #### Custom target to just print the version.
 add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")
@@ -214,10 +277,6 @@ elseif(MeshMC_LAYOUT_REAL STREQUAL "lin-nodeps")
 
     # Set RPATH
     SET(MeshMC_BINARY_RPATH "$ORIGIN/")
-
-    # Install basic runner script
-    configure_file(launcher/MeshMC.in "${CMAKE_CURRENT_BINARY_DIR}/MeshMCScript" @ONLY)
-    install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/MeshMCScript" DESTINATION ${BUNDLE_DEST_DIR} RENAME ${MeshMC_Name})
 
 elseif(MeshMC_LAYOUT_REAL STREQUAL "win-bundle")
     set(BINARY_DEST_DIR ".")

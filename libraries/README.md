@@ -61,7 +61,7 @@ mainClass net.minecraft.launchwrapper.Launch
 param --username
 param CENSORED
 param --version
-param MeshMC5
+param MeshMC
 param --gameDir
 param /home/peterix/minecraft/FTB/17ForgeTest/minecraft
 param --assetsDir

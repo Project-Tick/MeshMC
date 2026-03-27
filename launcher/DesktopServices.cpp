@@ -100,57 +100,33 @@ bool openDirectory(const QString &path, bool ensureExists)
     {
         parentPath.mkpath(dir.absolutePath());
     }
-    auto f = [&]()
-    {
-        return QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absolutePath()));
-    };
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-    return IndirectOpen(f);
+    return QProcess::startDetached("xdg-open", QStringList() << dir.absolutePath());
 #else
-    return f();
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absolutePath()));
 #endif
 }
 
 bool openFile(const QString &path)
 {
     qDebug() << "Opening file" << path;
-    auto f = [&]()
-    {
-        return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-    };
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-    return IndirectOpen(f);
+    return QProcess::startDetached("xdg-open", QStringList() << path);
 #else
-    return f();
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
 #endif
 }
 
 bool openFile(const QString &application, const QString &path, const QString &workingDirectory, qint64 *pid)
 {
     qDebug() << "Opening file" << path << "using" << application;
-#if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-    // FIXME: the pid here is fake. So if something depends on it, it will likely misbehave
-    return IndirectOpen([&]()
-    {
-        return QProcess::startDetached(application, QStringList() << path, workingDirectory);
-    }, pid);
-#else
     return QProcess::startDetached(application, QStringList() << path, workingDirectory, pid);
-#endif
 }
 
 bool run(const QString &application, const QStringList &args, const QString &workingDirectory, qint64 *pid)
 {
     qDebug() << "Running" << application << "with args" << args.join(' ');
-#if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-    // FIXME: the pid here is fake. So if something depends on it, it will likely misbehave
-    return IndirectOpen([&]()
-    {
-        return QProcess::startDetached(application, args, workingDirectory);
-    }, pid);
-#else
     return QProcess::startDetached(application, args, workingDirectory, pid);
-#endif
 }
 
 bool openUrl(const QUrl &url)
