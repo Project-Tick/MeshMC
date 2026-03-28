@@ -250,10 +250,10 @@ public class ModernLauncher implements MeshMC
         // JVM arguments (memory settings, GC options, platform flags, etc.)
         cmd.addAll(jvmArgs);
 
-        // Native library path — needed for LWJGL and other native dependencies.
+        // Native library path - needed for LWJGL and other native dependencies.
         // Pass both the standard JVM property and the LWJGL-specific property:
-        //   java.library.path   – used by java.lang.System.loadLibrary()
-        //   org.lwjgl.librarypath – checked first by LWJGL 3.3+ before java.library.path
+        //   java.library.path   - used by java.lang.System.loadLibrary()
+        //   org.lwjgl.librarypath - checked first by LWJGL 3.3+ before java.library.path
         if (natives != null && !natives.isEmpty())
         {
             cmd.add("-Djava.library.path=" + natives);
@@ -299,7 +299,7 @@ public class ModernLauncher implements MeshMC
                 }
                 catch (IOException e)
                 {
-                    // Stream closed — expected when the child process exits
+                    // Stream closed - expected when the child process exits
                 }
             }
         }, "ModernLauncher-" + name + "-pipe");
