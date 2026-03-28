@@ -600,6 +600,8 @@ SET(MESHMC_SOURCES
     resources/iOS/iOS.qrc
     resources/flat/flat.qrc
     resources/documents/documents.qrc
+    resources/breeze_dark/breeze_dark.qrc
+    resources/breeze_light/breeze_light.qrc
     ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
 
     # Icons
@@ -899,6 +901,8 @@ qt6_add_resources(MESHMC_RESOURCES
     resources/iOS/iOS.qrc
     resources/flat/flat.qrc
     resources/documents/documents.qrc
+    resources/breeze_dark/breeze_dark.qrc
+    resources/breeze_light/breeze_light.qrc
     ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
 )
 
