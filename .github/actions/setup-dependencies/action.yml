@@ -77,5 +77,5 @@ runs:
       with:
         aqtversion: "==3.1.*"
         version: ${{ inputs.qt-version }}
-        modules: qtimageformats qtnetworkauth core5compat
+        modules: qtimageformats qtnetworkauth qt5compat
         cache: ${{ inputs.build-type == 'Debug' }}
