@@ -21,39 +21,44 @@
 
 #pragma once
 
-#include <launch/LaunchStep.h>
-#ifndef MeshMC_DISABLE_JAVA_DOWNLOADER
-#include "java/download/JavaRuntime.h"
-#include "java/download/JavaDownloadTask.h"
-#endif
+#include "tasks/Task.h"
 #include "net/NetJob.h"
+#include "java/download/JavaRuntime.h"
 
-class VerifyJavaInstall : public LaunchStep {
+#include <QUrl>
+
+class JavaDownloadTask : public Task
+{
     Q_OBJECT
 
 public:
-    explicit VerifyJavaInstall(LaunchTask *parent) : LaunchStep(parent) {
-    };
-    ~VerifyJavaInstall() override = default;
+    explicit JavaDownloadTask(const JavaDownload::RuntimeEntry &runtime, const QString &targetDir,
+                              QObject *parent = nullptr);
+    virtual ~JavaDownloadTask() = default;
 
+    QString installedJavaPath() const { return m_installedJavaPath; }
+
+protected:
     void executeTask() override;
-    bool canAbort() const override {
-        return false;
-    }
+
+private slots:
+    void downloadFinished();
+    void downloadFailed(QString reason);
+    void extractArchive();
+    void manifestDownloaded();
+    void manifestFilesDownloaded();
 
 private:
-    int determineRequiredJavaMajor() const;
-    QString findInstalledJava(int requiredMajor) const;
-    QString javaInstallDir() const;
-#ifndef MeshMC_DISABLE_JAVA_DOWNLOADER
-    void autoDownloadJava(int requiredMajor);
-    void fetchVersionList(int requiredMajor);
-    void fetchRuntimes(const QString &versionId, int requiredMajor);
-    void startDownload(const JavaDownload::RuntimeEntry &runtime, int requiredMajor);
-    void setJavaPathAndSucceed(const QString &javaPath);
+    void downloadArchive();
+    void downloadManifest();
+    QString findJavaBinary(const QString &dir) const;
 
-    NetJob::Ptr m_fetchJob;
-    QByteArray m_fetchData;
-    std::unique_ptr<JavaDownloadTask> m_downloadTask;
-#endif
+    JavaDownload::RuntimeEntry m_runtime;
+    QString m_targetDir;
+    QString m_archivePath;
+    QString m_installedJavaPath;
+    NetJob::Ptr m_downloadJob;
+    QByteArray m_manifestData;
+    QStringList m_executableFiles;
+    QList<QPair<QString, QString>> m_linkEntries;
 };

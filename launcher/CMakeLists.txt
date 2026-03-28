@@ -441,6 +441,14 @@ set(JAVA_SOURCES
     java/JavaVersion.cpp
 )
 
+if(NOT MeshMC_DISABLE_JAVA_DOWNLOADER)
+    list(APPEND JAVA_SOURCES
+        java/download/JavaRuntime.h
+        java/download/JavaDownloadTask.h
+        java/download/JavaDownloadTask.cpp
+    )
+endif()
+
 add_unit_test(JavaVersion
     SOURCES java/JavaVersion_test.cpp
     LIBS MeshMC_logic
@@ -890,6 +898,13 @@ qt6_wrap_ui(MESHMC_UI
     ui/dialogs/EditAccountDialog.ui
 )
 
+if(NOT MeshMC_DISABLE_JAVA_DOWNLOADER)
+    list(APPEND MESHMC_SOURCES
+        ui/dialogs/JavaDownloadDialog.cpp
+        ui/dialogs/JavaDownloadDialog.h
+    )
+endif()
+
 qt6_add_resources(MESHMC_RESOURCES
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
@@ -923,6 +938,10 @@ target_link_libraries(MeshMC_logic
     BuildConfig
     Katabasis
 )
+
+if(MeshMC_DISABLE_JAVA_DOWNLOADER)
+    target_compile_definitions(MeshMC_logic PUBLIC MeshMC_DISABLE_JAVA_DOWNLOADER)
+endif()
 target_link_libraries(MeshMC_logic
     Qt6::Core
     Qt6::Xml

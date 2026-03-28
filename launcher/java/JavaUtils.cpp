@@ -425,8 +425,19 @@ QList<QString> JavaUtils::FindJavaPaths()
     scanJavaDir("/usr/lib/jvm");
     scanJavaDir("/usr/lib64/jvm");
     scanJavaDir("/usr/lib32/jvm");
-    // javas stored in MeshMC's folder
-    scanJavaDir("java");
+    // javas stored in MeshMC's folder (recursive scan for managed java/{vendor}/{name}/... structure)
+    {
+        QDir javaBaseDir("java");
+        if (javaBaseDir.exists()) {
+            QDirIterator it("java", QStringList() << "java", QDir::Files, QDirIterator::Subdirectories);
+            while (it.hasNext()) {
+                it.next();
+                if (it.filePath().contains("/bin/")) {
+                    javas.append(it.filePath());
+                }
+            }
+        }
+    }
     // manually installed JDKs in /opt
     scanJavaDir("/opt/jdk");
     scanJavaDir("/opt/jdks");

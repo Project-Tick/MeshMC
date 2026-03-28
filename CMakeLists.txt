@@ -76,6 +76,7 @@ include(ECMQtDeclareLoggingCategory)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_DEPRECATED_WARNINGS=Y")
 
 option(ENABLE_LTO "Enable Link Time Optimization" off)
+option(MeshMC_DISABLE_JAVA_DOWNLOADER "Disable the built-in Java downloader feature" OFF)
 
 if(ENABLE_LTO)
     include(CheckIPOSupported)
