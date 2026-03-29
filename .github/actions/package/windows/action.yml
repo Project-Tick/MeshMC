@@ -30,23 +30,24 @@ runs:
       if: ${{ inputs.msystem != '' }}
       shell: msys2 {0}
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        BUILD_DIR: build
+        INSTALL_DIR: install
       run: |
-        build_dir="$(cygpath -u "${BUILD_DIR}")"
-        install_dir="$(cygpath -u "${INSTALL_DIR}")"
-        cmake --install "$build_dir" --config ${{ inputs.build-type }}
-        touch "$install_dir/manifest.txt"
-        for l in $(find "$install_dir" -type f); do l=$(cygpath -u "$l"); l=${l#${install_dir}/}; echo $l; done >> "$install_dir/manifest.txt"
+        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
+        touch ${{ env.INSTALL_DIR }}/manifest.txt
+        for l in $(find ${{ env.INSTALL_DIR }} -type f); do l=$(cygpath -u $l); l=${l#$(pwd)/}; l=${l#${{ env.INSTALL_DIR }}/}; l=${l#./}; echo $l; done >> ${{ env.INSTALL_DIR }}/manifest.txt
 
     - name: Package (MSVC)
       if: ${{ inputs.msystem == '' }}
       shell: pwsh
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        BUILD_DIR: build
+        INSTALL_DIR: install
       run: |
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
+
+        cd ${{ github.workspace }}
+
         Get-ChildItem ${{ env.INSTALL_DIR }} -Recurse | ForEach FullName | Resolve-Path -Relative | %{ $_.TrimStart('.\') } | %{ $_.TrimStart('${{ env.INSTALL_DIR }}') } | %{ $_.TrimStart('\') } | Out-File -FilePath ${{ env.INSTALL_DIR }}/manifest.txt
 
     - name: Fetch codesign certificate
@@ -57,13 +58,12 @@ runs:
     - name: Sign executable
       shell: pwsh
       env:
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
-        CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
+        INSTALL_DIR: install
       run: |
-        if (Get-Content $env:CODESIGN_CERT_PATH){
+        if (Get-Content ./codesign.pfx){
           cd ${{ env.INSTALL_DIR }}
             # We ship the exact same executable for portable and non-portable editions, so signing just once is fine
-            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com meshmc.exe meshmc_updater.exe meshmc_filelink.exe 
+            SignTool sign /fd sha256 /td sha256 /f ../codesign.pfx /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com meshmc.exe
         } else {
           ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
         }
@@ -72,24 +72,21 @@ runs:
       if: ${{ inputs.msystem != '' }}
       shell: msys2 {0}
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
-        INSTALL_PORTABLE_DIR: ${{ format('{0}/install-portable' || github.workspace) }}
+        BUILD_DIR: build
+        INSTALL_DIR: install
+        INSTALL_PORTABLE_DIR: install-portable
       run: |
-        build_dir="$(cygpath -u "${BUILD_DIR}")"
-        install_dir="$(cygpath -u "${INSTALL_DIR}")"
-        install_portable_dir="$(cygpath -u "${INSTALL_PORTABLE_DIR}")"
-        cp -r "$install_dir" "$install_portable_dir"  # cmake install on Windows is slow, let's just copy instead
-        cmake --install "$build_dir" --config ${{ inputs.build-type }} --prefix "$install_portable_dir" --component portable
-        for l in $(find "$install_portable_dir" -type f); do l=$(cygpath -u "$l"); l=${l#${install_portable_dir}/}; echo $l; done >> "$install_portable_dir/manifest.txt"
+        cp -r ${{ env.INSTALL_DIR }} ${{ env.INSTALL_PORTABLE_DIR }}  # cmake install on Windows is slow, let's just copy instead
+        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }} --component portable
+        for l in $(find ${{ env.INSTALL_PORTABLE_DIR }} -type f); do l=$(cygpath -u $l); l=${l#$(pwd)/}; l=${l#${{ env.INSTALL_PORTABLE_DIR }}/}; l=${l#./}; echo $l; done >> ${{ env.INSTALL_PORTABLE_DIR }}/manifest.txt
 
     - name: Package (MSVC, portable)
       if: ${{ inputs.msystem == '' }}
       shell: pwsh
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
-        INSTALL_PORTABLE_DIR: ${{ format('{0}/install-portable' || github.workspace) }}
+        BUILD_DIR: build
+        INSTALL_DIR: install
+        INSTALL_PORTABLE_DIR: install-portable
       run: |
         cp -r ${{ env.INSTALL_DIR }} ${{ env.INSTALL_PORTABLE_DIR }}  # cmake install on Windows is slow, let's just copy instead
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }} --component portable
@@ -99,8 +96,8 @@ runs:
     - name: Package (installer)
       shell: pwsh
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        BUILD_DIR: build
+        INSTALL_DIR: install
 
         NSCURL_VERSION: "v24.9.26.122"
         NSCURL_SHA256: "AEE6C4BE3CB6455858E9C1EE4B3AFE0DB9960FA03FE99CCDEDC28390D57CCBB0"
@@ -114,18 +111,14 @@ runs:
         }
         Expand-Archive -Path NSISPlugins\NScurl.zip -DestinationPath NSISPlugins\NScurl
 
-        $nsisScript = Resolve-Path (Join-Path "${{ env.BUILD_DIR }}" "branding/win_install.nsi")
         cd ${{ env.INSTALL_DIR }}
-        makensis -NOCD "$nsisScript"
+        makensis -NOCD "${{ github.workspace }}/${{ env.BUILD_DIR }}/program_info/win_install.nsi"
 
     - name: Sign installer
       shell: pwsh
-      env:
-        CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
-        INSTALLER_PATH: ${{ format('{0}/MeshMC-Setup.exe' || github.workspace) }}
       run: |
-          if (Get-Content $env:CODESIGN_CERT_PATH){
-            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com $env:INSTALLER_PATH
+          if (Get-Content ./codesign.pfx){
+            SignTool sign /fd sha256 /td sha256 /f codesign.pfx /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com MeshMC-Setup.exe
           } else {
             ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
           }
@@ -134,16 +127,16 @@ runs:
       uses: actions/upload-artifact@v5
       with:
         name: MeshMC-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ format('{0}/install/**' || github.workspace) }}
+        path: install/**
 
     - name: Upload portable zip
       uses: actions/upload-artifact@v5
       with:
         name: MeshMC-${{ inputs.artifact-name }}-Portable-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ format('{0}/install-portable/**' || github.workspace) }}
+        path: install-portable/**
 
     - name: Upload installer
       uses: actions/upload-artifact@v5
       with:
         name: MeshMC-${{ inputs.artifact-name }}-Setup-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ format('{0}/MeshMC-Setup.exe' || github.workspace) }}
+        path: MeshMC-Setup.exe
