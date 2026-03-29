@@ -29,7 +29,7 @@ on:
       - "cmake/**"
       - "launcher/**"
       - "libraries/**"
-      - "program_info/**"
+      - "branding/**"
       - "tests/**"
 
       # Files
@@ -56,7 +56,7 @@ on:
       - "cmake/**"
       - "launcher/**"
       - "libraries/**"
-      - "program_info/**"
+      - "branding/**"
       - "tests/**"
 
       # Files

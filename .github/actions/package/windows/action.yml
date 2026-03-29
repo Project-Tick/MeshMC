@@ -114,7 +114,7 @@ runs:
         }
         Expand-Archive -Path NSISPlugins\NScurl.zip -DestinationPath NSISPlugins\NScurl
 
-        $nsisScript = Resolve-Path (Join-Path "${{ env.BUILD_DIR }}" "program_info/win_install.nsi")
+        $nsisScript = Resolve-Path (Join-Path "${{ env.BUILD_DIR }}" "branding/win_install.nsi")
         cd ${{ env.INSTALL_DIR }}
         makensis -NOCD "$nsisScript"
 

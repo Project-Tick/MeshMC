@@ -150,7 +150,7 @@ configure_file(branding/${MeshMC_CommonName}.manifest.in ${MeshMC_AppBinaryName}
 configure_file(branding/${MeshMC_AppID}.mime.xml ${MeshMC_AppID}.xml COPYONLY)
 configure_file(branding/${MeshMC_SVGFileName} ${MeshMC_SVGFileName} COPYONLY)
 set(MeshMC_Portable_File "branding/portable.txt")
-set(MeshMC_Branding_MAC_ICON "program_info/${MeshMC_CommonName}.icon")
+set(MeshMC_Branding_MAC_ICON "branding/${MeshMC_CommonName}.icon")
 
 if(MSVC)
     set(MeshMC_MSVC_Redist_NSIS_Section [=[
