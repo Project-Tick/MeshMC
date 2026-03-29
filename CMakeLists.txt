@@ -227,9 +227,14 @@ set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
 #### Check the current Git commit and branch
 include(GetGitRevisionDescription)
 get_git_head_revision(MeshMC_GIT_REFSPEC MeshMC_GIT_COMMIT)
+git_get_exact_tag(MeshMC_GIT_TAG)
 
 message(STATUS "Git commit: ${MeshMC_GIT_COMMIT}")
 message(STATUS "Git refspec: ${MeshMC_GIT_REFSPEC}")
+message(STATUS "Git tag: ${MeshMC_GIT_TAG}")
+
+string(TIMESTAMP TODAY "%Y-%m-%d")
+set(MeshMC_BUILD_TIMESTAMP "${TODAY}")
 
 #### Custom target to just print the version.
 add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")

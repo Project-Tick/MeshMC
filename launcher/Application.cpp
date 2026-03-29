@@ -96,6 +96,7 @@
 
 #include <ganalytics.h>
 #include <sys.h>
+#include "MMCStrings.h"
 
 
 #if defined Q_OS_WIN32
@@ -134,7 +135,14 @@ void appDebugOutput(QtMsgType type, const QMessageLogContext &context, const QSt
 
     APPLICATION->logFile->write(out.toUtf8());
     APPLICATION->logFile->flush();
-    QTextStream(stderr) << out.toLocal8Bit();
+    QString coloredOut = QString("%1 %2%3%4%5 %6\n")
+        .arg(buf)
+        .arg(Strings::logColor(type))
+        .arg(levels[type])
+        .arg(":")
+        .arg(Strings::logColorReset())
+        .arg(msg);
+    QTextStream(stderr) << coloredOut.toLocal8Bit();
     fflush(stderr);
 }
 

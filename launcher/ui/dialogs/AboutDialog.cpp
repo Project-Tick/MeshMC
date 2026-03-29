@@ -45,77 +45,77 @@
 #include <net/NetJob.h>
 
 #include "HoeDown.h"
+#include "MMCStrings.h"
 
 namespace {
 // Credits
-// This is a hack, but I can't think of a better way to do this easily without screwing with QTextDocument...
-QString getCreditsHtml(QStringList patrons)
+QString getCreditsHtml()
 {
-    QString patronsHeading = QObject::tr("Patrons", "About Credits");
-    QString output;
-    QTextStream stream(&output);
-    stream << "<center>\n";
-    // TODO: possibly retrieve from git history at build time?
-    stream << "<h2> MeshMC Developers </h2>\n";
-    stream << "<h3>" << QObject::tr("Developers", "About Credits") << "</h3>\n";
-    stream << "<p>Mehmet Samet Duman &lt;<a href='mailto:yongdohyun@projecttick.org'>yongdohyun@projecttick.org</a>&gt;</p>\n";
+    QFile dataFile(":/documents/credits.html");
+    if (!dataFile.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file" << dataFile.fileName() << "for reading:" << dataFile.errorString();
+        return {};
+    }
+    QString fileContent = QString::fromUtf8(dataFile.readAll());
+    dataFile.close();
 
-    stream << "<h2> MultiMC Developers </h2>\n";
-    stream << "<h3>" << QObject::tr("Developers", "About Credits") << "</h3>\n";
-    stream << "<p>Andrew Okin &lt;<a href='mailto:forkk@forkk.net'>forkk@forkk.net</a>&gt;</p>\n";
-    stream << "<p>Petr Mrázek &lt;<a href='mailto:peterix@gmail.com'>peterix@gmail.com</a>&gt;</p>\n";
-    stream << "<p>Sky Welch &lt;<a href='mailto:multimc@bunnies.io'>multimc@bunnies.io</a>&gt;</p>\n";
-    stream << "<p>Jan (02JanDal) &lt;<a href='mailto:02jandal@gmail.com'>02jandal@gmail.com</a>&gt;</p>\n";
-    stream << "<p>RoboSky &lt;<a href='https://twitter.com/RoboSky_'>@RoboSky_</a>&gt;</p>\n";
-    stream << "<br />\n";
-
-    stream << "</center>\n";
-    return output;
+    return fileContent.arg(QObject::tr("%1 Developers").arg(BuildConfig.MESHMC_DISPLAYNAME), QObject::tr("MultiMC Developers"));
 }
 
 QString getLicenseHtml()
 {
-    HoeDown hoedown;
     QFile dataFile(":/documents/COPYING.md");
-    if (!dataFile.open(QIODevice::ReadOnly))
-    {
+    if (dataFile.open(QIODevice::ReadOnly)) {
+        HoeDown hoedown;
+        QString output = hoedown.process(dataFile.readAll());
+        dataFile.close();
+        return output;
+    } else {
+        qWarning() << "Failed to open file" << dataFile.fileName() << "for reading:" << dataFile.errorString();
         return QString();
     }
-    QString output = hoedown.process(dataFile.readAll());
-    return output;
 }
 
-}
+}  // namespace
 
-AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AboutDialog)
+AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent), ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
 
-    QString launcherName = BuildConfig.MESHMC_NAME;
+    QString launcherName = BuildConfig.MESHMC_DISPLAYNAME;
 
     setWindowTitle(tr("About %1").arg(launcherName));
 
-    QString chtml = getCreditsHtml(QStringList());
-    ui->creditsText->setHtml(chtml);
+    QString chtml = getCreditsHtml();
+    ui->creditsText->setHtml(Strings::htmlListPatch(chtml));
 
     QString lhtml = getLicenseHtml();
-    ui->licenseText->setHtml(lhtml);
+    ui->licenseText->setHtml(Strings::htmlListPatch(lhtml));
 
     ui->urlLabel->setOpenExternalLinks(true);
 
     ui->icon->setPixmap(APPLICATION->getThemedIcon("logo").pixmap(64));
     ui->title->setText(launcherName);
 
-    ui->versionLabel->setText(tr("Version") +": " + BuildConfig.printableVersionString());
-    ui->platformLabel->setText(tr("Platform") +": " + BuildConfig.BUILD_PLATFORM);
+    ui->versionLabel->setText(BuildConfig.printableVersionString());
 
-    if (BuildConfig.VERSION_BUILD >= 0)
-        ui->buildNumLabel->setText(tr("Build Number") +": " + QString::number(BuildConfig.VERSION_BUILD));
+    if (!BuildConfig.BUILD_PLATFORM.isEmpty())
+        ui->platformLabel->setText(tr("Platform") + ": " + BuildConfig.BUILD_PLATFORM);
     else
-        ui->buildNumLabel->setVisible(false);
+        ui->platformLabel->setVisible(false);
+
+    if (!BuildConfig.GIT_COMMIT.isEmpty())
+        ui->commitLabel->setText(tr("Commit: %1").arg(BuildConfig.GIT_COMMIT));
+    else
+        ui->commitLabel->setVisible(false);
+
+    if (!BuildConfig.BUILD_DATE.isEmpty())
+        ui->buildDateLabel->setText(tr("Build date: %1").arg(BuildConfig.BUILD_DATE));
+    else
+        ui->buildDateLabel->setVisible(false);
 
     if (!BuildConfig.VERSION_CHANNEL.isEmpty())
-        ui->channelLabel->setText(tr("Channel") +": " + BuildConfig.VERSION_CHANNEL);
+        ui->channelLabel->setText(tr("Channel") + ": " + BuildConfig.VERSION_CHANNEL);
     else
         ui->channelLabel->setVisible(false);
 
@@ -125,7 +125,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AboutDia
     QString copyText("© 2026 %1");
     ui->copyLabel->setText(copyText.arg(BuildConfig.MESHMC_COPYRIGHT));
 
-    connect(ui->closeButton, SIGNAL(clicked()), SLOT(close()));
+    connect(ui->closeButton, &QPushButton::clicked, this, &AboutDialog::close);
 
     connect(ui->aboutQt, &QPushButton::clicked, &QApplication::aboutQt);
 }

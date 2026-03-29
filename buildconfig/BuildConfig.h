@@ -59,6 +59,8 @@ public:
     /// URL for the updater's channel
     QString UPDATER_BASE;
 
+    /// A string containing the build timestamp
+    QString BUILD_DATE;
 
     /// User-Agent to use.
     QString USER_AGENT;
@@ -98,6 +100,9 @@ public:
 
     /// The git refspec of this build
     QString GIT_REFSPEC;
+
+    /// The exact git tag of this build, if any
+    QString GIT_TAG;
 
     /// This is printed on start to standard output
     QString VERSION_STR;

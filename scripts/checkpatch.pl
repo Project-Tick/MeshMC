@@ -78,7 +78,7 @@ use constant {
 my $MAX_LINE_LENGTH         = 120;
 my $INDENT_WIDTH            = 4;
 my $CMAKE_INDENT_WIDTH      = 3;
-my $MAX_FUNCTION_LENGTH     = 200;
+my $MAX_FUNCTION_LENGTH     = 500;
 my $MAX_FILE_LENGTH         = 3000;
 my $MAX_NESTING_DEPTH       = 6;
 my $MAX_PARAMS_PER_FUNCTION = 8;

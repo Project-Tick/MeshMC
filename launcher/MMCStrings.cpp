@@ -95,3 +95,31 @@ int Strings::naturalCompare(const QString &s1, const QString &s2, Qt::CaseSensit
     // The two strings are the same (02 == 2) so fall back to the normal sort
     return QString::compare(s1, s2, cs);
 }
+
+QString Strings::htmlListPatch(const QString &html)
+{
+    // QTextBrowser renders <ul>/<ol> lists with too much padding.
+    // This function corrects this by adding reasonable CSS margin/padding to the list elements.
+    QString patched(html);
+    patched.replace(QLatin1String("<ul"), QLatin1String("<ul style=\"margin-left: 0; padding-left: 20px;\""));
+    patched.replace(QLatin1String("<ol"), QLatin1String("<ol style=\"margin-left: 0; padding-left: 20px;\""));
+    patched.replace(QLatin1String("<li"), QLatin1String("<li style=\"margin-bottom: 4px;\""));
+    return patched;
+}
+
+const char *Strings::logColor(QtMsgType type)
+{
+    switch (type) {
+        case QtInfoMsg:    return "\033[36m";   // cyan
+        case QtDebugMsg:     return "\033[32m";   // green
+        case QtWarningMsg:  return "\033[33m";   // yellow
+        case QtCriticalMsg: return "\033[31m";   // red
+        case QtFatalMsg:    return "\033[1;31m"; // red again
+        default:            return "";
+    }
+}
+
+const char *Strings::logColorReset()
+{
+    return "\033[0m";
+}

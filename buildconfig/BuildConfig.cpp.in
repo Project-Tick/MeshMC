@@ -45,6 +45,7 @@ Config::Config()
 
     BUILD_PLATFORM = "@MeshMC_BUILD_PLATFORM@";
     BUILD_ARTIFACT = "@MeshMC_BUILD_ARTIFACT@";
+    BUILD_DATE = "@MeshMC_BUILD_TIMESTAMP@";
     COMPILER_NAME = "@MeshMC_COMPILER_NAME@";
     COMPILER_VERSION = "@MeshMC_COMPILER_VERSION@";
     COMPILER_TARGET_SYSTEM = "@MeshMC_COMPILER_TARGET_SYSTEM@";
@@ -57,6 +58,7 @@ Config::Config()
 
     GIT_COMMIT = "@MeshMC_GIT_COMMIT@";
     GIT_REFSPEC = "@MeshMC_GIT_REFSPEC@";
+    GIT_TAG = "@MeshMC_GIT_TAG@";
     if(GIT_REFSPEC.startsWith("refs/heads/") && !UPDATER_BASE.isEmpty() && !BUILD_PLATFORM.isEmpty() && VERSION_BUILD >= 0)
     {
         VERSION_CHANNEL = GIT_REFSPEC;
@@ -85,17 +87,16 @@ QString Config::printableVersionString() const
 {
     QString vstr = QString("%1.%2.%3").arg(QString::number(VERSION_MAJOR), QString::number(VERSION_MINOR), QString::number(VERSION_HOTFIX));
 
-    // If the build is not a main release, append the channel
-    if(VERSION_CHANNEL != "stable")
+    if(!GIT_TAG.isEmpty() && !GIT_TAG.endsWith("-NOTFOUND"))
     {
-        vstr += "-" + VERSION_CHANNEL;
+        return vstr;
     }
 
-    // if a build number is set, also add it to the end
-    if(VERSION_BUILD >= 0)
+    if(!GIT_COMMIT.isEmpty() && !GIT_COMMIT.endsWith("-NOTFOUND"))
     {
-        vstr += "-" + QString::number(VERSION_BUILD);
+        vstr += "-r" + GIT_COMMIT.left(6);
     }
+
     return vstr;
 }
 
