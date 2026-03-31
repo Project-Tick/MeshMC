@@ -1124,9 +1124,9 @@ if(WIN32 OR (UNIX AND APPLE))
         ]])
     endif()
 
-    # Add qt.conf - this makes Qt stop looking for things outside the bundle
+    # Add qt.conf - tell Qt where to find plugins relative to the executable
     install(
-        CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}/qt.conf\" \" \")"
+        CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}/qt.conf\" \"[Paths]\nPlugins = ${PLUGIN_DEST_DIR}\n\")"
     )
     # Add qtlogging.ini as a config file
     install(
