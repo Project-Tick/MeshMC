@@ -990,16 +990,10 @@ if(DEFINED MeshMC_APP_BINARY_DEFS)
 endif()
 
 install(TARGETS ${MeshMC_Name}
-    BUNDLE DESTINATION ${BUNDLE_DEST_DIR} COMPONENT Runtime
-    LIBRARY DESTINATION ${LIBRARY_DEST_DIR} COMPONENT Runtime
-    RUNTIME DESTINATION ${BINARY_DEST_DIR} COMPONENT Runtime
-)
-
-# The bundle component needs the executable present before deploy tools run
-install(TARGETS ${MeshMC_Name}
-    BUNDLE DESTINATION ${BUNDLE_DEST_DIR} COMPONENT bundle
-    LIBRARY DESTINATION ${LIBRARY_DEST_DIR} COMPONENT bundle
-    RUNTIME DESTINATION ${BINARY_DEST_DIR} COMPONENT bundle
+    BUNDLE DESTINATION ${BUNDLE_DEST_DIR}
+    LIBRARY DESTINATION ${LIBRARY_DEST_DIR}
+    RUNTIME DESTINATION ${BINARY_DEST_DIR}
+    RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
 )
 
 #### The bundle mess! ####
@@ -1035,18 +1029,24 @@ if(WIN32 OR (UNIX AND APPLE))
         )
         install(
             SCRIPT ${QT_DEPLOY_SCRIPT}
-            COMPONENT bundle
         )
     endif()
 
     # Bundle our linked dependencies
+    # For vcpkg builds, include both release and debug bin directories so
+    # RUNTIME_DEPENDENCY_SET can find DLLs like zlibd.dll in debug/bin/.
+    if(VCPKG_INSTALLED_DIR AND VCPKG_TARGET_TRIPLET)
+        set(_vcpkg_bin "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
+        set(_vcpkg_debug_bin "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin")
+    endif()
     install(
         RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
-        COMPONENT bundle
         DIRECTORIES
             ${CMAKE_SYSTEM_LIBRARY_PATH}
             ${QT_LIBS_DIR}
             ${QT_LIBEXECS_DIR}
+            ${_vcpkg_bin}
+            ${_vcpkg_debug_bin}
         PRE_EXCLUDE_REGEXES
             "^(api-ms-win|ext-ms)-.*\\.dll$"
             "^azure.*\\.dll$"
@@ -1082,8 +1082,7 @@ if(WIN32 OR (UNIX AND APPLE))
             if(NOT _deploy_result EQUAL 0)
                 message(FATAL_ERROR \"windeployqt failed with exit code: \${_deploy_result}\")
             endif()
-        "
-        COMPONENT bundle)
+        ")
     endif()
 
     # FIXME: remove this crap once we stop using msys2
@@ -1094,8 +1093,7 @@ if(WIN32 OR (UNIX AND APPLE))
             set(QT_LIBEXECS_DIR \"${QT_LIBEXECS_DIR}\")
             set(CMAKE_SYSTEM_LIBRARY_PATH \"${CMAKE_SYSTEM_LIBRARY_PATH}\")
             set(CMAKE_INSTALL_PREFIX \"${CMAKE_INSTALL_PREFIX}\")
-            "
-            COMPONENT bundle)
+            ")
 
         install(CODE [[
             file(GLOB QT_IMAGEFORMAT_DLLS "${QT_PLUGINS_DIR}/imageformats/*.dll")
@@ -1123,20 +1121,17 @@ if(WIN32 OR (UNIX AND APPLE))
                     FILES ${_lib}
                 )
             endforeach()
-        ]]
-        COMPONENT bundle)
+        ]])
     endif()
 
     # Add qt.conf - this makes Qt stop looking for things outside the bundle
     install(
         CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}/qt.conf\" \" \")"
-        COMPONENT bundle
     )
     # Add qtlogging.ini as a config file
     install(
         FILES "qtlogging.ini"
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}
-        COMPONENT bundle
     )
 endif()
 
