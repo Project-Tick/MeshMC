@@ -1015,6 +1015,13 @@ if(WIN32 OR (UNIX AND APPLE))
         if(NOT WINDEPLOYQT_EXECUTABLE)
             message(FATAL_ERROR "windeployqt not found")
         endif()
+
+        # For MSVC with vcpkg, debug DLLs live in a separate debug/bin/ directory.
+        if(MSVC)
+            get_filename_component(_vcpkg_prefix "${QT_LIBS_DIR}" DIRECTORY)
+            set(_vcpkg_bin_dir "${_vcpkg_prefix}/bin")
+            set(_vcpkg_debug_bin_dir "${_vcpkg_prefix}/debug/bin")
+        endif()
     endif()
 
     if(UNIX AND APPLE)
@@ -1047,6 +1054,8 @@ if(WIN32 OR (UNIX AND APPLE))
             ${CMAKE_SYSTEM_LIBRARY_PATH}
             ${QT_LIBS_DIR}
             ${QT_LIBEXECS_DIR}
+            ${_vcpkg_bin_dir}
+            ${_vcpkg_debug_bin_dir}
         PRE_EXCLUDE_REGEXES
             "^(api-ms-win|ext-ms)-.*\\.dll$"
             "^azure.*\\.dll$"
@@ -1059,28 +1068,13 @@ if(WIN32 OR (UNIX AND APPLE))
     )
 
     if(WIN32)
-        if(MSVC)
-            # vcpkg's x64-windows triplet places debug DLLs in debug/bin/ instead of bin/.
-            # windeployqt resolves DLLs relative to <qt_prefix>/bin/ and fails for Debug builds.
-            # Only needed for MSVC builds; MinGW uses MSYS2 packages, not vcpkg.
-            get_filename_component(_qt_prefix "${QT_LIBS_DIR}" DIRECTORY)
-            install(CODE "
-                set(_debug_bin \"${_qt_prefix}/debug/bin\")
-                set(_release_bin \"${_qt_prefix}/bin\")
-                if(IS_DIRECTORY \"\${_debug_bin}\")
-                    file(GLOB _debug_dlls \"\${_debug_bin}/*.dll\")
-                    foreach(_dll \${_debug_dlls})
-                        get_filename_component(_name \"\${_dll}\" NAME)
-                        if(NOT EXISTS \"\${_release_bin}/\${_name}\")
-                            file(COPY_FILE \"\${_dll}\" \"\${_release_bin}/\${_name}\")
-                        endif()
-                    endforeach()
-                endif()
-            "
-            COMPONENT bundle)
-        endif()
-        # Deploy Qt plugins and DLLs using windeployqt directly
+        # Deploy Qt plugins and DLLs using windeployqt.
+        # For MSVC/vcpkg, debug DLLs live in debug/bin/ — add to PATH so
+        # windeployqt can discover them.
         install(CODE "
+            if(EXISTS \"${_vcpkg_debug_bin_dir}\")
+                set(ENV{PATH} \"${_vcpkg_debug_bin_dir}\;${_vcpkg_bin_dir}\;\$ENV{PATH}\")
+            endif()
             execute_process(
                 COMMAND \"${WINDEPLOYQT_EXECUTABLE}\"
                     --no-opengl-sw
