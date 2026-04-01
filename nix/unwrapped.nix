@@ -73,6 +73,7 @@ stdenv.mkDerivation {
       ../REUSE.toml
       ../scripts
       ../shell.nix
+      ../updater
     ];
   };
 
