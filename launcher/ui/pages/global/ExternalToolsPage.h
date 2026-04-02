@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -43,55 +43,54 @@
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 
-namespace Ui {
-class ExternalToolsPage;
+namespace Ui
+{
+	class ExternalToolsPage;
 }
 
 class ExternalToolsPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ExternalToolsPage(QWidget *parent = 0);
-    ~ExternalToolsPage();
+  public:
+	explicit ExternalToolsPage(QWidget* parent = 0);
+	~ExternalToolsPage();
 
-    QString displayName() const override
-    {
-        return tr("External Tools");
-    }
-    QIcon icon() const override
-    {
-        auto icon = APPLICATION->getThemedIcon("externaltools");
-        if(icon.isNull())
-        {
-            icon = APPLICATION->getThemedIcon("loadermods");
-        }
-        return icon;
-    }
-    QString id() const override
-    {
-        return "external-tools";
-    }
-    QString helpPage() const override
-    {
-        return "Tools";
-    }
-    virtual bool apply() override;
+	QString displayName() const override
+	{
+		return tr("External Tools");
+	}
+	QIcon icon() const override
+	{
+		auto icon = APPLICATION->getThemedIcon("externaltools");
+		if (icon.isNull()) {
+			icon = APPLICATION->getThemedIcon("loadermods");
+		}
+		return icon;
+	}
+	QString id() const override
+	{
+		return "external-tools";
+	}
+	QString helpPage() const override
+	{
+		return "Tools";
+	}
+	virtual bool apply() override;
 
-private:
-    void loadSettings();
-    void applySettings();
+  private:
+	void loadSettings();
+	void applySettings();
 
-private:
-    Ui::ExternalToolsPage *ui;
+  private:
+	Ui::ExternalToolsPage* ui;
 
-private
-slots:
-    void on_jprofilerPathBtn_clicked();
-    void on_jprofilerCheckBtn_clicked();
-    void on_jvisualvmPathBtn_clicked();
-    void on_jvisualvmCheckBtn_clicked();
-    void on_mceditPathBtn_clicked();
-    void on_mceditCheckBtn_clicked();
-    void on_jsonEditorBrowseBtn_clicked();
+  private slots:
+	void on_jprofilerPathBtn_clicked();
+	void on_jprofilerCheckBtn_clicked();
+	void on_jvisualvmPathBtn_clicked();
+	void on_jvisualvmCheckBtn_clicked();
+	void on_mceditPathBtn_clicked();
+	void on_mceditCheckBtn_clicked();
+	void on_jsonEditorBrowseBtn_clicked();
 };

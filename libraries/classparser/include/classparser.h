@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -41,8 +41,9 @@
 
 namespace classparser
 {
-/**
- * @brief Get the version from a minecraft.jar by parsing its class files. Expensive!
- */
-QString GetMinecraftJarVersion(QString jar);
-}
+	/**
+	 * @brief Get the version from a minecraft.jar by parsing its class files.
+	 * Expensive!
+	 */
+	QString GetMinecraftJarVersion(QString jar);
+} // namespace classparser

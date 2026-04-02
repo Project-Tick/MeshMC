@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,7 +46,7 @@
 
 namespace Ui
 {
-class ServersPage;
+	class ServersPage;
 }
 
 struct Server;
@@ -55,63 +55,63 @@ class MinecraftInstance;
 
 class ServersPage : public QMainWindow, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ServersPage(InstancePtr inst, QWidget *parent = 0);
-    virtual ~ServersPage();
+  public:
+	explicit ServersPage(InstancePtr inst, QWidget* parent = 0);
+	virtual ~ServersPage();
 
-    void openedImpl() override;
-    void closedImpl() override;
+	void openedImpl() override;
+	void closedImpl() override;
 
-    virtual QString displayName() const override
-    {
-        return tr("Servers");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("unknown_server");
-    }
-    virtual QString id() const override
-    {
-        return "servers";
-    }
-    virtual QString helpPage() const override
-    {
-        return "Servers-management";
-    }
+	virtual QString displayName() const override
+	{
+		return tr("Servers");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("unknown_server");
+	}
+	virtual QString id() const override
+	{
+		return "servers";
+	}
+	virtual QString helpPage() const override
+	{
+		return "Servers-management";
+	}
 
-protected:
-    QMenu * createPopupMenu() override;
+  protected:
+	QMenu* createPopupMenu() override;
 
-private:
-    void updateState();
-    void scheduleSave();
-    bool saveIsScheduled() const;
+  private:
+	void updateState();
+	void scheduleSave();
+	bool saveIsScheduled() const;
 
-private slots:
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous);
-    void rowsRemoved(const QModelIndex &parent, int first, int last);
+  private slots:
+	void currentChanged(const QModelIndex& current,
+						const QModelIndex& previous);
+	void rowsRemoved(const QModelIndex& parent, int first, int last);
 
-    void on_actionAdd_triggered();
-    void on_actionRemove_triggered();
-    void on_actionMove_Up_triggered();
-    void on_actionMove_Down_triggered();
-    void on_actionJoin_triggered();
+	void on_actionAdd_triggered();
+	void on_actionRemove_triggered();
+	void on_actionMove_Up_triggered();
+	void on_actionMove_Down_triggered();
+	void on_actionJoin_triggered();
 
-    void on_RunningState_changed(bool running);
+	void on_RunningState_changed(bool running);
 
-    void nameEdited(const QString & name);
-    void addressEdited(const QString & address);
-    void resourceIndexChanged(int index);\
+	void nameEdited(const QString& name);
+	void addressEdited(const QString& address);
+	void resourceIndexChanged(int index);
 
-    void ShowContextMenu(const QPoint &pos);
+	void ShowContextMenu(const QPoint& pos);
 
-private: // data
-    int currentServer = -1;
-    bool m_locked = true;
-    Ui::ServersPage *ui = nullptr;
-    ServersModel * m_model = nullptr;
-    InstancePtr m_inst = nullptr;
+  private: // data
+	int currentServer = -1;
+	bool m_locked = true;
+	Ui::ServersPage* ui = nullptr;
+	ServersModel* m_model = nullptr;
+	InstancePtr m_inst = nullptr;
 };
-

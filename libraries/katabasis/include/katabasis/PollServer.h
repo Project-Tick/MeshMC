@@ -30,40 +30,44 @@
 
 class QNetworkAccessManager;
 
-namespace Katabasis {
-
-/// Poll an authorization server for token
-class PollServer : public QObject
+namespace Katabasis
 {
-    Q_OBJECT
 
-public:
-    explicit PollServer(QNetworkAccessManager * manager, const QNetworkRequest &request, const QByteArray & payload, int expiresIn, QObject *parent = 0);
+	/// Poll an authorization server for token
+	class PollServer : public QObject
+	{
+		Q_OBJECT
 
-    /// Seconds to wait between polling requests
-    Q_PROPERTY(int interval READ interval WRITE setInterval)
-    int interval() const;
-    void setInterval(int interval);
+	  public:
+		explicit PollServer(QNetworkAccessManager* manager,
+							const QNetworkRequest& request,
+							const QByteArray& payload, int expiresIn,
+							QObject* parent = 0);
 
-signals:
-    void verificationReceived(QMap<QString, QString>);
-    void serverClosed(bool); // whether it has found parameters
+		/// Seconds to wait between polling requests
+		Q_PROPERTY(int interval READ interval WRITE setInterval)
+		int interval() const;
+		void setInterval(int interval);
 
-public slots:
-    void startPolling();
+	  signals:
+		void verificationReceived(QMap<QString, QString>);
+		void serverClosed(bool); // whether it has found parameters
 
-protected slots:
-    void onPollTimeout();
-    void onExpiration();
-    void onReplyFinished();
+	  public slots:
+		void startPolling();
 
-protected:
-    QNetworkAccessManager *manager_;
-    const QNetworkRequest request_;
-    const QByteArray payload_;
-    const int expiresIn_;
-    QTimer expirationTimer;
-    QTimer pollTimer;
-};
+	  protected slots:
+		void onPollTimeout();
+		void onExpiration();
+		void onReplyFinished();
 
-}
+	  protected:
+		QNetworkAccessManager* manager_;
+		const QNetworkRequest request_;
+		const QByteArray payload_;
+		const int expiresIn_;
+		QTimer expirationTimer;
+		QTimer pollTimer;
+	};
+
+} // namespace Katabasis

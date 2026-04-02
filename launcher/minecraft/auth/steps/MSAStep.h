@@ -28,29 +28,28 @@
 #include <QOAuth2AuthorizationCodeFlow>
 #include <QOAuthHttpServerReplyHandler>
 
-class MSAStep : public AuthStep {
-    Q_OBJECT
-public:
-    enum Action {
-        Refresh,
-        Login
-    };
-public:
-    explicit MSAStep(AccountData *data, Action action);
-    virtual ~MSAStep() noexcept;
+class MSAStep : public AuthStep
+{
+	Q_OBJECT
+  public:
+	enum Action { Refresh, Login };
 
-    void perform() override;
-    void rehydrate() override;
+  public:
+	explicit MSAStep(AccountData* data, Action action);
+	virtual ~MSAStep() noexcept;
 
-    QString describe() override;
+	void perform() override;
+	void rehydrate() override;
 
-private slots:
-    void onGranted();
-    void onRequestFailed(QAbstractOAuth::Error error);
-    void onOpenBrowser(const QUrl &url);
+	QString describe() override;
 
-private:
-    QOAuth2AuthorizationCodeFlow *m_oauth2 = nullptr;
-    QOAuthHttpServerReplyHandler *m_replyHandler = nullptr;
-    Action m_action;
+  private slots:
+	void onGranted();
+	void onRequestFailed(QAbstractOAuth::Error error);
+	void onOpenBrowser(const QUrl& url);
+
+  private:
+	QOAuth2AuthorizationCodeFlow* m_oauth2 = nullptr;
+	QOAuthHttpServerReplyHandler* m_replyHandler = nullptr;
+	Action m_action;
 };

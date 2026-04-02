@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,29 +44,30 @@
 
 #include "minecraft/launch/MinecraftServerTarget.h"
 
-class LookupServerAddress: public LaunchStep {
-Q_OBJECT
-public:
-    explicit LookupServerAddress(LaunchTask *parent);
-    virtual ~LookupServerAddress() {};
+class LookupServerAddress : public LaunchStep
+{
+	Q_OBJECT
+  public:
+	explicit LookupServerAddress(LaunchTask* parent);
+	virtual ~LookupServerAddress() {};
 
-    virtual void executeTask();
-    virtual bool abort();
-    virtual bool canAbort() const
-    {
-        return true;
-    }
+	virtual void executeTask();
+	virtual bool abort();
+	virtual bool canAbort() const
+	{
+		return true;
+	}
 
-    void setLookupAddress(const QString &lookupAddress);
-    void setOutputAddressPtr(MinecraftServerTargetPtr output);
+	void setLookupAddress(const QString& lookupAddress);
+	void setOutputAddressPtr(MinecraftServerTargetPtr output);
 
-private slots:
-    void on_dnsLookupFinished();
+  private slots:
+	void on_dnsLookupFinished();
 
-private:
-    void resolve(const QString &address, quint16 port);
+  private:
+	void resolve(const QString& address, quint16 port);
 
-    QDnsLookup *m_dnsLookup;
-    QString m_lookupAddress;
-    MinecraftServerTargetPtr m_output;
+	QDnsLookup* m_dnsLookup;
+	QString m_lookupAddress;
+	MinecraftServerTargetPtr m_output;
 };

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,56 +44,58 @@
 #include "net/NetJob.h"
 #include <QIcon>
 
-namespace Ftb {
-
-struct Logo {
-    QString fullpath;
-    NetJob::Ptr downloadJob;
-    QIcon result;
-    bool failed = false;
-};
-
-typedef QMap<QString, Logo> LogoMap;
-typedef std::function<void(QString)> LogoCallback;
-
-class ListModel : public QAbstractListModel
+namespace Ftb
 {
-    Q_OBJECT
 
-public:
-    ListModel(QObject *parent);
-    virtual ~ListModel();
+	struct Logo {
+		QString fullpath;
+		NetJob::Ptr downloadJob;
+		QIcon result;
+		bool failed = false;
+	};
 
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+	typedef QMap<QString, Logo> LogoMap;
+	typedef std::function<void(QString)> LogoCallback;
 
-    void request();
+	class ListModel : public QAbstractListModel
+	{
+		Q_OBJECT
 
-    void getLogo(const QString &logo, const QString &logoUrl, LogoCallback callback);
+	  public:
+		ListModel(QObject* parent);
+		virtual ~ListModel();
 
-private slots:
-    void requestFinished();
-    void requestFailed(QString reason);
+		int rowCount(const QModelIndex& parent) const override;
+		int columnCount(const QModelIndex& parent) const override;
+		QVariant data(const QModelIndex& index, int role) const override;
 
-    void requestPack();
-    void packRequestFinished();
-    void packRequestFailed(QString reason);
+		void request();
 
-    void logoFailed(QString logo);
-    void logoLoaded(QString logo, bool stale);
+		void getLogo(const QString& logo, const QString& logoUrl,
+					 LogoCallback callback);
 
-private:
-    void requestLogo(QString file, QString url);
+	  private slots:
+		void requestFinished();
+		void requestFailed(QString reason);
 
-private:
-    QList<ModpacksCH::Modpack> modpacks;
-    LogoMap m_logoMap;
+		void requestPack();
+		void packRequestFinished();
+		void packRequestFailed(QString reason);
 
-    NetJob::Ptr jobPtr;
-    int currentPack;
-    QList<int> remainingPacks;
-    QByteArray response;
-};
+		void logoFailed(QString logo);
+		void logoLoaded(QString logo, bool stale);
 
-}
+	  private:
+		void requestLogo(QString file, QString url);
+
+	  private:
+		QList<ModpacksCH::Modpack> modpacks;
+		LogoMap m_logoMap;
+
+		NetJob::Ptr jobPtr;
+		int currentPack;
+		QList<int> remainingPacks;
+		QByteArray response;
+	};
+
+} // namespace Ftb

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -51,29 +51,28 @@ class MinecraftInstance;
 
 class MinecraftUpdate : public Task
 {
-    Q_OBJECT
-public:
-    explicit MinecraftUpdate(MinecraftInstance *inst, QObject *parent = 0);
-    virtual ~MinecraftUpdate() {};
+	Q_OBJECT
+  public:
+	explicit MinecraftUpdate(MinecraftInstance* inst, QObject* parent = 0);
+	virtual ~MinecraftUpdate() {};
 
-    void executeTask() override;
-    bool canAbort() const override;
+	void executeTask() override;
+	bool canAbort() const override;
 
-private
-slots:
-    bool abort() override;
-    void subtaskSucceeded();
-    void subtaskFailed(QString error);
+  private slots:
+	bool abort() override;
+	void subtaskSucceeded();
+	void subtaskFailed(QString error);
 
-private:
-    void next();
+  private:
+	void next();
 
-private:
-    MinecraftInstance *m_inst = nullptr;
-    QList<std::shared_ptr<Task>> m_tasks;
-    QString m_preFailure;
-    int m_currentTask = -1;
-    bool m_abort = false;
-    bool m_failed_out_of_order = false;
-    QString m_fail_reason;
+  private:
+	MinecraftInstance* m_inst = nullptr;
+	QList<std::shared_ptr<Task>> m_tasks;
+	QString m_preFailure;
+	int m_currentTask = -1;
+	bool m_abort = false;
+	bool m_failed_out_of_order = false;
+	QString m_fail_reason;
 };

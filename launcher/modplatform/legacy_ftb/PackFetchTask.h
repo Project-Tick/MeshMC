@@ -27,40 +27,44 @@
 #include <QObject>
 #include "PackHelpers.h"
 
-namespace LegacyFTB {
+namespace LegacyFTB
+{
 
-class PackFetchTask : public QObject {
+	class PackFetchTask : public QObject
+	{
 
-    Q_OBJECT
+		Q_OBJECT
 
-public:
-    PackFetchTask(shared_qobject_ptr<QNetworkAccessManager> network) : QObject(nullptr), m_network(network) {};
-    virtual ~PackFetchTask() = default;
+	  public:
+		PackFetchTask(shared_qobject_ptr<QNetworkAccessManager> network)
+			: QObject(nullptr), m_network(network) {};
+		virtual ~PackFetchTask() = default;
 
-    void fetch();
-    void fetchPrivate(const QStringList &toFetch);
+		void fetch();
+		void fetchPrivate(const QStringList& toFetch);
 
-private:
-    shared_qobject_ptr<QNetworkAccessManager> m_network;
-    NetJob::Ptr jobPtr;
+	  private:
+		shared_qobject_ptr<QNetworkAccessManager> m_network;
+		NetJob::Ptr jobPtr;
 
-    QByteArray publicModpacksXmlFileData;
-    QByteArray thirdPartyModpacksXmlFileData;
+		QByteArray publicModpacksXmlFileData;
+		QByteArray thirdPartyModpacksXmlFileData;
 
-    bool parseAndAddPacks(QByteArray &data, PackType packType, ModpackList &list);
-    ModpackList publicPacks;
-    ModpackList thirdPartyPacks;
+		bool parseAndAddPacks(QByteArray& data, PackType packType,
+							  ModpackList& list);
+		ModpackList publicPacks;
+		ModpackList thirdPartyPacks;
 
-protected slots:
-    void fileDownloadFinished();
-    void fileDownloadFailed(QString reason);
+	  protected slots:
+		void fileDownloadFinished();
+		void fileDownloadFailed(QString reason);
 
-signals:
-    void finished(ModpackList publicPacks, ModpackList thirdPartyPacks);
-    void failed(QString reason);
+	  signals:
+		void finished(ModpackList publicPacks, ModpackList thirdPartyPacks);
+		void failed(QString reason);
 
-    void privateFileDownloadFinished(Modpack modpack);
-    void privateFileDownloadFailed(QString reason, QString packCode);
-};
+		void privateFileDownloadFinished(Modpack modpack);
+		void privateFileDownloadFailed(QString reason, QString packCode);
+	};
 
-}
+} // namespace LegacyFTB

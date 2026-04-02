@@ -50,49 +50,49 @@
 
 namespace Flame
 {
-    class FileResolvingTask;
-    struct Manifest;
-}
+	class FileResolvingTask;
+	struct Manifest;
+} // namespace Flame
 
 class InstanceImportTask : public InstanceTask
 {
-    Q_OBJECT
-public:
-    explicit InstanceImportTask(const QUrl sourceUrl);
+	Q_OBJECT
+  public:
+	explicit InstanceImportTask(const QUrl sourceUrl);
 
-protected:
-    //! Entry point for tasks.
-    virtual void executeTask() override;
+  protected:
+	//! Entry point for tasks.
+	virtual void executeTask() override;
 
-private:
-    void processZipPack();
-    void processMeshMC();
-    void processFlame();
-    void configureFlameInstance(Flame::Manifest &pack);
-    void onFlameFileResolutionSucceeded();
-    void processModrinth();
-    void processTechnic();
+  private:
+	void processZipPack();
+	void processMeshMC();
+	void processFlame();
+	void configureFlameInstance(Flame::Manifest& pack);
+	void onFlameFileResolutionSucceeded();
+	void processModrinth();
+	void processTechnic();
 
-private slots:
-    void downloadSucceeded();
-    void downloadFailed(QString reason);
-    void downloadProgressChanged(qint64 current, qint64 total);
-    void extractFinished();
-    void extractAborted();
+  private slots:
+	void downloadSucceeded();
+	void downloadFailed(QString reason);
+	void downloadProgressChanged(qint64 current, qint64 total);
+	void extractFinished();
+	void extractAborted();
 
-private: /* data */
-    NetJob::Ptr m_filesNetJob;
-    shared_qobject_ptr<Flame::FileResolvingTask> m_modIdResolver;
-    QUrl m_sourceUrl;
-    QString m_archivePath;
-    bool m_downloadRequired = false;
-    QFuture<nonstd::optional<QStringList>> m_extractFuture;
-    QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
-    enum class ModpackType{
-        Unknown,
-        MeshMC,
-        Flame,
-        Modrinth,
-        Technic
-    } m_modpackType = ModpackType::Unknown;
+  private: /* data */
+	NetJob::Ptr m_filesNetJob;
+	shared_qobject_ptr<Flame::FileResolvingTask> m_modIdResolver;
+	QUrl m_sourceUrl;
+	QString m_archivePath;
+	bool m_downloadRequired = false;
+	QFuture<nonstd::optional<QStringList>> m_extractFuture;
+	QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
+	enum class ModpackType {
+		Unknown,
+		MeshMC,
+		Flame,
+		Modrinth,
+		Technic
+	} m_modpackType = ModpackType::Unknown;
 };

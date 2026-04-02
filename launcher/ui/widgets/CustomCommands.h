@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -42,25 +42,24 @@
 
 namespace Ui
 {
-class CustomCommands;
+	class CustomCommands;
 }
 
 class CustomCommands : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit CustomCommands(QWidget *parent = 0);
-    virtual ~CustomCommands();
-    void initialize(bool checkable, bool checked, const QString & prelaunch, const QString & wrapper, const QString & postexit);
+  public:
+	explicit CustomCommands(QWidget* parent = 0);
+	virtual ~CustomCommands();
+	void initialize(bool checkable, bool checked, const QString& prelaunch,
+					const QString& wrapper, const QString& postexit);
 
-    bool checked() const;
-    QString prelaunchCommand() const;
-    QString wrapperCommand() const;
-    QString postexitCommand() const;
+	bool checked() const;
+	QString prelaunchCommand() const;
+	QString wrapperCommand() const;
+	QString postexitCommand() const;
 
-private:
-    Ui::CustomCommands *ui;
+  private:
+	Ui::CustomCommands* ui;
 };
-
-

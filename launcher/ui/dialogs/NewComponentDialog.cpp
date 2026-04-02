@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -57,74 +57,73 @@
 #include <meta/Index.h>
 #include <meta/VersionList.h>
 
-NewComponentDialog::NewComponentDialog(const QString & initialName, const QString & initialUid, QWidget *parent)
-    : QDialog(parent), ui(new Ui::NewComponentDialog)
+NewComponentDialog::NewComponentDialog(const QString& initialName,
+									   const QString& initialUid,
+									   QWidget* parent)
+	: QDialog(parent), ui(new Ui::NewComponentDialog)
 {
-    ui->setupUi(this);
-    resize(minimumSizeHint());
+	ui->setupUi(this);
+	resize(minimumSizeHint());
 
-    ui->nameTextBox->setText(initialName);
-    ui->uidTextBox->setText(initialUid);
+	ui->nameTextBox->setText(initialName);
+	ui->uidTextBox->setText(initialUid);
 
-    connect(ui->nameTextBox, &QLineEdit::textChanged, this, &NewComponentDialog::updateDialogState);
-    connect(ui->uidTextBox, &QLineEdit::textChanged, this, &NewComponentDialog::updateDialogState);
+	connect(ui->nameTextBox, &QLineEdit::textChanged, this,
+			&NewComponentDialog::updateDialogState);
+	connect(ui->uidTextBox, &QLineEdit::textChanged, this,
+			&NewComponentDialog::updateDialogState);
 
-    auto groups = APPLICATION->instances()->getGroups();
-    groups.removeDuplicates();
-    ui->nameTextBox->setFocus();
+	auto groups = APPLICATION->instances()->getGroups();
+	groups.removeDuplicates();
+	ui->nameTextBox->setFocus();
 
-    originalPlaceholderText = ui->uidTextBox->placeholderText();
-    updateDialogState();
+	originalPlaceholderText = ui->uidTextBox->placeholderText();
+	updateDialogState();
 }
 
 NewComponentDialog::~NewComponentDialog()
 {
-    delete ui;
+	delete ui;
 }
 
 void NewComponentDialog::updateDialogState()
 {
-    auto protoUid = ui->nameTextBox->text().toLower();
-    protoUid.remove(QRegularExpression("[^a-z]"));
-    if(protoUid.isEmpty())
-    {
-        ui->uidTextBox->setPlaceholderText(originalPlaceholderText);
-    }
-    else
-    {
-        QString suggestedUid = "org.projecttick.custom." + protoUid;
-        ui->uidTextBox->setPlaceholderText(suggestedUid);
-    }
-    bool allowOK = !name().isEmpty() && !uid().isEmpty() && !uidBlacklist.contains(uid());
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(allowOK);
+	auto protoUid = ui->nameTextBox->text().toLower();
+	protoUid.remove(QRegularExpression("[^a-z]"));
+	if (protoUid.isEmpty()) {
+		ui->uidTextBox->setPlaceholderText(originalPlaceholderText);
+	} else {
+		QString suggestedUid = "org.projecttick.custom." + protoUid;
+		ui->uidTextBox->setPlaceholderText(suggestedUid);
+	}
+	bool allowOK =
+		!name().isEmpty() && !uid().isEmpty() && !uidBlacklist.contains(uid());
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(allowOK);
 }
 
 QString NewComponentDialog::name() const
 {
-    auto result = ui->nameTextBox->text();
-    if(result.size())
-    {
-        return result.trimmed();
-    }
-    return QString();
+	auto result = ui->nameTextBox->text();
+	if (result.size()) {
+		return result.trimmed();
+	}
+	return QString();
 }
 
 QString NewComponentDialog::uid() const
 {
-    auto result = ui->uidTextBox->text();
-    if(result.size())
-    {
-        return result.trimmed();
-    }
-    result = ui->uidTextBox->placeholderText();
-    if(result.size() && result != originalPlaceholderText)
-    {
-        return result.trimmed();
-    }
-    return QString();
+	auto result = ui->uidTextBox->text();
+	if (result.size()) {
+		return result.trimmed();
+	}
+	result = ui->uidTextBox->placeholderText();
+	if (result.size() && result != originalPlaceholderText) {
+		return result.trimmed();
+	}
+	return QString();
 }
 
 void NewComponentDialog::setBlacklist(QStringList badUids)
 {
-    uidBlacklist = badUids;
+	uidBlacklist = badUids;
 }

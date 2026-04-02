@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -48,30 +48,30 @@ typedef std::shared_ptr<BaseInstance> InstancePtr;
 
 namespace Ui
 {
-class ExportInstanceDialog;
+	class ExportInstanceDialog;
 }
 
 class ExportInstanceDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ExportInstanceDialog(InstancePtr instance, QWidget *parent = 0);
-    ~ExportInstanceDialog();
+  public:
+	explicit ExportInstanceDialog(InstancePtr instance, QWidget* parent = 0);
+	~ExportInstanceDialog();
 
-    virtual void done(int result);
+	virtual void done(int result);
 
-private:
-    bool doExport();
-    void loadPackIgnore();
-    void savePackIgnore();
-    QString ignoreFileName();
+  private:
+	bool doExport();
+	void loadPackIgnore();
+	void savePackIgnore();
+	QString ignoreFileName();
 
-private:
-    Ui::ExportInstanceDialog *ui;
-    InstancePtr m_instance;
-    PackIgnoreProxy * proxyModel;
+  private:
+	Ui::ExportInstanceDialog* ui;
+	InstancePtr m_instance;
+	PackIgnoreProxy* proxyModel;
 
-private slots:
-    void rowsInserted(QModelIndex parent, int top, int bottom);
+  private slots:
+	void rowsInserted(QModelIndex parent, int top, int bottom);
 };

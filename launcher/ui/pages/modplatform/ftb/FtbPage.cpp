@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,143 +47,147 @@
 
 #include "HoeDown.h"
 
-FtbPage::FtbPage(NewInstanceDialog* dialog, QWidget *parent)
-        : QWidget(parent), ui(new Ui::FtbPage), dialog(dialog)
+FtbPage::FtbPage(NewInstanceDialog* dialog, QWidget* parent)
+	: QWidget(parent), ui(new Ui::FtbPage), dialog(dialog)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    filterModel = new Ftb::FilterModel(this);
-    listModel = new Ftb::ListModel(this);
-    filterModel->setSourceModel(listModel);
-    ui->packView->setModel(filterModel);
-    ui->packView->setSortingEnabled(true);
-    ui->packView->header()->hide();
-    ui->packView->setIndentation(0);
+	filterModel = new Ftb::FilterModel(this);
+	listModel = new Ftb::ListModel(this);
+	filterModel->setSourceModel(listModel);
+	ui->packView->setModel(filterModel);
+	ui->packView->setSortingEnabled(true);
+	ui->packView->header()->hide();
+	ui->packView->setIndentation(0);
 
-    ui->searchEdit->installEventFilter(this);
+	ui->searchEdit->installEventFilter(this);
 
-    ui->versionSelectionBox->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    ui->versionSelectionBox->view()->parentWidget()->setMaximumHeight(300);
+	ui->versionSelectionBox->view()->setVerticalScrollBarPolicy(
+		Qt::ScrollBarAsNeeded);
+	ui->versionSelectionBox->view()->parentWidget()->setMaximumHeight(300);
 
-    for(int i = 0; i < filterModel->getAvailableSortings().size(); i++)
-    {
-        ui->sortByBox->addItem(filterModel->getAvailableSortings().keys().at(i));
-    }
-    ui->sortByBox->setCurrentText(filterModel->translateCurrentSorting());
+	for (int i = 0; i < filterModel->getAvailableSortings().size(); i++) {
+		ui->sortByBox->addItem(
+			filterModel->getAvailableSortings().keys().at(i));
+	}
+	ui->sortByBox->setCurrentText(filterModel->translateCurrentSorting());
 
-    connect(ui->searchEdit, &QLineEdit::textChanged, this, &FtbPage::triggerSearch);
-    connect(ui->sortByBox, &QComboBox::currentTextChanged, this, &FtbPage::onSortingSelectionChanged);
-    connect(ui->packView->selectionModel(), &QItemSelectionModel::currentChanged, this, &FtbPage::onSelectionChanged);
-    connect(ui->versionSelectionBox, &QComboBox::currentTextChanged, this, &FtbPage::onVersionSelectionChanged);
+	connect(ui->searchEdit, &QLineEdit::textChanged, this,
+			&FtbPage::triggerSearch);
+	connect(ui->sortByBox, &QComboBox::currentTextChanged, this,
+			&FtbPage::onSortingSelectionChanged);
+	connect(ui->packView->selectionModel(),
+			&QItemSelectionModel::currentChanged, this,
+			&FtbPage::onSelectionChanged);
+	connect(ui->versionSelectionBox, &QComboBox::currentTextChanged, this,
+			&FtbPage::onVersionSelectionChanged);
 }
 
 FtbPage::~FtbPage()
 {
-    delete ui;
+	delete ui;
 }
 
 bool FtbPage::eventFilter(QObject* watched, QEvent* event)
 {
-    if (watched == ui->searchEdit && event->type() == QEvent::KeyPress) {
-        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-        if (keyEvent->key() == Qt::Key_Return) {
-            triggerSearch();
-            keyEvent->accept();
-            return true;
-        }
-    }
-    return QWidget::eventFilter(watched, event);
+	if (watched == ui->searchEdit && event->type() == QEvent::KeyPress) {
+		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+		if (keyEvent->key() == Qt::Key_Return) {
+			triggerSearch();
+			keyEvent->accept();
+			return true;
+		}
+	}
+	return QWidget::eventFilter(watched, event);
 }
 
 bool FtbPage::shouldDisplay() const
 {
-    return true;
+	return true;
 }
 
 void FtbPage::openedImpl()
 {
-    if(!initialised)
-    {
-        listModel->request();
-        initialised = true;
-    }
+	if (!initialised) {
+		listModel->request();
+		initialised = true;
+	}
 
-    suggestCurrent();
+	suggestCurrent();
 }
 
 void FtbPage::suggestCurrent()
 {
-    if(!isOpened)
-    {
-        return;
-    }
+	if (!isOpened) {
+		return;
+	}
 
-    if (selectedVersion.isEmpty())
-    {
-        dialog->setSuggestedPack();
-        return;
-    }
+	if (selectedVersion.isEmpty()) {
+		dialog->setSuggestedPack();
+		return;
+	}
 
-    dialog->setSuggestedPack(selected.name + " " + selectedVersion, new ModpacksCH::PackInstallTask(selected, selectedVersion));
-    for(auto art : selected.art) {
-        if(art.type == "square") {
-            QString editedLogoName;
-            editedLogoName = selected.name;
+	dialog->setSuggestedPack(
+		selected.name + " " + selectedVersion,
+		new ModpacksCH::PackInstallTask(selected, selectedVersion));
+	for (auto art : selected.art) {
+		if (art.type == "square") {
+			QString editedLogoName;
+			editedLogoName = selected.name;
 
-            listModel->getLogo(selected.name, art.url, [this, editedLogoName](QString logo)
-            {
-                dialog->setSuggestedIconFromFile(logo + ".small", editedLogoName);
-            });
-        }
-    }
+			listModel->getLogo(selected.name, art.url,
+							   [this, editedLogoName](QString logo) {
+								   dialog->setSuggestedIconFromFile(
+									   logo + ".small", editedLogoName);
+							   });
+		}
+	}
 }
 
 void FtbPage::triggerSearch()
 {
-    filterModel->setSearchTerm(ui->searchEdit->text());
+	filterModel->setSearchTerm(ui->searchEdit->text());
 }
 
 void FtbPage::onSortingSelectionChanged(QString data)
 {
-    auto toSet = filterModel->getAvailableSortings().value(data);
-    filterModel->setSorting(toSet);
+	auto toSet = filterModel->getAvailableSortings().value(data);
+	filterModel->setSorting(toSet);
 }
 
 void FtbPage::onSelectionChanged(QModelIndex first, QModelIndex second)
 {
-    ui->versionSelectionBox->clear();
+	ui->versionSelectionBox->clear();
 
-    if(!first.isValid())
-    {
-        if(isOpened)
-        {
-            dialog->setSuggestedPack();
-        }
-        return;
-    }
+	if (!first.isValid()) {
+		if (isOpened) {
+			dialog->setSuggestedPack();
+		}
+		return;
+	}
 
-    selected = filterModel->data(first, Qt::UserRole).value<ModpacksCH::Modpack>();
+	selected =
+		filterModel->data(first, Qt::UserRole).value<ModpacksCH::Modpack>();
 
-    HoeDown hoedown;
-    QString output = hoedown.process(selected.description.toUtf8());
-    ui->packDescription->setHtml(output);
+	HoeDown hoedown;
+	QString output = hoedown.process(selected.description.toUtf8());
+	ui->packDescription->setHtml(output);
 
-    // reverse foreach, so that the newest versions are first
-    for (auto i = selected.versions.size(); i--;) {
-        ui->versionSelectionBox->addItem(selected.versions.at(i).name);
-    }
+	// reverse foreach, so that the newest versions are first
+	for (auto i = selected.versions.size(); i--;) {
+		ui->versionSelectionBox->addItem(selected.versions.at(i).name);
+	}
 
-    suggestCurrent();
+	suggestCurrent();
 }
 
 void FtbPage::onVersionSelectionChanged(QString data)
 {
-    if(data.isNull() || data.isEmpty())
-    {
-        selectedVersion = "";
-        return;
-    }
+	if (data.isNull() || data.isEmpty()) {
+		selectedVersion = "";
+		return;
+	}
 
-    selectedVersion = data;
-    suggestCurrent();
+	selectedVersion = data;
+	suggestCurrent();
 }

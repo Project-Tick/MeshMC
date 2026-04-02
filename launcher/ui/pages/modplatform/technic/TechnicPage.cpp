@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -50,175 +50,179 @@
 
 #include "Application.h"
 
-TechnicPage::TechnicPage(NewInstanceDialog* dialog, QWidget *parent)
-    : QWidget(parent), ui(new Ui::TechnicPage), dialog(dialog)
+TechnicPage::TechnicPage(NewInstanceDialog* dialog, QWidget* parent)
+	: QWidget(parent), ui(new Ui::TechnicPage), dialog(dialog)
 {
-    ui->setupUi(this);
-    connect(ui->searchButton, &QPushButton::clicked, this, &TechnicPage::triggerSearch);
-    ui->searchEdit->installEventFilter(this);
-    model = new Technic::ListModel(this);
-    ui->packView->setModel(model);
-    connect(ui->packView->selectionModel(), &QItemSelectionModel::currentChanged, this, &TechnicPage::onSelectionChanged);
+	ui->setupUi(this);
+	connect(ui->searchButton, &QPushButton::clicked, this,
+			&TechnicPage::triggerSearch);
+	ui->searchEdit->installEventFilter(this);
+	model = new Technic::ListModel(this);
+	ui->packView->setModel(model);
+	connect(ui->packView->selectionModel(),
+			&QItemSelectionModel::currentChanged, this,
+			&TechnicPage::onSelectionChanged);
 }
 
 bool TechnicPage::eventFilter(QObject* watched, QEvent* event)
 {
-    if (watched == ui->searchEdit && event->type() == QEvent::KeyPress) {
-        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-        if (keyEvent->key() == Qt::Key_Return) {
-            triggerSearch();
-            keyEvent->accept();
-            return true;
-        }
-    }
-    return QWidget::eventFilter(watched, event);
+	if (watched == ui->searchEdit && event->type() == QEvent::KeyPress) {
+		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+		if (keyEvent->key() == Qt::Key_Return) {
+			triggerSearch();
+			keyEvent->accept();
+			return true;
+		}
+	}
+	return QWidget::eventFilter(watched, event);
 }
 
 TechnicPage::~TechnicPage()
 {
-    delete ui;
+	delete ui;
 }
 
 bool TechnicPage::shouldDisplay() const
 {
-    return true;
+	return true;
 }
 
 void TechnicPage::openedImpl()
 {
-    suggestCurrent();
-    triggerSearch();
+	suggestCurrent();
+	triggerSearch();
 }
 
-void TechnicPage::triggerSearch() {
-    model->searchWithTerm(ui->searchEdit->text());
+void TechnicPage::triggerSearch()
+{
+	model->searchWithTerm(ui->searchEdit->text());
 }
 
 void TechnicPage::onSelectionChanged(QModelIndex first, QModelIndex second)
 {
-    if(!first.isValid())
-    {
-        if(isOpened)
-        {
-            dialog->setSuggestedPack();
-        }
-        //ui->frame->clear();
-        return;
-    }
+	if (!first.isValid()) {
+		if (isOpened) {
+			dialog->setSuggestedPack();
+		}
+		// ui->frame->clear();
+		return;
+	}
 
-    current = model->data(first, Qt::UserRole).value<Technic::Modpack>();
-    suggestCurrent();
+	current = model->data(first, Qt::UserRole).value<Technic::Modpack>();
+	suggestCurrent();
 }
 
 void TechnicPage::suggestCurrent()
 {
-    if (!isOpened)
-    {
-        return;
-    }
-    if (current.broken)
-    {
-        dialog->setSuggestedPack();
-        return;
-    }
+	if (!isOpened) {
+		return;
+	}
+	if (current.broken) {
+		dialog->setSuggestedPack();
+		return;
+	}
 
-    QString editedLogoName = "technic_" + current.logoName.section(".", 0, 0);
-    model->getLogo(current.logoName, current.logoUrl, [this, editedLogoName](QString logo)
-    {
-        dialog->setSuggestedIconFromFile(logo, editedLogoName);
-    });
+	QString editedLogoName = "technic_" + current.logoName.section(".", 0, 0);
+	model->getLogo(current.logoName, current.logoUrl,
+				   [this, editedLogoName](QString logo) {
+					   dialog->setSuggestedIconFromFile(logo, editedLogoName);
+				   });
 
-    if (current.metadataLoaded)
-    {
-        metadataLoaded();
-        return;
-    }
+	if (current.metadataLoaded) {
+		metadataLoaded();
+		return;
+	}
 
-    NetJob *netJob = new NetJob(QString("Technic::PackMeta(%1)").arg(current.name), APPLICATION->network());
-    std::shared_ptr<QByteArray> response = std::make_shared<QByteArray>();
-    QString slug = current.slug;
-    netJob->addNetAction(Net::Download::makeByteArray(QString("https://api.technicpack.net/modpack/%1?build=meshmc").arg(slug), response.get()));
-    QObject::connect(netJob, &NetJob::succeeded, this, [this, response, slug]
-    {
-        if (current.slug != slug)
-        {
-            return;
-        }
-        QJsonParseError parse_error;
-        QJsonDocument doc = QJsonDocument::fromJson(*response, &parse_error);
-        QJsonObject obj = doc.object();
-        if(parse_error.error != QJsonParseError::NoError)
-        {
-            qWarning() << "Error while parsing JSON response from Technic at " << parse_error.offset << " reason: " << parse_error.errorString();
-            qWarning() << *response;
-            return;
-        }
-        if (!obj.contains("url"))
-        {
-            qWarning() << "Json doesn't contain an url key";
-            return;
-        }
-        QJsonValueRef url = obj["url"];
-        if (url.isString())
-        {
-            current.url = url.toString();
-        }
-        else
-        {
-            if (!obj.contains("solder"))
-            {
-                qWarning() << "Json doesn't contain a valid url or solder key";
-                return;
-            }
-            QJsonValueRef solderUrl = obj["solder"];
-            if (solderUrl.isString())
-            {
-                current.url = solderUrl.toString();
-                current.isSolder = true;
-            }
-            else
-            {
-                qWarning() << "Json doesn't contain a valid url or solder key";
-                return;
-            }
-        }
+	NetJob* netJob =
+		new NetJob(QString("Technic::PackMeta(%1)").arg(current.name),
+				   APPLICATION->network());
+	std::shared_ptr<QByteArray> response = std::make_shared<QByteArray>();
+	QString slug = current.slug;
+	netJob->addNetAction(Net::Download::makeByteArray(
+		QString("https://api.technicpack.net/modpack/%1?build=meshmc")
+			.arg(slug),
+		response.get()));
+	QObject::connect(netJob, &NetJob::succeeded, this, [this, response, slug] {
+		if (current.slug != slug) {
+			return;
+		}
+		QJsonParseError parse_error;
+		QJsonDocument doc = QJsonDocument::fromJson(*response, &parse_error);
+		QJsonObject obj = doc.object();
+		if (parse_error.error != QJsonParseError::NoError) {
+			qWarning() << "Error while parsing JSON response from Technic at "
+					   << parse_error.offset
+					   << " reason: " << parse_error.errorString();
+			qWarning() << *response;
+			return;
+		}
+		if (!obj.contains("url")) {
+			qWarning() << "Json doesn't contain an url key";
+			return;
+		}
+		QJsonValueRef url = obj["url"];
+		if (url.isString()) {
+			current.url = url.toString();
+		} else {
+			if (!obj.contains("solder")) {
+				qWarning() << "Json doesn't contain a valid url or solder key";
+				return;
+			}
+			QJsonValueRef solderUrl = obj["solder"];
+			if (solderUrl.isString()) {
+				current.url = solderUrl.toString();
+				current.isSolder = true;
+			} else {
+				qWarning() << "Json doesn't contain a valid url or solder key";
+				return;
+			}
+		}
 
-        current.minecraftVersion = Json::ensureString(obj, "minecraft", QString(), "__placeholder__");
-        current.websiteUrl = Json::ensureString(obj, "platformUrl", QString(), "__placeholder__");
-        current.author = Json::ensureString(obj, "user", QString(), "__placeholder__");
-        current.description = Json::ensureString(obj, "description", QString(), "__placeholder__");
-        current.metadataLoaded = true;
-        metadataLoaded();
-    });
-    netJob->start();
+		current.minecraftVersion =
+			Json::ensureString(obj, "minecraft", QString(), "__placeholder__");
+		current.websiteUrl = Json::ensureString(obj, "platformUrl", QString(),
+												"__placeholder__");
+		current.author =
+			Json::ensureString(obj, "user", QString(), "__placeholder__");
+		current.description = Json::ensureString(obj, "description", QString(),
+												 "__placeholder__");
+		current.metadataLoaded = true;
+		metadataLoaded();
+	});
+	netJob->start();
 }
 
 // expects current.metadataLoaded to be true
 void TechnicPage::metadataLoaded()
 {
-    QString text = "";
-    QString name = current.name;
+	QString text = "";
+	QString name = current.name;
 
-    if (current.websiteUrl.isEmpty())
-        // This allows injecting HTML here.
-        text = name;
-    else
-        // URL not properly escaped for inclusion in HTML. The name allows for injecting HTML.
-        text = "<a href=\"" + current.websiteUrl + "\">" + name + "</a>";
-    if (!current.author.isEmpty()) {
-        // This allows injecting HTML here
-        text += tr(" by ") + current.author;
-    }
+	if (current.websiteUrl.isEmpty())
+		// This allows injecting HTML here.
+		text = name;
+	else
+		// URL not properly escaped for inclusion in HTML. The name allows for
+		// injecting HTML.
+		text = "<a href=\"" + current.websiteUrl + "\">" + name + "</a>";
+	if (!current.author.isEmpty()) {
+		// This allows injecting HTML here
+		text += tr(" by ") + current.author;
+	}
 
-    ui->frame->setModText(text);
-    ui->frame->setModDescription(current.description);
-    if (!current.isSolder)
-    {
-        dialog->setSuggestedPack(current.name, new Technic::SingleZipPackInstallTask(current.url, current.minecraftVersion));
-    }
-    else
-    {
-        while (current.url.endsWith('/')) current.url.chop(1);
-        dialog->setSuggestedPack(current.name, new Technic::SolderPackInstallTask(APPLICATION->network(), current.url + "/modpack/" + current.slug, current.minecraftVersion));
-    }
+	ui->frame->setModText(text);
+	ui->frame->setModDescription(current.description);
+	if (!current.isSolder) {
+		dialog->setSuggestedPack(current.name,
+								 new Technic::SingleZipPackInstallTask(
+									 current.url, current.minecraftVersion));
+	} else {
+		while (current.url.endsWith('/'))
+			current.url.chop(1);
+		dialog->setSuggestedPack(current.name,
+								 new Technic::SolderPackInstallTask(
+									 APPLICATION->network(),
+									 current.url + "/modpack/" + current.slug,
+									 current.minecraftVersion));
+	}
 }

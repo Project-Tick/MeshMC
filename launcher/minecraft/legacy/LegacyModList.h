@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,27 +44,26 @@
 
 class LegacyModList
 {
-public:
+  public:
+	using Mod = QFileInfo;
 
-    using Mod = QFileInfo;
+	LegacyModList(const QString& dir, const QString& list_file = QString());
 
-    LegacyModList(const QString &dir, const QString &list_file = QString());
+	/// Reloads the mod list and returns true if the list changed.
+	bool update();
 
-    /// Reloads the mod list and returns true if the list changed.
-    bool update();
+	QDir dir()
+	{
+		return m_dir;
+	}
 
-    QDir dir()
-    {
-        return m_dir;
-    }
+	const QList<Mod>& allMods()
+	{
+		return mods;
+	}
 
-    const QList<Mod> & allMods()
-    {
-        return mods;
-    }
-
-protected:
-    QDir m_dir;
-    QString m_list_file;
-    QList<Mod> mods;
+  protected:
+	QDir m_dir;
+	QString m_list_file;
+	QList<Mod> mods;
 };

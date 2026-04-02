@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -41,19 +41,20 @@
 #include <launch/LaunchStep.h>
 #include <memory>
 
-class ModMinecraftJar: public LaunchStep
+class ModMinecraftJar : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit ModMinecraftJar(LaunchTask *parent) : LaunchStep(parent) {};
-    virtual ~ModMinecraftJar(){};
+	Q_OBJECT
+  public:
+	explicit ModMinecraftJar(LaunchTask* parent) : LaunchStep(parent) {};
+	virtual ~ModMinecraftJar() {};
 
-    virtual void executeTask() override;
-    virtual bool canAbort() const override
-    {
-        return false;
-    }
-    void finalize() override;
-private:
-    bool removeJar();
+	virtual void executeTask() override;
+	virtual bool canAbort() const override
+	{
+		return false;
+	}
+	void finalize() override;
+
+  private:
+	bool removeJar();
 };

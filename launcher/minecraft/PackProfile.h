@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -58,117 +58,121 @@ class ComponentUpdateTask;
 
 class PackProfile : public QAbstractListModel
 {
-    Q_OBJECT
-    friend ComponentUpdateTask;
-public:
-    enum Columns
-    {
-        NameColumn = 0,
-        VersionColumn,
-        NUM_COLUMNS
-    };
+	Q_OBJECT
+	friend ComponentUpdateTask;
 
-    explicit PackProfile(MinecraftInstance * instance);
-    virtual ~PackProfile();
+  public:
+	enum Columns { NameColumn = 0, VersionColumn, NUM_COLUMNS };
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    virtual int columnCount(const QModelIndex &parent) const override;
-    virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
+	explicit PackProfile(MinecraftInstance* instance);
+	virtual ~PackProfile();
 
-    /// call this to explicitly mark the component list as loaded - this is used to build a new component list from scratch.
-    void buildingFromScratch();
+	virtual QVariant data(const QModelIndex& index,
+						  int role = Qt::DisplayRole) const override;
+	virtual bool setData(const QModelIndex& index, const QVariant& value,
+						 int role = Qt::EditRole) override;
+	virtual QVariant headerData(int section, Qt::Orientation orientation,
+								int role) const override;
+	virtual int
+	rowCount(const QModelIndex& parent = QModelIndex()) const override;
+	virtual int columnCount(const QModelIndex& parent) const override;
+	virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-    /// install more jar mods
-    void installJarMods(QStringList selectedFiles);
+	/// call this to explicitly mark the component list as loaded - this is used
+	/// to build a new component list from scratch.
+	void buildingFromScratch();
 
-    /// install a jar/zip as a replacement for the main jar
-    void installCustomJar(QString selectedFile);
+	/// install more jar mods
+	void installJarMods(QStringList selectedFiles);
 
-    enum MoveDirection { MoveUp, MoveDown };
-    /// move component file # up or down the list
-    void move(const int index, const MoveDirection direction);
+	/// install a jar/zip as a replacement for the main jar
+	void installCustomJar(QString selectedFile);
 
-    /// remove component file # - including files/records
-    bool remove(const int index);
+	enum MoveDirection { MoveUp, MoveDown };
+	/// move component file # up or down the list
+	void move(const int index, const MoveDirection direction);
 
-    /// remove component file by id - including files/records
-    bool remove(const QString id);
+	/// remove component file # - including files/records
+	bool remove(const int index);
 
-    bool customize(int index);
+	/// remove component file by id - including files/records
+	bool remove(const QString id);
 
-    bool revertToBase(int index);
+	bool customize(int index);
 
-    /// reload the list, reload all components, resolve dependencies
-    void reload(Net::Mode netmode);
+	bool revertToBase(int index);
 
-    // reload all components, resolve dependencies
-    void resolve(Net::Mode netmode);
+	/// reload the list, reload all components, resolve dependencies
+	void reload(Net::Mode netmode);
 
-    /// get current running task...
-    Task::Ptr getCurrentTask();
+	// reload all components, resolve dependencies
+	void resolve(Net::Mode netmode);
 
-    std::shared_ptr<LaunchProfile> getProfile() const;
+	/// get current running task...
+	Task::Ptr getCurrentTask();
 
-    // NOTE: used ONLY by MinecraftInstance to provide legacy version mappings from instance config
-    void setOldConfigVersion(const QString &uid, const QString &version);
+	std::shared_ptr<LaunchProfile> getProfile() const;
 
-    QString getComponentVersion(const QString &uid) const;
+	// NOTE: used ONLY by MinecraftInstance to provide legacy version mappings
+	// from instance config
+	void setOldConfigVersion(const QString& uid, const QString& version);
 
-    bool setComponentVersion(const QString &uid, const QString &version, bool important = false);
+	QString getComponentVersion(const QString& uid) const;
 
-    bool installEmpty(const QString &uid, const QString &name);
+	bool setComponentVersion(const QString& uid, const QString& version,
+							 bool important = false);
 
-    QString patchFilePathForUid(const QString &uid) const;
+	bool installEmpty(const QString& uid, const QString& name);
 
-    /// if there is a save scheduled, do it now.
-    void saveNow();
+	QString patchFilePathForUid(const QString& uid) const;
 
-signals:
-    void minecraftChanged();
+	/// if there is a save scheduled, do it now.
+	void saveNow();
 
-public:
-    /// get the profile component by id
-    Component * getComponent(const QString &id);
+  signals:
+	void minecraftChanged();
 
-    /// get the profile component by index
-    Component * getComponent(int index);
+  public:
+	/// get the profile component by id
+	Component* getComponent(const QString& id);
 
-    /// Add the component to the internal list of patches
-    // todo(merged): is this the best approach
-    void appendComponent(ComponentPtr component);
+	/// get the profile component by index
+	Component* getComponent(int index);
 
-private:
-    void scheduleSave();
-    bool saveIsScheduled() const;
+	/// Add the component to the internal list of patches
+	// todo(merged): is this the best approach
+	void appendComponent(ComponentPtr component);
 
-    /// apply the component patches. Catches all the errors and returns true/false for success/failure
-    void invalidateLaunchProfile();
+  private:
+	void scheduleSave();
+	bool saveIsScheduled() const;
 
-    /// insert component so that its index is ideally the specified one (returns real index)
-    void insertComponent(size_t index, ComponentPtr component);
+	/// apply the component patches. Catches all the errors and returns
+	/// true/false for success/failure
+	void invalidateLaunchProfile();
 
-    QString componentsFilePath() const;
-    QString patchesPattern() const;
+	/// insert component so that its index is ideally the specified one (returns
+	/// real index)
+	void insertComponent(size_t index, ComponentPtr component);
 
-private slots:
-    void save_internal();
-    void updateSucceeded();
-    void updateFailed(const QString & error);
-    void componentDataChanged();
-    void disableInteraction(bool disable);
+	QString componentsFilePath() const;
+	QString patchesPattern() const;
 
-private:
-    bool load();
-    bool installJarMods_internal(QStringList filepaths);
-    bool installCustomJar_internal(QString filepath);
-    bool removeComponent_internal(ComponentPtr patch);
+  private slots:
+	void save_internal();
+	void updateSucceeded();
+	void updateFailed(const QString& error);
+	void componentDataChanged();
+	void disableInteraction(bool disable);
 
-    bool migratePreComponentConfig();
+  private:
+	bool load();
+	bool installJarMods_internal(QStringList filepaths);
+	bool installCustomJar_internal(QString filepath);
+	bool removeComponent_internal(ComponentPtr patch);
 
-private: /* data */
+	bool migratePreComponentConfig();
 
-    std::unique_ptr<PackProfileData> d;
+  private: /* data */
+	std::unique_ptr<PackProfileData> d;
 };

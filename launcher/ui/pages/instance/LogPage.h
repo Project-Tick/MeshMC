@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,63 +47,64 @@
 
 namespace Ui
 {
-class LogPage;
+	class LogPage;
 }
 class QTextCharFormat;
 class LogFormatProxyModel;
 
 class LogPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit LogPage(InstancePtr instance, QWidget *parent = 0);
-    virtual ~LogPage();
-    virtual QString displayName() const override
-    {
-        return tr("Minecraft Log");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("log");
-    }
-    virtual QString id() const override
-    {
-        return "console";
-    }
-    virtual bool apply() override;
-    virtual QString helpPage() const override
-    {
-        return "Minecraft-Logs";
-    }
-    virtual bool shouldDisplay() const override;
+  public:
+	explicit LogPage(InstancePtr instance, QWidget* parent = 0);
+	virtual ~LogPage();
+	virtual QString displayName() const override
+	{
+		return tr("Minecraft Log");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("log");
+	}
+	virtual QString id() const override
+	{
+		return "console";
+	}
+	virtual bool apply() override;
+	virtual QString helpPage() const override
+	{
+		return "Minecraft-Logs";
+	}
+	virtual bool shouldDisplay() const override;
 
-private slots:
-    void on_btnPaste_clicked();
-    void on_btnCopy_clicked();
-    void on_btnClear_clicked();
-    void on_btnBottom_clicked();
+  private slots:
+	void on_btnPaste_clicked();
+	void on_btnCopy_clicked();
+	void on_btnClear_clicked();
+	void on_btnBottom_clicked();
 
-    void on_trackLogCheckbox_clicked(bool checked);
-    void on_wrapCheckbox_clicked(bool checked);
+	void on_trackLogCheckbox_clicked(bool checked);
+	void on_wrapCheckbox_clicked(bool checked);
 
-    void on_findButton_clicked();
-    void findActivated();
-    void findNextActivated();
-    void findPreviousActivated();
+	void on_findButton_clicked();
+	void findActivated();
+	void findNextActivated();
+	void findPreviousActivated();
 
-    void onInstanceLaunchTaskChanged(shared_qobject_ptr<LaunchTask> proc);
+	void onInstanceLaunchTaskChanged(shared_qobject_ptr<LaunchTask> proc);
 
-private:
-    void modelStateToUI();
-    void UIToModelState();
-    void setInstanceLaunchTaskChanged(shared_qobject_ptr<LaunchTask> proc, bool initial);
+  private:
+	void modelStateToUI();
+	void UIToModelState();
+	void setInstanceLaunchTaskChanged(shared_qobject_ptr<LaunchTask> proc,
+									  bool initial);
 
-private:
-    Ui::LogPage *ui;
-    InstancePtr m_instance;
-    shared_qobject_ptr<LaunchTask> m_process;
+  private:
+	Ui::LogPage* ui;
+	InstancePtr m_instance;
+	shared_qobject_ptr<LaunchTask> m_process;
 
-    LogFormatProxyModel * m_proxy;
-    shared_qobject_ptr <LogModel> m_model;
+	LogFormatProxyModel* m_proxy;
+	shared_qobject_ptr<LogModel> m_model;
 };

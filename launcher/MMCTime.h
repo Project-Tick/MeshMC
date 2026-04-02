@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -40,8 +40,9 @@
 
 #include <QString>
 
-namespace Time {
+namespace Time
+{
 
-QString prettifyDuration(int64_t duration);
+	QString prettifyDuration(int64_t duration);
 
 }

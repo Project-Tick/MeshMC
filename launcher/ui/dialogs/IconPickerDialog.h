@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -42,31 +42,30 @@
 
 namespace Ui
 {
-class IconPickerDialog;
+	class IconPickerDialog;
 }
 
 class IconPickerDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit IconPickerDialog(QWidget *parent = 0);
-    ~IconPickerDialog();
-    int execWithSelection(QString selection);
-    QString selectedIconKey;
+  public:
+	explicit IconPickerDialog(QWidget* parent = 0);
+	~IconPickerDialog();
+	int execWithSelection(QString selection);
+	QString selectedIconKey;
 
-protected:
-    virtual bool eventFilter(QObject *, QEvent *);
+  protected:
+	virtual bool eventFilter(QObject*, QEvent*);
 
-private:
-    Ui::IconPickerDialog *ui;
+  private:
+	Ui::IconPickerDialog* ui;
 
-private
-slots:
-    void selectionChanged(QItemSelection, QItemSelection);
-    void activated(QModelIndex);
-    void delayed_scroll(QModelIndex);
-    void addNewIcon();
-    void removeSelectedIcon();
-    void openFolder();
+  private slots:
+	void selectionChanged(QItemSelection, QItemSelection);
+	void activated(QModelIndex);
+	void delayed_scroll(QModelIndex);
+	void addNewIcon();
+	void removeSelectedIcon();
+	void openFolder();
 };

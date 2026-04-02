@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,55 +47,56 @@
 
 namespace Ui
 {
-class TechnicPage;
+	class TechnicPage;
 }
 
 class NewInstanceDialog;
 
-namespace Technic {
-    class ListModel;
+namespace Technic
+{
+	class ListModel;
 }
 
 class TechnicPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit TechnicPage(NewInstanceDialog* dialog, QWidget *parent = 0);
-    virtual ~TechnicPage();
-    virtual QString displayName() const override
-    {
-        return tr("Technic");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("technic");
-    }
-    virtual QString id() const override
-    {
-        return "technic";
-    }
-    virtual QString helpPage() const override
-    {
-        return "Technic-platform";
-    }
-    virtual bool shouldDisplay() const override;
+  public:
+	explicit TechnicPage(NewInstanceDialog* dialog, QWidget* parent = 0);
+	virtual ~TechnicPage();
+	virtual QString displayName() const override
+	{
+		return tr("Technic");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("technic");
+	}
+	virtual QString id() const override
+	{
+		return "technic";
+	}
+	virtual QString helpPage() const override
+	{
+		return "Technic-platform";
+	}
+	virtual bool shouldDisplay() const override;
 
-    void openedImpl() override;
+	void openedImpl() override;
 
-    bool eventFilter(QObject* watched, QEvent* event) override;
+	bool eventFilter(QObject* watched, QEvent* event) override;
 
-private:
-    void suggestCurrent();
-    void metadataLoaded();
+  private:
+	void suggestCurrent();
+	void metadataLoaded();
 
-private slots:
-    void triggerSearch();
-    void onSelectionChanged(QModelIndex first, QModelIndex second);
+  private slots:
+	void triggerSearch();
+	void onSelectionChanged(QModelIndex first, QModelIndex second);
 
-private:
-    Ui::TechnicPage *ui = nullptr;
-    NewInstanceDialog* dialog = nullptr;
-    Technic::ListModel* model = nullptr;
-    Technic::Modpack current;
+  private:
+	Ui::TechnicPage* ui = nullptr;
+	NewInstanceDialog* dialog = nullptr;
+	Technic::ListModel* model = nullptr;
+	Technic::Modpack current;
 };

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -49,37 +49,42 @@
 #include "ui/widgets/IconLabel.h"
 #include "ui/widgets/PageContainer.h"
 
-PageDialog::PageDialog(BasePageProvider *pageProvider, QString defaultId, QWidget *parent)
-    : QDialog(parent)
+PageDialog::PageDialog(BasePageProvider* pageProvider, QString defaultId,
+					   QWidget* parent)
+	: QDialog(parent)
 {
-    setWindowTitle(pageProvider->dialogTitle());
-    m_container = new PageContainer(pageProvider, defaultId, this);
+	setWindowTitle(pageProvider->dialogTitle());
+	m_container = new PageContainer(pageProvider, defaultId, this);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_container);
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    setLayout(mainLayout);
+	QVBoxLayout* mainLayout = new QVBoxLayout;
+	mainLayout->addWidget(m_container);
+	mainLayout->setSpacing(0);
+	mainLayout->setContentsMargins(0, 0, 0, 0);
+	setLayout(mainLayout);
 
-    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Help | QDialogButtonBox::Close);
-    buttons->button(QDialogButtonBox::Close)->setDefault(true);
-    buttons->setContentsMargins(6, 0, 6, 0);
-    m_container->addButtons(buttons);
+	QDialogButtonBox* buttons =
+		new QDialogButtonBox(QDialogButtonBox::Help | QDialogButtonBox::Close);
+	buttons->button(QDialogButtonBox::Close)->setDefault(true);
+	buttons->setContentsMargins(6, 0, 6, 0);
+	m_container->addButtons(buttons);
 
-    connect(buttons->button(QDialogButtonBox::Close), SIGNAL(clicked()), this, SLOT(close()));
-    connect(buttons->button(QDialogButtonBox::Help), SIGNAL(clicked()), m_container, SLOT(help()));
+	connect(buttons->button(QDialogButtonBox::Close), SIGNAL(clicked()), this,
+			SLOT(close()));
+	connect(buttons->button(QDialogButtonBox::Help), SIGNAL(clicked()),
+			m_container, SLOT(help()));
 
-    restoreGeometry(QByteArray::fromBase64(APPLICATION->settings()->get("PagedGeometry").toByteArray()));
+	restoreGeometry(QByteArray::fromBase64(
+		APPLICATION->settings()->get("PagedGeometry").toByteArray()));
 }
 
-void PageDialog::closeEvent(QCloseEvent *event)
+void PageDialog::closeEvent(QCloseEvent* event)
 {
-    qDebug() << "Paged dialog close requested";
-    if (m_container->prepareToClose())
-    {
-        qDebug() << "Paged dialog close approved";
-        APPLICATION->settings()->set("PagedGeometry", saveGeometry().toBase64());
-        qDebug() << "Paged dialog geometry saved";
-        QDialog::closeEvent(event);
-    }
+	qDebug() << "Paged dialog close requested";
+	if (m_container->prepareToClose()) {
+		qDebug() << "Paged dialog close approved";
+		APPLICATION->settings()->set("PagedGeometry",
+									 saveGeometry().toBase64());
+		qDebug() << "Paged dialog geometry saved";
+		QDialog::closeEvent(event);
+	}
 }

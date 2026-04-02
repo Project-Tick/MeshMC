@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,95 +44,97 @@
 
 #include "ModDetails.h"
 
-
-
 class Mod
 {
-public:
-    enum ModType
-    {
-        MOD_UNKNOWN,    //!< Indicates an unspecified mod type.
-        MOD_ZIPFILE,    //!< The mod is a zip file containing the mod's class files.
-        MOD_SINGLEFILE, //!< The mod is a single file (not a zip file).
-        MOD_FOLDER,     //!< The mod is in a folder on the filesystem.
-        MOD_LITEMOD, //!< The mod is a litemod
-    };
+  public:
+	enum ModType {
+		MOD_UNKNOWN, //!< Indicates an unspecified mod type.
+		MOD_ZIPFILE, //!< The mod is a zip file containing the mod's class
+					 //!< files.
+		MOD_SINGLEFILE, //!< The mod is a single file (not a zip file).
+		MOD_FOLDER,		//!< The mod is in a folder on the filesystem.
+		MOD_LITEMOD,	//!< The mod is a litemod
+	};
 
-    Mod() = default;
-    Mod(const QFileInfo &file);
+	Mod() = default;
+	Mod(const QFileInfo& file);
 
-    QFileInfo filename() const
-    {
-        return m_file;
-    }
-    QString mmc_id() const
-    {
-        return m_mmc_id;
-    }
-    ModType type() const
-    {
-        return m_type;
-    }
-    bool valid()
-    {
-        return m_type != MOD_UNKNOWN;
-    }
+	QFileInfo filename() const
+	{
+		return m_file;
+	}
+	QString mmc_id() const
+	{
+		return m_mmc_id;
+	}
+	ModType type() const
+	{
+		return m_type;
+	}
+	bool valid()
+	{
+		return m_type != MOD_UNKNOWN;
+	}
 
-    QDateTime dateTimeChanged() const
-    {
-        return m_changedDateTime;
-    }
+	QDateTime dateTimeChanged() const
+	{
+		return m_changedDateTime;
+	}
 
-    bool enabled() const
-    {
-        return m_enabled;
-    }
+	bool enabled() const
+	{
+		return m_enabled;
+	}
 
-    const ModDetails &details() const;
+	const ModDetails& details() const;
 
-    QString name() const;
-    QString version() const;
-    QString homeurl() const;
-    QString description() const;
-    QStringList authors() const;
+	QString name() const;
+	QString version() const;
+	QString homeurl() const;
+	QString description() const;
+	QStringList authors() const;
 
-    bool enable(bool value);
+	bool enable(bool value);
 
-    // delete all the files of this mod
-    bool destroy();
+	// delete all the files of this mod
+	bool destroy();
 
-    // change the mod's filesystem path (used by mod lists for *MAGIC* purposes)
-    void repath(const QFileInfo &file);
+	// change the mod's filesystem path (used by mod lists for *MAGIC* purposes)
+	void repath(const QFileInfo& file);
 
-    bool shouldResolve() {
-        return !m_resolving && !m_resolved;
-    }
-    bool isResolving() {
-        return m_resolving;
-    }
-    int resolutionTicket()
-    {
-        return m_resolutionTicket;
-    }
-    void setResolving(bool resolving, int resolutionTicket) {
-        m_resolving = resolving;
-        m_resolutionTicket = resolutionTicket;
-    }
-    void finishResolvingWithDetails(std::shared_ptr<ModDetails> details){
-        m_resolving = false;
-        m_resolved = true;
-        m_localDetails = details;
-    }
+	bool shouldResolve()
+	{
+		return !m_resolving && !m_resolved;
+	}
+	bool isResolving()
+	{
+		return m_resolving;
+	}
+	int resolutionTicket()
+	{
+		return m_resolutionTicket;
+	}
+	void setResolving(bool resolving, int resolutionTicket)
+	{
+		m_resolving = resolving;
+		m_resolutionTicket = resolutionTicket;
+	}
+	void finishResolvingWithDetails(std::shared_ptr<ModDetails> details)
+	{
+		m_resolving = false;
+		m_resolved = true;
+		m_localDetails = details;
+	}
 
-protected:
-    QFileInfo m_file;
-    QDateTime m_changedDateTime;
-    QString m_mmc_id;
-    QString m_name;
-    bool m_enabled = true;
-    bool m_resolving = false;
-    bool m_resolved = false;
-    int m_resolutionTicket = 0;
-    ModType m_type = MOD_UNKNOWN;
-    std::shared_ptr<ModDetails> m_localDetails;
+  protected:
+	QFileInfo m_file;
+	QDateTime m_changedDateTime;
+	QString m_mmc_id;
+	QString m_name;
+	bool m_enabled = true;
+	bool m_resolving = false;
+	bool m_resolved = false;
+	int m_resolutionTicket = 0;
+	ModType m_type = MOD_UNKNOWN;
+	std::shared_ptr<ModDetails> m_localDetails;
 };

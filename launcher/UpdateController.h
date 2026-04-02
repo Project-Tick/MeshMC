@@ -36,19 +36,19 @@ class QWidget;
  */
 class UpdateController
 {
-public:
-    UpdateController(QWidget *parent, const QString &root, const QString &downloadUrl);
+  public:
+	UpdateController(QWidget* parent, const QString& root,
+					 const QString& downloadUrl);
 
-    /*!
-     * Locates the meshmc-updater binary next to the running executable,
-     * launches it with the required arguments, and returns true on success.
-     * The caller is responsible for quitting the main application afterwards.
-     */
-    bool startUpdate();
+	/*!
+	 * Locates the meshmc-updater binary next to the running executable,
+	 * launches it with the required arguments, and returns true on success.
+	 * The caller is responsible for quitting the main application afterwards.
+	 */
+	bool startUpdate();
 
-private:
-    QWidget  *m_parent;
-    QString   m_root;
-    QString   m_downloadUrl;
+  private:
+	QWidget* m_parent;
+	QString m_root;
+	QString m_downloadUrl;
 };
-

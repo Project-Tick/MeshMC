@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -48,37 +48,38 @@ typedef shared_qobject_ptr<JavaCheckerJob> JavaCheckerJobPtr;
 // FIXME: this just seems horribly redundant
 class JavaCheckerJob : public Task
 {
-    Q_OBJECT
-public:
-    explicit JavaCheckerJob(QString job_name) : Task(), m_job_name(job_name) {};
-    virtual ~JavaCheckerJob() {};
+	Q_OBJECT
+  public:
+	explicit JavaCheckerJob(QString job_name) : Task(), m_job_name(job_name) {};
+	virtual ~JavaCheckerJob() {};
 
-    bool addJavaCheckerAction(JavaCheckerPtr base)
-    {
-        javacheckers.append(base);
-        // if this is already running, the action needs to be started right away!
-        if (isRunning())
-        {
-            setProgress(num_finished, javacheckers.size());
-            connect(base.get(), &JavaChecker::checkFinished, this, &JavaCheckerJob::partFinished);
-            base->performCheck();
-        }
-        return true;
-    }
-    QList<JavaCheckResult> getResults()
-    {
-        return javaresults;
-    }
+	bool addJavaCheckerAction(JavaCheckerPtr base)
+	{
+		javacheckers.append(base);
+		// if this is already running, the action needs to be started right
+		// away!
+		if (isRunning()) {
+			setProgress(num_finished, javacheckers.size());
+			connect(base.get(), &JavaChecker::checkFinished, this,
+					&JavaCheckerJob::partFinished);
+			base->performCheck();
+		}
+		return true;
+	}
+	QList<JavaCheckResult> getResults()
+	{
+		return javaresults;
+	}
 
-private slots:
-    void partFinished(JavaCheckResult result);
+  private slots:
+	void partFinished(JavaCheckResult result);
 
-protected:
-    virtual void executeTask() override;
+  protected:
+	virtual void executeTask() override;
 
-private:
-    QString m_job_name;
-    QList<JavaCheckerPtr> javacheckers;
-    QList<JavaCheckResult> javaresults;
-    int num_finished = 0;
+  private:
+	QString m_job_name;
+	QList<JavaCheckerPtr> javacheckers;
+	QList<JavaCheckResult> javaresults;
+	int num_finished = 0;
 };

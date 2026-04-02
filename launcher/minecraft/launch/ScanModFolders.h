@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -41,25 +41,26 @@
 #include <launch/LaunchStep.h>
 #include <memory>
 
-class ScanModFolders: public LaunchStep
+class ScanModFolders : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit ScanModFolders(LaunchTask *parent) : LaunchStep(parent) {};
-    virtual ~ScanModFolders(){};
+	Q_OBJECT
+  public:
+	explicit ScanModFolders(LaunchTask* parent) : LaunchStep(parent) {};
+	virtual ~ScanModFolders() {};
 
-    virtual void executeTask() override;
-    virtual bool canAbort() const override
-    {
-        return false;
-    }
-private slots:
-    void coreModsDone();
-    void modsDone();
-private:
-    void checkDone();
+	virtual void executeTask() override;
+	virtual bool canAbort() const override
+	{
+		return false;
+	}
+  private slots:
+	void coreModsDone();
+	void modsDone();
 
-private: // DATA
-    bool m_modsDone = false;
-    bool m_coreModsDone = false;
+  private:
+	void checkDone();
+
+  private: // DATA
+	bool m_modsDone = false;
+	bool m_coreModsDone = false;
 };

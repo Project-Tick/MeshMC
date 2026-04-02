@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -49,39 +49,39 @@
  */
 class INISettingsObject : public SettingsObject
 {
-    Q_OBJECT
-public:
-    explicit INISettingsObject(const QString &path, QObject *parent = 0);
+	Q_OBJECT
+  public:
+	explicit INISettingsObject(const QString& path, QObject* parent = 0);
 
-    /*!
-     * \brief Gets the path to the INI file.
-     * \return The path to the INI file.
-     */
-    virtual QString filePath() const
-    {
-        return m_filePath;
-    }
+	/*!
+	 * \brief Gets the path to the INI file.
+	 * \return The path to the INI file.
+	 */
+	virtual QString filePath() const
+	{
+		return m_filePath;
+	}
 
-    /*!
-     * \brief Sets the path to the INI file and reloads it.
-     * \param filePath The INI file's new path.
-     */
-    virtual void setFilePath(const QString &filePath);
+	/*!
+	 * \brief Sets the path to the INI file and reloads it.
+	 * \param filePath The INI file's new path.
+	 */
+	virtual void setFilePath(const QString& filePath);
 
-    bool reload() override;
+	bool reload() override;
 
-    void suspendSave() override;
-    void resumeSave() override;
+	void suspendSave() override;
+	void resumeSave() override;
 
-protected slots:
-    virtual void changeSetting(const Setting &setting, QVariant value) override;
-    virtual void resetSetting(const Setting &setting) override;
+  protected slots:
+	virtual void changeSetting(const Setting& setting, QVariant value) override;
+	virtual void resetSetting(const Setting& setting) override;
 
-protected:
-    virtual QVariant retrieveValue(const Setting &setting) override;
-    void doSave();
+  protected:
+	virtual QVariant retrieveValue(const Setting& setting) override;
+	void doSave();
 
-protected:
-    INIFile m_ini;
-    QString m_filePath;
+  protected:
+	INIFile m_ini;
+	QString m_filePath;
 };

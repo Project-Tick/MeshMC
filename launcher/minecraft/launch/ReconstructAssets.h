@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -41,16 +41,16 @@
 #include <launch/LaunchStep.h>
 #include <memory>
 
-class ReconstructAssets: public LaunchStep
+class ReconstructAssets : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit ReconstructAssets(LaunchTask *parent) : LaunchStep(parent){};
-    virtual ~ReconstructAssets(){};
+	Q_OBJECT
+  public:
+	explicit ReconstructAssets(LaunchTask* parent) : LaunchStep(parent) {};
+	virtual ~ReconstructAssets() {};
 
-    void executeTask() override;
-    bool canAbort() const override
-    {
-        return false;
-    }
+	void executeTask() override;
+	bool canAbort() const override
+	{
+		return false;
+	}
 };

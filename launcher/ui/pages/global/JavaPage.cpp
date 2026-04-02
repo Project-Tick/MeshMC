@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -60,230 +60,228 @@
 #include "Application.h"
 #include <sys.h>
 
-JavaPage::JavaPage(QWidget *parent) : QWidget(parent), ui(new Ui::JavaPage)
+JavaPage::JavaPage(QWidget* parent) : QWidget(parent), ui(new Ui::JavaPage)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    auto sysMiB = Sys::getSystemRam() / Sys::mebibyte;
-    ui->maxMemSpinBox->setMaximum(sysMiB);
-    loadSettings();
+	auto sysMiB = Sys::getSystemRam() / Sys::mebibyte;
+	ui->maxMemSpinBox->setMaximum(sysMiB);
+	loadSettings();
 #ifdef MeshMC_DISABLE_JAVA_DOWNLOADER
-    // Hide the entire Installations tab when Java downloader is disabled
-    int idx = ui->tabWidget->indexOf(ui->tabInstallations);
-    if (idx != -1)
-        ui->tabWidget->removeTab(idx);
+	// Hide the entire Installations tab when Java downloader is disabled
+	int idx = ui->tabWidget->indexOf(ui->tabInstallations);
+	if (idx != -1)
+		ui->tabWidget->removeTab(idx);
 #else
-    refreshInstalledJavas();
+	refreshInstalledJavas();
 #endif
 }
 
 JavaPage::~JavaPage()
 {
-    delete ui;
+	delete ui;
 }
 
 bool JavaPage::apply()
 {
-    applySettings();
-    return true;
+	applySettings();
+	return true;
 }
 
 void JavaPage::applySettings()
 {
-    auto s = APPLICATION->settings();
+	auto s = APPLICATION->settings();
 
-    // Memory
-    int min = ui->minMemSpinBox->value();
-    int max = ui->maxMemSpinBox->value();
-    if(min < max)
-    {
-        s->set("MinMemAlloc", min);
-        s->set("MaxMemAlloc", max);
-    }
-    else
-    {
-        s->set("MinMemAlloc", max);
-        s->set("MaxMemAlloc", min);
-    }
-    s->set("PermGen", ui->permGenSpinBox->value());
+	// Memory
+	int min = ui->minMemSpinBox->value();
+	int max = ui->maxMemSpinBox->value();
+	if (min < max) {
+		s->set("MinMemAlloc", min);
+		s->set("MaxMemAlloc", max);
+	} else {
+		s->set("MinMemAlloc", max);
+		s->set("MaxMemAlloc", min);
+	}
+	s->set("PermGen", ui->permGenSpinBox->value());
 
-    // Java Settings
-    s->set("JavaPath", ui->javaPathTextBox->text());
-    s->set("JvmArgs", ui->jvmArgsTextBox->text());
-    JavaCommon::checkJVMArgs(s->get("JvmArgs").toString(), this->parentWidget());
+	// Java Settings
+	s->set("JavaPath", ui->javaPathTextBox->text());
+	s->set("JvmArgs", ui->jvmArgsTextBox->text());
+	JavaCommon::checkJVMArgs(s->get("JvmArgs").toString(),
+							 this->parentWidget());
 }
 void JavaPage::loadSettings()
 {
-    auto s = APPLICATION->settings();
-    // Memory
-    int min = s->get("MinMemAlloc").toInt();
-    int max = s->get("MaxMemAlloc").toInt();
-    if(min < max)
-    {
-        ui->minMemSpinBox->setValue(min);
-        ui->maxMemSpinBox->setValue(max);
-    }
-    else
-    {
-        ui->minMemSpinBox->setValue(max);
-        ui->maxMemSpinBox->setValue(min);
-    }
-    ui->permGenSpinBox->setValue(s->get("PermGen").toInt());
+	auto s = APPLICATION->settings();
+	// Memory
+	int min = s->get("MinMemAlloc").toInt();
+	int max = s->get("MaxMemAlloc").toInt();
+	if (min < max) {
+		ui->minMemSpinBox->setValue(min);
+		ui->maxMemSpinBox->setValue(max);
+	} else {
+		ui->minMemSpinBox->setValue(max);
+		ui->maxMemSpinBox->setValue(min);
+	}
+	ui->permGenSpinBox->setValue(s->get("PermGen").toInt());
 
-    // Java Settings
-    ui->javaPathTextBox->setText(s->get("JavaPath").toString());
-    ui->jvmArgsTextBox->setText(s->get("JvmArgs").toString());
+	// Java Settings
+	ui->javaPathTextBox->setText(s->get("JavaPath").toString());
+	ui->jvmArgsTextBox->setText(s->get("JvmArgs").toString());
 }
 
 void JavaPage::on_javaDetectBtn_clicked()
 {
-    JavaInstallPtr java;
+	JavaInstallPtr java;
 
-    VersionSelectDialog vselect(APPLICATION->javalist().get(), tr("Select a Java version"), this, true);
-    vselect.setResizeOn(2);
-    vselect.exec();
+	VersionSelectDialog vselect(APPLICATION->javalist().get(),
+								tr("Select a Java version"), this, true);
+	vselect.setResizeOn(2);
+	vselect.exec();
 
-    if (vselect.result() == QDialog::Accepted && vselect.selectedVersion())
-    {
-        java = std::dynamic_pointer_cast<JavaInstall>(vselect.selectedVersion());
-        ui->javaPathTextBox->setText(java->path);
-    }
+	if (vselect.result() == QDialog::Accepted && vselect.selectedVersion()) {
+		java =
+			std::dynamic_pointer_cast<JavaInstall>(vselect.selectedVersion());
+		ui->javaPathTextBox->setText(java->path);
+	}
 }
 
 void JavaPage::on_javaBrowseBtn_clicked()
 {
-    QString raw_path = QFileDialog::getOpenFileName(this, tr("Find Java executable"));
+	QString raw_path =
+		QFileDialog::getOpenFileName(this, tr("Find Java executable"));
 
-    // do not allow current dir - it's dirty. Do not allow dirs that don't exist
-    if(raw_path.isEmpty())
-    {
-        return;
-    }
+	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
+	if (raw_path.isEmpty()) {
+		return;
+	}
 
-    QString cooked_path = FS::NormalizePath(raw_path);
-    QFileInfo javaInfo(cooked_path);;
-    if(!javaInfo.exists() || !javaInfo.isExecutable())
-    {
-        return;
-    }
-    ui->javaPathTextBox->setText(cooked_path);
+	QString cooked_path = FS::NormalizePath(raw_path);
+	QFileInfo javaInfo(cooked_path);
+	;
+	if (!javaInfo.exists() || !javaInfo.isExecutable()) {
+		return;
+	}
+	ui->javaPathTextBox->setText(cooked_path);
 }
 
 void JavaPage::on_javaTestBtn_clicked()
 {
-    if(checker)
-    {
-        return;
-    }
-    checker.reset(new JavaCommon::TestCheck(
-        this, ui->javaPathTextBox->text(), ui->jvmArgsTextBox->text(),
-        ui->minMemSpinBox->value(), ui->maxMemSpinBox->value(), ui->permGenSpinBox->value()));
-    connect(checker.get(), SIGNAL(finished()), SLOT(checkerFinished()));
-    checker->run();
+	if (checker) {
+		return;
+	}
+	checker.reset(new JavaCommon::TestCheck(
+		this, ui->javaPathTextBox->text(), ui->jvmArgsTextBox->text(),
+		ui->minMemSpinBox->value(), ui->maxMemSpinBox->value(),
+		ui->permGenSpinBox->value()));
+	connect(checker.get(), SIGNAL(finished()), SLOT(checkerFinished()));
+	checker->run();
 }
 
 void JavaPage::checkerFinished()
 {
-    checker.reset();
+	checker.reset();
 }
 
 void JavaPage::on_javaDownloadBtn_clicked()
 {
 #ifndef MeshMC_DISABLE_JAVA_DOWNLOADER
-    JavaDownloadDialog dlg(this);
-    if (dlg.exec() == QDialog::Accepted) {
-        refreshInstalledJavas();
-    }
+	JavaDownloadDialog dlg(this);
+	if (dlg.exec() == QDialog::Accepted) {
+		refreshInstalledJavas();
+	}
 #endif
 }
 
 void JavaPage::on_javaRefreshBtn_clicked()
 {
-    refreshInstalledJavas();
+	refreshInstalledJavas();
 }
 
 void JavaPage::on_javaRemoveBtn_clicked()
 {
-    auto *item = ui->installedJavaTree->currentItem();
-    if (!item)
-        return;
+	auto* item = ui->installedJavaTree->currentItem();
+	if (!item)
+		return;
 
-    QString path = item->text(2);
-    if (path.isEmpty())
-        return;
+	QString path = item->text(2);
+	if (path.isEmpty())
+		return;
 
-    // Find the java installation root directory (parent of bin/)
-    QFileInfo fi(path);
-    QDir javaDir = fi.dir(); // bin/
-    javaDir.cdUp(); // java root
+	// Find the java installation root directory (parent of bin/)
+	QFileInfo fi(path);
+	QDir javaDir = fi.dir(); // bin/
+	javaDir.cdUp();			 // java root
 
-    auto result = QMessageBox::question(this, tr("Remove Java Installation"),
-        tr("Are you sure you want to remove this Java installation?\n\n%1").arg(javaDir.absolutePath()),
-        QMessageBox::Yes | QMessageBox::No);
+	auto result = QMessageBox::question(
+		this, tr("Remove Java Installation"),
+		tr("Are you sure you want to remove this Java installation?\n\n%1")
+			.arg(javaDir.absolutePath()),
+		QMessageBox::Yes | QMessageBox::No);
 
-    if (result != QMessageBox::Yes)
-        return;
+	if (result != QMessageBox::Yes)
+		return;
 
-    javaDir.removeRecursively();
-    refreshInstalledJavas();
+	javaDir.removeRecursively();
+	refreshInstalledJavas();
 }
 
 void JavaPage::on_javaUseBtn_clicked()
 {
-    auto *item = ui->installedJavaTree->currentItem();
-    if (!item)
-        return;
+	auto* item = ui->installedJavaTree->currentItem();
+	if (!item)
+		return;
 
-    QString path = item->text(2);
-    if (!path.isEmpty()) {
-        ui->javaPathTextBox->setText(path);
-        ui->tabWidget->setCurrentIndex(0); // Switch to Settings tab
-    }
+	QString path = item->text(2);
+	if (!path.isEmpty()) {
+		ui->javaPathTextBox->setText(path);
+		ui->tabWidget->setCurrentIndex(0); // Switch to Settings tab
+	}
 }
 
 void JavaPage::refreshInstalledJavas()
 {
-    ui->installedJavaTree->clear();
+	ui->installedJavaTree->clear();
 
-    QString javaBaseDir = FS::PathCombine(QDir::currentPath(), "java");
-    QDir baseDir(javaBaseDir);
-    if (!baseDir.exists())
-        return;
+	QString javaBaseDir = JavaUtils::managedJavaRoot();
+	QDir baseDir(javaBaseDir);
+	if (!baseDir.exists())
+		return;
 
-    // Scan for java binaries under java/{vendor}/{version}/
-    QDirIterator vendorIt(javaBaseDir, QDir::Dirs | QDir::NoDotAndDotDot);
-    while (vendorIt.hasNext()) {
-        vendorIt.next();
-        QString vendorName = vendorIt.fileName();
-        QString vendorPath = vendorIt.filePath();
+	// Scan for java binaries under java/{vendor}/{version}/
+	QDirIterator vendorIt(javaBaseDir, QDir::Dirs | QDir::NoDotAndDotDot);
+	while (vendorIt.hasNext()) {
+		vendorIt.next();
+		QString vendorName = vendorIt.fileName();
+		QString vendorPath = vendorIt.filePath();
 
-        QDirIterator versionIt(vendorPath, QDir::Dirs | QDir::NoDotAndDotDot);
-        while (versionIt.hasNext()) {
-            versionIt.next();
-            QString versionPath = versionIt.filePath();
+		QDirIterator versionIt(vendorPath, QDir::Dirs | QDir::NoDotAndDotDot);
+		while (versionIt.hasNext()) {
+			versionIt.next();
+			QString versionPath = versionIt.filePath();
 
-            // Look for java binary
+			// Look for java binary
 #if defined(Q_OS_WIN)
-            QString binaryName = "javaw.exe";
+			QString binaryName = "javaw.exe";
 #else
-            QString binaryName = "java";
+			QString binaryName = "java";
 #endif
-            QDirIterator binIt(versionPath, QStringList() << binaryName,
-                               QDir::Files, QDirIterator::Subdirectories);
-            while (binIt.hasNext()) {
-                binIt.next();
-                QString javaPath = binIt.filePath();
-                if (javaPath.contains("/bin/")) {
-                    auto *item = new QTreeWidgetItem(ui->installedJavaTree);
-                    item->setText(0, versionIt.fileName());
-                    item->setText(1, vendorName);
-                    item->setText(2, javaPath);
-                    break; // Only first binary per version dir
-                }
-            }
-        }
-    }
+			QDirIterator binIt(versionPath, QStringList() << binaryName,
+							   QDir::Files, QDirIterator::Subdirectories);
+			while (binIt.hasNext()) {
+				binIt.next();
+				QString javaPath = binIt.filePath();
+				if (javaPath.contains("/bin/")) {
+					auto* item = new QTreeWidgetItem(ui->installedJavaTree);
+					item->setText(0, versionIt.fileName());
+					item->setText(1, vendorName);
+					item->setText(2, javaPath);
+					break; // Only first binary per version dir
+				}
+			}
+		}
+	}
 
-    ui->installedJavaTree->resizeColumnToContents(0);
-    ui->installedJavaTree->resizeColumnToContents(1);
+	ui->installedJavaTree->resizeColumnToContents(0);
+	ui->installedJavaTree->resizeColumnToContents(1);
 }

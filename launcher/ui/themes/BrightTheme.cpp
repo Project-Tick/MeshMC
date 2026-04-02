@@ -25,60 +25,59 @@
 
 QString BrightTheme::id()
 {
-    return "bright";
+	return "bright";
 }
 
 QString BrightTheme::name()
 {
-    return QObject::tr("Bright");
+	return QObject::tr("Bright");
 }
 
 QString BrightTheme::tooltip()
 {
-    return QObject::tr("A bright Fusion-based theme with green accents");
+	return QObject::tr("A bright Fusion-based theme with green accents");
 }
 
 bool BrightTheme::hasColorScheme()
 {
-    return true;
+	return true;
 }
 
 QPalette BrightTheme::colorScheme()
 {
-    QPalette brightPalette;
-    brightPalette.setColor(QPalette::Window, QColor(255,255,255));
-    brightPalette.setColor(QPalette::WindowText, QColor(49,49,49));
-    brightPalette.setColor(QPalette::Base, QColor(250,250,250));
-    brightPalette.setColor(QPalette::AlternateBase, QColor(239,240,241));
-    brightPalette.setColor(QPalette::ToolTipBase, QColor(49,49,49));
-    brightPalette.setColor(QPalette::ToolTipText, QColor(239,240,241));
-    brightPalette.setColor(QPalette::Text,  QColor(49,49,49));
-    brightPalette.setColor(QPalette::Button, QColor(255,255,255));
-    brightPalette.setColor(QPalette::ButtonText, QColor(49,49,49));
-    brightPalette.setColor(QPalette::BrightText, Qt::red);
-    brightPalette.setColor(QPalette::Link, QColor(37, 137, 164));
-    brightPalette.setColor(QPalette::Highlight, QColor(137, 207, 84));
-    brightPalette.setColor(QPalette::HighlightedText, QColor(239,240,241));
-    return fadeInactive(brightPalette, fadeAmount(), fadeColor());
+	QPalette brightPalette;
+	brightPalette.setColor(QPalette::Window, QColor(255, 255, 255));
+	brightPalette.setColor(QPalette::WindowText, QColor(49, 49, 49));
+	brightPalette.setColor(QPalette::Base, QColor(250, 250, 250));
+	brightPalette.setColor(QPalette::AlternateBase, QColor(239, 240, 241));
+	brightPalette.setColor(QPalette::ToolTipBase, QColor(49, 49, 49));
+	brightPalette.setColor(QPalette::ToolTipText, QColor(239, 240, 241));
+	brightPalette.setColor(QPalette::Text, QColor(49, 49, 49));
+	brightPalette.setColor(QPalette::Button, QColor(255, 255, 255));
+	brightPalette.setColor(QPalette::ButtonText, QColor(49, 49, 49));
+	brightPalette.setColor(QPalette::BrightText, Qt::red);
+	brightPalette.setColor(QPalette::Link, QColor(37, 137, 164));
+	brightPalette.setColor(QPalette::Highlight, QColor(137, 207, 84));
+	brightPalette.setColor(QPalette::HighlightedText, QColor(239, 240, 241));
+	return fadeInactive(brightPalette, fadeAmount(), fadeColor());
 }
 
 double BrightTheme::fadeAmount()
 {
-    return 0.5;
+	return 0.5;
 }
 
 QColor BrightTheme::fadeColor()
 {
-    return QColor(255,255,255);
+	return QColor(255, 255, 255);
 }
 
 bool BrightTheme::hasStyleSheet()
 {
-    return false;
+	return false;
 }
 
 QString BrightTheme::appStyleSheet()
 {
-    return QString();
+	return QString();
 }
-

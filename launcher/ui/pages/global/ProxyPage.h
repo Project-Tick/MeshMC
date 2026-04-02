@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,44 +46,43 @@
 
 namespace Ui
 {
-class ProxyPage;
+	class ProxyPage;
 }
 
 class ProxyPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ProxyPage(QWidget *parent = 0);
-    ~ProxyPage();
+  public:
+	explicit ProxyPage(QWidget* parent = 0);
+	~ProxyPage();
 
-    QString displayName() const override
-    {
-        return tr("Proxy");
-    }
-    QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("proxy");
-    }
-    QString id() const override
-    {
-        return "proxy-settings";
-    }
-    QString helpPage() const override
-    {
-        return "Proxy-settings";
-    }
-    bool apply() override;
+	QString displayName() const override
+	{
+		return tr("Proxy");
+	}
+	QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("proxy");
+	}
+	QString id() const override
+	{
+		return "proxy-settings";
+	}
+	QString helpPage() const override
+	{
+		return "Proxy-settings";
+	}
+	bool apply() override;
 
-private:
-    void updateCheckboxStuff();
-    void applySettings();
-    void loadSettings();
+  private:
+	void updateCheckboxStuff();
+	void applySettings();
+	void loadSettings();
 
-private
-slots:
-    void proxyChanged(int);
+  private slots:
+	void proxyChanged(int);
 
-private:
-    Ui::ProxyPage *ui;
+  private:
+	Ui::ProxyPage* ui;
 };

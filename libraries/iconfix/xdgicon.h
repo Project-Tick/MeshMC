@@ -36,14 +36,16 @@
 
 class MESHMC_ICONFIX_EXPORT XdgIcon
 {
-public:
-    static QIcon fromTheme(const QString &iconName, const QIcon &fallback = QIcon());
-    static QIcon fromTheme(const QStringList &iconNames, const QIcon &fallback = QIcon());
+  public:
+	static QIcon fromTheme(const QString& iconName,
+						   const QIcon& fallback = QIcon());
+	static QIcon fromTheme(const QStringList& iconNames,
+						   const QIcon& fallback = QIcon());
 
-    static QString themeName();
-    static void setThemeName(const QString &themeName);
+	static QString themeName();
+	static void setThemeName(const QString& themeName);
 
-protected:
-    explicit XdgIcon();
-    virtual ~XdgIcon();
+  protected:
+	explicit XdgIcon();
+	virtual ~XdgIcon();
 };

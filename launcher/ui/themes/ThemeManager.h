@@ -34,59 +34,58 @@ class ITheme;
 
 #include "CatPack.h"
 
-struct IconThemeEntry
-{
-    QString id;
-    QString name;
-    QString family;
-    QString variant;
+struct IconThemeEntry {
+	QString id;
+	QString name;
+	QString family;
+	QString variant;
 };
 
 class ThemeManager
 {
-public:
-    ThemeManager();
+  public:
+	ThemeManager();
 
-    void addTheme(std::unique_ptr<ITheme> theme);
+	void addTheme(std::unique_ptr<ITheme> theme);
 
-    ITheme* getTheme(const QString& id);
+	ITheme* getTheme(const QString& id);
 
-    void setApplicationTheme(const QString& id, bool initial);
+	void setApplicationTheme(const QString& id, bool initial);
 
-    void setIconTheme(const QString& name);
+	void setIconTheme(const QString& name);
 
-    void applyCurrentlySelectedTheme(bool initial = false);
+	void applyCurrentlySelectedTheme(bool initial = false);
 
-    std::vector<ITheme*> allThemes();
+	std::vector<ITheme*> allThemes();
 
-    QStringList families();
+	QStringList families();
 
-    std::vector<ITheme*> themesInFamily(const QString& family);
+	std::vector<ITheme*> themesInFamily(const QString& family);
 
-    QList<IconThemeEntry> iconThemes() const;
+	QList<IconThemeEntry> iconThemes() const;
 
-    QStringList iconThemeFamilies() const;
+	QStringList iconThemeFamilies() const;
 
-    QList<IconThemeEntry> iconThemesInFamily(const QString& family) const;
+	QList<IconThemeEntry> iconThemesInFamily(const QString& family) const;
 
-    QString resolveIconTheme(const QString& family) const;
+	QString resolveIconTheme(const QString& family) const;
 
-    QString bestIconThemeForPalette(const QString& currentIconId) const;
+	QString bestIconThemeForPalette(const QString& currentIconId) const;
 
-    // CatPack API
-    QString getCatPack(const QString& catName = QString());
-    QList<CatPack*> getValidCatPacks();
-    QDir getCatPacksFolder();
+	// CatPack API
+	QString getCatPack(const QString& catName = QString());
+	QList<CatPack*> getValidCatPacks();
+	QDir getCatPacksFolder();
 
-private:
-    std::map<QString, std::unique_ptr<ITheme>> m_themes;
-    QList<IconThemeEntry> m_iconThemes;
-    std::map<QString, std::unique_ptr<CatPack>> m_catPacks;
-    QDir m_catPacksFolder;
-    QString m_defaultStyle;
-    QPalette m_defaultPalette;
+  private:
+	std::map<QString, std::unique_ptr<ITheme>> m_themes;
+	QList<IconThemeEntry> m_iconThemes;
+	std::map<QString, std::unique_ptr<CatPack>> m_catPacks;
+	QDir m_catPacksFolder;
+	QString m_defaultStyle;
+	QPalette m_defaultPalette;
 
-    void initIconThemes();
-    void initializeCatPacks();
-    void addCatPack(std::unique_ptr<CatPack> catPack);
+	void initIconThemes();
+	void initializeCatPacks();
+	void addCatPack(std::unique_ptr<CatPack> catPack);
 };

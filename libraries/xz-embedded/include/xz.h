@@ -68,12 +68,7 @@ extern "C" {
  * with support for all operation modes, but the preboot code may
  * be built with fewer features to minimize code size.
  */
-enum xz_mode
-{
-    XZ_SINGLE,
-    XZ_PREALLOC,
-    XZ_DYNALLOC
-};
+enum xz_mode { XZ_SINGLE, XZ_PREALLOC, XZ_DYNALLOC };
 
 /**
  * enum xz_ret - Return codes
@@ -125,17 +120,16 @@ enum xz_mode
  * (relatively) clear that the compressed input is truncated, XZ_DATA_ERROR
  * is used instead of XZ_BUF_ERROR.
  */
-enum xz_ret
-{
-    XZ_OK,
-    XZ_STREAM_END,
-    XZ_UNSUPPORTED_CHECK,
-    XZ_MEM_ERROR,
-    XZ_MEMLIMIT_ERROR,
-    XZ_FORMAT_ERROR,
-    XZ_OPTIONS_ERROR,
-    XZ_DATA_ERROR,
-    XZ_BUF_ERROR
+enum xz_ret {
+	XZ_OK,
+	XZ_STREAM_END,
+	XZ_UNSUPPORTED_CHECK,
+	XZ_MEM_ERROR,
+	XZ_MEMLIMIT_ERROR,
+	XZ_FORMAT_ERROR,
+	XZ_OPTIONS_ERROR,
+	XZ_DATA_ERROR,
+	XZ_BUF_ERROR
 };
 
 /**
@@ -154,15 +148,14 @@ enum xz_ret
  * Only the contents of the output buffer from out[out_pos] onward, and
  * the variables in_pos and out_pos are modified by the XZ code.
  */
-struct xz_buf
-{
-    const uint8_t *in;
-    size_t in_pos;
-    size_t in_size;
+struct xz_buf {
+	const uint8_t* in;
+	size_t in_pos;
+	size_t in_size;
 
-    uint8_t *out;
-    size_t out_pos;
-    size_t out_size;
+	uint8_t* out;
+	size_t out_pos;
+	size_t out_size;
 };
 
 /**
@@ -213,7 +206,7 @@ struct xz_dec;
  * ready to be used with xz_dec_run(). If memory allocation fails,
  * xz_dec_init() returns NULL.
  */
-XZ_EXTERN struct xz_dec *xz_dec_init(enum xz_mode mode, uint32_t dict_max);
+XZ_EXTERN struct xz_dec* xz_dec_init(enum xz_mode mode, uint32_t dict_max);
 
 /**
  * xz_dec_run() - Run the XZ decoder
@@ -233,7 +226,7 @@ XZ_EXTERN struct xz_dec *xz_dec_init(enum xz_mode mode, uint32_t dict_max);
  * get that amount valid data from the beginning of the stream. You must use
  * the multi-call decoder if you don't want to uncompress the whole stream.
  */
-XZ_EXTERN enum xz_ret xz_dec_run(struct xz_dec *s, struct xz_buf *b);
+XZ_EXTERN enum xz_ret xz_dec_run(struct xz_dec* s, struct xz_buf* b);
 
 /**
  * xz_dec_reset() - Reset an already allocated decoder state
@@ -246,14 +239,14 @@ XZ_EXTERN enum xz_ret xz_dec_run(struct xz_dec *s, struct xz_buf *b);
  * xz_dec_run(). Thus, explicit call to xz_dec_reset() is useful only in
  * multi-call mode.
  */
-XZ_EXTERN void xz_dec_reset(struct xz_dec *s);
+XZ_EXTERN void xz_dec_reset(struct xz_dec* s);
 
 /**
  * xz_dec_end() - Free the memory allocated for the decoder state
  * @s:          Decoder state allocated using xz_dec_init(). If s is NULL,
  *              this function does nothing.
  */
-XZ_EXTERN void xz_dec_end(struct xz_dec *s);
+XZ_EXTERN void xz_dec_end(struct xz_dec* s);
 
 /*
  * Standalone build (userspace build or in-kernel build for boot time use)
@@ -297,7 +290,7 @@ XZ_EXTERN void xz_crc32_init(void);
  * calculation, the third argument must be zero. To continue the calculation,
  * the previously returned value is passed as the third argument.
  */
-XZ_EXTERN uint32_t xz_crc32(const uint8_t *buf, size_t size, uint32_t crc);
+XZ_EXTERN uint32_t xz_crc32(const uint8_t* buf, size_t size, uint32_t crc);
 #endif
 
 #if XZ_INTERNAL_CRC64
@@ -312,7 +305,7 @@ XZ_EXTERN void xz_crc64_init(void);
  * calculation, the third argument must be zero. To continue the calculation,
  * the previously returned value is passed as the third argument.
  */
-XZ_EXTERN uint64_t xz_crc64(const uint8_t *buf, size_t size, uint64_t crc);
+XZ_EXTERN uint64_t xz_crc64(const uint8_t* buf, size_t size, uint64_t crc);
 #endif
 
 #ifdef __cplusplus

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -40,51 +40,46 @@
 
 #include <QStringList>
 
-// FIXME: the way this is written, it can't ever do any sort of validation and can accept total junk
-MinecraftServerTarget MinecraftServerTarget::parse(const QString &fullAddress) {
-    QStringList split = fullAddress.split(":");
+// FIXME: the way this is written, it can't ever do any sort of validation and
+// can accept total junk
+MinecraftServerTarget MinecraftServerTarget::parse(const QString& fullAddress)
+{
+	QStringList split = fullAddress.split(":");
 
-    // The logic below replicates the exact logic minecraft uses for parsing server addresses.
-    // While the conversion is not lossless and eats errors, it ensures the same behavior
-    // within Minecraft and MeshMC when entering server addresses.
-    if (fullAddress.startsWith("["))
-    {
-        int bracket = fullAddress.indexOf("]");
-        if (bracket > 0)
-        {
-            QString ipv6 = fullAddress.mid(1, bracket - 1);
-            QString port = fullAddress.mid(bracket + 1).trimmed();
+	// The logic below replicates the exact logic minecraft uses for parsing
+	// server addresses. While the conversion is not lossless and eats errors,
+	// it ensures the same behavior within Minecraft and MeshMC when entering
+	// server addresses.
+	if (fullAddress.startsWith("[")) {
+		int bracket = fullAddress.indexOf("]");
+		if (bracket > 0) {
+			QString ipv6 = fullAddress.mid(1, bracket - 1);
+			QString port = fullAddress.mid(bracket + 1).trimmed();
 
-            if (port.startsWith(":") && !ipv6.isEmpty())
-            {
-                port = port.mid(1);
-                split = QStringList({ ipv6, port });
-            }
-            else
-            {
-                split = QStringList({ipv6});
-            }
-        }
-    }
+			if (port.startsWith(":") && !ipv6.isEmpty()) {
+				port = port.mid(1);
+				split = QStringList({ipv6, port});
+			} else {
+				split = QStringList({ipv6});
+			}
+		}
+	}
 
-    if (split.size() > 2)
-    {
-        split = QStringList({fullAddress});
-    }
+	if (split.size() > 2) {
+		split = QStringList({fullAddress});
+	}
 
-    QString realAddress = split[0];
+	QString realAddress = split[0];
 
-    quint16 realPort = 25565;
-    if (split.size() > 1)
-    {
-        bool ok;
-        realPort = split[1].toUInt(&ok);
+	quint16 realPort = 25565;
+	if (split.size() > 1) {
+		bool ok;
+		realPort = split[1].toUInt(&ok);
 
-        if (!ok)
-        {
-            realPort = 25565;
-        }
-    }
+		if (!ok) {
+			realPort = 25565;
+		}
+	}
 
-    return MinecraftServerTarget { realAddress, realPort };
+	return MinecraftServerTarget{realAddress, realPort};
 }

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -40,34 +40,36 @@
 
 #include <QtCore/QSortFilterProxyModel>
 
-namespace Ftb {
-
-class FilterModel : public QSortFilterProxyModel
+namespace Ftb
 {
-    Q_OBJECT
 
-public:
-    FilterModel(QObject* parent = Q_NULLPTR);
-    enum Sorting {
-        ByPlays,
-        ByInstalls,
-        ByName,
-    };
-    const QMap<QString, Sorting> getAvailableSortings();
-    QString translateCurrentSorting();
-    void setSorting(Sorting sorting);
-    Sorting getCurrentSorting();
-    void setSearchTerm(const QString& term);
+	class FilterModel : public QSortFilterProxyModel
+	{
+		Q_OBJECT
 
-protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
-    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
+	  public:
+		FilterModel(QObject* parent = Q_NULLPTR);
+		enum Sorting {
+			ByPlays,
+			ByInstalls,
+			ByName,
+		};
+		const QMap<QString, Sorting> getAvailableSortings();
+		QString translateCurrentSorting();
+		void setSorting(Sorting sorting);
+		Sorting getCurrentSorting();
+		void setSearchTerm(const QString& term);
 
-private:
-    QMap<QString, Sorting> sortings;
-    Sorting currentSorting;
-    QString searchTerm { "" };
+	  protected:
+		bool filterAcceptsRow(int sourceRow,
+							  const QModelIndex& sourceParent) const override;
+		bool lessThan(const QModelIndex& left,
+					  const QModelIndex& right) const override;
 
-};
+	  private:
+		QMap<QString, Sorting> sortings;
+		Sorting currentSorting;
+		QString searchTerm{""};
+	};
 
-}
+} // namespace Ftb

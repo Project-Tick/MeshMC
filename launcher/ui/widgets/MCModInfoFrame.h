@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -43,33 +43,32 @@
 
 namespace Ui
 {
-class MCModInfoFrame;
+	class MCModInfoFrame;
 }
 
 class MCModInfoFrame : public QFrame
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit MCModInfoFrame(QWidget *parent = 0);
-    ~MCModInfoFrame();
+  public:
+	explicit MCModInfoFrame(QWidget* parent = 0);
+	~MCModInfoFrame();
 
-    void setModText(QString text);
-    void setModDescription(QString text);
+	void setModText(QString text);
+	void setModDescription(QString text);
 
-    void updateWithMod(Mod &m);
-    void clear();
+	void updateWithMod(Mod& m);
+	void clear();
 
-public slots:
-    void modDescEllipsisHandler(const QString& link );
-    void boxClosed(int result);
+  public slots:
+	void modDescEllipsisHandler(const QString& link);
+	void boxClosed(int result);
 
-private:
-    void updateHiddenState();
+  private:
+	void updateHiddenState();
 
-private:
-    Ui::MCModInfoFrame *ui;
-    QString desc;
-    class QMessageBox * currentBox = nullptr;
+  private:
+	Ui::MCModInfoFrame* ui;
+	QString desc;
+	class QMessageBox* currentBox = nullptr;
 };
-

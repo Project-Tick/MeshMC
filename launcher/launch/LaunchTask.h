@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -45,100 +45,94 @@
 #include "LoggedProcess.h"
 #include "LaunchStep.h"
 
-class LaunchTask: public Task
+class LaunchTask : public Task
 {
-    Q_OBJECT
-protected:
-    explicit LaunchTask(InstancePtr instance);
-    void init();
+	Q_OBJECT
+  protected:
+	explicit LaunchTask(InstancePtr instance);
+	void init();
 
-public:
-    enum State
-    {
-        NotStarted,
-        Running,
-        Waiting,
-        Failed,
-        Aborted,
-        Finished
-    };
+  public:
+	enum State { NotStarted, Running, Waiting, Failed, Aborted, Finished };
 
-public: /* methods */
-    static shared_qobject_ptr<LaunchTask> create(InstancePtr inst);
-    virtual ~LaunchTask() {};
+  public: /* methods */
+	static shared_qobject_ptr<LaunchTask> create(InstancePtr inst);
+	virtual ~LaunchTask() {};
 
-    void appendStep(shared_qobject_ptr<LaunchStep> step);
-    void prependStep(shared_qobject_ptr<LaunchStep> step);
-    void setCensorFilter(QMap<QString, QString> filter);
+	void appendStep(shared_qobject_ptr<LaunchStep> step);
+	void prependStep(shared_qobject_ptr<LaunchStep> step);
+	void setCensorFilter(QMap<QString, QString> filter);
 
-    InstancePtr instance()
-    {
-        return m_instance;
-    }
+	InstancePtr instance()
+	{
+		return m_instance;
+	}
 
-    void setPid(qint64 pid)
-    {
-        m_pid = pid;
-    }
+	void setPid(qint64 pid)
+	{
+		m_pid = pid;
+	}
 
-    qint64 pid()
-    {
-        return m_pid;
-    }
+	qint64 pid()
+	{
+		return m_pid;
+	}
 
-    /**
-     * @brief prepare the process for launch (for multi-stage launch)
-     */
-    virtual void executeTask() override;
+	/**
+	 * @brief prepare the process for launch (for multi-stage launch)
+	 */
+	virtual void executeTask() override;
 
-    /**
-     * @brief launch the armed instance
-     */
-    void proceed();
+	/**
+	 * @brief launch the armed instance
+	 */
+	void proceed();
 
-    /**
-     * @brief abort launch
-     */
-    bool abort() override;
+	/**
+	 * @brief abort launch
+	 */
+	bool abort() override;
 
-    bool canAbort() const override;
+	bool canAbort() const override;
 
-    shared_qobject_ptr<LogModel> getLogModel();
+	shared_qobject_ptr<LogModel> getLogModel();
 
-public:
-    QString substituteVariables(const QString &cmd) const;
-    QString censorPrivateInfo(QString in);
+  public:
+	QString substituteVariables(const QString& cmd) const;
+	QString censorPrivateInfo(QString in);
 
-protected: /* methods */
-    virtual void emitFailed(QString reason) override;
-    virtual void emitSucceeded() override;
+  protected: /* methods */
+	virtual void emitFailed(QString reason) override;
+	virtual void emitSucceeded() override;
 
-signals:
-    /**
-     * @brief emitted when the launch preparations are done
-     */
-    void readyForLaunch();
+  signals:
+	/**
+	 * @brief emitted when the launch preparations are done
+	 */
+	void readyForLaunch();
 
-    void requestProgress(Task *task);
+	void requestProgress(Task* task);
 
-    void requestLogging();
+	void requestLogging();
 
-public slots:
-    void onLogLines(const QStringList& lines, MessageLevel::Enum defaultLevel = MessageLevel::MeshMC);
-    void onLogLine(QString line, MessageLevel::Enum defaultLevel = MessageLevel::MeshMC);
-    void onReadyForLaunch();
-    void onStepFinished();
-    void onProgressReportingRequested();
+  public slots:
+	void onLogLines(const QStringList& lines,
+					MessageLevel::Enum defaultLevel = MessageLevel::MeshMC);
+	void onLogLine(QString line,
+				   MessageLevel::Enum defaultLevel = MessageLevel::MeshMC);
+	void onReadyForLaunch();
+	void onStepFinished();
+	void onProgressReportingRequested();
 
-private: /*methods */
-    void finalizeSteps(bool successful, const QString & error);
+  private: /*methods */
+	void finalizeSteps(bool successful, const QString& error);
 
-protected: /* data */
-    InstancePtr m_instance;
-    shared_qobject_ptr<LogModel> m_logModel;
-    QList <shared_qobject_ptr<LaunchStep>> m_steps;
-    QMap<QString, QString> m_censorFilter;
-    int currentStep = -1;
-    State state = NotStarted;
-    qint64 m_pid = -1;
+  protected: /* data */
+	InstancePtr m_instance;
+	shared_qobject_ptr<LogModel> m_logModel;
+	QList<shared_qobject_ptr<LaunchStep>> m_steps;
+	QMap<QString, QString> m_censorFilter;
+	int currentStep = -1;
+	State state = NotStarted;
+	qint64 m_pid = -1;
 };

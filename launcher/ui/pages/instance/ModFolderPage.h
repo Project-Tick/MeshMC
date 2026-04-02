@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -48,96 +48,89 @@
 class ModFolderModel;
 namespace Ui
 {
-class ModFolderPage;
+	class ModFolderPage;
 }
 
 class ModFolderPage : public QMainWindow, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ModFolderPage(
-        BaseInstance *inst,
-        std::shared_ptr<ModFolderModel> mods,
-        QString id,
-        QString iconName,
-        QString displayName,
-        QString helpPage = "",
-        QWidget *parent = 0
-    );
-    virtual ~ModFolderPage();
+  public:
+	explicit ModFolderPage(BaseInstance* inst,
+						   std::shared_ptr<ModFolderModel> mods, QString id,
+						   QString iconName, QString displayName,
+						   QString helpPage = "", QWidget* parent = 0);
+	virtual ~ModFolderPage();
 
-    void setFilter(const QString & filter)
-    {
-        m_fileSelectionFilter = filter;
-    }
+	void setFilter(const QString& filter)
+	{
+		m_fileSelectionFilter = filter;
+	}
 
-    virtual QString displayName() const override
-    {
-        return m_displayName;
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon(m_iconName);
-    }
-    virtual QString id() const override
-    {
-        return m_id;
-    }
-    virtual QString helpPage() const override
-    {
-        return m_helpName;
-    }
-    virtual bool shouldDisplay() const override;
+	virtual QString displayName() const override
+	{
+		return m_displayName;
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon(m_iconName);
+	}
+	virtual QString id() const override
+	{
+		return m_id;
+	}
+	virtual QString helpPage() const override
+	{
+		return m_helpName;
+	}
+	virtual bool shouldDisplay() const override;
 
-    virtual void openedImpl() override;
-    virtual void closedImpl() override;
-protected:
-    bool eventFilter(QObject *obj, QEvent *ev) override;
-    bool modListFilter(QKeyEvent *ev);
-    QMenu * createPopupMenu() override;
+	virtual void openedImpl() override;
+	virtual void closedImpl() override;
 
-protected:
-    BaseInstance *m_inst = nullptr;
+  protected:
+	bool eventFilter(QObject* obj, QEvent* ev) override;
+	bool modListFilter(QKeyEvent* ev);
+	QMenu* createPopupMenu() override;
 
-protected:
-    Ui::ModFolderPage *ui = nullptr;
-    std::shared_ptr<ModFolderModel> m_mods;
-    QSortFilterProxyModel *m_filterModel = nullptr;
-    QString m_iconName;
-    QString m_id;
-    QString m_displayName;
-    QString m_helpName;
-    QString m_fileSelectionFilter;
-    QString m_viewFilter;
-    bool m_controlsEnabled = true;
+  protected:
+	BaseInstance* m_inst = nullptr;
 
-public
-slots:
-    void modCurrent(const QModelIndex &current, const QModelIndex &previous);
+  protected:
+	Ui::ModFolderPage* ui = nullptr;
+	std::shared_ptr<ModFolderModel> m_mods;
+	QSortFilterProxyModel* m_filterModel = nullptr;
+	QString m_iconName;
+	QString m_id;
+	QString m_displayName;
+	QString m_helpName;
+	QString m_fileSelectionFilter;
+	QString m_viewFilter;
+	bool m_controlsEnabled = true;
 
-private
-slots:
-    void modItemActivated(const QModelIndex &index);
-    void on_filterTextChanged(const QString & newContents);
-    void on_RunningState_changed(bool running);
-    void on_actionAdd_triggered();
-    void on_actionRemove_triggered();
-    void on_actionEnable_triggered();
-    void on_actionDisable_triggered();
-    void on_actionView_Folder_triggered();
-    void on_actionView_configs_triggered();
-    void ShowContextMenu(const QPoint &pos);
+  public slots:
+	void modCurrent(const QModelIndex& current, const QModelIndex& previous);
+
+  private slots:
+	void modItemActivated(const QModelIndex& index);
+	void on_filterTextChanged(const QString& newContents);
+	void on_RunningState_changed(bool running);
+	void on_actionAdd_triggered();
+	void on_actionRemove_triggered();
+	void on_actionEnable_triggered();
+	void on_actionDisable_triggered();
+	void on_actionView_Folder_triggered();
+	void on_actionView_configs_triggered();
+	void ShowContextMenu(const QPoint& pos);
 };
 
 class CoreModFolderPage : public ModFolderPage
 {
-public:
-    explicit CoreModFolderPage(BaseInstance *inst, std::shared_ptr<ModFolderModel> mods, QString id,
-                               QString iconName, QString displayName, QString helpPage = "",
-                               QWidget *parent = 0);
-    virtual ~CoreModFolderPage()
-    {
-    }
-    virtual bool shouldDisplay() const;
+  public:
+	explicit CoreModFolderPage(BaseInstance* inst,
+							   std::shared_ptr<ModFolderModel> mods, QString id,
+							   QString iconName, QString displayName,
+							   QString helpPage = "", QWidget* parent = 0);
+	virtual ~CoreModFolderPage() {}
+	virtual bool shouldDisplay() const;
 };

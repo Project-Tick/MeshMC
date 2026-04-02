@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,25 +44,25 @@
 
 class Exception : public std::exception
 {
-public:
-    Exception(const QString &message) : std::exception(), m_message(message)
-    {
-        qCritical() << "Exception:" << message;
-    }
-    Exception(const Exception &other)
-        : std::exception(), m_message(other.cause())
-    {
-    }
-    virtual ~Exception() noexcept {}
-    const char *what() const noexcept
-    {
-        return m_message.toLatin1().constData();
-    }
-    QString cause() const
-    {
-        return m_message;
-    }
+  public:
+	Exception(const QString& message) : std::exception(), m_message(message)
+	{
+		qCritical() << "Exception:" << message;
+	}
+	Exception(const Exception& other)
+		: std::exception(), m_message(other.cause())
+	{
+	}
+	virtual ~Exception() noexcept {}
+	const char* what() const noexcept
+	{
+		return m_message.toLatin1().constData();
+	}
+	QString cause() const
+	{
+		return m_message;
+	}
 
-private:
-    QString m_message;
+  private:
+	QString m_message;
 };

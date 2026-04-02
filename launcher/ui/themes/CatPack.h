@@ -28,61 +28,60 @@
 
 class CatPack
 {
-public:
-    virtual ~CatPack() {}
-    virtual QString id() = 0;
-    virtual QString name() = 0;
-    virtual QString path() = 0;
+  public:
+	virtual ~CatPack() {}
+	virtual QString id() = 0;
+	virtual QString name() = 0;
+	virtual QString path() = 0;
 };
 
 class BasicCatPack : public CatPack
 {
-public:
-    BasicCatPack(const QString& id, const QString& name);
+  public:
+	BasicCatPack(const QString& id, const QString& name);
 
-    QString id() override;
-    QString name() override;
-    QString path() override;
+	QString id() override;
+	QString name() override;
+	QString path() override;
 
-private:
-    QString m_id;
-    QString m_name;
+  private:
+	QString m_id;
+	QString m_name;
 };
 
 class FileCatPack : public CatPack
 {
-public:
-    explicit FileCatPack(const QFileInfo& fileInfo);
+  public:
+	explicit FileCatPack(const QFileInfo& fileInfo);
 
-    QString id() override;
-    QString name() override;
-    QString path() override;
+	QString id() override;
+	QString name() override;
+	QString path() override;
 
-private:
-    QFileInfo m_fileInfo;
+  private:
+	QFileInfo m_fileInfo;
 };
 
-struct JsonCatPackVariant
-{
-    QString path;
-    int startMonth;
-    int startDay;
-    int endMonth;
-    int endDay;
+struct JsonCatPackVariant {
+	QString path;
+	int startMonth;
+	int startDay;
+	int endMonth;
+	int endDay;
 };
 
 class JsonCatPack : public CatPack
 {
-public:
-    explicit JsonCatPack(const QFileInfo& manifestInfo);
+  public:
+	explicit JsonCatPack(const QFileInfo& manifestInfo);
 
-    QString id() override;
-    QString name() override;
-    QString path() override;
+	QString id() override;
+	QString name() override;
+	QString path() override;
 
-private:
-    QString m_id;
-    QString m_name;
-    QString m_defaultPath;
-    QList<JsonCatPackVariant> m_variants;
+  private:
+	QString m_id;
+	QString m_name;
+	QString m_defaultPath;
+	QList<JsonCatPackVariant> m_variants;
 };

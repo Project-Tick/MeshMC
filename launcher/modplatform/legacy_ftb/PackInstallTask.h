@@ -31,46 +31,52 @@
 
 #include <nonstd/optional>
 
-namespace LegacyFTB {
-
-class PackInstallTask : public InstanceTask
+namespace LegacyFTB
 {
-    Q_OBJECT
 
-public:
-    explicit PackInstallTask(shared_qobject_ptr<QNetworkAccessManager> network, Modpack pack, QString version);
-    virtual ~PackInstallTask(){}
+	class PackInstallTask : public InstanceTask
+	{
+		Q_OBJECT
 
-    bool canAbort() const override { return true; }
-    bool abort() override;
+	  public:
+		explicit PackInstallTask(
+			shared_qobject_ptr<QNetworkAccessManager> network, Modpack pack,
+			QString version);
+		virtual ~PackInstallTask() {}
 
-protected:
-    //! Entry point for tasks.
-    virtual void executeTask() override;
+		bool canAbort() const override
+		{
+			return true;
+		}
+		bool abort() override;
 
-private:
-    void downloadPack();
-    void unzip();
-    void install();
+	  protected:
+		//! Entry point for tasks.
+		virtual void executeTask() override;
 
-private slots:
-    void onDownloadSucceeded();
-    void onDownloadFailed(QString reason);
-    void onDownloadProgress(qint64 current, qint64 total);
+	  private:
+		void downloadPack();
+		void unzip();
+		void install();
 
-    void onUnzipFinished();
-    void onUnzipCanceled();
+	  private slots:
+		void onDownloadSucceeded();
+		void onDownloadFailed(QString reason);
+		void onDownloadProgress(qint64 current, qint64 total);
 
-private: /* data */
-    shared_qobject_ptr<QNetworkAccessManager> m_network;
-    bool abortable = false;
-    QFuture<nonstd::optional<QStringList>> m_extractFuture;
-    QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
-    NetJob::Ptr netJobContainer;
-    QString archivePath;
+		void onUnzipFinished();
+		void onUnzipCanceled();
 
-    Modpack m_pack;
-    QString m_version;
-};
+	  private: /* data */
+		shared_qobject_ptr<QNetworkAccessManager> m_network;
+		bool abortable = false;
+		QFuture<nonstd::optional<QStringList>> m_extractFuture;
+		QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
+		NetJob::Ptr netJobContainer;
+		QString archivePath;
 
-}
+		Modpack m_pack;
+		QString m_version;
+	};
+
+} // namespace LegacyFTB

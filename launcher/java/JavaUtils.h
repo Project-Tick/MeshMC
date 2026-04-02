@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -51,15 +51,21 @@ QProcessEnvironment CleanEnviroment();
 
 class JavaUtils : public QObject
 {
-    Q_OBJECT
-public:
-    JavaUtils();
+	Q_OBJECT
+  public:
+	JavaUtils();
 
-    JavaInstallPtr MakeJavaPtr(QString path, QString id = "unknown", QString arch = "unknown");
-    QList<QString> FindJavaPaths();
-    JavaInstallPtr GetDefaultJava();
+	static QString managedJavaRoot();
+
+	JavaInstallPtr MakeJavaPtr(QString path, QString id = "unknown",
+							   QString arch = "unknown");
+	QList<QString> FindJavaPaths();
+	JavaInstallPtr GetDefaultJava();
 
 #ifdef Q_OS_WIN
-    QList<JavaInstallPtr> FindJavaFromRegistryKey(DWORD keyType, QString keyName, QString keyJavaDir, QString subkeySuffix = "");
+	QList<JavaInstallPtr> FindJavaFromRegistryKey(DWORD keyType,
+												  QString keyName,
+												  QString keyJavaDir,
+												  QString subkeySuffix = "");
 #endif
 };

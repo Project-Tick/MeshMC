@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -39,12 +39,14 @@
 #include "LaunchStep.h"
 #include "LaunchTask.h"
 
-void LaunchStep::bind(LaunchTask *parent)
+void LaunchStep::bind(LaunchTask* parent)
 {
-    m_parent = parent;
-    connect(this, &LaunchStep::readyForLaunch, parent, &LaunchTask::onReadyForLaunch);
-    connect(this, &LaunchStep::logLine, parent, &LaunchTask::onLogLine);
-    connect(this, &LaunchStep::logLines, parent, &LaunchTask::onLogLines);
-    connect(this, &LaunchStep::finished, parent, &LaunchTask::onStepFinished);
-    connect(this, &LaunchStep::progressReportingRequest, parent, &LaunchTask::onProgressReportingRequested);
+	m_parent = parent;
+	connect(this, &LaunchStep::readyForLaunch, parent,
+			&LaunchTask::onReadyForLaunch);
+	connect(this, &LaunchStep::logLine, parent, &LaunchTask::onLogLine);
+	connect(this, &LaunchStep::logLines, parent, &LaunchTask::onLogLines);
+	connect(this, &LaunchStep::finished, parent, &LaunchTask::onStepFinished);
+	connect(this, &LaunchStep::progressReportingRequest, parent,
+			&LaunchTask::onProgressReportingRequested);
 }

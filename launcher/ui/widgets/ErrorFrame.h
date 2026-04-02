@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -42,31 +42,31 @@
 
 namespace Ui
 {
-class ErrorFrame;
+	class ErrorFrame;
 }
 
 class ErrorFrame : public QFrame
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ErrorFrame(QWidget *parent = 0);
-    ~ErrorFrame();
+  public:
+	explicit ErrorFrame(QWidget* parent = 0);
+	~ErrorFrame();
 
-    void setTitle(QString text);
-    void setDescription(QString text);
+	void setTitle(QString text);
+	void setDescription(QString text);
 
-    void clear();
+	void clear();
 
-public slots:
-    void ellipsisHandler(const QString& link );
-    void boxClosed(int result);
+  public slots:
+	void ellipsisHandler(const QString& link);
+	void boxClosed(int result);
 
-private:
-    void updateHiddenState();
+  private:
+	void updateHiddenState();
 
-private:
-    Ui::ErrorFrame *ui;
-    QString desc;
-    class QMessageBox * currentBox = nullptr;
+  private:
+	Ui::ErrorFrame* ui;
+	QString desc;
+	class QMessageBox* currentBox = nullptr;
 };

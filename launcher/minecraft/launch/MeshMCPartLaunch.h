@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,40 +44,40 @@
 
 #include "MinecraftServerTarget.h"
 
-class MeshMCPartLaunch: public LaunchStep
+class MeshMCPartLaunch : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit MeshMCPartLaunch(LaunchTask *parent);
-    virtual ~MeshMCPartLaunch() {};
+	Q_OBJECT
+  public:
+	explicit MeshMCPartLaunch(LaunchTask* parent);
+	virtual ~MeshMCPartLaunch() {};
 
-    virtual void executeTask();
-    virtual bool abort();
-    virtual void proceed();
-    virtual bool canAbort() const
-    {
-        return true;
-    }
-    void setWorkingDirectory(const QString &wd);
-    void setAuthSession(AuthSessionPtr session)
-    {
-        m_session = session;
-    }
+	virtual void executeTask();
+	virtual bool abort();
+	virtual void proceed();
+	virtual bool canAbort() const
+	{
+		return true;
+	}
+	void setWorkingDirectory(const QString& wd);
+	void setAuthSession(AuthSessionPtr session)
+	{
+		m_session = session;
+	}
 
-    void setServerToJoin(MinecraftServerTargetPtr serverToJoin)
-    {
-        m_serverToJoin = std::move(serverToJoin);
-    }
+	void setServerToJoin(MinecraftServerTargetPtr serverToJoin)
+	{
+		m_serverToJoin = std::move(serverToJoin);
+	}
 
-private slots:
-    void on_state(LoggedProcess::State state);
+  private slots:
+	void on_state(LoggedProcess::State state);
 
-private:
-    LoggedProcess m_process;
-    QString m_command;
-    AuthSessionPtr m_session;
-    QString m_launchScript;
-    MinecraftServerTargetPtr m_serverToJoin;
+  private:
+	LoggedProcess m_process;
+	QString m_command;
+	AuthSessionPtr m_session;
+	QString m_launchScript;
+	MinecraftServerTargetPtr m_serverToJoin;
 
-    bool mayProceed = false;
+	bool mayProceed = false;
 };

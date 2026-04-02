@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,53 +46,53 @@
 
 namespace Ui
 {
-class VanillaPage;
+	class VanillaPage;
 }
 
 class NewInstanceDialog;
 
 class VanillaPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit VanillaPage(NewInstanceDialog *dialog, QWidget *parent = 0);
-    virtual ~VanillaPage();
-    virtual QString displayName() const override
-    {
-        return tr("Vanilla");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("minecraft");
-    }
-    virtual QString id() const override
-    {
-        return "vanilla";
-    }
-    virtual QString helpPage() const override
-    {
-        return "Vanilla-platform";
-    }
-    virtual bool shouldDisplay() const override;
-    void openedImpl() override;
+  public:
+	explicit VanillaPage(NewInstanceDialog* dialog, QWidget* parent = 0);
+	virtual ~VanillaPage();
+	virtual QString displayName() const override
+	{
+		return tr("Vanilla");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("minecraft");
+	}
+	virtual QString id() const override
+	{
+		return "vanilla";
+	}
+	virtual QString helpPage() const override
+	{
+		return "Vanilla-platform";
+	}
+	virtual bool shouldDisplay() const override;
+	void openedImpl() override;
 
-    BaseVersionPtr selectedVersion() const;
+	BaseVersionPtr selectedVersion() const;
 
-public slots:
-    void setSelectedVersion(BaseVersionPtr version);
+  public slots:
+	void setSelectedVersion(BaseVersionPtr version);
 
-private slots:
-    void filterChanged();
+  private slots:
+	void filterChanged();
 
-private:
-    void refresh();
-    void suggestCurrent();
+  private:
+	void refresh();
+	void suggestCurrent();
 
-private:
-    bool initialized = false;
-    NewInstanceDialog *dialog = nullptr;
-    Ui::VanillaPage *ui = nullptr;
-    bool m_versionSetByUser = false;
-    BaseVersionPtr m_selectedVersion;
+  private:
+	bool initialized = false;
+	NewInstanceDialog* dialog = nullptr;
+	Ui::VanillaPage* ui = nullptr;
+	bool m_versionSetByUser = false;
+	BaseVersionPtr m_selectedVersion;
 };

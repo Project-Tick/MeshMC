@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,272 +44,275 @@
 
 #include <QPainter>
 
-namespace Ftb {
-
-ListModel::ListModel(QObject *parent) : QAbstractListModel(parent)
+namespace Ftb
 {
-}
 
-ListModel::~ListModel()
-{
-}
+	ListModel::ListModel(QObject* parent) : QAbstractListModel(parent) {}
 
-int ListModel::rowCount(const QModelIndex &parent) const
-{
-    return modpacks.size();
-}
+	ListModel::~ListModel() {}
 
-int ListModel::columnCount(const QModelIndex &parent) const
-{
-    return 1;
-}
+	int ListModel::rowCount(const QModelIndex& parent) const
+	{
+		return modpacks.size();
+	}
 
-QVariant ListModel::data(const QModelIndex &index, int role) const
-{
-    int pos = index.row();
-    if(pos >= modpacks.size() || pos < 0 || !index.isValid())
-    {
-        return QString("INVALID INDEX %1").arg(pos);
-    }
+	int ListModel::columnCount(const QModelIndex& parent) const
+	{
+		return 1;
+	}
 
-    ModpacksCH::Modpack pack = modpacks.at(pos);
-    if(role == Qt::DisplayRole)
-    {
-        return pack.name;
-    }
-    else if (role == Qt::ToolTipRole)
-    {
-        return pack.synopsis;
-    }
-    else if(role == Qt::DecorationRole)
-    {
-        QIcon placeholder = APPLICATION->getThemedIcon("screenshot-placeholder");
+	QVariant ListModel::data(const QModelIndex& index, int role) const
+	{
+		int pos = index.row();
+		if (pos >= modpacks.size() || pos < 0 || !index.isValid()) {
+			return QString("INVALID INDEX %1").arg(pos);
+		}
 
-        auto iter = m_logoMap.find(pack.name);
-        if (iter != m_logoMap.end()) {
-            auto & logo = *iter;
-            if(!logo.result.isNull()) {
-                return logo.result;
-            }
-            return placeholder;
-        }
+		ModpacksCH::Modpack pack = modpacks.at(pos);
+		if (role == Qt::DisplayRole) {
+			return pack.name;
+		} else if (role == Qt::ToolTipRole) {
+			return pack.synopsis;
+		} else if (role == Qt::DecorationRole) {
+			QIcon placeholder =
+				APPLICATION->getThemedIcon("screenshot-placeholder");
 
-        for(auto art : pack.art) {
-            if(art.type == "square") {
-                ((ListModel *)this)->requestLogo(pack.name, art.url);
-            }
-        }
-        return placeholder;
-    }
-    else if(role == Qt::UserRole)
-    {
-        QVariant v;
-        v.setValue(pack);
-        return v;
-    }
+			auto iter = m_logoMap.find(pack.name);
+			if (iter != m_logoMap.end()) {
+				auto& logo = *iter;
+				if (!logo.result.isNull()) {
+					return logo.result;
+				}
+				return placeholder;
+			}
 
-    return QVariant();
-}
+			for (auto art : pack.art) {
+				if (art.type == "square") {
+					((ListModel*)this)->requestLogo(pack.name, art.url);
+				}
+			}
+			return placeholder;
+		} else if (role == Qt::UserRole) {
+			QVariant v;
+			v.setValue(pack);
+			return v;
+		}
 
-void ListModel::getLogo(const QString &logo, const QString &logoUrl, LogoCallback callback)
-{
-    if(m_logoMap.contains(logo))
-    {
-        callback(APPLICATION->metacache()->resolveEntry("ModpacksCHPacks", QString("logos/%1").arg(logo.section(".", 0, 0)))->getFullPath());
-    }
-    else
-    {
-        requestLogo(logo, logoUrl);
-    }
-}
+		return QVariant();
+	}
 
-void ListModel::request()
-{
-    beginResetModel();
-    modpacks.clear();
-    endResetModel();
+	void ListModel::getLogo(const QString& logo, const QString& logoUrl,
+							LogoCallback callback)
+	{
+		if (m_logoMap.contains(logo)) {
+			callback(APPLICATION->metacache()
+						 ->resolveEntry(
+							 "ModpacksCHPacks",
+							 QString("logos/%1").arg(logo.section(".", 0, 0)))
+						 ->getFullPath());
+		} else {
+			requestLogo(logo, logoUrl);
+		}
+	}
 
-    auto *netJob = new NetJob("Ftb::Request", APPLICATION->network());
-    auto url = QString(BuildConfig.MODPACKSCH_API_BASE_URL + "public/modpack/all");
-    netJob->addNetAction(Net::Download::makeByteArray(QUrl(url), &response));
-    jobPtr = netJob;
-    jobPtr->start();
+	void ListModel::request()
+	{
+		beginResetModel();
+		modpacks.clear();
+		endResetModel();
 
-    QObject::connect(netJob, &NetJob::succeeded, this, &ListModel::requestFinished);
-    QObject::connect(netJob, &NetJob::failed, this, &ListModel::requestFailed);
-}
+		auto* netJob = new NetJob("Ftb::Request", APPLICATION->network());
+		auto url =
+			QString(BuildConfig.MODPACKSCH_API_BASE_URL + "public/modpack/all");
+		netJob->addNetAction(
+			Net::Download::makeByteArray(QUrl(url), &response));
+		jobPtr = netJob;
+		jobPtr->start();
 
-void ListModel::requestFinished()
-{
-    jobPtr.reset();
-    remainingPacks.clear();
+		QObject::connect(netJob, &NetJob::succeeded, this,
+						 &ListModel::requestFinished);
+		QObject::connect(netJob, &NetJob::failed, this,
+						 &ListModel::requestFailed);
+	}
 
-    QJsonParseError parse_error;
-    QJsonDocument doc = QJsonDocument::fromJson(response, &parse_error);
-    if(parse_error.error != QJsonParseError::NoError) {
-        qWarning() << "Error while parsing JSON response from FTB at " << parse_error.offset << " reason: " << parse_error.errorString();
-        qWarning() << response;
-        return;
-    }
+	void ListModel::requestFinished()
+	{
+		jobPtr.reset();
+		remainingPacks.clear();
 
-    auto packs = doc.object().value("packs").toArray();
-    for(auto pack : packs) {
-        auto packId = pack.toInt();
-        remainingPacks.append(packId);
-    }
+		QJsonParseError parse_error;
+		QJsonDocument doc = QJsonDocument::fromJson(response, &parse_error);
+		if (parse_error.error != QJsonParseError::NoError) {
+			qWarning() << "Error while parsing JSON response from FTB at "
+					   << parse_error.offset
+					   << " reason: " << parse_error.errorString();
+			qWarning() << response;
+			return;
+		}
 
-    if(!remainingPacks.isEmpty()) {
-        currentPack = remainingPacks.at(0);
-        requestPack();
-    }
-}
+		auto packs = doc.object().value("packs").toArray();
+		for (auto pack : packs) {
+			auto packId = pack.toInt();
+			remainingPacks.append(packId);
+		}
 
-void ListModel::requestFailed(QString reason)
-{
-    jobPtr.reset();
-    remainingPacks.clear();
-}
+		if (!remainingPacks.isEmpty()) {
+			currentPack = remainingPacks.at(0);
+			requestPack();
+		}
+	}
 
-void ListModel::requestPack()
-{
-    auto *netJob = new NetJob("Ftb::Search", APPLICATION->network());
-    auto searchUrl = QString(BuildConfig.MODPACKSCH_API_BASE_URL + "public/modpack/%1").arg(currentPack);
-    netJob->addNetAction(Net::Download::makeByteArray(QUrl(searchUrl), &response));
-    jobPtr = netJob;
-    jobPtr->start();
+	void ListModel::requestFailed(QString reason)
+	{
+		jobPtr.reset();
+		remainingPacks.clear();
+	}
 
-    QObject::connect(netJob, &NetJob::succeeded, this, &ListModel::packRequestFinished);
-    QObject::connect(netJob, &NetJob::failed, this, &ListModel::packRequestFailed);
-}
+	void ListModel::requestPack()
+	{
+		auto* netJob = new NetJob("Ftb::Search", APPLICATION->network());
+		auto searchUrl =
+			QString(BuildConfig.MODPACKSCH_API_BASE_URL + "public/modpack/%1")
+				.arg(currentPack);
+		netJob->addNetAction(
+			Net::Download::makeByteArray(QUrl(searchUrl), &response));
+		jobPtr = netJob;
+		jobPtr->start();
 
-void ListModel::packRequestFinished()
-{
-    jobPtr.reset();
-    remainingPacks.removeOne(currentPack);
+		QObject::connect(netJob, &NetJob::succeeded, this,
+						 &ListModel::packRequestFinished);
+		QObject::connect(netJob, &NetJob::failed, this,
+						 &ListModel::packRequestFailed);
+	}
 
-    QJsonParseError parse_error;
-    QJsonDocument doc = QJsonDocument::fromJson(response, &parse_error);
+	void ListModel::packRequestFinished()
+	{
+		jobPtr.reset();
+		remainingPacks.removeOne(currentPack);
 
-    if(parse_error.error != QJsonParseError::NoError) {
-        qWarning() << "Error while parsing JSON response from FTB at " << parse_error.offset << " reason: " << parse_error.errorString();
-        qWarning() << response;
-        return;
-    }
+		QJsonParseError parse_error;
+		QJsonDocument doc = QJsonDocument::fromJson(response, &parse_error);
 
-    auto obj = doc.object();
+		if (parse_error.error != QJsonParseError::NoError) {
+			qWarning() << "Error while parsing JSON response from FTB at "
+					   << parse_error.offset
+					   << " reason: " << parse_error.errorString();
+			qWarning() << response;
+			return;
+		}
 
-    ModpacksCH::Modpack pack;
-    try
-    {
-        ModpacksCH::loadModpack(pack, obj);
-    }
-    catch (const JSONValidationError &e)
-    {
-        qDebug() << QString::fromUtf8(response);
-        qWarning() << "Error while reading pack manifest from FTB: " << e.cause();
-        return;
-    }
+		auto obj = doc.object();
 
-    // Since there is no guarantee that packs have a version, this will just
-    // ignore those "dud" packs.
-    if (pack.versions.empty())
-    {
-        qWarning() << "FTB Pack " << pack.id << " ignored. reason: lacking any versions";
-    }
-    else
-    {
-        beginInsertRows(QModelIndex(), modpacks.size(), modpacks.size());
-        modpacks.append(pack);
-        endInsertRows();
-    }
+		ModpacksCH::Modpack pack;
+		try {
+			ModpacksCH::loadModpack(pack, obj);
+		} catch (const JSONValidationError& e) {
+			qDebug() << QString::fromUtf8(response);
+			qWarning() << "Error while reading pack manifest from FTB: "
+					   << e.cause();
+			return;
+		}
 
-    if(!remainingPacks.isEmpty()) {
-        currentPack = remainingPacks.at(0);
-        requestPack();
-    }
-}
+		// Since there is no guarantee that packs have a version, this will just
+		// ignore those "dud" packs.
+		if (pack.versions.empty()) {
+			qWarning() << "FTB Pack " << pack.id
+					   << " ignored. reason: lacking any versions";
+		} else {
+			beginInsertRows(QModelIndex(), modpacks.size(), modpacks.size());
+			modpacks.append(pack);
+			endInsertRows();
+		}
 
-void ListModel::packRequestFailed(QString reason)
-{
-    jobPtr.reset();
-    remainingPacks.removeOne(currentPack);
-}
+		if (!remainingPacks.isEmpty()) {
+			currentPack = remainingPacks.at(0);
+			requestPack();
+		}
+	}
 
-void ListModel::logoLoaded(QString logo, bool stale)
-{
-    auto & logoObj = m_logoMap[logo];
-    logoObj.downloadJob.reset();
-    QString smallPath = logoObj.fullpath + ".small";
+	void ListModel::packRequestFailed(QString reason)
+	{
+		jobPtr.reset();
+		remainingPacks.removeOne(currentPack);
+	}
 
-    QFileInfo smallInfo(smallPath);
+	void ListModel::logoLoaded(QString logo, bool stale)
+	{
+		auto& logoObj = m_logoMap[logo];
+		logoObj.downloadJob.reset();
+		QString smallPath = logoObj.fullpath + ".small";
 
-    if(stale || !smallInfo.exists()) {
-        QImage image(logoObj.fullpath);
-        if (image.isNull())
-        {
-            logoObj.failed = true;
-            return;
-        }
-        QImage small;
-        if (image.width() > image.height()) {
-            small = image.scaledToWidth(512).scaledToWidth(256, Qt::SmoothTransformation);
-        }
-        else {
-            small = image.scaledToHeight(512).scaledToHeight(256, Qt::SmoothTransformation);
-        }
-        QPoint offset((256 - small.width()) / 2, (256 - small.height()) / 2);
-        QImage square(QSize(256, 256), QImage::Format_ARGB32);
-        square.fill(Qt::transparent);
+		QFileInfo smallInfo(smallPath);
 
-        QPainter painter(&square);
-        painter.drawImage(offset, small);
-        painter.end();
+		if (stale || !smallInfo.exists()) {
+			QImage image(logoObj.fullpath);
+			if (image.isNull()) {
+				logoObj.failed = true;
+				return;
+			}
+			QImage small;
+			if (image.width() > image.height()) {
+				small = image.scaledToWidth(512).scaledToWidth(
+					256, Qt::SmoothTransformation);
+			} else {
+				small = image.scaledToHeight(512).scaledToHeight(
+					256, Qt::SmoothTransformation);
+			}
+			QPoint offset((256 - small.width()) / 2,
+						  (256 - small.height()) / 2);
+			QImage square(QSize(256, 256), QImage::Format_ARGB32);
+			square.fill(Qt::transparent);
 
-        square.save(logoObj.fullpath + ".small", "PNG");
-    }
+			QPainter painter(&square);
+			painter.drawImage(offset, small);
+			painter.end();
 
-    logoObj.result = QIcon(logoObj.fullpath + ".small");
-    for(int i = 0; i < modpacks.size(); i++) {
-        if(modpacks[i].name == logo) {
-            emit dataChanged(createIndex(i, 0), createIndex(i, 0), {Qt::DecorationRole});
-        }
-    }
-}
+			square.save(logoObj.fullpath + ".small", "PNG");
+		}
 
-void ListModel::logoFailed(QString logo)
-{
-    m_logoMap[logo].failed = true;
-    m_logoMap[logo].downloadJob.reset();
-}
+		logoObj.result = QIcon(logoObj.fullpath + ".small");
+		for (int i = 0; i < modpacks.size(); i++) {
+			if (modpacks[i].name == logo) {
+				emit dataChanged(createIndex(i, 0), createIndex(i, 0),
+								 {Qt::DecorationRole});
+			}
+		}
+	}
 
-void ListModel::requestLogo(QString logo, QString url)
-{
-    if(m_logoMap.contains(logo)) {
-        return;
-    }
+	void ListModel::logoFailed(QString logo)
+	{
+		m_logoMap[logo].failed = true;
+		m_logoMap[logo].downloadJob.reset();
+	}
 
-    MetaEntryPtr entry = APPLICATION->metacache()->resolveEntry("ModpacksCHPacks", QString("logos/%1").arg(logo.section(".", 0, 0)));
+	void ListModel::requestLogo(QString logo, QString url)
+	{
+		if (m_logoMap.contains(logo)) {
+			return;
+		}
 
-    bool stale = entry->isStale();
+		MetaEntryPtr entry = APPLICATION->metacache()->resolveEntry(
+			"ModpacksCHPacks",
+			QString("logos/%1").arg(logo.section(".", 0, 0)));
 
-    NetJob *job = new NetJob(QString("FTB Icon Download %1").arg(logo), APPLICATION->network());
-    job->addNetAction(Net::Download::makeCached(QUrl(url), entry));
+		bool stale = entry->isStale();
 
-    auto fullPath = entry->getFullPath();
-    QObject::connect(job, &NetJob::finished, this, [this, logo, fullPath, stale]
-    {
-        logoLoaded(logo, stale);
-    });
+		NetJob* job = new NetJob(QString("FTB Icon Download %1").arg(logo),
+								 APPLICATION->network());
+		job->addNetAction(Net::Download::makeCached(QUrl(url), entry));
 
-    QObject::connect(job, &NetJob::failed, this, [this, logo]
-    {
-        logoFailed(logo);
-    });
+		auto fullPath = entry->getFullPath();
+		QObject::connect(
+			job, &NetJob::finished, this,
+			[this, logo, fullPath, stale] { logoLoaded(logo, stale); });
 
-    auto &newLogoEntry = m_logoMap[logo];
-    newLogoEntry.downloadJob = job;
-    newLogoEntry.fullpath = fullPath;
-    job->start();
-}
+		QObject::connect(job, &NetJob::failed, this,
+						 [this, logo] { logoFailed(logo); });
 
-}
+		auto& newLogoEntry = m_logoMap[logo];
+		newLogoEntry.downloadJob = job;
+		newLogoEntry.fullpath = fullPath;
+		job->start();
+	}
+
+} // namespace Ftb

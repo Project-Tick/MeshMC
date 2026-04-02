@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -51,90 +51,97 @@
 
 #include <nonstd/optional>
 
-namespace ATLauncher {
-
-class UserInteractionSupport {
-
-public:
-    /**
-     * Requests a user interaction to select which optional mods should be installed.
-     */
-    virtual QVector<QString> chooseOptionalMods(QVector<ATLauncher::VersionMod> mods) = 0;
-
-    /**
-     * Requests a user interaction to select a component version from a given version list
-     * and constrained to a given Minecraft version.
-     */
-    virtual QString chooseVersion(Meta::VersionListPtr vlist, QString minecraftVersion) = 0;
-
-};
-
-class PackInstallTask : public InstanceTask
+namespace ATLauncher
 {
-Q_OBJECT
 
-public:
-    explicit PackInstallTask(UserInteractionSupport *support, QString pack, QString version);
-    virtual ~PackInstallTask(){}
+	class UserInteractionSupport
+	{
 
-    bool canAbort() const override { return true; }
-    bool abort() override;
+	  public:
+		/**
+		 * Requests a user interaction to select which optional mods should be
+		 * installed.
+		 */
+		virtual QVector<QString>
+		chooseOptionalMods(QVector<ATLauncher::VersionMod> mods) = 0;
 
-protected:
-    virtual void executeTask() override;
+		/**
+		 * Requests a user interaction to select a component version from a
+		 * given version list and constrained to a given Minecraft version.
+		 */
+		virtual QString chooseVersion(Meta::VersionListPtr vlist,
+									  QString minecraftVersion) = 0;
+	};
 
-private slots:
-    void onDownloadSucceeded();
-    void onDownloadFailed(QString reason);
+	class PackInstallTask : public InstanceTask
+	{
+		Q_OBJECT
 
-    void onModsDownloaded();
-    void onModsExtracted();
+	  public:
+		explicit PackInstallTask(UserInteractionSupport* support, QString pack,
+								 QString version);
+		virtual ~PackInstallTask() {}
 
-private:
-    QString getDirForModType(ModType type, QString raw);
-    QString getVersionForLoader(QString uid);
-    QString detectLibrary(VersionLibrary library);
+		bool canAbort() const override
+		{
+			return true;
+		}
+		bool abort() override;
 
-    bool createLibrariesComponent(QString instanceRoot, std::shared_ptr<PackProfile> profile);
-    bool createPackComponent(QString instanceRoot, std::shared_ptr<PackProfile> profile);
+	  protected:
+		virtual void executeTask() override;
 
-    void installConfigs();
-    void extractConfigs();
-    void downloadMods();
-    bool extractMods(
-        const QMap<QString, VersionMod> &toExtract,
-        const QMap<QString, VersionMod> &toDecomp,
-        const QMap<QString, QString> &toCopy
-    );
-    void install();
+	  private slots:
+		void onDownloadSucceeded();
+		void onDownloadFailed(QString reason);
 
-private:
-    UserInteractionSupport *m_support;
+		void onModsDownloaded();
+		void onModsExtracted();
 
-    bool abortable = false;
+	  private:
+		QString getDirForModType(ModType type, QString raw);
+		QString getVersionForLoader(QString uid);
+		QString detectLibrary(VersionLibrary library);
 
-    NetJob::Ptr jobPtr;
-    QByteArray response;
+		bool createLibrariesComponent(QString instanceRoot,
+									  std::shared_ptr<PackProfile> profile);
+		bool createPackComponent(QString instanceRoot,
+								 std::shared_ptr<PackProfile> profile);
 
-    QString m_pack;
-    QString m_version_name;
-    PackVersion m_version;
+		void installConfigs();
+		void extractConfigs();
+		void downloadMods();
+		bool extractMods(const QMap<QString, VersionMod>& toExtract,
+						 const QMap<QString, VersionMod>& toDecomp,
+						 const QMap<QString, QString>& toCopy);
+		void install();
 
-    QMap<QString, VersionMod> modsToExtract;
-    QMap<QString, VersionMod> modsToDecomp;
-    QMap<QString, QString> modsToCopy;
+	  private:
+		UserInteractionSupport* m_support;
 
-    QString archivePath;
-    QStringList jarmods;
-    Meta::VersionPtr minecraftVersion;
-    QMap<QString, Meta::VersionPtr> componentsToInstall;
+		bool abortable = false;
 
-    QFuture<nonstd::optional<QStringList>> m_extractFuture;
-    QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
+		NetJob::Ptr jobPtr;
+		QByteArray response;
 
-    QFuture<bool> m_modExtractFuture;
-    QFutureWatcher<bool> m_modExtractFutureWatcher;
+		QString m_pack;
+		QString m_version_name;
+		PackVersion m_version;
 
-};
+		QMap<QString, VersionMod> modsToExtract;
+		QMap<QString, VersionMod> modsToDecomp;
+		QMap<QString, QString> modsToCopy;
 
-}
+		QString archivePath;
+		QStringList jarmods;
+		Meta::VersionPtr minecraftVersion;
+		QMap<QString, Meta::VersionPtr> componentsToInstall;
+
+		QFuture<nonstd::optional<QStringList>> m_extractFuture;
+		QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
+
+		QFuture<bool> m_modExtractFuture;
+		QFutureWatcher<bool> m_modExtractFutureWatcher;
+	};
+
+} // namespace ATLauncher

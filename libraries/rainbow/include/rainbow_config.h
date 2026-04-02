@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -39,11 +39,11 @@
 #include <QtCore/QtGlobal>
 
 #ifdef RAINBOW_STATIC
-    #define RAINBOW_EXPORT
+#define RAINBOW_EXPORT
 #else
-    #ifdef RAINBOW_LIBRARY
-        #define RAINBOW_EXPORT Q_DECL_EXPORT
-    #else
-        #define RAINBOW_EXPORT Q_DECL_IMPORT
-    #endif
+#ifdef RAINBOW_LIBRARY
+#define RAINBOW_EXPORT Q_DECL_EXPORT
+#else
+#define RAINBOW_EXPORT Q_DECL_IMPORT
+#endif
 #endif

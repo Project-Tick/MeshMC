@@ -34,30 +34,31 @@
 
 class AuthFlow : public AccountTask
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit AuthFlow(AccountData * data, QObject *parent = 0);
+  public:
+	explicit AuthFlow(AccountData* data, QObject* parent = 0);
 
-    Katabasis::Validity validity() {
-        return m_data->validity_;
-    };
+	Katabasis::Validity validity()
+	{
+		return m_data->validity_;
+	};
 
-    QString getStateMessage() const override;
+	QString getStateMessage() const override;
 
-    void executeTask() override;
+	void executeTask() override;
 
-signals:
-    // No extra signals needed - authorizeWithBrowser is on AccountTask
+  signals:
+	// No extra signals needed - authorizeWithBrowser is on AccountTask
 
-private slots:
-    void stepFinished(AccountTaskState resultingState, QString message);
+  private slots:
+	void stepFinished(AccountTaskState resultingState, QString message);
 
-protected:
-    void succeed();
-    void nextStep();
+  protected:
+	void succeed();
+	void nextStep();
 
-protected:
-    QList<AuthStep::Ptr> m_steps;
-    AuthStep::Ptr m_currentStep;
+  protected:
+	QList<AuthStep::Ptr> m_steps;
+	AuthStep::Ptr m_currentStep;
 };

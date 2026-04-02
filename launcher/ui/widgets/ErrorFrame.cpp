@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,112 +46,97 @@
 
 void ErrorFrame::clear()
 {
-    setTitle(QString());
-    setDescription(QString());
+	setTitle(QString());
+	setDescription(QString());
 }
 
-ErrorFrame::ErrorFrame(QWidget *parent) :
-    QFrame(parent),
-    ui(new Ui::ErrorFrame)
+ErrorFrame::ErrorFrame(QWidget* parent) : QFrame(parent), ui(new Ui::ErrorFrame)
 {
-    ui->setupUi(this);
-    ui->label_Description->setHidden(true);
-    ui->label_Title->setHidden(true);
-    updateHiddenState();
+	ui->setupUi(this);
+	ui->label_Description->setHidden(true);
+	ui->label_Title->setHidden(true);
+	updateHiddenState();
 }
 
 ErrorFrame::~ErrorFrame()
 {
-    delete ui;
+	delete ui;
 }
 
 void ErrorFrame::updateHiddenState()
 {
-    if(ui->label_Description->isHidden() && ui->label_Title->isHidden())
-    {
-        setHidden(true);
-    }
-    else
-    {
-        setHidden(false);
-    }
+	if (ui->label_Description->isHidden() && ui->label_Title->isHidden()) {
+		setHidden(true);
+	} else {
+		setHidden(false);
+	}
 }
 
 void ErrorFrame::setTitle(QString text)
 {
-    if(text.isEmpty())
-    {
-        ui->label_Title->setHidden(true);
-    }
-    else
-    {
-        ui->label_Title->setText(text);
-        ui->label_Title->setHidden(false);
-    }
-    updateHiddenState();
+	if (text.isEmpty()) {
+		ui->label_Title->setHidden(true);
+	} else {
+		ui->label_Title->setText(text);
+		ui->label_Title->setHidden(false);
+	}
+	updateHiddenState();
 }
 
 void ErrorFrame::setDescription(QString text)
 {
-    if(text.isEmpty())
-    {
-        ui->label_Description->setHidden(true);
-        updateHiddenState();
-        return;
-    }
-    else
-    {
-        ui->label_Description->setHidden(false);
-        updateHiddenState();
-    }
-    ui->label_Description->setToolTip("");
-    QString intermediatetext = text.trimmed();
-    bool prev(false);
-    QChar rem('\n');
-    QString finaltext;
-    finaltext.reserve(intermediatetext.size());
-    foreach(const QChar& c, intermediatetext)
-    {
-        if(c == rem && prev){
-            continue;
-        }
-        prev = c == rem;
-        finaltext += c;
-    }
-    QString labeltext;
-    labeltext.reserve(300);
-    if(finaltext.length() > 290)
-    {
-        ui->label_Description->setOpenExternalLinks(false);
-        ui->label_Description->setTextFormat(Qt::TextFormat::RichText);
-        desc = text;
-        // This allows injecting HTML here.
-        labeltext.append("<html><body>" + finaltext.left(287) + "<a href=\"#mod_desc\">...</a></body></html>");
-        QObject::connect(ui->label_Description, &QLabel::linkActivated, this, &ErrorFrame::ellipsisHandler);
-    }
-    else
-    {
-        ui->label_Description->setTextFormat(Qt::TextFormat::PlainText);
-        labeltext.append(finaltext);
-    }
-    ui->label_Description->setText(labeltext);
+	if (text.isEmpty()) {
+		ui->label_Description->setHidden(true);
+		updateHiddenState();
+		return;
+	} else {
+		ui->label_Description->setHidden(false);
+		updateHiddenState();
+	}
+	ui->label_Description->setToolTip("");
+	QString intermediatetext = text.trimmed();
+	bool prev(false);
+	QChar rem('\n');
+	QString finaltext;
+	finaltext.reserve(intermediatetext.size());
+	foreach (const QChar& c, intermediatetext) {
+		if (c == rem && prev) {
+			continue;
+		}
+		prev = c == rem;
+		finaltext += c;
+	}
+	QString labeltext;
+	labeltext.reserve(300);
+	if (finaltext.length() > 290) {
+		ui->label_Description->setOpenExternalLinks(false);
+		ui->label_Description->setTextFormat(Qt::TextFormat::RichText);
+		desc = text;
+		// This allows injecting HTML here.
+		labeltext.append("<html><body>" + finaltext.left(287) +
+						 "<a href=\"#mod_desc\">...</a></body></html>");
+		QObject::connect(ui->label_Description, &QLabel::linkActivated, this,
+						 &ErrorFrame::ellipsisHandler);
+	} else {
+		ui->label_Description->setTextFormat(Qt::TextFormat::PlainText);
+		labeltext.append(finaltext);
+	}
+	ui->label_Description->setText(labeltext);
 }
 
-void ErrorFrame::ellipsisHandler(const QString &link)
+void ErrorFrame::ellipsisHandler(const QString& link)
 {
-    if(!currentBox)
-    {
-        currentBox = CustomMessageBox::selectable(this, QString(), desc);
-        connect(currentBox, &QMessageBox::finished, this, &ErrorFrame::boxClosed);
-        currentBox->show();
-    }
-    else
-    {
-        currentBox->setText(desc);
-    }
+	if (!currentBox) {
+		currentBox = CustomMessageBox::selectable(this, QString(), desc);
+		connect(currentBox, &QMessageBox::finished, this,
+				&ErrorFrame::boxClosed);
+		currentBox->show();
+	} else {
+		currentBox->setText(desc);
+	}
 }
 
 void ErrorFrame::boxClosed(int result)
 {
-    currentBox = nullptr;
+	currentBox = nullptr;
 }

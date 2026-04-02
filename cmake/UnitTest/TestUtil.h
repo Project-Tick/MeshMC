@@ -10,20 +10,20 @@
 
 class TestsInternal
 {
-public:
-    static QByteArray readFile(const QString &fileName)
-    {
-        QFile f(fileName);
-        if (!f.open(QFile::ReadOnly))
-            return QByteArray();
-        return f.readAll();
-    }
-    static QString readFileUtf8(const QString &fileName)
-    {
-        return QString::fromUtf8(readFile(fileName));
-    }
+  public:
+	static QByteArray readFile(const QString& fileName)
+	{
+		QFile f(fileName);
+		if (!f.open(QFile::ReadOnly))
+			return QByteArray();
+		return f.readAll();
+	}
+	static QString readFileUtf8(const QString& fileName)
+	{
+		return QString::fromUtf8(readFile(fileName));
+	}
 };
 
 #define GET_TEST_FILE(file) TestsInternal::readFile(QFINDTESTDATA(file))
-#define GET_TEST_FILE_UTF8(file) TestsInternal::readFileUtf8(QFINDTESTDATA(file))
-
+#define GET_TEST_FILE_UTF8(file)                                               \
+	TestsInternal::readFileUtf8(QFINDTESTDATA(file))

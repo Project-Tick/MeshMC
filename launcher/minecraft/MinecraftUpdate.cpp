@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -57,148 +57,144 @@
 #include <meta/Index.h>
 #include <meta/Version.h>
 
-MinecraftUpdate::MinecraftUpdate(MinecraftInstance *inst, QObject *parent) : Task(parent), m_inst(inst)
+MinecraftUpdate::MinecraftUpdate(MinecraftInstance* inst, QObject* parent)
+	: Task(parent), m_inst(inst)
 {
 }
 
 void MinecraftUpdate::executeTask()
 {
-    m_tasks.clear();
-    // create folders
-    {
-        m_tasks.append(std::make_shared<FoldersTask>(m_inst));
-    }
+	m_tasks.clear();
+	// create folders
+	{
+		m_tasks.append(std::make_shared<FoldersTask>(m_inst));
+	}
 
-    // add metadata update task if necessary
-    {
-        auto components = m_inst->getPackProfile();
-        components->reload(Net::Mode::Online);
-        auto task = components->getCurrentTask();
-        if(task)
-        {
-            m_tasks.append(task.unwrap());
-        }
-    }
+	// add metadata update task if necessary
+	{
+		auto components = m_inst->getPackProfile();
+		components->reload(Net::Mode::Online);
+		auto task = components->getCurrentTask();
+		if (task) {
+			m_tasks.append(task.unwrap());
+		}
+	}
 
-    // libraries download
-    {
-        m_tasks.append(std::make_shared<LibrariesTask>(m_inst));
-    }
+	// libraries download
+	{
+		m_tasks.append(std::make_shared<LibrariesTask>(m_inst));
+	}
 
-    // FML libraries download and copy into the instance
-    {
-        m_tasks.append(std::make_shared<FMLLibrariesTask>(m_inst));
-    }
+	// FML libraries download and copy into the instance
+	{
+		m_tasks.append(std::make_shared<FMLLibrariesTask>(m_inst));
+	}
 
-    // assets update
-    {
-        m_tasks.append(std::make_shared<AssetUpdateTask>(m_inst));
-    }
+	// assets update
+	{
+		m_tasks.append(std::make_shared<AssetUpdateTask>(m_inst));
+	}
 
-    if(!m_preFailure.isEmpty())
-    {
-        emitFailed(m_preFailure);
-        return;
-    }
-    next();
+	if (!m_preFailure.isEmpty()) {
+		emitFailed(m_preFailure);
+		return;
+	}
+	next();
 }
 
 void MinecraftUpdate::next()
 {
-    if(m_abort)
-    {
-        emitFailed(tr("Aborted by user."));
-        return;
-    }
-    if(m_failed_out_of_order)
-    {
-        emitFailed(m_fail_reason);
-        return;
-    }
-    m_currentTask ++;
-    if(m_currentTask > 0)
-    {
-        auto task = m_tasks[m_currentTask - 1];
-        disconnect(task.get(), &Task::succeeded, this, &MinecraftUpdate::subtaskSucceeded);
-        disconnect(task.get(), &Task::failed, this, &MinecraftUpdate::subtaskFailed);
-        disconnect(task.get(), &Task::progress, this, &MinecraftUpdate::progress);
-        disconnect(task.get(), &Task::status, this, &MinecraftUpdate::setStatus);
-    }
-    if(m_currentTask == m_tasks.size())
-    {
-        emitSucceeded();
-        return;
-    }
-    auto task = m_tasks[m_currentTask];
-    // if the task is already finished by the time we look at it, skip it
-    if(task->isFinished())
-    {
-        qCritical() << "MinecraftUpdate: Skipping finished subtask" << m_currentTask << ":" << task.get();
-        next();
-    }
-    connect(task.get(), &Task::succeeded, this, &MinecraftUpdate::subtaskSucceeded);
-    connect(task.get(), &Task::failed, this, &MinecraftUpdate::subtaskFailed);
-    connect(task.get(), &Task::progress, this, &MinecraftUpdate::progress);
-    connect(task.get(), &Task::status, this, &MinecraftUpdate::setStatus);
-    // if the task is already running, do not start it again
-    if(!task->isRunning())
-    {
-        task->start();
-    }
+	if (m_abort) {
+		emitFailed(tr("Aborted by user."));
+		return;
+	}
+	if (m_failed_out_of_order) {
+		emitFailed(m_fail_reason);
+		return;
+	}
+	m_currentTask++;
+	if (m_currentTask > 0) {
+		auto task = m_tasks[m_currentTask - 1];
+		disconnect(task.get(), &Task::succeeded, this,
+				   &MinecraftUpdate::subtaskSucceeded);
+		disconnect(task.get(), &Task::failed, this,
+				   &MinecraftUpdate::subtaskFailed);
+		disconnect(task.get(), &Task::progress, this,
+				   &MinecraftUpdate::progress);
+		disconnect(task.get(), &Task::status, this,
+				   &MinecraftUpdate::setStatus);
+	}
+	if (m_currentTask == m_tasks.size()) {
+		emitSucceeded();
+		return;
+	}
+	auto task = m_tasks[m_currentTask];
+	// if the task is already finished by the time we look at it, skip it
+	if (task->isFinished()) {
+		qCritical() << "MinecraftUpdate: Skipping finished subtask"
+					<< m_currentTask << ":" << task.get();
+		next();
+	}
+	connect(task.get(), &Task::succeeded, this,
+			&MinecraftUpdate::subtaskSucceeded);
+	connect(task.get(), &Task::failed, this, &MinecraftUpdate::subtaskFailed);
+	connect(task.get(), &Task::progress, this, &MinecraftUpdate::progress);
+	connect(task.get(), &Task::status, this, &MinecraftUpdate::setStatus);
+	// if the task is already running, do not start it again
+	if (!task->isRunning()) {
+		task->start();
+	}
 }
 
 void MinecraftUpdate::subtaskSucceeded()
 {
-    if(isFinished())
-    {
-        qCritical() << "MinecraftUpdate: Subtask" << sender() << "succeeded, but work was already done!";
-        return;
-    }
-    auto senderTask = QObject::sender();
-    auto currentTask = m_tasks[m_currentTask].get();
-    if(senderTask != currentTask)
-    {
-        qDebug() << "MinecraftUpdate: Subtask" << sender() << "succeeded out of order.";
-        return;
-    }
-    next();
+	if (isFinished()) {
+		qCritical() << "MinecraftUpdate: Subtask" << sender()
+					<< "succeeded, but work was already done!";
+		return;
+	}
+	auto senderTask = QObject::sender();
+	auto currentTask = m_tasks[m_currentTask].get();
+	if (senderTask != currentTask) {
+		qDebug() << "MinecraftUpdate: Subtask" << sender()
+				 << "succeeded out of order.";
+		return;
+	}
+	next();
 }
 
 void MinecraftUpdate::subtaskFailed(QString error)
 {
-    if(isFinished())
-    {
-        qCritical() << "MinecraftUpdate: Subtask" << sender() << "failed, but work was already done!";
-        return;
-    }
-    auto senderTask = QObject::sender();
-    auto currentTask = m_tasks[m_currentTask].get();
-    if(senderTask != currentTask)
-    {
-        qDebug() << "MinecraftUpdate: Subtask" << sender() << "failed out of order.";
-        m_failed_out_of_order = true;
-        m_fail_reason = error;
-        return;
-    }
-    emitFailed(error);
+	if (isFinished()) {
+		qCritical() << "MinecraftUpdate: Subtask" << sender()
+					<< "failed, but work was already done!";
+		return;
+	}
+	auto senderTask = QObject::sender();
+	auto currentTask = m_tasks[m_currentTask].get();
+	if (senderTask != currentTask) {
+		qDebug() << "MinecraftUpdate: Subtask" << sender()
+				 << "failed out of order.";
+		m_failed_out_of_order = true;
+		m_fail_reason = error;
+		return;
+	}
+	emitFailed(error);
 }
-
 
 bool MinecraftUpdate::abort()
 {
-    if(!m_abort)
-    {
-        m_abort = true;
-        auto task = m_tasks[m_currentTask];
-        if(task->canAbort())
-        {
-            return task->abort();
-        }
-    }
-    return true;
+	if (!m_abort) {
+		m_abort = true;
+		auto task = m_tasks[m_currentTask];
+		if (task->canAbort()) {
+			return task->abort();
+		}
+	}
+	return true;
 }
 
 bool MinecraftUpdate::canAbort() const
 {
-    return true;
+	return true;
 }

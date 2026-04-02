@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -45,50 +45,47 @@ class Task;
 
 namespace Ui
 {
-class ProgressDialog;
+	class ProgressDialog;
 }
 
 class ProgressDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ProgressDialog(QWidget *parent = 0);
-    ~ProgressDialog();
+  public:
+	explicit ProgressDialog(QWidget* parent = 0);
+	~ProgressDialog();
 
-    void updateSize();
+	void updateSize();
 
-    int execWithTask(Task *task);
-    int execWithTask(std::unique_ptr<Task> &&task);
-    int execWithTask(std::unique_ptr<Task> &task);
+	int execWithTask(Task* task);
+	int execWithTask(std::unique_ptr<Task>&& task);
+	int execWithTask(std::unique_ptr<Task>& task);
 
-    void setSkipButton(bool present, QString label = QString());
+	void setSkipButton(bool present, QString label = QString());
 
-    Task *getTask();
+	Task* getTask();
 
-public
-slots:
-    void onTaskStarted();
-    void onTaskFailed(QString failure);
-    void onTaskSucceeded();
+  public slots:
+	void onTaskStarted();
+	void onTaskFailed(QString failure);
+	void onTaskSucceeded();
 
-    void changeStatus(const QString &status);
-    void changeProgress(qint64 current, qint64 total);
+	void changeStatus(const QString& status);
+	void changeProgress(qint64 current, qint64 total);
 
+  private slots:
+	void on_skipButton_clicked(bool checked);
 
-private
-slots:
-    void on_skipButton_clicked(bool checked);
+  protected:
+	virtual void keyPressEvent(QKeyEvent* e);
+	virtual void closeEvent(QCloseEvent* e);
 
-protected:
-    virtual void keyPressEvent(QKeyEvent *e);
-    virtual void closeEvent(QCloseEvent *e);
+  private:
+	bool handleImmediateResult(QDialog::DialogCode& result);
 
-private:
-    bool handleImmediateResult(QDialog::DialogCode &result);
+  private:
+	Ui::ProgressDialog* ui;
 
-private:
-    Ui::ProgressDialog *ui;
-
-    Task *task;
+	Task* task;
 };

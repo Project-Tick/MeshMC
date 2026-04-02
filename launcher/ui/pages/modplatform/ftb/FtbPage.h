@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -49,58 +49,58 @@
 
 namespace Ui
 {
-    class FtbPage;
+	class FtbPage;
 }
 
 class NewInstanceDialog;
 
 class FtbPage : public QWidget, public BasePage
 {
-Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit FtbPage(NewInstanceDialog* dialog, QWidget *parent = 0);
-    virtual ~FtbPage();
-    virtual QString displayName() const override
-    {
-        return tr("FTB");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("ftb_logo");
-    }
-    virtual QString id() const override
-    {
-        return "ftb";
-    }
-    virtual QString helpPage() const override
-    {
-        return "FTB-platform";
-    }
-    virtual bool shouldDisplay() const override;
+  public:
+	explicit FtbPage(NewInstanceDialog* dialog, QWidget* parent = 0);
+	virtual ~FtbPage();
+	virtual QString displayName() const override
+	{
+		return tr("FTB");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("ftb_logo");
+	}
+	virtual QString id() const override
+	{
+		return "ftb";
+	}
+	virtual QString helpPage() const override
+	{
+		return "FTB-platform";
+	}
+	virtual bool shouldDisplay() const override;
 
-    void openedImpl() override;
+	void openedImpl() override;
 
-    bool eventFilter(QObject * watched, QEvent * event) override;
+	bool eventFilter(QObject* watched, QEvent* event) override;
 
-private:
-    void suggestCurrent();
+  private:
+	void suggestCurrent();
 
-private slots:
-    void triggerSearch();
+  private slots:
+	void triggerSearch();
 
-    void onSortingSelectionChanged(QString data);
-    void onSelectionChanged(QModelIndex first, QModelIndex second);
-    void onVersionSelectionChanged(QString data);
+	void onSortingSelectionChanged(QString data);
+	void onSelectionChanged(QModelIndex first, QModelIndex second);
+	void onVersionSelectionChanged(QString data);
 
-private:
-    Ui::FtbPage *ui = nullptr;
-    NewInstanceDialog* dialog = nullptr;
-    Ftb::ListModel* listModel = nullptr;
-    Ftb::FilterModel* filterModel = nullptr;
+  private:
+	Ui::FtbPage* ui = nullptr;
+	NewInstanceDialog* dialog = nullptr;
+	Ftb::ListModel* listModel = nullptr;
+	Ftb::FilterModel* filterModel = nullptr;
 
-    ModpacksCH::Modpack selected;
-    QString selectedVersion;
+	ModpacksCH::Modpack selected;
+	QString selectedVersion;
 
-    bool initialised { false };
+	bool initialised{false};
 };

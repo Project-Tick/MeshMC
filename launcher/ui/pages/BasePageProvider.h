@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,48 +44,50 @@
 
 class BasePageProvider
 {
-public:
-    virtual QList<BasePage *> getPages() = 0;
-    virtual QString dialogTitle() = 0;
+  public:
+	virtual QList<BasePage*> getPages() = 0;
+	virtual QString dialogTitle() = 0;
 };
 
 class GenericPageProvider : public BasePageProvider
 {
-    typedef std::function<BasePage *()> PageCreator;
-public:
-    explicit GenericPageProvider(const QString &dialogTitle)
-        : m_dialogTitle(dialogTitle)
-    {
-    }
-    virtual ~GenericPageProvider() {}
+	typedef std::function<BasePage*()> PageCreator;
 
-    QList<BasePage *> getPages() override
-    {
-        QList<BasePage *> pages;
-        for (PageCreator creator : m_creators)
-        {
-            pages.append(creator());
-        }
-        return pages;
-    }
-    QString dialogTitle() override { return m_dialogTitle; }
+  public:
+	explicit GenericPageProvider(const QString& dialogTitle)
+		: m_dialogTitle(dialogTitle)
+	{
+	}
+	virtual ~GenericPageProvider() {}
 
-    void setDialogTitle(const QString &title)
-    {
-        m_dialogTitle = title;
-    }
-    void addPageCreator(PageCreator page)
-    {
-        m_creators.append(page);
-    }
+	QList<BasePage*> getPages() override
+	{
+		QList<BasePage*> pages;
+		for (PageCreator creator : m_creators) {
+			pages.append(creator());
+		}
+		return pages;
+	}
+	QString dialogTitle() override
+	{
+		return m_dialogTitle;
+	}
 
-    template<typename PageClass>
-    void addPage()
-    {
-        addPageCreator([](){return new PageClass();});
-    }
+	void setDialogTitle(const QString& title)
+	{
+		m_dialogTitle = title;
+	}
+	void addPageCreator(PageCreator page)
+	{
+		m_creators.append(page);
+	}
 
-private:
-    QList<PageCreator> m_creators;
-    QString m_dialogTitle;
+	template <typename PageClass> void addPage()
+	{
+		addPageCreator([]() { return new PageClass(); });
+	}
+
+  private:
+	QList<PageCreator> m_creators;
+	QString m_dialogTitle;
 };

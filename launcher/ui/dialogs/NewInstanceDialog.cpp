@@ -65,218 +65,214 @@
 #include "ui/pages/modplatform/ImportPage.h"
 #include "ui/pages/modplatform/technic/TechnicPage.h"
 
-NewInstanceDialog::NewInstanceDialog(const QString & initialGroup, const QString & url, QWidget *parent)
-    : QDialog(parent), ui(new Ui::NewInstanceDialog)
+NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
+									 const QString& url, QWidget* parent)
+	: QDialog(parent), ui(new Ui::NewInstanceDialog)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    setWindowIcon(APPLICATION->getThemedIcon("new"));
+	setWindowIcon(APPLICATION->getThemedIcon("new"));
 
-    InstIconKey = "default";
-    ui->iconButton->setIcon(APPLICATION->icons()->getIcon(InstIconKey));
+	InstIconKey = "default";
+	ui->iconButton->setIcon(APPLICATION->icons()->getIcon(InstIconKey));
 
-    auto groupList = APPLICATION->instances()->getGroups();
-    groupList.removeDuplicates();
-    groupList.sort(Qt::CaseInsensitive);
-    groupList.removeOne("");
-    groupList.push_front(initialGroup);
-    groupList.push_front("");
-    ui->groupBox->addItems(groupList);
-    int index = groupList.indexOf(initialGroup);
-    if(index == -1)
-    {
-        index = 0;
-    }
-    ui->groupBox->setCurrentIndex(index);
-    ui->groupBox->lineEdit()->setPlaceholderText(tr("No group"));
+	auto groupList = APPLICATION->instances()->getGroups();
+	groupList.removeDuplicates();
+	groupList.sort(Qt::CaseInsensitive);
+	groupList.removeOne("");
+	groupList.push_front(initialGroup);
+	groupList.push_front("");
+	ui->groupBox->addItems(groupList);
+	int index = groupList.indexOf(initialGroup);
+	if (index == -1) {
+		index = 0;
+	}
+	ui->groupBox->setCurrentIndex(index);
+	ui->groupBox->lineEdit()->setPlaceholderText(tr("No group"));
 
+	// NOTE: m_buttons must be initialized before PageContainer, because it
+	// indirectly accesses m_buttons through setSuggestedPack! Do not move
+	// this below.
+	m_buttons =
+		new QDialogButtonBox(QDialogButtonBox::Help | QDialogButtonBox::Ok |
+							 QDialogButtonBox::Cancel);
 
-    // NOTE: m_buttons must be initialized before PageContainer, because it
-    // indirectly accesses m_buttons through setSuggestedPack! Do not move
-    // this below.
-    m_buttons = new QDialogButtonBox(
-        QDialogButtonBox::Help | QDialogButtonBox::Ok |
-        QDialogButtonBox::Cancel);
+	m_container = new PageContainer(this);
+	m_container->setSizePolicy(QSizePolicy::Policy::Preferred,
+							   QSizePolicy::Policy::Expanding);
+	m_container->layout()->setContentsMargins(0, 0, 0, 0);
+	ui->verticalLayout->insertWidget(2, m_container);
 
-    m_container = new PageContainer(this);
-    m_container->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Expanding);
-    m_container->layout()->setContentsMargins(0, 0, 0, 0);
-    ui->verticalLayout->insertWidget(2, m_container);
+	m_container->addButtons(m_buttons);
 
-    m_container->addButtons(m_buttons);
+	// Bonk Qt over its stupid head and make sure it understands which button is
+	// the default one... See:
+	// https://stackoverflow.com/questions/24556831/qbuttonbox-set-default-button
+	auto OkButton = m_buttons->button(QDialogButtonBox::Ok);
+	OkButton->setDefault(true);
+	OkButton->setAutoDefault(true);
+	connect(OkButton, &QPushButton::clicked, this, &NewInstanceDialog::accept);
 
-    // Bonk Qt over its stupid head and make sure it understands which button is the default one...
-    // See: https://stackoverflow.com/questions/24556831/qbuttonbox-set-default-button
-    auto OkButton = m_buttons->button(QDialogButtonBox::Ok);
-    OkButton->setDefault(true);
-    OkButton->setAutoDefault(true);
-    connect(OkButton, &QPushButton::clicked, this, &NewInstanceDialog::accept);
+	auto CancelButton = m_buttons->button(QDialogButtonBox::Cancel);
+	CancelButton->setDefault(false);
+	CancelButton->setAutoDefault(false);
+	connect(CancelButton, &QPushButton::clicked, this,
+			&NewInstanceDialog::reject);
 
-    auto CancelButton = m_buttons->button(QDialogButtonBox::Cancel);
-    CancelButton->setDefault(false);
-    CancelButton->setAutoDefault(false);
-    connect(CancelButton, &QPushButton::clicked, this, &NewInstanceDialog::reject);
+	auto HelpButton = m_buttons->button(QDialogButtonBox::Help);
+	HelpButton->setDefault(false);
+	HelpButton->setAutoDefault(false);
+	connect(HelpButton, &QPushButton::clicked, m_container,
+			&PageContainer::help);
 
-    auto HelpButton = m_buttons->button(QDialogButtonBox::Help);
-    HelpButton->setDefault(false);
-    HelpButton->setAutoDefault(false);
-    connect(HelpButton, &QPushButton::clicked, m_container, &PageContainer::help);
+	if (!url.isEmpty()) {
+		QUrl actualUrl(url);
+		m_container->selectPage("import");
+		importPage->setUrl(url);
+	}
 
-    if(!url.isEmpty())
-    {
-        QUrl actualUrl(url);
-        m_container->selectPage("import");
-        importPage->setUrl(url);
-    }
+	updateDialogState();
 
-    updateDialogState();
-
-    restoreGeometry(QByteArray::fromBase64(APPLICATION->settings()->get("NewInstanceGeometry").toByteArray()));
+	restoreGeometry(QByteArray::fromBase64(
+		APPLICATION->settings()->get("NewInstanceGeometry").toByteArray()));
 }
 
 void NewInstanceDialog::reject()
 {
-    APPLICATION->settings()->set("NewInstanceGeometry", saveGeometry().toBase64());
-    QDialog::reject();
+	APPLICATION->settings()->set("NewInstanceGeometry",
+								 saveGeometry().toBase64());
+	QDialog::reject();
 }
 
 void NewInstanceDialog::accept()
 {
-    APPLICATION->settings()->set("NewInstanceGeometry", saveGeometry().toBase64());
-    importIconNow();
-    QDialog::accept();
+	APPLICATION->settings()->set("NewInstanceGeometry",
+								 saveGeometry().toBase64());
+	importIconNow();
+	QDialog::accept();
 }
 
-QList<BasePage *> NewInstanceDialog::getPages()
+QList<BasePage*> NewInstanceDialog::getPages()
 {
-    importPage = new ImportPage(this);
-    flamePage = new FlamePage(this);
-    auto technicPage = new TechnicPage(this);
-    return
-    {
-        new VanillaPage(this),
-        importPage,
-        new AtlPage(this),
-        flamePage,
-        new ModrinthPage(this),
-        new FtbPage(this),
-        new LegacyFTB::Page(this),
-        technicPage
-    };
+	importPage = new ImportPage(this);
+	flamePage = new FlamePage(this);
+	auto technicPage = new TechnicPage(this);
+	return {new VanillaPage(this),	   importPage,
+			new AtlPage(this),		   flamePage,
+			new ModrinthPage(this),	   new FtbPage(this),
+			new LegacyFTB::Page(this), technicPage};
 }
 
 QString NewInstanceDialog::dialogTitle()
 {
-    return tr("New Instance");
+	return tr("New Instance");
 }
 
 NewInstanceDialog::~NewInstanceDialog()
 {
-    delete ui;
+	delete ui;
 }
 
-void NewInstanceDialog::setSuggestedPack(const QString& name, InstanceTask* task)
+void NewInstanceDialog::setSuggestedPack(const QString& name,
+										 InstanceTask* task)
 {
-    creationTask.reset(task);
-    ui->instNameTextBox->setPlaceholderText(name);
+	creationTask.reset(task);
+	ui->instNameTextBox->setPlaceholderText(name);
 
-    if(!task)
-    {
-        ui->iconButton->setIcon(APPLICATION->icons()->getIcon("default"));
-        importIcon = false;
-    }
+	if (!task) {
+		ui->iconButton->setIcon(APPLICATION->icons()->getIcon("default"));
+		importIcon = false;
+	}
 
-    auto allowOK = task && !instName().isEmpty();
-    m_buttons->button(QDialogButtonBox::Ok)->setEnabled(allowOK);
+	auto allowOK = task && !instName().isEmpty();
+	m_buttons->button(QDialogButtonBox::Ok)->setEnabled(allowOK);
 }
 
-void NewInstanceDialog::setSuggestedIconFromFile(const QString &path, const QString &name)
+void NewInstanceDialog::setSuggestedIconFromFile(const QString& path,
+												 const QString& name)
 {
-    importIcon = true;
-    importIconPath = path;
-    importIconName = name;
+	importIcon = true;
+	importIconPath = path;
+	importIconName = name;
 
-    //Hmm, for some reason they can be to small
-    ui->iconButton->setIcon(QIcon(path));
+	// Hmm, for some reason they can be to small
+	ui->iconButton->setIcon(QIcon(path));
 }
 
-void NewInstanceDialog::setSuggestedIcon(const QString &key)
+void NewInstanceDialog::setSuggestedIcon(const QString& key)
 {
-    auto icon = APPLICATION->icons()->getIcon(key);
-    importIcon = false;
+	auto icon = APPLICATION->icons()->getIcon(key);
+	importIcon = false;
 
-    ui->iconButton->setIcon(icon);
+	ui->iconButton->setIcon(icon);
 }
 
-InstanceTask * NewInstanceDialog::extractTask()
+InstanceTask* NewInstanceDialog::extractTask()
 {
-    InstanceTask * extracted = creationTask.get();
-    creationTask.release();
-    extracted->setName(instName());
-    extracted->setGroup(instGroup());
-    extracted->setIcon(iconKey());
-    return extracted;
+	InstanceTask* extracted = creationTask.get();
+	creationTask.release();
+	extracted->setName(instName());
+	extracted->setGroup(instGroup());
+	extracted->setIcon(iconKey());
+	return extracted;
 }
 
 void NewInstanceDialog::updateDialogState()
 {
-    auto allowOK = creationTask && !instName().isEmpty();
-    auto OkButton = m_buttons->button(QDialogButtonBox::Ok);
-    if(OkButton->isEnabled() != allowOK)
-    {
-        OkButton->setEnabled(allowOK);
-    }
+	auto allowOK = creationTask && !instName().isEmpty();
+	auto OkButton = m_buttons->button(QDialogButtonBox::Ok);
+	if (OkButton->isEnabled() != allowOK) {
+		OkButton->setEnabled(allowOK);
+	}
 }
 
 QString NewInstanceDialog::instName() const
 {
-    auto result = ui->instNameTextBox->text().trimmed();
-    if(result.size())
-    {
-        return result;
-    }
-    result = ui->instNameTextBox->placeholderText().trimmed();
-    if(result.size())
-    {
-        return result;
-    }
-    return QString();
+	auto result = ui->instNameTextBox->text().trimmed();
+	if (result.size()) {
+		return result;
+	}
+	result = ui->instNameTextBox->placeholderText().trimmed();
+	if (result.size()) {
+		return result;
+	}
+	return QString();
 }
 
 QString NewInstanceDialog::instGroup() const
 {
-    return ui->groupBox->currentText();
+	return ui->groupBox->currentText();
 }
 QString NewInstanceDialog::iconKey() const
 {
-    return InstIconKey;
+	return InstIconKey;
 }
 
 void NewInstanceDialog::on_iconButton_clicked()
 {
-    importIconNow(); //so the user can switch back
-    IconPickerDialog dlg(this);
-    dlg.execWithSelection(InstIconKey);
+	importIconNow(); // so the user can switch back
+	IconPickerDialog dlg(this);
+	dlg.execWithSelection(InstIconKey);
 
-    if (dlg.result() == QDialog::Accepted)
-    {
-        InstIconKey = dlg.selectedIconKey;
-        ui->iconButton->setIcon(APPLICATION->icons()->getIcon(InstIconKey));
-        importIcon = false;
-    }
+	if (dlg.result() == QDialog::Accepted) {
+		InstIconKey = dlg.selectedIconKey;
+		ui->iconButton->setIcon(APPLICATION->icons()->getIcon(InstIconKey));
+		importIcon = false;
+	}
 }
 
-void NewInstanceDialog::on_instNameTextBox_textChanged(const QString &arg1)
+void NewInstanceDialog::on_instNameTextBox_textChanged(const QString& arg1)
 {
-    updateDialogState();
+	updateDialogState();
 }
 
 void NewInstanceDialog::importIconNow()
 {
-    if(importIcon) {
-        APPLICATION->icons()->installIcon(importIconPath, importIconName);
-        InstIconKey = importIconName;
-        importIcon = false;
-    }
-    APPLICATION->settings()->set("NewInstanceGeometry", saveGeometry().toBase64());
+	if (importIcon) {
+		APPLICATION->icons()->installIcon(importIconPath, importIconName);
+		InstIconKey = importIconName;
+		importIcon = false;
+	}
+	APPLICATION->settings()->set("NewInstanceGeometry",
+								 saveGeometry().toBase64());
 }

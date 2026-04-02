@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -55,272 +55,264 @@
 #include <QProcess>
 
 // FIXME: possibly move elsewhere
-enum InstSortMode
-{
-    // Sort alphabetically by name.
-    Sort_Name,
-    // Sort by which instance was launched most recently.
-    Sort_LastLaunch
+enum InstSortMode {
+	// Sort alphabetically by name.
+	Sort_Name,
+	// Sort by which instance was launched most recently.
+	Sort_LastLaunch
 };
 
-MeshMCPage::MeshMCPage(QWidget *parent) : QWidget(parent), ui(new Ui::MeshMCPage)
+MeshMCPage::MeshMCPage(QWidget* parent)
+	: QWidget(parent), ui(new Ui::MeshMCPage)
 {
-    ui->setupUi(this);
-    auto origForeground = ui->fontPreview->palette().color(ui->fontPreview->foregroundRole());
-    auto origBackground = ui->fontPreview->palette().color(ui->fontPreview->backgroundRole());
-    m_colors.reset(new LogColorCache(origForeground, origBackground));
+	ui->setupUi(this);
+	auto origForeground =
+		ui->fontPreview->palette().color(ui->fontPreview->foregroundRole());
+	auto origBackground =
+		ui->fontPreview->palette().color(ui->fontPreview->backgroundRole());
+	m_colors.reset(new LogColorCache(origForeground, origBackground));
 
-    ui->sortingModeGroup->setId(ui->sortByNameBtn, Sort_Name);
-    ui->sortingModeGroup->setId(ui->sortLastLaunchedBtn, Sort_LastLaunch);
+	ui->sortingModeGroup->setId(ui->sortByNameBtn, Sort_Name);
+	ui->sortingModeGroup->setId(ui->sortLastLaunchedBtn, Sort_LastLaunch);
 
-    defaultFormat = new QTextCharFormat(ui->fontPreview->currentCharFormat());
+	defaultFormat = new QTextCharFormat(ui->fontPreview->currentCharFormat());
 
-    m_languageModel = APPLICATION->translations();
-    loadSettings();
+	m_languageModel = APPLICATION->translations();
+	loadSettings();
 
-    if(BuildConfig.UPDATER_ENABLED && UpdateChecker::isUpdaterSupported())
-    {
-        // New updater: hide the legacy channel selector (no channel selection in the new system).
-        ui->updateChannelComboBox->setVisible(false);
-        ui->updateChannelLabel->setVisible(false);
-        ui->updateChannelDescLabel->setVisible(false);
-    }
-    else
-    {
-        ui->updateSettingsBox->setHidden(true);
-    }
-    // Analytics
-    if(BuildConfig.ANALYTICS_ID.isEmpty())
-    {
-        ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->analyticsTab));
-    }
-    connect(ui->fontSizeBox, SIGNAL(valueChanged(int)), SLOT(refreshFontPreview()));
-    connect(ui->consoleFont, SIGNAL(currentFontChanged(QFont)), SLOT(refreshFontPreview()));
+	if (BuildConfig.UPDATER_ENABLED && UpdateChecker::isUpdaterSupported()) {
+		// New updater: hide the legacy channel selector (no channel selection
+		// in the new system).
+		ui->updateChannelComboBox->setVisible(false);
+		ui->updateChannelLabel->setVisible(false);
+		ui->updateChannelDescLabel->setVisible(false);
+	} else {
+		ui->updateSettingsBox->setHidden(true);
+	}
+	// Analytics
+	if (BuildConfig.ANALYTICS_ID.isEmpty()) {
+		ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->analyticsTab));
+	}
+	connect(ui->fontSizeBox, SIGNAL(valueChanged(int)),
+			SLOT(refreshFontPreview()));
+	connect(ui->consoleFont, SIGNAL(currentFontChanged(QFont)),
+			SLOT(refreshFontPreview()));
 
-    //move mac data button
-    QFile file(QDir::current().absolutePath() + "/dontmovemacdata");
-    if (!file.exists())
-    {
-        ui->migrateDataFolderMacBtn->setVisible(false);
-    }
+	ui->migrateDataFolderMacBtn->setVisible(false);
 }
 
 MeshMCPage::~MeshMCPage()
 {
-    delete ui;
-    delete defaultFormat;
+	delete ui;
+	delete defaultFormat;
 }
 
 bool MeshMCPage::apply()
 {
-    applySettings();
-    return true;
+	applySettings();
+	return true;
 }
 
 void MeshMCPage::on_instDirBrowseBtn_clicked()
 {
-    QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Instance Folder"), ui->instDirTextBox->text());
+	QString raw_dir = QFileDialog::getExistingDirectory(
+		this, tr("Instance Folder"), ui->instDirTextBox->text());
 
-    // do not allow current dir - it's dirty. Do not allow dirs that don't exist
-    if (!raw_dir.isEmpty() && QDir(raw_dir).exists())
-    {
-        QString cooked_dir = FS::NormalizePath(raw_dir);
-        if (FS::checkProblemticPathJava(QDir(cooked_dir)))
-        {
-            QMessageBox warning;
-            warning.setText(tr("You're trying to specify an instance folder which\'s path "
-                               "contains at least one \'!\'. "
-                               "Java is known to cause problems if that is the case, your "
-                               "instances (probably) won't start!"));
-            warning.setInformativeText(
-                tr("Do you really want to use this path? "
-                   "Selecting \"No\" will close this and not alter your instance path."));
-            warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-            int result = warning.exec();
-            if (result == QMessageBox::Yes)
-            {
-                ui->instDirTextBox->setText(cooked_dir);
-            }
-        }
-        else
-        {
-            ui->instDirTextBox->setText(cooked_dir);
-        }
-    }
+	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
+	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
+		QString cooked_dir = FS::NormalizePath(raw_dir);
+		if (FS::checkProblemticPathJava(QDir(cooked_dir))) {
+			QMessageBox warning;
+			warning.setText(
+				tr("You're trying to specify an instance folder which\'s path "
+				   "contains at least one \'!\'. "
+				   "Java is known to cause problems if that is the case, your "
+				   "instances (probably) won't start!"));
+			warning.setInformativeText(
+				tr("Do you really want to use this path? "
+				   "Selecting \"No\" will close this and not alter your "
+				   "instance path."));
+			warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+			int result = warning.exec();
+			if (result == QMessageBox::Yes) {
+				ui->instDirTextBox->setText(cooked_dir);
+			}
+		} else {
+			ui->instDirTextBox->setText(cooked_dir);
+		}
+	}
 }
 
 void MeshMCPage::on_iconsDirBrowseBtn_clicked()
 {
-    QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Icons Folder"), ui->iconsDirTextBox->text());
+	QString raw_dir = QFileDialog::getExistingDirectory(
+		this, tr("Icons Folder"), ui->iconsDirTextBox->text());
 
-    // do not allow current dir - it's dirty. Do not allow dirs that don't exist
-    if (!raw_dir.isEmpty() && QDir(raw_dir).exists())
-    {
-        QString cooked_dir = FS::NormalizePath(raw_dir);
-        ui->iconsDirTextBox->setText(cooked_dir);
-    }
+	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
+	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
+		QString cooked_dir = FS::NormalizePath(raw_dir);
+		ui->iconsDirTextBox->setText(cooked_dir);
+	}
 }
 void MeshMCPage::on_modsDirBrowseBtn_clicked()
 {
-    QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Mods Folder"), ui->modsDirTextBox->text());
+	QString raw_dir = QFileDialog::getExistingDirectory(
+		this, tr("Mods Folder"), ui->modsDirTextBox->text());
 
-    // do not allow current dir - it's dirty. Do not allow dirs that don't exist
-    if (!raw_dir.isEmpty() && QDir(raw_dir).exists())
-    {
-        QString cooked_dir = FS::NormalizePath(raw_dir);
-        ui->modsDirTextBox->setText(cooked_dir);
-    }
+	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
+	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
+		QString cooked_dir = FS::NormalizePath(raw_dir);
+		ui->modsDirTextBox->setText(cooked_dir);
+	}
 }
 void MeshMCPage::on_migrateDataFolderMacBtn_clicked()
 {
-    QFile file(QDir::current().absolutePath() + "/dontmovemacdata");
-    file.remove();
-    QProcess::startDetached(qApp->arguments()[0]);
-    qApp->quit();
+	QMessageBox::information(
+		this, tr("Automatic macOS Migration"),
+		tr("%1 now stores macOS data under your Library/Application Support "
+		   "folder automatically.")
+			.arg(BuildConfig.MESHMC_DISPLAYNAME));
 }
 
 void MeshMCPage::refreshUpdateChannelList()
 {
-    // No-op: the new updater does not use named channels.
+	// No-op: the new updater does not use named channels.
 }
 
 void MeshMCPage::updateChannelSelectionChanged(int)
 {
-    // No-op.
+	// No-op.
 }
 
 void MeshMCPage::refreshUpdateChannelDesc()
 {
-    // No-op.
+	// No-op.
 }
 
 void MeshMCPage::applySettings()
 {
-    auto s = APPLICATION->settings();
+	auto s = APPLICATION->settings();
 
-    if (ui->resetNotificationsBtn->isChecked())
-    {
-        s->set("ShownNotifications", QString());
-    }
+	if (ui->resetNotificationsBtn->isChecked()) {
+		s->set("ShownNotifications", QString());
+	}
 
-    // Updates
-    s->set("AutoUpdate", ui->autoUpdateCheckBox->isChecked());
-    // (UpdateChannel setting removed - the new updater always checks the stable feed)
+	// Updates
+	s->set("AutoUpdate", ui->autoUpdateCheckBox->isChecked());
+	// (UpdateChannel setting removed - the new updater always checks the stable
+	// feed)
 
-    // Console settings
-    s->set("ShowConsole", ui->showConsoleCheck->isChecked());
-    s->set("AutoCloseConsole", ui->autoCloseConsoleCheck->isChecked());
-    s->set("ShowConsoleOnError", ui->showConsoleErrorCheck->isChecked());
-    QString consoleFontFamily = ui->consoleFont->currentFont().family();
-    s->set("ConsoleFont", consoleFontFamily);
-    s->set("ConsoleFontSize", ui->fontSizeBox->value());
-    s->set("ConsoleMaxLines", ui->lineLimitSpinBox->value());
-    s->set("ConsoleOverflowStop", ui->checkStopLogging->checkState() != Qt::Unchecked);
+	// Console settings
+	s->set("ShowConsole", ui->showConsoleCheck->isChecked());
+	s->set("AutoCloseConsole", ui->autoCloseConsoleCheck->isChecked());
+	s->set("ShowConsoleOnError", ui->showConsoleErrorCheck->isChecked());
+	QString consoleFontFamily = ui->consoleFont->currentFont().family();
+	s->set("ConsoleFont", consoleFontFamily);
+	s->set("ConsoleFontSize", ui->fontSizeBox->value());
+	s->set("ConsoleMaxLines", ui->lineLimitSpinBox->value());
+	s->set("ConsoleOverflowStop",
+		   ui->checkStopLogging->checkState() != Qt::Unchecked);
 
-    // Folders
-    // TODO: Offer to move instances to new instance folder.
-    s->set("InstanceDir", ui->instDirTextBox->text());
-    s->set("CentralModsDir", ui->modsDirTextBox->text());
-    s->set("IconsDir", ui->iconsDirTextBox->text());
+	// Folders
+	// TODO: Offer to move instances to new instance folder.
+	s->set("InstanceDir", ui->instDirTextBox->text());
+	s->set("CentralModsDir", ui->modsDirTextBox->text());
+	s->set("IconsDir", ui->iconsDirTextBox->text());
 
-    auto sortMode = (InstSortMode)ui->sortingModeGroup->checkedId();
-    switch (sortMode)
-    {
-    case Sort_LastLaunch:
-        s->set("InstSortMode", "LastLaunch");
-        break;
-    case Sort_Name:
-    default:
-        s->set("InstSortMode", "Name");
-        break;
-    }
+	auto sortMode = (InstSortMode)ui->sortingModeGroup->checkedId();
+	switch (sortMode) {
+		case Sort_LastLaunch:
+			s->set("InstSortMode", "LastLaunch");
+			break;
+		case Sort_Name:
+		default:
+			s->set("InstSortMode", "Name");
+			break;
+	}
 
-    // Analytics
-    if(!BuildConfig.ANALYTICS_ID.isEmpty())
-    {
-        s->set("Analytics", ui->analyticsCheck->isChecked());
-    }
+	// Analytics
+	if (!BuildConfig.ANALYTICS_ID.isEmpty()) {
+		s->set("Analytics", ui->analyticsCheck->isChecked());
+	}
 }
 void MeshMCPage::loadSettings()
 {
-    auto s = APPLICATION->settings();
-    // Updates
-    ui->autoUpdateCheckBox->setChecked(s->get("AutoUpdate").toBool());
-    // (no channel to read in the new updater system)
+	auto s = APPLICATION->settings();
+	// Updates
+	ui->autoUpdateCheckBox->setChecked(s->get("AutoUpdate").toBool());
+	// (no channel to read in the new updater system)
 
-    // Console settings
-    ui->showConsoleCheck->setChecked(s->get("ShowConsole").toBool());
-    ui->autoCloseConsoleCheck->setChecked(s->get("AutoCloseConsole").toBool());
-    ui->showConsoleErrorCheck->setChecked(s->get("ShowConsoleOnError").toBool());
-    QString fontFamily = APPLICATION->settings()->get("ConsoleFont").toString();
-    QFont consoleFont(fontFamily);
-    ui->consoleFont->setCurrentFont(consoleFont);
+	// Console settings
+	ui->showConsoleCheck->setChecked(s->get("ShowConsole").toBool());
+	ui->autoCloseConsoleCheck->setChecked(s->get("AutoCloseConsole").toBool());
+	ui->showConsoleErrorCheck->setChecked(
+		s->get("ShowConsoleOnError").toBool());
+	QString fontFamily = APPLICATION->settings()->get("ConsoleFont").toString();
+	QFont consoleFont(fontFamily);
+	ui->consoleFont->setCurrentFont(consoleFont);
 
-    bool conversionOk = true;
-    int fontSize = APPLICATION->settings()->get("ConsoleFontSize").toInt(&conversionOk);
-    if(!conversionOk)
-    {
-        fontSize = 11;
-    }
-    ui->fontSizeBox->setValue(fontSize);
-    refreshFontPreview();
-    ui->lineLimitSpinBox->setValue(s->get("ConsoleMaxLines").toInt());
-    ui->checkStopLogging->setChecked(s->get("ConsoleOverflowStop").toBool());
+	bool conversionOk = true;
+	int fontSize =
+		APPLICATION->settings()->get("ConsoleFontSize").toInt(&conversionOk);
+	if (!conversionOk) {
+		fontSize = 11;
+	}
+	ui->fontSizeBox->setValue(fontSize);
+	refreshFontPreview();
+	ui->lineLimitSpinBox->setValue(s->get("ConsoleMaxLines").toInt());
+	ui->checkStopLogging->setChecked(s->get("ConsoleOverflowStop").toBool());
 
-    // Folders
-    ui->instDirTextBox->setText(s->get("InstanceDir").toString());
-    ui->modsDirTextBox->setText(s->get("CentralModsDir").toString());
-    ui->iconsDirTextBox->setText(s->get("IconsDir").toString());
+	// Folders
+	ui->instDirTextBox->setText(s->get("InstanceDir").toString());
+	ui->modsDirTextBox->setText(s->get("CentralModsDir").toString());
+	ui->iconsDirTextBox->setText(s->get("IconsDir").toString());
 
-    QString sortMode = s->get("InstSortMode").toString();
+	QString sortMode = s->get("InstSortMode").toString();
 
-    if (sortMode == "LastLaunch")
-    {
-        ui->sortLastLaunchedBtn->setChecked(true);
-    }
-    else
-    {
-        ui->sortByNameBtn->setChecked(true);
-    }
+	if (sortMode == "LastLaunch") {
+		ui->sortLastLaunchedBtn->setChecked(true);
+	} else {
+		ui->sortByNameBtn->setChecked(true);
+	}
 
-    // Analytics
-    if(!BuildConfig.ANALYTICS_ID.isEmpty())
-    {
-        ui->analyticsCheck->setChecked(s->get("Analytics").toBool());
-    }
+	// Analytics
+	if (!BuildConfig.ANALYTICS_ID.isEmpty()) {
+		ui->analyticsCheck->setChecked(s->get("Analytics").toBool());
+	}
 }
 
 void MeshMCPage::refreshFontPreview()
 {
-    int fontSize = ui->fontSizeBox->value();
-    QString fontFamily = ui->consoleFont->currentFont().family();
-    ui->fontPreview->clear();
-    defaultFormat->setFont(QFont(fontFamily, fontSize));
-    {
-        QTextCharFormat format(*defaultFormat);
-        format.setForeground(m_colors->getFront(MessageLevel::Error));
-        // append a paragraph/line
-        auto workCursor = ui->fontPreview->textCursor();
-        workCursor.movePosition(QTextCursor::End);
-        workCursor.insertText(tr("[Something/ERROR] A spooky error!"), format);
-        workCursor.insertBlock();
-    }
-    {
-        QTextCharFormat format(*defaultFormat);
-        format.setForeground(m_colors->getFront(MessageLevel::Message));
-        // append a paragraph/line
-        auto workCursor = ui->fontPreview->textCursor();
-        workCursor.movePosition(QTextCursor::End);
-        workCursor.insertText(tr("[Test/INFO] A harmless message..."), format);
-        workCursor.insertBlock();
-    }
-    {
-        QTextCharFormat format(*defaultFormat);
-        format.setForeground(m_colors->getFront(MessageLevel::Warning));
-        // append a paragraph/line
-        auto workCursor = ui->fontPreview->textCursor();
-        workCursor.movePosition(QTextCursor::End);
-        workCursor.insertText(tr("[Something/WARN] A not so spooky warning."), format);
-        workCursor.insertBlock();
-    }
+	int fontSize = ui->fontSizeBox->value();
+	QString fontFamily = ui->consoleFont->currentFont().family();
+	ui->fontPreview->clear();
+	defaultFormat->setFont(QFont(fontFamily, fontSize));
+	{
+		QTextCharFormat format(*defaultFormat);
+		format.setForeground(m_colors->getFront(MessageLevel::Error));
+		// append a paragraph/line
+		auto workCursor = ui->fontPreview->textCursor();
+		workCursor.movePosition(QTextCursor::End);
+		workCursor.insertText(tr("[Something/ERROR] A spooky error!"), format);
+		workCursor.insertBlock();
+	}
+	{
+		QTextCharFormat format(*defaultFormat);
+		format.setForeground(m_colors->getFront(MessageLevel::Message));
+		// append a paragraph/line
+		auto workCursor = ui->fontPreview->textCursor();
+		workCursor.movePosition(QTextCursor::End);
+		workCursor.insertText(tr("[Test/INFO] A harmless message..."), format);
+		workCursor.insertBlock();
+	}
+	{
+		QTextCharFormat format(*defaultFormat);
+		format.setForeground(m_colors->getFront(MessageLevel::Warning));
+		// append a paragraph/line
+		auto workCursor = ui->fontPreview->textCursor();
+		workCursor.movePosition(QTextCursor::End);
+		workCursor.insertText(tr("[Something/WARN] A not so spooky warning."),
+							  format);
+		workCursor.insertBlock();
+	}
 }

@@ -45,109 +45,98 @@ typedef QCache<QString, QIcon> IconCache;
 
 namespace
 {
-struct QtIconCache : public IconCache
-{
-    QtIconCache()
-    {
-        qAddPostRoutine(qt_cleanup_icon_cache);
-    }
-};
-}
+	struct QtIconCache : public IconCache {
+		QtIconCache()
+		{
+			qAddPostRoutine(qt_cleanup_icon_cache);
+		}
+	};
+} // namespace
 Q_GLOBAL_STATIC(IconCache, qtIconCache)
 
 static void qt_cleanup_icon_cache()
 {
-    qtIconCache()->clear();
+	qtIconCache()->clear();
 }
 
 /************************************************
 
  ************************************************/
-XdgIcon::XdgIcon()
-{
-}
+XdgIcon::XdgIcon() {}
 
 /************************************************
 
  ************************************************/
-XdgIcon::~XdgIcon()
-{
-}
+XdgIcon::~XdgIcon() {}
 
 /************************************************
  Returns the name of the current icon theme.
  ************************************************/
 QString XdgIcon::themeName()
 {
-    return QIcon::themeName();
+	return QIcon::themeName();
 }
 
 /************************************************
  Sets the current icon theme to name.
  ************************************************/
-void XdgIcon::setThemeName(const QString &themeName)
+void XdgIcon::setThemeName(const QString& themeName)
 {
-    QIcon::setThemeName(themeName);
-    QtXdg::QIconLoader::instance()->updateSystemTheme();
+	QIcon::setThemeName(themeName);
+	QtXdg::QIconLoader::instance()->updateSystemTheme();
 }
 
 /************************************************
- Returns the QIcon corresponding to name in the current icon theme. If no such icon
- is found in the current theme fallback is return instead.
+ Returns the QIcon corresponding to name in the current icon theme. If no such
+ icon is found in the current theme fallback is return instead.
  ************************************************/
-QIcon XdgIcon::fromTheme(const QString &iconName, const QIcon &fallback)
+QIcon XdgIcon::fromTheme(const QString& iconName, const QIcon& fallback)
 {
-    if (iconName.isEmpty())
-        return fallback;
+	if (iconName.isEmpty())
+		return fallback;
 
-    bool isAbsolute = (iconName[0] == '/');
+	bool isAbsolute = (iconName[0] == '/');
 
-    QString name = QFileInfo(iconName).fileName();
-    if (name.endsWith(".png", Qt::CaseInsensitive) ||
-        name.endsWith(".svg", Qt::CaseInsensitive) ||
-        name.endsWith(".xpm", Qt::CaseInsensitive))
-    {
-        name.truncate(name.length() - 4);
-    }
+	QString name = QFileInfo(iconName).fileName();
+	if (name.endsWith(".png", Qt::CaseInsensitive) ||
+		name.endsWith(".svg", Qt::CaseInsensitive) ||
+		name.endsWith(".xpm", Qt::CaseInsensitive)) {
+		name.truncate(name.length() - 4);
+	}
 
-    QIcon icon;
+	QIcon icon;
 
-    if (qtIconCache()->contains(name))
-    {
-        icon = *qtIconCache()->object(name);
-    }
-    else
-    {
-        QIcon *cachedIcon;
-        if (!isAbsolute)
-            cachedIcon = new QIcon(new QtXdg::QIconLoaderEngineFixed(name));
-        else
-            cachedIcon = new QIcon(iconName);
-        qtIconCache()->insert(name, cachedIcon);
-        icon = *cachedIcon;
-    }
+	if (qtIconCache()->contains(name)) {
+		icon = *qtIconCache()->object(name);
+	} else {
+		QIcon* cachedIcon;
+		if (!isAbsolute)
+			cachedIcon = new QIcon(new QtXdg::QIconLoaderEngineFixed(name));
+		else
+			cachedIcon = new QIcon(iconName);
+		qtIconCache()->insert(name, cachedIcon);
+		icon = *cachedIcon;
+	}
 
-    // Note the qapp check is to allow lazy loading of static icons
-    // Supporting fallbacks will not work for this case.
-    if (qApp && !isAbsolute && icon.availableSizes().isEmpty())
-    {
-        return fallback;
-    }
-    return icon;
+	// Note the qapp check is to allow lazy loading of static icons
+	// Supporting fallbacks will not work for this case.
+	if (qApp && !isAbsolute && icon.availableSizes().isEmpty()) {
+		return fallback;
+	}
+	return icon;
 }
 
 /************************************************
- Returns the QIcon corresponding to names in the current icon theme. If no such icon
- is found in the current theme fallback is return instead.
+ Returns the QIcon corresponding to names in the current icon theme. If no such
+ icon is found in the current theme fallback is return instead.
  ************************************************/
-QIcon XdgIcon::fromTheme(const QStringList &iconNames, const QIcon &fallback)
+QIcon XdgIcon::fromTheme(const QStringList& iconNames, const QIcon& fallback)
 {
-    foreach (QString iconName, iconNames)
-    {
-        QIcon icon = fromTheme(iconName);
-        if (!icon.isNull())
-            return icon;
-    }
+	foreach (QString iconName, iconNames) {
+		QIcon icon = fromTheme(iconName);
+		if (!icon.isNull())
+			return icon;
+	}
 
-    return fallback;
+	return fallback;
 }

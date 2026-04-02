@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -52,70 +52,69 @@ class SettingsObject;
 
 namespace Ui
 {
-class MeshMCPage;
+	class MeshMCPage;
 }
 
 class MeshMCPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit MeshMCPage(QWidget *parent = 0);
-    ~MeshMCPage();
+  public:
+	explicit MeshMCPage(QWidget* parent = 0);
+	~MeshMCPage();
 
-    QString displayName() const override
-    {
-        return "MeshMC";
-    }
-    QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("launcher");
-    }
-    QString id() const override
-    {
-        return "launcher-settings";
-    }
-    QString helpPage() const override
-    {
-        return "MeshMC-settings";
-    }
-    bool apply() override;
+	QString displayName() const override
+	{
+		return "MeshMC";
+	}
+	QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("launcher");
+	}
+	QString id() const override
+	{
+		return "launcher-settings";
+	}
+	QString helpPage() const override
+	{
+		return "MeshMC-settings";
+	}
+	bool apply() override;
 
-private:
-    void applySettings();
-    void loadSettings();
+  private:
+	void applySettings();
+	void loadSettings();
 
-private
-slots:
-    void on_instDirBrowseBtn_clicked();
-    void on_modsDirBrowseBtn_clicked();
-    void on_iconsDirBrowseBtn_clicked();
-    void on_migrateDataFolderMacBtn_clicked();
+  private slots:
+	void on_instDirBrowseBtn_clicked();
+	void on_modsDirBrowseBtn_clicked();
+	void on_iconsDirBrowseBtn_clicked();
+	void on_migrateDataFolderMacBtn_clicked();
 
-    /*!
-     * Updates the list of update channels in the combo box.
-     */
-    void refreshUpdateChannelList();
+	/*!
+	 * Updates the list of update channels in the combo box.
+	 */
+	void refreshUpdateChannelList();
 
-    /*!
-     * Updates the channel description label.
-     */
-    void refreshUpdateChannelDesc();
+	/*!
+	 * Updates the channel description label.
+	 */
+	void refreshUpdateChannelDesc();
 
-    /*!
-     * Updates the font preview
-     */
-    void refreshFontPreview();
+	/*!
+	 * Updates the font preview
+	 */
+	void refreshFontPreview();
 
-    void updateChannelSelectionChanged(int index);
+	void updateChannelSelectionChanged(int index);
 
-private:
-    Ui::MeshMCPage *ui;
+  private:
+	Ui::MeshMCPage* ui;
 
-    // default format for the font preview...
-    QTextCharFormat *defaultFormat;
+	// default format for the font preview...
+	QTextCharFormat* defaultFormat;
 
-    std::unique_ptr<LogColorCache> m_colors;
+	std::unique_ptr<LogColorCache> m_colors;
 
-    std::shared_ptr<TranslationsModel> m_languageModel;
+	std::shared_ptr<TranslationsModel> m_languageModel;
 };

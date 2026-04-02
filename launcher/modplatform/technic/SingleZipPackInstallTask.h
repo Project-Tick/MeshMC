@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,38 +47,42 @@
 
 #include <nonstd/optional>
 
-namespace Technic {
-
-class SingleZipPackInstallTask : public InstanceTask
+namespace Technic
 {
-    Q_OBJECT
 
-public:
-    SingleZipPackInstallTask(const QUrl &sourceUrl, const QString &minecraftVersion);
+	class SingleZipPackInstallTask : public InstanceTask
+	{
+		Q_OBJECT
 
-    bool canAbort() const override { return true; }
-    bool abort() override;
+	  public:
+		SingleZipPackInstallTask(const QUrl& sourceUrl,
+								 const QString& minecraftVersion);
 
-protected:
-    void executeTask() override;
+		bool canAbort() const override
+		{
+			return true;
+		}
+		bool abort() override;
 
+	  protected:
+		void executeTask() override;
 
-private slots:
-    void downloadSucceeded();
-    void downloadFailed(QString reason);
-    void downloadProgressChanged(qint64 current, qint64 total);
-    void extractFinished();
-    void extractAborted();
+	  private slots:
+		void downloadSucceeded();
+		void downloadFailed(QString reason);
+		void downloadProgressChanged(qint64 current, qint64 total);
+		void extractFinished();
+		void extractAborted();
 
-private:
-    bool m_abortable = false;
+	  private:
+		bool m_abortable = false;
 
-    QUrl m_sourceUrl;
-    QString m_minecraftVersion;
-    QString m_archivePath;
-    NetJob::Ptr m_filesNetJob;
-    QFuture<nonstd::optional<QStringList>> m_extractFuture;
-    QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
-};
+		QUrl m_sourceUrl;
+		QString m_minecraftVersion;
+		QString m_archivePath;
+		NetJob::Ptr m_filesNetJob;
+		QFuture<nonstd::optional<QStringList>> m_extractFuture;
+		QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
+	};
 
 } // namespace Technic

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,37 +47,37 @@ class LanguageSelectionWidget;
 
 class LanguagePage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit LanguagePage(QWidget *parent = 0);
-    virtual ~LanguagePage();
+  public:
+	explicit LanguagePage(QWidget* parent = 0);
+	virtual ~LanguagePage();
 
-    QString displayName() const override
-    {
-        return tr("Language");
-    }
-    QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("language");
-    }
-    QString id() const override
-    {
-        return "language-settings";
-    }
-    QString helpPage() const override
-    {
-        return "Language-settings";
-    }
-    bool apply() override;
+	QString displayName() const override
+	{
+		return tr("Language");
+	}
+	QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("language");
+	}
+	QString id() const override
+	{
+		return "language-settings";
+	}
+	QString helpPage() const override
+	{
+		return "Language-settings";
+	}
+	bool apply() override;
 
-    void changeEvent(QEvent * ) override;
+	void changeEvent(QEvent*) override;
 
-private:
-    void applySettings();
-    void loadSettings();
-    void retranslate();
+  private:
+	void applySettings();
+	void loadSettings();
+	void retranslate();
 
-private:
-    LanguageSelectionWidget *mainWidget;
+  private:
+	LanguageSelectionWidget* mainWidget;
 };

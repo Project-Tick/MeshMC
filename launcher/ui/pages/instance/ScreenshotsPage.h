@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,7 +47,7 @@ class QFileSystemModel;
 class QIdentityProxyModel;
 namespace Ui
 {
-class ScreenshotsPage;
+	class ScreenshotsPage;
 }
 
 struct ScreenShot;
@@ -56,57 +56,54 @@ class ImgurAlbumCreation;
 
 class ScreenshotsPage : public QMainWindow, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ScreenshotsPage(QString path, QWidget *parent = 0);
-    virtual ~ScreenshotsPage();
+  public:
+	explicit ScreenshotsPage(QString path, QWidget* parent = 0);
+	virtual ~ScreenshotsPage();
 
-    virtual void openedImpl() override;
+	virtual void openedImpl() override;
 
-    enum
-    {
-        NothingDone = 0x42
-    };
+	enum { NothingDone = 0x42 };
 
-    virtual bool eventFilter(QObject *, QEvent *) override;
-    virtual QString displayName() const override
-    {
-        return tr("Screenshots");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("screenshots");
-    }
-    virtual QString id() const override
-    {
-        return "screenshots";
-    }
-    virtual QString helpPage() const override
-    {
-        return "Screenshots-management";
-    }
-    virtual bool apply() override
-    {
-        return !m_uploadActive;
-    }
+	virtual bool eventFilter(QObject*, QEvent*) override;
+	virtual QString displayName() const override
+	{
+		return tr("Screenshots");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("screenshots");
+	}
+	virtual QString id() const override
+	{
+		return "screenshots";
+	}
+	virtual QString helpPage() const override
+	{
+		return "Screenshots-management";
+	}
+	virtual bool apply() override
+	{
+		return !m_uploadActive;
+	}
 
-protected:
-    QMenu * createPopupMenu() override;
+  protected:
+	QMenu* createPopupMenu() override;
 
-private slots:
-    void on_actionUpload_triggered();
-    void on_actionDelete_triggered();
-    void on_actionRename_triggered();
-    void on_actionView_Folder_triggered();
-    void onItemActivated(QModelIndex);
-    void ShowContextMenu(const QPoint &pos);
+  private slots:
+	void on_actionUpload_triggered();
+	void on_actionDelete_triggered();
+	void on_actionRename_triggered();
+	void on_actionView_Folder_triggered();
+	void onItemActivated(QModelIndex);
+	void ShowContextMenu(const QPoint& pos);
 
-private:
-    Ui::ScreenshotsPage *ui;
-    std::shared_ptr<QFileSystemModel> m_model;
-    std::shared_ptr<QIdentityProxyModel> m_filterModel;
-    QString m_folder;
-    bool m_valid = false;
-    bool m_uploadActive = false;
+  private:
+	Ui::ScreenshotsPage* ui;
+	std::shared_ptr<QFileSystemModel> m_model;
+	std::shared_ptr<QIdentityProxyModel> m_filterModel;
+	QString m_folder;
+	bool m_valid = false;
+	bool m_uploadActive = false;
 };

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,7 +46,7 @@
 
 namespace Ui
 {
-class NewInstanceDialog;
+	class NewInstanceDialog;
 }
 
 class PageContainer;
@@ -56,48 +56,51 @@ class FlamePage;
 
 class NewInstanceDialog : public QDialog, public BasePageProvider
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit NewInstanceDialog(const QString & initialGroup, const QString & url = QString(), QWidget *parent = 0);
-    ~NewInstanceDialog();
+  public:
+	explicit NewInstanceDialog(const QString& initialGroup,
+							   const QString& url = QString(),
+							   QWidget* parent = 0);
+	~NewInstanceDialog();
 
-    void updateDialogState();
+	void updateDialogState();
 
-    void setSuggestedPack(const QString & name = QString(), InstanceTask * task = nullptr);
-    void setSuggestedIconFromFile(const QString &path, const QString &name);
-    void setSuggestedIcon(const QString &key);
+	void setSuggestedPack(const QString& name = QString(),
+						  InstanceTask* task = nullptr);
+	void setSuggestedIconFromFile(const QString& path, const QString& name);
+	void setSuggestedIcon(const QString& key);
 
-    InstanceTask * extractTask();
+	InstanceTask* extractTask();
 
-    QString dialogTitle() override;
-    QList<BasePage *> getPages() override;
+	QString dialogTitle() override;
+	QList<BasePage*> getPages() override;
 
-    QString instName() const;
-    QString instGroup() const;
-    QString iconKey() const;
+	QString instName() const;
+	QString instGroup() const;
+	QString iconKey() const;
 
-public slots:
-    void accept() override;
-    void reject() override;
+  public slots:
+	void accept() override;
+	void reject() override;
 
-private slots:
-    void on_iconButton_clicked();
-    void on_instNameTextBox_textChanged(const QString &arg1);
+  private slots:
+	void on_iconButton_clicked();
+	void on_instNameTextBox_textChanged(const QString& arg1);
 
-private:
-    Ui::NewInstanceDialog *ui = nullptr;
-    PageContainer * m_container = nullptr;
-    QDialogButtonBox * m_buttons = nullptr;
+  private:
+	Ui::NewInstanceDialog* ui = nullptr;
+	PageContainer* m_container = nullptr;
+	QDialogButtonBox* m_buttons = nullptr;
 
-    QString InstIconKey;
-    ImportPage *importPage = nullptr;
-    FlamePage *flamePage = nullptr;
-    std::unique_ptr<InstanceTask> creationTask;
+	QString InstIconKey;
+	ImportPage* importPage = nullptr;
+	FlamePage* flamePage = nullptr;
+	std::unique_ptr<InstanceTask> creationTask;
 
-    bool importIcon = false;
-    QString importIconPath;
-    QString importIconName;
+	bool importIcon = false;
+	QString importIconPath;
+	QString importIconName;
 
-    void importIconNow();
+	void importIconNow();
 };

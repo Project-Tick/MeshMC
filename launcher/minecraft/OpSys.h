@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -38,24 +38,17 @@
 
 #pragma once
 #include <QString>
-enum OpSys
-{
-    Os_Windows,
-    Os_FreeBSD,
-    Os_Linux,
-    Os_OSX,
-    Os_Other
-};
+enum OpSys { Os_Windows, Os_FreeBSD, Os_Linux, Os_OSX, Os_Other };
 
 OpSys OpSys_fromString(QString);
 QString OpSys_toString(OpSys);
 
 #ifdef Q_OS_WIN32
-    #define currentSystem Os_Windows
+#define currentSystem Os_Windows
 #elif defined Q_OS_MAC
-    #define currentSystem Os_OSX
+#define currentSystem Os_OSX
 #elif defined Q_OS_FREEBSD
-    #define currentSystem Os_FreeBSD
+#define currentSystem Os_FreeBSD
 #else
-    #define currentSystem Os_Linux
+#define currentSystem Os_Linux
 #endif

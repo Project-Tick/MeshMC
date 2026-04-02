@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -45,27 +45,29 @@
 
 namespace Ui
 {
-class NewComponentDialog;
+	class NewComponentDialog;
 }
 
 class NewComponentDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit NewComponentDialog(const QString & initialName = QString(), const QString & initialUid = QString(), QWidget *parent = 0);
-    virtual ~NewComponentDialog();
-    void setBlacklist(QStringList badUids);
+  public:
+	explicit NewComponentDialog(const QString& initialName = QString(),
+								const QString& initialUid = QString(),
+								QWidget* parent = 0);
+	virtual ~NewComponentDialog();
+	void setBlacklist(QStringList badUids);
 
-    QString name() const;
-    QString uid() const;
+	QString name() const;
+	QString uid() const;
 
-private slots:
-    void updateDialogState();
+  private slots:
+	void updateDialogState();
 
-private:
-    Ui::NewComponentDialog *ui;
+  private:
+	Ui::NewComponentDialog* ui;
 
-    QString originalPlaceholderText;
-    QStringList uidBlacklist;
+	QString originalPlaceholderText;
+	QStringList uidBlacklist;
 };

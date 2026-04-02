@@ -28,32 +28,34 @@
 #endif
 #include "net/NetJob.h"
 
-class VerifyJavaInstall : public LaunchStep {
-    Q_OBJECT
+class VerifyJavaInstall : public LaunchStep
+{
+	Q_OBJECT
 
-public:
-    explicit VerifyJavaInstall(LaunchTask *parent) : LaunchStep(parent) {
-    };
-    ~VerifyJavaInstall() override = default;
+  public:
+	explicit VerifyJavaInstall(LaunchTask* parent) : LaunchStep(parent) {};
+	~VerifyJavaInstall() override = default;
 
-    void executeTask() override;
-    bool canAbort() const override {
-        return false;
-    }
+	void executeTask() override;
+	bool canAbort() const override
+	{
+		return false;
+	}
 
-private:
-    int determineRequiredJavaMajor() const;
-    QString findInstalledJava(int requiredMajor) const;
-    QString javaInstallDir() const;
+  private:
+	int determineRequiredJavaMajor() const;
+	QString findInstalledJava(int requiredMajor) const;
+	QString javaInstallDir() const;
 #ifndef MeshMC_DISABLE_JAVA_DOWNLOADER
-    void autoDownloadJava(int requiredMajor);
-    void fetchVersionList(int requiredMajor);
-    void fetchRuntimes(const QString &versionId, int requiredMajor);
-    void startDownload(const JavaDownload::RuntimeEntry &runtime, int requiredMajor);
-    void setJavaPathAndSucceed(const QString &javaPath);
+	void autoDownloadJava(int requiredMajor);
+	void fetchVersionList(int requiredMajor);
+	void fetchRuntimes(const QString& versionId, int requiredMajor);
+	void startDownload(const JavaDownload::RuntimeEntry& runtime,
+					   int requiredMajor);
+	void setJavaPathAndSucceed(const QString& javaPath);
 
-    NetJob::Ptr m_fetchJob;
-    QByteArray m_fetchData;
-    std::unique_ptr<JavaDownloadTask> m_downloadTask;
+	NetJob::Ptr m_fetchJob;
+	QByteArray m_fetchData;
+	std::unique_ptr<JavaDownloadTask> m_downloadTask;
 #endif
 };

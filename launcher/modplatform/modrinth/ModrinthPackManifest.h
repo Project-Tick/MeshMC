@@ -25,37 +25,38 @@
 #include <QUrl>
 #include <QVector>
 
-namespace Modrinth {
+namespace Modrinth
+{
 
-struct File {
-    QString path;
-    QUrl downloadUrl;
-    QString sha1;
-    QString sha512;
-    int fileSize = 0;
-};
+	struct File {
+		QString path;
+		QUrl downloadUrl;
+		QString sha1;
+		QString sha512;
+		int fileSize = 0;
+	};
 
-struct Dependency {
-    QString versionId;
-    QString projectId;
-    QString fileName;
-};
+	struct Dependency {
+		QString versionId;
+		QString projectId;
+		QString fileName;
+	};
 
-struct Manifest {
-    int formatVersion = 0;
-    QString game;
-    QString versionId;
-    QString name;
-    QString summary;
-    QVector<Modrinth::File> files;
+	struct Manifest {
+		int formatVersion = 0;
+		QString game;
+		QString versionId;
+		QString name;
+		QString summary;
+		QVector<Modrinth::File> files;
 
-    QString minecraftVersion;
-    QString forgeVersion;
-    QString fabricVersion;
-    QString quiltVersion;
-    QString neoForgeVersion;
-};
+		QString minecraftVersion;
+		QString forgeVersion;
+		QString fabricVersion;
+		QString quiltVersion;
+		QString neoForgeVersion;
+	};
 
-void loadManifest(Modrinth::Manifest &m, const QString &filepath);
+	void loadManifest(Modrinth::Manifest& m, const QString& filepath);
 
-}
+} // namespace Modrinth

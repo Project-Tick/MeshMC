@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -39,84 +39,82 @@
 #include "BaseVersionList.h"
 #include "BaseVersion.h"
 
-BaseVersionList::BaseVersionList(QObject *parent) : QAbstractListModel(parent)
+BaseVersionList::BaseVersionList(QObject* parent) : QAbstractListModel(parent)
 {
 }
 
-BaseVersionPtr BaseVersionList::findVersion(const QString &descriptor)
+BaseVersionPtr BaseVersionList::findVersion(const QString& descriptor)
 {
-    for (int i = 0; i < count(); i++)
-    {
-        if (at(i)->descriptor() == descriptor)
-            return at(i);
-    }
-    return BaseVersionPtr();
+	for (int i = 0; i < count(); i++) {
+		if (at(i)->descriptor() == descriptor)
+			return at(i);
+	}
+	return BaseVersionPtr();
 }
 
 BaseVersionPtr BaseVersionList::getRecommended() const
 {
-    if (count() <= 0)
-        return BaseVersionPtr();
-    else
-        return at(0);
+	if (count() <= 0)
+		return BaseVersionPtr();
+	else
+		return at(0);
 }
 
-QVariant BaseVersionList::data(const QModelIndex &index, int role) const
+QVariant BaseVersionList::data(const QModelIndex& index, int role) const
 {
-    if (!index.isValid())
-        return QVariant();
+	if (!index.isValid())
+		return QVariant();
 
-    if (index.row() > count())
-        return QVariant();
+	if (index.row() > count())
+		return QVariant();
 
-    BaseVersionPtr version = at(index.row());
+	BaseVersionPtr version = at(index.row());
 
-    switch (role)
-    {
-    case VersionPointerRole:
-        return QVariant::fromValue(version);
+	switch (role) {
+		case VersionPointerRole:
+			return QVariant::fromValue(version);
 
-    case VersionRole:
-        return version->name();
+		case VersionRole:
+			return version->name();
 
-    case VersionIdRole:
-        return version->descriptor();
+		case VersionIdRole:
+			return version->descriptor();
 
-    case TypeRole:
-        return version->typeString();
+		case TypeRole:
+			return version->typeString();
 
-    default:
-        return QVariant();
-    }
+		default:
+			return QVariant();
+	}
 }
 
 BaseVersionList::RoleList BaseVersionList::providesRoles() const
 {
-    return {VersionPointerRole, VersionRole, VersionIdRole, TypeRole};
+	return {VersionPointerRole, VersionRole, VersionIdRole, TypeRole};
 }
 
-int BaseVersionList::rowCount(const QModelIndex &parent) const
+int BaseVersionList::rowCount(const QModelIndex& parent) const
 {
-    // Return count
-    return count();
+	// Return count
+	return count();
 }
 
-int BaseVersionList::columnCount(const QModelIndex &parent) const
+int BaseVersionList::columnCount(const QModelIndex& parent) const
 {
-    return 1;
+	return 1;
 }
 
 QHash<int, QByteArray> BaseVersionList::roleNames() const
 {
-    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
-    roles.insert(VersionRole, "version");
-    roles.insert(VersionIdRole, "versionId");
-    roles.insert(ParentVersionRole, "parentGameVersion");
-    roles.insert(RecommendedRole, "recommended");
-    roles.insert(LatestRole, "latest");
-    roles.insert(TypeRole, "type");
-    roles.insert(BranchRole, "branch");
-    roles.insert(PathRole, "path");
-    roles.insert(ArchitectureRole, "architecture");
-    return roles;
+	QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+	roles.insert(VersionRole, "version");
+	roles.insert(VersionIdRole, "versionId");
+	roles.insert(ParentVersionRole, "parentGameVersion");
+	roles.insert(RecommendedRole, "recommended");
+	roles.insert(LatestRole, "latest");
+	roles.insert(TypeRole, "type");
+	roles.insert(BranchRole, "branch");
+	roles.insert(PathRole, "path");
+	roles.insert(ArchitectureRole, "architecture");
+	return roles;
 }

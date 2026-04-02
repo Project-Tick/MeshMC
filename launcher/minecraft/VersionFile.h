@@ -42,94 +42,100 @@ struct MojangAssetIndexInfo;
 using VersionFilePtr = std::shared_ptr<VersionFile>;
 class VersionFile : public ProblemContainer
 {
-    friend class MojangVersionFormat;
-    friend class OneSixVersionFormat;
-public: /* methods */
-    void applyTo(LaunchProfile* profile);
+	friend class MojangVersionFormat;
+	friend class OneSixVersionFormat;
 
-public: /* data */
-    /// MeshMC: order hint for this version file if no explicit order is set
-    int order = 0;
+  public: /* methods */
+	void applyTo(LaunchProfile* profile);
 
-    /// MeshMC: human readable name of this package
-    QString name;
+  public: /* data */
+	/// MeshMC: order hint for this version file if no explicit order is set
+	int order = 0;
 
-    /// MeshMC: package ID of this package
-    QString uid;
+	/// MeshMC: human readable name of this package
+	QString name;
 
-    /// MeshMC: version of this package
-    QString version;
+	/// MeshMC: package ID of this package
+	QString uid;
 
-    /// MeshMC: DEPRECATED dependency on a Minecraft version
-    QString dependsOnMinecraftVersion;
+	/// MeshMC: version of this package
+	QString version;
 
-    /// Mojang: DEPRECATED used to version the Mojang version format
-    int minimumMeshMCVersion = -1;
+	/// MeshMC: DEPRECATED dependency on a Minecraft version
+	QString dependsOnMinecraftVersion;
 
-    /// Mojang: DEPRECATED version of Minecraft this is
-    QString minecraftVersion;
+	/// Mojang: DEPRECATED used to version the Mojang version format
+	int minimumMeshMCVersion = -1;
 
-    /// Mojang: class to launch Minecraft with
-    QString mainClass;
+	/// Mojang: DEPRECATED version of Minecraft this is
+	QString minecraftVersion;
 
-    /// MeshMC: class to launch legacy Minecraft with (embed in a custom window)
-    QString appletClass;
+	/// Mojang: class to launch Minecraft with
+	QString mainClass;
 
-    /// Mojang: Minecraft launch arguments (may contain placeholders for variable substitution)
-    QString minecraftArguments;
+	/// MeshMC: class to launch legacy Minecraft with (embed in a custom window)
+	QString appletClass;
 
-    /// Mojang: type of the Minecraft version
-    QString type;
+	/// Mojang: Minecraft launch arguments (may contain placeholders for
+	/// variable substitution)
+	QString minecraftArguments;
 
-    /// Mojang: the time this version was actually released by Mojang
-    QDateTime releaseTime;
+	/// Mojang: type of the Minecraft version
+	QString type;
 
-    /// Mojang: DEPRECATED the time this version was last updated by Mojang
-    QDateTime updateTime;
+	/// Mojang: the time this version was actually released by Mojang
+	QDateTime releaseTime;
 
-    /// Mojang: DEPRECATED asset group to be used with Minecraft
-    QString assets;
+	/// Mojang: DEPRECATED the time this version was last updated by Mojang
+	QDateTime updateTime;
 
-    /// MeshMC: list of tweaker mod arguments for launchwrapper
-    QStringList addTweakers;
+	/// Mojang: DEPRECATED asset group to be used with Minecraft
+	QString assets;
 
-    /// Mojang: list of libraries to add to the version
-    QList<LibraryPtr> libraries;
+	/// MeshMC: list of tweaker mod arguments for launchwrapper
+	QStringList addTweakers;
 
-    /// MeshMC: list of maven files to put in the libraries folder, but not in classpath
-    QList<LibraryPtr> mavenFiles;
+	/// Mojang: list of libraries to add to the version
+	QList<LibraryPtr> libraries;
 
-    /// The main jar (Minecraft version library, normally)
-    LibraryPtr mainJar;
+	/// MeshMC: list of maven files to put in the libraries folder, but not in
+	/// classpath
+	QList<LibraryPtr> mavenFiles;
 
-    /// MeshMC: list of attached traits of this version file - used to enable features
-    QSet<QString> traits;
+	/// The main jar (Minecraft version library, normally)
+	LibraryPtr mainJar;
 
-    /// MeshMC: list of jar mods added to this version
-    QList<LibraryPtr> jarMods;
+	/// MeshMC: list of attached traits of this version file - used to enable
+	/// features
+	QSet<QString> traits;
 
-    /// MeshMC: list of mods added to this version
-    QList<LibraryPtr> mods;
+	/// MeshMC: list of jar mods added to this version
+	QList<LibraryPtr> jarMods;
 
-    /**
-     * MeshMC: set of packages this depends on
-     * NOTE: this is shared with the meta format!!!
-     */
-    Meta::RequireSet requirements;
+	/// MeshMC: list of mods added to this version
+	QList<LibraryPtr> mods;
 
-    /**
-     * MeshMC: set of packages this conflicts with
-     * NOTE: this is shared with the meta format!!!
-     */
-    Meta::RequireSet conflicts;
+	/**
+	 * MeshMC: set of packages this depends on
+	 * NOTE: this is shared with the meta format!!!
+	 */
+	Meta::RequireSet requirements;
 
-    /// is volatile -- may be removed as soon as it is no longer needed by something else
-    bool m_volatile = false;
+	/**
+	 * MeshMC: set of packages this conflicts with
+	 * NOTE: this is shared with the meta format!!!
+	 */
+	Meta::RequireSet conflicts;
 
-public:
-    // Mojang: DEPRECATED list of 'downloads' - client jar, server jar, windows server exe, maybe more.
-    QMap <QString, std::shared_ptr<MojangDownloadInfo>> mojangDownloads;
+	/// is volatile -- may be removed as soon as it is no longer needed by
+	/// something else
+	bool m_volatile = false;
 
-    // Mojang: extended asset index download information
-    std::shared_ptr<MojangAssetIndexInfo> mojangAssetIndex;
+  public:
+	// Mojang: DEPRECATED list of 'downloads' - client jar, server jar, windows
+	// server exe, maybe more.
+	QMap<QString, std::shared_ptr<MojangDownloadInfo>> mojangDownloads;
+
+	// Mojang: extended asset index download information
+	std::shared_ptr<MojangAssetIndexInfo> mojangAssetIndex;
 };

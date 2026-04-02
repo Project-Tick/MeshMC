@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,25 +44,27 @@
 #include <java/JavaChecker.h>
 #include <net/Mode.h>
 
-// FIXME: stupid. should be defined by the instance type? or even completely abstracted away...
-class Update: public LaunchStep
+// FIXME: stupid. should be defined by the instance type? or even completely
+// abstracted away...
+class Update : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit Update(LaunchTask *parent, Net::Mode mode):LaunchStep(parent), m_mode(mode) {};
-    virtual ~Update() {};
+	Q_OBJECT
+  public:
+	explicit Update(LaunchTask* parent, Net::Mode mode)
+		: LaunchStep(parent), m_mode(mode) {};
+	virtual ~Update() {};
 
-    void executeTask() override;
-    bool canAbort() const override;
-    void proceed() override;
-public slots:
-    bool abort() override;
+	void executeTask() override;
+	bool canAbort() const override;
+	void proceed() override;
+  public slots:
+	bool abort() override;
 
-private slots:
-    void updateFinished();
+  private slots:
+	void updateFinished();
 
-private:
-    Task::Ptr m_updateTask;
-    bool m_aborted = false;
-    Net::Mode m_mode = Net::Mode::Offline;
+  private:
+	Task::Ptr m_updateTask;
+	bool m_aborted = false;
+	Net::Mode m_mode = Net::Mode::Offline;
 };

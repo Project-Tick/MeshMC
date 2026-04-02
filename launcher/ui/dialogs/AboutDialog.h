@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -43,20 +43,20 @@
 
 namespace Ui
 {
-class AboutDialog;
+	class AboutDialog;
 }
 
 class AboutDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit AboutDialog(QWidget *parent = 0);
-    ~AboutDialog();
+  public:
+	explicit AboutDialog(QWidget* parent = 0);
+	~AboutDialog();
 
-private:
-    Ui::AboutDialog *ui;
+  private:
+	Ui::AboutDialog* ui;
 
-    NetJob::Ptr netJob;
-    QByteArray dataSink;
+	NetJob::Ptr netJob;
+	QByteArray dataSink;
 };

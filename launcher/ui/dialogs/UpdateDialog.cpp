@@ -24,51 +24,54 @@
 #include "Application.h"
 #include "BuildConfig.h"
 
-UpdateDialog::UpdateDialog(bool hasUpdate, const UpdateAvailableStatus &status, QWidget *parent)
-    : QDialog(parent), ui(new Ui::UpdateDialog)
+UpdateDialog::UpdateDialog(bool hasUpdate, const UpdateAvailableStatus& status,
+						   QWidget* parent)
+	: QDialog(parent), ui(new Ui::UpdateDialog)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    if (hasUpdate) {
-        ui->label->setText(tr("<b>%1 %2</b> is available!").arg(
-            BuildConfig.MESHMC_DISPLAYNAME, status.version));
+	if (hasUpdate) {
+		ui->label->setText(
+			tr("<b>%1 %2</b> is available!")
+				.arg(BuildConfig.MESHMC_DISPLAYNAME, status.version));
 
-        if (!status.releaseNotes.isEmpty()) {
-            ui->changelogBrowser->setHtml(status.releaseNotes);
-        } else {
-            ui->changelogBrowser->setHtml(
-                tr("<center><p>No release notes available.</p></center>"));
-        }
-    } else {
-        ui->label->setText(tr("You are running the latest version of %1.").arg(
-            BuildConfig.MESHMC_DISPLAYNAME));
-        ui->changelogBrowser->setHtml(
-            tr("<center><p>No updates found.</p></center>"));
-        ui->btnUpdateNow->setHidden(true);
-        ui->btnUpdateLater->setText(tr("Close"));
-    }
+		if (!status.releaseNotes.isEmpty()) {
+			ui->changelogBrowser->setHtml(status.releaseNotes);
+		} else {
+			ui->changelogBrowser->setHtml(
+				tr("<center><p>No release notes available.</p></center>"));
+		}
+	} else {
+		ui->label->setText(tr("You are running the latest version of %1.")
+							   .arg(BuildConfig.MESHMC_DISPLAYNAME));
+		ui->changelogBrowser->setHtml(
+			tr("<center><p>No updates found.</p></center>"));
+		ui->btnUpdateNow->setHidden(true);
+		ui->btnUpdateLater->setText(tr("Close"));
+	}
 
-    restoreGeometry(QByteArray::fromBase64(
-        APPLICATION->settings()->get("UpdateDialogGeometry").toByteArray()));
+	restoreGeometry(QByteArray::fromBase64(
+		APPLICATION->settings()->get("UpdateDialogGeometry").toByteArray()));
 }
 
 UpdateDialog::~UpdateDialog()
 {
-    delete ui;
+	delete ui;
 }
 
 void UpdateDialog::on_btnUpdateLater_clicked()
 {
-    reject();
+	reject();
 }
 
 void UpdateDialog::on_btnUpdateNow_clicked()
 {
-    done(UPDATE_NOW);
+	done(UPDATE_NOW);
 }
 
-void UpdateDialog::closeEvent(QCloseEvent *evt)
+void UpdateDialog::closeEvent(QCloseEvent* evt)
 {
-    APPLICATION->settings()->set("UpdateDialogGeometry", saveGeometry().toBase64());
-    QDialog::closeEvent(evt);
+	APPLICATION->settings()->set("UpdateDialogGeometry",
+								 saveGeometry().toBase64());
+	QDialog::closeEvent(evt);
 }

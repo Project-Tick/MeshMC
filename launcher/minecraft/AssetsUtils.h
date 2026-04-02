@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -43,34 +43,34 @@
 #include "net/NetAction.h"
 #include "net/NetJob.h"
 
-struct AssetObject
-{
-    QString getRelPath();
-    QUrl getUrl();
-    QString getLocalPath();
-    NetAction::Ptr getDownloadAction();
+struct AssetObject {
+	QString getRelPath();
+	QUrl getUrl();
+	QString getLocalPath();
+	NetAction::Ptr getDownloadAction();
 
-    QString hash;
-    qint64 size;
+	QString hash;
+	qint64 size;
 };
 
-struct AssetsIndex
-{
-    NetJob::Ptr getDownloadJob();
+struct AssetsIndex {
+	NetJob::Ptr getDownloadJob();
 
-    QString id;
-    QMap<QString, AssetObject> objects;
-    bool isVirtual = false;
-    bool mapToResources = false;
+	QString id;
+	QMap<QString, AssetObject> objects;
+	bool isVirtual = false;
+	bool mapToResources = false;
 };
 
 /// FIXME: this is absolutely horrendous. REDO!!!!
 namespace AssetsUtils
 {
-bool loadAssetsIndexJson(const QString &id, const QString &file, AssetsIndex& index);
+	bool loadAssetsIndexJson(const QString& id, const QString& file,
+							 AssetsIndex& index);
 
-QDir getAssetsDir(const QString &assetsId, const QString &resourcesFolder);
+	QDir getAssetsDir(const QString& assetsId, const QString& resourcesFolder);
 
-/// Reconstruct a virtual assets folder for the given assets ID and return the folder
-bool reconstructAssets(QString assetsId, QString resourcesFolder);
-}
+	/// Reconstruct a virtual assets folder for the given assets ID and return
+	/// the folder
+	bool reconstructAssets(QString assetsId, QString resourcesFolder);
+} // namespace AssetsUtils

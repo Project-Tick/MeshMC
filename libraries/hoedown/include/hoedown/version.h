@@ -26,7 +26,6 @@
 extern "C" {
 #endif
 
-
 /*************
  * CONSTANTS *
  *************/
@@ -36,14 +35,12 @@ extern "C" {
 #define HOEDOWN_VERSION_MINOR 0
 #define HOEDOWN_VERSION_REVISION 2
 
-
 /*************
  * FUNCTIONS *
  *************/
 
 /* hoedown_version: retrieve Hoedown's version numbers */
-void hoedown_version(int *major, int *minor, int *revision);
-
+void hoedown_version(int* major, int* minor, int* revision);
 
 #ifdef __cplusplus
 }

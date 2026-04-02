@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -45,15 +45,15 @@
 // Sectionless INI parser (for instance config files)
 class INIFile : public QMap<QString, QVariant>
 {
-public:
-    explicit INIFile();
+  public:
+	explicit INIFile();
 
-    bool loadFile(QByteArray file);
-    bool loadFile(QString fileName);
-    bool saveFile(QString fileName);
+	bool loadFile(QByteArray file);
+	bool loadFile(QString fileName);
+	bool saveFile(QString fileName);
 
-    QVariant get(QString key, QVariant def) const;
-    void set(QString key, QVariant val);
-    static QString unescape(QString orig);
-    static QString escape(QString orig);
+	QVariant get(QString key, QVariant def) const;
+	void set(QString key, QVariant val);
+	static QString unescape(QString orig);
+	static QString escape(QString orig);
 };

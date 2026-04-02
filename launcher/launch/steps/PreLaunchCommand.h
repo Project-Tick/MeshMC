@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -41,24 +41,24 @@
 #include "launch/LaunchStep.h"
 #include "LoggedProcess.h"
 
-class PreLaunchCommand: public LaunchStep
+class PreLaunchCommand : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit PreLaunchCommand(LaunchTask *parent);
-    virtual ~PreLaunchCommand() {};
+	Q_OBJECT
+  public:
+	explicit PreLaunchCommand(LaunchTask* parent);
+	virtual ~PreLaunchCommand() {};
 
-    virtual void executeTask();
-    virtual bool abort();
-    virtual bool canAbort() const
-    {
-        return true;
-    }
-    void setWorkingDirectory(const QString &wd);
-private slots:
-    void on_state(LoggedProcess::State state);
+	virtual void executeTask();
+	virtual bool abort();
+	virtual bool canAbort() const
+	{
+		return true;
+	}
+	void setWorkingDirectory(const QString& wd);
+  private slots:
+	void on_state(LoggedProcess::State state);
 
-private:
-    LoggedProcess m_process;
-    QString m_command;
+  private:
+	LoggedProcess m_process;
+	QString m_command;
 };

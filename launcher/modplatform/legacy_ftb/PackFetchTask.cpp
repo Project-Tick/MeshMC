@@ -26,168 +26,177 @@
 #include "BuildConfig.h"
 #include "Application.h"
 
-namespace LegacyFTB {
-
-void PackFetchTask::fetch()
+namespace LegacyFTB
 {
-    publicPacks.clear();
-    thirdPartyPacks.clear();
 
-    jobPtr = new NetJob("LegacyFTB::ModpackFetch", m_network);
+	void PackFetchTask::fetch()
+	{
+		publicPacks.clear();
+		thirdPartyPacks.clear();
 
-    QUrl publicPacksUrl = QUrl(BuildConfig.LEGACY_FTB_CDN_BASE_URL + "static/modpacks.xml");
-    qDebug() << "Downloading public version info from" << publicPacksUrl.toString();
-    jobPtr->addNetAction(Net::Download::makeByteArray(publicPacksUrl, &publicModpacksXmlFileData));
+		jobPtr = new NetJob("LegacyFTB::ModpackFetch", m_network);
 
-    QUrl thirdPartyUrl = QUrl(BuildConfig.LEGACY_FTB_CDN_BASE_URL + "static/thirdparty.xml");
-    qDebug() << "Downloading thirdparty version info from" << thirdPartyUrl.toString();
-    jobPtr->addNetAction(Net::Download::makeByteArray(thirdPartyUrl, &thirdPartyModpacksXmlFileData));
+		QUrl publicPacksUrl =
+			QUrl(BuildConfig.LEGACY_FTB_CDN_BASE_URL + "static/modpacks.xml");
+		qDebug() << "Downloading public version info from"
+				 << publicPacksUrl.toString();
+		jobPtr->addNetAction(Net::Download::makeByteArray(
+			publicPacksUrl, &publicModpacksXmlFileData));
 
-    QObject::connect(jobPtr.get(), &NetJob::succeeded, this, &PackFetchTask::fileDownloadFinished);
-    QObject::connect(jobPtr.get(), &NetJob::failed, this, &PackFetchTask::fileDownloadFailed);
+		QUrl thirdPartyUrl =
+			QUrl(BuildConfig.LEGACY_FTB_CDN_BASE_URL + "static/thirdparty.xml");
+		qDebug() << "Downloading thirdparty version info from"
+				 << thirdPartyUrl.toString();
+		jobPtr->addNetAction(Net::Download::makeByteArray(
+			thirdPartyUrl, &thirdPartyModpacksXmlFileData));
 
-    jobPtr->start();
-}
+		QObject::connect(jobPtr.get(), &NetJob::succeeded, this,
+						 &PackFetchTask::fileDownloadFinished);
+		QObject::connect(jobPtr.get(), &NetJob::failed, this,
+						 &PackFetchTask::fileDownloadFailed);
 
-void PackFetchTask::fetchPrivate(const QStringList & toFetch)
-{
-    QString privatePackBaseUrl = BuildConfig.LEGACY_FTB_CDN_BASE_URL + "static/%1.xml";
+		jobPtr->start();
+	}
 
-    for (auto &packCode: toFetch)
-    {
-        QByteArray *data = new QByteArray();
-        NetJob *job = new NetJob("Fetching private pack", m_network);
-        job->addNetAction(Net::Download::makeByteArray(privatePackBaseUrl.arg(packCode), data));
+	void PackFetchTask::fetchPrivate(const QStringList& toFetch)
+	{
+		QString privatePackBaseUrl =
+			BuildConfig.LEGACY_FTB_CDN_BASE_URL + "static/%1.xml";
 
-        QObject::connect(job, &NetJob::succeeded, this, [this, job, data, packCode]
-        {
-            ModpackList packs;
-            parseAndAddPacks(*data, PackType::Private, packs);
-            foreach(Modpack currentPack, packs)
-            {
-                currentPack.packCode = packCode;
-                emit privateFileDownloadFinished(currentPack);
-            }
+		for (auto& packCode : toFetch) {
+			QByteArray* data = new QByteArray();
+			NetJob* job = new NetJob("Fetching private pack", m_network);
+			job->addNetAction(Net::Download::makeByteArray(
+				privatePackBaseUrl.arg(packCode), data));
 
-            job->deleteLater();
+			QObject::connect(
+				job, &NetJob::succeeded, this, [this, job, data, packCode] {
+					ModpackList packs;
+					parseAndAddPacks(*data, PackType::Private, packs);
+					foreach (Modpack currentPack, packs) {
+						currentPack.packCode = packCode;
+						emit privateFileDownloadFinished(currentPack);
+					}
 
-            data->clear();
-            delete data;
-        });
+					job->deleteLater();
 
-        QObject::connect(job, &NetJob::failed, this, [this, job, packCode, data](QString reason)
-        {
-            emit privateFileDownloadFailed(reason, packCode);
-            job->deleteLater();
+					data->clear();
+					delete data;
+				});
 
-            data->clear();
-            delete data;
-        });
+			QObject::connect(job, &NetJob::failed, this,
+							 [this, job, packCode, data](QString reason) {
+								 emit privateFileDownloadFailed(reason,
+																packCode);
+								 job->deleteLater();
 
-        job->start();
-    }
-}
+								 data->clear();
+								 delete data;
+							 });
 
-void PackFetchTask::fileDownloadFinished()
-{
-    jobPtr.reset();
+			job->start();
+		}
+	}
 
-    QStringList failedLists;
+	void PackFetchTask::fileDownloadFinished()
+	{
+		jobPtr.reset();
 
-    if(!parseAndAddPacks(publicModpacksXmlFileData, PackType::Public, publicPacks))
-    {
-        failedLists.append(tr("Public Packs"));
-    }
+		QStringList failedLists;
 
-    if(!parseAndAddPacks(thirdPartyModpacksXmlFileData, PackType::ThirdParty, thirdPartyPacks))
-    {
-        failedLists.append(tr("Third Party Packs"));
-    }
+		if (!parseAndAddPacks(publicModpacksXmlFileData, PackType::Public,
+							  publicPacks)) {
+			failedLists.append(tr("Public Packs"));
+		}
 
-    if(failedLists.size() > 0)
-    {
-        emit failed(tr("Failed to download some pack lists: %1").arg(failedLists.join("\n- ")));
-    }
-    else
-    {
-        emit finished(publicPacks, thirdPartyPacks);
-    }
-}
+		if (!parseAndAddPacks(thirdPartyModpacksXmlFileData,
+							  PackType::ThirdParty, thirdPartyPacks)) {
+			failedLists.append(tr("Third Party Packs"));
+		}
 
-bool PackFetchTask::parseAndAddPacks(QByteArray &data, PackType packType, ModpackList &list)
-{
-    QDomDocument doc;
+		if (failedLists.size() > 0) {
+			emit failed(tr("Failed to download some pack lists: %1")
+							.arg(failedLists.join("\n- ")));
+		} else {
+			emit finished(publicPacks, thirdPartyPacks);
+		}
+	}
 
-    QString errorMsg = "Unknown error.";
-    int errorLine = -1;
-    int errorCol = -1;
+	bool PackFetchTask::parseAndAddPacks(QByteArray& data, PackType packType,
+										 ModpackList& list)
+	{
+		QDomDocument doc;
 
-    if(!doc.setContent(data, false, &errorMsg, &errorLine, &errorCol))
-    {
-        auto fullErrMsg = QString("Failed to fetch modpack data: %1 %2:%3!").arg(errorMsg).arg(errorLine).arg(errorCol);
-        qWarning() << fullErrMsg;
-        data.clear();
-        return false;
-    }
+		QString errorMsg = "Unknown error.";
+		int errorLine = -1;
+		int errorCol = -1;
 
-    QDomNodeList nodes = doc.elementsByTagName("modpack");
-    for(int i = 0; i < nodes.length(); i++)
-    {
-        QDomElement element = nodes.at(i).toElement();
+		if (!doc.setContent(data, false, &errorMsg, &errorLine, &errorCol)) {
+			auto fullErrMsg = QString("Failed to fetch modpack data: %1 %2:%3!")
+								  .arg(errorMsg)
+								  .arg(errorLine)
+								  .arg(errorCol);
+			qWarning() << fullErrMsg;
+			data.clear();
+			return false;
+		}
 
-        Modpack modpack;
-        modpack.name = element.attribute("name");
-        modpack.currentVersion = element.attribute("version");
-        modpack.mcVersion = element.attribute("mcVersion");
-        modpack.description = element.attribute("description");
-        modpack.mods = element.attribute("mods");
-        modpack.logo = element.attribute("logo");
-        modpack.oldVersions = element.attribute("oldVersions").split(";");
-        modpack.broken = false;
-        modpack.bugged = false;
+		QDomNodeList nodes = doc.elementsByTagName("modpack");
+		for (int i = 0; i < nodes.length(); i++) {
+			QDomElement element = nodes.at(i).toElement();
 
-        //remove empty if the xml is bugged
-        for(QString curr : modpack.oldVersions)
-        {
-            if(curr.isNull() || curr.isEmpty())
-            {
-                modpack.oldVersions.removeAll(curr);
-                modpack.bugged = true;
-                qWarning() << "Removed some empty versions from" << modpack.name;
-            }
-        }
+			Modpack modpack;
+			modpack.name = element.attribute("name");
+			modpack.currentVersion = element.attribute("version");
+			modpack.mcVersion = element.attribute("mcVersion");
+			modpack.description = element.attribute("description");
+			modpack.mods = element.attribute("mods");
+			modpack.logo = element.attribute("logo");
+			modpack.oldVersions = element.attribute("oldVersions").split(";");
+			modpack.broken = false;
+			modpack.bugged = false;
 
-        if(modpack.oldVersions.size() < 1)
-        {
-            if(!modpack.currentVersion.isNull() && !modpack.currentVersion.isEmpty())
-            {
-                modpack.oldVersions.append(modpack.currentVersion);
-                qWarning() << "Added current version to oldVersions because oldVersions was empty! (" + modpack.name + ")";
-            }
-            else
-            {
-                modpack.broken = true;
-                qWarning() << "Broken pack:" << modpack.name << " => No valid version!";
-            }
-        }
+			// remove empty if the xml is bugged
+			for (QString curr : modpack.oldVersions) {
+				if (curr.isNull() || curr.isEmpty()) {
+					modpack.oldVersions.removeAll(curr);
+					modpack.bugged = true;
+					qWarning()
+						<< "Removed some empty versions from" << modpack.name;
+				}
+			}
 
-        modpack.author = element.attribute("author");
+			if (modpack.oldVersions.size() < 1) {
+				if (!modpack.currentVersion.isNull() &&
+					!modpack.currentVersion.isEmpty()) {
+					modpack.oldVersions.append(modpack.currentVersion);
+					qWarning() << "Added current version to oldVersions "
+								  "because oldVersions was empty! (" +
+									  modpack.name + ")";
+				} else {
+					modpack.broken = true;
+					qWarning() << "Broken pack:" << modpack.name
+							   << " => No valid version!";
+				}
+			}
 
-        modpack.dir = element.attribute("dir");
-        modpack.file = element.attribute("url");
+			modpack.author = element.attribute("author");
 
-        modpack.type = packType;
+			modpack.dir = element.attribute("dir");
+			modpack.file = element.attribute("url");
 
-        list.append(modpack);
-    }
+			modpack.type = packType;
 
-    return true;
-}
+			list.append(modpack);
+		}
 
-void PackFetchTask::fileDownloadFailed(QString reason)
-{
-    qWarning() << "Fetching FTBPacks failed:" << reason;
-    emit failed(reason);
-}
+		return true;
+	}
 
-}
+	void PackFetchTask::fileDownloadFailed(QString reason)
+	{
+		qWarning() << "Fetching FTBPacks failed:" << reason;
+		emit failed(reason);
+	}
+
+} // namespace LegacyFTB

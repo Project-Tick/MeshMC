@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,21 +44,22 @@ class QVBoxLayout;
 class QTreeView;
 class QLabel;
 
-class LanguageSelectionWidget: public QWidget
+class LanguageSelectionWidget : public QWidget
 {
-    Q_OBJECT
-public:
-    explicit LanguageSelectionWidget(QWidget *parent = 0);
-    virtual ~LanguageSelectionWidget() { };
+	Q_OBJECT
+  public:
+	explicit LanguageSelectionWidget(QWidget* parent = 0);
+	virtual ~LanguageSelectionWidget() {};
 
-    QString getSelectedLanguageKey() const;
-    void retranslate();
+	QString getSelectedLanguageKey() const;
+	void retranslate();
 
-protected slots:
-    void languageRowChanged(const QModelIndex &current, const QModelIndex &previous);
+  protected slots:
+	void languageRowChanged(const QModelIndex& current,
+							const QModelIndex& previous);
 
-private:
-    QVBoxLayout *verticalLayout = nullptr;
-    QTreeView *languageView = nullptr;
-    QLabel *helpUsLabel = nullptr;
+  private:
+	QVBoxLayout* verticalLayout = nullptr;
+	QTreeView* languageView = nullptr;
+	QLabel* helpUsLabel = nullptr;
 };

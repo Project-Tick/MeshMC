@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -64,184 +64,186 @@ class InstanceTask;
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    class Ui;
+	class Ui;
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+  public:
+	explicit MainWindow(QWidget* parent = 0);
+	~MainWindow();
 
-    bool eventFilter(QObject *obj, QEvent *ev) override;
-    void closeEvent(QCloseEvent *event) override;
-    void changeEvent(QEvent * event) override;
+	bool eventFilter(QObject* obj, QEvent* ev) override;
+	void closeEvent(QCloseEvent* event) override;
+	void changeEvent(QEvent* event) override;
 
-    void checkInstancePathForProblems();
+	void checkInstancePathForProblems();
 
-    void updatesAllowedChanged(bool allowed);
+	void updatesAllowedChanged(bool allowed);
 
-    void droppedURLs(QList<QUrl> urls);
-signals:
-    void isClosing();
+	void droppedURLs(QList<QUrl> urls);
+  signals:
+	void isClosing();
 
-protected:
-    QMenu * createPopupMenu() override;
+  protected:
+	QMenu* createPopupMenu() override;
 
-private slots:
-    void onCatToggled(bool);
+  private slots:
+	void onCatToggled(bool);
 
-    void on_actionAbout_triggered();
+	void on_actionAbout_triggered();
 
-    void on_actionAddInstance_triggered();
+	void on_actionAddInstance_triggered();
 
-    void on_actionREDDIT_triggered();
+	void on_actionREDDIT_triggered();
 
-    void on_actionDISCORD_triggered();
+	void on_actionDISCORD_triggered();
 
-    void on_actionCopyInstance_triggered();
+	void on_actionCopyInstance_triggered();
 
-    void on_actionChangeInstGroup_triggered();
+	void on_actionChangeInstGroup_triggered();
 
-    void on_actionChangeInstIcon_triggered();
-    void on_changeIconButton_clicked(bool)
-    {
-        on_actionChangeInstIcon_triggered();
-    }
+	void on_actionChangeInstIcon_triggered();
+	void on_changeIconButton_clicked(bool)
+	{
+		on_actionChangeInstIcon_triggered();
+	}
 
-    void on_actionViewInstanceFolder_triggered();
+	void on_actionViewInstanceFolder_triggered();
 
-    void on_actionConfig_Folder_triggered();
+	void on_actionConfig_Folder_triggered();
 
-    void on_actionViewSelectedInstFolder_triggered();
+	void on_actionViewSelectedInstFolder_triggered();
 
-    void on_actionViewSelectedMCFolder_triggered();
+	void on_actionViewSelectedMCFolder_triggered();
 
-    void on_actionViewSelectedModsFolder_triggered();
+	void on_actionViewSelectedModsFolder_triggered();
 
-    void refreshInstances();
+	void refreshInstances();
 
-    void on_actionViewCentralModsFolder_triggered();
+	void on_actionViewCentralModsFolder_triggered();
 
-    void checkForUpdates();
+	void checkForUpdates();
 
-    void on_actionSettings_triggered();
+	void on_actionSettings_triggered();
 
-    void on_actionInstanceSettings_triggered();
+	void on_actionInstanceSettings_triggered();
 
-    void on_actionManageAccounts_triggered();
+	void on_actionManageAccounts_triggered();
 
-    void on_actionReportBug_triggered();
+	void on_actionReportBug_triggered();
 
-    void on_actionMoreNews_triggered();
+	void on_actionMoreNews_triggered();
 
-    void newsButtonClicked();
+	void newsButtonClicked();
 
-    void on_actionLaunchInstance_triggered();
+	void on_actionLaunchInstance_triggered();
 
-    void on_actionLaunchInstanceOffline_triggered();
+	void on_actionLaunchInstanceOffline_triggered();
 
-    void on_actionDeleteInstance_triggered();
+	void on_actionDeleteInstance_triggered();
 
-    void deleteGroup();
+	void deleteGroup();
 
-    void on_actionExportInstance_triggered();
+	void on_actionExportInstance_triggered();
 
-    void on_actionRenameInstance_triggered();
-    void on_renameButton_clicked(bool)
-    {
-        on_actionRenameInstance_triggered();
-    }
+	void on_actionRenameInstance_triggered();
+	void on_renameButton_clicked(bool)
+	{
+		on_actionRenameInstance_triggered();
+	}
 
-    void on_actionEditInstance_triggered();
+	void on_actionEditInstance_triggered();
 
-    void on_actionEditInstNotes_triggered();
+	void on_actionEditInstNotes_triggered();
 
-    void on_actionMods_triggered();
+	void on_actionMods_triggered();
 
-    void on_actionWorlds_triggered();
+	void on_actionWorlds_triggered();
 
-    void on_actionScreenshots_triggered();
+	void on_actionScreenshots_triggered();
 
-    void taskEnd();
+	void taskEnd();
 
-    /**
-     * called when an icon is changed in the icon model.
-     */
-    void iconUpdated(QString);
+	/**
+	 * called when an icon is changed in the icon model.
+	 */
+	void iconUpdated(QString);
 
-    void showInstanceContextMenu(const QPoint &);
+	void showInstanceContextMenu(const QPoint&);
 
-    void updateToolsMenu();
+	void updateToolsMenu();
 
-    void instanceActivated(QModelIndex);
+	void instanceActivated(QModelIndex);
 
-    void instanceChanged(const QModelIndex &current, const QModelIndex &previous);
+	void instanceChanged(const QModelIndex& current,
+						 const QModelIndex& previous);
 
-    void instanceSelectRequest(QString id);
+	void instanceSelectRequest(QString id);
 
-    void instanceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+	void instanceDataChanged(const QModelIndex& topLeft,
+							 const QModelIndex& bottomRight);
 
-    void selectionBad();
+	void selectionBad();
 
-    void startTask(Task *task);
+	void startTask(Task* task);
 
-    void updateAvailable(UpdateAvailableStatus status);
+	void updateAvailable(UpdateAvailableStatus status);
 
-    void updateNotAvailable();
+	void updateNotAvailable();
 
-    void notificationsChanged();
+	void notificationsChanged();
 
-    void defaultAccountChanged();
+	void defaultAccountChanged();
 
-    void changeActiveAccount();
+	void changeActiveAccount();
 
-    void repopulateAccountsMenu();
+	void repopulateAccountsMenu();
 
-    void updateNewsLabel();
+	void updateNewsLabel();
 
-    /*!
-     * Stub kept for source compatibility; actual installation is delegated to
-     * the meshmc-updater binary via UpdateController.
-     */
-    void downloadUpdates(UpdateAvailableStatus status);
+	/*!
+	 * Stub kept for source compatibility; actual installation is delegated to
+	 * the meshmc-updater binary via UpdateController.
+	 */
+	void downloadUpdates(UpdateAvailableStatus status);
 
-    void konamiTriggered();
+	void konamiTriggered();
 
-    void globalSettingsClosed();
+	void globalSettingsClosed();
 
-private:
-    void retranslateUi();
+  private:
+	void retranslateUi();
 
-    void addInstance(QString url = QString());
-    void activateInstance(InstancePtr instance);
-    void setCatBackground(bool enabled);
-    void updateInstanceToolIcon(QString new_icon);
-    void setSelectedInstanceById(const QString &id);
-    void updateStatusCenter();
+	void addInstance(QString url = QString());
+	void activateInstance(InstancePtr instance);
+	void setCatBackground(bool enabled);
+	void updateInstanceToolIcon(QString new_icon);
+	void setSelectedInstanceById(const QString& id);
+	void updateStatusCenter();
 
-    void runModalTask(Task *task);
-    void instanceFromInstanceTask(InstanceTask *task);
-    void finalizeInstance(InstancePtr inst);
+	void runModalTask(Task* task);
+	void instanceFromInstanceTask(InstanceTask* task);
+	void finalizeInstance(InstancePtr inst);
 
-private:
-    std::unique_ptr<Ui> ui;
+  private:
+	std::unique_ptr<Ui> ui;
 
-    // these are managed by Qt's memory management model!
-    InstanceView *view = nullptr;
-    InstanceProxyModel *proxymodel = nullptr;
-    QToolButton *newsLabel = nullptr;
-    QLabel *m_statusLeft = nullptr;
-    QLabel *m_statusCenter = nullptr;
-    QMenu *accountMenu = nullptr;
-    QToolButton *accountMenuButton = nullptr;
-    KonamiCode * secretEventFilter = nullptr;
+	// these are managed by Qt's memory management model!
+	InstanceView* view = nullptr;
+	InstanceProxyModel* proxymodel = nullptr;
+	QToolButton* newsLabel = nullptr;
+	QLabel* m_statusLeft = nullptr;
+	QLabel* m_statusCenter = nullptr;
+	QMenu* accountMenu = nullptr;
+	QToolButton* accountMenuButton = nullptr;
+	KonamiCode* secretEventFilter = nullptr;
 
-    unique_qobject_ptr<NewsChecker> m_newsChecker;
-    unique_qobject_ptr<NotificationChecker> m_notificationChecker;
+	unique_qobject_ptr<NewsChecker> m_newsChecker;
+	unique_qobject_ptr<NotificationChecker> m_notificationChecker;
 
-    InstancePtr m_selectedInstance;
-    QString m_currentInstIcon;
+	InstancePtr m_selectedInstance;
+	QString m_currentInstIcon;
 
-    // managed by the application object
-    Task *m_versionLoadTask = nullptr;
+	// managed by the application object
+	Task* m_versionLoadTask = nullptr;
 };

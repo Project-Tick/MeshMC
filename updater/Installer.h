@@ -29,8 +29,8 @@
  * Installer downloads an update artifact and installs it.
  *
  * Supported artifact types (determined by file extension):
- *   .exe   - Windows NSIS/Inno installer: run directly, installer handles everything.
- *   .zip   - Portable zip archive: extract over the root directory.
+ *   .exe   - Windows NSIS/Inno installer: run directly, installer handles
+ * everything. .zip   - Portable zip archive: extract over the root directory.
  *   .tar.gz / .tgz - Portable tarball: extract over the root directory.
  *   .dmg   - macOS disk image: mount, copy .app bundle, unmount. (planned)
  *
@@ -39,40 +39,49 @@
  */
 class Installer : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit Installer(QObject *parent = nullptr);
+  public:
+	explicit Installer(QObject* parent = nullptr);
 
-    void setDownloadUrl(const QString &url)   { m_url       = url;   }
-    void setRootPath(const QString &root)     { m_root      = root;  }
-    void setRelaunchPath(const QString &exec) { m_exec      = exec;  }
+	void setDownloadUrl(const QString& url)
+	{
+		m_url = url;
+	}
+	void setRootPath(const QString& root)
+	{
+		m_root = root;
+	}
+	void setRelaunchPath(const QString& exec)
+	{
+		m_exec = exec;
+	}
 
-    /*!
-     * Start the install process asynchronously.
-     * The object emits \c finished() with a success flag when done.
-     */
-    void start();
+	/*!
+	 * Start the install process asynchronously.
+	 * The object emits \c finished() with a success flag when done.
+	 */
+	void start();
 
-signals:
-    void progressMessage(const QString &msg);
-    void finished(bool success, const QString &errorMessage);
+  signals:
+	void progressMessage(const QString& msg);
+	void finished(bool success, const QString& errorMessage);
 
-private slots:
-    void onDownloadProgress(qint64 received, qint64 total);
-    void onDownloadFinished();
+  private slots:
+	void onDownloadProgress(qint64 received, qint64 total);
+	void onDownloadFinished();
 
-private:
-    bool installArchive(const QString &filePath);
-    bool installExe(const QString &filePath);
-    bool extractZip(const QString &zipPath, const QString &destDir);
-    bool extractTarGz(const QString &tarPath, const QString &destDir);
-    void relaunch();
+  private:
+	bool installArchive(const QString& filePath);
+	bool installExe(const QString& filePath);
+	bool extractZip(const QString& zipPath, const QString& destDir);
+	bool extractTarGz(const QString& tarPath, const QString& destDir);
+	void relaunch();
 
-    QString  m_url;
-    QString  m_root;
-    QString  m_exec;
-    QString  m_tempFile;
+	QString m_url;
+	QString m_root;
+	QString m_exec;
+	QString m_tempFile;
 
-    QNetworkAccessManager *m_nam = nullptr;
+	QNetworkAccessManager* m_nam = nullptr;
 };

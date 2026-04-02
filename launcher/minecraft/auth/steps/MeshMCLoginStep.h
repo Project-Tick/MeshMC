@@ -25,19 +25,20 @@
 #include "QObjectPtr.h"
 #include "minecraft/auth/AuthStep.h"
 
+class MeshMCLoginStep : public AuthStep
+{
+	Q_OBJECT
 
-class MeshMCLoginStep : public AuthStep {
-    Q_OBJECT
+  public:
+	explicit MeshMCLoginStep(AccountData* data);
+	virtual ~MeshMCLoginStep() noexcept;
 
-public:
-    explicit MeshMCLoginStep(AccountData *data);
-    virtual ~MeshMCLoginStep() noexcept;
+	void perform() override;
+	void rehydrate() override;
 
-    void perform() override;
-    void rehydrate() override;
+	QString describe() override;
 
-    QString describe() override;
-
-private slots:
-    void onRequestDone(QNetworkReply::NetworkError, QByteArray, QList<QNetworkReply::RawHeaderPair>);
+  private slots:
+	void onRequestDone(QNetworkReply::NetworkError, QByteArray,
+					   QList<QNetworkReply::RawHeaderPair>);
 };

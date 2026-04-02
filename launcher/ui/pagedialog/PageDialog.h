@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,15 +44,15 @@
 class PageContainer;
 class PageDialog : public QDialog
 {
-    Q_OBJECT
-public:
-    explicit PageDialog(BasePageProvider *pageProvider, QString defaultId = QString(), QWidget *parent = 0);
-    virtual ~PageDialog() {}
+	Q_OBJECT
+  public:
+	explicit PageDialog(BasePageProvider* pageProvider,
+						QString defaultId = QString(), QWidget* parent = 0);
+	virtual ~PageDialog() {}
 
-private
-slots:
-    virtual void closeEvent(QCloseEvent *event);
+  private slots:
+	virtual void closeEvent(QCloseEvent* event);
 
-private:
-    PageContainer * m_container;
+  private:
+	PageContainer* m_container;
 };

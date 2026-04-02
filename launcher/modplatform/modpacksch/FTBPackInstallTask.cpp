@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -49,213 +49,232 @@
 #include "BuildConfig.h"
 #include "Application.h"
 
-namespace ModpacksCH {
-
-PackInstallTask::PackInstallTask(Modpack pack, QString version)
+namespace ModpacksCH
 {
-    m_pack = pack;
-    m_version_name = version;
-}
 
-bool PackInstallTask::abort()
-{
-    if(abortable)
-    {
-        return jobPtr->abort();
-    }
-    return false;
-}
+	PackInstallTask::PackInstallTask(Modpack pack, QString version)
+	{
+		m_pack = pack;
+		m_version_name = version;
+	}
 
-void PackInstallTask::executeTask()
-{
-    // Find pack version
-    bool found = false;
-    VersionInfo version;
+	bool PackInstallTask::abort()
+	{
+		if (abortable) {
+			return jobPtr->abort();
+		}
+		return false;
+	}
 
-    for(auto vInfo : m_pack.versions) {
-        if (vInfo.name == m_version_name) {
-            found = true;
-            version = vInfo;
-            break;
-        }
-    }
+	void PackInstallTask::executeTask()
+	{
+		// Find pack version
+		bool found = false;
+		VersionInfo version;
 
-    if(!found) {
-        emitFailed(tr("Failed to find pack version %1").arg(m_version_name));
-        return;
-    }
+		for (auto vInfo : m_pack.versions) {
+			if (vInfo.name == m_version_name) {
+				found = true;
+				version = vInfo;
+				break;
+			}
+		}
 
-    auto *netJob = new NetJob("ModpacksCH::VersionFetch", APPLICATION->network());
-    auto searchUrl = QString(BuildConfig.MODPACKSCH_API_BASE_URL + "public/modpack/%1/%2").arg(m_pack.id).arg(version.id);
-    netJob->addNetAction(Net::Download::makeByteArray(QUrl(searchUrl), &response));
-    jobPtr = netJob;
-    jobPtr->start();
+		if (!found) {
+			emitFailed(
+				tr("Failed to find pack version %1").arg(m_version_name));
+			return;
+		}
 
-    QObject::connect(netJob, &NetJob::succeeded, this, &PackInstallTask::onDownloadSucceeded);
-    QObject::connect(netJob, &NetJob::failed, this, &PackInstallTask::onDownloadFailed);
-}
+		auto* netJob =
+			new NetJob("ModpacksCH::VersionFetch", APPLICATION->network());
+		auto searchUrl = QString(BuildConfig.MODPACKSCH_API_BASE_URL +
+								 "public/modpack/%1/%2")
+							 .arg(m_pack.id)
+							 .arg(version.id);
+		netJob->addNetAction(
+			Net::Download::makeByteArray(QUrl(searchUrl), &response));
+		jobPtr = netJob;
+		jobPtr->start();
 
-void PackInstallTask::onDownloadSucceeded()
-{
-    QJsonParseError parse_error;
-    QJsonDocument doc = QJsonDocument::fromJson(response, &parse_error);
-    if(parse_error.error != QJsonParseError::NoError) {
-        qWarning() << "Error while parsing JSON response from FTB at " << parse_error.offset << " reason: " << parse_error.errorString();
-        qWarning() << response;
-        return;
-    }
+		QObject::connect(netJob, &NetJob::succeeded, this,
+						 &PackInstallTask::onDownloadSucceeded);
+		QObject::connect(netJob, &NetJob::failed, this,
+						 &PackInstallTask::onDownloadFailed);
+	}
 
-    auto obj = doc.object();
+	void PackInstallTask::onDownloadSucceeded()
+	{
+		QJsonParseError parse_error;
+		QJsonDocument doc = QJsonDocument::fromJson(response, &parse_error);
+		if (parse_error.error != QJsonParseError::NoError) {
+			qWarning() << "Error while parsing JSON response from FTB at "
+					   << parse_error.offset
+					   << " reason: " << parse_error.errorString();
+			qWarning() << response;
+			return;
+		}
 
-    ModpacksCH::Version version;
-    try
-    {
-        ModpacksCH::loadVersion(version, obj);
-    }
-    catch (const JSONValidationError &e)
-    {
-        emitFailed(tr("Could not understand pack manifest:\n") + e.cause());
-        jobPtr.reset();
-        return;
-    }
-    m_version = version;
+		auto obj = doc.object();
 
-    downloadPack();
-}
+		ModpacksCH::Version version;
+		try {
+			ModpacksCH::loadVersion(version, obj);
+		} catch (const JSONValidationError& e) {
+			emitFailed(tr("Could not understand pack manifest:\n") + e.cause());
+			jobPtr.reset();
+			return;
+		}
+		m_version = version;
 
-void PackInstallTask::onDownloadFailed(QString reason)
-{
-    emitFailed(reason);
-    jobPtr.reset();
-}
+		downloadPack();
+	}
 
-void PackInstallTask::downloadPack()
-{
-    setStatus(tr("Downloading mods..."));
+	void PackInstallTask::onDownloadFailed(QString reason)
+	{
+		emitFailed(reason);
+		jobPtr.reset();
+	}
 
-    jobPtr = new NetJob(tr("Mod download"), APPLICATION->network());
-    for(auto file : m_version.files) {
-        if(file.serverOnly) continue;
-        if(file.url.isEmpty()) {
-            qWarning() << "Skipping" << file.name << "- no download URL available";
-            continue;
-        }
+	void PackInstallTask::downloadPack()
+	{
+		setStatus(tr("Downloading mods..."));
 
-        QFileInfo fileName(file.name);
-        auto cacheName = fileName.completeBaseName() + "-" + file.sha1 + "." + fileName.suffix();
+		jobPtr = new NetJob(tr("Mod download"), APPLICATION->network());
+		for (auto file : m_version.files) {
+			if (file.serverOnly)
+				continue;
+			if (file.url.isEmpty()) {
+				qWarning() << "Skipping" << file.name
+						   << "- no download URL available";
+				continue;
+			}
 
-        auto entry = APPLICATION->metacache()->resolveEntry("ModpacksCHPacks", cacheName);
-        entry->setStale(true);
+			QFileInfo fileName(file.name);
+			auto cacheName = fileName.completeBaseName() + "-" + file.sha1 +
+							 "." + fileName.suffix();
 
-        auto relpath = FS::PathCombine("minecraft", file.path, file.name);
-        auto path = FS::PathCombine(m_stagingPath, relpath);
+			auto entry = APPLICATION->metacache()->resolveEntry(
+				"ModpacksCHPacks", cacheName);
+			entry->setStale(true);
 
-        if (filesToCopy.contains(path)) {
-            qWarning() << "Ignoring" << file.url << "as a file of that path is already downloading.";
-            continue;
-        }
-        qDebug() << "Will download" << file.url << "to" << path;
-        filesToCopy[path] = entry->getFullPath();
+			auto relpath = FS::PathCombine("minecraft", file.path, file.name);
+			auto path = FS::PathCombine(m_stagingPath, relpath);
 
-        auto dl = Net::Download::makeCached(file.url, entry);
-        if (!file.sha1.isEmpty()) {
-            auto rawSha1 = QByteArray::fromHex(file.sha1.toLatin1());
-            dl->addValidator(new Net::ChecksumValidator(QCryptographicHash::Sha1, rawSha1));
-        }
-        jobPtr->addNetAction(dl);
-    }
+			if (filesToCopy.contains(path)) {
+				qWarning() << "Ignoring" << file.url
+						   << "as a file of that path is already downloading.";
+				continue;
+			}
+			qDebug() << "Will download" << file.url << "to" << path;
+			filesToCopy[path] = entry->getFullPath();
 
-    connect(jobPtr.get(), &NetJob::succeeded, this, [&]()
-    {
-        abortable = false;
-        install();
-        jobPtr.reset();
-    });
-    connect(jobPtr.get(), &NetJob::failed, [&](QString reason)
-    {
-        abortable = false;
-        emitFailed(reason);
-        jobPtr.reset();
-    });
-    connect(jobPtr.get(), &NetJob::progress, [&](qint64 current, qint64 total)
-    {
-        abortable = true;
-        setProgress(current, total);
-    });
+			auto dl = Net::Download::makeCached(file.url, entry);
+			if (!file.sha1.isEmpty()) {
+				auto rawSha1 = QByteArray::fromHex(file.sha1.toLatin1());
+				dl->addValidator(new Net::ChecksumValidator(
+					QCryptographicHash::Sha1, rawSha1));
+			}
+			jobPtr->addNetAction(dl);
+		}
 
-    jobPtr->start();
-}
+		connect(jobPtr.get(), &NetJob::succeeded, this, [&]() {
+			abortable = false;
+			install();
+			jobPtr.reset();
+		});
+		connect(jobPtr.get(), &NetJob::failed, [&](QString reason) {
+			abortable = false;
+			emitFailed(reason);
+			jobPtr.reset();
+		});
+		connect(jobPtr.get(), &NetJob::progress,
+				[&](qint64 current, qint64 total) {
+					abortable = true;
+					setProgress(current, total);
+				});
 
-void PackInstallTask::install()
-{
-    setStatus(tr("Copying modpack files"));
+		jobPtr->start();
+	}
 
-    for (auto iter = filesToCopy.begin(); iter != filesToCopy.end(); iter++) {
-        auto &to = iter.key();
-        auto &from = iter.value();
-        FS::copy fileCopyOperation(from, to);
-        if(!fileCopyOperation()) {
-            qWarning() << "Failed to copy" << from << "to" << to;
-            emitFailed(tr("Failed to copy files"));
-            return;
-        }
-    }
+	void PackInstallTask::install()
+	{
+		setStatus(tr("Copying modpack files"));
 
-    setStatus(tr("Installing modpack"));
+		for (auto iter = filesToCopy.begin(); iter != filesToCopy.end();
+			 iter++) {
+			auto& to = iter.key();
+			auto& from = iter.value();
+			FS::copy fileCopyOperation(from, to);
+			if (!fileCopyOperation()) {
+				qWarning() << "Failed to copy" << from << "to" << to;
+				emitFailed(tr("Failed to copy files"));
+				return;
+			}
+		}
 
-    auto instanceConfigPath = FS::PathCombine(m_stagingPath, "instance.cfg");
-    auto instanceSettings = std::make_shared<INISettingsObject>(instanceConfigPath);
-    instanceSettings->suspendSave();
-    instanceSettings->registerSetting("InstanceType", "Legacy");
-    instanceSettings->set("InstanceType", "OneSix");
+		setStatus(tr("Installing modpack"));
 
-    MinecraftInstance instance(m_globalSettings, instanceSettings, m_stagingPath);
-    auto components = instance.getPackProfile();
-    components->buildingFromScratch();
+		auto instanceConfigPath =
+			FS::PathCombine(m_stagingPath, "instance.cfg");
+		auto instanceSettings =
+			std::make_shared<INISettingsObject>(instanceConfigPath);
+		instanceSettings->suspendSave();
+		instanceSettings->registerSetting("InstanceType", "Legacy");
+		instanceSettings->set("InstanceType", "OneSix");
 
-    for(auto target : m_version.targets) {
-        if(target.type == "game" && target.name == "minecraft") {
-            components->setComponentVersion("net.minecraft", target.version, true);
-            break;
-        }
-    }
+		MinecraftInstance instance(m_globalSettings, instanceSettings,
+								   m_stagingPath);
+		auto components = instance.getPackProfile();
+		components->buildingFromScratch();
 
-    for(auto target : m_version.targets) {
-        if(target.type != "modloader") continue;
+		for (auto target : m_version.targets) {
+			if (target.type == "game" && target.name == "minecraft") {
+				components->setComponentVersion("net.minecraft", target.version,
+												true);
+				break;
+			}
+		}
 
-        if(target.name == "forge") {
-            components->setComponentVersion("net.minecraftforge", target.version, true);
-        }
-        else if(target.name == "neoforge") {
-            components->setComponentVersion("net.neoforged", target.version, true);
-        }
-        else if(target.name == "fabric") {
-            components->setComponentVersion("net.fabricmc.fabric-loader", target.version, true);
-        }
-        else if(target.name == "quilt-loader") {
-            components->setComponentVersion("org.quiltmc.quilt-loader", target.version, true);
-        }
-    }
+		for (auto target : m_version.targets) {
+			if (target.type != "modloader")
+				continue;
 
-    // install any jar mods
-    QDir jarModsDir(FS::PathCombine(m_stagingPath, "minecraft", "jarmods"));
-    if (jarModsDir.exists()) {
-        QStringList jarMods;
+			if (target.name == "forge") {
+				components->setComponentVersion("net.minecraftforge",
+												target.version, true);
+			} else if (target.name == "neoforge") {
+				components->setComponentVersion("net.neoforged", target.version,
+												true);
+			} else if (target.name == "fabric") {
+				components->setComponentVersion("net.fabricmc.fabric-loader",
+												target.version, true);
+			} else if (target.name == "quilt-loader") {
+				components->setComponentVersion("org.quiltmc.quilt-loader",
+												target.version, true);
+			}
+		}
 
-        for (const auto& info : jarModsDir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files)) {
-            jarMods.push_back(info.absoluteFilePath());
-        }
+		// install any jar mods
+		QDir jarModsDir(FS::PathCombine(m_stagingPath, "minecraft", "jarmods"));
+		if (jarModsDir.exists()) {
+			QStringList jarMods;
 
-        components->installJarMods(jarMods);
-    }
+			for (const auto& info :
+				 jarModsDir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files)) {
+				jarMods.push_back(info.absoluteFilePath());
+			}
 
-    components->saveNow();
+			components->installJarMods(jarMods);
+		}
 
-    instance.setName(m_instName);
-    instance.setIconKey(m_instIcon);
-    instanceSettings->resumeSave();
+		components->saveNow();
 
-    emitSucceeded();
-}
+		instance.setName(m_instName);
+		instance.setIconKey(m_instIcon);
+		instanceSettings->resumeSave();
 
-}
+		emitSucceeded();
+	}
+
+} // namespace ModpacksCH

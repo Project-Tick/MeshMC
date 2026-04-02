@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -40,30 +40,29 @@
 
 OpSys OpSys_fromString(QString name)
 {
-    if (name == "freebsd")
-        return Os_FreeBSD;
-    if (name == "linux")
-        return Os_Linux;
-    if (name == "windows")
-        return Os_Windows;
-    if (name == "osx")
-        return Os_OSX;
-    return Os_Other;
+	if (name == "freebsd")
+		return Os_FreeBSD;
+	if (name == "linux")
+		return Os_Linux;
+	if (name == "windows")
+		return Os_Windows;
+	if (name == "osx")
+		return Os_OSX;
+	return Os_Other;
 }
 
 QString OpSys_toString(OpSys name)
 {
-    switch (name)
-    {
-    case Os_FreeBSD:
-	return "freebsd";
-    case Os_Linux:
-        return "linux";
-    case Os_OSX:
-        return "osx";
-    case Os_Windows:
-        return "windows";
-    default:
-        return "other";
-    }
+	switch (name) {
+		case Os_FreeBSD:
+			return "freebsd";
+		case Os_Linux:
+			return "linux";
+		case Os_OSX:
+			return "osx";
+		case Os_Windows:
+			return "windows";
+		default:
+			return "other";
+	}
 }

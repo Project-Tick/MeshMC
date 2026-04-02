@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -41,44 +41,38 @@
 #include "BaseInstaller.h"
 #include "minecraft/MinecraftInstance.h"
 
-BaseInstaller::BaseInstaller()
-{
+BaseInstaller::BaseInstaller() {}
 
+bool BaseInstaller::isApplied(MinecraftInstance* on)
+{
+	return QFile::exists(filename(on->instanceRoot()));
 }
 
-bool BaseInstaller::isApplied(MinecraftInstance *on)
+bool BaseInstaller::add(MinecraftInstance* to)
 {
-    return QFile::exists(filename(on->instanceRoot()));
+	if (!patchesDir(to->instanceRoot()).exists()) {
+		QDir(to->instanceRoot()).mkdir("patches");
+	}
+
+	if (isApplied(to)) {
+		if (!remove(to)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
-bool BaseInstaller::add(MinecraftInstance *to)
+bool BaseInstaller::remove(MinecraftInstance* from)
 {
-    if (!patchesDir(to->instanceRoot()).exists())
-    {
-        QDir(to->instanceRoot()).mkdir("patches");
-    }
-
-    if (isApplied(to))
-    {
-        if (!remove(to))
-        {
-            return false;
-        }
-    }
-
-    return true;
+	return QFile::remove(filename(from->instanceRoot()));
 }
 
-bool BaseInstaller::remove(MinecraftInstance *from)
+QString BaseInstaller::filename(const QString& root) const
 {
-    return QFile::remove(filename(from->instanceRoot()));
+	return patchesDir(root).absoluteFilePath(id() + ".json");
 }
-
-QString BaseInstaller::filename(const QString &root) const
+QDir BaseInstaller::patchesDir(const QString& root) const
 {
-    return patchesDir(root).absoluteFilePath(id() + ".json");
-}
-QDir BaseInstaller::patchesDir(const QString &root) const
-{
-    return QDir(root + "/patches/");
+	return QDir(root + "/patches/");
 }

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,38 +46,38 @@
 
 namespace Ui
 {
-class NotesPage;
+	class NotesPage;
 }
 
 class NotesPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit NotesPage(BaseInstance *inst, QWidget *parent = 0);
-    virtual ~NotesPage();
-    virtual QString displayName() const override
-    {
-        return tr("Notes");
-    }
-    virtual QIcon icon() const override
-    {
-        auto icon = APPLICATION->getThemedIcon("notes");
-        if(icon.isNull())
-            icon = APPLICATION->getThemedIcon("news");
-        return icon;
-    }
-    virtual QString id() const override
-    {
-        return "notes";
-    }
-    virtual bool apply() override;
-    virtual QString helpPage() const override
-    {
-        return "Notes";
-    }
+  public:
+	explicit NotesPage(BaseInstance* inst, QWidget* parent = 0);
+	virtual ~NotesPage();
+	virtual QString displayName() const override
+	{
+		return tr("Notes");
+	}
+	virtual QIcon icon() const override
+	{
+		auto icon = APPLICATION->getThemedIcon("notes");
+		if (icon.isNull())
+			icon = APPLICATION->getThemedIcon("news");
+		return icon;
+	}
+	virtual QString id() const override
+	{
+		return "notes";
+	}
+	virtual bool apply() override;
+	virtual QString helpPage() const override
+	{
+		return "Notes";
+	}
 
-private:
-    Ui::NotesPage *ui;
-    BaseInstance *m_inst;
+  private:
+	Ui::NotesPage* ui;
+	BaseInstance* m_inst;
 };

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -50,60 +50,64 @@
 
 namespace Ui
 {
-    class AtlPage;
+	class AtlPage;
 }
 
 class NewInstanceDialog;
 
-class AtlPage : public QWidget, public BasePage, public ATLauncher::UserInteractionSupport
+class AtlPage : public QWidget,
+				public BasePage,
+				public ATLauncher::UserInteractionSupport
 {
-Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit AtlPage(NewInstanceDialog* dialog, QWidget *parent = 0);
-    virtual ~AtlPage();
-    virtual QString displayName() const override
-    {
-        return tr("ATLauncher");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("atlauncher");
-    }
-    virtual QString id() const override
-    {
-        return "atl";
-    }
-    virtual QString helpPage() const override
-    {
-        return "ATL-platform";
-    }
-    virtual bool shouldDisplay() const override;
+  public:
+	explicit AtlPage(NewInstanceDialog* dialog, QWidget* parent = 0);
+	virtual ~AtlPage();
+	virtual QString displayName() const override
+	{
+		return tr("ATLauncher");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("atlauncher");
+	}
+	virtual QString id() const override
+	{
+		return "atl";
+	}
+	virtual QString helpPage() const override
+	{
+		return "ATL-platform";
+	}
+	virtual bool shouldDisplay() const override;
 
-    void openedImpl() override;
+	void openedImpl() override;
 
-private:
-    void suggestCurrent();
+  private:
+	void suggestCurrent();
 
-    QString chooseVersion(Meta::VersionListPtr vlist, QString minecraftVersion) override;
-    QVector<QString> chooseOptionalMods(QVector<ATLauncher::VersionMod> mods) override;
+	QString chooseVersion(Meta::VersionListPtr vlist,
+						  QString minecraftVersion) override;
+	QVector<QString>
+	chooseOptionalMods(QVector<ATLauncher::VersionMod> mods) override;
 
-private slots:
-    void triggerSearch();
+  private slots:
+	void triggerSearch();
 
-    void onSortingSelectionChanged(QString data);
+	void onSortingSelectionChanged(QString data);
 
-    void onSelectionChanged(QModelIndex first, QModelIndex second);
-    void onVersionSelectionChanged(QString data);
+	void onSelectionChanged(QModelIndex first, QModelIndex second);
+	void onVersionSelectionChanged(QString data);
 
-private:
-    Ui::AtlPage *ui = nullptr;
-    NewInstanceDialog* dialog = nullptr;
-    Atl::ListModel* listModel = nullptr;
-    Atl::FilterModel* filterModel = nullptr;
+  private:
+	Ui::AtlPage* ui = nullptr;
+	NewInstanceDialog* dialog = nullptr;
+	Atl::ListModel* listModel = nullptr;
+	Atl::FilterModel* filterModel = nullptr;
 
-    ATLauncher::IndexedPack selected;
-    QString selectedVersion;
+	ATLauncher::IndexedPack selected;
+	QString selectedVersion;
 
-    bool initialized = false;
+	bool initialized = false;
 };

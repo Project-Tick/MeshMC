@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,58 +47,59 @@
 
 namespace Ui
 {
-class FlamePage;
+	class FlamePage;
 }
 
 class NewInstanceDialog;
 
-namespace Flame {
-    class ListModel;
+namespace Flame
+{
+	class ListModel;
 }
 
 class FlamePage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit FlamePage(NewInstanceDialog* dialog, QWidget *parent = 0);
-    virtual ~FlamePage();
-    virtual QString displayName() const override
-    {
-        return tr("CurseForge");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("flame");
-    }
-    virtual QString id() const override
-    {
-        return "flame";
-    }
-    virtual QString helpPage() const override
-    {
-        return "Flame-platform";
-    }
-    virtual bool shouldDisplay() const override;
+  public:
+	explicit FlamePage(NewInstanceDialog* dialog, QWidget* parent = 0);
+	virtual ~FlamePage();
+	virtual QString displayName() const override
+	{
+		return tr("CurseForge");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("flame");
+	}
+	virtual QString id() const override
+	{
+		return "flame";
+	}
+	virtual QString helpPage() const override
+	{
+		return "Flame-platform";
+	}
+	virtual bool shouldDisplay() const override;
 
-    void openedImpl() override;
+	void openedImpl() override;
 
-    bool eventFilter(QObject * watched, QEvent * event) override;
+	bool eventFilter(QObject* watched, QEvent* event) override;
 
-private:
-    void suggestCurrent();
+  private:
+	void suggestCurrent();
 
-private slots:
-    void triggerSearch();
-    void onSelectionChanged(QModelIndex first, QModelIndex second);
-    void onVersionSelectionChanged(QString data);
+  private slots:
+	void triggerSearch();
+	void onSelectionChanged(QModelIndex first, QModelIndex second);
+	void onVersionSelectionChanged(QString data);
 
-private:
-    Ui::FlamePage *ui = nullptr;
-    NewInstanceDialog* dialog = nullptr;
-    Flame::ListModel* listModel = nullptr;
-    Flame::IndexedPack current;
+  private:
+	Ui::FlamePage* ui = nullptr;
+	NewInstanceDialog* dialog = nullptr;
+	Flame::ListModel* listModel = nullptr;
+	Flame::IndexedPack current;
 
-    QString selectedVersion;
-    int selectedVersionIndex = -1;
+	QString selectedVersion;
+	int selectedVersionIndex = -1;
 };

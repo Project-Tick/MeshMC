@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,19 +46,21 @@
  * FIXME: maybe do not export
  */
 
-class TextPrint: public LaunchStep
+class TextPrint : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit TextPrint(LaunchTask *parent, const QStringList &lines, MessageLevel::Enum level);
-    explicit TextPrint(LaunchTask *parent, const QString &line, MessageLevel::Enum level);
-    virtual ~TextPrint(){};
+	Q_OBJECT
+  public:
+	explicit TextPrint(LaunchTask* parent, const QStringList& lines,
+					   MessageLevel::Enum level);
+	explicit TextPrint(LaunchTask* parent, const QString& line,
+					   MessageLevel::Enum level);
+	virtual ~TextPrint() {};
 
-    virtual void executeTask();
-    virtual bool canAbort() const;
-    virtual bool abort();
+	virtual void executeTask();
+	virtual bool canAbort() const;
+	virtual bool abort();
 
-private:
-    QStringList m_lines;
-    MessageLevel::Enum m_level;
+  private:
+	QStringList m_lines;
+	MessageLevel::Enum m_level;
 };

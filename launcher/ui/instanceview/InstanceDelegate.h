@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -43,20 +43,27 @@
 
 class ListViewDelegate : public QStyledItemDelegate
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ListViewDelegate(QObject *parent = 0);
-    virtual ~ListViewDelegate() {}
+  public:
+	explicit ListViewDelegate(QObject* parent = 0);
+	virtual ~ListViewDelegate() {}
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
-    QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+	void paint(QPainter* painter, const QStyleOptionViewItem& option,
+			   const QModelIndex& index) const override;
+	QSize sizeHint(const QStyleOptionViewItem& option,
+				   const QModelIndex& index) const override;
+	void updateEditorGeometry(QWidget* editor,
+							  const QStyleOptionViewItem& option,
+							  const QModelIndex& index) const override;
+	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+						  const QModelIndex& index) const override;
 
-    void setEditorData(QWidget * editor, const QModelIndex & index) const override;
-    void setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const override;
+	void setEditorData(QWidget* editor,
+					   const QModelIndex& index) const override;
+	void setModelData(QWidget* editor, QAbstractItemModel* model,
+					  const QModelIndex& index) const override;
 
-private slots:
-    void editingDone();
+  private slots:
+	void editingDone();
 };

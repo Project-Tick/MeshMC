@@ -30,142 +30,149 @@
 #include "RequestParameter.h"
 #include "Bits.h"
 
-namespace Katabasis {
-
-class ReplyServer;
-class PollServer;
-
-/// Simple OAuth2 Device Flow authenticator.
-class DeviceFlow: public QObject
+namespace Katabasis
 {
-    Q_OBJECT
-public:
-    Q_ENUMS(GrantFlow)
 
-public:
+	class ReplyServer;
+	class PollServer;
 
-    struct Options {
-        QString userAgent = QStringLiteral("Katabasis/1.0");
-        QString responseType = QStringLiteral("code");
-        QString scope;
-        QString clientIdentifier;
-        QString clientSecret;
-        QUrl authorizationUrl;
-        QUrl accessTokenUrl;
-    };
+	/// Simple OAuth2 Device Flow authenticator.
+	class DeviceFlow : public QObject
+	{
+		Q_OBJECT
+	  public:
+		Q_ENUMS(GrantFlow)
 
-public:
-    /// Are we authenticated?
-    bool linked();
+	  public:
+		struct Options {
+			QString userAgent = QStringLiteral("Katabasis/1.0");
+			QString responseType = QStringLiteral("code");
+			QString scope;
+			QString clientIdentifier;
+			QString clientSecret;
+			QUrl authorizationUrl;
+			QUrl accessTokenUrl;
+		};
 
-    /// Authentication token.
-    QString token();
+	  public:
+		/// Are we authenticated?
+		bool linked();
 
-    /// Provider-specific extra tokens, available after a successful authentication
-    QVariantMap extraTokens();
+		/// Authentication token.
+		QString token();
 
-public:
-    // TODO: put in `Options`
-    /// User-defined extra parameters to append to request URL
-    QVariantMap extraRequestParams();
-    void setExtraRequestParams(const QVariantMap &value);
+		/// Provider-specific extra tokens, available after a successful
+		/// authentication
+		QVariantMap extraTokens();
 
-    // TODO: split up the class into multiple, each implementing one OAuth2 flow
-    /// Grant type (if non-standard)
-    QString grantType();
-    void setGrantType(const QString &value);
+	  public:
+		// TODO: put in `Options`
+		/// User-defined extra parameters to append to request URL
+		QVariantMap extraRequestParams();
+		void setExtraRequestParams(const QVariantMap& value);
 
-public:
-    /// Constructor.
-    /// @param  parent  Parent object.
-    explicit DeviceFlow(Options & opts, Token & token, QObject *parent = 0, QNetworkAccessManager *manager = 0);
+		// TODO: split up the class into multiple, each implementing one OAuth2
+		// flow
+		/// Grant type (if non-standard)
+		QString grantType();
+		void setGrantType(const QString& value);
 
-    /// Get refresh token.
-    QString refreshToken();
+	  public:
+		/// Constructor.
+		/// @param  parent  Parent object.
+		explicit DeviceFlow(Options& opts, Token& token, QObject* parent = 0,
+							QNetworkAccessManager* manager = 0);
 
-    /// Get token expiration time
-    QDateTime expires();
+		/// Get refresh token.
+		QString refreshToken();
 
-public slots:
-    /// Authenticate.
-    void login();
+		/// Get token expiration time
+		QDateTime expires();
 
-    /// De-authenticate.
-    void logout();
+	  public slots:
+		/// Authenticate.
+		void login();
 
-    /// Refresh token.
-    bool refresh();
+		/// De-authenticate.
+		void logout();
 
-    /// Handle situation where reply server has opted to close its connection
-    void serverHasClosed(bool paramsfound = false);
+		/// Refresh token.
+		bool refresh();
 
-signals:
-    /// Emitted when client needs to open a web browser window, with the given URL.
-    void openBrowser(const QUrl &url);
+		/// Handle situation where reply server has opted to close its
+		/// connection
+		void serverHasClosed(bool paramsfound = false);
 
-    /// Emitted when client can close the browser window.
-    void closeBrowser();
+	  signals:
+		/// Emitted when client needs to open a web browser window, with the
+		/// given URL.
+		void openBrowser(const QUrl& url);
 
-    /// Emitted when client needs to show a verification uri and user code
-    void showVerificationUriAndCode(const QUrl &uri, const QString &code, int expiresIn);
+		/// Emitted when client can close the browser window.
+		void closeBrowser();
 
-    /// Emitted when the internal state changes
-    void activityChanged(Activity activity);
+		/// Emitted when client needs to show a verification uri and user code
+		void showVerificationUriAndCode(const QUrl& uri, const QString& code,
+										int expiresIn);
 
-public slots:
-    /// Handle verification response.
-    void onVerificationReceived(QMap<QString, QString>);
+		/// Emitted when the internal state changes
+		void activityChanged(Activity activity);
 
-protected slots:
-    /// Handle completion of a Device Authorization Request
-    void onDeviceAuthReplyFinished();
+	  public slots:
+		/// Handle verification response.
+		void onVerificationReceived(QMap<QString, QString>);
 
-    /// Handle completion of a refresh request.
-    void onRefreshFinished();
+	  protected slots:
+		/// Handle completion of a Device Authorization Request
+		void onDeviceAuthReplyFinished();
 
-    /// Handle failure of a refresh request.
-    void onRefreshError(QNetworkReply::NetworkError error, QNetworkReply *reply);
+		/// Handle completion of a refresh request.
+		void onRefreshFinished();
 
-protected:
-    /// Set refresh token.
-    void setRefreshToken(const QString &v);
+		/// Handle failure of a refresh request.
+		void onRefreshError(QNetworkReply::NetworkError error,
+							QNetworkReply* reply);
 
-    /// Set token expiration time.
-    void setExpires(QDateTime v);
+	  protected:
+		/// Set refresh token.
+		void setRefreshToken(const QString& v);
 
-    /// Start polling authorization server
-    void startPollServer(const QVariantMap &params, int expiresIn);
+		/// Set token expiration time.
+		void setExpires(QDateTime v);
 
-    /// Set authentication token.
-    void setToken(const QString &v);
+		/// Start polling authorization server
+		void startPollServer(const QVariantMap& params, int expiresIn);
 
-    /// Set the linked state
-    void setLinked(bool v);
+		/// Set authentication token.
+		void setToken(const QString& v);
 
-    /// Set extra tokens found in OAuth response
-    void setExtraTokens(QVariantMap extraTokens);
+		/// Set the linked state
+		void setLinked(bool v);
 
-    /// Set local poll server
-    void setPollServer(PollServer *server);
+		/// Set extra tokens found in OAuth response
+		void setExtraTokens(QVariantMap extraTokens);
 
-    PollServer * pollServer() const;
+		/// Set local poll server
+		void setPollServer(PollServer* server);
 
-    void updateActivity(Activity activity);
+		PollServer* pollServer() const;
 
-protected:
-    Options options_;
+		void updateActivity(Activity activity);
 
-    QVariantMap extraReqParams_;
-    QNetworkAccessManager *manager_ = nullptr;
-    ReplyList timedReplies_;
-    QString grantType_;
+	  protected:
+		Options options_;
 
-protected:
-    Token &token_;
+		QVariantMap extraReqParams_;
+		QNetworkAccessManager* manager_ = nullptr;
+		ReplyList timedReplies_;
+		QString grantType_;
 
-private:
-    PollServer *pollServer_ = nullptr;
-    Activity activity_ = Activity::Idle;
-};
+	  protected:
+		Token& token_;
 
-}
+	  private:
+		PollServer* pollServer_ = nullptr;
+		Activity activity_ = Activity::Idle;
+	};
+
+} // namespace Katabasis

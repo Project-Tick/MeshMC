@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -43,18 +43,16 @@
 #include <minecraft/auth/AuthSession.h>
 
 // Create the main .minecraft for the instance and any other necessary folders
-class CreateGameFolders: public LaunchStep
+class CreateGameFolders : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit CreateGameFolders(LaunchTask *parent);
-    virtual ~CreateGameFolders() {};
+	Q_OBJECT
+  public:
+	explicit CreateGameFolders(LaunchTask* parent);
+	virtual ~CreateGameFolders() {};
 
-    virtual void executeTask();
-    virtual bool canAbort() const
-    {
-        return false;
-    }
+	virtual void executeTask();
+	virtual bool canAbort() const
+	{
+		return false;
+	}
 };
-
-

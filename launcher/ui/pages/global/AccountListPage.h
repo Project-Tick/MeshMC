@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -48,60 +48,59 @@
 
 namespace Ui
 {
-class AccountListPage;
+	class AccountListPage;
 }
 
 class AuthenticateTask;
 
 class AccountListPage : public QMainWindow, public BasePage
 {
-    Q_OBJECT
-public:
-    explicit AccountListPage(QWidget *parent = 0);
-    ~AccountListPage();
+	Q_OBJECT
+  public:
+	explicit AccountListPage(QWidget* parent = 0);
+	~AccountListPage();
 
-    QString displayName() const override
-    {
-        return tr("Accounts");
-    }
-    QIcon icon() const override
-    {
-        auto icon = APPLICATION->getThemedIcon("accounts");
-        if(icon.isNull())
-        {
-            icon = APPLICATION->getThemedIcon("noaccount");
-        }
-        return icon;
-    }
-    QString id() const override
-    {
-        return "accounts";
-    }
-    QString helpPage() const override
-    {
-        return "Getting-Started#adding-an-account";
-    }
+	QString displayName() const override
+	{
+		return tr("Accounts");
+	}
+	QIcon icon() const override
+	{
+		auto icon = APPLICATION->getThemedIcon("accounts");
+		if (icon.isNull()) {
+			icon = APPLICATION->getThemedIcon("noaccount");
+		}
+		return icon;
+	}
+	QString id() const override
+	{
+		return "accounts";
+	}
+	QString helpPage() const override
+	{
+		return "Getting-Started#adding-an-account";
+	}
 
-public slots:
-    void on_actionAddMicrosoft_triggered();
-    void on_actionRemove_triggered();
-    void on_actionRefresh_triggered();
-    void on_actionSetDefault_triggered();
-    void on_actionNoDefault_triggered();
-    void on_actionUploadSkin_triggered();
-    void on_actionDeleteSkin_triggered();
+  public slots:
+	void on_actionAddMicrosoft_triggered();
+	void on_actionRemove_triggered();
+	void on_actionRefresh_triggered();
+	void on_actionSetDefault_triggered();
+	void on_actionNoDefault_triggered();
+	void on_actionUploadSkin_triggered();
+	void on_actionDeleteSkin_triggered();
 
-    void listChanged();
+	void listChanged();
 
-    //! Updates the states of the dialog's buttons.
-    void updateButtonStates();
+	//! Updates the states of the dialog's buttons.
+	void updateButtonStates();
 
-protected slots:
-    void ShowContextMenu(const QPoint &pos);
+  protected slots:
+	void ShowContextMenu(const QPoint& pos);
 
-private:
-    void changeEvent(QEvent * event) override;
-    QMenu * createPopupMenu() override;
-    shared_qobject_ptr<AccountList> m_accounts;
-    Ui::AccountListPage *ui;
+  private:
+	void changeEvent(QEvent* event) override;
+	QMenu* createPopupMenu() override;
+	shared_qobject_ptr<AccountList> m_accounts;
+	Ui::AccountListPage* ui;
 };

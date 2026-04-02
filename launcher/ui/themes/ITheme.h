@@ -27,34 +27,34 @@ class QStyle;
 
 class ITheme
 {
-public:
-    virtual ~ITheme() {}
-    virtual void apply(bool initial);
-    virtual QString id() = 0;
-    virtual QString name() = 0;
-    virtual QString tooltip()
-    {
-        return QString();
-    }
-    virtual bool hasStyleSheet() = 0;
-    virtual QString appStyleSheet() = 0;
-    virtual QString qtTheme() = 0;
-    virtual bool hasColorScheme() = 0;
-    virtual QPalette colorScheme() = 0;
-    virtual QColor fadeColor() = 0;
-    virtual double fadeAmount() = 0;
-    virtual QStringList searchPaths()
-    {
-        return {};
-    }
-    virtual QString family()
-    {
-        return name();
-    }
-    virtual QString variant()
-    {
-        return QString();
-    }
+  public:
+	virtual ~ITheme() {}
+	virtual void apply(bool initial);
+	virtual QString id() = 0;
+	virtual QString name() = 0;
+	virtual QString tooltip()
+	{
+		return QString();
+	}
+	virtual bool hasStyleSheet() = 0;
+	virtual QString appStyleSheet() = 0;
+	virtual QString qtTheme() = 0;
+	virtual bool hasColorScheme() = 0;
+	virtual QPalette colorScheme() = 0;
+	virtual QColor fadeColor() = 0;
+	virtual double fadeAmount() = 0;
+	virtual QStringList searchPaths()
+	{
+		return {};
+	}
+	virtual QString family()
+	{
+		return name();
+	}
+	virtual QString variant()
+	{
+		return QString();
+	}
 
-    static QPalette fadeInactive(QPalette in, qreal bias, QColor color);
+	static QPalette fadeInactive(QPalette in, qreal bias, QColor color);
 };

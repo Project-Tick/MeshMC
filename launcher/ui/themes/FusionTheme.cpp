@@ -23,5 +23,5 @@
 
 QString FusionTheme::qtTheme()
 {
-    return "Fusion";
+	return "Fusion";
 }

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,90 +47,100 @@
 #include "HoeDown.h"
 #include "MMCStrings.h"
 
-namespace {
-// Credits
-QString getCreditsHtml()
+namespace
 {
-    QFile dataFile(":/documents/credits.html");
-    if (!dataFile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Failed to open file" << dataFile.fileName() << "for reading:" << dataFile.errorString();
-        return {};
-    }
-    QString fileContent = QString::fromUtf8(dataFile.readAll());
-    dataFile.close();
+	// Credits
+	QString getCreditsHtml()
+	{
+		QFile dataFile(":/documents/credits.html");
+		if (!dataFile.open(QIODevice::ReadOnly)) {
+			qWarning() << "Failed to open file" << dataFile.fileName()
+					   << "for reading:" << dataFile.errorString();
+			return {};
+		}
+		QString fileContent = QString::fromUtf8(dataFile.readAll());
+		dataFile.close();
 
-    return fileContent.arg(QObject::tr("%1 Developers").arg(BuildConfig.MESHMC_DISPLAYNAME), QObject::tr("MultiMC Developers"));
-}
+		return fileContent.arg(
+			QObject::tr("%1 Developers").arg(BuildConfig.MESHMC_DISPLAYNAME),
+			QObject::tr("MultiMC Developers"));
+	}
 
-QString getLicenseHtml()
+	QString getLicenseHtml()
+	{
+		QFile dataFile(":/documents/COPYING.md");
+		if (dataFile.open(QIODevice::ReadOnly)) {
+			HoeDown hoedown;
+			QString output = hoedown.process(dataFile.readAll());
+			dataFile.close();
+			return output;
+		} else {
+			qWarning() << "Failed to open file" << dataFile.fileName()
+					   << "for reading:" << dataFile.errorString();
+			return QString();
+		}
+	}
+
+} // namespace
+
+AboutDialog::AboutDialog(QWidget* parent)
+	: QDialog(parent), ui(new Ui::AboutDialog)
 {
-    QFile dataFile(":/documents/COPYING.md");
-    if (dataFile.open(QIODevice::ReadOnly)) {
-        HoeDown hoedown;
-        QString output = hoedown.process(dataFile.readAll());
-        dataFile.close();
-        return output;
-    } else {
-        qWarning() << "Failed to open file" << dataFile.fileName() << "for reading:" << dataFile.errorString();
-        return QString();
-    }
-}
+	ui->setupUi(this);
 
-}  // namespace
+	QString launcherName = BuildConfig.MESHMC_DISPLAYNAME;
 
-AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent), ui(new Ui::AboutDialog)
-{
-    ui->setupUi(this);
+	setWindowTitle(tr("About %1").arg(launcherName));
 
-    QString launcherName = BuildConfig.MESHMC_DISPLAYNAME;
+	QString chtml = getCreditsHtml();
+	ui->creditsText->setHtml(Strings::htmlListPatch(chtml));
 
-    setWindowTitle(tr("About %1").arg(launcherName));
+	QString lhtml = getLicenseHtml();
+	ui->licenseText->setHtml(Strings::htmlListPatch(lhtml));
 
-    QString chtml = getCreditsHtml();
-    ui->creditsText->setHtml(Strings::htmlListPatch(chtml));
+	ui->urlLabel->setOpenExternalLinks(true);
 
-    QString lhtml = getLicenseHtml();
-    ui->licenseText->setHtml(Strings::htmlListPatch(lhtml));
+	ui->icon->setPixmap(APPLICATION->getThemedIcon("logo").pixmap(64));
+	ui->title->setText(launcherName);
 
-    ui->urlLabel->setOpenExternalLinks(true);
+	ui->versionLabel->setText(BuildConfig.printableVersionString());
 
-    ui->icon->setPixmap(APPLICATION->getThemedIcon("logo").pixmap(64));
-    ui->title->setText(launcherName);
+	if (!BuildConfig.BUILD_PLATFORM.isEmpty())
+		ui->platformLabel->setText(tr("Platform") + ": " +
+								   BuildConfig.BUILD_PLATFORM);
+	else
+		ui->platformLabel->setVisible(false);
 
-    ui->versionLabel->setText(BuildConfig.printableVersionString());
+	if (!BuildConfig.GIT_COMMIT.isEmpty())
+		ui->commitLabel->setText(tr("Commit: %1").arg(BuildConfig.GIT_COMMIT));
+	else
+		ui->commitLabel->setVisible(false);
 
-    if (!BuildConfig.BUILD_PLATFORM.isEmpty())
-        ui->platformLabel->setText(tr("Platform") + ": " + BuildConfig.BUILD_PLATFORM);
-    else
-        ui->platformLabel->setVisible(false);
+	if (!BuildConfig.BUILD_DATE.isEmpty())
+		ui->buildDateLabel->setText(
+			tr("Build date: %1").arg(BuildConfig.BUILD_DATE));
+	else
+		ui->buildDateLabel->setVisible(false);
 
-    if (!BuildConfig.GIT_COMMIT.isEmpty())
-        ui->commitLabel->setText(tr("Commit: %1").arg(BuildConfig.GIT_COMMIT));
-    else
-        ui->commitLabel->setVisible(false);
+	if (!BuildConfig.VERSION_CHANNEL.isEmpty())
+		ui->channelLabel->setText(tr("Channel") + ": " +
+								  BuildConfig.VERSION_CHANNEL);
+	else
+		ui->channelLabel->setVisible(false);
 
-    if (!BuildConfig.BUILD_DATE.isEmpty())
-        ui->buildDateLabel->setText(tr("Build date: %1").arg(BuildConfig.BUILD_DATE));
-    else
-        ui->buildDateLabel->setVisible(false);
+	QString urlText(
+		"<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");
+	ui->urlLabel->setText(urlText.arg(BuildConfig.MESHMC_GIT));
 
-    if (!BuildConfig.VERSION_CHANNEL.isEmpty())
-        ui->channelLabel->setText(tr("Channel") + ": " + BuildConfig.VERSION_CHANNEL);
-    else
-        ui->channelLabel->setVisible(false);
+	QString copyText("© 2026 %1");
+	ui->copyLabel->setText(copyText.arg(BuildConfig.MESHMC_COPYRIGHT));
 
-    QString urlText("<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");
-    ui->urlLabel->setText(urlText.arg(BuildConfig.MESHMC_GIT));
+	connect(ui->closeButton, &QPushButton::clicked, this, &AboutDialog::close);
 
-    QString copyText("© 2026 %1");
-    ui->copyLabel->setText(copyText.arg(BuildConfig.MESHMC_COPYRIGHT));
-
-    connect(ui->closeButton, &QPushButton::clicked, this, &AboutDialog::close);
-
-    connect(ui->aboutQt, &QPushButton::clicked, &QApplication::aboutQt);
+	connect(ui->aboutQt, &QPushButton::clicked, &QApplication::aboutQt);
 }
 
 AboutDialog::~AboutDialog()
 {
-    delete ui;
+	delete ui;
 }

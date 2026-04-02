@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,47 +44,49 @@
 #include <QIcon>
 #include <modplatform/atlauncher/ATLPackIndex.h>
 
-namespace Atl {
-
-typedef QMap<QString, QIcon> LogoMap;
-typedef std::function<void(QString)> LogoCallback;
-
-class ListModel : public QAbstractListModel
+namespace Atl
 {
-    Q_OBJECT
 
-public:
-    ListModel(QObject *parent);
-    virtual ~ListModel();
+	typedef QMap<QString, QIcon> LogoMap;
+	typedef std::function<void(QString)> LogoCallback;
 
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+	class ListModel : public QAbstractListModel
+	{
+		Q_OBJECT
 
-    void request();
+	  public:
+		ListModel(QObject* parent);
+		virtual ~ListModel();
 
-    void getLogo(const QString &logo, const QString &logoUrl, LogoCallback callback);
+		int rowCount(const QModelIndex& parent) const override;
+		int columnCount(const QModelIndex& parent) const override;
+		QVariant data(const QModelIndex& index, int role) const override;
 
-private slots:
-    void requestFinished();
-    void requestFailed(QString reason);
+		void request();
 
-    void logoFailed(QString logo);
-    void logoLoaded(QString logo, QIcon out);
+		void getLogo(const QString& logo, const QString& logoUrl,
+					 LogoCallback callback);
 
-private:
-    void requestLogo(QString file, QString url);
+	  private slots:
+		void requestFinished();
+		void requestFailed(QString reason);
 
-private:
-    QList<ATLauncher::IndexedPack> modpacks;
+		void logoFailed(QString logo);
+		void logoLoaded(QString logo, QIcon out);
 
-    QStringList m_failedLogos;
-    QStringList m_loadingLogos;
-    LogoMap m_logoMap;
-    QMap<QString, LogoCallback> waitingCallbacks;
+	  private:
+		void requestLogo(QString file, QString url);
 
-    NetJob::Ptr jobPtr;
-    QByteArray response;
-};
+	  private:
+		QList<ATLauncher::IndexedPack> modpacks;
 
-}
+		QStringList m_failedLogos;
+		QStringList m_loadingLogos;
+		LogoMap m_logoMap;
+		QMap<QString, LogoCallback> waitingCallbacks;
+
+		NetJob::Ptr jobPtr;
+		QByteArray response;
+	};
+
+} // namespace Atl

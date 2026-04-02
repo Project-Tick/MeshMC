@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -53,87 +53,88 @@
 
 namespace Meta
 {
-using VersionPtr = std::shared_ptr<class Version>;
+	using VersionPtr = std::shared_ptr<class Version>;
 
-class Version : public QObject, public BaseVersion, public BaseEntity
-{
-    Q_OBJECT
+	class Version : public QObject, public BaseVersion, public BaseEntity
+	{
+		Q_OBJECT
 
-public: /* con/des */
-    explicit Version(const QString &uid, const QString &version);
-    virtual ~Version();
+	  public: /* con/des */
+		explicit Version(const QString& uid, const QString& version);
+		virtual ~Version();
 
-    QString descriptor() override;
-    QString name() override;
-    QString typeString() const override;
+		QString descriptor() override;
+		QString name() override;
+		QString typeString() const override;
 
-    QString uid() const
-    {
-        return m_uid;
-    }
-    QString version() const
-    {
-        return m_version;
-    }
-    QString type() const
-    {
-        return m_type;
-    }
-    QDateTime time() const;
-    qint64 rawTime() const
-    {
-        return m_time;
-    }
-    const Meta::RequireSet &requirements() const
-    {
-        return m_requires;
-    }
-    VersionFilePtr data() const
-    {
-        return m_data;
-    }
-    bool isRecommended() const
-    {
-        return m_recommended;
-    }
-    bool isLoaded() const
-    {
-        return m_data != nullptr;
-    }
+		QString uid() const
+		{
+			return m_uid;
+		}
+		QString version() const
+		{
+			return m_version;
+		}
+		QString type() const
+		{
+			return m_type;
+		}
+		QDateTime time() const;
+		qint64 rawTime() const
+		{
+			return m_time;
+		}
+		const Meta::RequireSet& requirements() const
+		{
+			return m_requires;
+		}
+		VersionFilePtr data() const
+		{
+			return m_data;
+		}
+		bool isRecommended() const
+		{
+			return m_recommended;
+		}
+		bool isLoaded() const
+		{
+			return m_data != nullptr;
+		}
 
-    void merge(const VersionPtr &other);
-    void mergeFromList(const VersionPtr &other);
-    void parse(const QJsonObject &obj) override;
+		void merge(const VersionPtr& other);
+		void mergeFromList(const VersionPtr& other);
+		void parse(const QJsonObject& obj) override;
 
-    QString localFilename() const override;
+		QString localFilename() const override;
 
-public: // for usage by format parsers only
-    void setType(const QString &type);
-    void setTime(const qint64 time);
-    void setRequires(const Meta::RequireSet &requirements, const Meta::RequireSet &conflicts);
-    void setVolatile(bool volatile_);
-    void setRecommended(bool recommended);
-    void setProvidesRecommendations();
-    void setData(const VersionFilePtr &data);
+	  public: // for usage by format parsers only
+		void setType(const QString& type);
+		void setTime(const qint64 time);
+		void setRequires(const Meta::RequireSet& requirements,
+						 const Meta::RequireSet& conflicts);
+		void setVolatile(bool volatile_);
+		void setRecommended(bool recommended);
+		void setProvidesRecommendations();
+		void setData(const VersionFilePtr& data);
 
-signals:
-    void typeChanged();
-    void timeChanged();
-    void requiresChanged();
+	  signals:
+		void typeChanged();
+		void timeChanged();
+		void requiresChanged();
 
-private:
-    bool m_providesRecommendations = false;
-    bool m_recommended = false;
-    QString m_name;
-    QString m_uid;
-    QString m_version;
-    QString m_type;
-    qint64 m_time = 0;
-    Meta::RequireSet m_requires;
-    Meta::RequireSet m_conflicts;
-    bool m_volatile = false;
-    VersionFilePtr m_data;
-};
-}
+	  private:
+		bool m_providesRecommendations = false;
+		bool m_recommended = false;
+		QString m_name;
+		QString m_uid;
+		QString m_version;
+		QString m_type;
+		qint64 m_time = 0;
+		Meta::RequireSet m_requires;
+		Meta::RequireSet m_conflicts;
+		bool m_volatile = false;
+		VersionFilePtr m_data;
+	};
+} // namespace Meta
 
 Q_DECLARE_METATYPE(Meta::VersionPtr)

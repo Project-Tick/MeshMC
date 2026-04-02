@@ -44,62 +44,64 @@
 
 #include "Installer.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    QCoreApplication app(argc, argv);
-    app.setApplicationName("meshmc-updater");
-    app.setOrganizationName("Project Tick");
+	QCoreApplication app(argc, argv);
+	app.setApplicationName("meshmc-updater");
+	app.setOrganizationName("Project Tick");
 
-    QCommandLineParser parser;
-    parser.setApplicationDescription("MeshMC Updater");
-    parser.addHelpOption();
+	QCommandLineParser parser;
+	parser.setApplicationDescription("MeshMC Updater");
+	parser.addHelpOption();
 
-    QCommandLineOption urlOpt("url",     "URL of the update artifact to download.", "url");
-    QCommandLineOption rootOpt("root",   "Installation root directory.",            "root");
-    QCommandLineOption execOpt("exec",   "Path to relaunch after update.",          "exec");
+	QCommandLineOption urlOpt("url", "URL of the update artifact to download.",
+							  "url");
+	QCommandLineOption rootOpt("root", "Installation root directory.", "root");
+	QCommandLineOption execOpt("exec", "Path to relaunch after update.",
+							   "exec");
 
-    parser.addOption(urlOpt);
-    parser.addOption(rootOpt);
-    parser.addOption(execOpt);
-    parser.process(app);
+	parser.addOption(urlOpt);
+	parser.addOption(rootOpt);
+	parser.addOption(execOpt);
+	parser.process(app);
 
-    const QString url  = parser.value(urlOpt).trimmed();
-    const QString root = parser.value(rootOpt).trimmed();
-    const QString exec = parser.value(execOpt).trimmed();
+	const QString url = parser.value(urlOpt).trimmed();
+	const QString root = parser.value(rootOpt).trimmed();
+	const QString exec = parser.value(execOpt).trimmed();
 
-    if (url.isEmpty() || root.isEmpty()) {
-        fprintf(stderr, "meshmc-updater: --url and --root are required.\n");
-        return 1;
-    }
+	if (url.isEmpty() || root.isEmpty()) {
+		fprintf(stderr, "meshmc-updater: --url and --root are required.\n");
+		return 1;
+	}
 
-    qDebug() << "meshmc-updater: url =" << url
-             << "| root =" << root
-             << "| exec =" << exec;
+	qDebug() << "meshmc-updater: url =" << url << "| root =" << root
+			 << "| exec =" << exec;
 
-    // Give the main application 2 seconds to exit before we start overwriting files.
-    auto *installer = new Installer(&app);
-    installer->setDownloadUrl(url);
-    installer->setRootPath(root);
-    installer->setRelaunchPath(exec);
+	// Give the main application 2 seconds to exit before we start overwriting
+	// files.
+	auto* installer = new Installer(&app);
+	installer->setDownloadUrl(url);
+	installer->setRootPath(root);
+	installer->setRelaunchPath(exec);
 
-    QObject::connect(installer, &Installer::progressMessage,
-                     [](const QString &msg) { qDebug() << "updater:" << msg; });
+	QObject::connect(installer, &Installer::progressMessage,
+					 [](const QString& msg) { qDebug() << "updater:" << msg; });
 
-    QObject::connect(installer, &Installer::finished,
-                     [](bool success, const QString &errorMsg) {
-                         if (!success) {
-                             qCritical() << "meshmc-updater: installation failed:" << errorMsg;
-                             QCoreApplication::exit(1);
-                         } else {
-                             qDebug() << "meshmc-updater: update installed successfully.";
-                             QCoreApplication::exit(0);
-                         }
-                     });
+	QObject::connect(
+		installer, &Installer::finished,
+		[](bool success, const QString& errorMsg) {
+			if (!success) {
+				qCritical()
+					<< "meshmc-updater: installation failed:" << errorMsg;
+				QCoreApplication::exit(1);
+			} else {
+				qDebug() << "meshmc-updater: update installed successfully.";
+				QCoreApplication::exit(0);
+			}
+		});
 
-    // Delay start to give the parent process time to close.
-    QTimer::singleShot(2000, &app, [installer]() {
-        installer->start();
-    });
+	// Delay start to give the parent process time to close.
+	QTimer::singleShot(2000, &app, [installer]() { installer->start(); });
 
-    return app.exec();
+	return app.exec();
 }

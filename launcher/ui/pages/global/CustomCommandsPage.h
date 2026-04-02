@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,32 +47,32 @@
 
 class CustomCommandsPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit CustomCommandsPage(QWidget *parent = 0);
-    ~CustomCommandsPage();
+  public:
+	explicit CustomCommandsPage(QWidget* parent = 0);
+	~CustomCommandsPage();
 
-    QString displayName() const override
-    {
-        return tr("Custom Commands");
-    }
-    QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("custom-commands");
-    }
-    QString id() const override
-    {
-        return "custom-commands";
-    }
-    QString helpPage() const override
-    {
-        return "Custom-commands";
-    }
-    bool apply() override;
+	QString displayName() const override
+	{
+		return tr("Custom Commands");
+	}
+	QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("custom-commands");
+	}
+	QString id() const override
+	{
+		return "custom-commands";
+	}
+	QString helpPage() const override
+	{
+		return "Custom-commands";
+	}
+	bool apply() override;
 
-private:
-    void applySettings();
-    void loadSettings();
-    CustomCommands * commands;
+  private:
+	void applySettings();
+	void loadSettings();
+	CustomCommands* commands;
 };

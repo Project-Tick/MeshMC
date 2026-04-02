@@ -30,14 +30,14 @@
 
 class InstanceCreationTask : public InstanceTask
 {
-    Q_OBJECT
-public:
-    explicit InstanceCreationTask(BaseVersionPtr version);
+	Q_OBJECT
+  public:
+	explicit InstanceCreationTask(BaseVersionPtr version);
 
-protected:
-    //! Entry point for tasks.
-    virtual void executeTask() override;
+  protected:
+	//! Entry point for tasks.
+	virtual void executeTask() override;
 
-private: /* data */
-    BaseVersionPtr m_version;
+  private: /* data */
+	BaseVersionPtr m_version;
 };

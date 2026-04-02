@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -51,20 +51,20 @@ class MinecraftInstance;
 
 class MinecraftLoadAndCheck : public Task
 {
-    Q_OBJECT
-public:
-    explicit MinecraftLoadAndCheck(MinecraftInstance *inst, QObject *parent = 0);
-    virtual ~MinecraftLoadAndCheck() {};
-    void executeTask() override;
+	Q_OBJECT
+  public:
+	explicit MinecraftLoadAndCheck(MinecraftInstance* inst,
+								   QObject* parent = 0);
+	virtual ~MinecraftLoadAndCheck() {};
+	void executeTask() override;
 
-private slots:
-    void subtaskSucceeded();
-    void subtaskFailed(QString error);
+  private slots:
+	void subtaskSucceeded();
+	void subtaskFailed(QString error);
 
-private:
-    MinecraftInstance *m_inst = nullptr;
-    Task::Ptr m_task;
-    QString m_preFailure;
-    QString m_fail_reason;
+  private:
+	MinecraftInstance* m_inst = nullptr;
+	Task::Ptr m_task;
+	QString m_preFailure;
+	QString m_fail_reason;
 };
-

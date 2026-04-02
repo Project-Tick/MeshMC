@@ -1138,3 +1138,20 @@ if(CLANG_FORMAT)
 else()
     message(WARNING "Unable to find `clang-format`. Not creating custom target")
 endif()
+
+find_program(CLANG_TIDY clang-tidy OPTIONAL)
+find_program(RUN_CLANG_TIDY NAMES run-clang-tidy run-clang-tidy.py OPTIONAL)
+if(CLANG_TIDY AND RUN_CLANG_TIDY)
+    message(STATUS "Creating clang-tidy target")
+    add_custom_target(
+        clang-tidy
+        COMMAND ${RUN_CLANG_TIDY}
+            -p ${PROJECT_BINARY_DIR}
+            -clang-tidy-binary ${CLANG_TIDY}
+            -config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        USES_TERMINAL
+    )
+elseif(CLANG_TIDY)
+    message(WARNING "Unable to find `run-clang-tidy`. Not creating custom target")
+endif()

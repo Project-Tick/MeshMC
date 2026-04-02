@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -48,57 +48,53 @@
 #include "tools/BaseProfiler.h"
 #include "Application.h"
 
-PasteEEPage::PasteEEPage(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::PasteEEPage)
+PasteEEPage::PasteEEPage(QWidget* parent)
+	: QWidget(parent), ui(new Ui::PasteEEPage)
 {
-    ui->setupUi(this);
-    ui->tabWidget->tabBar()->hide();\
-    connect(ui->customAPIkeyEdit, &QLineEdit::textEdited, this, &PasteEEPage::textEdited);
-    loadSettings();
+	ui->setupUi(this);
+	ui->tabWidget->tabBar()->hide();
+	connect(ui->customAPIkeyEdit, &QLineEdit::textEdited, this,
+			&PasteEEPage::textEdited);
+	loadSettings();
 }
 
 PasteEEPage::~PasteEEPage()
 {
-    delete ui;
+	delete ui;
 }
 
 void PasteEEPage::loadSettings()
 {
-    auto s = APPLICATION->settings();
-    QString keyToUse = s->get("PasteEEAPIKey").toString();
-    if(keyToUse == "meshmc")
-    {
-        ui->meshmcButton->setChecked(true);
-    }
-    else
-    {
-        ui->customButton->setChecked(true);
-        ui->customAPIkeyEdit->setText(keyToUse);
-    }
+	auto s = APPLICATION->settings();
+	QString keyToUse = s->get("PasteEEAPIKey").toString();
+	if (keyToUse == "meshmc") {
+		ui->meshmcButton->setChecked(true);
+	} else {
+		ui->customButton->setChecked(true);
+		ui->customAPIkeyEdit->setText(keyToUse);
+	}
 }
 
 void PasteEEPage::applySettings()
 {
-    auto s = APPLICATION->settings();
+	auto s = APPLICATION->settings();
 
-    QString pasteKeyToUse;
-    if (ui->customButton->isChecked())
-        pasteKeyToUse = ui->customAPIkeyEdit->text();
-    else
-    {
-        pasteKeyToUse =  "meshmc";
-    }
-    s->set("PasteEEAPIKey", pasteKeyToUse);
+	QString pasteKeyToUse;
+	if (ui->customButton->isChecked())
+		pasteKeyToUse = ui->customAPIkeyEdit->text();
+	else {
+		pasteKeyToUse = "meshmc";
+	}
+	s->set("PasteEEAPIKey", pasteKeyToUse);
 }
 
 bool PasteEEPage::apply()
 {
-    applySettings();
-    return true;
+	applySettings();
+	return true;
 }
 
 void PasteEEPage::textEdited(const QString& text)
 {
-    ui->customButton->setChecked(true);
+	ui->customButton->setChecked(true);
 }

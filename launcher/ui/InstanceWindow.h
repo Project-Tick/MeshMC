@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -52,48 +52,48 @@ class QPushButton;
 class PageContainer;
 class InstanceWindow : public QMainWindow, public BasePageContainer
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit InstanceWindow(InstancePtr proc, QWidget *parent = 0);
-    virtual ~InstanceWindow();
+  public:
+	explicit InstanceWindow(InstancePtr proc, QWidget* parent = 0);
+	virtual ~InstanceWindow();
 
-    bool selectPage(QString pageId) override;
-    void refreshContainer() override;
+	bool selectPage(QString pageId) override;
+	void refreshContainer() override;
 
-    QString instanceId();
+	QString instanceId();
 
-    // save all settings and changes (prepare for launch)
-    bool saveAll();
+	// save all settings and changes (prepare for launch)
+	bool saveAll();
 
-    // request closing the window (from a page)
-    bool requestClose() override;
+	// request closing the window (from a page)
+	bool requestClose() override;
 
-signals:
-    void isClosing();
+  signals:
+	void isClosing();
 
-private
-slots:
-    void on_closeButton_clicked();
-    void on_btnKillMinecraft_clicked();
-    void on_btnLaunchMinecraftOffline_clicked();
+  private slots:
+	void on_closeButton_clicked();
+	void on_btnKillMinecraft_clicked();
+	void on_btnLaunchMinecraftOffline_clicked();
 
-    void on_InstanceLaunchTask_changed(shared_qobject_ptr<LaunchTask> proc);
-    void on_RunningState_changed(bool running);
-    void on_instanceStatusChanged(BaseInstance::Status, BaseInstance::Status newStatus);
+	void on_InstanceLaunchTask_changed(shared_qobject_ptr<LaunchTask> proc);
+	void on_RunningState_changed(bool running);
+	void on_instanceStatusChanged(BaseInstance::Status,
+								  BaseInstance::Status newStatus);
 
-protected:
-    void closeEvent(QCloseEvent *) override;
+  protected:
+	void closeEvent(QCloseEvent*) override;
 
-private:
-    void updateLaunchButtons();
+  private:
+	void updateLaunchButtons();
 
-private:
-    shared_qobject_ptr<LaunchTask> m_proc;
-    InstancePtr m_instance;
-    bool m_doNotSave = false;
-    PageContainer *m_container = nullptr;
-    QPushButton *m_closeButton = nullptr;
-    QPushButton *m_killButton = nullptr;
-    QPushButton *m_launchOfflineButton = nullptr;
+  private:
+	shared_qobject_ptr<LaunchTask> m_proc;
+	InstancePtr m_instance;
+	bool m_doNotSave = false;
+	PageContainer* m_container = nullptr;
+	QPushButton* m_closeButton = nullptr;
+	QPushButton* m_killButton = nullptr;
+	QPushButton* m_launchOfflineButton = nullptr;
 };

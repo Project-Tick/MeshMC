@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -41,25 +41,26 @@
 #include <QList>
 #include <QString>
 
-namespace Technic {
-struct Modpack {
-    QString slug;
+namespace Technic
+{
+	struct Modpack {
+		QString slug;
 
-    QString name;
-    QString logoUrl;
-    QString logoName;
+		QString name;
+		QString logoUrl;
+		QString logoName;
 
-    bool broken = true;
+		bool broken = true;
 
-    QString url;
-    bool isSolder = false;
-    QString minecraftVersion;
+		QString url;
+		bool isSolder = false;
+		QString minecraftVersion;
 
-    bool metadataLoaded = false;
-    QString websiteUrl;
-    QString author;
-    QString description;
-};
-}
+		bool metadataLoaded = false;
+		QString websiteUrl;
+		QString author;
+		QString description;
+	};
+} // namespace Technic
 
 Q_DECLARE_METATYPE(Technic::Modpack)

@@ -35,59 +35,61 @@
 
 #include <modplatform/modrinth/ModrinthPackIndex.h>
 
-namespace Modrinth {
-
-typedef QMap<QString, QIcon> LogoMap;
-typedef std::function<void(QString)> LogoCallback;
-
-class ListModel : public QAbstractListModel
+namespace Modrinth
 {
-    Q_OBJECT
 
-public:
-    explicit ListModel(QObject *parent);
-    virtual ~ListModel() override;
+	typedef QMap<QString, QIcon> LogoMap;
+	typedef std::function<void(QString)> LogoCallback;
 
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-    bool canFetchMore(const QModelIndex &parent) const override;
-    void fetchMore(const QModelIndex &parent) override;
+	class ListModel : public QAbstractListModel
+	{
+		Q_OBJECT
 
-    void getLogo(const QString &logo, const QString &logoUrl, LogoCallback callback);
-    void searchWithTerm(const QString &term, const int sort);
+	  public:
+		explicit ListModel(QObject* parent);
+		virtual ~ListModel() override;
 
-private slots:
-    void performPaginatedSearch();
+		int rowCount(const QModelIndex& parent) const override;
+		int columnCount(const QModelIndex& parent) const override;
+		QVariant data(const QModelIndex& index, int role) const override;
+		Qt::ItemFlags flags(const QModelIndex& index) const override;
+		bool canFetchMore(const QModelIndex& parent) const override;
+		void fetchMore(const QModelIndex& parent) override;
 
-    void logoFailed(QString logo);
-    void logoLoaded(QString logo, QIcon out);
+		void getLogo(const QString& logo, const QString& logoUrl,
+					 LogoCallback callback);
+		void searchWithTerm(const QString& term, const int sort);
 
-    void searchRequestFinished();
-    void searchRequestFailed(QString reason);
+	  private slots:
+		void performPaginatedSearch();
 
-private:
-    void requestLogo(QString file, QString url);
+		void logoFailed(QString logo);
+		void logoLoaded(QString logo, QIcon out);
 
-private:
-    QList<IndexedPack> modpacks;
-    QStringList m_failedLogos;
-    QStringList m_loadingLogos;
-    LogoMap m_logoMap;
-    QMap<QString, LogoCallback> waitingCallbacks;
+		void searchRequestFinished();
+		void searchRequestFailed(QString reason);
 
-    QString currentSearchTerm;
-    int currentSort = 0;
-    int nextSearchOffset = 0;
-    enum SearchState {
-        None,
-        CanPossiblyFetchMore,
-        ResetRequested,
-        Finished
-    } searchState = None;
-    NetJob::Ptr jobPtr;
-    QByteArray response;
-};
+	  private:
+		void requestLogo(QString file, QString url);
 
-}
+	  private:
+		QList<IndexedPack> modpacks;
+		QStringList m_failedLogos;
+		QStringList m_loadingLogos;
+		LogoMap m_logoMap;
+		QMap<QString, LogoCallback> waitingCallbacks;
+
+		QString currentSearchTerm;
+		int currentSort = 0;
+		int nextSearchOffset = 0;
+		enum SearchState {
+			None,
+			CanPossiblyFetchMore,
+			ResetRequested,
+			Finished
+		} searchState = None;
+		NetJob::Ptr jobPtr;
+		QByteArray response;
+	};
+
+} // namespace Modrinth

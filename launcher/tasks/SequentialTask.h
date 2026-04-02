@@ -28,24 +28,23 @@
 
 class SequentialTask : public Task
 {
-    Q_OBJECT
-public:
-    explicit SequentialTask(QObject *parent = 0);
-    virtual ~SequentialTask() {};
+	Q_OBJECT
+  public:
+	explicit SequentialTask(QObject* parent = 0);
+	virtual ~SequentialTask() {};
 
-    void addTask(Task::Ptr task);
+	void addTask(Task::Ptr task);
 
-protected:
-    void executeTask();
+  protected:
+	void executeTask();
 
-private
-slots:
-    void startNext();
-    void subTaskFailed(const QString &msg);
-    void subTaskStatus(const QString &msg);
-    void subTaskProgress(qint64 current, qint64 total);
+  private slots:
+	void startNext();
+	void subTaskFailed(const QString& msg);
+	void subTaskStatus(const QString& msg);
+	void subTaskProgress(qint64 current, qint64 total);
 
-private:
-    QQueue<Task::Ptr > m_queue;
-    int m_currentIndex;
+  private:
+	QQueue<Task::Ptr> m_queue;
+	int m_currentIndex;
 };

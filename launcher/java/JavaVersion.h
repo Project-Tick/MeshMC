@@ -23,48 +23,51 @@
 
 #include <QString>
 
-// NOTE: apparently the GNU C library pollutes the global namespace with these... undef them.
+// NOTE: apparently the GNU C library pollutes the global namespace with
+// these... undef them.
 #ifdef major
-    #undef major
+#undef major
 #endif
 #ifdef minor
-    #undef minor
+#undef minor
 #endif
 
 class JavaVersion
 {
-    friend class JavaVersionTest;
-public:
-    JavaVersion() {};
-    JavaVersion(const QString & rhs);
+	friend class JavaVersionTest;
 
-    JavaVersion & operator=(const QString & rhs);
+  public:
+	JavaVersion() {};
+	JavaVersion(const QString& rhs);
 
-    bool operator<(const JavaVersion & rhs) const;
-    bool operator==(const JavaVersion & rhs) const;
-    bool operator>(const JavaVersion & rhs) const;
+	JavaVersion& operator=(const QString& rhs);
 
-    bool requiresPermGen();
+	bool operator<(const JavaVersion& rhs) const;
+	bool operator==(const JavaVersion& rhs) const;
+	bool operator>(const JavaVersion& rhs) const;
 
-    QString toString();
+	bool requiresPermGen() const;
 
-    int major()
-    {
-        return m_major;
-    }
-    int minor()
-    {
-        return m_minor;
-    }
-    int security()
-    {
-        return m_security;
-    }
-private:
-    QString m_string;
-    int m_major = 0;
-    int m_minor = 0;
-    int m_security = 0;
-    bool m_parseable = false;
-    QString m_prerelease;
+	QString toString() const;
+
+	int major() const
+	{
+		return m_major;
+	}
+	int minor() const
+	{
+		return m_minor;
+	}
+	int security() const
+	{
+		return m_security;
+	}
+
+  private:
+	QString m_string;
+	int m_major = 0;
+	int m_minor = 0;
+	int m_security = 0;
+	bool m_parseable = false;
+	QString m_prerelease;
 };

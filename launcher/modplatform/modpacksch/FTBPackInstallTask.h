@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,42 +44,45 @@
 #include "InstanceTask.h"
 #include "net/NetJob.h"
 
-namespace ModpacksCH {
-
-class PackInstallTask : public InstanceTask
+namespace ModpacksCH
 {
-    Q_OBJECT
 
-public:
-    explicit PackInstallTask(Modpack pack, QString version);
-    virtual ~PackInstallTask(){}
+	class PackInstallTask : public InstanceTask
+	{
+		Q_OBJECT
 
-    bool canAbort() const override { return true; }
-    bool abort() override;
+	  public:
+		explicit PackInstallTask(Modpack pack, QString version);
+		virtual ~PackInstallTask() {}
 
-protected:
-    virtual void executeTask() override;
+		bool canAbort() const override
+		{
+			return true;
+		}
+		bool abort() override;
 
-private slots:
-    void onDownloadSucceeded();
-    void onDownloadFailed(QString reason);
+	  protected:
+		virtual void executeTask() override;
 
-private:
-    void downloadPack();
-    void install();
+	  private slots:
+		void onDownloadSucceeded();
+		void onDownloadFailed(QString reason);
 
-private:
-    bool abortable = false;
+	  private:
+		void downloadPack();
+		void install();
 
-    NetJob::Ptr jobPtr;
-    QByteArray response;
+	  private:
+		bool abortable = false;
 
-    Modpack m_pack;
-    QString m_version_name;
-    Version m_version;
+		NetJob::Ptr jobPtr;
+		QByteArray response;
 
-    QMap<QString, QString> filesToCopy;
+		Modpack m_pack;
+		QString m_version_name;
+		Version m_version;
 
-};
+		QMap<QString, QString> filesToCopy;
+	};
 
-}
+} // namespace ModpacksCH

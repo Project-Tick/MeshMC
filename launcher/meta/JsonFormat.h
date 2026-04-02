@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -47,60 +47,58 @@
 
 namespace Meta
 {
-class Index;
-class Version;
-class VersionList;
+	class Index;
+	class Version;
+	class VersionList;
 
-enum class MetadataVersion
-{
-    Invalid = -1,
-    InitialRelease = 1
-};
+	enum class MetadataVersion { Invalid = -1, InitialRelease = 1 };
 
-class ParseException : public Exception
-{
-public:
-    using Exception::Exception;
-};
-struct Require
-{
-    bool operator==(const Require & rhs) const
-    {
-        return uid == rhs.uid;
-    }
-    bool operator<(const Require & rhs) const
-    {
-        return uid < rhs.uid;
-    }
-    bool deepEquals(const Require & rhs) const
-    {
-        return uid == rhs.uid
-            && equalsVersion == rhs.equalsVersion
-            && suggests == rhs.suggests;
-    }
-    QString uid;
-    QString equalsVersion;
-    QString suggests;
-};
+	class ParseException : public Exception
+	{
+	  public:
+		using Exception::Exception;
+	};
+	struct Require {
+		bool operator==(const Require& rhs) const
+		{
+			return uid == rhs.uid;
+		}
+		bool operator<(const Require& rhs) const
+		{
+			return uid < rhs.uid;
+		}
+		bool deepEquals(const Require& rhs) const
+		{
+			return uid == rhs.uid && equalsVersion == rhs.equalsVersion &&
+				   suggests == rhs.suggests;
+		}
+		QString uid;
+		QString equalsVersion;
+		QString suggests;
+	};
 
-inline Q_DECL_PURE_FUNCTION uint qHash(const Require &key, uint seed = 0) Q_DECL_NOTHROW
-{
-    return qHash(key.uid, seed);
-}
+	inline Q_DECL_PURE_FUNCTION uint qHash(const Require& key,
+										   uint seed = 0) Q_DECL_NOTHROW
+	{
+		return qHash(key.uid, seed);
+	}
 
-using RequireSet = std::set<Require>;
+	using RequireSet = std::set<Require>;
 
-void parseIndex(const QJsonObject &obj, Index *ptr);
-void parseVersion(const QJsonObject &obj, Version *ptr);
-void parseVersionList(const QJsonObject &obj, VersionList *ptr);
+	void parseIndex(const QJsonObject& obj, Index* ptr);
+	void parseVersion(const QJsonObject& obj, Version* ptr);
+	void parseVersionList(const QJsonObject& obj, VersionList* ptr);
 
-MetadataVersion parseFormatVersion(const QJsonObject &obj, bool required = true);
-void serializeFormatVersion(QJsonObject &obj, MetadataVersion version);
+	MetadataVersion parseFormatVersion(const QJsonObject& obj,
+									   bool required = true);
+	void serializeFormatVersion(QJsonObject& obj, MetadataVersion version);
 
-// FIXME: this has a different shape than the others...FIX IT!?
-void parseRequires(const QJsonObject &obj, RequireSet * ptr, const char * keyName = "requires");
-void serializeRequires(QJsonObject & objOut, RequireSet* ptr, const char * keyName = "requires");
-MetadataVersion currentFormatVersion();
-}
+	// FIXME: this has a different shape than the others...FIX IT!?
+	void parseRequires(const QJsonObject& obj, RequireSet* ptr,
+					   const char* keyName = "requires");
+	void serializeRequires(QJsonObject& objOut, RequireSet* ptr,
+						   const char* keyName = "requires");
+	MetadataVersion currentFormatVersion();
+} // namespace Meta
 
 Q_DECLARE_METATYPE(std::set<Meta::Require>)

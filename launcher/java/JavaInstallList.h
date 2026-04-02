@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -53,52 +53,48 @@ class JavaListLoadTask;
 
 class JavaInstallList : public BaseVersionList
 {
-    Q_OBJECT
-    enum class Status
-    {
-        NotDone,
-        InProgress,
-        Done
-    };
-public:
-    explicit JavaInstallList(QObject *parent = 0);
+	Q_OBJECT
+	enum class Status { NotDone, InProgress, Done };
 
-    Task::Ptr getLoadTask() override;
-    bool isLoaded() override;
-    const BaseVersionPtr at(int i) const override;
-    int count() const override;
-    void sortVersions() override;
+  public:
+	explicit JavaInstallList(QObject* parent = 0);
 
-    QVariant data(const QModelIndex &index, int role) const override;
-    RoleList providesRoles() const override;
+	Task::Ptr getLoadTask() override;
+	bool isLoaded() override;
+	const BaseVersionPtr at(int i) const override;
+	int count() const override;
+	void sortVersions() override;
 
-public slots:
-    void updateListData(QList<BaseVersionPtr> versions) override;
+	QVariant data(const QModelIndex& index, int role) const override;
+	RoleList providesRoles() const override;
 
-protected:
-    void load();
-    Task::Ptr getCurrentTask();
+  public slots:
+	void updateListData(QList<BaseVersionPtr> versions) override;
 
-protected:
-    Status m_status = Status::NotDone;
-    shared_qobject_ptr<JavaListLoadTask> m_loadTask;
-    QList<BaseVersionPtr> m_vlist;
+  protected:
+	void load();
+	Task::Ptr getCurrentTask();
+
+  protected:
+	Status m_status = Status::NotDone;
+	shared_qobject_ptr<JavaListLoadTask> m_loadTask;
+	QList<BaseVersionPtr> m_vlist;
 };
 
 class JavaListLoadTask : public Task
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit JavaListLoadTask(JavaInstallList *vlist);
-    virtual ~JavaListLoadTask();
+  public:
+	explicit JavaListLoadTask(JavaInstallList* vlist);
+	virtual ~JavaListLoadTask();
 
-    void executeTask() override;
-public slots:
-    void javaCheckerFinished();
+	void executeTask() override;
+  public slots:
+	void javaCheckerFinished();
 
-protected:
-    shared_qobject_ptr<JavaCheckerJob> m_job;
-    JavaInstallList *m_list;
-    JavaInstall *m_currentRecommended;
+  protected:
+	shared_qobject_ptr<JavaCheckerJob> m_job;
+	JavaInstallList* m_list;
+	JavaInstall* m_currentRecommended;
 };

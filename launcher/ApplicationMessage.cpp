@@ -24,29 +24,31 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-void ApplicationMessage::parse(const QByteArray & input) {
-    auto doc = QJsonDocument::fromJson(input);
-    auto root = doc.object();
+void ApplicationMessage::parse(const QByteArray& input)
+{
+	auto doc = QJsonDocument::fromJson(input);
+	auto root = doc.object();
 
-    command = root.value("command").toString();
-    args.clear();
+	command = root.value("command").toString();
+	args.clear();
 
-    auto parsedArgs = root.value("args").toObject();
-    for(auto iter = parsedArgs.begin(); iter != parsedArgs.end(); iter++) {
-        args[iter.key()] = iter.value().toString();
-    }
+	auto parsedArgs = root.value("args").toObject();
+	for (auto iter = parsedArgs.begin(); iter != parsedArgs.end(); iter++) {
+		args[iter.key()] = iter.value().toString();
+	}
 }
 
-QByteArray ApplicationMessage::serialize() {
-    QJsonObject root;
-    root.insert("command", command);
-    QJsonObject outArgs;
-    for (auto iter = args.begin(); iter != args.end(); iter++) {
-        outArgs[iter.key()] = iter.value();
-    }
-    root.insert("args", outArgs);
+QByteArray ApplicationMessage::serialize()
+{
+	QJsonObject root;
+	root.insert("command", command);
+	QJsonObject outArgs;
+	for (auto iter = args.begin(); iter != args.end(); iter++) {
+		outArgs[iter.key()] = iter.value();
+	}
+	root.insert("args", outArgs);
 
-    QJsonDocument out;
-    out.setObject(root);
-    return out.toJson(QJsonDocument::Compact);
+	QJsonDocument out;
+	out.setObject(root);
+	return out.toJson(QJsonDocument::Compact);
 }

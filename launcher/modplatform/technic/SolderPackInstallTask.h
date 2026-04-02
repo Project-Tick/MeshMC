@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,40 +46,45 @@
 
 namespace Technic
 {
-    class SolderPackInstallTask : public InstanceTask
-    {
-        Q_OBJECT
-    public:
-        explicit SolderPackInstallTask(shared_qobject_ptr<QNetworkAccessManager> network, const QUrl &sourceUrl, const QString &minecraftVersion);
+	class SolderPackInstallTask : public InstanceTask
+	{
+		Q_OBJECT
+	  public:
+		explicit SolderPackInstallTask(
+			shared_qobject_ptr<QNetworkAccessManager> network,
+			const QUrl& sourceUrl, const QString& minecraftVersion);
 
-        bool canAbort() const override { return true; }
-        bool abort() override;
+		bool canAbort() const override
+		{
+			return true;
+		}
+		bool abort() override;
 
-    protected:
-        //! Entry point for tasks.
-        virtual void executeTask() override;
+	  protected:
+		//! Entry point for tasks.
+		virtual void executeTask() override;
 
-    private slots:
-        void versionSucceeded();
-        void fileListSucceeded();
-        void downloadSucceeded();
-        void downloadFailed(QString reason);
-        void downloadProgressChanged(qint64 current, qint64 total);
-        void extractFinished();
-        void extractAborted();
+	  private slots:
+		void versionSucceeded();
+		void fileListSucceeded();
+		void downloadSucceeded();
+		void downloadFailed(QString reason);
+		void downloadProgressChanged(qint64 current, qint64 total);
+		void extractFinished();
+		void extractAborted();
 
-    private:
-        bool m_abortable = false;
+	  private:
+		bool m_abortable = false;
 
-        shared_qobject_ptr<QNetworkAccessManager> m_network;
+		shared_qobject_ptr<QNetworkAccessManager> m_network;
 
-        NetJob::Ptr m_filesNetJob;
-        QUrl m_sourceUrl;
-        QString m_minecraftVersion;
-        QByteArray m_response;
-        QTemporaryDir m_outputDir;
-        int m_modCount;
-        QFuture<bool> m_extractFuture;
-        QFutureWatcher<bool> m_extractFutureWatcher;
-    };
-}
+		NetJob::Ptr m_filesNetJob;
+		QUrl m_sourceUrl;
+		QString m_minecraftVersion;
+		QByteArray m_response;
+		QTemporaryDir m_outputDir;
+		int m_modCount;
+		QFuture<bool> m_extractFuture;
+		QFutureWatcher<bool> m_extractFutureWatcher;
+	};
+} // namespace Technic

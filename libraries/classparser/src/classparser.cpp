@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,72 +46,71 @@
 namespace classparser
 {
 
-QString GetMinecraftJarVersion(QString jarName)
-{
-    QString version;
+	QString GetMinecraftJarVersion(QString jarName)
+	{
+		QString version;
 
-    // check if minecraft.jar exists
-    QFile jar(jarName);
-    if (!jar.exists())
-        return version;
+		// check if minecraft.jar exists
+		QFile jar(jarName);
+		if (!jar.exists())
+			return version;
 
-    // open jar with libarchive
-    struct archive *a = archive_read_new();
-    archive_read_support_format_zip(a);
-    if (archive_read_open_filename(a, jarName.toUtf8().constData(), 10240) != ARCHIVE_OK) {
-        archive_read_free(a);
-        return version;
-    }
+		// open jar with libarchive
+		struct archive* a = archive_read_new();
+		archive_read_support_format_zip(a);
+		if (archive_read_open_filename(a, jarName.toUtf8().constData(),
+									   10240) != ARCHIVE_OK) {
+			archive_read_free(a);
+			return version;
+		}
 
-    // find and read Minecraft.class
-    QByteArray classData;
-    struct archive_entry *entry;
-    while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-        QString name = QString::fromUtf8(archive_entry_pathname(entry));
-        if (name == "net/minecraft/client/Minecraft.class") {
-            la_int64_t sz = archive_entry_size(entry);
-            if (sz > 0) {
-                classData.resize(sz);
-                archive_read_data(a, classData.data(), sz);
-            } else {
-                char buf[8192];
-                la_ssize_t r;
-                while ((r = archive_read_data(a, buf, sizeof(buf))) > 0)
-                    classData.append(buf, r);
-            }
-            break;
-        }
-        archive_read_data_skip(a);
-    }
-    archive_read_free(a);
+		// find and read Minecraft.class
+		QByteArray classData;
+		struct archive_entry* entry;
+		while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+			QString name = QString::fromUtf8(archive_entry_pathname(entry));
+			if (name == "net/minecraft/client/Minecraft.class") {
+				la_int64_t sz = archive_entry_size(entry);
+				if (sz > 0) {
+					classData.resize(sz);
+					archive_read_data(a, classData.data(), sz);
+				} else {
+					char buf[8192];
+					la_ssize_t r;
+					while ((r = archive_read_data(a, buf, sizeof(buf))) > 0)
+						classData.append(buf, r);
+				}
+				break;
+			}
+			archive_read_data_skip(a);
+		}
+		archive_read_free(a);
 
-    if (classData.isEmpty())
-        return version;
+		if (classData.isEmpty())
+			return version;
 
-    // parse Minecraft.class
-    try
-    {
-        char *temp = classData.data();
-        qint64 size = classData.size();
-        java::classfile MinecraftClass(temp, size);
-        java::constant_pool constants = MinecraftClass.constants;
-        for (java::constant_pool::container_type::const_iterator iter = constants.begin();
-             iter != constants.end(); iter++)
-        {
-            const java::constant &constant = *iter;
-            if (constant.type != java::constant_type_t::j_string_data)
-                continue;
-            const std::string &str = constant.str_data;
-            qDebug() << QString::fromStdString(str);
-            if (str.compare(0, 20, "Minecraft Minecraft ") == 0)
-            {
-                version = str.substr(20).data();
-                break;
-            }
-        }
-    }
-    catch (const java::classfile_exception &) { }
+		// parse Minecraft.class
+		try {
+			char* temp = classData.data();
+			qint64 size = classData.size();
+			java::classfile MinecraftClass(temp, size);
+			java::constant_pool constants = MinecraftClass.constants;
+			for (java::constant_pool::container_type::const_iterator iter =
+					 constants.begin();
+				 iter != constants.end(); iter++) {
+				const java::constant& constant = *iter;
+				if (constant.type != java::constant_type_t::j_string_data)
+					continue;
+				const std::string& str = constant.str_data;
+				qDebug() << QString::fromStdString(str);
+				if (str.compare(0, 20, "Minecraft Minecraft ") == 0) {
+					version = str.substr(20).data();
+					break;
+				}
+			}
+		} catch (const java::classfile_exception&) {
+		}
 
-    return version;
-}
-}
+		return version;
+	}
+} // namespace classparser

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,21 +44,23 @@
 #include "minecraft/launch/MinecraftServerTarget.h"
 
 // FIXME: temporary wrapper for existing task.
-class PrintInstanceInfo: public LaunchStep
+class PrintInstanceInfo : public LaunchStep
 {
-    Q_OBJECT
-public:
-    explicit PrintInstanceInfo(LaunchTask *parent, AuthSessionPtr session, MinecraftServerTargetPtr serverToJoin) :
-        LaunchStep(parent), m_session(session), m_serverToJoin(serverToJoin) {};
-    virtual ~PrintInstanceInfo(){};
+	Q_OBJECT
+  public:
+	explicit PrintInstanceInfo(LaunchTask* parent, AuthSessionPtr session,
+							   MinecraftServerTargetPtr serverToJoin)
+		: LaunchStep(parent), m_session(session),
+		  m_serverToJoin(serverToJoin) {};
+	virtual ~PrintInstanceInfo() {};
 
-    virtual void executeTask();
-    virtual bool canAbort() const
-    {
-        return false;
-    }
-private:
-    AuthSessionPtr m_session;
-    MinecraftServerTargetPtr m_serverToJoin;
+	virtual void executeTask();
+	virtual bool canAbort() const
+	{
+		return false;
+	}
+
+  private:
+	AuthSessionPtr m_session;
+	MinecraftServerTargetPtr m_serverToJoin;
 };
-

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -44,16 +44,18 @@
 
 void ReconstructAssets::executeTask()
 {
-    auto instance = m_parent->instance();
-    std::shared_ptr<MinecraftInstance> minecraftInstance = std::dynamic_pointer_cast<MinecraftInstance>(instance);
-    auto components = minecraftInstance->getPackProfile();
-    auto profile = components->getProfile();
-    auto assets = profile->getMinecraftAssets();
+	auto instance = m_parent->instance();
+	std::shared_ptr<MinecraftInstance> minecraftInstance =
+		std::dynamic_pointer_cast<MinecraftInstance>(instance);
+	auto components = minecraftInstance->getPackProfile();
+	auto profile = components->getProfile();
+	auto assets = profile->getMinecraftAssets();
 
-    if(!AssetsUtils::reconstructAssets(assets->id, minecraftInstance->resourcesDir()))
-    {
-        emit logLine("Failed to reconstruct Minecraft assets.", MessageLevel::Error);
-    }
+	if (!AssetsUtils::reconstructAssets(assets->id,
+										minecraftInstance->resourcesDir())) {
+		emit logLine("Failed to reconstruct Minecraft assets.",
+					 MessageLevel::Error);
+	}
 
-    emitSucceeded();
+	emitSucceeded();
 }

@@ -27,45 +27,45 @@
 
 namespace Ui
 {
-class AppearancePage;
+	class AppearancePage;
 }
 
 class AppearancePage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit AppearancePage(QWidget *parent = nullptr);
-    ~AppearancePage();
+  public:
+	explicit AppearancePage(QWidget* parent = nullptr);
+	~AppearancePage();
 
-    QString displayName() const override
-    {
-        return tr("Appearance");
-    }
-    QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("appearance");
-    }
-    QString id() const override
-    {
-        return "appearance-settings";
-    }
-    QString helpPage() const override
-    {
-        return "Appearance-settings";
-    }
-    bool apply() override;
+	QString displayName() const override
+	{
+		return tr("Appearance");
+	}
+	QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("appearance");
+	}
+	QString id() const override
+	{
+		return "appearance-settings";
+	}
+	QString helpPage() const override
+	{
+		return "Appearance-settings";
+	}
+	bool apply() override;
 
-private slots:
-    void applyWidgetTheme(int index);
-    void applyIconTheme(int index);
-    void applyCatTheme(int index);
+  private slots:
+	void applyWidgetTheme(int index);
+	void applyIconTheme(int index);
+	void applyCatTheme(int index);
 
-private:
-    void applySettings();
-    void loadSettings();
-    void updateIconPreview();
-    void updateCatPreview();
+  private:
+	void applySettings();
+	void loadSettings();
+	void updateIconPreview();
+	void updateCatPreview();
 
-    Ui::AppearancePage *ui;
+	Ui::AppearancePage* ui;
 };

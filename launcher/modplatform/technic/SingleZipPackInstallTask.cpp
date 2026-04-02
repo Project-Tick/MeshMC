@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,116 +46,123 @@
 
 #include "Application.h"
 
-Technic::SingleZipPackInstallTask::SingleZipPackInstallTask(const QUrl &sourceUrl, const QString &minecraftVersion)
+Technic::SingleZipPackInstallTask::SingleZipPackInstallTask(
+	const QUrl& sourceUrl, const QString& minecraftVersion)
 {
-    m_sourceUrl = sourceUrl;
-    m_minecraftVersion = minecraftVersion;
+	m_sourceUrl = sourceUrl;
+	m_minecraftVersion = minecraftVersion;
 }
 
-bool Technic::SingleZipPackInstallTask::abort() {
-    if(m_abortable)
-    {
-        return m_filesNetJob->abort();
-    }
-    return false;
+bool Technic::SingleZipPackInstallTask::abort()
+{
+	if (m_abortable) {
+		return m_filesNetJob->abort();
+	}
+	return false;
 }
 
 void Technic::SingleZipPackInstallTask::executeTask()
 {
-    setStatus(tr("Downloading modpack:\n%1").arg(m_sourceUrl.toString()));
+	setStatus(tr("Downloading modpack:\n%1").arg(m_sourceUrl.toString()));
 
-    const QString path = m_sourceUrl.host() + '/' + m_sourceUrl.path();
-    auto entry = APPLICATION->metacache()->resolveEntry("general", path);
-    entry->setStale(true);
-    m_filesNetJob = new NetJob(tr("Modpack download"), APPLICATION->network());
-    m_filesNetJob->addNetAction(Net::Download::makeCached(m_sourceUrl, entry));
-    m_archivePath = entry->getFullPath();
-    auto job = m_filesNetJob.get();
-    connect(job, &NetJob::succeeded, this, &Technic::SingleZipPackInstallTask::downloadSucceeded);
-    connect(job, &NetJob::progress, this, &Technic::SingleZipPackInstallTask::downloadProgressChanged);
-    connect(job, &NetJob::failed, this, &Technic::SingleZipPackInstallTask::downloadFailed);
-    m_filesNetJob->start();
+	const QString path = m_sourceUrl.host() + '/' + m_sourceUrl.path();
+	auto entry = APPLICATION->metacache()->resolveEntry("general", path);
+	entry->setStale(true);
+	m_filesNetJob = new NetJob(tr("Modpack download"), APPLICATION->network());
+	m_filesNetJob->addNetAction(Net::Download::makeCached(m_sourceUrl, entry));
+	m_archivePath = entry->getFullPath();
+	auto job = m_filesNetJob.get();
+	connect(job, &NetJob::succeeded, this,
+			&Technic::SingleZipPackInstallTask::downloadSucceeded);
+	connect(job, &NetJob::progress, this,
+			&Technic::SingleZipPackInstallTask::downloadProgressChanged);
+	connect(job, &NetJob::failed, this,
+			&Technic::SingleZipPackInstallTask::downloadFailed);
+	m_filesNetJob->start();
 }
 
 void Technic::SingleZipPackInstallTask::downloadSucceeded()
 {
-    m_abortable = false;
+	m_abortable = false;
 
-    setStatus(tr("Extracting modpack"));
-    QDir extractDir(FS::PathCombine(m_stagingPath, ".minecraft"));
-    qDebug() << "Attempting to create instance from" << m_archivePath;
+	setStatus(tr("Extracting modpack"));
+	QDir extractDir(FS::PathCombine(m_stagingPath, ".minecraft"));
+	qDebug() << "Attempting to create instance from" << m_archivePath;
 
-    QString archivePath = m_archivePath;
-    QString extractPath = extractDir.absolutePath();
-    m_extractFuture = QtConcurrent::run(QThreadPool::globalInstance(), [archivePath, extractPath]() {
-        return MMCZip::extractSubDir(archivePath, QString(""), extractPath);
-    });
-    connect(&m_extractFutureWatcher, &QFutureWatcher<QStringList>::finished, this, &Technic::SingleZipPackInstallTask::extractFinished);
-    connect(&m_extractFutureWatcher, &QFutureWatcher<QStringList>::canceled, this, &Technic::SingleZipPackInstallTask::extractAborted);
-    m_extractFutureWatcher.setFuture(m_extractFuture);
-    m_filesNetJob.reset();
+	QString archivePath = m_archivePath;
+	QString extractPath = extractDir.absolutePath();
+	m_extractFuture = QtConcurrent::run(
+		QThreadPool::globalInstance(), [archivePath, extractPath]() {
+			return MMCZip::extractSubDir(archivePath, QString(""), extractPath);
+		});
+	connect(&m_extractFutureWatcher, &QFutureWatcher<QStringList>::finished,
+			this, &Technic::SingleZipPackInstallTask::extractFinished);
+	connect(&m_extractFutureWatcher, &QFutureWatcher<QStringList>::canceled,
+			this, &Technic::SingleZipPackInstallTask::extractAborted);
+	m_extractFutureWatcher.setFuture(m_extractFuture);
+	m_filesNetJob.reset();
 }
 
 void Technic::SingleZipPackInstallTask::downloadFailed(QString reason)
 {
-    m_abortable = false;
-    emitFailed(reason);
-    m_filesNetJob.reset();
+	m_abortable = false;
+	emitFailed(reason);
+	m_filesNetJob.reset();
 }
 
-void Technic::SingleZipPackInstallTask::downloadProgressChanged(qint64 current, qint64 total)
+void Technic::SingleZipPackInstallTask::downloadProgressChanged(qint64 current,
+																qint64 total)
 {
-    m_abortable = true;
-    setProgress(current / 2, total);
+	m_abortable = true;
+	setProgress(current / 2, total);
 }
 
 void Technic::SingleZipPackInstallTask::extractFinished()
 {
-    if (!m_extractFuture.result())
-    {
-        emitFailed(tr("Failed to extract modpack"));
-        return;
-    }
-    QDir extractDir(m_stagingPath);
+	if (!m_extractFuture.result()) {
+		emitFailed(tr("Failed to extract modpack"));
+		return;
+	}
+	QDir extractDir(m_stagingPath);
 
-    qDebug() << "Fixing permissions for extracted pack files...";
-    QDirIterator it(extractDir, QDirIterator::Subdirectories);
-    while (it.hasNext())
-    {
-        auto filepath = it.next();
-        QFileInfo file(filepath);
-        auto permissions = QFile::permissions(filepath);
-        auto origPermissions = permissions;
-        if (file.isDir())
-        {
-            // Folder +rwx for current user
-            permissions |= QFileDevice::Permission::ReadUser | QFileDevice::Permission::WriteUser | QFileDevice::Permission::ExeUser;
-        }
-        else
-        {
-            // File +rw for current user
-            permissions |= QFileDevice::Permission::ReadUser | QFileDevice::Permission::WriteUser;
-        }
-        if (origPermissions != permissions)
-        {
-            if (!QFile::setPermissions(filepath, permissions))
-            {
-                logWarning(tr("Could not fix permissions for %1").arg(filepath));
-            }
-            else
-            {
-                qDebug() << "Fixed" << filepath;
-            }
-        }
-    }
+	qDebug() << "Fixing permissions for extracted pack files...";
+	QDirIterator it(extractDir, QDirIterator::Subdirectories);
+	while (it.hasNext()) {
+		auto filepath = it.next();
+		QFileInfo file(filepath);
+		auto permissions = QFile::permissions(filepath);
+		auto origPermissions = permissions;
+		if (file.isDir()) {
+			// Folder +rwx for current user
+			permissions |= QFileDevice::Permission::ReadUser |
+						   QFileDevice::Permission::WriteUser |
+						   QFileDevice::Permission::ExeUser;
+		} else {
+			// File +rw for current user
+			permissions |= QFileDevice::Permission::ReadUser |
+						   QFileDevice::Permission::WriteUser;
+		}
+		if (origPermissions != permissions) {
+			if (!QFile::setPermissions(filepath, permissions)) {
+				logWarning(
+					tr("Could not fix permissions for %1").arg(filepath));
+			} else {
+				qDebug() << "Fixed" << filepath;
+			}
+		}
+	}
 
-    shared_qobject_ptr<Technic::TechnicPackProcessor> packProcessor = new Technic::TechnicPackProcessor();
-    connect(packProcessor.get(), &Technic::TechnicPackProcessor::succeeded, this, &Technic::SingleZipPackInstallTask::emitSucceeded);
-    connect(packProcessor.get(), &Technic::TechnicPackProcessor::failed, this, &Technic::SingleZipPackInstallTask::emitFailed);
-    packProcessor->run(m_globalSettings, m_instName, m_instIcon, m_stagingPath, m_minecraftVersion);
+	shared_qobject_ptr<Technic::TechnicPackProcessor> packProcessor =
+		new Technic::TechnicPackProcessor();
+	connect(packProcessor.get(), &Technic::TechnicPackProcessor::succeeded,
+			this, &Technic::SingleZipPackInstallTask::emitSucceeded);
+	connect(packProcessor.get(), &Technic::TechnicPackProcessor::failed, this,
+			&Technic::SingleZipPackInstallTask::emitFailed);
+	packProcessor->run(m_globalSettings, m_instName, m_instIcon, m_stagingPath,
+					   m_minecraftVersion);
 }
 
 void Technic::SingleZipPackInstallTask::extractAborted()
 {
-    emitFailed(tr("Instance import has been aborted."));
+	emitFailed(tr("Instance import has been aborted."));
 }

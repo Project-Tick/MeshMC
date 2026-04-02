@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -45,19 +45,20 @@ class QLabel;
 
 class LabeledToolButton : public QToolButton
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    QLabel * m_label;
-    QIcon m_icon;
+	QLabel* m_label;
+	QIcon m_icon;
 
-public:
-    LabeledToolButton(QWidget * parent = 0);
+  public:
+	LabeledToolButton(QWidget* parent = 0);
 
-    QString text() const;
-    void setText(const QString & text);
-    void setIcon(QIcon icon);
-    virtual QSize sizeHint() const;
-protected:
-    void resizeEvent(QResizeEvent * event);
-    void resetIcon();
+	QString text() const;
+	void setText(const QString& text);
+	void setIcon(QIcon icon);
+	virtual QSize sizeHint() const;
+
+  protected:
+	void resizeEvent(QResizeEvent* event);
+	void resetIcon();
 };

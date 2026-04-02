@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -39,10 +39,10 @@
 #pragma once
 #include <QTreeView>
 
-class ModListView: public QTreeView
+class ModListView : public QTreeView
 {
-    Q_OBJECT
-public:
-    explicit ModListView ( QWidget* parent = 0 );
-    virtual void setModel ( QAbstractItemModel* model );
+	Q_OBJECT
+  public:
+	explicit ModListView(QWidget* parent = 0);
+	virtual void setModel(QAbstractItemModel* model);
 };

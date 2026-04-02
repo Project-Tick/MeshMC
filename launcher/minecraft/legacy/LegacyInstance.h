@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -46,120 +46,127 @@ class LegacyModList;
 class WorldList;
 class Task;
 /*
- * WHY: Legacy instances - from MultiMC 3 and 4 - are here only to provide a way to upgrade them to the current format.
+ * WHY: Legacy instances - from MultiMC 3 and 4 - are here only to provide a way
+ * to upgrade them to the current format.
  */
 class LegacyInstance : public BaseInstance
 {
-    Q_OBJECT
-public:
+	Q_OBJECT
+  public:
+	explicit LegacyInstance(SettingsObjectPtr globalSettings,
+							SettingsObjectPtr settings, const QString& rootDir);
 
-    explicit LegacyInstance(SettingsObjectPtr globalSettings, SettingsObjectPtr settings, const QString &rootDir);
+	virtual void saveNow() override {}
 
-    virtual void saveNow() override {}
+	/// Path to the instance's minecraft.jar
+	QString runnableJar() const;
 
-    /// Path to the instance's minecraft.jar
-    QString runnableJar() const;
+	//! Path to the instance's modlist file.
+	QString modListFile() const;
 
-    //! Path to the instance's modlist file.
-    QString modListFile() const;
+	////// Directories //////
+	QString libDir() const;
+	QString savesDir() const;
+	QString texturePacksDir() const;
+	QString jarModsDir() const;
+	QString coreModsDir() const;
+	QString resourceDir() const;
 
-    ////// Directories //////
-    QString libDir() const;
-    QString savesDir() const;
-    QString texturePacksDir() const;
-    QString jarModsDir() const;
-    QString coreModsDir() const;
-    QString resourceDir() const;
+	QString instanceConfigFolder() const override;
 
-    QString instanceConfigFolder() const override;
+	QString
+	gameRoot() const override; // Path to the instance's minecraft directory.
+	QString
+	modsRoot() const override; // Path to the instance's minecraft directory.
+	QString binRoot() const; // Path to the instance's minecraft bin directory.
 
-    QString gameRoot() const override; // Path to the instance's minecraft directory.
-    QString modsRoot() const override; // Path to the instance's minecraft directory.
-    QString binRoot() const; // Path to the instance's minecraft bin directory.
+	/// Get the curent base jar of this instance. By default, it's the
+	/// versions/$version/$version.jar
+	QString baseJar() const;
 
-    /// Get the curent base jar of this instance. By default, it's the
-    /// versions/$version/$version.jar
-    QString baseJar() const;
+	/// the default base jar of this instance
+	QString defaultBaseJar() const;
+	/// the default custom base jar of this instance
+	QString defaultCustomBaseJar() const;
 
-    /// the default base jar of this instance
-    QString defaultBaseJar() const;
-    /// the default custom base jar of this instance
-    QString defaultCustomBaseJar() const;
+	// the main jar that we actually want to keep when migrating the instance
+	QString mainJarToPreserve() const;
 
-    // the main jar that we actually want to keep when migrating the instance
-    QString mainJarToPreserve() const;
+	/*!
+	 * Whether or not custom base jar is used
+	 */
+	bool shouldUseCustomBaseJar() const;
 
-    /*!
-     * Whether or not custom base jar is used
-     */
-    bool shouldUseCustomBaseJar() const;
+	/*!
+	 * The value of the custom base jar
+	 */
+	QString customBaseJar() const;
 
-    /*!
-     * The value of the custom base jar
-     */
-    QString customBaseJar() const;
+	std::shared_ptr<LegacyModList> jarModList() const;
+	std::shared_ptr<WorldList> worldList() const;
 
-    std::shared_ptr<LegacyModList> jarModList() const;
-    std::shared_ptr<WorldList> worldList() const;
+	/*!
+	 * Whether or not the instance's minecraft.jar needs to be rebuilt.
+	 * If this is true, when the instance launches, its jar mods will be
+	 * re-added to a fresh minecraft.jar file.
+	 */
+	bool shouldRebuild() const;
 
-    /*!
-     * Whether or not the instance's minecraft.jar needs to be rebuilt.
-     * If this is true, when the instance launches, its jar mods will be
-     * re-added to a fresh minecraft.jar file.
-     */
-    bool shouldRebuild() const;
+	QString currentVersionId() const;
+	QString intendedVersionId() const;
 
-    QString currentVersionId() const;
-    QString intendedVersionId() const;
+	QSet<QString> traits() const override
+	{
+		return {"legacy-instance", "texturepacks"};
+	};
 
-    QSet<QString> traits() const override
-    {
-        return {"legacy-instance", "texturepacks"};
-    };
+	virtual bool shouldUpdate() const;
+	virtual Task::Ptr createUpdateTask(Net::Mode mode) override;
 
-    virtual bool shouldUpdate() const;
-    virtual Task::Ptr createUpdateTask(Net::Mode mode) override;
+	virtual QString typeName() const override;
 
-    virtual QString typeName() const override;
+	bool canLaunch() const override
+	{
+		return false;
+	}
+	bool canEdit() const override
+	{
+		return true;
+	}
+	bool canExport() const override
+	{
+		return false;
+	}
+	shared_qobject_ptr<LaunchTask>
+	createLaunchTask(AuthSessionPtr account,
+					 MinecraftServerTargetPtr serverToJoin) override
+	{
+		return nullptr;
+	}
+	IPathMatcher::Ptr getLogFileMatcher() override
+	{
+		return nullptr;
+	}
+	QString getLogFileRoot() override
+	{
+		return gameRoot();
+	}
 
-    bool canLaunch() const override
-    {
-        return false;
-    }
-    bool canEdit() const override
-    {
-        return true;
-    }
-    bool canExport() const override
-    {
-        return false;
-    }
-    shared_qobject_ptr<LaunchTask> createLaunchTask(
-            AuthSessionPtr account, MinecraftServerTargetPtr serverToJoin) override
-    {
-        return nullptr;
-    }
-    IPathMatcher::Ptr getLogFileMatcher() override
-    {
-        return nullptr;
-    }
-    QString getLogFileRoot() override
-    {
-        return gameRoot();
-    }
+	QString getStatusbarDescription() override;
+	QStringList
+	verboseDescription(AuthSessionPtr session,
+					   MinecraftServerTargetPtr serverToJoin) override;
 
-    QString getStatusbarDescription() override;
-    QStringList verboseDescription(AuthSessionPtr session, MinecraftServerTargetPtr serverToJoin) override;
+	QProcessEnvironment createEnvironment() override
+	{
+		return QProcessEnvironment();
+	}
+	QMap<QString, QString> getVariables() const override
+	{
+		return {};
+	}
 
-    QProcessEnvironment createEnvironment() override
-    {
-        return QProcessEnvironment();
-    }
-    QMap<QString, QString> getVariables() const override
-    {
-        return {};
-    }
-protected:
-    mutable std::shared_ptr<LegacyModList> jar_mod_list;
-    mutable std::shared_ptr<WorldList> m_world_list;
+  protected:
+	mutable std::shared_ptr<LegacyModList> jar_mod_list;
+	mutable std::shared_ptr<WorldList> m_world_list;
 };

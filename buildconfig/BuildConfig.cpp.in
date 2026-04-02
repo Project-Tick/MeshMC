@@ -26,98 +26,101 @@ const Config BuildConfig;
 
 Config::Config()
 {
-    // Name and copyright
-    MESHMC_NAME = "@MeshMC_Name@";
-    MESHMC_DISPLAYNAME = "@MeshMC_DisplayName@";
-    MESHMC_COPYRIGHT = "@MeshMC_Copyright@";
-    MESHMC_DOMAIN = "@MeshMC_Domain@";
-    MESHMC_CONFIGFILE = "@MeshMC_ConfigFile@";
-    MESHMC_GIT = "@MeshMC_Git@";
+	// Name and copyright
+	MESHMC_NAME = "@MeshMC_Name@";
+	MESHMC_DISPLAYNAME = "@MeshMC_DisplayName@";
+	MESHMC_COPYRIGHT = "@MeshMC_Copyright@";
+	MESHMC_DOMAIN = "@MeshMC_Domain@";
+	MESHMC_CONFIGFILE = "@MeshMC_ConfigFile@";
+	MESHMC_GIT = "@MeshMC_Git@";
 
-    USER_AGENT = "@MeshMC_UserAgent@";
-    USER_AGENT_UNCACHED = USER_AGENT + " (Uncached)";
+	USER_AGENT = "@MeshMC_UserAgent@";
+	USER_AGENT_UNCACHED = USER_AGENT + " (Uncached)";
 
-    // Version information
-    VERSION_MAJOR = @MeshMC_VERSION_MAJOR@;
-    VERSION_MINOR = @MeshMC_VERSION_MINOR@;
-    VERSION_HOTFIX = @MeshMC_VERSION_HOTFIX@;
-    VERSION_BUILD = @MeshMC_VERSION_BUILD@;
+	// Version information
+	VERSION_MAJOR = @MeshMC_VERSION_MAJOR @;
+	VERSION_MINOR = @MeshMC_VERSION_MINOR @;
+	VERSION_HOTFIX = @MeshMC_VERSION_HOTFIX @;
+	VERSION_BUILD = @MeshMC_VERSION_BUILD @;
 
-    BUILD_PLATFORM = "@MeshMC_BUILD_PLATFORM@";
-    BUILD_ARTIFACT = "@MeshMC_BUILD_ARTIFACT@";
-    BUILD_DATE = "@MeshMC_BUILD_TIMESTAMP@";
-    COMPILER_NAME = "@MeshMC_COMPILER_NAME@";
-    COMPILER_VERSION = "@MeshMC_COMPILER_VERSION@";
-    COMPILER_TARGET_SYSTEM = "@MeshMC_COMPILER_TARGET_SYSTEM@";
-    COMPILER_TARGET_SYSTEM_VERSION = "@MeshMC_COMPILER_TARGET_SYSTEM_VERSION@";
-    COMPILER_TARGET_SYSTEM_PROCESSOR = "@MeshMC_COMPILER_TARGET_PROCESSOR@";
-    UPDATER_BASE = "@MeshMC_UPDATER_BASE@";
-    UPDATER_FEED_URL = "@MeshMC_UPDATER_FEED_URL@";
-    UPDATER_GITHUB_API_URL = "@MeshMC_UPDATER_GITHUB_API_URL@";
-    ANALYTICS_ID = "@MeshMC_ANALYTICS_ID@";
-    NOTIFICATION_URL = "@MeshMC_NOTIFICATION_URL@";
-    FULL_VERSION_STR = "@MeshMC_VERSION_MAJOR@.@MeshMC_VERSION_MINOR@.@MeshMC_VERSION_BUILD@";
+	BUILD_PLATFORM = "@MeshMC_BUILD_PLATFORM@";
+	BUILD_ARTIFACT = "@MeshMC_BUILD_ARTIFACT@";
+	BUILD_DATE = "@MeshMC_BUILD_TIMESTAMP@";
+	COMPILER_NAME = "@MeshMC_COMPILER_NAME@";
+	COMPILER_VERSION = "@MeshMC_COMPILER_VERSION@";
+	COMPILER_TARGET_SYSTEM = "@MeshMC_COMPILER_TARGET_SYSTEM@";
+	COMPILER_TARGET_SYSTEM_VERSION = "@MeshMC_COMPILER_TARGET_SYSTEM_VERSION@";
+	COMPILER_TARGET_SYSTEM_PROCESSOR = "@MeshMC_COMPILER_TARGET_PROCESSOR@";
+	UPDATER_BASE = "@MeshMC_UPDATER_BASE@";
+	UPDATER_FEED_URL = "@MeshMC_UPDATER_FEED_URL@";
+	UPDATER_GITHUB_API_URL = "@MeshMC_UPDATER_GITHUB_API_URL@";
+	ANALYTICS_ID = "@MeshMC_ANALYTICS_ID@";
+	NOTIFICATION_URL = "@MeshMC_NOTIFICATION_URL@";
+	FULL_VERSION_STR =
+		"@MeshMC_VERSION_MAJOR@.@MeshMC_VERSION_MINOR@.@MeshMC_VERSION_BUILD@";
 
-    GIT_COMMIT = "@MeshMC_GIT_COMMIT@";
-    GIT_REFSPEC = "@MeshMC_GIT_REFSPEC@";
-    GIT_TAG = "@MeshMC_GIT_TAG@";
+	GIT_COMMIT = "@MeshMC_GIT_COMMIT@";
+	GIT_REFSPEC = "@MeshMC_GIT_REFSPEC@";
+	GIT_TAG = "@MeshMC_GIT_TAG@";
 
-    // New updater: enabled when both feed and GitHub API URLs are configured and
-    // a build artifact name is provided for platform-specific asset matching.
-    if (!UPDATER_FEED_URL.isEmpty() && !UPDATER_GITHUB_API_URL.isEmpty() && !BUILD_ARTIFACT.isEmpty())
-    {
-        UPDATER_ENABLED = true;
-    }
+	// New updater: enabled when both feed and GitHub API URLs are configured
+	// and a build artifact name is provided for platform-specific asset
+	// matching.
+	if (!UPDATER_FEED_URL.isEmpty() && !UPDATER_GITHUB_API_URL.isEmpty() &&
+		!BUILD_ARTIFACT.isEmpty()) {
+		UPDATER_ENABLED = true;
+	}
 
-    // VERSION_CHANNEL is still populated from the git branch for informational use.
-    if (GIT_REFSPEC.startsWith("refs/heads/"))
-    {
-        VERSION_CHANNEL = GIT_REFSPEC;
-        VERSION_CHANNEL.remove("refs/heads/");
-    }
-    else
-    {
-        VERSION_CHANNEL = QObject::tr("custom");
-    }
+	// VERSION_CHANNEL is still populated from the git branch for informational
+	// use.
+	if (GIT_REFSPEC.startsWith("refs/heads/")) {
+		VERSION_CHANNEL = GIT_REFSPEC;
+		VERSION_CHANNEL.remove("refs/heads/");
+	} else {
+		VERSION_CHANNEL = QObject::tr("custom");
+	}
 
-    VERSION_STR = "@MeshMC_VERSION_STRING@";
-    MSAClientID = "@MeshMC_MICROSOFT_CLIENT_ID@";
-    NEWS_RSS_URL = "@MeshMC_NEWS_RSS_URL@";
-    PASTE_EE_KEY = "@MeshMC_PASTE_EE_API_KEY@";
-    IMGUR_CLIENT_ID = "@MeshMC_IMGUR_CLIENT_ID@";
-    META_URL = "@MeshMC_META_URL@";
-    CURSEFORGE_API_KEY = "@MeshMC_CURSEFORGE_API_KEY@";
+	VERSION_STR = "@MeshMC_VERSION_STRING@";
+	MSAClientID = "@MeshMC_MICROSOFT_CLIENT_ID@";
+	NEWS_RSS_URL = "@MeshMC_NEWS_RSS_URL@";
+	PASTE_EE_KEY = "@MeshMC_PASTE_EE_API_KEY@";
+	IMGUR_CLIENT_ID = "@MeshMC_IMGUR_CLIENT_ID@";
+	META_URL = "@MeshMC_META_URL@";
+	CURSEFORGE_API_KEY = "@MeshMC_CURSEFORGE_API_KEY@";
 
-    BUG_TRACKER_URL = "@MeshMC_BUG_TRACKER_URL@";
-    DISCORD_URL = "@MeshMC_DISCORD_URL@";
-    SUBREDDIT_URL = "@MeshMC_SUBREDDIT_URL@";
+	BUG_TRACKER_URL = "@MeshMC_BUG_TRACKER_URL@";
+	DISCORD_URL = "@MeshMC_DISCORD_URL@";
+	SUBREDDIT_URL = "@MeshMC_SUBREDDIT_URL@";
 }
 
 QString Config::printableVersionString() const
 {
-    QString vstr = QString("%1.%2.%3").arg(QString::number(VERSION_MAJOR), QString::number(VERSION_MINOR), QString::number(VERSION_HOTFIX));
+	QString vstr =
+		QString("%1.%2.%3")
+			.arg(QString::number(VERSION_MAJOR), QString::number(VERSION_MINOR),
+				 QString::number(VERSION_HOTFIX));
 
-    if(!GIT_TAG.isEmpty() && !GIT_TAG.endsWith("-NOTFOUND"))
-    {
-        return vstr;
-    }
+	if (!GIT_TAG.isEmpty() && !GIT_TAG.endsWith("-NOTFOUND")) {
+		return vstr;
+	}
 
-    if(!GIT_COMMIT.isEmpty() && !GIT_COMMIT.endsWith("-NOTFOUND"))
-    {
-        vstr += "-r" + GIT_COMMIT.left(6);
-    }
+	if (!GIT_COMMIT.isEmpty() && !GIT_COMMIT.endsWith("-NOTFOUND")) {
+		vstr += "-r" + GIT_COMMIT.left(6);
+	}
 
-    return vstr;
+	return vstr;
 }
 
 QString Config::compilerID() const
 {
-    if (COMPILER_VERSION.isEmpty())
-        return COMPILER_NAME;
-    return QStringLiteral("%1 - %2").arg(COMPILER_NAME).arg(COMPILER_VERSION);
+	if (COMPILER_VERSION.isEmpty())
+		return COMPILER_NAME;
+	return QStringLiteral("%1 - %2").arg(COMPILER_NAME).arg(COMPILER_VERSION);
 }
 
 QString Config::systemID() const
 {
-    return QStringLiteral("%1 %2 %3").arg(COMPILER_TARGET_SYSTEM, COMPILER_TARGET_SYSTEM_VERSION, COMPILER_TARGET_SYSTEM_PROCESSOR);
+	return QStringLiteral("%1 %2 %3")
+		.arg(COMPILER_TARGET_SYSTEM, COMPILER_TARGET_SYSTEM_VERSION,
+			 COMPILER_TARGET_SYSTEM_PROCESSOR);
 }

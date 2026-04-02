@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -56,57 +56,57 @@ class QGridLayout;
 
 class PageContainer : public QWidget, public BasePageContainer
 {
-    Q_OBJECT
-public:
-    explicit PageContainer(BasePageProvider *pageProvider, QString defaultId = QString(),
-                        QWidget *parent = 0);
-    virtual ~PageContainer() {}
+	Q_OBJECT
+  public:
+	explicit PageContainer(BasePageProvider* pageProvider,
+						   QString defaultId = QString(), QWidget* parent = 0);
+	virtual ~PageContainer() {}
 
-    void addButtons(QWidget * buttons);
-    void addButtons(QLayout * buttons);
-    /*
-     * Save any unsaved state and prepare to be closed.
-     * @return true if everything can be saved, false if there is something that requires attention
-     */
-    bool prepareToClose();
-    bool saveAll();
+	void addButtons(QWidget* buttons);
+	void addButtons(QLayout* buttons);
+	/*
+	 * Save any unsaved state and prepare to be closed.
+	 * @return true if everything can be saved, false if there is something that
+	 * requires attention
+	 */
+	bool prepareToClose();
+	bool saveAll();
 
-    /* request close - used by individual pages */
-    bool requestClose() override
-    {
-        if(m_container)
-        {
-            return m_container->requestClose();
-        }
-        return false;
-    }
+	/* request close - used by individual pages */
+	bool requestClose() override
+	{
+		if (m_container) {
+			return m_container->requestClose();
+		}
+		return false;
+	}
 
-    virtual bool selectPage(QString pageId) override;
+	virtual bool selectPage(QString pageId) override;
 
-    void refreshContainer() override;
-    virtual void setParentContainer(BasePageContainer * container)
-    {
-        m_container = container;
-    };
+	void refreshContainer() override;
+	virtual void setParentContainer(BasePageContainer* container)
+	{
+		m_container = container;
+	};
 
-private:
-    void createUI();
+  private:
+	void createUI();
 
-public slots:
-    void help();
+  public slots:
+	void help();
 
-private slots:
-    void currentChanged(const QModelIndex &current);
-    void showPage(int row);
+  private slots:
+	void currentChanged(const QModelIndex& current);
+	void showPage(int row);
 
-private:
-    BasePageContainer * m_container = nullptr;
-    BasePage * m_currentPage = 0;
-    QSortFilterProxyModel *m_proxyModel;
-    PageModel *m_model;
-    QStackedLayout *m_pageStack;
-    QListView *m_pageList;
-    QLabel *m_header;
-    IconLabel *m_iconHeader;
-    QGridLayout *m_layout;
+  private:
+	BasePageContainer* m_container = nullptr;
+	BasePage* m_currentPage = 0;
+	QSortFilterProxyModel* m_proxyModel;
+	PageModel* m_model;
+	QStackedLayout* m_pageStack;
+	QListView* m_pageList;
+	QLabel* m_header;
+	IconLabel* m_iconHeader;
+	QGridLayout* m_layout;
 };

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -43,35 +43,38 @@
 
 namespace Ui
 {
-class UpdateDialog;
+	class UpdateDialog;
 }
 
-enum UpdateAction
-{
-    UPDATE_LATER = QDialog::Rejected,
-    UPDATE_NOW = QDialog::Accepted,
+enum UpdateAction {
+	UPDATE_LATER = QDialog::Rejected,
+	UPDATE_NOW = QDialog::Accepted,
 };
 
 class UpdateDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    /*!
-     * Constructs the update dialog.
-     * \a hasUpdate    - true when an update is available (shows "Update now" button).
-     * \a status       - update information (version, release notes); ignored when hasUpdate is false.
-     */
-    explicit UpdateDialog(bool hasUpdate, const UpdateAvailableStatus &status = {}, QWidget *parent = nullptr);
-    ~UpdateDialog();
+  public:
+	/*!
+	 * Constructs the update dialog.
+	 * \a hasUpdate    - true when an update is available (shows "Update now"
+	 * button).
+	 * \a status       - update information (version, release notes); ignored
+	 * when hasUpdate is false.
+	 */
+	explicit UpdateDialog(bool hasUpdate,
+						  const UpdateAvailableStatus& status = {},
+						  QWidget* parent = nullptr);
+	~UpdateDialog();
 
-public slots:
-    void on_btnUpdateNow_clicked();
-    void on_btnUpdateLater_clicked();
+  public slots:
+	void on_btnUpdateNow_clicked();
+	void on_btnUpdateLater_clicked();
 
-protected:
-    void closeEvent(QCloseEvent * ) override;
+  protected:
+	void closeEvent(QCloseEvent*) override;
 
-private:
-    Ui::UpdateDialog *ui;
+  private:
+	Ui::UpdateDialog* ui;
 };

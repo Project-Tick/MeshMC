@@ -30,57 +30,58 @@
 
 namespace Ui
 {
-class ModrinthPage;
+	class ModrinthPage;
 }
 
 class NewInstanceDialog;
 
-namespace Modrinth {
-    class ListModel;
+namespace Modrinth
+{
+	class ListModel;
 }
 
 class ModrinthPage : public QWidget, public BasePage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ModrinthPage(NewInstanceDialog *dialog, QWidget *parent = 0);
-    virtual ~ModrinthPage() override;
-    virtual QString displayName() const override
-    {
-        return tr("Modrinth");
-    }
-    virtual QIcon icon() const override
-    {
-        return APPLICATION->getThemedIcon("modrinth");
-    }
-    virtual QString id() const override
-    {
-        return "modrinth";
-    }
-    virtual QString helpPage() const override
-    {
-        return "Modrinth-platform";
-    }
-    virtual bool shouldDisplay() const override;
+  public:
+	explicit ModrinthPage(NewInstanceDialog* dialog, QWidget* parent = 0);
+	virtual ~ModrinthPage() override;
+	virtual QString displayName() const override
+	{
+		return tr("Modrinth");
+	}
+	virtual QIcon icon() const override
+	{
+		return APPLICATION->getThemedIcon("modrinth");
+	}
+	virtual QString id() const override
+	{
+		return "modrinth";
+	}
+	virtual QString helpPage() const override
+	{
+		return "Modrinth-platform";
+	}
+	virtual bool shouldDisplay() const override;
 
-    void openedImpl() override;
+	void openedImpl() override;
 
-    bool eventFilter(QObject *watched, QEvent *event) override;
+	bool eventFilter(QObject* watched, QEvent* event) override;
 
-private:
-    void suggestCurrent();
+  private:
+	void suggestCurrent();
 
-private slots:
-    void triggerSearch();
-    void onSelectionChanged(QModelIndex first, QModelIndex second);
-    void onVersionSelectionChanged(QString data);
+  private slots:
+	void triggerSearch();
+	void onSelectionChanged(QModelIndex first, QModelIndex second);
+	void onVersionSelectionChanged(QString data);
 
-private:
-    Ui::ModrinthPage *ui = nullptr;
-    NewInstanceDialog *dialog = nullptr;
-    Modrinth::ListModel *listModel = nullptr;
-    Modrinth::IndexedPack current;
+  private:
+	Ui::ModrinthPage* ui = nullptr;
+	NewInstanceDialog* dialog = nullptr;
+	Modrinth::ListModel* listModel = nullptr;
+	Modrinth::IndexedPack current;
 
-    QString selectedVersion;
+	QString selectedVersion;
 };

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -43,16 +43,20 @@
 
 namespace Technic
 {
-    // not exporting it, only used in SingleZipPackInstallTask, InstanceImportTask and SolderPackInstallTask
-    class TechnicPackProcessor : public QObject
-    {
-        Q_OBJECT
+	// not exporting it, only used in SingleZipPackInstallTask,
+	// InstanceImportTask and SolderPackInstallTask
+	class TechnicPackProcessor : public QObject
+	{
+		Q_OBJECT
 
-    signals:
-        void succeeded();
-        void failed(QString reason);
+	  signals:
+		void succeeded();
+		void failed(QString reason);
 
-    public:
-        void run(SettingsObjectPtr globalSettings, const QString &instName, const QString &instIcon, const QString &stagingPath, const QString &minecraftVersion=QString(), const bool isSolder = false);
-    };
-}
+	  public:
+		void run(SettingsObjectPtr globalSettings, const QString& instName,
+				 const QString& instIcon, const QString& stagingPath,
+				 const QString& minecraftVersion = QString(),
+				 const bool isSolder = false);
+	};
+} // namespace Technic

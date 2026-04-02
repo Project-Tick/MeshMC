@@ -26,9 +26,9 @@
 #include <QByteArray>
 
 struct ApplicationMessage {
-    QString command;
-    QMap<QString, QString> args;
+	QString command;
+	QMap<QString, QString> args;
 
-    QByteArray serialize();
-    void parse(const QByteArray & input);
+	QByteArray serialize();
+	void parse(const QByteArray& input);
 };

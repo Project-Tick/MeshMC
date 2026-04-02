@@ -23,16 +23,14 @@
 
 class FocusLineEdit : public QLineEdit
 {
-    Q_OBJECT
-public:
-    FocusLineEdit(QWidget *parent);
-    virtual ~FocusLineEdit()
-    {
-    }
+	Q_OBJECT
+  public:
+	FocusLineEdit(QWidget* parent);
+	virtual ~FocusLineEdit() {}
 
-protected:
-    void focusInEvent(QFocusEvent *e);
-    void mousePressEvent(QMouseEvent *me);
+  protected:
+	void focusInEvent(QFocusEvent* e);
+	void mousePressEvent(QMouseEvent* me);
 
-    bool _selectOnMousePress;
+	bool _selectOnMousePress;
 };

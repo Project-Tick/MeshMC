@@ -25,25 +25,25 @@
 #include "Application.h"
 #include "minecraft/auth/AccountList.h"
 
-ClaimAccount::ClaimAccount(LaunchTask* parent, AuthSessionPtr session): LaunchStep(parent)
+ClaimAccount::ClaimAccount(LaunchTask* parent, AuthSessionPtr session)
+	: LaunchStep(parent)
 {
-    if(session->status == AuthSession::Status::PlayableOnline && !session->demo)
-    {
-        auto accounts = APPLICATION->accounts();
-        m_account = accounts->getAccountByProfileName(session->player_name);
-    }
+	if (session->status == AuthSession::Status::PlayableOnline &&
+		!session->demo) {
+		auto accounts = APPLICATION->accounts();
+		m_account = accounts->getAccountByProfileName(session->player_name);
+	}
 }
 
 void ClaimAccount::executeTask()
 {
-    if(m_account)
-    {
-        lock.reset(new UseLock(m_account));
-        emitSucceeded();
-    }
+	if (m_account) {
+		lock.reset(new UseLock(m_account));
+		emitSucceeded();
+	}
 }
 
 void ClaimAccount::finalize()
 {
-    lock.reset();
+	lock.reset();
 }

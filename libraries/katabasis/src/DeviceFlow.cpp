@@ -42,431 +42,498 @@
 
 #include "JsonResponse.h"
 
-namespace {
-// ref: https://tools.ietf.org/html/rfc8628#section-3.2
-// Exception: Google sign-in uses "verification_url" instead of "*_uri" - we'll accept both.
-bool hasMandatoryDeviceAuthParams(const QVariantMap& params)
+namespace
 {
-    if (!params.contains(Katabasis::OAUTH2_DEVICE_CODE))
-        return false;
+	// ref: https://tools.ietf.org/html/rfc8628#section-3.2
+	// Exception: Google sign-in uses "verification_url" instead of "*_uri" -
+	// we'll accept both.
+	bool hasMandatoryDeviceAuthParams(const QVariantMap& params)
+	{
+		if (!params.contains(Katabasis::OAUTH2_DEVICE_CODE))
+			return false;
 
-    if (!params.contains(Katabasis::OAUTH2_USER_CODE))
-        return false;
+		if (!params.contains(Katabasis::OAUTH2_USER_CODE))
+			return false;
 
-    if (!(params.contains(Katabasis::OAUTH2_VERIFICATION_URI) || params.contains(Katabasis::OAUTH2_VERIFICATION_URL)))
-        return false;
+		if (!(params.contains(Katabasis::OAUTH2_VERIFICATION_URI) ||
+			  params.contains(Katabasis::OAUTH2_VERIFICATION_URL)))
+			return false;
 
-    if (!params.contains(Katabasis::OAUTH2_EXPIRES_IN))
-        return false;
+		if (!params.contains(Katabasis::OAUTH2_EXPIRES_IN))
+			return false;
 
-    return true;
-}
+		return true;
+	}
 
-QByteArray createQueryParameters(const QList<Katabasis::RequestParameter> &parameters) {
-    QByteArray ret;
-    bool first = true;
-    for( auto & h: parameters) {
-        if (first) {
-            first = false;
-        } else {
-            ret.append("&");
-        }
-        ret.append(QUrl::toPercentEncoding(h.name) + "=" + QUrl::toPercentEncoding(h.value));
-    }
-    return ret;
-}
-}
+	QByteArray
+	createQueryParameters(const QList<Katabasis::RequestParameter>& parameters)
+	{
+		QByteArray ret;
+		bool first = true;
+		for (auto& h : parameters) {
+			if (first) {
+				first = false;
+			} else {
+				ret.append("&");
+			}
+			ret.append(QUrl::toPercentEncoding(h.name) + "=" +
+					   QUrl::toPercentEncoding(h.value));
+		}
+		return ret;
+	}
+} // namespace
 
-namespace Katabasis {
-
-DeviceFlow::DeviceFlow(Options & opts, Token & token, QObject *parent, QNetworkAccessManager *manager) : QObject(parent), token_(token) {
-    manager_ = manager ? manager : new QNetworkAccessManager(this);
-    qRegisterMetaType<QNetworkReply::NetworkError>("QNetworkReply::NetworkError");
-    options_ = opts;
-}
-
-bool DeviceFlow::linked() {
-    return token_.validity != Validity::None;
-}
-void DeviceFlow::setLinked(bool v) {
-    qDebug() << "DeviceFlow::setLinked:" << (v? "true": "false");
-    token_.validity = v ? Validity::Certain : Validity::None;
-}
-
-void DeviceFlow::updateActivity(Activity activity)
+namespace Katabasis
 {
-    if(activity_ == activity) {
-        return;
-    }
 
-    activity_ = activity;
-    switch(activity) {
-        case Katabasis::Activity::Idle:
-        case Katabasis::Activity::LoggingIn:
-        case Katabasis::Activity::LoggingOut:
-        case Katabasis::Activity::Refreshing:
-            // non-terminal states...
-            break;
-        case Katabasis::Activity::FailedSoft:
-            // terminal state, tokens did not change
-            break;
-        case Katabasis::Activity::FailedHard:
-        case Katabasis::Activity::FailedGone:
-            // terminal state, tokens are invalid
-            token_ = Token();
-            break;
-        case Katabasis::Activity::Succeeded:
-            setLinked(true);
-            break;
-    }
-    emit activityChanged(activity_);
-}
+	DeviceFlow::DeviceFlow(Options& opts, Token& token, QObject* parent,
+						   QNetworkAccessManager* manager)
+		: QObject(parent), token_(token)
+	{
+		manager_ = manager ? manager : new QNetworkAccessManager(this);
+		qRegisterMetaType<QNetworkReply::NetworkError>(
+			"QNetworkReply::NetworkError");
+		options_ = opts;
+	}
 
-QString DeviceFlow::token() {
-    return token_.token;
-}
-void DeviceFlow::setToken(const QString &v) {
-    token_.token = v;
-}
+	bool DeviceFlow::linked()
+	{
+		return token_.validity != Validity::None;
+	}
+	void DeviceFlow::setLinked(bool v)
+	{
+		qDebug() << "DeviceFlow::setLinked:" << (v ? "true" : "false");
+		token_.validity = v ? Validity::Certain : Validity::None;
+	}
 
-QVariantMap DeviceFlow::extraTokens() {
-    return token_.extra;
-}
+	void DeviceFlow::updateActivity(Activity activity)
+	{
+		if (activity_ == activity) {
+			return;
+		}
 
-void DeviceFlow::setExtraTokens(QVariantMap extraTokens) {
-    token_.extra = extraTokens;
-}
+		activity_ = activity;
+		switch (activity) {
+			case Katabasis::Activity::Idle:
+			case Katabasis::Activity::LoggingIn:
+			case Katabasis::Activity::LoggingOut:
+			case Katabasis::Activity::Refreshing:
+				// non-terminal states...
+				break;
+			case Katabasis::Activity::FailedSoft:
+				// terminal state, tokens did not change
+				break;
+			case Katabasis::Activity::FailedHard:
+			case Katabasis::Activity::FailedGone:
+				// terminal state, tokens are invalid
+				token_ = Token();
+				break;
+			case Katabasis::Activity::Succeeded:
+				setLinked(true);
+				break;
+		}
+		emit activityChanged(activity_);
+	}
 
-void DeviceFlow::setPollServer(PollServer *server)
-{
-    if (pollServer_)
-        pollServer_->deleteLater();
+	QString DeviceFlow::token()
+	{
+		return token_.token;
+	}
+	void DeviceFlow::setToken(const QString& v)
+	{
+		token_.token = v;
+	}
 
-    pollServer_ = server;
-}
+	QVariantMap DeviceFlow::extraTokens()
+	{
+		return token_.extra;
+	}
 
-PollServer *DeviceFlow::pollServer() const
-{
-    return pollServer_;
-}
+	void DeviceFlow::setExtraTokens(QVariantMap extraTokens)
+	{
+		token_.extra = extraTokens;
+	}
 
-QVariantMap DeviceFlow::extraRequestParams()
-{
-    return extraReqParams_;
-}
+	void DeviceFlow::setPollServer(PollServer* server)
+	{
+		if (pollServer_)
+			pollServer_->deleteLater();
 
-void DeviceFlow::setExtraRequestParams(const QVariantMap &value)
-{
-    extraReqParams_ = value;
-}
+		pollServer_ = server;
+	}
 
-QString DeviceFlow::grantType()
-{
-    if (!grantType_.isEmpty())
-        return grantType_;
+	PollServer* DeviceFlow::pollServer() const
+	{
+		return pollServer_;
+	}
 
-    return OAUTH2_GRANT_TYPE_DEVICE;
-}
+	QVariantMap DeviceFlow::extraRequestParams()
+	{
+		return extraReqParams_;
+	}
 
-void DeviceFlow::setGrantType(const QString &value)
-{
-    grantType_ = value;
-}
+	void DeviceFlow::setExtraRequestParams(const QVariantMap& value)
+	{
+		extraReqParams_ = value;
+	}
 
-// First get the URL and token to display to the user
-void DeviceFlow::login() {
-    qDebug() << "DeviceFlow::link";
+	QString DeviceFlow::grantType()
+	{
+		if (!grantType_.isEmpty())
+			return grantType_;
 
-    updateActivity(Activity::LoggingIn);
-    setLinked(false);
-    setToken("");
-    setExtraTokens(QVariantMap());
-    setRefreshToken(QString());
-    setExpires(QDateTime());
+		return OAUTH2_GRANT_TYPE_DEVICE;
+	}
 
-    QList<RequestParameter> parameters;
-    parameters.append(RequestParameter(OAUTH2_CLIENT_ID, options_.clientIdentifier.toUtf8()));
-    parameters.append(RequestParameter(OAUTH2_SCOPE, options_.scope.toUtf8()));
-    QByteArray payload = createQueryParameters(parameters);
+	void DeviceFlow::setGrantType(const QString& value)
+	{
+		grantType_ = value;
+	}
 
-    QUrl url(options_.authorizationUrl);
-    QNetworkRequest deviceRequest(url);
-    deviceRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    QNetworkReply *tokenReply = manager_->post(deviceRequest, payload);
+	// First get the URL and token to display to the user
+	void DeviceFlow::login()
+	{
+		qDebug() << "DeviceFlow::link";
 
-    connect(tokenReply, &QNetworkReply::finished, this, &DeviceFlow::onDeviceAuthReplyFinished, Qt::QueuedConnection);
-}
+		updateActivity(Activity::LoggingIn);
+		setLinked(false);
+		setToken("");
+		setExtraTokens(QVariantMap());
+		setRefreshToken(QString());
+		setExpires(QDateTime());
 
-// Then, once we get them, present them to the user
-void DeviceFlow::onDeviceAuthReplyFinished()
-{
-    qDebug() << "DeviceFlow::onDeviceAuthReplyFinished";
-    QNetworkReply *tokenReply = qobject_cast<QNetworkReply *>(sender());
-    if (!tokenReply)
-    {
-      qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: reply is null";
-      return;
-    }
-    if (tokenReply->error() == QNetworkReply::NoError) {
-        QByteArray replyData = tokenReply->readAll();
+		QList<RequestParameter> parameters;
+		parameters.append(RequestParameter(OAUTH2_CLIENT_ID,
+										   options_.clientIdentifier.toUtf8()));
+		parameters.append(
+			RequestParameter(OAUTH2_SCOPE, options_.scope.toUtf8()));
+		QByteArray payload = createQueryParameters(parameters);
 
-        // Dump replyData
-        // SENSITIVE DATA in RelWithDebInfo or Debug builds
-        //qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: replyData\n";
-        //qDebug() << QString( replyData );
+		QUrl url(options_.authorizationUrl);
+		QNetworkRequest deviceRequest(url);
+		deviceRequest.setHeader(QNetworkRequest::ContentTypeHeader,
+								"application/x-www-form-urlencoded");
+		QNetworkReply* tokenReply = manager_->post(deviceRequest, payload);
 
-        QVariantMap params = parseJsonResponse(replyData);
+		connect(tokenReply, &QNetworkReply::finished, this,
+				&DeviceFlow::onDeviceAuthReplyFinished, Qt::QueuedConnection);
+	}
 
-        // Dump tokens
-        qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: Tokens returned:\n";
-        foreach (QString key, params.keys()) {
-            // SENSITIVE DATA in RelWithDebInfo or Debug builds, so it is truncated first
-            qDebug() << key << ": "<< params.value( key ).toString();
-        }
+	// Then, once we get them, present them to the user
+	void DeviceFlow::onDeviceAuthReplyFinished()
+	{
+		qDebug() << "DeviceFlow::onDeviceAuthReplyFinished";
+		QNetworkReply* tokenReply = qobject_cast<QNetworkReply*>(sender());
+		if (!tokenReply) {
+			qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: reply is null";
+			return;
+		}
+		if (tokenReply->error() == QNetworkReply::NoError) {
+			QByteArray replyData = tokenReply->readAll();
 
-        // Check for mandatory parameters
-        if (hasMandatoryDeviceAuthParams(params)) {
-            qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: Device auth request response";
+			// Dump replyData
+			// SENSITIVE DATA in RelWithDebInfo or Debug builds
+			// qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: replyData\n";
+			// qDebug() << QString( replyData );
 
-            const QString userCode = params.take(OAUTH2_USER_CODE).toString();
-            QUrl uri = params.take(OAUTH2_VERIFICATION_URI).toUrl();
-            if (uri.isEmpty())
-                uri = params.take(OAUTH2_VERIFICATION_URL).toUrl();
+			QVariantMap params = parseJsonResponse(replyData);
 
-            if (params.contains(OAUTH2_VERIFICATION_URI_COMPLETE))
-                emit openBrowser(params.take(OAUTH2_VERIFICATION_URI_COMPLETE).toUrl());
+			// Dump tokens
+			qDebug()
+				<< "DeviceFlow::onDeviceAuthReplyFinished: Tokens returned:\n";
+			foreach (QString key, params.keys()) {
+				// SENSITIVE DATA in RelWithDebInfo or Debug builds, so it is
+				// truncated first
+				qDebug() << key << ": " << params.value(key).toString();
+			}
 
-            bool ok = false;
-            int expiresIn = params[OAUTH2_EXPIRES_IN].toInt(&ok);
-            if (!ok) {
-                qWarning() << "DeviceFlow::startPollServer: No expired_in parameter";
-                updateActivity(Activity::FailedHard);
-                return;
-            }
+			// Check for mandatory parameters
+			if (hasMandatoryDeviceAuthParams(params)) {
+				qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: Device "
+							"auth request response";
 
-            emit showVerificationUriAndCode(uri, userCode, expiresIn);
+				const QString userCode =
+					params.take(OAUTH2_USER_CODE).toString();
+				QUrl uri = params.take(OAUTH2_VERIFICATION_URI).toUrl();
+				if (uri.isEmpty())
+					uri = params.take(OAUTH2_VERIFICATION_URL).toUrl();
 
-            startPollServer(params, expiresIn);
-        } else {
-            qWarning() << "DeviceFlow::onDeviceAuthReplyFinished: Mandatory parameters missing from response";
-            updateActivity(Activity::FailedHard);
-        }
-    }
-    tokenReply->deleteLater();
-}
+				if (params.contains(OAUTH2_VERIFICATION_URI_COMPLETE))
+					emit openBrowser(
+						params.take(OAUTH2_VERIFICATION_URI_COMPLETE).toUrl());
 
-// Spin up polling for the user completing the login flow out of band
-void DeviceFlow::startPollServer(const QVariantMap &params, int expiresIn)
-{
-    qDebug() << "DeviceFlow::startPollServer: device_ and user_code expires in" << expiresIn << "seconds";
+				bool ok = false;
+				int expiresIn = params[OAUTH2_EXPIRES_IN].toInt(&ok);
+				if (!ok) {
+					qWarning() << "DeviceFlow::startPollServer: No expired_in "
+								  "parameter";
+					updateActivity(Activity::FailedHard);
+					return;
+				}
 
-    QUrl url(options_.accessTokenUrl);
-    QNetworkRequest authRequest(url);
-    authRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+				emit showVerificationUriAndCode(uri, userCode, expiresIn);
 
-    const QString deviceCode = params[OAUTH2_DEVICE_CODE].toString();
-    const QString grantType = grantType_.isEmpty() ? OAUTH2_GRANT_TYPE_DEVICE : grantType_;
+				startPollServer(params, expiresIn);
+			} else {
+				qWarning() << "DeviceFlow::onDeviceAuthReplyFinished: "
+							  "Mandatory parameters missing from response";
+				updateActivity(Activity::FailedHard);
+			}
+		}
+		tokenReply->deleteLater();
+	}
 
-    QList<RequestParameter> parameters;
-    parameters.append(RequestParameter(OAUTH2_CLIENT_ID, options_.clientIdentifier.toUtf8()));
-    if ( !options_.clientSecret.isEmpty() ) {
-        parameters.append(RequestParameter(OAUTH2_CLIENT_SECRET, options_.clientSecret.toUtf8()));
-    }
-    parameters.append(RequestParameter(OAUTH2_CODE, deviceCode.toUtf8()));
-    parameters.append(RequestParameter(OAUTH2_GRANT_TYPE, grantType.toUtf8()));
-    QByteArray payload = createQueryParameters(parameters);
+	// Spin up polling for the user completing the login flow out of band
+	void DeviceFlow::startPollServer(const QVariantMap& params, int expiresIn)
+	{
+		qDebug()
+			<< "DeviceFlow::startPollServer: device_ and user_code expires in"
+			<< expiresIn << "seconds";
 
-    PollServer * pollServer = new PollServer(manager_, authRequest, payload, expiresIn, this);
-    if (params.contains(OAUTH2_INTERVAL)) {
-        bool ok = false;
-        int interval = params[OAUTH2_INTERVAL].toInt(&ok);
-        if (ok) {
-            pollServer->setInterval(interval);
-        }
-    }
-    connect(pollServer, &PollServer::verificationReceived, this, &DeviceFlow::onVerificationReceived);
-    connect(pollServer, &PollServer::serverClosed, this, &DeviceFlow::serverHasClosed);
-    setPollServer(pollServer);
-    pollServer->startPolling();
-}
+		QUrl url(options_.accessTokenUrl);
+		QNetworkRequest authRequest(url);
+		authRequest.setHeader(QNetworkRequest::ContentTypeHeader,
+							  "application/x-www-form-urlencoded");
 
-// Once the user completes the flow, update the internal state and report it to observers
-void DeviceFlow::onVerificationReceived(const QMap<QString, QString> response) {
-    qDebug() << "DeviceFlow::onVerificationReceived: Emitting closeBrowser()";
-    emit closeBrowser();
+		const QString deviceCode = params[OAUTH2_DEVICE_CODE].toString();
+		const QString grantType =
+			grantType_.isEmpty() ? OAUTH2_GRANT_TYPE_DEVICE : grantType_;
 
-    if (response.contains("error")) {
-        qWarning() << "DeviceFlow::onVerificationReceived: Verification failed:" << response;
-        updateActivity(Activity::FailedHard);
-        return;
-    }
+		QList<RequestParameter> parameters;
+		parameters.append(RequestParameter(OAUTH2_CLIENT_ID,
+										   options_.clientIdentifier.toUtf8()));
+		if (!options_.clientSecret.isEmpty()) {
+			parameters.append(RequestParameter(OAUTH2_CLIENT_SECRET,
+											   options_.clientSecret.toUtf8()));
+		}
+		parameters.append(RequestParameter(OAUTH2_CODE, deviceCode.toUtf8()));
+		parameters.append(
+			RequestParameter(OAUTH2_GRANT_TYPE, grantType.toUtf8()));
+		QByteArray payload = createQueryParameters(parameters);
 
-    // Check for mandatory tokens
-    if (response.contains(OAUTH2_ACCESS_TOKEN)) {
-        qDebug() << "DeviceFlow::onVerificationReceived: Access token returned for implicit or device flow";
-        setToken(response.value(OAUTH2_ACCESS_TOKEN));
-        if (response.contains(OAUTH2_EXPIRES_IN)) {
-            bool ok = false;
-            int expiresIn = response.value(OAUTH2_EXPIRES_IN).toInt(&ok);
-            if (ok) {
-                qDebug() << "DeviceFlow::onVerificationReceived: Token expires in" << expiresIn << "seconds";
-                setExpires(QDateTime::currentDateTimeUtc().addSecs(expiresIn));
-            }
-        }
-        if (response.contains(OAUTH2_REFRESH_TOKEN)) {
-            setRefreshToken(response.value(OAUTH2_REFRESH_TOKEN));
-        }
-        updateActivity(Activity::Succeeded);
-    } else {
-        qWarning() << "DeviceFlow::onVerificationReceived: Access token missing from response for implicit or device flow";
-        updateActivity(Activity::FailedHard);
-    }
-}
+		PollServer* pollServer =
+			new PollServer(manager_, authRequest, payload, expiresIn, this);
+		if (params.contains(OAUTH2_INTERVAL)) {
+			bool ok = false;
+			int interval = params[OAUTH2_INTERVAL].toInt(&ok);
+			if (ok) {
+				pollServer->setInterval(interval);
+			}
+		}
+		connect(pollServer, &PollServer::verificationReceived, this,
+				&DeviceFlow::onVerificationReceived);
+		connect(pollServer, &PollServer::serverClosed, this,
+				&DeviceFlow::serverHasClosed);
+		setPollServer(pollServer);
+		pollServer->startPolling();
+	}
 
-// Or if the flow fails or the polling times out, update the internal state with error and report it to observers
-void DeviceFlow::serverHasClosed(bool paramsfound)
-{
-    if ( !paramsfound ) {
-        // server has probably timed out after receiving first response
-        updateActivity(Activity::FailedHard);
-    }
-    // poll server is not re-used for later auth requests
-    setPollServer(NULL);
-}
+	// Once the user completes the flow, update the internal state and report it
+	// to observers
+	void
+	DeviceFlow::onVerificationReceived(const QMap<QString, QString> response)
+	{
+		qDebug()
+			<< "DeviceFlow::onVerificationReceived: Emitting closeBrowser()";
+		emit closeBrowser();
 
-void DeviceFlow::logout() {
-    qDebug() << "DeviceFlow::unlink";
-    updateActivity(Activity::LoggingOut);
-    // FIXME: implement logout flows... if they exist
-    token_ = Token();
-    updateActivity(Activity::FailedHard);
-}
+		if (response.contains("error")) {
+			qWarning()
+				<< "DeviceFlow::onVerificationReceived: Verification failed:"
+				<< response;
+			updateActivity(Activity::FailedHard);
+			return;
+		}
 
-QDateTime DeviceFlow::expires() {
-    return token_.notAfter;
-}
-void DeviceFlow::setExpires(QDateTime v) {
-    token_.notAfter = v;
-}
+		// Check for mandatory tokens
+		if (response.contains(OAUTH2_ACCESS_TOKEN)) {
+			qDebug() << "DeviceFlow::onVerificationReceived: Access token "
+						"returned for implicit or device flow";
+			setToken(response.value(OAUTH2_ACCESS_TOKEN));
+			if (response.contains(OAUTH2_EXPIRES_IN)) {
+				bool ok = false;
+				int expiresIn = response.value(OAUTH2_EXPIRES_IN).toInt(&ok);
+				if (ok) {
+					qDebug() << "DeviceFlow::onVerificationReceived: Token "
+								"expires in"
+							 << expiresIn << "seconds";
+					setExpires(
+						QDateTime::currentDateTimeUtc().addSecs(expiresIn));
+				}
+			}
+			if (response.contains(OAUTH2_REFRESH_TOKEN)) {
+				setRefreshToken(response.value(OAUTH2_REFRESH_TOKEN));
+			}
+			updateActivity(Activity::Succeeded);
+		} else {
+			qWarning() << "DeviceFlow::onVerificationReceived: Access token "
+						  "missing from response for implicit or device flow";
+			updateActivity(Activity::FailedHard);
+		}
+	}
 
-QString DeviceFlow::refreshToken() {
-    return token_.refresh_token;
-}
+	// Or if the flow fails or the polling times out, update the internal state
+	// with error and report it to observers
+	void DeviceFlow::serverHasClosed(bool paramsfound)
+	{
+		if (!paramsfound) {
+			// server has probably timed out after receiving first response
+			updateActivity(Activity::FailedHard);
+		}
+		// poll server is not re-used for later auth requests
+		setPollServer(NULL);
+	}
 
-void DeviceFlow::setRefreshToken(const QString &v) {
+	void DeviceFlow::logout()
+	{
+		qDebug() << "DeviceFlow::unlink";
+		updateActivity(Activity::LoggingOut);
+		// FIXME: implement logout flows... if they exist
+		token_ = Token();
+		updateActivity(Activity::FailedHard);
+	}
+
+	QDateTime DeviceFlow::expires()
+	{
+		return token_.notAfter;
+	}
+	void DeviceFlow::setExpires(QDateTime v)
+	{
+		token_.notAfter = v;
+	}
+
+	QString DeviceFlow::refreshToken()
+	{
+		return token_.refresh_token;
+	}
+
+	void DeviceFlow::setRefreshToken(const QString& v)
+	{
 #ifndef NDEBUG
-    qDebug() << "DeviceFlow::setRefreshToken" << v << "...";
+		qDebug() << "DeviceFlow::setRefreshToken" << v << "...";
 #endif
-    token_.refresh_token = v;
-}
+		token_.refresh_token = v;
+	}
 
-namespace {
-QByteArray buildRequestBody(const QMap<QString, QString> &parameters) {
-    QByteArray body;
-    bool first = true;
-    foreach (QString key, parameters.keys()) {
-        if (first) {
-            first = false;
-        } else {
-            body.append("&");
-        }
-        QString value = parameters.value(key);
-        body.append(QUrl::toPercentEncoding(key) + QString("=").toUtf8() + QUrl::toPercentEncoding(value));
-    }
-    return body;
-}
-}
+	namespace
+	{
+		QByteArray buildRequestBody(const QMap<QString, QString>& parameters)
+		{
+			QByteArray body;
+			bool first = true;
+			foreach (QString key, parameters.keys()) {
+				if (first) {
+					first = false;
+				} else {
+					body.append("&");
+				}
+				QString value = parameters.value(key);
+				body.append(QUrl::toPercentEncoding(key) +
+							QString("=").toUtf8() +
+							QUrl::toPercentEncoding(value));
+			}
+			return body;
+		}
+	} // namespace
 
-bool DeviceFlow::refresh() {
-    qDebug() << "DeviceFlow::refresh: Token: ..." << refreshToken().right(7);
+	bool DeviceFlow::refresh()
+	{
+		qDebug() << "DeviceFlow::refresh: Token: ..."
+				 << refreshToken().right(7);
 
-    updateActivity(Activity::Refreshing);
+		updateActivity(Activity::Refreshing);
 
-    if (refreshToken().isEmpty()) {
-        qWarning() << "DeviceFlow::refresh: No refresh token";
-        onRefreshError(QNetworkReply::AuthenticationRequiredError, nullptr);
-        return false;
-    }
-    if (options_.accessTokenUrl.isEmpty()) {
-        qWarning() << "DeviceFlow::refresh: Refresh token URL not set";
-        onRefreshError(QNetworkReply::AuthenticationRequiredError, nullptr);
-        return false;
-    }
+		if (refreshToken().isEmpty()) {
+			qWarning() << "DeviceFlow::refresh: No refresh token";
+			onRefreshError(QNetworkReply::AuthenticationRequiredError, nullptr);
+			return false;
+		}
+		if (options_.accessTokenUrl.isEmpty()) {
+			qWarning() << "DeviceFlow::refresh: Refresh token URL not set";
+			onRefreshError(QNetworkReply::AuthenticationRequiredError, nullptr);
+			return false;
+		}
 
-    QNetworkRequest refreshRequest(options_.accessTokenUrl);
-    refreshRequest.setHeader(QNetworkRequest::ContentTypeHeader, MIME_TYPE_XFORM);
-    QMap<QString, QString> parameters;
-    parameters.insert(OAUTH2_CLIENT_ID, options_.clientIdentifier);
-    if ( !options_.clientSecret.isEmpty() ) {
-        parameters.insert(OAUTH2_CLIENT_SECRET, options_.clientSecret);
-    }
-    parameters.insert(OAUTH2_REFRESH_TOKEN, refreshToken());
-    parameters.insert(OAUTH2_GRANT_TYPE, OAUTH2_REFRESH_TOKEN);
+		QNetworkRequest refreshRequest(options_.accessTokenUrl);
+		refreshRequest.setHeader(QNetworkRequest::ContentTypeHeader,
+								 MIME_TYPE_XFORM);
+		QMap<QString, QString> parameters;
+		parameters.insert(OAUTH2_CLIENT_ID, options_.clientIdentifier);
+		if (!options_.clientSecret.isEmpty()) {
+			parameters.insert(OAUTH2_CLIENT_SECRET, options_.clientSecret);
+		}
+		parameters.insert(OAUTH2_REFRESH_TOKEN, refreshToken());
+		parameters.insert(OAUTH2_GRANT_TYPE, OAUTH2_REFRESH_TOKEN);
 
-    QByteArray data = buildRequestBody(parameters);
-    QNetworkReply *refreshReply = manager_->post(refreshRequest, data);
-    timedReplies_.add(refreshReply);
-    connect(refreshReply, &QNetworkReply::finished, this, &DeviceFlow::onRefreshFinished, Qt::QueuedConnection);
-    return true;
-}
+		QByteArray data = buildRequestBody(parameters);
+		QNetworkReply* refreshReply = manager_->post(refreshRequest, data);
+		timedReplies_.add(refreshReply);
+		connect(refreshReply, &QNetworkReply::finished, this,
+				&DeviceFlow::onRefreshFinished, Qt::QueuedConnection);
+		return true;
+	}
 
-void DeviceFlow::onRefreshFinished() {
-    QNetworkReply *refreshReply = qobject_cast<QNetworkReply *>(sender());
+	void DeviceFlow::onRefreshFinished()
+	{
+		QNetworkReply* refreshReply = qobject_cast<QNetworkReply*>(sender());
 
-    auto networkError = refreshReply->error();
-    if (networkError == QNetworkReply::NoError) {
-        QByteArray reply = refreshReply->readAll();
-        QVariantMap tokens = parseJsonResponse(reply);
-        setToken(tokens.value(OAUTH2_ACCESS_TOKEN).toString());
-        setExpires(QDateTime::currentDateTimeUtc().addSecs(tokens.value(OAUTH2_EXPIRES_IN).toInt()));
-        QString refreshToken = tokens.value(OAUTH2_REFRESH_TOKEN).toString();
-        if(!refreshToken.isEmpty()) {
-            setRefreshToken(refreshToken);
-        }
-        else {
-            qDebug() << "No new refresh token. Keep the old one.";
-        }
-        timedReplies_.remove(refreshReply);
-        refreshReply->deleteLater();
-        updateActivity(Activity::Succeeded);
-        qDebug() << "New token expires in" << expires() << "seconds";
-    } else {
-        // FIXME: differentiate the error more here
-        onRefreshError(networkError, refreshReply);
-    }
-}
+		auto networkError = refreshReply->error();
+		if (networkError == QNetworkReply::NoError) {
+			QByteArray reply = refreshReply->readAll();
+			QVariantMap tokens = parseJsonResponse(reply);
+			setToken(tokens.value(OAUTH2_ACCESS_TOKEN).toString());
+			setExpires(QDateTime::currentDateTimeUtc().addSecs(
+				tokens.value(OAUTH2_EXPIRES_IN).toInt()));
+			QString refreshToken =
+				tokens.value(OAUTH2_REFRESH_TOKEN).toString();
+			if (!refreshToken.isEmpty()) {
+				setRefreshToken(refreshToken);
+			} else {
+				qDebug() << "No new refresh token. Keep the old one.";
+			}
+			timedReplies_.remove(refreshReply);
+			refreshReply->deleteLater();
+			updateActivity(Activity::Succeeded);
+			qDebug() << "New token expires in" << expires() << "seconds";
+		} else {
+			// FIXME: differentiate the error more here
+			onRefreshError(networkError, refreshReply);
+		}
+	}
 
-void DeviceFlow::onRefreshError(QNetworkReply::NetworkError error, QNetworkReply *refreshReply) {
-    QString errorString = "No Reply";
-    if(refreshReply) {
-        timedReplies_.remove(refreshReply);
-        errorString = refreshReply->errorString();
-    }
+	void DeviceFlow::onRefreshError(QNetworkReply::NetworkError error,
+									QNetworkReply* refreshReply)
+	{
+		QString errorString = "No Reply";
+		if (refreshReply) {
+			timedReplies_.remove(refreshReply);
+			errorString = refreshReply->errorString();
+		}
 
-    switch (error)
-    {
-    // used for invalid credentials and similar errors. Fall through.
-    case QNetworkReply::AuthenticationRequiredError:
-    case QNetworkReply::ContentAccessDenied:
-    case QNetworkReply::ContentOperationNotPermittedError:
-    case QNetworkReply::ProtocolInvalidOperationError:
-        updateActivity(Activity::FailedHard);
-        break;
-    case QNetworkReply::ContentGoneError: {
-        updateActivity(Activity::FailedGone);
-        break;
-    }
-    case QNetworkReply::TimeoutError:
-    case QNetworkReply::OperationCanceledError:
-    case QNetworkReply::SslHandshakeFailedError:
-    default:
-        updateActivity(Activity::FailedSoft);
-        return;
-    }
-    if(refreshReply) {
-        refreshReply->deleteLater();
-    }
-    qDebug() << "DeviceFlow::onRefreshFinished: Error" << (int)error << " - " << errorString;
-}
+		switch (error) {
+			// used for invalid credentials and similar errors. Fall through.
+			case QNetworkReply::AuthenticationRequiredError:
+			case QNetworkReply::ContentAccessDenied:
+			case QNetworkReply::ContentOperationNotPermittedError:
+			case QNetworkReply::ProtocolInvalidOperationError:
+				updateActivity(Activity::FailedHard);
+				break;
+			case QNetworkReply::ContentGoneError: {
+				updateActivity(Activity::FailedGone);
+				break;
+			}
+			case QNetworkReply::TimeoutError:
+			case QNetworkReply::OperationCanceledError:
+			case QNetworkReply::SslHandshakeFailedError:
+			default:
+				updateActivity(Activity::FailedSoft);
+				return;
+		}
+		if (refreshReply) {
+			refreshReply->deleteLater();
+		}
+		qDebug() << "DeviceFlow::onRefreshFinished: Error" << (int)error
+				 << " - " << errorString;
+	}
 
-}
+} // namespace Katabasis

@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -42,27 +42,26 @@
 
 namespace Ui
 {
-class SetupWizard;
+	class SetupWizard;
 }
 
 class BaseWizardPage;
 
 class SetupWizard : public QWizard
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public: /* con/destructors */
-    explicit SetupWizard(QWidget *parent = 0);
-    virtual ~SetupWizard();
+  public: /* con/destructors */
+	explicit SetupWizard(QWidget* parent = 0);
+	virtual ~SetupWizard();
 
-    void changeEvent(QEvent * event) override;
-    BaseWizardPage *getBasePage(int id);
-    BaseWizardPage *getCurrentBasePage();
+	void changeEvent(QEvent* event) override;
+	BaseWizardPage* getBasePage(int id);
+	BaseWizardPage* getCurrentBasePage();
 
-private slots:
-    void pageChanged(int id);
+  private slots:
+	void pageChanged(int id);
 
-private: /* methods */
-    void retranslate();
+  private: /* methods */
+	void retranslate();
 };
-

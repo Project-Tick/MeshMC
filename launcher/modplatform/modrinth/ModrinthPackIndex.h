@@ -26,36 +26,37 @@
 #include <QString>
 #include <QVector>
 
-namespace Modrinth {
+namespace Modrinth
+{
 
-struct IndexedVersion {
-    QString id;
-    QString projectId;
-    QString name;
-    QString versionNumber;
-    QString mcVersion;
-    QString downloadUrl;
-    int downloadSize = 0;
-    QString sha1;
-    QString loaders;
-};
+	struct IndexedVersion {
+		QString id;
+		QString projectId;
+		QString name;
+		QString versionNumber;
+		QString mcVersion;
+		QString downloadUrl;
+		int downloadSize = 0;
+		QString sha1;
+		QString loaders;
+	};
 
-struct IndexedPack {
-    QString projectId;
-    QString slug;
-    QString name;
-    QString description;
-    QString author;
-    QString iconUrl;
-    int downloads = 0;
+	struct IndexedPack {
+		QString projectId;
+		QString slug;
+		QString name;
+		QString description;
+		QString author;
+		QString iconUrl;
+		int downloads = 0;
 
-    bool versionsLoaded = false;
-    QVector<IndexedVersion> versions;
-};
+		bool versionsLoaded = false;
+		QVector<IndexedVersion> versions;
+	};
 
-void loadIndexedPack(IndexedPack &pack, QJsonObject &obj);
-void loadIndexedPackVersions(IndexedPack &pack, QJsonArray &arr);
+	void loadIndexedPack(IndexedPack& pack, QJsonObject& obj);
+	void loadIndexedPackVersions(IndexedPack& pack, QJsonArray& arr);
 
-}
+} // namespace Modrinth
 
 Q_DECLARE_METATYPE(Modrinth::IndexedPack)

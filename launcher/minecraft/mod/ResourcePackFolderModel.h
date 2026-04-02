@@ -25,10 +25,11 @@
 
 class ResourcePackFolderModel : public ModFolderModel
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    explicit ResourcePackFolderModel(const QString &dir);
+  public:
+	explicit ResourcePackFolderModel(const QString& dir);
 
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+	QVariant headerData(int section, Qt::Orientation orientation,
+						int role) const override;
 };

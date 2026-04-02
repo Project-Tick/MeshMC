@@ -17,7 +17,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
  *
@@ -40,19 +40,20 @@
 
 namespace CustomMessageBox
 {
-QMessageBox *selectable(QWidget *parent, const QString &title, const QString &text,
-                        QMessageBox::Icon icon, QMessageBox::StandardButtons buttons,
-                        QMessageBox::StandardButton defaultButton)
-{
-    QMessageBox *messageBox = new QMessageBox(parent);
-    messageBox->setWindowTitle(title);
-    messageBox->setText(text);
-    messageBox->setStandardButtons(buttons);
-    messageBox->setDefaultButton(defaultButton);
-    messageBox->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    messageBox->setIcon(icon);
-    messageBox->setTextInteractionFlags(Qt::TextBrowserInteraction);
+	QMessageBox* selectable(QWidget* parent, const QString& title,
+							const QString& text, QMessageBox::Icon icon,
+							QMessageBox::StandardButtons buttons,
+							QMessageBox::StandardButton defaultButton)
+	{
+		QMessageBox* messageBox = new QMessageBox(parent);
+		messageBox->setWindowTitle(title);
+		messageBox->setText(text);
+		messageBox->setStandardButtons(buttons);
+		messageBox->setDefaultButton(defaultButton);
+		messageBox->setTextInteractionFlags(Qt::TextSelectableByMouse);
+		messageBox->setIcon(icon);
+		messageBox->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
-    return messageBox;
-}
-}
+		return messageBox;
+	}
+} // namespace CustomMessageBox
