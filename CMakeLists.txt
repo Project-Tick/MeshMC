@@ -159,7 +159,7 @@ set(MeshMC_Name "${MeshMC_CommonName}")
 set(MeshMC_DisplayName "${MeshMC_CommonName}")
 set(MeshMC_UserAgent "${MeshMC_CommonName}/5.0")
 set(MeshMC_ConfigFile "meshmc.cfg")
-set(MeshMC_Git "https://github.com/Project-Tick/MeshMC")
+set(MeshMC_Git "https://github.com/Project-Tick/Project-Tick")
 
 set(MeshMC_SVGFileName "${MeshMC_AppID}.svg")
 set(MeshMC_Branding_ICNS "branding/${MeshMC_AppID}.icns")
