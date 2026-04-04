@@ -36,7 +36,7 @@ and sets up lefthook git hooks.
 ### Linux / macOS
 
 ```bash
-./bootstrap.sh
+../bootstrap.sh
 ```
 
 Supported distributions: Debian, Ubuntu, Fedora, RHEL/CentOS, openSUSE, Arch Linux, macOS (via Homebrew).
@@ -44,7 +44,7 @@ Supported distributions: Debian, Ubuntu, Fedora, RHEL/CentOS, openSUSE, Arch Lin
 ### Windows
 
 ```cmd
-bootstrap.cmd
+..\bootstrap.cmd
 ```
 
 Uses [Scoop](https://scoop.sh) for CLI tools and [vcpkg](https://github.com/microsoft/vcpkg) for C/C++ libraries.
