@@ -44,7 +44,7 @@ stdenv.mkDerivation {
   src = lib.fileset.toSource {
     root = ../../.;
     fileset = lib.fileset.unions [
-      ../bootstrap.sh
+      ../../bootstrap.sh
       ../branding
       ../buildconfig
       ../BUILD.md
