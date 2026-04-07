@@ -52,7 +52,7 @@ stdenv.mkDerivation {
       ../cmake
       ../CMakeLists.txt
       ../CMakePresets.json
-      ../CODE_OF_CONDUCT.md
+      ../../CODE_OF_CONDUCT.md
       ../Containerfile
       ../CONTRIBUTING.md
       ../COPYING.md
@@ -62,7 +62,7 @@ stdenv.mkDerivation {
       ../flake.nix
       ../.gitattributes
       ../launcher
-      ../lefthook.yml
+      ../../lefthook.yml
       ../libraries
       ../../libnbtplusplus
       ../LICENSES
