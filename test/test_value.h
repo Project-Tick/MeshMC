@@ -13,7 +13,7 @@ class value_assignment_test : public CxxTest::TestSuite
 
 		v = int8_t(-5);
 		TS_ASSERT_EQUALS(int32_t(v), int32_t(-5));
-		TS_ASSERT_EQUALS(double(v), 5.);
+		TS_ASSERT_EQUALS(double(v), -5.);
 
 		v = value();
 		v = int16_t(12345);
@@ -27,7 +27,7 @@ class value_assignment_test : public CxxTest::TestSuite
 
 		v = value();
 		v = float(3.14f);
-		TS_ASSERT_EQUALS(double(v), 3.14);
+		TS_ASSERT_DELTA(double(v), 3.14, 1e-6);
 
 		v = value();
 		v = double(2.718281828);
