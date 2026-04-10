@@ -151,7 +151,7 @@
         {
           clang-format = pkgs.runCommand "meshmc-clang-format-check"
             {
-              nativeBuildInputs = [ llvm.clang-tools pkgs.bash ];
+              nativeBuildInputs = [ llvm.clang-tools pkgs.bash pkgs.ripgrep ];
               src = self;
             }
             ''
