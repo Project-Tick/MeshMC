@@ -222,8 +222,8 @@ void PageContainer::help()
 		QString pageId = m_currentPage->helpPage();
 		if (pageId.isEmpty())
 			return;
-		DesktopServices::openUrl(
-			QUrl("https://github.com/Project-Tick/Project-Tick/wiki/" + pageId));
+		DesktopServices::openUrl(QUrl(
+			"https://github.com/Project-Tick/Project-Tick/wiki/" + pageId));
 	}
 }
 

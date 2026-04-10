@@ -42,7 +42,7 @@
 
         let
           pkgs = nixpkgsFor.${system};
-          llvm = pkgs.llvmPackages_19;
+          llvm = pkgs.llvmPackages_22;
           python = pkgs.python3;
           mkShell = pkgs.mkShell.override { inherit (llvm) stdenv; };
 
@@ -168,7 +168,7 @@
         final: prev:
 
         let
-          llvm = final.llvmPackages_19 or prev.llvmPackages_19;
+          llvm = final.llvmPackages_22 or prev.llvmPackages_22;
         in
 
         {
