@@ -23,6 +23,7 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QXmlStreamReader>
@@ -121,15 +122,20 @@ void UpdateChecker::checkForUpdate(bool notifyNoUpdate)
 	m_checking = true;
 	m_feedData.clear();
 	m_githubData.clear();
+	m_componentsData.clear();
+	m_feedVersion.clear();
+	m_downloadUrl.clear();
+	m_releaseNotes.clear();
+	m_githubTagVersion.clear();
 
-	m_checkJob.reset(new NetJob("Update Check", m_network));
+	m_checkJob.reset(new NetJob("Update Check Phase 1", m_network));
 	m_checkJob->addNetAction(Net::Download::makeByteArray(
 		QUrl(BuildConfig.UPDATER_FEED_URL), &m_feedData));
 	m_checkJob->addNetAction(Net::Download::makeByteArray(
 		QUrl(BuildConfig.UPDATER_GITHUB_API_URL), &m_githubData));
 
 	connect(m_checkJob.get(), &NetJob::succeeded,
-			[this, notifyNoUpdate]() { onDownloadsFinished(notifyNoUpdate); });
+			[this, notifyNoUpdate]() { onPhase1Finished(notifyNoUpdate); });
 	connect(m_checkJob.get(), &NetJob::failed, this,
 			&UpdateChecker::onDownloadsFailed);
 
@@ -137,23 +143,48 @@ void UpdateChecker::checkForUpdate(bool notifyNoUpdate)
 }
 
 // ---------------------------------------------------------------------------
+// Private: GitHub JSON -> components.json URL
+// ---------------------------------------------------------------------------
+
+QString UpdateChecker::findComponentsUrl()
+{
+	QJsonParseError jsonError;
+	const QJsonDocument doc =
+		QJsonDocument::fromJson(m_githubData, &jsonError);
+	m_githubData.clear();
+
+	if (jsonError.error != QJsonParseError::NoError || !doc.isObject()) {
+		return {};
+	}
+
+	const QJsonObject root = doc.object();
+
+	// Store tag_name as fallback version
+	const QString tag = root.value("tag_name").toString().trimmed();
+	if (!tag.isEmpty())
+		m_githubTagVersion = normalizeVersion(tag);
+
+	// Search assets for components.json
+	const QJsonArray assets = root.value("assets").toArray();
+	for (const QJsonValue& assetVal : assets) {
+		const QJsonObject asset = assetVal.toObject();
+		if (asset.value("name").toString() == "components.json") {
+			return asset.value("browser_download_url").toString();
+		}
+	}
+
+	return {};
+}
+
+// ---------------------------------------------------------------------------
 // Private slots
 // ---------------------------------------------------------------------------
 
-void UpdateChecker::onDownloadsFinished(bool notifyNoUpdate)
+void UpdateChecker::onPhase1Finished(bool notifyNoUpdate)
 {
-	m_checking = false;
 	m_checkJob.reset();
 
 	// ---- Parse the RSS feed -----------------------------------------------
-	// We look for the first <item> whose <projt:channel> == "stable".
-	// From that item we read <projt:version> and the <projt:asset> whose
-	// name attribute contains BuildConfig.BUILD_ARTIFACT.
-
-	QString feedVersion;
-	QString downloadUrl;
-	QString releaseNotes;
-
 	{
 		QXmlStreamReader xml(m_feedData);
 		m_feedData.clear();
@@ -164,8 +195,6 @@ void UpdateChecker::onDownloadsFinished(bool notifyNoUpdate)
 		QString itemUrl;
 		QString itemNotes;
 
-		// We iterate forward and take the FIRST stable item we encounter
-		// (the feed lists newest first).
 		while (!xml.atEnd() && !xml.hasError()) {
 			xml.readNext();
 
@@ -209,87 +238,148 @@ void UpdateChecker::onDownloadsFinished(bool notifyNoUpdate)
 					   insideItem) {
 				insideItem = false;
 				if (isStable && !itemVersion.isEmpty()) {
-					// First stable item wins.
-					feedVersion = normalizeVersion(itemVersion);
-					downloadUrl = itemUrl;
-					releaseNotes = itemNotes;
+					m_feedVersion = normalizeVersion(itemVersion);
+					m_downloadUrl = itemUrl;
+					m_releaseNotes = itemNotes;
 					break;
 				}
 			}
 		}
 
 		if (xml.hasError()) {
+			m_checking = false;
 			emit checkFailed(
 				tr("Failed to parse update feed: %1").arg(xml.errorString()));
 			return;
 		}
 	}
 
-	if (feedVersion.isEmpty()) {
+	if (m_feedVersion.isEmpty()) {
+		m_checking = false;
 		emit checkFailed(
 			tr("No stable release entry found in the update feed."));
 		return;
 	}
 
-	if (downloadUrl.isEmpty()) {
-		qWarning() << "UpdateChecker: feed has version" << feedVersion
+	if (m_downloadUrl.isEmpty()) {
+		qWarning() << "UpdateChecker: feed has version" << m_feedVersion
 				   << "but no asset matching BUILD_ARTIFACT '"
 				   << BuildConfig.BUILD_ARTIFACT << "'";
-		// We can still report an update even without a direct URL —
-		// the UpdateDialog will inform the user.
 	}
 
-	// ---- Parse the GitHub releases JSON -----------------------------------
-	// Expect the GitHub REST API format: { "tag_name": "vX.Y.Z", ... }
+	// ---- Parse GitHub JSON and look for components.json -------------------
+	const QString componentsUrl = findComponentsUrl();
 
-	QString githubVersion;
-	{
-		QJsonParseError jsonError;
-		const QJsonDocument doc =
-			QJsonDocument::fromJson(m_githubData, &jsonError);
-		m_githubData.clear();
+	if (!componentsUrl.isEmpty()) {
+		// Phase 2: download components.json for canonical version
+		qDebug() << "UpdateChecker: downloading components.json from"
+				 << componentsUrl;
+		m_componentsData.clear();
+		m_checkJob.reset(new NetJob("Update Check Phase 2", m_network));
+		m_checkJob->addNetAction(Net::Download::makeByteArray(
+			QUrl(componentsUrl), &m_componentsData));
 
-		if (jsonError.error != QJsonParseError::NoError || !doc.isObject()) {
-			emit checkFailed(tr("Failed to parse GitHub releases response: %1")
-								 .arg(jsonError.errorString()));
-			return;
-		}
+		connect(m_checkJob.get(), &NetJob::succeeded,
+				[this, notifyNoUpdate]() {
+					onComponentsDownloaded(notifyNoUpdate);
+				});
+		connect(m_checkJob.get(), &NetJob::failed, this,
+				&UpdateChecker::onDownloadsFailed);
 
-		const QString tag = doc.object().value("tag_name").toString().trimmed();
-		if (tag.isEmpty()) {
+		m_checkJob->start();
+	} else {
+		// Fallback: use tag_name as version (legacy releases without
+		// components.json)
+		qDebug() << "UpdateChecker: no components.json found, falling back to "
+					"tag_name";
+		if (m_githubTagVersion.isEmpty()) {
+			m_checking = false;
 			emit checkFailed(
-				tr("GitHub releases response contained no tag_name field."));
+				tr("GitHub release has no components.json and no tag_name."));
 			return;
 		}
-		githubVersion = normalizeVersion(tag);
+		finalizeCheck(notifyNoUpdate, m_githubTagVersion);
+	}
+}
+
+void UpdateChecker::onComponentsDownloaded(bool notifyNoUpdate)
+{
+	m_checkJob.reset();
+
+	QJsonParseError jsonError;
+	const QJsonDocument doc =
+		QJsonDocument::fromJson(m_componentsData, &jsonError);
+	m_componentsData.clear();
+
+	if (jsonError.error != QJsonParseError::NoError || !doc.isObject()) {
+		qWarning() << "UpdateChecker: failed to parse components.json,"
+				   << "falling back to tag_name";
+		if (!m_githubTagVersion.isEmpty()) {
+			finalizeCheck(notifyNoUpdate, m_githubTagVersion);
+		} else {
+			m_checking = false;
+			emit checkFailed(tr("Failed to parse components.json and no "
+								"tag_name fallback available."));
+		}
+		return;
 	}
 
-	qDebug() << "UpdateChecker: feed version =" << feedVersion
+	// Extract canonical version: components.meshmc.version
+	const QJsonObject components =
+		doc.object().value("components").toObject();
+	const QJsonObject meshmc = components.value("meshmc").toObject();
+	const QString componentVersion = meshmc.value("version").toString().trimmed();
+
+	if (componentVersion.isEmpty()) {
+		qWarning()
+			<< "UpdateChecker: components.json has no meshmc version,"
+			<< "falling back to tag_name";
+		if (!m_githubTagVersion.isEmpty()) {
+			finalizeCheck(notifyNoUpdate, m_githubTagVersion);
+		} else {
+			m_checking = false;
+			emit checkFailed(
+				tr("components.json contains no MeshMC version."));
+		}
+		return;
+	}
+
+	qDebug() << "UpdateChecker: components.json meshmc version ="
+			 << componentVersion;
+	finalizeCheck(notifyNoUpdate, componentVersion);
+}
+
+void UpdateChecker::finalizeCheck(bool notifyNoUpdate,
+								  const QString& githubVersion)
+{
+	m_checking = false;
+
+	qDebug() << "UpdateChecker: feed version =" << m_feedVersion
 			 << "| github version =" << githubVersion
 			 << "| current =" << currentVersion();
 
-	// ---- Cross-check both sources -----------------------------------------
-	if (feedVersion != githubVersion) {
-		qDebug() << "UpdateChecker: feed and GitHub disagree on version — no "
+	// Cross-check both sources
+	if (m_feedVersion != githubVersion) {
+		qDebug() << "UpdateChecker: feed and GitHub disagree on version -- no "
 					"update reported.";
 		if (notifyNoUpdate)
 			emit noUpdateFound();
 		return;
 	}
 
-	// ---- Compare against the running version ------------------------------
-	if (compareVersions(feedVersion, currentVersion()) <= 0) {
+	// Compare against the running version
+	if (compareVersions(m_feedVersion, currentVersion()) <= 0) {
 		qDebug() << "UpdateChecker: already up to date.";
 		if (notifyNoUpdate)
 			emit noUpdateFound();
 		return;
 	}
 
-	qDebug() << "UpdateChecker: update available:" << feedVersion;
+	qDebug() << "UpdateChecker: update available:" << m_feedVersion;
 	UpdateAvailableStatus status;
-	status.version = feedVersion;
-	status.downloadUrl = downloadUrl;
-	status.releaseNotes = releaseNotes;
+	status.version = m_feedVersion;
+	status.downloadUrl = m_downloadUrl;
+	status.releaseNotes = m_releaseNotes;
 	emit updateAvailable(status);
 }
 
@@ -299,6 +389,7 @@ void UpdateChecker::onDownloadsFailed(QString reason)
 	m_checkJob.reset();
 	m_feedData.clear();
 	m_githubData.clear();
+	m_componentsData.clear();
 	qCritical() << "UpdateChecker: download failed:" << reason;
 	emit checkFailed(reason);
 }

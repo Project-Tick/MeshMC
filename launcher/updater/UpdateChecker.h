@@ -45,17 +45,19 @@ Q_DECLARE_METATYPE(UpdateAvailableStatus)
  * Algorithm:
  *   1. Download the RSS feed at BuildConfig.UPDATER_FEED_URL in parallel with
  *      the GitHub releases JSON at BuildConfig.UPDATER_GITHUB_API_URL.
- *   2. Parse the latest stable <item> from the feed → extract <projt:version>
+ *   2. Parse the latest stable <item> from the feed -> extract <projt:version>
  *      and the <projt:asset> URL whose name contains
- * BuildConfig.BUILD_ARTIFACT.
- *   3. Parse the GitHub JSON → strip leading "v" from tag_name.
+ *      BuildConfig.BUILD_ARTIFACT.
+ *   3. From the GitHub JSON, locate the components.json asset and download it.
+ *      Extract the canonical MeshMC version from components.meshmc.version.
+ *      Fallback: strip leading "v" from tag_name if components.json is absent.
  *   4. Both versions must match and be greater than the running version;
  *      otherwise the check is considered a no-update or failure.
  *
  * Platform / mode gating (runtime):
- *   - Linux + APPIMAGE env variable set  → updater disabled.
- *   - Linux + no portable.txt in app dir → updater disabled.
- *   - Windows / macOS / Linux-portable   → updater active.
+ *   - Linux + APPIMAGE env variable set  -> updater disabled.
+ *   - Linux + no portable.txt in app dir -> updater disabled.
+ *   - Windows / macOS / Linux-portable   -> updater active.
  */
 class UpdateChecker : public QObject
 {
@@ -91,7 +93,8 @@ class UpdateChecker : public QObject
 	void checkFailed(QString reason);
 
   private slots:
-	void onDownloadsFinished(bool notifyNoUpdate);
+	void onPhase1Finished(bool notifyNoUpdate);
+	void onComponentsDownloaded(bool notifyNoUpdate);
 	void onDownloadsFailed(QString reason);
 
   private:
@@ -104,9 +107,23 @@ class UpdateChecker : public QObject
 	/// Compares two "X.Y.Z" strings numerically. Returns >0 if v1 > v2.
 	static int compareVersions(const QString& v1, const QString& v2);
 
+	/// Parse GitHub releases JSON, return components.json browser_download_url.
+	/// Stores tag_name fallback in m_githubTagVersion.
+	QString findComponentsUrl();
+
+	/// Finalize the version comparison after all data is available.
+	void finalizeCheck(bool notifyNoUpdate, const QString& githubVersion);
+
 	shared_qobject_ptr<QNetworkAccessManager> m_network;
 	NetJob::Ptr m_checkJob;
 	QByteArray m_feedData;
 	QByteArray m_githubData;
+	QByteArray m_componentsData;
 	bool m_checking = false;
+
+	// Intermediate state between Phase 1 and Phase 2
+	QString m_feedVersion;
+	QString m_downloadUrl;
+	QString m_releaseNotes;
+	QString m_githubTagVersion; // fallback if no components.json
 };
