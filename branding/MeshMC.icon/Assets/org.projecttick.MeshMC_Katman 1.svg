@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="979.63251mm"
+   height="979.63251mm"
+   viewBox="0 0 979.63251 979.63251"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch3">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3" />
+    </linearGradient>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath9">
+      <rect
+         style="fill:#ffff00;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.264999;paint-order:markers fill stroke"
+         id="rect10"
+         width="979.63251"
+         height="979.63251"
+         x="19.999998"
+         y="19.999998"
+         rx="126" />
+    </clipPath>
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-19.999998,-19.999998)">
+    <g
+       id="g10">
+      <path
+         d="M 18.999874,19.999813 V 191.84617 1000.1121 H 190.84572 v -0.26667 h 637.15439 v 0.19997 h 171.84532 v -0.19997 h 0.19997 V 828.00011 h -0.19997 V 19.999813 H 999.04496 828.00011 Z M 190.84572,191.84617 H 828.00011 V 828.00011 H 190.84572 Z"
+         style="fill:#050505;stroke-width:0.242949"
+         id="path2"
+         clip-path="url(#clipPath9)" />
+    </g>
+  </g>
+</svg>

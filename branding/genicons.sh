@@ -41,9 +41,9 @@ fi
 
 if command -v "inkscape" && command -v "iconutil" && command -v "oxipng"; then
     # macOS ICNS
-    d=$(mktemp -d)
+    tmp=$(mktemp -d)
 
-    d="$d/org.projecttick.MeshMC.iconset"
+    d="$tmp/org.projecttick.MeshMC.iconset"
 
     mkdir -p "$d"
 
@@ -61,7 +61,7 @@ if command -v "inkscape" && command -v "iconutil" && command -v "oxipng"; then
     oxipng --opt max --strip all --alpha --interlace 0 "$d/icon_"*".png"
 
     iconutil -c icns "$d"
-    cp -v "$d/org.projecttick.MeshMC.icns" .
+    cp -v "$tmp/org.projecttick.MeshMC.icns" .
 else
     echo "ERROR: macOS icons were NOT generated!" >&2
     echo "ERROR: requires inkscape, iconutil and oxipng in PATH"

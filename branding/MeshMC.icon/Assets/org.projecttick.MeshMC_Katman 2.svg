@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="352.13251mm"
+   height="352.13251mm"
+   viewBox="0 0 352.13251 352.13251"
+   version="1.1"
+   id="svg1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient5">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop4" />
+    </linearGradient>
+    <linearGradient
+       id="swatch3">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient5"
+       id="linearGradient4"
+       gradientUnits="userSpaceOnUse"
+       x1="658"
+       y1="829"
+       x2="1000"
+       y2="829"
+       gradientTransform="translate(-10.367572,-10.367499)" />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5">
+      <rect
+         style="fill:#ffff00;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.264999;paint-order:markers fill stroke"
+         id="rect6"
+         width="979.63251"
+         height="979.63251"
+         x="19.999998"
+         y="19.999998"
+         rx="126" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath7">
+      <rect
+         style="fill:#ffff00;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.264999;paint-order:markers fill stroke"
+         id="rect8"
+         width="979.63251"
+         height="979.63251"
+         x="19.999998"
+         y="19.999998"
+         rx="126" />
+    </clipPath>
+  </defs>
+  <g
+     id="layer2"
+     transform="translate(-647.50001,-647.50001)">
+    <g
+       id="g12">
+      <rect
+         style="fill:url(#linearGradient4);fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.265;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+         id="rect2-8"
+         width="352"
+         height="352"
+         x="647.63251"
+         y="647.63251"
+         clip-path="url(#clipPath7)" />
+      <rect
+         style="fill:#ff003c;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.265;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+         id="rect2"
+         width="342"
+         height="342"
+         x="658.13251"
+         y="658.13251"
+         clip-path="url(#clipPath5)" />
+    </g>
+  </g>
+</svg>
