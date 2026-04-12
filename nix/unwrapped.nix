@@ -7,7 +7,6 @@
   gamemode,
   jdk17,
   kdePackages,
-  libnbtplusplus,
   ninja,
   qrencode,
   self,
@@ -76,11 +75,6 @@ stdenv.mkDerivation {
       ../updater
     ];
   };
-
-  postUnpack = ''
-    rm -rf source/libraries/libnbtplusplus
-    ln -s ${libnbtplusplus} source/libraries/libnbtplusplus
-  '';
 
   nativeBuildInputs = [
     cmake
