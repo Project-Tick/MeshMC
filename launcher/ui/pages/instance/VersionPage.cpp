@@ -436,8 +436,8 @@ void VersionPage::on_actionDownload_All_triggered()
 		return;
 	}
 	ProgressDialog tDialog(this);
-	connect(updateTask.get(), SIGNAL(failed(QString)),
-			SLOT(onGameUpdateError(QString)));
+	connect(updateTask.get(), &Task::failed, this,
+			&VersionPage::onGameUpdateError);
 	// FIXME: unused return value
 	tDialog.execWithTask(updateTask.get());
 	updateButtons();

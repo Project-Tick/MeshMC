@@ -561,8 +561,8 @@ ServersPage::ServersPage(InstancePtr inst, QWidget* parent)
 			&ServersPage::nameEdited);
 	connect(ui->addressLine, &QLineEdit::textEdited, this,
 			&ServersPage::addressEdited);
-	connect(ui->resourceComboBox, SIGNAL(currentIndexChanged(int)), this,
-			SLOT(resourceIndexChanged(int)));
+	connect(ui->resourceComboBox, &QComboBox::currentIndexChanged, this,
+			&ServersPage::resourceIndexChanged);
 	connect(m_model, &QAbstractItemModel::rowsRemoved, this,
 			&ServersPage::rowsRemoved);
 

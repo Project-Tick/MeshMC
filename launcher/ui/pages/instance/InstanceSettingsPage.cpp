@@ -343,7 +343,7 @@ void InstanceSettingsPage::on_javaTestBtn_clicked()
 		ui->jvmArgsTextBox->toPlainText().replace("\n", " "),
 		ui->minMemSpinBox->value(), ui->maxMemSpinBox->value(),
 		ui->permGenSpinBox->value()));
-	connect(checker.get(), SIGNAL(finished()), SLOT(checkerFinished()));
+	connect(checker.get(), &JavaCommon::TestCheck::finished, this, &InstanceSettingsPage::checkerFinished);
 	checker->run();
 }
 
