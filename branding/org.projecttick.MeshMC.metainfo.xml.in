@@ -31,7 +31,7 @@
     </screenshot>
   </screenshots>
   <releases>
-    <release version="@MeshMC_VERSION_NAME@" date="@MeshMC_BUILD_TIMESTAMP@"></release>
+    <release version="@MeshMC_RELEASE_VERSION_NAME@" date="@MeshMC_BUILD_TIMESTAMP@"></release>
   </releases>
   <url type="homepage">https://projecttick.org/p/meshmc</url>
   <url type="bugtracker">https://github.com/Project-Tick/MeshMC/issues</url>
