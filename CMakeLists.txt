@@ -138,10 +138,26 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ####################################### Branding #######################################
 
+#### Check the current Git commit and branch
+include(GetGitRevisionDescription)
+get_git_head_revision(MeshMC_GIT_REFSPEC MeshMC_GIT_COMMIT ALLOW_LOOKING_ABOVE_CMAKE_SOURCE_DIR)
+git_get_exact_tag(MeshMC_GIT_TAG)
+
+message(STATUS "Git commit: ${MeshMC_GIT_COMMIT}")
+message(STATUS "Git refspec: ${MeshMC_GIT_REFSPEC}")
+message(STATUS "Git tag: ${MeshMC_GIT_TAG}")
+
+string(TIMESTAMP TODAY "%Y-%m-%d")
+set(MeshMC_BUILD_TIMESTAMP "${TODAY}")
+
+#### Custom target to just print the version.
+add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")
+add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MESHMC_VERSION\\' value=\\'${MeshMC_RELEASE_VERSION_NAME}\\']")
+
 ######## Firstly, please set version numbers ########
 set(MeshMC_VERSION_MAJOR    7)
 set(MeshMC_VERSION_MINOR    0)
-set(MeshMC_VERSION_HOTFIX   0)
+set(MeshMC_VERSION_HOTFIX   1)
 
 set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
 set(MeshMC_VERSION_NAME4 "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}.0")
@@ -255,22 +271,6 @@ set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
 
 # Subreddit URL
 set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
-
-#### Check the current Git commit and branch
-include(GetGitRevisionDescription)
-get_git_head_revision(MeshMC_GIT_REFSPEC MeshMC_GIT_COMMIT ALLOW_LOOKING_ABOVE_CMAKE_SOURCE_DIR)
-git_get_exact_tag(MeshMC_GIT_TAG)
-
-message(STATUS "Git commit: ${MeshMC_GIT_COMMIT}")
-message(STATUS "Git refspec: ${MeshMC_GIT_REFSPEC}")
-message(STATUS "Git tag: ${MeshMC_GIT_TAG}")
-
-string(TIMESTAMP TODAY "%Y-%m-%d")
-set(MeshMC_BUILD_TIMESTAMP "${TODAY}")
-
-#### Custom target to just print the version.
-add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")
-add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MESHMC_VERSION\\' value=\\'${MeshMC_RELEASE_VERSION_NAME}\\']")
 
 ####################################### Install layout #######################################
 
