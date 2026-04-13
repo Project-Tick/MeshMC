@@ -59,8 +59,8 @@ void JavaCheckerJob::executeTask()
 	qDebug() << m_job_name.toLocal8Bit() << " started.";
 	for (auto iter : javacheckers) {
 		javaresults.append(JavaCheckResult());
-		connect(iter.get(), SIGNAL(checkFinished(JavaCheckResult)),
-				SLOT(partFinished(JavaCheckResult)));
+		connect(iter.get(), &JavaChecker::checkFinished, this,
+				&JavaCheckerJob::partFinished);
 		iter->performCheck();
 	}
 }
