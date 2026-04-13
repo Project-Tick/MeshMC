@@ -51,14 +51,14 @@ namespace Katabasis
 		expirationTimer.setTimerType(Qt::VeryCoarseTimer);
 		expirationTimer.setInterval(expiresIn * 1000);
 		expirationTimer.setSingleShot(true);
-		connect(&expirationTimer, SIGNAL(timeout()), this,
-				SLOT(onExpiration()));
+		connect(&expirationTimer, &QTimer::timeout, this,
+				&PollServer::onExpiration);
 		expirationTimer.start();
 
 		pollTimer.setTimerType(Qt::VeryCoarseTimer);
 		pollTimer.setInterval(5 * 1000);
 		pollTimer.setSingleShot(true);
-		connect(&pollTimer, SIGNAL(timeout()), this, SLOT(onPollTimeout()));
+		connect(&pollTimer, &QTimer::timeout, this, &PollServer::onPollTimeout);
 	}
 
 	int PollServer::interval() const
@@ -82,7 +82,7 @@ namespace Katabasis
 	{
 		qDebug() << "PollServer::onPollTimeout: retrying";
 		QNetworkReply* reply = manager_->post(request_, payload_);
-		connect(reply, SIGNAL(finished()), this, SLOT(onReplyFinished()));
+		connect(reply, &QNetworkReply::finished, this, &PollServer::onReplyFinished);
 	}
 
 	void PollServer::onExpiration()
