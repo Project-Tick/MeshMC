@@ -69,10 +69,10 @@ IconList::IconList(const QStringList& builtinPaths, QString path,
 
 	m_watcher.reset(new QFileSystemWatcher());
 	is_watching = false;
-	connect(m_watcher.get(), SIGNAL(directoryChanged(QString)),
-			SLOT(directoryChanged(QString)));
-	connect(m_watcher.get(), SIGNAL(fileChanged(QString)),
-			SLOT(fileChanged(QString)));
+	connect(m_watcher.get(), &QFileSystemWatcher::directoryChanged, this,
+			&IconList::directoryChanged);
+	connect(m_watcher.get(), &QFileSystemWatcher::fileChanged, this,
+			&IconList::fileChanged);
 
 	directoryChanged(path);
 }
