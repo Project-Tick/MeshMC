@@ -93,10 +93,10 @@ MeshMCPage::MeshMCPage(QWidget* parent)
 	if (BuildConfig.ANALYTICS_ID.isEmpty()) {
 		ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->analyticsTab));
 	}
-	connect(ui->fontSizeBox, SIGNAL(valueChanged(int)),
-			SLOT(refreshFontPreview()));
-	connect(ui->consoleFont, SIGNAL(currentFontChanged(QFont)),
-			SLOT(refreshFontPreview()));
+	connect(ui->fontSizeBox, &QSpinBox::valueChanged, this,
+			&MeshMCPage::refreshFontPreview);
+	connect(ui->consoleFont, &QFontComboBox::currentFontChanged, this,
+			&MeshMCPage::refreshFontPreview);
 
 	ui->migrateDataFolderMacBtn->setVisible(false);
 }
