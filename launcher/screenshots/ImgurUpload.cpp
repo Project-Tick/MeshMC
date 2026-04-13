@@ -82,8 +82,8 @@ void ImgurUpload::startImpl()
 			&ImgurUpload::downloadProgress);
 	connect(rep, &QNetworkReply::finished, this,
 			&ImgurUpload::downloadFinished);
-	connect(rep, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-			SLOT(downloadError(QNetworkReply::NetworkError)));
+	connect(rep, &QNetworkReply::errorOccurred, this,
+			&ImgurUpload::downloadError);
 }
 void ImgurUpload::downloadError(QNetworkReply::NetworkError error)
 {
