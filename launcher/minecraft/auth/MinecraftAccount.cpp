@@ -137,7 +137,7 @@ void MinecraftAccount::authSucceeded()
 	emit activityChanged(false);
 }
 
-void MinecraftAccount::authFailed(QString reason)
+void MinecraftAccount::authFailed(QString)
 {
 	switch (m_currentTask->taskState()) {
 		case AccountTaskState::STATE_OFFLINE:
