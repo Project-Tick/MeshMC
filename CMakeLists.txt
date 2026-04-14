@@ -127,6 +127,27 @@ find_package(Qt6 REQUIRED COMPONENTS
     Test
     Xml
 )
+if(DEFINED Qt6Core_VERSION)
+    set(_projt_qt_version "${Qt6Core_VERSION}")
+elseif(DEFINED Qt6_VERSION)
+    set(_projt_qt_version "${Qt6_VERSION}")
+endif()
+if(DEFINED _projt_qt_version AND _projt_qt_version VERSION_LESS "6.8.0")
+    message(FATAL_ERROR "Qt 6.8.0 or newer is required. Detected: ${_projt_qt_version}")
+endif()
+unset(_projt_qt_version)
+
+if(UNIX)
+    find_package(PkgConfig)
+    if(PkgConfig_FOUND)
+        pkg_search_module(SCDOC scdoc)
+        if(SCDOC_FOUND)
+            pkg_get_variable(SCDOC_SCDOC scdoc scdoc)
+            message(STATUS "SCDOC_FOUND=${SCDOC_FOUND}")
+            message(STATUS "SCDOC_SCDOC=${SCDOC_SCDOC}")
+        endif()
+    endif()
+endif()
 
 include(QMakeQuery)
 QUERY_QMAKE(QT_INSTALL_PLUGINS QT_PLUGINS_DIR)
@@ -137,6 +158,9 @@ find_package(LibArchive REQUIRED)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ####################################### Branding #######################################
+
+######## Firstly, dont touch here, this section calculate Git commit, branch; Timestamp
+######## and initialize targets for print version sections.
 
 #### Check the current Git commit and branch
 include(GetGitRevisionDescription)
@@ -154,16 +178,68 @@ set(MeshMC_BUILD_TIMESTAMP "${TODAY}")
 add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")
 add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MESHMC_VERSION\\' value=\\'${MeshMC_RELEASE_VERSION_NAME}\\']")
 
-######## Firstly, please set version numbers ########
+######## Secondly, please set version numbers ########
 set(MeshMC_VERSION_MAJOR    7)
-set(MeshMC_VERSION_MINOR    0)
-set(MeshMC_VERSION_HOTFIX   1)
+set(MeshMC_VERSION_MINOR    1)
+set(MeshMC_VERSION_HOTFIX   0)
 
 set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
 set(MeshMC_VERSION_NAME4 "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}.0")
 set(MeshMC_VERSION_NAME4_COMMA "${MeshMC_VERSION_MAJOR},${MeshMC_VERSION_MINOR},${MeshMC_VERSION_HOTFIX},0")
 
-######## Please define MeshMC attributes ########
+######## Thirdly, please define URLs and API keys ########
+
+set(MeshMC_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch MeshMC's news RSS feed from.")
+
+# Build number
+set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
+
+# Name to help updater identify valid artifacts
+set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Artifact name to help the updater identify valid artifacts.")
+
+# Build platform.
+set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
+
+# Channel list URL (legacy - kept for compatibility)
+set(MeshMC_UPDATER_BASE "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "Base URL for the legacy GoUpdate system (unused).")
+
+# New updater: RSS feed URL (projt: namespace)
+set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "RSS feed URL for the updater (projt: namespace.)")
+
+# New updater: GitHub releases API URL
+set(MeshMC_UPDATER_GITHUB_API_URL "https://api.github.com/repos/Project-Tick/Project-Tick/releases/latest" CACHE STRING "GitHub Releases API URL for update verification.")
+
+# Notification URL
+set(MeshMC_NOTIFICATION_URL "https://projecttick.org/" CACHE STRING "URL for checking for notifications.")
+
+# The metadata server
+set(MeshMC_META_URL "https://meta.projecttick.org/" CACHE STRING "URL to fetch MeshMC's meta files from.")
+
+# Microsoft Client ID
+set(MeshMC_MICROSOFT_CLIENT_ID "3035382c-8f73-493a-b579-d182905c2864")
+
+# paste.ee API key
+set(MeshMC_PASTE_EE_API_KEY "ay2miY3lWxUHEEzYucj5e4YShIuo1aaY43MfwsUAe" CACHE STRING "API key you can get from paste.ee when you register an account")
+
+# Imgur API Client ID
+set(MeshMC_IMGUR_CLIENT_ID "5b97b0713fba4a3" CACHE STRING "Client ID you can get from Imgur when you register an application")
+
+# CurseForge API key
+set(MeshMC_CURSEFORGE_API_KEY "$2a$10$S7KcKijbCj8mCHUQcn0tgOmtHg0kA8q9FI0niNJJ7knPq0INomzrG" CACHE STRING "API key for the CurseForge API (get one at https://console.curseforge.com/)")
+
+# Google analytics ID
+set(MeshMC_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google analytics")
+
+# Bug tracker URL
+set(MeshMC_BUG_TRACKER_URL "https://bugs.projecttick.org/enter_bug.cgi?product=MeshMC" CACHE STRING "URL for the bug tracker.")
+
+# Discord URL
+set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
+
+# Subreddit URL
+set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
+
+######## Fourthly, please define MeshMC attributes ########
 
 set(MeshMC_CommonName "MeshMC")
 set(MeshMC_AppBinaryName "meshmc")
@@ -175,7 +251,10 @@ set(MeshMC_Name "${MeshMC_CommonName}")
 set(MeshMC_DisplayName "${MeshMC_CommonName}")
 set(MeshMC_UserAgent "${MeshMC_CommonName}/5.0")
 set(MeshMC_ConfigFile "meshmc.cfg")
-set(MeshMC_Git "https://github.com/Project-Tick/Project-Tick")
+set(MeshMC_Git "https://git.projecttick.org/pub/scm/git/Project-Tick/Project-Tick")
+set(MeshMC_Authors "Copyright (C) 2026 Project Tick <https://projecttick.org>, All rights reserved. This Project Licensed under GNU GENERAL PUBLIC LICENSE, either version 3 of the License, or any later version. ")
+
+######## Lastly, configure placeholders
 
 set(MeshMC_SVGFileName "${MeshMC_AppID}.svg")
 set(MeshMC_Branding_ICNS "branding/${MeshMC_AppID}.icns")
@@ -191,8 +270,21 @@ configure_file(branding/${MeshMC_CommonName}.manifest.in ${MeshMC_AppBinaryName}
 configure_file(branding/${MeshMC_AppID}.mime.xml ${MeshMC_AppID}.xml COPYONLY)
 configure_file(branding/${MeshMC_SVGFileName} ${MeshMC_SVGFileName} COPYONLY)
 configure_file(branding/${MeshMC_AppID}.ico ${MeshMC_AppID}.ico COPYONLY)
+configure_file(branding/${MeshMC_AppBinaryName}.6.scd.in ${MeshMC_AppBinaryName}.6.scd @ONLY)
 set(MeshMC_Portable_File "branding/portable.txt")
 set(MeshMC_Branding_MAC_ICON "branding/${MeshMC_CommonName}.icon")
+
+if(SCDOC_FOUND)
+    set(in_scd "${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppBinaryName}.6.scd")
+    set(out_man "${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppBinaryName}.6")
+    add_custom_command(
+        DEPENDS "${in_scd}"
+        OUTPUT "${out_man}"
+        COMMAND ${SCDOC_SCDOC} < "${in_scd}" > "${out_man}"
+    )
+    add_custom_target(man ALL DEPENDS ${out_man})
+    set(MeshMC_ManPage "${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppBinaryName}.6")
+endif()
 
 if(MSVC)
     set(MeshMC_MSVC_Redist_NSIS_Section [=[
@@ -219,58 +311,6 @@ SectionEnd
 endif()
 
 configure_file(branding/win_install.nsi.in win_install.nsi @ONLY)
-
-######## Please define URLs ########
-
-set(MeshMC_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch MeshMC's news RSS feed from.")
-
-# Build number
-set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
-
-# Name to help updater identify valid artifacts
-set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Artifact name to help the updater identify valid artifacts.")
-
-# Build platform.
-set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
-
-# Channel list URL (legacy - kept for compatibility)
-set(MeshMC_UPDATER_BASE "" CACHE STRING "Base URL for the legacy GoUpdate system (unused).")
-
-# New updater: RSS feed URL (projt: namespace)
-set(MeshMC_UPDATER_FEED_URL "" CACHE STRING "RSS feed URL for the updater (projt: namespace, e.g. https://projecttick.org/product/meshmc/feed.xml).")
-
-# New updater: GitHub releases API URL
-set(MeshMC_UPDATER_GITHUB_API_URL "" CACHE STRING "GitHub Releases API URL for update verification (e.g. https://api.github.com/repos/Project-Tick/MeshMC/releases/latest).")
-
-# Notification URL
-set(MeshMC_NOTIFICATION_URL "https://projecttick.org/" CACHE STRING "URL for checking for notifications.")
-
-# The metadata server
-set(MeshMC_META_URL "https://meta.projecttick.org/" CACHE STRING "URL to fetch MeshMC's meta files from.")
-
-# Microsoft Client ID
-set(MeshMC_MICROSOFT_CLIENT_ID "3035382c-8f73-493a-b579-d182905c2864")
-
-# paste.ee API key
-set(MeshMC_PASTE_EE_API_KEY "ay2miY3lWxUHEEzYucj5e4YShIuo1aaY43MfwsUAe" CACHE STRING "API key you can get from paste.ee when you register an account")
-
-# Imgur API Client ID
-set(MeshMC_IMGUR_CLIENT_ID "5b97b0713fba4a3" CACHE STRING "Client ID you can get from Imgur when you register an application")
-
-# CurseForge API key
-set(MeshMC_CURSEFORGE_API_KEY "$2a$10$S7KcKijbCj8mCHUQcn0tgOmtHg0kA8q9FI0niNJJ7knPq0INomzrG" CACHE STRING "API key for the CurseForge API (get one at https://console.curseforge.com/)")
-
-# Google analytics ID
-set(MeshMC_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google analytics")
-
-# Bug tracker URL
-set(MeshMC_BUG_TRACKER_URL "https://github.com/Project-Tick/MeshMC/issues" CACHE STRING "URL for the bug tracker.")
-
-# Discord URL
-set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
-
-# Subreddit URL
-set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
 
 ####################################### Install layout #######################################
 
@@ -375,7 +415,7 @@ elseif(UNIX)
     set(RESOURCES_DEST_DIR ".")
 
     if(MeshMC_ManPage)
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_ManPage} DESTINATION "${KDE_INSTALL_MANDIR}/man6")
+        install(FILES ${MeshMC_ManPage} DESTINATION "${KDE_INSTALL_MANDIR}/man6")
     endif()
 
     # Install basic runner script if component "portable" is selected
@@ -422,7 +462,10 @@ add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too m
 ############################### Built Artifacts ###############################
 
 add_subdirectory(buildconfig)
-add_subdirectory(updater)
+
+if(NOT MeshMC_BUILD_ARTIFACT STREQUAL "" AND NOT MeshMC_UPDATER_FEED_URL STREQUAL "" AND NOT MeshMC_UPDATER_GITHUB_API_URL STREQUAL "")
+    add_subdirectory(updater)
+endif()
 
 # NOTE: this must always be last to appease the CMake deity of quirky install command evaluation order.
 add_subdirectory(launcher)
