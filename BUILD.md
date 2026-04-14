@@ -151,8 +151,8 @@ These are **not required** to build, but are used for development:
 MeshMC uses git submodules. Make sure to clone recursively:
 
 ```bash
-git clone --recursive https://github.com/Project-Tick/MeshMC.git
-cd MeshMC
+git clone --recursive https://github.com/Project-Tick/Project-Tick.git
+cd Project-Tick/MeshMC
 ```
 
 If you already cloned without `--recursive`, initialize submodules manually:

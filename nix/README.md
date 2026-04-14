@@ -155,7 +155,7 @@ Example:
 {
   environment.systemPackages = [
     (import (
-      builtins.fetchTarball "https://github.com/Project-Tick/MeshMC/archive/master.tar.gz"
+      builtins.fetchTarball "https://ftp.projecttick.org/Project-Tick/meshmc/releases/download/v202604131638/meshmc-v202604131638.tar.gz"
     )).packages.${pkgs.system}.meshmc
   ];
 }
@@ -173,7 +173,7 @@ Example:
 {
   nixpkgs.overlays = [
     (import (
-      builtins.fetchTarball "https://github.com/Project-Tick/MeshMC/archive/master.tar.gz"
+      builtins.fetchTarball "https://ftp.projecttick.org/Project-Tick/meshmc/releases/download/v202604131638/meshmc-v202604131638.tar.gz"
     )).overlays.default
   ];
 
@@ -188,7 +188,7 @@ You can add this repository as a channel and install its packages that way.
 Example:
 
 ```shell
-nix-channel --add https://github.com/Project-Tick/MeshMC/archive/master.tar.gz meshmc
+nix-channel --add https://ftp.projecttick.org/Project-Tick/meshmc/releases/download/v202604131638/meshmc-v202604131638.tar.gz meshmc
 
 nix-channel --update meshmc
 
