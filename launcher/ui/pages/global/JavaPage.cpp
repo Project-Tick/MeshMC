@@ -174,7 +174,8 @@ void JavaPage::on_javaTestBtn_clicked()
 		this, ui->javaPathTextBox->text(), ui->jvmArgsTextBox->text(),
 		ui->minMemSpinBox->value(), ui->maxMemSpinBox->value(),
 		ui->permGenSpinBox->value()));
-	connect(checker.get(), &JavaCommon::TestCheck::finished, this, &JavaPage::checkerFinished);
+	connect(checker.get(), &JavaCommon::TestCheck::finished, this,
+			&JavaPage::checkerFinished);
 	checker->run();
 }
 

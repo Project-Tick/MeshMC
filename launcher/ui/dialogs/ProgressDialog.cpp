@@ -102,8 +102,7 @@ int ProgressDialog::execWithTask(Task* task)
 	connect(task, &Task::failed, this, &ProgressDialog::onTaskFailed);
 	connect(task, &Task::succeeded, this, &ProgressDialog::onTaskSucceeded);
 	connect(task, &Task::status, this, &ProgressDialog::changeStatus);
-	connect(task, &Task::progress, this,
-			&ProgressDialog::changeProgress);
+	connect(task, &Task::progress, this, &ProgressDialog::changeProgress);
 
 	// if this didn't connect to an already running task, invoke start
 	if (!task->isRunning()) {

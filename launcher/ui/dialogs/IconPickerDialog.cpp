@@ -91,8 +91,10 @@ IconPickerDialog::IconPickerDialog(QWidget* parent)
 	auto buttonRemove = ui->buttonBox->addButton(tr("Remove Icon"),
 												 QDialogButtonBox::ResetRole);
 
-	connect(buttonAdd, &QPushButton::clicked, this, &IconPickerDialog::addNewIcon);
-	connect(buttonRemove, &QPushButton::clicked, this, &IconPickerDialog::removeSelectedIcon);
+	connect(buttonAdd, &QPushButton::clicked, this,
+			&IconPickerDialog::addNewIcon);
+	connect(buttonRemove, &QPushButton::clicked, this,
+			&IconPickerDialog::removeSelectedIcon);
 
 	connect(contentsWidget, &QListView::doubleClicked, this,
 			&IconPickerDialog::activated);

@@ -49,10 +49,8 @@ void SequentialTask::startNext()
 		return;
 	}
 	Task::Ptr next = m_queue[m_currentIndex];
-	connect(next.get(), &Task::failed, this,
-			&SequentialTask::subTaskFailed);
-	connect(next.get(), &Task::status, this,
-			&SequentialTask::subTaskStatus);
+	connect(next.get(), &Task::failed, this, &SequentialTask::subTaskFailed);
+	connect(next.get(), &Task::status, this, &SequentialTask::subTaskStatus);
 	connect(next.get(), &Task::progress, this,
 			&SequentialTask::subTaskProgress);
 	connect(next.get(), &Task::succeeded, this, &SequentialTask::startNext);

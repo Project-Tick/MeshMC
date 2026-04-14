@@ -71,7 +71,8 @@ void PasteUpload::executeTask()
 	connect(rep, &QNetworkReply::uploadProgress, this, &Task::setProgress);
 	connect(rep, &QNetworkReply::errorOccurred, this,
 			&PasteUpload::downloadError);
-	connect(rep, &QNetworkReply::finished, this, &PasteUpload::downloadFinished);
+	connect(rep, &QNetworkReply::finished, this,
+			&PasteUpload::downloadFinished);
 }
 
 void PasteUpload::downloadError(QNetworkReply::NetworkError error)

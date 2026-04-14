@@ -152,7 +152,8 @@ void NetJob::startMoreParts()
 		m_doing.insert(doThis);
 		auto part = downloads[doThis];
 		// connect signals :D
-		connect(part.get(), &NetAction::succeeded, this, &NetJob::partSucceeded);
+		connect(part.get(), &NetAction::succeeded, this,
+				&NetJob::partSucceeded);
 		connect(part.get(), &NetAction::failed, this, &NetJob::partFailed);
 		connect(part.get(), &NetAction::aborted, this, &NetJob::partAborted);
 		connect(part.get(), &NetAction::netActionProgress, this,
@@ -212,7 +213,8 @@ bool NetJob::addNetAction(NetAction::Ptr action)
 				 action->totalProgress());
 
 	if (action->isRunning()) {
-		connect(action.get(), &NetAction::succeeded, this, &NetJob::partSucceeded);
+		connect(action.get(), &NetAction::succeeded, this,
+				&NetJob::partSucceeded);
 		connect(action.get(), &NetAction::failed, this, &NetJob::partFailed);
 		connect(action.get(), &NetAction::netActionProgress, this,
 				&NetJob::partProgress);

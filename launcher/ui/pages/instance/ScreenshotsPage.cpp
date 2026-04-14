@@ -196,9 +196,10 @@ class FilterModel : public QIdentityProxyModel
 	void thumbnailImage(QString path)
 	{
 		auto runnable = new ThumbnailRunnable(path, m_thumbnailCache);
-		connect(&(runnable->m_resultEmitter), &ThumbnailingResult::resultsReady, this,
-				&FilterModel::thumbnailReady);
-		connect(&(runnable->m_resultEmitter), &ThumbnailingResult::resultsFailed, this,
+		connect(&(runnable->m_resultEmitter), &ThumbnailingResult::resultsReady,
+				this, &FilterModel::thumbnailReady);
+		connect(&(runnable->m_resultEmitter),
+				&ThumbnailingResult::resultsFailed, this,
 				&FilterModel::thumbnailFailed);
 		((QThreadPool&)m_thumbnailingPool).start(runnable);
 	}

@@ -175,7 +175,8 @@ LogPage::LogPage(InstancePtr instance, QWidget* parent)
 	connect(findShortcut, &QShortcut::activated, this, &LogPage::findActivated);
 	auto findNextShortcut =
 		new QShortcut(QKeySequence(QKeySequence::FindNext), this);
-	connect(findNextShortcut, &QShortcut::activated, this, &LogPage::findNextActivated);
+	connect(findNextShortcut, &QShortcut::activated, this,
+			&LogPage::findNextActivated);
 	connect(ui->searchBar, &QLineEdit::returnPressed, this,
 			&LogPage::on_findButton_clicked);
 	auto findPreviousShortcut =

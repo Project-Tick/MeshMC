@@ -82,7 +82,8 @@ namespace Katabasis
 	{
 		qDebug() << "PollServer::onPollTimeout: retrying";
 		QNetworkReply* reply = manager_->post(request_, payload_);
-		connect(reply, &QNetworkReply::finished, this, &PollServer::onReplyFinished);
+		connect(reply, &QNetworkReply::finished, this,
+				&PollServer::onReplyFinished);
 	}
 
 	void PollServer::onExpiration()

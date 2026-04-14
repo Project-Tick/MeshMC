@@ -42,7 +42,8 @@ void AuthRequest::get(const QNetworkRequest& req, int timeout /* = 60*1000*/)
 	timedReplies_.add(new Katabasis::Reply(reply_, timeout));
 	connect(reply_, &QNetworkReply::errorOccurred, this,
 			&AuthRequest::onRequestError);
-	connect(reply_, &QNetworkReply::finished, this, &AuthRequest::onRequestFinished);
+	connect(reply_, &QNetworkReply::finished, this,
+			&AuthRequest::onRequestFinished);
 	connect(reply_, &QNetworkReply::sslErrors, this, &AuthRequest::onSslErrors);
 }
 
@@ -56,7 +57,8 @@ void AuthRequest::post(const QNetworkRequest& req, const QByteArray& data,
 	timedReplies_.add(new Katabasis::Reply(reply_, timeout));
 	connect(reply_, &QNetworkReply::errorOccurred, this,
 			&AuthRequest::onRequestError);
-	connect(reply_, &QNetworkReply::finished, this, &AuthRequest::onRequestFinished);
+	connect(reply_, &QNetworkReply::finished, this,
+			&AuthRequest::onRequestFinished);
 	connect(reply_, &QNetworkReply::sslErrors, this, &AuthRequest::onSslErrors);
 	connect(reply_, &QNetworkReply::uploadProgress, this,
 			&AuthRequest::onUploadProgress);

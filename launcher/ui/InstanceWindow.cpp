@@ -86,7 +86,8 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
 		auto btnHelp = new QPushButton();
 		btnHelp->setText(tr("Help"));
 		horizontalLayout->addWidget(btnHelp);
-		connect(btnHelp, &QPushButton::clicked, m_container, &PageContainer::help);
+		connect(btnHelp, &QPushButton::clicked, m_container,
+				&PageContainer::help);
 
 		auto spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding,
 									  QSizePolicy::Minimum);

@@ -1197,7 +1197,8 @@ void MainWindow::repopulateAccountsMenu()
 	}
 
 	accountMenu->addAction(action);
-	connect(action, &QAction::triggered, this, &MainWindow::changeActiveAccount);
+	connect(action, &QAction::triggered, this,
+			&MainWindow::changeActiveAccount);
 
 	accountMenu->addSeparator();
 	accountMenu->addAction(ui->actionManageAccounts);

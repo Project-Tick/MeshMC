@@ -30,10 +30,8 @@ LoggedProcess::LoggedProcess(QObject* parent) : QProcess(parent)
 			&LoggedProcess::on_stdOut);
 	connect(this, &QProcess::readyReadStandardError, this,
 			&LoggedProcess::on_stdErr);
-	connect(this, &QProcess::finished, this,
-			&LoggedProcess::on_exit);
-	connect(this, &QProcess::errorOccurred, this,
-			&LoggedProcess::on_error);
+	connect(this, &QProcess::finished, this, &LoggedProcess::on_exit);
+	connect(this, &QProcess::errorOccurred, this, &LoggedProcess::on_error);
 	connect(this, &QProcess::stateChanged, this,
 			&LoggedProcess::on_stateChange);
 }

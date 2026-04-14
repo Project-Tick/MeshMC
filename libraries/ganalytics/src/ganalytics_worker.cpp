@@ -231,7 +231,8 @@ void GAnalyticsWorker::postMessage()
 
 	QNetworkReply* reply = networkManager->post(
 		m_request, buffer.postQuery.query(QUrl::EncodeUnicode).toUtf8());
-	connect(reply, &QNetworkReply::finished, this, &GAnalyticsWorker::postMessageFinished);
+	connect(reply, &QNetworkReply::finished, this,
+			&GAnalyticsWorker::postMessageFinished);
 }
 
 /**
