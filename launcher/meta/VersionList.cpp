@@ -69,7 +69,7 @@ namespace Meta
 	}
 	int VersionList::count() const
 	{
-		return m_versions.size();
+		return static_cast<int>(m_versions.size());
 	}
 
 	void VersionList::sortVersions()
