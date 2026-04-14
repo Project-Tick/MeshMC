@@ -23,20 +23,21 @@
 
 #include <windows.h>
 
+#include <QOperatingSystemVersion>
+
 Sys::KernelInfo Sys::getKernelInfo()
 {
 	Sys::KernelInfo out;
 	out.kernelType = KernelType::Windows;
 	out.kernelName = "Windows";
-	OSVERSIONINFOW osvi;
-	ZeroMemory(&osvi, sizeof(OSVERSIONINFOW));
-	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOW);
-	GetVersionExW(&osvi);
-	out.kernelVersion =
-		QString("%1.%2").arg(osvi.dwMajorVersion).arg(osvi.dwMinorVersion);
-	out.kernelMajor = osvi.dwMajorVersion;
-	out.kernelMinor = osvi.dwMinorVersion;
-	out.kernelPatch = osvi.dwBuildNumber;
+	const auto osVersion = QOperatingSystemVersion::current();
+	out.kernelMajor = osVersion.majorVersion();
+	out.kernelMinor = osVersion.minorVersion();
+	out.kernelPatch = osVersion.microVersion();
+	out.kernelVersion = QString("%1.%2.%3")
+						.arg(out.kernelMajor)
+						.arg(out.kernelMinor)
+						.arg(out.kernelPatch);
 	return out;
 }
 
