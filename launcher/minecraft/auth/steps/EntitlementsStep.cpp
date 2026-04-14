@@ -62,8 +62,8 @@ void EntitlementsStep::rehydrate()
 }
 
 void EntitlementsStep::onRequestDone(
-	QNetworkReply::NetworkError error, QByteArray data,
-	QList<QNetworkReply::RawHeaderPair> headers)
+	QNetworkReply::NetworkError, QByteArray data,
+	QList<QNetworkReply::RawHeaderPair>)
 {
 	auto requestor = qobject_cast<AuthRequest*>(QObject::sender());
 	requestor->deleteLater();
