@@ -452,8 +452,18 @@ namespace FS
 		//    argStr.toWCharArray(args_w);
 
 		//    return SUCCEEDED(CreateLink(file_w, dest_w, args_w));
+		(void)location;
+		(void)dest;
+		(void)args;
+		(void)name;
+		(void)icon;
 		return false;
 #else
+		(void)location;
+		(void)dest;
+		(void)args;
+		(void)name;
+		(void)icon;
 		qWarning("Desktop Shortcuts not supported on your platform!");
 		return false;
 #endif
