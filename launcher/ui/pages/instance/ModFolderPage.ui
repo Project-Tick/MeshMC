@@ -84,6 +84,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAdd"/>
+   <addaction name="actionDownload"/>
    <addaction name="separator"/>
    <addaction name="actionRemove"/>
    <addaction name="actionEnable"/>
@@ -134,6 +135,14 @@
   <action name="actionView_Folder">
    <property name="text">
     <string>View &amp;Folder</string>
+   </property>
+  </action>
+  <action name="actionDownload">
+   <property name="text">
+    <string>&amp;Download</string>
+   </property>
+   <property name="toolTip">
+    <string>Download content from CurseForge and Modrinth</string>
    </property>
   </action>
  </widget>

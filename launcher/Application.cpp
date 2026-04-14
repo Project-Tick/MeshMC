@@ -1049,6 +1049,12 @@ void Application::initSubsystems()
 							 QDir("cache/TechnicPacks").absolutePath());
 		m_metacache->addBase("FlamePacks",
 							 QDir("cache/FlamePacks").absolutePath());
+		m_metacache->addBase("FlameModIcons",
+							 QDir("cache/FlameModIcons").absolutePath());
+		m_metacache->addBase("ModrinthPacks",
+							 QDir("cache/ModrinthPacks").absolutePath());
+		m_metacache->addBase("ModrinthModIcons",
+							 QDir("cache/ModrinthModIcons").absolutePath());
 		m_metacache->addBase("root", QDir::currentPath());
 		m_metacache->addBase("translations",
 							 QDir("translations").absolutePath());

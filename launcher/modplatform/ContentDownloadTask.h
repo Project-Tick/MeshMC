@@ -17,29 +17,38 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 #pragma once
 
-#include "ModFolderPage.h"
-#include "ui_ModFolderPage.h"
+#include <QObject>
+#include <QList>
+#include <QString>
 
-class ShaderPackPage : public ModFolderPage
+#include "modplatform/ModDownloadTypes.h"
+#include "net/NetJob.h"
+#include "tasks/Task.h"
+
+class ContentDownloadTask : public Task
 {
 	Q_OBJECT
-  public:
-	explicit ShaderPackPage(MinecraftInstance* instance, QWidget* parent = 0)
-		: ModFolderPage(instance, instance->shaderPackList(), "shaderpacks",
-						"shaderpacks", tr("Shader packs"), "Resource-packs",
-						parent)
-	{
-		ui->actionView_configs->setVisible(false);
-		setContentType(ModPlatform::ContentType::ShaderPack);
-	}
-	virtual ~ShaderPackPage() {}
 
-	virtual bool shouldDisplay() const override
-	{
-		return true;
-	}
+  public:
+	explicit ContentDownloadTask(const QList<ModPlatform::DownloadItem>& items,
+								 const QString& targetDir,
+								 QObject* parent = nullptr);
+
+  protected:
+	void executeTask() override;
+
+  private slots:
+	void onDownloadSucceeded();
+	void onDownloadFailed(QString reason);
+	void onDownloadProgress(qint64 current, qint64 total);
+
+  private:
+	QList<ModPlatform::DownloadItem> m_items;
+	QString m_targetDir;
+	NetJob::Ptr m_netJob;
 };

@@ -42,6 +42,7 @@
 
 #include "minecraft/MinecraftInstance.h"
 #include "ui/pages/BasePage.h"
+#include "modplatform/ContentType.h"
 
 #include <Application.h>
 
@@ -65,6 +66,11 @@ class ModFolderPage : public QMainWindow, public BasePage
 	void setFilter(const QString& filter)
 	{
 		m_fileSelectionFilter = filter;
+	}
+
+	void setContentType(ModPlatform::ContentType type)
+	{
+		m_contentType = type;
 	}
 
 	virtual QString displayName() const override
@@ -107,6 +113,7 @@ class ModFolderPage : public QMainWindow, public BasePage
 	QString m_fileSelectionFilter;
 	QString m_viewFilter;
 	bool m_controlsEnabled = true;
+	ModPlatform::ContentType m_contentType = ModPlatform::ContentType::Mod;
 
   public slots:
 	void modCurrent(const QModelIndex& current, const QModelIndex& previous);
@@ -121,6 +128,7 @@ class ModFolderPage : public QMainWindow, public BasePage
 	void on_actionDisable_triggered();
 	void on_actionView_Folder_triggered();
 	void on_actionView_configs_triggered();
+	void on_actionDownload_triggered();
 	void ShowContextMenu(const QPoint& pos);
 };
 

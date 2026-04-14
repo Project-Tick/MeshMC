@@ -49,6 +49,9 @@
 #include "Application.h"
 
 #include "ui/dialogs/CustomMessageBox.h"
+#include "ui/dialogs/DownloadContentDialog.h"
+#include "ui/dialogs/DownloadSummaryDialog.h"
+#include "ui/dialogs/ProgressDialog.h"
 #include "ui/GuiUtil.h"
 
 #include "DesktopServices.h"
@@ -57,6 +60,8 @@
 #include "minecraft/mod/Mod.h"
 #include "minecraft/VersionFilterData.h"
 #include "minecraft/PackProfile.h"
+#include "modplatform/DependencyResolver.h"
+#include "modplatform/ContentDownloadTask.h"
 
 #include "Version.h"
 
@@ -277,6 +282,7 @@ void ModFolderPage::on_RunningState_changed(bool running)
 	ui->actionDisable->setEnabled(m_controlsEnabled);
 	ui->actionEnable->setEnabled(m_controlsEnabled);
 	ui->actionRemove->setEnabled(m_controlsEnabled);
+	ui->actionDownload->setEnabled(m_controlsEnabled);
 }
 
 bool ModFolderPage::shouldDisplay() const
@@ -404,4 +410,92 @@ void ModFolderPage::modCurrent(const QModelIndex& current,
 	int row = sourceCurrent.row();
 	Mod& m = m_mods->operator[](row);
 	ui->frame->updateWithMod(m);
+}
+
+void ModFolderPage::on_actionDownload_triggered()
+{
+	if (!m_controlsEnabled) {
+		return;
+	}
+
+	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
+	if (!mcInst) {
+		return;
+	}
+
+	// For mods, require a mod loader to be installed
+	if (m_contentType == ModPlatform::ContentType::Mod) {
+		auto profile = mcInst->getPackProfile();
+		bool hasLoader = false;
+		if (profile) {
+			hasLoader = profile->getComponent("net.minecraftforge") ||
+						profile->getComponent("net.fabricmc.fabric-loader") ||
+						profile->getComponent("org.quiltmc.quilt-loader") ||
+						profile->getComponent("net.neoforged.neoforge");
+		}
+		if (!hasLoader) {
+			QMessageBox::warning(
+				this->parentWidget(), tr("No Mod Loader"),
+				tr("No mod loader (Forge, Fabric, Quilt, or NeoForge) is "
+				   "installed "
+				   "in this instance. Please install a mod loader first before "
+				   "downloading mods."));
+			return;
+		}
+	}
+
+	// Step 1: Open browse dialog
+	DownloadContentDialog browseDialog(mcInst, m_contentType,
+									   this->parentWidget());
+	if (browseDialog.exec() != QDialog::Accepted) {
+		return;
+	}
+
+	auto selectedMods = browseDialog.selectedMods();
+	if (selectedMods.isEmpty()) {
+		return;
+	}
+
+	// Step 2: Resolve dependencies (only for mods)
+	QList<ModPlatform::DependencyInfo> dependencies;
+	QList<ModPlatform::UnresolvedDep> unresolvedDeps;
+	if (m_contentType == ModPlatform::ContentType::Mod) {
+		auto* resolver = new DependencyResolver(
+			selectedMods, browseDialog.mcVersion(), browseDialog.loaderType());
+
+		ProgressDialog depProgress(this->parentWidget());
+		depProgress.setSkipButton(true, tr("Skip"));
+		if (depProgress.execWithTask(resolver) != QDialog::Accepted) {
+			if (!resolver->wasSuccessful()) {
+				qWarning() << "Dependency resolution failed or was skipped";
+			}
+		}
+		dependencies = resolver->resolvedDependencies();
+		unresolvedDeps = resolver->unresolvedDependencies();
+		delete resolver;
+	}
+
+	// Step 3: Show summary dialog
+	DownloadSummaryDialog summaryDialog(selectedMods, dependencies,
+										unresolvedDeps, this->parentWidget());
+	if (summaryDialog.exec() != QDialog::Accepted) {
+		return;
+	}
+
+	// Step 4: Download everything
+	auto downloadItems = summaryDialog.downloadItems();
+	QString targetDir = m_mods->dir().absolutePath();
+
+	auto* downloadTask = new ContentDownloadTask(downloadItems, targetDir);
+	ProgressDialog downloadProgress(this->parentWidget());
+	downloadProgress.execWithTask(downloadTask);
+
+	if (downloadTask->wasSuccessful()) {
+		m_mods->update();
+	} else {
+		QMessageBox::warning(this->parentWidget(), tr("Download Failed"),
+							 tr("Some files failed to download: %1")
+								 .arg(downloadTask->failReason()));
+	}
+	delete downloadTask;
 }

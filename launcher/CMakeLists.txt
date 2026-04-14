@@ -492,6 +492,8 @@ set(FLAME_SOURCES
     modplatform/flame/PackManifest.cpp
     modplatform/flame/FileResolvingTask.h
     modplatform/flame/FileResolvingTask.cpp
+    modplatform/flame/FlameModModel.h
+    modplatform/flame/FlameModModel.cpp
 )
 
 set(MODPACKSCH_SOURCES
@@ -524,6 +526,17 @@ set(MODRINTH_SOURCES
     modplatform/modrinth/ModrinthPackIndex.h
     modplatform/modrinth/ModrinthPackManifest.cpp
     modplatform/modrinth/ModrinthPackManifest.h
+    modplatform/modrinth/ModrinthModModel.h
+    modplatform/modrinth/ModrinthModModel.cpp
+)
+
+set(CONTENT_DOWNLOAD_SOURCES
+    modplatform/ContentType.h
+    modplatform/ModDownloadTypes.h
+    modplatform/DependencyResolver.h
+    modplatform/DependencyResolver.cpp
+    modplatform/ContentDownloadTask.h
+    modplatform/ContentDownloadTask.cpp
 )
 
 add_unit_test(Index
@@ -559,6 +572,7 @@ set(LOGIC_SOURCES
     ${TECHNIC_SOURCES}
     ${ATLAUNCHER_SOURCES}
     ${MODRINTH_SOURCES}
+    ${CONTENT_DOWNLOAD_SOURCES}
 )
 
 SET(MESHMC_SOURCES
@@ -791,6 +805,10 @@ SET(MESHMC_SOURCES
     ui/dialogs/VersionSelectDialog.h
     ui/dialogs/SkinUploadDialog.cpp
     ui/dialogs/SkinUploadDialog.h
+    ui/dialogs/DownloadContentDialog.cpp
+    ui/dialogs/DownloadContentDialog.h
+    ui/dialogs/DownloadSummaryDialog.cpp
+    ui/dialogs/DownloadSummaryDialog.h
 
 
     # GUI - widgets

@@ -34,6 +34,7 @@ class ResourcePackPage : public ModFolderPage
 						parent)
 	{
 		ui->actionView_configs->setVisible(false);
+		setContentType(ModPlatform::ContentType::ResourcePack);
 	}
 	virtual ~ResourcePackPage() {}
 
