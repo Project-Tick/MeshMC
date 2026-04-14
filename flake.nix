@@ -10,18 +10,12 @@
 
   inputs = {
     nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
-
-    libnbtplusplus = {
-      url = "github:Project-Tick/libnbtplusplus";
-      flake = false;
-    };
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      libnbtplusplus,
     }:
 
     let
@@ -175,7 +169,6 @@
           meshmc-unwrapped = prev.callPackage ./nix/unwrapped.nix {
             inherit (llvm) stdenv;
             inherit
-              libnbtplusplus
               self
               ;
           };

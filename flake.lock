@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "libnbtplusplus": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1774630629,
-        "narHash": "sha256-Hu/7viS/TiXIlNFZpTiIMH/dmVrKlomBKlckD7TKB+Q=",
-        "owner": "Project-Tick",
-        "repo": "libnbtplusplus",
-        "rev": "bc952e1298e7aba15a7e97df521b8fc57efd5d73",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Project-Tick",
-        "repo": "libnbtplusplus",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1775036866,
@@ -31,7 +15,6 @@
     },
     "root": {
       "inputs": {
-        "libnbtplusplus": "libnbtplusplus",
         "nixpkgs": "nixpkgs"
       }
     }
