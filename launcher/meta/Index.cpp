@@ -78,11 +78,11 @@ namespace Meta
 		}
 		return QVariant();
 	}
-	int Index::rowCount(const QModelIndex& parent) const
+	int Index::rowCount(const QModelIndex&) const
 	{
-		return m_lists.size();
+		return static_cast<int>(m_lists.size());
 	}
-	int Index::columnCount(const QModelIndex& parent) const
+	int Index::columnCount(const QModelIndex&) const
 	{
 		return 1;
 	}
