@@ -138,16 +138,16 @@ namespace Parsers
 			if (!item.isObject()) {
 				continue;
 			}
-			auto obj = item.toObject();
-			if (obj.contains("uhs")) {
+			auto claimObject = item.toObject();
+			if (claimObject.contains("uhs")) {
 				foundUHS = true;
 			} else {
 				continue;
 			}
 			// consume all 'display claims' ... whatever that means
-			for (auto iter = obj.begin(); iter != obj.end(); iter++) {
+			for (auto iter = claimObject.begin(); iter != claimObject.end(); iter++) {
 				QString claim;
-				if (!getString(obj.value(iter.key()), claim)) {
+				if (!getString(claimObject.value(iter.key()), claim)) {
 					qWarning() << "display claim " << iter.key()
 							   << " is not a string...";
 					return false;
