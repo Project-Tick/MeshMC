@@ -27,8 +27,7 @@
 
 #include <QVBoxLayout>
 
-UpdateProgressDialog::UpdateProgressDialog(QWidget* parent)
-	: QDialog(parent)
+UpdateProgressDialog::UpdateProgressDialog(QWidget* parent) : QDialog(parent)
 {
 	setWindowTitle(tr("MeshMC Update"));
 	setMinimumSize(500, 400);

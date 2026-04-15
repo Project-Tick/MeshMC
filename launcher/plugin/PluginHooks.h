@@ -39,31 +39,31 @@
  */
 
 enum MMCOHookId : uint32_t {
-    /* Application lifecycle */
-    MMCO_HOOK_APP_INITIALIZED       = 0x0100,  /* payload: nullptr */
-    MMCO_HOOK_APP_SHUTDOWN          = 0x0101,  /* payload: nullptr */
+	/* Application lifecycle */
+	MMCO_HOOK_APP_INITIALIZED = 0x0100, /* payload: nullptr */
+	MMCO_HOOK_APP_SHUTDOWN = 0x0101,	/* payload: nullptr */
 
-    /* Instance lifecycle */
-    MMCO_HOOK_INSTANCE_PRE_LAUNCH   = 0x0200,  /* payload: MMCOInstanceInfo* */
-    MMCO_HOOK_INSTANCE_POST_LAUNCH  = 0x0201,  /* payload: MMCOInstanceInfo* */
-    MMCO_HOOK_INSTANCE_CREATED      = 0x0202,  /* payload: MMCOInstanceInfo* */
-    MMCO_HOOK_INSTANCE_REMOVED      = 0x0203,  /* payload: MMCOInstanceInfo* */
+	/* Instance lifecycle */
+	MMCO_HOOK_INSTANCE_PRE_LAUNCH = 0x0200,	 /* payload: MMCOInstanceInfo* */
+	MMCO_HOOK_INSTANCE_POST_LAUNCH = 0x0201, /* payload: MMCOInstanceInfo* */
+	MMCO_HOOK_INSTANCE_CREATED = 0x0202,	 /* payload: MMCOInstanceInfo* */
+	MMCO_HOOK_INSTANCE_REMOVED = 0x0203,	 /* payload: MMCOInstanceInfo* */
 
-    /* Settings */
-    MMCO_HOOK_SETTINGS_CHANGED      = 0x0300,  /* payload: MMCOSettingChange* */
+	/* Settings */
+	MMCO_HOOK_SETTINGS_CHANGED = 0x0300, /* payload: MMCOSettingChange* */
 
-    /* Content / mod management */
-    MMCO_HOOK_CONTENT_PRE_DOWNLOAD  = 0x0400,  /* payload: MMCOContentEvent* */
-    MMCO_HOOK_CONTENT_POST_DOWNLOAD = 0x0401,  /* payload: MMCOContentEvent* */
+	/* Content / mod management */
+	MMCO_HOOK_CONTENT_PRE_DOWNLOAD = 0x0400,  /* payload: MMCOContentEvent* */
+	MMCO_HOOK_CONTENT_POST_DOWNLOAD = 0x0401, /* payload: MMCOContentEvent* */
 
-    /* Network */
-    MMCO_HOOK_NETWORK_PRE_REQUEST   = 0x0500,  /* payload: MMCONetworkEvent* */
-    MMCO_HOOK_NETWORK_POST_REQUEST  = 0x0501,  /* payload: MMCONetworkEvent* */
+	/* Network */
+	MMCO_HOOK_NETWORK_PRE_REQUEST = 0x0500,	 /* payload: MMCONetworkEvent* */
+	MMCO_HOOK_NETWORK_POST_REQUEST = 0x0501, /* payload: MMCONetworkEvent* */
 
-    /* UI extension points */
-    MMCO_HOOK_UI_MAIN_READY         = 0x0600,  /* payload: nullptr */
-    MMCO_HOOK_UI_CONTEXT_MENU       = 0x0601,  /* payload: MMCOMenuEvent* */
-    MMCO_HOOK_UI_INSTANCE_PAGES     = 0x0602,  /* payload: MMCOInstancePagesEvent* */
+	/* UI extension points */
+	MMCO_HOOK_UI_MAIN_READY = 0x0600,	  /* payload: nullptr */
+	MMCO_HOOK_UI_CONTEXT_MENU = 0x0601,	  /* payload: MMCOMenuEvent* */
+	MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602, /* payload: MMCOInstancePagesEvent* */
 };
 
 /*
@@ -76,42 +76,40 @@ enum MMCOHookId : uint32_t {
  * Return 0 to allow the chain to continue, non-zero to signal cancellation
  * (only effective for "pre" hooks).
  */
-typedef int (*MMCOHookCallback)(void* module_handle,
-                                uint32_t hook_id,
-                                void* payload,
-                                void* user_data);
+typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,
+								void* payload, void* user_data);
 
 /* Payload structures for hooks */
 
 struct MMCOInstanceInfo {
-    const char* instance_id;
-    const char* instance_name;
-    const char* instance_path;
-    const char* minecraft_version;
+	const char* instance_id;
+	const char* instance_name;
+	const char* instance_path;
+	const char* minecraft_version;
 };
 
 struct MMCOSettingChange {
-    const char* key;
-    const char* old_value;
-    const char* new_value;
+	const char* key;
+	const char* old_value;
+	const char* new_value;
 };
 
 struct MMCOContentEvent {
-    const char* instance_id;
-    const char* file_name;
-    const char* url;
-    const char* target_path;
+	const char* instance_id;
+	const char* file_name;
+	const char* url;
+	const char* target_path;
 };
 
 struct MMCONetworkEvent {
-    const char* url;
-    const char* method;     /* "GET", "POST", etc. */
-    int         status_code; /* 0 for pre-request */
+	const char* url;
+	const char* method; /* "GET", "POST", etc. */
+	int status_code;	/* 0 for pre-request */
 };
 
 struct MMCOMenuEvent {
-    const char* context;     /* "main", "instance", etc. */
-    void*       menu_handle; /* Opaque handle for mmco_ui_add_menu_item() */
+	const char* context; /* "main", "instance", etc. */
+	void* menu_handle;	 /* Opaque handle for mmco_ui_add_menu_item() */
 };
 
 /*
@@ -121,9 +119,9 @@ struct MMCOMenuEvent {
  * QList<BasePage*>*).
  */
 struct MMCOInstancePagesEvent {
-    const char* instance_id;
-    const char* instance_name;
-    const char* instance_path;
-    void*       page_list_handle;  /* Opaque: QList<BasePage*>* */
-    void*       instance_handle;   /* Opaque: InstancePtr raw pointer */
+	const char* instance_id;
+	const char* instance_name;
+	const char* instance_path;
+	void* page_list_handle; /* Opaque: QList<BasePage*>* */
+	void* instance_handle;	/* Opaque: InstancePtr raw pointer */
 };

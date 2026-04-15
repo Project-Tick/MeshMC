@@ -1005,11 +1005,14 @@ MainWindow::MainWindow(QWidget* parent)
 		QAction* changeGroupAct = ui->actionChangeInstGroup.operator->();
 		QAction* insertBefore = nullptr;
 		int idx = tbActions.indexOf(changeGroupAct);
-		if (idx >= 0 && idx + 1 < tbActions.size() && tbActions[idx + 1]->isSeparator()) {
+		if (idx >= 0 && idx + 1 < tbActions.size() &&
+			tbActions[idx + 1]->isSeparator()) {
 			insertBefore = tbActions[idx + 1];
 		}
-		for (const auto& act : APPLICATION->pluginManager()->instanceActions()) {
-			auto* qa = new QAction(APPLICATION->getThemedIcon(act.iconName), act.text, this);
+		for (const auto& act :
+			 APPLICATION->pluginManager()->instanceActions()) {
+			auto* qa = new QAction(APPLICATION->getThemedIcon(act.iconName),
+								   act.text, this);
 			qa->setToolTip(act.tooltip);
 			QString pageId = act.pageId;
 			connect(qa, &QAction::triggered, this, [this, pageId] {
@@ -1128,7 +1131,8 @@ void MainWindow::showInstanceContextMenu(const QPoint& pos)
 		MMCOMenuEvent menuEvt{};
 		menuEvt.context = ctxName.constData();
 		menuEvt.menu_handle = &myMenu;
-		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_CONTEXT_MENU, &menuEvt);
+		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_CONTEXT_MENU,
+												   &menuEvt);
 	}
 
 	myMenu.exec(view->mapToGlobal(pos));
@@ -1391,22 +1395,21 @@ void MainWindow::updateAvailable(UpdateAvailableStatus status)
 				QApplication::processEvents();
 
 				APPLICATION->updateIsRunning(true);
-				progressDlg->setStatus(
-					tr("Launching updater..."));
+				progressDlg->setStatus(tr("Launching updater..."));
 				QApplication::processEvents();
 
 				UpdateController controller(this, APPLICATION->root(),
 											status.downloadUrl);
 				if (controller.startUpdate()) {
-					progressDlg->setFinished(true,
-						tr("Updater launched. MeshMC will now close."));
+					progressDlg->setFinished(
+						true, tr("Updater launched. MeshMC will now close."));
 					QApplication::processEvents();
 					// The updater binary has been launched; quit the main app
 					// so the updater can overwrite its files.
 					QCoreApplication::quit();
 				} else {
-					progressDlg->setFinished(false,
-						tr("Failed to launch the updater."));
+					progressDlg->setFinished(
+						false, tr("Failed to launch the updater."));
 				}
 				APPLICATION->updateIsRunning(false);
 			} else {
@@ -1765,27 +1768,30 @@ void MainWindow::checkForUpdates()
 		progressDlg->setStatus(tr("Checking for updates..."));
 		progressDlg->setAttribute(Qt::WA_DeleteOnClose);
 
-		connect(updater.get(), &UpdateChecker::checkFailed, progressDlg,
-				[progressDlg](QString reason) {
-					progressDlg->setFinished(
-						false, QObject::tr("Update check failed: %1").arg(reason));
-				},
-				Qt::SingleShotConnection);
+		connect(
+			updater.get(), &UpdateChecker::checkFailed, progressDlg,
+			[progressDlg](QString reason) {
+				progressDlg->setFinished(
+					false, QObject::tr("Update check failed: %1").arg(reason));
+			},
+			Qt::SingleShotConnection);
 
-		connect(updater.get(), &UpdateChecker::updateAvailable, progressDlg,
-				[progressDlg](UpdateAvailableStatus status) {
-					progressDlg->setFinished(
-						true,
-						QObject::tr("Update available: version %1").arg(status.version));
-				},
-				Qt::SingleShotConnection);
+		connect(
+			updater.get(), &UpdateChecker::updateAvailable, progressDlg,
+			[progressDlg](UpdateAvailableStatus status) {
+				progressDlg->setFinished(
+					true, QObject::tr("Update available: version %1")
+							  .arg(status.version));
+			},
+			Qt::SingleShotConnection);
 
-		connect(updater.get(), &UpdateChecker::noUpdateFound, progressDlg,
-				[progressDlg]() {
-					progressDlg->setFinished(
-						true, QObject::tr("You are running the latest version."));
-				},
-				Qt::SingleShotConnection);
+		connect(
+			updater.get(), &UpdateChecker::noUpdateFound, progressDlg,
+			[progressDlg]() {
+				progressDlg->setFinished(
+					true, QObject::tr("You are running the latest version."));
+			},
+			Qt::SingleShotConnection);
 
 		progressDlg->show();
 		updater->checkForUpdate(true);

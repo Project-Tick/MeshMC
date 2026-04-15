@@ -83,7 +83,7 @@ class UpdateCheckerTest : public QObject
 		</item>
 	</channel>
 </rss>)")
-			.arg(namespaceUri);
+								.arg(namespaceUri);
 
 		QString version;
 		QString downloadUrl;
@@ -109,8 +109,10 @@ class UpdateCheckerTest : public QObject
 		QVERIFY(!UpdateChecker::parseStableFeedItem(
 			"<rss><channel><item>", "Linux-Qt6-Portable", &version,
 			&downloadUrl, &releaseNotes, &parseError));
-		QVERIFY2(!parseError.isEmpty(),
-				 qPrintable(QString("Expected a parse error for malformed XML, got empty string")));
+		QVERIFY2(
+			!parseError.isEmpty(),
+			qPrintable(QString(
+				"Expected a parse error for malformed XML, got empty string")));
 	}
 
 	void tst_NormalizeVersion_data()

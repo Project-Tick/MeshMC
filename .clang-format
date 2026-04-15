@@ -22,3 +22,7 @@ IndentPPDirectives: None
 NamespaceIndentation: All
 SpaceBeforeParens: ControlStatements
 SpacesInParentheses: false
+
+
+# Keep SPDX/license comment lines untouched
+CommentPragmas: '^(SPDX-|Copyright \(C\)|MeshMC - |This program is free software:|This program is distributed in the hope that it will be useful,|You should have received a copy of the GNU General Public License)'

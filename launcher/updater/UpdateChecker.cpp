@@ -90,11 +90,10 @@ bool UpdateChecker::isSupportedFeedNamespace(QStringView namespaceUri)
 }
 
 bool UpdateChecker::parseStableFeedItem(const QByteArray& feedData,
-									const QString& buildArtifact,
-									QString* version,
-									QString* downloadUrl,
-									QString* releaseNotes,
-									QString* parseError)
+										const QString& buildArtifact,
+										QString* version, QString* downloadUrl,
+										QString* releaseNotes,
+										QString* parseError)
 {
 	Q_ASSERT(version);
 	Q_ASSERT(downloadUrl);
@@ -139,16 +138,15 @@ bool UpdateChecker::parseStableFeedItem(const QByteArray& feedData,
 							xml.attributes().value("url").toString();
 						if (!buildArtifact.isEmpty() &&
 							assetName.contains(buildArtifact,
-										  Qt::CaseInsensitive)) {
+											   Qt::CaseInsensitive)) {
 							itemUrl = assetUrl;
 						}
 					}
 				} else if (name == u"description" &&
 						   xml.namespaceUri().isEmpty()) {
-					itemNotes =
-						xml.readElementText(
-							   QXmlStreamReader::IncludeChildElements)
-							.trimmed();
+					itemNotes = xml.readElementText(
+									   QXmlStreamReader::IncludeChildElements)
+									.trimmed();
 				}
 			}
 		} else if (xml.isEndElement() && xml.name() == u"item" && insideItem) {
@@ -281,9 +279,8 @@ void UpdateChecker::onPhase1Finished(bool notifyNoUpdate)
 	QString downloadUrl;
 	QString releaseNotes;
 	QString feedParseError;
-	if (!parseStableFeedItem(feedData, BuildConfig.BUILD_ARTIFACT,
-							 &feedVersion, &downloadUrl,
-							 &releaseNotes, &feedParseError)) {
+	if (!parseStableFeedItem(feedData, BuildConfig.BUILD_ARTIFACT, &feedVersion,
+							 &downloadUrl, &releaseNotes, &feedParseError)) {
 		m_checking = false;
 		if (!feedParseError.isEmpty()) {
 			qWarning() << "UpdateChecker: failed to parse update feed:"
@@ -291,8 +288,8 @@ void UpdateChecker::onPhase1Finished(bool notifyNoUpdate)
 			emit checkFailed(
 				tr("Failed to parse update feed: %1").arg(feedParseError));
 		} else {
-			qWarning()
-				<< "UpdateChecker: no stable release entry found in the update feed.";
+			qWarning() << "UpdateChecker: no stable release entry found in the "
+						  "update feed.";
 			emit checkFailed(
 				tr("No stable release entry found in the update feed."));
 		}

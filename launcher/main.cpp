@@ -61,8 +61,7 @@ static void launchCrashReporter()
 
 	QString apiKey = "public";
 	if (APPLICATION && APPLICATION->settings()) {
-		QString key =
-			APPLICATION->settings()->get("PasteEEAPIKey").toString();
+		QString key = APPLICATION->settings()->get("PasteEEAPIKey").toString();
 		if (key != "meshmc" && !key.isEmpty()) {
 			apiKey = key;
 		} else {

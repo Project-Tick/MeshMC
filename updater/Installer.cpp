@@ -174,7 +174,8 @@ bool Installer::installArchive(const QString& filePath)
 		// never try to overwrite ourselves mid-update.  This works correctly
 		// whether the updater was launched directly or via a wrapper script.
 		const QString selfPath =
-			QFileInfo(QCoreApplication::applicationFilePath()).absoluteFilePath();
+			QFileInfo(QCoreApplication::applicationFilePath())
+				.absoluteFilePath();
 
 		QDir src(tempDir.path());
 		// If the archive has a single top-level directory, descend into it.
@@ -202,8 +203,9 @@ bool Installer::installArchive(const QString& filePath)
 				continue;
 
 			if (!QDir().mkpath(QFileInfo(destPath).absolutePath())) {
-				emit finished(false, tr("Cannot create directory: %1")
-										 .arg(QFileInfo(destPath).absolutePath()));
+				emit finished(false,
+							  tr("Cannot create directory: %1")
+								  .arg(QFileInfo(destPath).absolutePath()));
 				return false;
 			}
 
@@ -218,8 +220,8 @@ bool Installer::installArchive(const QString& filePath)
 				const QString relTarget =
 					QDir(fi.absolutePath()).relativeFilePath(absTarget);
 				if (!QFile::link(relTarget, destPath)) {
-					qWarning() << "Installer: cannot create symlink"
-							   << destPath << "->" << relTarget;
+					qWarning() << "Installer: cannot create symlink" << destPath
+							   << "->" << relTarget;
 				}
 				continue;
 			}
@@ -313,7 +315,8 @@ bool Installer::extractZip(const QString& zipPath, const QString& destDir)
 		const int wh = archive_write_header(ext, entry);
 		if (wh < ARCHIVE_WARN) {
 			extractError = QString::fromLocal8Bit(archive_error_string(ext));
-			qWarning() << "extractZip: archive_write_header failed:" << extractError;
+			qWarning() << "extractZip: archive_write_header failed:"
+					   << extractError;
 			ok = false;
 			break;
 		} else if (wh != ARCHIVE_OK) {
@@ -331,7 +334,8 @@ bool Installer::extractZip(const QString& zipPath, const QString& destDir)
 			}
 			if (rb != ARCHIVE_EOF && rb < ARCHIVE_WARN) {
 				extractError = QString::fromLocal8Bit(archive_error_string(a));
-				qWarning() << "extractZip: read data block failed:" << extractError;
+				qWarning() << "extractZip: read data block failed:"
+						   << extractError;
 				ok = false;
 				break;
 			}
@@ -345,7 +349,8 @@ bool Installer::extractZip(const QString& zipPath, const QString& destDir)
 	archive_write_free(ext);
 
 	if (!ok) {
-		emit finished(false, tr("Failed to extract zip archive: %1").arg(extractError));
+		emit finished(
+			false, tr("Failed to extract zip archive: %1").arg(extractError));
 		return false;
 	}
 	return true;
@@ -395,7 +400,8 @@ bool Installer::extractTarGz(const QString& tarPath, const QString& destDir)
 		const int wh = archive_write_header(ext, entry);
 		if (wh < ARCHIVE_WARN) {
 			extractError = QString::fromLocal8Bit(archive_error_string(ext));
-			qWarning() << "extractTarGz: archive_write_header failed:" << extractError;
+			qWarning() << "extractTarGz: archive_write_header failed:"
+					   << extractError;
 			ok = false;
 			break;
 		} else if (wh != ARCHIVE_OK) {
@@ -413,7 +419,8 @@ bool Installer::extractTarGz(const QString& tarPath, const QString& destDir)
 			}
 			if (rb != ARCHIVE_EOF && rb < ARCHIVE_WARN) {
 				extractError = QString::fromLocal8Bit(archive_error_string(a));
-				qWarning() << "extractTarGz: read data block failed:" << extractError;
+				qWarning() << "extractTarGz: read data block failed:"
+						   << extractError;
 				ok = false;
 				break;
 			}
@@ -427,7 +434,8 @@ bool Installer::extractTarGz(const QString& tarPath, const QString& destDir)
 	archive_write_free(ext);
 
 	if (!ok) {
-		emit finished(false, tr("Failed to extract tar archive: %1").arg(extractError));
+		emit finished(
+			false, tr("Failed to extract tar archive: %1").arg(extractError));
 		return false;
 	}
 	return true;

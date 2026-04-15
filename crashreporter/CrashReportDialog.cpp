@@ -39,8 +39,7 @@
 #endif
 
 CrashReportDialog::CrashReportDialog(const QString& pasteLink,
-									  const QString& logContent,
-									  QWidget* parent)
+									 const QString& logContent, QWidget* parent)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("MeshMC Crash Report"));
@@ -53,7 +52,8 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	m_messageLabel->setText(
 		tr("<h2 style='color: #cc0000;'>MeshMC has failed</h2>"
 		   "<p>An unexpected error occurred and MeshMC had to close.</p>"
-		   "<p>Your logs have been uploaded to paste.ee for troubleshooting.</p>"));
+		   "<p>Your logs have been uploaded to paste.ee for "
+		   "troubleshooting.</p>"));
 	m_messageLabel->setAlignment(Qt::AlignCenter);
 	m_messageLabel->setWordWrap(true);
 	mainLayout->addWidget(m_messageLabel);
@@ -67,8 +67,7 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	// so the most recent (and most relevant) log lines are included.
 	QString truncatedLog = logContent;
 	if (truncatedLog.size() > 2000) {
-		truncatedLog = tr("[...truncated...]\n") +
-			logContent.right(2000);
+		truncatedLog = tr("[...truncated...]\n") + logContent.right(2000);
 	}
 
 	auto* qrLogGroup = new QVBoxLayout();
@@ -120,15 +119,13 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	auto* buttonLayout = new QHBoxLayout();
 
 	auto* copyLinkBtn = new QPushButton(tr("Copy Link"), this);
-	connect(copyLinkBtn, &QPushButton::clicked, this, [pasteLink]() {
-		QApplication::clipboard()->setText(pasteLink);
-	});
+	connect(copyLinkBtn, &QPushButton::clicked, this,
+			[pasteLink]() { QApplication::clipboard()->setText(pasteLink); });
 	buttonLayout->addWidget(copyLinkBtn);
 
 	auto* openBtn = new QPushButton(tr("Open in Browser"), this);
-	connect(openBtn, &QPushButton::clicked, this, [pasteLink]() {
-		QDesktopServices::openUrl(QUrl(pasteLink));
-	});
+	connect(openBtn, &QPushButton::clicked, this,
+			[pasteLink]() { QDesktopServices::openUrl(QUrl(pasteLink)); });
 	buttonLayout->addWidget(openBtn);
 
 	auto* closeBtn = new QPushButton(tr("Close"), this);
@@ -141,8 +138,8 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 QPixmap CrashReportDialog::generateQRCode(const QString& text, int size)
 {
 #ifdef MESHMC_HAS_QRENCODE
-	QRcode* qr = QRcode_encodeString(text.toUtf8().constData(), 0,
-									  QR_ECLEVEL_M, QR_MODE_8, 1);
+	QRcode* qr = QRcode_encodeString(text.toUtf8().constData(), 0, QR_ECLEVEL_M,
+									 QR_MODE_8, 1);
 	if (!qr) {
 		return QPixmap();
 	}

@@ -37,44 +37,45 @@
  * It does NOT call mmco_init(); that is the PluginManager's job.
  */
 
-class PluginLoader {
+class PluginLoader
+{
   public:
-    PluginLoader();
-    ~PluginLoader();
+	PluginLoader();
+	~PluginLoader();
 
-    /*
-     * Scan all configured search paths and return metadata for every
-     * valid .mmco module found. Invalid modules (bad magic, ABI mismatch,
-     * missing symbols) are logged and skipped.
-     */
-    QVector<PluginMetadata> discoverModules() const;
+	/*
+	 * Scan all configured search paths and return metadata for every
+	 * valid .mmco module found. Invalid modules (bad magic, ABI mismatch,
+	 * missing symbols) are logged and skipped.
+	 */
+	QVector<PluginMetadata> discoverModules() const;
 
-    /*
-     * Open a single .mmco file: dlopen, validate magic/ABI, resolve
-     * entry points. On success the returned PluginMetadata has
-     * loaded == true. On failure loaded == false and libraryHandle
-     * is nullptr.
-     */
-    PluginMetadata loadModule(const QString& path) const;
+	/*
+	 * Open a single .mmco file: dlopen, validate magic/ABI, resolve
+	 * entry points. On success the returned PluginMetadata has
+	 * loaded == true. On failure loaded == false and libraryHandle
+	 * is nullptr.
+	 */
+	PluginMetadata loadModule(const QString& path) const;
 
-    /*
-     * Close a previously loaded module.
-     */
-    static void unloadModule(PluginMetadata& meta);
+	/*
+	 * Close a previously loaded module.
+	 */
+	static void unloadModule(PluginMetadata& meta);
 
-    /*
-     * Return the ordered list of directories that will be scanned.
-     */
-    QStringList searchPaths() const;
+	/*
+	 * Return the ordered list of directories that will be scanned.
+	 */
+	QStringList searchPaths() const;
 
-    /*
-     * Prepend extra search paths (e.g. from settings).
-     */
-    void addSearchPath(const QString& path);
+	/*
+	 * Prepend extra search paths (e.g. from settings).
+	 */
+	void addSearchPath(const QString& path);
 
   private:
-    QStringList m_extraPaths;
+	QStringList m_extraPaths;
 
-    static QStringList defaultSearchPaths();
-    QVector<PluginMetadata> scanDirectory(const QString& dir) const;
+	static QStringList defaultSearchPaths();
+	QVector<PluginMetadata> scanDirectory(const QString& dir) const;
 };

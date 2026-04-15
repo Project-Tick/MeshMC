@@ -42,29 +42,29 @@
 
 #include <cstdint>
 
-#define MMCO_MAGIC         0x4D4D434F  /* "MMCO" in big-endian ASCII */
-#define MMCO_ABI_VERSION   1
-#define MMCO_EXTENSION     ".mmco"
+#define MMCO_MAGIC 0x4D4D434F /* "MMCO" in big-endian ASCII */
+#define MMCO_ABI_VERSION 1
+#define MMCO_EXTENSION ".mmco"
 
 struct MMCOModuleInfo {
-    uint32_t magic;          /* Must be MMCO_MAGIC */
-    uint32_t abi_version;    /* Must match MMCO_ABI_VERSION */
-    const char* name;        /* Human-readable module name */
-    const char* version;     /* Module version string */
-    const char* author;      /* Author / maintainer */
-    const char* description; /* Short description */
-    const char* license;     /* SPDX license identifier */
-    uint32_t flags;          /* Reserved for future use, set to 0 */
+	uint32_t magic;			 /* Must be MMCO_MAGIC */
+	uint32_t abi_version;	 /* Must match MMCO_ABI_VERSION */
+	const char* name;		 /* Human-readable module name */
+	const char* version;	 /* Module version string */
+	const char* author;		 /* Author / maintainer */
+	const char* description; /* Short description */
+	const char* license;	 /* SPDX license identifier */
+	uint32_t flags;			 /* Reserved for future use, set to 0 */
 };
 
 /* Module flags (reserved, extend as needed) */
-#define MMCO_FLAG_NONE          0x00000000
+#define MMCO_FLAG_NONE 0x00000000
 
 /* Symbol visibility for .mmco shared libraries */
 #if defined(_WIN32) || defined(__CYGWIN__)
-#  define MMCO_EXPORT __declspec(dllexport)
+#define MMCO_EXPORT __declspec(dllexport)
 #else
-#  define MMCO_EXPORT __attribute__((visibility("default")))
+#define MMCO_EXPORT __attribute__((visibility("default")))
 #endif
 
 /*

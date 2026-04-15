@@ -51,9 +51,8 @@ static QString readLogFile(const QString& logDir, const QString& baseName)
 	return QString::fromUtf8(file.readAll());
 }
 
-static QString
-uploadToPasteEE(QNetworkAccessManager* nam, const QString& text,
-				const QString& apiKey)
+static QString uploadToPasteEE(QNetworkAccessManager* nam, const QString& text,
+							   const QString& apiKey)
 {
 	QJsonObject sectionObject;
 	sectionObject.insert("contents", text);
@@ -135,8 +134,7 @@ int main(int argc, char* argv[])
 	parser.addOption(logDirOption);
 
 	QCommandLineOption baseNameOption(
-		"name", "Base name for log files (default: MeshMC).", "name",
-		"MeshMC");
+		"name", "Base name for log files (default: MeshMC).", "name", "MeshMC");
 	parser.addOption(baseNameOption);
 
 	QCommandLineOption apiKeyOption(

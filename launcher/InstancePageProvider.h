@@ -110,7 +110,8 @@ class InstancePageProvider : public QObject, public BasePageProvider
 			evt.instance_path = pathUtf8.constData();
 			evt.page_list_handle = &values;
 			evt.instance_handle = inst.get();
-			APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_INSTANCE_PAGES, &evt);
+			APPLICATION->pluginManager()->dispatchHook(
+				MMCO_HOOK_UI_INSTANCE_PAGES, &evt);
 		}
 
 		return values;

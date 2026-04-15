@@ -121,11 +121,9 @@ class UpdateChecker : public QObject
 	static bool isSupportedFeedNamespace(QStringView namespaceUri);
 	/// Extracts the first stable item from the feed and reports parse errors.
 	static bool parseStableFeedItem(const QByteArray& feedData,
-									   const QString& buildArtifact,
-									   QString* version,
-									   QString* downloadUrl,
-									   QString* releaseNotes,
-									   QString* parseError);
+									const QString& buildArtifact,
+									QString* version, QString* downloadUrl,
+									QString* releaseNotes, QString* parseError);
 
 	/// Parse GitHub releases JSON, return components.json browser_download_url.
 	/// Stores tag_name fallback in m_githubTagVersion.

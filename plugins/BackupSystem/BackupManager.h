@@ -10,32 +10,34 @@
 #include "plugin/sdk/mmco_sdk.h"
 
 struct BackupEntry {
-    QString name;           // human-readable label
-    QString fileName;       // zip file name (e.g. "2026-01-15_14-30-00.zip")
-    QString fullPath;       // absolute path to the backup zip
-    QDateTime timestamp;    // when the backup was created
-    qint64 sizeBytes;       // file size
+	QString name;		 // human-readable label
+	QString fileName;	 // zip file name (e.g. "2026-01-15_14-30-00.zip")
+	QString fullPath;	 // absolute path to the backup zip
+	QDateTime timestamp; // when the backup was created
+	qint64 sizeBytes;	 // file size
 };
 
-class BackupManager {
-public:
-    explicit BackupManager(const QString& instanceId,
-                           const QString& instanceRoot);
+class BackupManager
+{
+  public:
+	explicit BackupManager(const QString& instanceId,
+						   const QString& instanceRoot);
 
-    QString backupDir() const;
-    QList<BackupEntry> listBackups() const;
-    BackupEntry createBackup(const QString& label = {});
-    bool restoreBackup(const BackupEntry& entry);
-    bool exportBackup(const BackupEntry& entry, const QString& destPath);
-    BackupEntry importBackup(const QString& srcZipPath, const QString& label = {});
-    bool deleteBackup(const BackupEntry& entry);
+	QString backupDir() const;
+	QList<BackupEntry> listBackups() const;
+	BackupEntry createBackup(const QString& label = {});
+	bool restoreBackup(const BackupEntry& entry);
+	bool exportBackup(const BackupEntry& entry, const QString& destPath);
+	BackupEntry importBackup(const QString& srcZipPath,
+							 const QString& label = {});
+	bool deleteBackup(const BackupEntry& entry);
 
-private:
-    void ensureBackupDir();
-    QString generateFileName(const QString& label) const;
-    BackupEntry entryFromFile(const QString& filePath) const;
+  private:
+	void ensureBackupDir();
+	QString generateFileName(const QString& label) const;
+	BackupEntry entryFromFile(const QString& filePath) const;
 
-    QString m_instanceId;
-    QString m_instanceRoot;
-    QString m_backupDir;
+	QString m_instanceId;
+	QString m_instanceRoot;
+	QString m_backupDir;
 };

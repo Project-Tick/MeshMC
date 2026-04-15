@@ -38,38 +38,39 @@
  */
 
 struct PluginMetadata {
-    /* File system */
-    QString filePath;           /* Absolute path to the .mmco file */
-    QString dataDir;            /* Plugin-private data directory */
+	/* File system */
+	QString filePath; /* Absolute path to the .mmco file */
+	QString dataDir;  /* Plugin-private data directory */
 
-    /* From MMCOModuleInfo */
-    QString name;
-    QString version;
-    QString author;
-    QString description;
-    QString license;
-    uint32_t flags = 0;
+	/* From MMCOModuleInfo */
+	QString name;
+	QString version;
+	QString author;
+	QString description;
+	QString license;
+	uint32_t flags = 0;
 
-    /* Runtime state */
-    void* libraryHandle = nullptr;   /* dlopen/LoadLibrary handle */
-    MMCOModuleInfo* moduleInfo = nullptr;
+	/* Runtime state */
+	void* libraryHandle = nullptr; /* dlopen/LoadLibrary handle */
+	MMCOModuleInfo* moduleInfo = nullptr;
 
-    /* Entry points resolved from the shared library */
-    using InitFunc = int (*)(MMCOContext*);
-    using UnloadFunc = void (*)();
+	/* Entry points resolved from the shared library */
+	using InitFunc = int (*)(MMCOContext*);
+	using UnloadFunc = void (*)();
 
-    InitFunc initFunc = nullptr;
-    UnloadFunc unloadFunc = nullptr;
+	InitFunc initFunc = nullptr;
+	UnloadFunc unloadFunc = nullptr;
 
-    bool loaded = false;
-    bool initialized = false;
+	bool loaded = false;
+	bool initialized = false;
 
-    /* Convenience: unique identifier derived from file name */
-    QString moduleId() const {
-        // Strip path and extension to get a stable ID
-        QString base = filePath.section('/', -1);
-        if (base.endsWith(MMCO_EXTENSION))
-            base.chop(static_cast<int>(strlen(MMCO_EXTENSION)));
-        return base;
-    }
+	/* Convenience: unique identifier derived from file name */
+	QString moduleId() const
+	{
+		// Strip path and extension to get a stable ID
+		QString base = filePath.section('/', -1);
+		if (base.endsWith(MMCO_EXTENSION))
+			base.chop(static_cast<int>(strlen(MMCO_EXTENSION)));
+		return base;
+	}
 };

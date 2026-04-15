@@ -344,7 +344,8 @@ void LaunchController::launchInstance()
 		hookInfo.instance_name = nameUtf8.constData();
 		hookInfo.instance_path = pathUtf8.constData();
 		hookInfo.minecraft_version = nullptr;
-		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_INSTANCE_PRE_LAUNCH, &hookInfo);
+		APPLICATION->pluginManager()->dispatchHook(
+			MMCO_HOOK_INSTANCE_PRE_LAUNCH, &hookInfo);
 	}
 
 	m_launcher->start();
@@ -410,7 +411,8 @@ void LaunchController::onSucceeded()
 		hookInfo.instance_name = nameUtf8.constData();
 		hookInfo.instance_path = pathUtf8.constData();
 		hookInfo.minecraft_version = nullptr;
-		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_INSTANCE_POST_LAUNCH, &hookInfo);
+		APPLICATION->pluginManager()->dispatchHook(
+			MMCO_HOOK_INSTANCE_POST_LAUNCH, &hookInfo);
 	}
 
 	emitSucceeded();

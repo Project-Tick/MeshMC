@@ -49,9 +49,8 @@ MeshMCLogsDialog::MeshMCLogsDialog(QWidget* parent)
 			&MeshMCLogsDialog::onLogFileChanged);
 
 	auto findShortcut = new QShortcut(QKeySequence(QKeySequence::Find), this);
-	connect(findShortcut, &QShortcut::activated, this, [this]() {
-		ui->searchBar->setFocus();
-	});
+	connect(findShortcut, &QShortcut::activated, this,
+			[this]() { ui->searchBar->setFocus(); });
 
 	connect(ui->searchBar, &QLineEdit::returnPressed, this,
 			&MeshMCLogsDialog::on_findButton_clicked);
@@ -156,10 +155,9 @@ void MeshMCLogsDialog::loadSelectedLog()
 	QString fullPath = logFilePath(m_currentFile);
 	QFile file(fullPath);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
-		QMessageBox::critical(
-			this, tr("Error"),
-			tr("Unable to open %1 for reading: %2")
-				.arg(m_currentFile, file.errorString()));
+		QMessageBox::critical(this, tr("Error"),
+							  tr("Unable to open %1 for reading: %2")
+								  .arg(m_currentFile, file.errorString()));
 		setControlsEnabled(false);
 		return;
 	}
@@ -174,8 +172,7 @@ void MeshMCLogsDialog::loadSelectedLog()
 
 	QString content = QString::fromUtf8(file.readAll());
 
-	QString fontFamily =
-		APPLICATION->settings()->get("ConsoleFont").toString();
+	QString fontFamily = APPLICATION->settings()->get("ConsoleFont").toString();
 	bool conversionOk = false;
 	int fontSize =
 		APPLICATION->settings()->get("ConsoleFontSize").toInt(&conversionOk);
@@ -223,10 +220,9 @@ void MeshMCLogsDialog::on_btnDelete_clicked()
 	}
 	QFile file(logFilePath(m_currentFile));
 	if (!file.remove()) {
-		QMessageBox::critical(
-			this, tr("Error"),
-			tr("Unable to delete %1: %2")
-				.arg(m_currentFile, file.errorString()));
+		QMessageBox::critical(this, tr("Error"),
+							  tr("Unable to delete %1: %2")
+								  .arg(m_currentFile, file.errorString()));
 	}
 	m_currentFile.clear();
 	populateLogList();
@@ -250,9 +246,8 @@ void MeshMCLogsDialog::on_btnClean_clicked()
 
 	QMessageBox* messageBox = new QMessageBox(this);
 	messageBox->setWindowTitle(tr("Clean up"));
-	messageBox->setText(
-		tr("Do you really want to delete all log files?\n%1")
-			.arg(toDelete.join('\n')));
+	messageBox->setText(tr("Do you really want to delete all log files?\n%1")
+							.arg(toDelete.join('\n')));
 	messageBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	messageBox->setDefaultButton(QMessageBox::Ok);
 	messageBox->setIcon(QMessageBox::Question);
