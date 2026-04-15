@@ -154,6 +154,11 @@ set(UPDATE_SOURCES
     updater/UpdateChecker.cpp
 )
 
+add_unit_test(UpdateChecker
+    SOURCES updater/UpdateChecker_test.cpp
+    LIBS MeshMC_logic
+    )
+
 # Rarely used notifications
 set(NOTIFICATIONS_SOURCES
     # Notifications - short warning messages

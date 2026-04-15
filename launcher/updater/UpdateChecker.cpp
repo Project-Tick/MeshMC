@@ -80,6 +80,90 @@ int UpdateChecker::compareVersions(const QString& v1, const QString& v2)
 	return 0;
 }
 
+bool UpdateChecker::isSupportedFeedNamespace(QStringView namespaceUri)
+{
+	return namespaceUri == u"https://projecttick.org/ns/product-feed";
+}
+
+bool UpdateChecker::parseStableFeedItem(const QByteArray& feedData,
+									const QString& buildArtifact,
+									QString* version,
+									QString* downloadUrl,
+									QString* releaseNotes,
+									QString* parseError)
+{
+	Q_ASSERT(version);
+	Q_ASSERT(downloadUrl);
+	Q_ASSERT(releaseNotes);
+	Q_ASSERT(parseError);
+
+	version->clear();
+	downloadUrl->clear();
+	releaseNotes->clear();
+	parseError->clear();
+
+	QXmlStreamReader xml(feedData);
+	bool insideItem = false;
+	bool isStable = false;
+	QString itemVersion;
+	QString itemUrl;
+	QString itemNotes;
+
+	while (!xml.atEnd() && !xml.hasError()) {
+		xml.readNext();
+
+		if (xml.isStartElement()) {
+			const QStringView name = xml.name();
+
+			if (name == u"item") {
+				insideItem = true;
+				isStable = false;
+				itemVersion.clear();
+				itemUrl.clear();
+				itemNotes.clear();
+			} else if (insideItem) {
+				if (isSupportedFeedNamespace(xml.namespaceUri())) {
+					if (name == u"version") {
+						itemVersion = xml.readElementText().trimmed();
+					} else if (name == u"channel") {
+						isStable =
+							(xml.readElementText().trimmed() == u"stable");
+					} else if (name == u"asset") {
+						const QString assetName =
+							xml.attributes().value("name").toString();
+						const QString assetUrl =
+							xml.attributes().value("url").toString();
+						if (!buildArtifact.isEmpty() &&
+							assetName.contains(buildArtifact,
+										  Qt::CaseInsensitive)) {
+							itemUrl = assetUrl;
+						}
+					}
+				} else if (name == u"description" &&
+						   xml.namespaceUri().isEmpty()) {
+					itemNotes =
+						xml.readElementText(
+							   QXmlStreamReader::IncludeChildElements)
+							.trimmed();
+				}
+			}
+		} else if (xml.isEndElement() && xml.name() == u"item" && insideItem) {
+			insideItem = false;
+			if (isStable && !itemVersion.isEmpty()) {
+				*version = itemVersion;
+				*downloadUrl = itemUrl;
+				*releaseNotes = itemNotes;
+				return true;
+			}
+		}
+	}
+
+	if (xml.hasError())
+		*parseError = xml.errorString();
+
+	return false;
+}
+
 // ---------------------------------------------------------------------------
 // Public
 // ---------------------------------------------------------------------------
@@ -186,81 +270,34 @@ void UpdateChecker::onPhase1Finished(bool notifyNoUpdate)
 	m_checkJob.reset();
 
 	// ---- Parse the RSS feed -----------------------------------------------
-	{
-		QXmlStreamReader xml(m_feedData);
-		m_feedData.clear();
+	const QByteArray feedData = m_feedData;
+	m_feedData.clear();
 
-		bool insideItem = false;
-		bool isStable = false;
-		QString itemVersion;
-		QString itemUrl;
-		QString itemNotes;
-
-		while (!xml.atEnd() && !xml.hasError()) {
-			xml.readNext();
-
-			if (xml.isStartElement()) {
-				const QStringView name = xml.name();
-
-				if (name == u"item") {
-					insideItem = true;
-					isStable = false;
-					itemVersion.clear();
-					itemUrl.clear();
-					itemNotes.clear();
-				} else if (insideItem) {
-					if (xml.namespaceUri() ==
-						u"https://projecttick.org/ns/projt-launcher/feed") {
-						if (name == u"version") {
-							itemVersion = xml.readElementText().trimmed();
-						} else if (name == u"channel") {
-							isStable =
-								(xml.readElementText().trimmed() == "stable");
-						} else if (name == u"asset") {
-							const QString assetName =
-								xml.attributes().value("name").toString();
-							const QString assetUrl =
-								xml.attributes().value("url").toString();
-							if (!BuildConfig.BUILD_ARTIFACT.isEmpty() &&
-								assetName.contains(BuildConfig.BUILD_ARTIFACT,
-												   Qt::CaseInsensitive)) {
-								itemUrl = assetUrl;
-							}
-						}
-					} else if (name == u"description" &&
-							   xml.namespaceUri().isEmpty()) {
-						itemNotes =
-							xml.readElementText(
-								   QXmlStreamReader::IncludeChildElements)
-								.trimmed();
-					}
-				}
-			} else if (xml.isEndElement() && xml.name() == u"item" &&
-					   insideItem) {
-				insideItem = false;
-				if (isStable && !itemVersion.isEmpty()) {
-					m_feedVersion = normalizeVersion(itemVersion);
-					m_downloadUrl = itemUrl;
-					m_releaseNotes = itemNotes;
-					break;
-				}
-			}
-		}
-
-		if (xml.hasError()) {
-			m_checking = false;
-			emit checkFailed(
-				tr("Failed to parse update feed: %1").arg(xml.errorString()));
-			return;
-		}
-	}
-
-	if (m_feedVersion.isEmpty()) {
+	QString feedVersion;
+	QString downloadUrl;
+	QString releaseNotes;
+	QString feedParseError;
+	if (!parseStableFeedItem(feedData, BuildConfig.BUILD_ARTIFACT,
+							 &feedVersion, &downloadUrl,
+							 &releaseNotes, &feedParseError)) {
 		m_checking = false;
-		emit checkFailed(
-			tr("No stable release entry found in the update feed."));
+		if (!feedParseError.isEmpty()) {
+			qWarning() << "UpdateChecker: failed to parse update feed:"
+					   << feedParseError;
+			emit checkFailed(
+				tr("Failed to parse update feed: %1").arg(feedParseError));
+		} else {
+			qWarning()
+				<< "UpdateChecker: no stable release entry found in the update feed.";
+			emit checkFailed(
+				tr("No stable release entry found in the update feed."));
+		}
 		return;
 	}
+
+	m_feedVersion = normalizeVersion(feedVersion);
+	m_downloadUrl = downloadUrl;
+	m_releaseNotes = releaseNotes;
 
 	if (m_downloadUrl.isEmpty()) {
 		qWarning() << "UpdateChecker: feed has version" << m_feedVersion

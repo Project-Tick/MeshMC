@@ -23,7 +23,10 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringView>
 #include "net/NetJob.h"
+
+class UpdateCheckerTest;
 
 /*!
  * Carries all information about an available update that is needed by the
@@ -47,7 +50,9 @@ Q_DECLARE_METATYPE(UpdateAvailableStatus)
  *      the GitHub releases JSON at BuildConfig.UPDATER_GITHUB_API_URL.
  *   2. Parse the latest stable <item> from the feed -> extract <projt:version>
  *      and the <projt:asset> URL whose name contains
- *      BuildConfig.BUILD_ARTIFACT.
+ *      BuildConfig.BUILD_ARTIFACT. Feed metadata accepts both the current
+ *      Project Tick product-feed namespace and the legacy launcher-feed
+ *      namespace.
  *   3. From the GitHub JSON, locate the components.json asset and download it.
  *      Extract the canonical MeshMC version from components.meshmc.version.
  *      Fallback: strip leading "v" from tag_name if components.json is absent.
@@ -98,6 +103,8 @@ class UpdateChecker : public QObject
 	void onDownloadsFailed(QString reason);
 
   private:
+	friend class UpdateCheckerTest;
+
 	static bool isPortableMode();
 	static bool isAppImage();
 	/// Returns current version as "MAJOR.MINOR.HOTFIX".
@@ -106,6 +113,15 @@ class UpdateChecker : public QObject
 	static QString normalizeVersion(const QString& v);
 	/// Compares two "X.Y.Z" strings numerically. Returns >0 if v1 > v2.
 	static int compareVersions(const QString& v1, const QString& v2);
+	/// Accepts current and legacy Project Tick feed namespaces.
+	static bool isSupportedFeedNamespace(QStringView namespaceUri);
+	/// Extracts the first stable item from the feed and reports parse errors.
+	static bool parseStableFeedItem(const QByteArray& feedData,
+									   const QString& buildArtifact,
+									   QString* version,
+									   QString* downloadUrl,
+									   QString* releaseNotes,
+									   QString* parseError);
 
 	/// Parse GitHub releases JSON, return components.json browser_download_url.
 	/// Stores tag_name fallback in m_githubTagVersion.

@@ -55,6 +55,59 @@ class UpdateCheckerTest : public QObject
 {
 	Q_OBJECT
   private slots:
+	void tst_ParseStableFeedItem_data()
+	{
+		QTest::addColumn<QString>("namespaceUri");
+
+		QTest::newRow("product feed namespace")
+			<< "https://projecttick.org/ns/product-feed";
+	}
+
+	void tst_ParseStableFeedItem()
+	{
+		QFETCH(QString, namespaceUri);
+
+		const QString xml = QString(R"(<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:projt="%1" version="2.0">
+	<channel>
+		<item>
+			<title>MeshMC Update 7.1.0</title>
+			<description><![CDATA[<p>Release notes</p>]]></description>
+			<projt:version>7.1.0</projt:version>
+			<projt:channel>stable</projt:channel>
+			<projt:asset name="MeshMC-Linux-Qt6-Portable-v202604141638.tar.gz" url="https://example.invalid/meshmc.tar.gz"/>
+		</item>
+	</channel>
+</rss>)")
+			.arg(namespaceUri);
+
+		QString version;
+		QString downloadUrl;
+		QString releaseNotes;
+		QString parseError;
+
+		QVERIFY(UpdateChecker::parseStableFeedItem(
+			xml.toUtf8(), "Linux-Qt6-Portable", &version, &downloadUrl,
+			&releaseNotes, &parseError));
+		QCOMPARE(version, "7.1.0");
+		QCOMPARE(downloadUrl, "https://example.invalid/meshmc.tar.gz");
+		QCOMPARE(releaseNotes, "<p>Release notes</p>");
+		QVERIFY(parseError.isEmpty());
+	}
+
+	void tst_ParseStableFeedItemReportsMalformedXml()
+	{
+		QString version;
+		QString downloadUrl;
+		QString releaseNotes;
+		QString parseError;
+
+		QVERIFY(!UpdateChecker::parseStableFeedItem(
+			"<rss><channel><item>", "Linux-Qt6-Portable", &version,
+			&downloadUrl, &releaseNotes, &parseError));
+		QVERIFY(parseError.contains("unexpected end", Qt::CaseInsensitive));
+	}
+
 	void tst_NormalizeVersion_data()
 	{
 		QTest::addColumn<QString>("input");
