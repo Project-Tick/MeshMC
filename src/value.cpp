@@ -220,9 +220,9 @@ namespace nbt
 			case tag_type::Short:
 				return static_cast<tag_short&>(*tag_).get();
 			case tag_type::Int:
-				return static_cast<tag_int&>(*tag_).get();
+				return static_cast<float>(static_cast<tag_int&>(*tag_).get());
 			case tag_type::Long:
-				return static_cast<tag_long&>(*tag_).get();
+				return static_cast<float>(static_cast<tag_long&>(*tag_).get());
 			case tag_type::Float:
 				return static_cast<tag_float&>(*tag_).get();
 
@@ -241,7 +241,7 @@ namespace nbt
 			case tag_type::Int:
 				return static_cast<tag_int&>(*tag_).get();
 			case tag_type::Long:
-				return static_cast<tag_long&>(*tag_).get();
+				return static_cast<double>(static_cast<tag_long&>(*tag_).get());
 			case tag_type::Float:
 				return static_cast<tag_float&>(*tag_).get();
 			case tag_type::Double:

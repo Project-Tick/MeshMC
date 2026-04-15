@@ -224,8 +224,15 @@ namespace nbt
 										  const tag_list& rhs);
 
 	  private:
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4251)
+#endif
 		std::vector<value> tags;
 		tag_type el_type_;
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 		/**
 		 * Internally used initialization function that initializes the list

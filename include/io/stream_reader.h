@@ -40,10 +40,17 @@ namespace nbt
 	{
 
 		/// Exception that gets thrown when reading is not successful
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4275)
+#endif
 		class NBT_EXPORT input_error : public std::runtime_error
 		{
 			using std::runtime_error::runtime_error;
 		};
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 		/**
 		 * @brief Reads a named tag from the stream, making sure that it is a

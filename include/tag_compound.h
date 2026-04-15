@@ -170,7 +170,14 @@ namespace nbt
 		}
 
 	  private:
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4251)
+#endif
 		map_t_ tags;
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 	};
 
 	template <class T, class... Args>

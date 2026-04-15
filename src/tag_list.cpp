@@ -124,10 +124,10 @@ namespace nbt
 		tags.push_back(std::move(val));
 	}
 
-	void tag_list::reset(tag_type type)
+	void tag_list::reset(tag_type lt)
 	{
 		clear();
-		el_type_ = type;
+		el_type_ = lt;
 	}
 
 	void tag_list::read_payload(io::stream_reader& reader)

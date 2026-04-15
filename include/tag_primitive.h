@@ -107,12 +107,21 @@ namespace nbt
 	typedef tag_primitive<double> tag_double;
 
 	// Explicit instantiation declarations
+#if defined(_MSC_VER) && defined(MeshMC_nbt___EXPORTS)
+	template class NBT_EXPORT tag_primitive<int8_t>;
+	template class NBT_EXPORT tag_primitive<int16_t>;
+	template class NBT_EXPORT tag_primitive<int32_t>;
+	template class NBT_EXPORT tag_primitive<int64_t>;
+	template class NBT_EXPORT tag_primitive<float>;
+	template class NBT_EXPORT tag_primitive<double>;
+#else
 	extern template class NBT_EXPORT tag_primitive<int8_t>;
 	extern template class NBT_EXPORT tag_primitive<int16_t>;
 	extern template class NBT_EXPORT tag_primitive<int32_t>;
 	extern template class NBT_EXPORT tag_primitive<int64_t>;
 	extern template class NBT_EXPORT tag_primitive<float>;
 	extern template class NBT_EXPORT tag_primitive<double>;
+#endif
 
 	template <class T>
 	void tag_primitive<T>::read_payload(io::stream_reader& reader)

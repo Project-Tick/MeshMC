@@ -237,7 +237,14 @@ namespace nbt
 		friend NBT_EXPORT bool operator!=(const value& lhs, const value& rhs);
 
 	  private:
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4251)
+#endif
 		std::unique_ptr<tag> tag_;
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 	};
 
 	template <class T> T& value::as()

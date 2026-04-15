@@ -75,10 +75,10 @@ namespace nbt
 		return tags.find(key) != tags.end();
 	}
 
-	bool tag_compound::has_key(const std::string& key, tag_type type) const
+	bool tag_compound::has_key(const std::string& key, tag_type tt) const
 	{
 		auto it = tags.find(key);
-		return it != tags.end() && it->second.get_type() == type;
+		return it != tags.end() && it->second.get_type() == tt;
 	}
 
 	void tag_compound::read_payload(io::stream_reader& reader)
@@ -89,7 +89,7 @@ namespace nbt
 			std::string key;
 			try {
 				key = reader.read_string();
-			} catch (io::input_error& ex) {
+			} catch (io::input_error&) {
 				std::ostringstream str;
 				str << "Error reading key of tag_" << tt;
 				throw io::input_error(str.str());

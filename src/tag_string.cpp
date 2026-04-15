@@ -32,7 +32,7 @@ namespace nbt
 	{
 		try {
 			value = reader.read_string();
-		} catch (io::input_error& ex) {
+		} catch (io::input_error&) {
 			throw io::input_error("Error reading tag_string");
 		}
 	}

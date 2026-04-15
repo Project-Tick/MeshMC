@@ -92,7 +92,14 @@ namespace nbt
 		void write_payload(io::stream_writer& writer) const override;
 
 	  private:
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4251)
+#endif
 		std::string value;
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 	};
 
 	inline bool operator==(const tag_string& lhs, const tag_string& rhs)
