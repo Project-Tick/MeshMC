@@ -39,3 +39,7 @@ run/
 compile_commands.json
 tree.txt
 .clang-format-files
+
+# MeshMC MMCO Plugins
+
+*.mmco

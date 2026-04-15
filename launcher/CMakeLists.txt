@@ -544,6 +544,18 @@ set(CONTENT_DOWNLOAD_SOURCES
     modplatform/ContentDownloadTask.cpp
 )
 
+set(PLUGIN_SOURCES
+    # MMCO Plugin System
+    plugin/MMCOFormat.h
+    plugin/PluginHooks.h
+    plugin/PluginAPI.h
+    plugin/PluginMetadata.h
+    plugin/PluginLoader.h
+    plugin/PluginLoader.cpp
+    plugin/PluginManager.h
+    plugin/PluginManager.cpp
+)
+
 add_unit_test(Index
     SOURCES meta/Index_test.cpp
     LIBS MeshMC_logic
@@ -578,6 +590,7 @@ set(LOGIC_SOURCES
     ${ATLAUNCHER_SOURCES}
     ${MODRINTH_SOURCES}
     ${CONTENT_DOWNLOAD_SOURCES}
+    ${PLUGIN_SOURCES}
 )
 
 SET(MESHMC_SOURCES
@@ -981,6 +994,11 @@ target_link_libraries(MeshMC_logic
     LocalPeer
     ganalytics
 )
+
+# Plugin system needs dlopen/dlsym on Unix
+if(UNIX AND NOT APPLE)
+    target_link_libraries(MeshMC_logic ${CMAKE_DL_LIBS})
+endif()
 
 if(APPLE)
     set(CMAKE_MACOSX_RPATH 1)

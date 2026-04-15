@@ -1,6 +1,6 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: GPL-3.0-or-later WITH LicenseRef-MeshMC-MMCO-Module-Exception-1.0
  *
  *   MeshMC - A Custom Launcher for Minecraft
  *   Copyright (C) 2026 Project Tick
@@ -8,7 +8,8 @@
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   (at your option) any later version, with the additional permission
+ *   described in the MeshMC MMCO Module Exception 1.0.
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,6 +18,9 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *   You should have received a copy of the MeshMC MMCO Module Exception 1.0
+ *   along with this program.  If not, see <https://projecttick.org/licenses/>.
  *
  *  This file incorporates work covered by the following copyright and
  *  permission notice:
@@ -37,6 +41,8 @@
  */
 #include "Application.h"
 #include "BuildConfig.h"
+#include "plugin/PluginManager.h"
+#include "plugin/PluginHooks.h"
 
 #include "MainWindow.h"
 #include "ui/themes/ThemeManager.h"
@@ -989,6 +995,35 @@ MainWindow::MainWindow(QWidget* parent)
 	view->setFocus();
 
 	retranslateUi();
+
+	// Notify plugins that the main UI is ready
+	if (APPLICATION->pluginManager()) {
+		// Add plugin-registered instance toolbar actions
+		auto* instanceTB = ui->instanceToolBar.operator->();
+		QList<QAction*> tbActions = instanceTB->actions();
+		// Find the separator right after actionChangeInstGroup
+		QAction* changeGroupAct = ui->actionChangeInstGroup.operator->();
+		QAction* insertBefore = nullptr;
+		int idx = tbActions.indexOf(changeGroupAct);
+		if (idx >= 0 && idx + 1 < tbActions.size() && tbActions[idx + 1]->isSeparator()) {
+			insertBefore = tbActions[idx + 1];
+		}
+		for (const auto& act : APPLICATION->pluginManager()->instanceActions()) {
+			auto* qa = new QAction(APPLICATION->getThemedIcon(act.iconName), act.text, this);
+			qa->setToolTip(act.tooltip);
+			QString pageId = act.pageId;
+			connect(qa, &QAction::triggered, this, [this, pageId] {
+				APPLICATION->showInstanceWindow(m_selectedInstance, pageId);
+			});
+			if (insertBefore)
+				instanceTB->insertAction(insertBefore, qa);
+			else
+				instanceTB->addAction(qa);
+			m_pluginInstanceActions.append(qa);
+		}
+
+		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_MAIN_READY);
+	}
 }
 
 void MainWindow::retranslateUi()
@@ -1086,6 +1121,16 @@ void MainWindow::showInstanceContextMenu(const QPoint& pos)
 	if (onInstance)
 		myMenu.setEnabled(m_selectedInstance->canLaunch());
 	*/
+
+	// Let plugins add items to the context menu
+	if (APPLICATION->pluginManager()) {
+		QByteArray ctxName = onInstance ? "instance" : "main";
+		MMCOMenuEvent menuEvt{};
+		menuEvt.context = ctxName.constData();
+		menuEvt.menu_handle = &myMenu;
+		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_CONTEXT_MENU, &menuEvt);
+	}
+
 	myMenu.exec(view->mapToGlobal(pos));
 }
 
