@@ -32,6 +32,9 @@
 
 #include <csignal>
 #include <cstdlib>
+#ifndef Q_OS_WIN
+#include <unistd.h>
+#endif
 
 // #define BREAK_INFINITE_LOOP
 // #define BREAK_EXCEPTION
