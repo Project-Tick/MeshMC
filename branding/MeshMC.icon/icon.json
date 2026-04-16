@@ -1,22 +1,58 @@
 {
-  "fill" : "automatic",
+  "color-space-for-untagged-svg-colors" : "display-p3",
+  "fill" : {
+    "solid" : "display-p3:0.09804,0.14902,0.46275,1.00000"
+  },
   "groups" : [
     {
       "blend-mode-specializations" : [
         {
-          "value" : "plus-darker"
+          "value" : "normal"
         },
         {
           "appearance" : "dark",
+          "value" : "normal"
+        },
+        {
+          "appearance" : "tinted",
           "value" : "normal"
         }
       ],
       "blur-material" : null,
       "layers" : [
         {
-          "fill" : {
-            "solid" : "srgb:0.00000,1.00000,1.00000,1.00000"
-          },
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:0.00000,1.00000,1.00000,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:0.00000,1.00000,1.00000,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "linear-gradient" : [
+                  "display-p3:0.33784,0.90679,0.91457,1.00000",
+                  "srgb:0.00000,1.00000,1.00000,1.00000"
+                ],
+                "orientation" : {
+                  "start" : {
+                    "x" : 0.5,
+                    "y" : 1
+                  },
+                  "stop" : {
+                    "x" : 0.5,
+                    "y" : 0.3
+                  }
+                }
+              }
+            }
+          ],
           "image-name" : "org.projecttick.MeshMC_Katman 3 2.svg",
           "name" : "org.projecttick.MeshMC_Katman 3 2",
           "position" : {
@@ -28,10 +64,22 @@
           }
         },
         {
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "tinted",
+              "value" : "normal"
+            }
+          ],
           "fill-specializations" : [
             {
               "value" : {
-                "solid" : "srgb:1.00000,0.00000,0.23529,1.00000"
+                "automatic-gradient" : "srgb:1.00000,0.00000,0.23529,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:1.00000,0.00000,0.23529,1.00000"
               }
             },
             {
@@ -70,13 +118,19 @@
           "fill-specializations" : [
             {
               "value" : {
-                "solid" : "srgb:0.01961,0.01961,0.01961,1.00000"
+                "automatic-gradient" : "srgb:0.01961,0.01961,0.01961,1.00000"
               }
             },
             {
               "appearance" : "dark",
               "value" : {
-                "solid" : "srgb:0.01961,0.01961,0.01961,1.00000"
+                "automatic-gradient" : "srgb:0.01961,0.01961,0.01961,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "automatic-gradient" : "srgb:0.01961,0.01961,0.01961,1.00000"
               }
             }
           ],
@@ -89,11 +143,26 @@
               0
             ]
           }
+        },
+        {
+          "fill" : {
+            "automatic-gradient" : "srgb:0.09804,0.14902,0.46275,1.00000"
+          },
+          "glass" : true,
+          "image-name" : "batch_Katman 1.svg",
+          "name" : "batch_Katman 1",
+          "position" : {
+            "scale" : 0.27,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
         }
       ],
       "lighting" : "individual",
       "shadow" : {
-        "kind" : "neutral",
+        "kind" : "layer-color",
         "opacity" : 0.5
       },
       "translucency" : {
@@ -103,9 +172,9 @@
     }
   ],
   "supported-platforms" : {
-    "circles" : [
-      "watchOS"
-    ],
-    "squares" : "shared"
+    "squares" : [
+      "iOS",
+      "macOS"
+    ]
   }
 }
