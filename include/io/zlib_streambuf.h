@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <streambuf>
 #include <vector>
-#include <zlib.h>
+#include <neozip.h>
 #include "nbt_export.h"
 
 namespace zlib
@@ -23,8 +23,8 @@ namespace zlib
 		const int errcode;
 
 		zlib_error(const char* msg, int errcode)
-			: std::runtime_error(msg ? std::string(zError(errcode)) + ": " + msg
-									 : zError(errcode)),
+			: std::runtime_error(msg ? std::string(zng_zError(errcode)) + ": " + msg
+									 : zng_zError(errcode)),
 			  errcode(errcode)
 		{
 		}
@@ -36,7 +36,7 @@ namespace zlib
 	  protected:
 		std::vector<char> in;
 		std::vector<char> out;
-		z_stream zstr;
+		zng_stream zstr;
 
 		explicit zlib_streambuf(size_t bufsize) : in(bufsize), out(bufsize)
 		{

@@ -28,7 +28,7 @@
 
 #include "io/zlib_streambuf.h"
 #include <ostream>
-#include <zlib.h>
+#include <neozip.h>
 
 namespace zlib
 {

@@ -33,7 +33,7 @@ namespace zlib
 	{
 		zstr.next_in = Z_NULL;
 		zstr.avail_in = 0;
-		int ret = inflateInit2(&zstr, window_bits);
+		int ret = zng_inflateInit2(&zstr, window_bits);
 		if (ret != Z_OK)
 			throw zlib_error(zstr.msg, ret);
 
@@ -43,7 +43,7 @@ namespace zlib
 
 	inflate_streambuf::~inflate_streambuf() noexcept
 	{
-		inflateEnd(&zstr);
+		zng_inflateEnd(&zstr);
 	}
 
 	inflate_streambuf::int_type inflate_streambuf::underflow()
@@ -62,14 +62,14 @@ namespace zlib
 				if (count == 0 && !stream_end)
 					throw zlib_error("Unexpected end of stream", Z_DATA_ERROR);
 
-				zstr.next_in = reinterpret_cast<Bytef*>(in.data());
+				zstr.next_in = reinterpret_cast<uint8_t*>(in.data());
 				zstr.avail_in = count;
 			}
 
-			zstr.next_out = reinterpret_cast<Bytef*>(out.data());
+			zstr.next_out = reinterpret_cast<uint8_t*>(out.data());
 			zstr.avail_out = out.size();
 
-			int ret = inflate(&zstr, Z_NO_FLUSH);
+			int ret = zng_inflate(&zstr, Z_NO_FLUSH);
 			have = out.size() - zstr.avail_out;
 			switch (ret) {
 				case Z_NEED_DICT:

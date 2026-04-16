@@ -37,7 +37,7 @@ set(NBT_SOURCES_Z
     src/io/ozlibstream.cpp)
 
 if(NBT_USE_ZLIB)
-    find_package(ZLIB REQUIRED)
+    find_package(neozip REQUIRED)
     list(APPEND NBT_SOURCES ${NBT_SOURCES_Z})
     add_definitions("-DNBT_HAVE_ZLIB")
 endif()
@@ -53,7 +53,7 @@ target_include_directories(nbt++
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/nbt++>)
 
 if(NBT_USE_ZLIB)
-    target_link_libraries(nbt++ PUBLIC ZLIB::ZLIB)
+    target_link_libraries(nbt++ PUBLIC neozip::zlib)
 endif()
 set_property(TARGET nbt++ PROPERTY CXX_STANDARD 11)
 generate_export_header(nbt++ BASE_NAME nbt)
