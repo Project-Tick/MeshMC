@@ -1079,6 +1079,13 @@ if(WIN32 OR (UNIX AND APPLE))
         set(_vcpkg_bin "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
         set(_vcpkg_debug_bin "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin")
     endif()
+    # Monorepo libraries installed via CMAKE_PREFIX_PATH also place DLLs in bin/
+    set(_prefix_path_bins "")
+    foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
+        if(IS_DIRECTORY "${_prefix}/bin")
+            list(APPEND _prefix_path_bins "${_prefix}/bin")
+        endif()
+    endforeach()
     install(
         RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
         DIRECTORIES
@@ -1087,6 +1094,7 @@ if(WIN32 OR (UNIX AND APPLE))
             ${QT_LIBEXECS_DIR}
             ${_vcpkg_bin}
             ${_vcpkg_debug_bin}
+            ${_prefix_path_bins}
         PRE_EXCLUDE_REGEXES
             "^(api-ms-win|ext-ms)-.*\\.dll$"
             "^azure.*\\.dll$"
