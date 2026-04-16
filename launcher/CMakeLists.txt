@@ -1079,13 +1079,20 @@ if(WIN32 OR (UNIX AND APPLE))
         set(_vcpkg_bin "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
         set(_vcpkg_debug_bin "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin")
     endif()
-    # Monorepo libraries installed via CMAKE_PREFIX_PATH also place DLLs in bin/
+    # Collect bin/ directories from CMAKE_PREFIX_PATH (both CMake variable and
+    # environment variable) so RUNTIME_DEPENDENCY_SET can locate monorepo DLLs
+    # such as rainbow.dll, iconfix.dll, nbt++.dll, etc.
     set(_prefix_path_bins "")
     foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
-        if(IS_DIRECTORY "${_prefix}/bin")
-            list(APPEND _prefix_path_bins "${_prefix}/bin")
-        endif()
+        list(APPEND _prefix_path_bins "${_prefix}/bin")
     endforeach()
+    if(DEFINED ENV{CMAKE_PREFIX_PATH})
+        file(TO_CMAKE_PATH "$ENV{CMAKE_PREFIX_PATH}" _env_prefixes)
+        foreach(_prefix IN LISTS _env_prefixes)
+            list(APPEND _prefix_path_bins "${_prefix}/bin")
+        endforeach()
+    endif()
+    list(REMOVE_DUPLICATES _prefix_path_bins)
     install(
         RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
         DIRECTORIES
