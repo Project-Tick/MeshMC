@@ -78,6 +78,8 @@ include(ECMQtDeclareLoggingCategory)
 option(ENABLE_LTO "Enable Link Time Optimization" off)
 option(MeshMC_DISABLE_JAVA_DOWNLOADER "Disable the built-in Java downloader feature" OFF)
 option(MeshMC_ENABLE_CLANG_TIDY "Run clang-tidy during C/C++ compilation" OFF)
+option(MeshMC_PLUGINS "Build plugins" OFF)
+option(MeshMC_STAGING_PLUGINS "Build Staging plugins" OFF)
 
 find_program(MeshMC_CLANG_TIDY_EXECUTABLE NAMES clang-tidy clang-tidy-19 OPTIONAL)
 if(MeshMC_ENABLE_CLANG_TIDY)
@@ -471,8 +473,10 @@ add_subdirectory(crashreporter)
 # NOTE: this must always be last to appease the CMake deity of quirky install command evaluation order.
 add_subdirectory(launcher)
 
-# Plugin SDK (INTERFACE library — headers only, must come before plugins)
-add_subdirectory(launcher/plugin/sdk)
+if(MeshMC_PLUGINS)
+    # Plugin SDK (INTERFACE library — headers only, must come before plugins)
+    add_subdirectory(launcher/plugin/sdk)
 
-# In-tree .mmco plugins (after launcher so MeshMC_logic target is available)
-add_subdirectory(plugins)
+    # In-tree .mmco plugins (after launcher so MeshMC_logic target is available)
+    add_subdirectory(plugins)
+endif()

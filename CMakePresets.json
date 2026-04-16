@@ -16,6 +16,8 @@
                 "MeshMC_BUILD_ARTIFACT": "$penv{ARTIFACT_NAME}",
                 "MeshMC_BUILD_PLATFORM": "$penv{BUILD_PLATFORM}",
                 "MeshMC_DISABLE_JAVA_DOWNLOADER": "OFF",
+                "MeshMC_PLUGINS": "ON",
+                "MeshMC_STAGING_PLUGINS": "ON",
                 "ENABLE_LTO": "ON"
             }
         },

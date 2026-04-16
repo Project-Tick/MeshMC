@@ -11,7 +11,9 @@ set(MESHMC_PLUGIN_STAGING_DIR "${CMAKE_BINARY_DIR}/mmcmodules" CACHE PATH
 file(MAKE_DIRECTORY "${MESHMC_PLUGIN_STAGING_DIR}")
 
 ####### Staging plugins
-add_subdirectory(staging)
+if(MeshMC_STAGING_PLUGINS)
+    add_subdirectory(staging)
+endif()
 
 #################################### Register plugins here ####################################
 
