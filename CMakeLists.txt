@@ -407,14 +407,21 @@ if(UNIX AND APPLE)
 
 
 elseif(UNIX)
-    include(KDEInstallDirs)
-
     set(BINARY_DEST_DIR "bin")
     set(LIBRARY_DEST_DIR "lib${LIB_SUFFIX}")
     set(JARS_DEST_DIR "share/${MeshMC_Name}")
 
     # Set RPATH
     SET(MeshMC_BINARY_RPATH "$ORIGIN/../lib${LIB_SUFFIX}")
+
+    # Standard FreeDesktop install paths (replaces KDEInstallDirs to avoid
+    # conflicts with GNUInstallDirs already loaded by find_package(Qt6)).
+    include(GNUInstallDirs)
+    set(KDE_INSTALL_APPDIR      "${CMAKE_INSTALL_DATAROOTDIR}/applications")
+    set(KDE_INSTALL_METAINFODIR "${CMAKE_INSTALL_DATAROOTDIR}/metainfo")
+    set(KDE_INSTALL_ICONDIR     "${CMAKE_INSTALL_DATAROOTDIR}/icons")
+    set(KDE_INSTALL_MIMEDIR     "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages")
+    set(KDE_INSTALL_MANDIR      "${CMAKE_INSTALL_MANDIR}")
 
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppID}.desktop DESTINATION ${KDE_INSTALL_APPDIR})
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppID}.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
