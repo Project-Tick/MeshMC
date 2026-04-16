@@ -204,6 +204,7 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 	meta.description =
 		QString::fromUtf8(info->description ? info->description : "");
 	meta.license = QString::fromUtf8(info->license ? info->license : "");
+	meta.codeLink = QString::fromUtf8(info->code_link ? info->code_link : "");
 	meta.flags = info->flags;
 
 	// Resolve mmco_init

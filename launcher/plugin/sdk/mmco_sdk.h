@@ -115,6 +115,7 @@ struct MMCOModuleInfo {
 	const char* description;
 	const char* license;
 	uint32_t flags;
+	const char* code_link;
 };
 
 enum MMCOHookId : uint32_t {
@@ -386,11 +387,24 @@ struct MMCOContext {
 	int (*launch_prepend_wrapper)(void* mh, const char* wrapper_cmd);
 };
 
-#define MMCO_DEFINE_MODULE(mod_name, mod_version, mod_author, mod_desc,        \
-						   mod_license)                                        \
+#define MMCO_DEFINE_MODULE_6(mod_name, mod_version, mod_author, mod_desc,      \
+							 mod_license, mod_code_link)                   \
 	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
 		MMCO_MAGIC, MMCO_ABI_VERSION, mod_name,	   mod_version,                \
-		mod_author, mod_desc,		  mod_license, MMCO_FLAG_NONE}
+		mod_author, mod_desc,		  mod_license, MMCO_FLAG_NONE,             \
+		mod_code_link}
+
+#define MMCO_DEFINE_MODULE_5(mod_name, mod_version, mod_author, mod_desc,      \
+							 mod_license)                                      \
+	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+		MMCO_MAGIC, MMCO_ABI_VERSION, mod_name,	   mod_version,                \
+		mod_author, mod_desc,		  mod_license, MMCO_FLAG_NONE,             \
+		nullptr}
+
+#define MMCO_GET_MACRO(_1, _2, _3, _4, _5, _6, NAME, ...) NAME
+#define MMCO_DEFINE_MODULE(...)                                                \
+	MMCO_GET_MACRO(__VA_ARGS__, MMCO_DEFINE_MODULE_6, MMCO_DEFINE_MODULE_5)    \
+	(__VA_ARGS__)
 
 #define MMCO_LOG(ctx, msg) (ctx)->log_info((ctx)->module_handle, (msg))
 #define MMCO_WARN(ctx, msg) (ctx)->log_warn((ctx)->module_handle, (msg))

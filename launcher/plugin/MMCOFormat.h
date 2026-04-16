@@ -55,6 +55,7 @@ struct MMCOModuleInfo {
 	const char* description; /* Short description */
 	const char* license;	 /* SPDX license identifier */
 	uint32_t flags;			 /* Reserved for future use, set to 0 */
+	const char* code_link;	 /* Optional: URL to source code repository */
 };
 
 /* Module flags (reserved, extend as needed) */

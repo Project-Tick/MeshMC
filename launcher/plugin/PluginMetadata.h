@@ -48,6 +48,7 @@ struct PluginMetadata {
 	QString author;
 	QString description;
 	QString license;
+	QString codeLink;
 	uint32_t flags = 0;
 
 	/* Runtime state */
