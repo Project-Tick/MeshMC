@@ -1008,6 +1008,9 @@ endif()
 add_executable(${MeshMC_Name} MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
 target_link_libraries(${MeshMC_Name} MeshMC_logic)
 
+# Export all symbols so dlopen()'ed .mmco plugins can resolve launcher symbols at runtime
+set_target_properties(${MeshMC_Name} PROPERTIES ENABLE_EXPORTS ON)
+
 if(MSVC)
     target_link_options(${MeshMC_Name} PRIVATE "/MANIFEST:NO")
 endif()

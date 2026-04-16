@@ -13,6 +13,7 @@
 # ---------------------------------------------------------------------------
 add_library(MeshMC_sdk INTERFACE)
 add_library(MeshMC::SDK ALIAS MeshMC_sdk)
+set_target_properties(MeshMC_sdk PROPERTIES EXPORT_NAME SDK)
 
 target_include_directories(MeshMC_sdk INTERFACE
     # Build-tree consumers (in-tree plugins)
@@ -30,6 +31,7 @@ target_link_libraries(MeshMC_sdk INTERFACE
     Qt6::Core
     Qt6::Widgets
     Qt6::Gui
+    Qt6::Network
 )
 
 # ---------------------------------------------------------------------------
@@ -198,29 +200,29 @@ install(FILES
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/MeshMCSDKConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/MeshMCSDKConfig.cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/MeshMC_SDKConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/MeshMC_SDKConfig.cmake"
     INSTALL_DESTINATION "lib/cmake/MeshMC_SDK"
 )
 
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/MeshMCSDKConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/MeshMC_SDKConfigVersion.cmake"
     VERSION "${MeshMC_RELEASE_VERSION_NAME}"
     COMPATIBILITY AnyNewerVersion
 )
 
 install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/MeshMCSDKConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/MeshMCSDKConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/MeshMC_SDKConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/MeshMC_SDKConfigVersion.cmake"
     DESTINATION "lib/cmake/MeshMC_SDK"
 )
 
 install(TARGETS MeshMC_sdk
-    EXPORT MeshMCSDKTargets
+    EXPORT MeshMC_SDKTargets
 )
 
-install(EXPORT MeshMCSDKTargets
-    FILE MeshMCSDKTargets.cmake
+install(EXPORT MeshMC_SDKTargets
+    FILE MeshMC_SDKTargets.cmake
     NAMESPACE MeshMC::
     DESTINATION "lib/cmake/MeshMC_SDK"
 )
