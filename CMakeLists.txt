@@ -44,6 +44,7 @@ endif()
 
 add_library(nbt++ ${NBT_SOURCES})
 add_library(nbt++::nbt++ ALIAS nbt++)
+set(NBT_NAME nbt++ CACHE STRING "" FORCE)
 
 target_include_directories(nbt++
     PUBLIC
