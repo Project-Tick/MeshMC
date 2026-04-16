@@ -20,11 +20,6 @@ SPDX-License-Identifier = "CC0-1.0"
 SPDX-FileCopyrightText = "NONE"
 
 [[annotations]]
-path = ["launcher/package/**"]
-SPDX-License-Identifier = "GPL-3.0-or-later"
-SPDX-FileCopyrightText = "2026 Project Tick"
-
-[[annotations]]
 path = ["**/*.md", "doc/**"]
 SPDX-License-Identifier = "CC0-1.0"
 SPDX-FileCopyrightText = "2026 Project Tick"
@@ -51,7 +46,7 @@ SPDX-FileCopyrightText = "NONE"
 
 [[annotations]]
 path = ["**/*.ui"]
-SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-License-Identifier = "GPL-3.0-or-later WITH LicenseRef-MeshMC-MMCO-Module-Exception-1.0"
 SPDX-FileCopyrightText = "2026 Project Tick"
 
 [[annotations]]
@@ -61,5 +56,10 @@ SPDX-FileCopyrightText = "NONE"
 
 [[annotations]]
 path = ["CMakePresets.json"]
-SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-License-Identifier = "GPL-3.0-or-later WITH LicenseRef-MeshMC-MMCO-Module-Exception-1.0"
+SPDX-FileCopyrightText = "2026 Project Tick"
+
+[[annotations]]
+path = ["launcher/plugin/sdk/**.in"]
+SPDX-License-Identifier = "GPL-3.0-or-later WITH LicenseRef-MeshMC-MMCO-Module-Exception-1.0"
 SPDX-FileCopyrightText = "2026 Project Tick"
