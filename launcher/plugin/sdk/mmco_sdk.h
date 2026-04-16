@@ -75,6 +75,10 @@
 #include <QIcon>
 #include <QInputDialog>
 #include <QLabel>
+#include <QCheckBox>
+#include <QGroupBox>
+#include <QPointer>
+#include <QTimer>
 #include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
@@ -128,6 +132,7 @@ enum MMCOHookId : uint32_t {
 	MMCO_HOOK_UI_MAIN_READY = 0x0600,
 	MMCO_HOOK_UI_CONTEXT_MENU = 0x0601,
 	MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602,
+	MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES = 0x0603,
 };
 
 struct MMCOInstanceInfo {
@@ -167,6 +172,10 @@ struct MMCOInstancePagesEvent {
 	const char* instance_path;
 	void* page_list_handle;
 	void* instance_handle;
+};
+
+struct MMCOGlobalSettingsPagesEvent {
+	void* page_list_handle;
 };
 
 typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,
@@ -371,6 +380,10 @@ struct MMCOContext {
 	const char* (*get_app_version)(void* mh);
 	const char* (*get_app_name)(void* mh);
 	int64_t (*get_timestamp)(void* mh);
+
+	/* S15 — Launch Modifiers (only valid inside INSTANCE_PRE_LAUNCH hooks) */
+	int (*launch_set_env)(void* mh, const char* key, const char* value);
+	int (*launch_prepend_wrapper)(void* mh, const char* wrapper_cmd);
 };
 
 #define MMCO_DEFINE_MODULE(mod_name, mod_version, mod_author, mod_desc,        \

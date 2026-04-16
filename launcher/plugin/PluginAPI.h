@@ -273,4 +273,15 @@ struct MMCOContext {
 	const char* (*get_app_version)(void* mh);
 	const char* (*get_app_name)(void* mh);
 	int64_t (*get_timestamp)(void* mh);
+
+	/* S15 — Launch Modifiers (only valid inside INSTANCE_PRE_LAUNCH hooks) */
+
+	/* Set an environment variable for the current launching instance.
+	 * The variable is injected via qputenv() before launch and removed
+	 * via qunsetenv() after the instance stops. */
+	int (*launch_set_env)(void* mh, const char* key, const char* value);
+
+	/* Prepend a wrapper command for the current launching instance.
+	 * If the instance already has a wrapper, this command is prepended. */
+	int (*launch_prepend_wrapper)(void* mh, const char* wrapper_cmd);
 };

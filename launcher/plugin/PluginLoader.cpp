@@ -134,7 +134,16 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 
 	qDebug() << "[PluginLoader] Loading module:" << path;
 
-	// Open the shared library
+	// Open the shared library.
+	//
+	// RTLD_NODELETE prevents the C runtime from running the module's
+	// static destructors during exit().  Plugin .mmco files statically
+	// link MeshMC_logic which contains the global `const Config
+	// BuildConfig` — a non-trivially-destructible object.  Without
+	// RTLD_NODELETE the duplicate BuildConfig inside each .mmco would
+	// be destroyed at exit(), corrupting the heap because the main
+	// binary's copy was already torn down ("corrupted double-linked
+	// list").
 #ifdef Q_OS_WIN
 	HMODULE handle = LoadLibraryW(reinterpret_cast<LPCWSTR>(path.utf16()));
 	if (!handle) {
@@ -144,7 +153,8 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 	}
 	meta.libraryHandle = reinterpret_cast<void*>(handle);
 #else
-	void* handle = dlopen(path.toUtf8().constData(), RTLD_NOW | RTLD_LOCAL);
+	void* handle = dlopen(path.toUtf8().constData(),
+						  RTLD_NOW | RTLD_LOCAL | RTLD_NODELETE);
 	if (!handle) {
 		qWarning() << "[PluginLoader] Failed to load" << path << "-"
 				   << dlerror();

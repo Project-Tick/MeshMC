@@ -31,6 +31,7 @@
 #include <QProcess>
 
 #include <csignal>
+#include <cstdlib>
 
 // #define BREAK_INFINITE_LOOP
 // #define BREAK_EXCEPTION
@@ -136,7 +137,26 @@ int main(int argc, char* argv[])
 			Q_INIT_RESOURCE(iOS);
 			Q_INIT_RESOURCE(flat);
 			Q_INIT_RESOURCE(flat_white);
-			return app.exec();
+
+			int ret = app.exec();
+
+			// Use _exit() to terminate immediately after the Qt event
+			// loop ends.  All meaningful cleanup (instance save, plugin
+			// shutdown, log flush/close) has already happened in the
+			// Application::aboutToQuit handler while Qt was still alive.
+			//
+			// A normal return would run C++ static destructors via
+			// exit()/__cxa_finalize.  Plugin .mmco modules statically
+			// link MeshMC_logic, which embeds a duplicate global
+			// `const Config BuildConfig` (non-trivial dtor with ~20
+			// QString members).  Those duplicate destructors corrupt
+			// the heap when they run after Qt is torn down, causing
+			// glibc's "corrupted double-linked list" abort.
+			//
+			// _exit() bypasses all atexit handlers and static dtors,
+			// avoiding the double-destruction entirely.  The OS
+			// reclaims all process memory.
+			_exit(ret);
 		}
 		case Application::Failed:
 			return 1;

@@ -64,6 +64,8 @@ enum MMCOHookId : uint32_t {
 	MMCO_HOOK_UI_MAIN_READY = 0x0600,	  /* payload: nullptr */
 	MMCO_HOOK_UI_CONTEXT_MENU = 0x0601,	  /* payload: MMCOMenuEvent* */
 	MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602, /* payload: MMCOInstancePagesEvent* */
+	MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES =
+		0x0603, /* payload: MMCOGlobalSettingsPagesEvent* */
 };
 
 /*
@@ -124,4 +126,14 @@ struct MMCOInstancePagesEvent {
 	const char* instance_path;
 	void* page_list_handle; /* Opaque: QList<BasePage*>* */
 	void* instance_handle;	/* Opaque: InstancePtr raw pointer */
+};
+
+/*
+ * Payload for MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES.
+ * Plugins receive this when the global settings dialog is being built.
+ * They can add pages via the page_list_handle (opaque pointer to
+ * QList<BasePage*>*).
+ */
+struct MMCOGlobalSettingsPagesEvent {
+	void* page_list_handle; /* Opaque: QList<BasePage*>* */
 };

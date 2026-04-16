@@ -323,6 +323,10 @@ class PluginManager : public QObject
 	static const char* api_get_app_name(void* mh);
 	static int64_t api_get_timestamp(void* mh);
 
+	/* Section 15: Launch Modifiers */
+	static int api_launch_set_env(void* mh, const char* key, const char* value);
+	static int api_launch_prepend_wrapper(void* mh, const char* wrapper_cmd);
+
 	/* Helpers */
 	static ModuleRuntime* rt(void* mh);
 
@@ -349,4 +353,16 @@ class PluginManager : public QObject
 
   private:
 	QVector<InstanceAction> m_instanceActions;
+
+	/* Pending launch modifications (set by plugins during PRE_LAUNCH hooks) */
+	QMap<QString, QString> m_pendingLaunchEnv;
+	QString m_pendingLaunchWrapper;
+
+	bool m_shutdownDone = false;
+
+  public:
+	/* Called by LaunchController before/after dispatching PRE_LAUNCH hook */
+	void clearPendingLaunchMods();
+	QMap<QString, QString> takePendingLaunchEnv();
+	QString takePendingLaunchWrapper();
 };

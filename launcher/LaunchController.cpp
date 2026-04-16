@@ -336,6 +336,7 @@ void LaunchController::launchInstance()
 		MessageLevel::MeshMC));
 	// Dispatch pre-launch hook to plugins
 	if (APPLICATION->pluginManager()) {
+		APPLICATION->pluginManager()->clearPendingLaunchMods();
 		QByteArray idUtf8 = m_instance->id().toUtf8();
 		QByteArray nameUtf8 = m_instance->name().toUtf8();
 		QByteArray pathUtf8 = m_instance->instanceRoot().toUtf8();
@@ -346,6 +347,45 @@ void LaunchController::launchInstance()
 		hookInfo.minecraft_version = nullptr;
 		APPLICATION->pluginManager()->dispatchHook(
 			MMCO_HOOK_INSTANCE_PRE_LAUNCH, &hookInfo);
+
+		// Apply plugin-requested environment variables via qputenv.
+		// CleanEnviroment() reads systemEnvironment() so these will be
+		// inherited by the child process.
+		auto pendingEnv = APPLICATION->pluginManager()->takePendingLaunchEnv();
+		for (auto it = pendingEnv.constBegin(); it != pendingEnv.constEnd();
+			 ++it) {
+			qputenv(it.key().toUtf8().constData(), it.value().toUtf8());
+		}
+
+		// Apply plugin-requested wrapper command (save original for restore)
+		QString pendingWrapper =
+			APPLICATION->pluginManager()->takePendingLaunchWrapper();
+		QString savedWrapper;
+		if (!pendingWrapper.isEmpty()) {
+			savedWrapper = m_instance->getWrapperCommand().trimmed();
+			if (savedWrapper.isEmpty()) {
+				m_instance->settings()->set("WrapperCommand", pendingWrapper);
+			} else {
+				m_instance->settings()->set(
+					"WrapperCommand", pendingWrapper + " " + savedWrapper);
+			}
+		}
+
+		// Restore env vars and wrapper after the launch task finishes
+		if (!pendingEnv.isEmpty() || !pendingWrapper.isEmpty()) {
+			auto inst = m_instance;
+			connect(m_launcher.get(), &Task::finished, this,
+					[pendingEnv, pendingWrapper, savedWrapper, inst]() {
+						for (auto it = pendingEnv.constBegin();
+							 it != pendingEnv.constEnd(); ++it) {
+							qunsetenv(it.key().toUtf8().constData());
+						}
+						if (!pendingWrapper.isEmpty()) {
+							inst->settings()->set("WrapperCommand",
+												  savedWrapper);
+						}
+					});
+		}
 	}
 
 	m_launcher->start();

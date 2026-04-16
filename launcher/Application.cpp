@@ -325,7 +325,10 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 
 	// Initialize the plugin system — scans mmcmodules directories
 	// and loads all discovered .mmco modules.
-	m_pluginManager = std::make_unique<PluginManager>(this, this);
+	// NOTE: parent is nullptr — unique_ptr is the sole owner.
+	// Do NOT pass `this` as QObject parent, or the PluginManager
+	// will be double-freed (once by unique_ptr, once by ~QObject).
+	m_pluginManager = std::make_unique<PluginManager>(this, nullptr);
 	m_pluginManager->initializeAll();
 
 	if (createSetupWizard()) {
@@ -1094,6 +1097,10 @@ void Application::initSubsystems()
 			// save any remaining instance state
 			m_instances->saveNow();
 		}
+		// Shut down plugins while the log file and Qt are still alive
+		if (m_pluginManager) {
+			m_pluginManager->shutdownAll();
+		}
 		if (logFile) {
 			logFile->flush();
 			logFile->close();
@@ -1218,10 +1225,11 @@ void Application::showFatalErrorMessage(const QString& title,
 
 Application::~Application()
 {
-	// Shut down plugin system before tearing down the rest
+	// Shut down plugin system before tearing down the rest.
+	// shutdownAll() was already called from aboutToQuit; this
+	// is a no-op guard for any other exit path.
 	if (m_pluginManager) {
 		m_pluginManager->shutdownAll();
-		m_pluginManager.reset();
 	}
 
 	// Shut down logger by setting the logger function to nothing
@@ -1520,6 +1528,13 @@ void Application::ShowGlobalSettings(class QWidget* parent, QString open_page)
 		dlg.exec();
 	}
 	emit globalSettingsClosed();
+}
+
+void Application::registerGlobalSettingsPage(std::function<BasePage*()> creator)
+{
+	if (m_globalSettingsProvider) {
+		m_globalSettingsProvider->addPageCreator(creator);
+	}
 }
 
 MainWindow* Application::showMainWindow(bool minimized)

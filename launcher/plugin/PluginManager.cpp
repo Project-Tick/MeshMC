@@ -130,6 +130,10 @@ void PluginManager::initializeAll()
 
 void PluginManager::shutdownAll()
 {
+	if (m_shutdownDone)
+		return;
+	m_shutdownDone = true;
+
 	// Fire shutdown hook before unloading
 	dispatchHook(MMCO_HOOK_APP_SHUTDOWN);
 
@@ -144,20 +148,21 @@ void PluginManager::shutdownAll()
 			meta.unloadFunc();
 		}
 		meta.initialized = false;
-		emit moduleUnloaded(meta.name);
 	}
 
-	// Remove all hook registrations
-	m_hooks.clear();
-
-	// Close shared libraries
-	for (auto& meta : m_modules) {
-		PluginLoader::unloadModule(meta);
-	}
-
-	m_modules.clear();
-	m_runtimes.clear();
-	m_contexts.clear();
+	// DO NOT call dlclose() or clear() data structures here.
+	//
+	// Plugin .mmco shared libraries statically link MeshMC_logic
+	// which contains global objects with non-trivial destructors
+	// (e.g. `const Config BuildConfig`).  Modules are opened with
+	// RTLD_NODELETE to prevent their static destructors from running
+	// at exit and corrupting the heap.  Calling dlclose() would
+	// undo that protection.
+	//
+	// Additionally, plugin Q_OBJECT classes (e.g. BackupPage) have
+	// MOC-generated QMetaObject statics registered in Qt's type
+	// system; unmapping that memory causes crashes.
+	// The OS reclaims all process memory at exit.
 }
 
 bool PluginManager::dispatchHook(uint32_t hook_id, void* payload)
@@ -329,6 +334,10 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 	ctx.get_app_name = api_get_app_name;
 	ctx.get_timestamp = api_get_timestamp;
 
+	// S15 — Launch Modifiers
+	ctx.launch_set_env = api_launch_set_env;
+	ctx.launch_prepend_wrapper = api_launch_prepend_wrapper;
+
 	return ctx;
 }
 
@@ -438,6 +447,12 @@ int PluginManager::api_setting_set(void* mh, const char* key, const char* value)
 	auto& meta = r->manager->m_modules[r->moduleIndex];
 	QString fullKey =
 		QString("plugin.%1.%2").arg(meta.moduleId(), QString::fromUtf8(key));
+
+	// Auto-register the setting if it doesn't exist yet
+	if (!app->settings()->contains(fullKey)) {
+		app->settings()->registerSetting(fullKey, QString());
+	}
+
 	app->settings()->set(fullKey, QString::fromUtf8(value));
 	return 0;
 }
@@ -1910,6 +1925,54 @@ int PluginManager::api_ui_tree_row_count(void* mh, void* tree)
 	if (!tree)
 		return 0;
 	return static_cast<QTreeWidget*>(tree)->topLevelItemCount();
+}
+
+/* ── S15 — Launch Modifiers ───────────────────────────────────────── */
+
+int PluginManager::api_launch_set_env(void* mh, const char* key,
+									  const char* value)
+{
+	auto* r = rt(mh);
+	if (!key || !value)
+		return -1;
+	r->manager->m_pendingLaunchEnv.insert(QString::fromUtf8(key),
+										  QString::fromUtf8(value));
+	return 0;
+}
+
+int PluginManager::api_launch_prepend_wrapper(void* mh, const char* wrapper_cmd)
+{
+	auto* r = rt(mh);
+	if (!wrapper_cmd || wrapper_cmd[0] == '\0')
+		return -1;
+	QString cmd = QString::fromUtf8(wrapper_cmd);
+	if (r->manager->m_pendingLaunchWrapper.isEmpty()) {
+		r->manager->m_pendingLaunchWrapper = cmd;
+	} else {
+		r->manager->m_pendingLaunchWrapper =
+			cmd + " " + r->manager->m_pendingLaunchWrapper;
+	}
+	return 0;
+}
+
+void PluginManager::clearPendingLaunchMods()
+{
+	m_pendingLaunchEnv.clear();
+	m_pendingLaunchWrapper.clear();
+}
+
+QMap<QString, QString> PluginManager::takePendingLaunchEnv()
+{
+	QMap<QString, QString> env;
+	env.swap(m_pendingLaunchEnv);
+	return env;
+}
+
+QString PluginManager::takePendingLaunchWrapper()
+{
+	QString w;
+	w.swap(m_pendingLaunchWrapper);
+	return w;
 }
 
 /* PluginPage MOC — required because PluginPage has Q_OBJECT */

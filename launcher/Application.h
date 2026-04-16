@@ -27,6 +27,7 @@
 
 #include <QApplication>
 #include <memory>
+#include <functional>
 #include <QDebug>
 #include <QFlag>
 #include <QIcon>
@@ -61,6 +62,7 @@ class ThemeManager;
 class MCEditTool;
 class GAnalytics;
 class PluginManager;
+class BasePage;
 
 namespace Meta
 {
@@ -186,6 +188,8 @@ class Application : public QApplication
 
 	void ShowGlobalSettings(class QWidget* parent,
 							QString open_page = QString());
+
+	void registerGlobalSettingsPage(std::function<BasePage*()> creator);
 
   signals:
 	void updateAllowedChanged(bool status);
