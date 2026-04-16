@@ -385,6 +385,9 @@ struct MMCOContext {
 	/* S15 — Launch Modifiers (only valid inside INSTANCE_PRE_LAUNCH hooks) */
 	int (*launch_set_env)(void* mh, const char* key, const char* value);
 	int (*launch_prepend_wrapper)(void* mh, const char* wrapper_cmd);
+
+	/* S16 — Application Settings (read-only global settings) */
+	const char* (*app_setting_get)(void* mh, const char* key);
 };
 
 #define MMCO_DEFINE_MODULE_6(mod_name, mod_version, mod_author, mod_desc,      \

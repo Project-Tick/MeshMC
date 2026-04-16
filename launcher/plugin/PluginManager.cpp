@@ -338,6 +338,9 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 	ctx.launch_set_env = api_launch_set_env;
 	ctx.launch_prepend_wrapper = api_launch_prepend_wrapper;
 
+	// S16 — Application Settings
+	ctx.app_setting_get = api_app_setting_get;
+
 	return ctx;
 }
 
@@ -1959,6 +1962,27 @@ void PluginManager::clearPendingLaunchMods()
 {
 	m_pendingLaunchEnv.clear();
 	m_pendingLaunchWrapper.clear();
+}
+
+/* ── S16 — Application Settings ───────────────────────────────────── */
+
+const char* PluginManager::api_app_setting_get(void* mh, const char* key)
+{
+	auto* r = rt(mh);
+	auto* app = r->manager->m_app;
+	if (!app || !app->settings() || !key)
+		return nullptr;
+
+	QString qKey = QString::fromUtf8(key);
+	if (!app->settings()->contains(qKey))
+		return nullptr;
+
+	QVariant val = app->settings()->get(qKey);
+	if (!val.isValid())
+		return nullptr;
+
+	r->tempString = val.toString().toStdString();
+	return r->tempString.c_str();
 }
 
 QMap<QString, QString> PluginManager::takePendingLaunchEnv()

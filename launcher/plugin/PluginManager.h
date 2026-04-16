@@ -327,6 +327,9 @@ class PluginManager : public QObject
 	static int api_launch_set_env(void* mh, const char* key, const char* value);
 	static int api_launch_prepend_wrapper(void* mh, const char* wrapper_cmd);
 
+	/* Section 16: Application Settings */
+	static const char* api_app_setting_get(void* mh, const char* key);
+
 	/* Helpers */
 	static ModuleRuntime* rt(void* mh);
 

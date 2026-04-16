@@ -284,4 +284,11 @@ struct MMCOContext {
 	/* Prepend a wrapper command for the current launching instance.
 	 * If the instance already has a wrapper, this command is prepended. */
 	int (*launch_prepend_wrapper)(void* mh, const char* wrapper_cmd);
+
+	/* S16 — Application Settings (read-only global settings) */
+
+	/* Read a global application setting by key. Returns the value as a
+	 * string, or nullptr if the key does not exist. The returned pointer
+	 * is valid until the next API call on the same module. */
+	const char* (*app_setting_get)(void* mh, const char* key);
 };
