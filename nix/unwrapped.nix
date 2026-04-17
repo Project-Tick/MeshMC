@@ -2,7 +2,6 @@
   lib,
   stdenv,
   cmake,
-  cmark,
   extra-cmake-modules,
   gamemode,
   jdk17,
@@ -11,10 +10,23 @@
   qrencode,
   self,
   stripJavaArchivesHook,
-  tomlplusplus,
-  zlib,
   msaClientID ? null,
   libarchive,
+  project-tick-cmark,
+  project-tick-tomlplusplus,
+  neozip,
+  libnbtplusplus,
+  systeminfo,
+  ganalytics,
+  rainbow,
+  iconfix,
+  LocalPeer,
+  classparser,
+  optional-bare,
+  xz-embedded,
+  katabasis,
+  javacheck,
+  javalauncher,
 }:
 
 let
@@ -41,31 +53,27 @@ stdenv.mkDerivation {
   version = "7.3-unstable-${date}";
 
   src = lib.fileset.toSource {
-    root = ../../.;
+    root = ../.;
     fileset = lib.fileset.unions [
       ../branding
       ../buildconfig
-      ../BUILD.md
       ../cmake
+      ../crashreporter
+      ../launcher
+      ../nix
+      ../plugins
+      ../scripts
+      ../updater
+      ../.clang-format
+      ../.clang-tidy
+      ../.markdownlint.yaml
+      ../.markdownlintignore
       ../CMakeLists.txt
       ../CMakePresets.json
       ../Containerfile
       ../COPYING.md
-      ../default.nix
-      ../.envrc
-      ../flake.nix
-      ../.gitattributes
-      ../launcher
-      ../../lefthook.yml
-      ../LICENSES
-      ../.markdownlintignore
-      ../.markdownlint.yaml
-      ../nix
       ../README.md
       ../REUSE.toml
-      ../scripts
-      ../shell.nix
-      ../updater
     ];
   };
 
@@ -78,22 +86,36 @@ stdenv.mkDerivation {
   ];
 
   buildInputs = [
-    cmark
+    project-tick-cmark
     kdePackages.qtbase
     kdePackages.qtnetworkauth
     qrencode
     libarchive
-    tomlplusplus
-    zlib
+    project-tick-tomlplusplus
+    neozip
+    libnbtplusplus
+    systeminfo
+    ganalytics
+    rainbow
+    iconfix
+    LocalPeer
+    classparser
+    optional-bare
+    xz-embedded
+    katabasis
+    javacheck
+    javalauncher
   ]
   ++ lib.optional stdenv.hostPlatform.isLinux gamemode;
 
   cmakeFlags = [
     # downstream branding
-    (lib.cmakeFeature "Launcher_BUILD_PLATFORM" "nixpkgs")
+    (lib.cmakeFeature "MeshMC_BUILD_PLATFORM" "nixpkgs")
+    (lib.cmakeBool "MeshMC_PLUGINS" true)
+    (lib.cmakeBool "MeshMC_STAGING_PLUGINS" true)
   ]
   ++ lib.optionals (msaClientID != null) [
-    (lib.cmakeFeature "Launcher_MSA_CLIENT_ID" (toString msaClientID))
+    (lib.cmakeFeature "MeshMC_MSA_CLIENT_ID" (toString msaClientID))
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # we wrap our binary manually
