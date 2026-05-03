@@ -394,6 +394,8 @@ void UpdateChecker::finalizeCheck(bool notifyNoUpdate,
 			 << "| github version =" << githubVersion
 			 << "| current =" << currentVersion();
 
+	/* 	
+	// FIXME: Remove GITHUB control!!!!
 	// Cross-check both sources
 	if (m_feedVersion != githubVersion) {
 		qDebug() << "UpdateChecker: feed and GitHub disagree on version -- no "
@@ -402,6 +404,8 @@ void UpdateChecker::finalizeCheck(bool notifyNoUpdate,
 			emit noUpdateFound();
 		return;
 	}
+	
+	*/
 
 	// Compare against the running version
 	if (compareVersions(m_feedVersion, currentVersion()) <= 0) {
