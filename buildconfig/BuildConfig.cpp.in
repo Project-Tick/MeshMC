@@ -110,10 +110,6 @@ QString Config::printableVersionString() const
 		return vstr;
 	}
 
-	if (!GIT_COMMIT.isEmpty() && !GIT_COMMIT.endsWith("-NOTFOUND")) {
-		vstr += "-r" + GIT_COMMIT.left(6);
-	}
-
 	return vstr;
 }
 
