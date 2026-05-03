@@ -58,6 +58,32 @@
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="7.18.0" date="2026-05-03">
+      <description>
+        <p><em>Highlights</em></p>
+        <ul>
+          <li>Removed GitHub control from the MeshMC updater.</li>
+          <li>Fixed the debug message appearance in the MeshMC Plugin System.</li>
+          <li>Updated BuildConfig to remove the -rSHA suffix and related build metadata handling.</li>
+          <li>Improved MeshMC CrashReporter by censoring sensitive regex patterns.</li>
+        </ul>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>Changed BuildConfig so release metadata no longer includes the -rSHA suffix.</li>
+        </ul>
+        <p><em>Fixed</em></p>
+        <ul>
+          <li>Fixed MeshMC updater behavior by removing GitHub control.</li>
+          <li>Fixed the debug message appearing during the MeshMC plugin flow.</li>
+          <li>Fixed CrashReporter privacy handling by censoring sensitive regex matches.</li>
+        </ul>
+        <p><em>Removed</em></p>
+        <ul>
+          <li>Removed GitHub control from the MeshMC updater.</li>
+          <li>Removed the -rSHA suffix from BuildConfig output.</li>
+        </ul>
+      </description>
+    </release>
     <release version="7.17.0" date="2026-04-29">
       <description>
         <p><em>Changed</em></p>
