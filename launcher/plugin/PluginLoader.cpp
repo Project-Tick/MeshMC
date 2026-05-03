@@ -55,7 +55,8 @@ QStringList PluginLoader::defaultSearchPaths()
 	if (!localData.isEmpty())
 		paths << QDir(localData).filePath("mmcmodules");
 #else
-	// TODO: Edit this so that the system and user levels differentiate between them in the about dialog.
+	// TODO: Edit this so that the system and user levels differentiate between
+	// them in the about dialog.
 	// ~/.local/lib/mmcmodules
 	QString home = QDir::homePath();
 	paths << home + "/.local/lib/mmcmodules";
@@ -238,8 +239,9 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 	}
 
 	meta.loaded = true;
-	qDebug() << "[PluginLoader] Loaded module:" << meta.name << "v"
-			 << meta.version << "by" << meta.author;
+	qDebug().noquote().nospace()
+		<< "[PluginLoader] Loaded module: " << meta.name << " v" << meta.version
+		<< " by " << meta.author;
 
 	return meta;
 }

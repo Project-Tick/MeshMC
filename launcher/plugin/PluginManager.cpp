@@ -144,7 +144,7 @@ void PluginManager::shutdownAll()
 		if (!meta.initialized)
 			continue;
 
-		qDebug() << "[PluginManager] Unloading module:" << meta.name;
+		qDebug().noquote() << "[PluginManager] Unloading module:" << meta.name;
 		if (meta.unloadFunc) {
 			meta.unloadFunc();
 		}
