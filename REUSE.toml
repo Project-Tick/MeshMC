@@ -10,8 +10,22 @@ path = [
   ".markdownlint.yaml",
   ".markdownlintignore",
   "Containerfile",
+  "default.nix",
+  "flake.lock",
+  "flake.nix",
+  "shell.nix",
   ".clang-format",
-  ".clang-tidy"
+  ".clang-tidy",
+  "CODEOWNERS",
+  "hooks/**",
+  "ci/**",
+  "Packaging/**",
+  ".clusterfuzzlite/**",
+  "**.nix",
+  "**.in",
+  "**/.gitignore",
+  "libraries/README",
+  "renovate.json"
 ]
 SPDX-License-Identifier = "CC0-1.0"
 SPDX-FileCopyrightText = "NONE"
