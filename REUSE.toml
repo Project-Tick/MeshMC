@@ -84,3 +84,8 @@ SPDX-FileCopyrightText = "2026 Project Tick"
 path = ["flatpak/**"]
 SPDX-License-Identifier = "GPL-3.0-or-later"
 SPDX-FileCopyrightText = "2026 Project Tick"
+
+[[annotations]]
+path = [".lefthook/**", "scripts/**"]
+SPDX-License-Identifier = "MIT"
+SPDX-FileCopyrightText = "Gitlab Inc. && 2026 Project Tick"
