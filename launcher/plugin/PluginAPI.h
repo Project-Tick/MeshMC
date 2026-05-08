@@ -299,4 +299,51 @@ struct MMCOContext {
 	 * string, or nullptr if the key does not exist. The returned pointer
 	 * is valid until the next API call on the same module. */
 	const char* (*app_setting_get)(void* mh, const char* key);
+	/* S17 — News API */
+
+	/* Returns the total number of loaded news entries across all feeds.
+	 * Returns -1 if the news system is not available. */
+	int (*news_get_entry_count)(void* mh);
+
+	/* Returns the title of the news entry at the given index.
+	 * Returns nullptr if index is out of range. */
+	const char* (*news_get_entry_title)(void* mh, int index);
+
+	/* Returns the URL link of the news entry at the given index.
+	 * Returns nullptr if index is out of range. */
+	const char* (*news_get_entry_link)(void* mh, int index);
+
+	/* Returns the HTML/text content of the news entry at the given index.
+	 * Returns nullptr if index is out of range. */
+	const char* (*news_get_entry_content)(void* mh, int index);
+
+	/* Returns the author of the news entry at the given index.
+	 * Returns nullptr if index is out of range. */
+	const char* (*news_get_entry_author)(void* mh, int index);
+
+	/* Returns the publication date of the news entry at the given index
+	 * as an ISO 8601 string (e.g. "2026-05-08T14:30:00").
+	 * Returns nullptr if index is out of range. */
+	const char* (*news_get_entry_date)(void* mh, int index);
+
+	/* Returns the feed URL index for the news entry at the given index.
+	 * This identifies which feed the entry came from. */
+	int (*news_get_entry_feed_index)(void* mh, int index);
+
+	/* Registers an additional RSS feed URL to be fetched alongside the
+	 * default feed. Returns 0 on success, -1 on failure.
+	 * The URL is stored for the lifetime of the application. */
+	int (*news_add_feed_url)(void* mh, const char* url);
+
+	/* Returns the number of registered feed URLs (including the default). */
+	int (*news_get_feed_count)(void* mh);
+
+	/* Returns the feed URL at the given index.
+	 * Returns nullptr if index is out of range. */
+	const char* (*news_get_feed_url)(void* mh, int index);
+
+	/* Triggers a reload of all news feeds. Non-blocking — results arrive
+	 * via the MMCO_HOOK_NEWS_UPDATED hook. Returns 0 on success. */
+	int (*news_reload)(void* mh);
+
 };

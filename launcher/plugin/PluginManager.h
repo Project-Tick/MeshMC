@@ -32,6 +32,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QVector>
 #include <QMap>
 #include <QMultiMap>
@@ -335,6 +336,20 @@ class PluginManager : public QObject
 	/* Section 16: Application Settings */
 	static const char* api_app_setting_get(void* mh, const char* key);
 
+	/* S17 — News API */
+	void rebuildNewsCache();
+	static int api_news_get_entry_count(void* mh);
+	static const char* api_news_get_entry_title(void* mh, int index);
+	static const char* api_news_get_entry_link(void* mh, int index);
+	static const char* api_news_get_entry_content(void* mh, int index);
+	static const char* api_news_get_entry_author(void* mh, int index);
+	static const char* api_news_get_entry_date(void* mh, int index);
+	static int api_news_get_entry_feed_index(void* mh, int index);
+	static int api_news_add_feed_url(void* mh, const char* url);
+	static int api_news_get_feed_count(void* mh);
+	static const char* api_news_get_feed_url(void* mh, int index);
+	static int api_news_reload(void* mh);
+
 	/* Helpers */
 	static ModuleRuntime* rt(void* mh);
 
@@ -378,6 +393,21 @@ class PluginManager : public QObject
 	/* Pending launch modifications (set by plugins during PRE_LAUNCH hooks) */
 	QMap<QString, QString> m_pendingLaunchEnv;
 	QString m_pendingLaunchWrapper;
+
+	/* S17 — News state */
+	QStringList m_extraFeedUrls;
+	/* Flat list of all entries from all feeds: (feedIndex, entry) pairs.
+	 * feedIndex 0 = default BuildConfig.NEWS_RSS_URL,
+	 * feedIndex N = m_extraFeedUrls[N-1] */
+	struct NewsEntryCache {
+		int feedIndex;
+		QString title;
+		QString link;
+		QString content;
+		QString author;
+		QString date; /* ISO 8601 */
+	};
+	QVector<NewsEntryCache> m_newsCache;
 
 	bool m_shutdownDone = false;
 

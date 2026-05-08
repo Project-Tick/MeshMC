@@ -60,6 +60,13 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QDomDocument>
+#include <QDomNodeList>
+#include <QStringList>
+#include "news/NewsChecker.h"
+#include "ui/MainWindow.h"
+#include <net/NetJob.h>
+#include "net/Download.h"
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QStandardPaths>
@@ -342,6 +349,19 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 
 	// S16 — Application Settings
 	ctx.app_setting_get = api_app_setting_get;
+
+	// S17 — News API
+	ctx.news_get_entry_count = api_news_get_entry_count;
+	ctx.news_get_entry_title = api_news_get_entry_title;
+	ctx.news_get_entry_link = api_news_get_entry_link;
+	ctx.news_get_entry_content = api_news_get_entry_content;
+	ctx.news_get_entry_author = api_news_get_entry_author;
+	ctx.news_get_entry_date = api_news_get_entry_date;
+	ctx.news_get_entry_feed_index = api_news_get_entry_feed_index;
+	ctx.news_add_feed_url = api_news_add_feed_url;
+	ctx.news_get_feed_count = api_news_get_feed_count;
+	ctx.news_get_feed_url = api_news_get_feed_url;
+	ctx.news_reload = api_news_reload;
 
 	return ctx;
 }
@@ -2018,6 +2038,238 @@ QString PluginManager::takePendingLaunchWrapper()
 	QString w;
 	w.swap(m_pendingLaunchWrapper);
 	return w;
+}
+
+
+/* ── S17 — News API ────────────────────────────────────────────────── */
+
+/*
+ * Internal helper: rebuild m_newsCache from the MainWindow's NewsChecker
+ * (feed index 0) and any extra feeds registered by plugins.
+ * Called lazily on first access and after news_reload().
+ */
+void PluginManager::rebuildNewsCache()
+{
+    m_newsCache.clear();
+
+    // Feed 0: default NewsChecker from MainWindow
+    if (!m_app)
+        return;
+
+    auto* mw = m_app->mainWindow();
+    if (mw) {
+        auto* checker = mw->newsChecker();
+        if (checker) {
+            const auto entries = checker->getNewsEntries();
+            for (const auto& e : entries) {
+                NewsEntryCache c;
+                c.feedIndex = 0;
+                c.title = e->title;
+                c.link = e->link;
+                c.content = e->content;
+                c.author = e->author;
+                c.date = e->pubDate.toString(Qt::ISODate);
+                m_newsCache.append(c);
+            }
+        }
+    }
+
+    // Feeds 1..N: extra feeds are appended by api_news_reload callbacks.
+    // rebuildNewsCache only populates feed 0; extra feed entries persist
+    // in m_newsCache between reloads (appended by the NetJob callbacks).
+}
+
+int PluginManager::api_news_get_entry_count(void* mh)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return -1;
+    r->manager->rebuildNewsCache();
+    return r->manager->m_newsCache.size();
+}
+
+const char* PluginManager::api_news_get_entry_title(void* mh, int index)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return nullptr;
+    r->manager->rebuildNewsCache();
+    if (index < 0 || index >= r->manager->m_newsCache.size())
+        return nullptr;
+    r->tempString = r->manager->m_newsCache[index].title.toStdString();
+    return r->tempString.c_str();
+}
+
+const char* PluginManager::api_news_get_entry_link(void* mh, int index)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return nullptr;
+    r->manager->rebuildNewsCache();
+    if (index < 0 || index >= r->manager->m_newsCache.size())
+        return nullptr;
+    r->tempString = r->manager->m_newsCache[index].link.toStdString();
+    return r->tempString.c_str();
+}
+
+const char* PluginManager::api_news_get_entry_content(void* mh, int index)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return nullptr;
+    r->manager->rebuildNewsCache();
+    if (index < 0 || index >= r->manager->m_newsCache.size())
+        return nullptr;
+    r->tempString = r->manager->m_newsCache[index].content.toStdString();
+    return r->tempString.c_str();
+}
+
+const char* PluginManager::api_news_get_entry_author(void* mh, int index)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return nullptr;
+    r->manager->rebuildNewsCache();
+    if (index < 0 || index >= r->manager->m_newsCache.size())
+        return nullptr;
+    r->tempString = r->manager->m_newsCache[index].author.toStdString();
+    return r->tempString.c_str();
+}
+
+const char* PluginManager::api_news_get_entry_date(void* mh, int index)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return nullptr;
+    r->manager->rebuildNewsCache();
+    if (index < 0 || index >= r->manager->m_newsCache.size())
+        return nullptr;
+    r->tempString = r->manager->m_newsCache[index].date.toStdString();
+    return r->tempString.c_str();
+}
+
+int PluginManager::api_news_get_entry_feed_index(void* mh, int index)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return -1;
+    r->manager->rebuildNewsCache();
+    if (index < 0 || index >= r->manager->m_newsCache.size())
+        return -1;
+    return r->manager->m_newsCache[index].feedIndex;
+}
+
+int PluginManager::api_news_add_feed_url(void* mh, const char* url)
+{
+    auto* r = rt(mh);
+    if (!r || !url)
+        return -1;
+    QString qUrl = QString::fromUtf8(url);
+    if (qUrl.isEmpty())
+        return -1;
+    if (!r->manager->m_extraFeedUrls.contains(qUrl))
+        r->manager->m_extraFeedUrls.append(qUrl);
+    return 0;
+}
+
+int PluginManager::api_news_get_feed_count(void* mh)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return 0;
+    // +1 for the default feed
+    return 1 + r->manager->m_extraFeedUrls.size();
+}
+
+const char* PluginManager::api_news_get_feed_url(void* mh, int index)
+{
+    auto* r = rt(mh);
+    if (!r || index < 0)
+        return nullptr;
+    if (index == 0) {
+        // Default feed URL from BuildConfig
+        r->tempString = BuildConfig.NEWS_RSS_URL.toStdString();
+        return r->tempString.c_str();
+    }
+    int extraIdx = index - 1;
+    if (extraIdx >= r->manager->m_extraFeedUrls.size())
+        return nullptr;
+    r->tempString = r->manager->m_extraFeedUrls[extraIdx].toStdString();
+    return r->tempString.c_str();
+}
+
+int PluginManager::api_news_reload(void* mh)
+{
+    auto* r = rt(mh);
+    if (!r)
+        return -1;
+
+    auto* app = r->manager->m_app;
+    if (!app)
+        return -1;
+
+    // Reload default feed via MainWindow's NewsChecker
+    auto* mw = app->mainWindow();
+    if (mw) {
+        auto* checker = mw->newsChecker();
+        if (checker)
+            checker->reloadNews();
+    }
+
+    // Extra feeds: fetch via NetJob and append to cache
+    // We use the existing http_get infrastructure for simplicity.
+    // Each extra feed is fetched; on completion we parse and append.
+    int feedIdx = 1;
+    for (const QString& feedUrl : r->manager->m_extraFeedUrls) {
+        const int capturedFeedIdx = feedIdx++;
+        QByteArray* buf = new QByteArray();
+        NetJob* job = new NetJob(
+            QStringLiteral("NewsViewer extra feed"), app->network());
+        job->addNetAction(Net::Download::makeByteArray(feedUrl, buf));
+
+        QObject::connect(
+            job, &NetJob::succeeded,
+            r->manager,
+            [mgr = r->manager, buf, capturedFeedIdx]() {
+                QDomDocument doc;
+                if (!doc.setContent(*buf)) {
+                    delete buf;
+                    return;
+                }
+                delete buf;
+
+                QDomNodeList items = doc.elementsByTagName("item");
+                for (int i = 0; i < items.length(); i++) {
+                    QDomElement el = items.at(i).toElement();
+                    auto childText = [&](const QString& tag,
+                                        const QString& def = {}) -> QString {
+                        auto nodes = el.elementsByTagName(tag);
+                        return nodes.count() > 0
+                                   ? nodes.at(0).toElement().text()
+                                   : def;
+                    };
+                    PluginManager::NewsEntryCache c;
+                    c.feedIndex = capturedFeedIdx;
+                    c.title = childText("title", QObject::tr("Untitled"));
+                    c.content = childText("description");
+                    c.link = childText("link");
+                    c.author = childText("dc:creator");
+                    QString dateStr = childText("pubDate");
+                    QDateTime dt = QDateTime::fromString(
+                        dateStr, "ddd, dd MMM yyyy hh:mm:ss");
+                    c.date = dt.isValid() ? dt.toString(Qt::ISODate) : dateStr;
+                    mgr->m_newsCache.append(c);
+                }
+                mgr->dispatchHook(MMCO_HOOK_NEWS_UPDATED);
+            });
+
+        QObject::connect(job, &NetJob::failed, r->manager,
+                         [buf](const QString&) { delete buf; });
+
+        job->start();
+    }
+
+    return 0;
 }
 
 /* PluginPage MOC — required because PluginPage has Q_OBJECT */
