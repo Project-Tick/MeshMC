@@ -84,6 +84,8 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QToolBar>
+#include <QAction>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
@@ -148,6 +150,9 @@ enum MMCOHookId : uint32_t {
 	MMCO_HOOK_UI_CONTEXT_MENU = 0x0601,
 	MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602,
 	MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES = 0x0603,
+
+	/* News */
+	MMCO_HOOK_NEWS_UPDATED = 0x0700, /* payload: nullptr */
 };
 
 struct MMCOInstanceInfo {
@@ -410,6 +415,19 @@ struct MMCOContext {
 
 	/* S16 — Application Settings (read-only global settings) */
 	const char* (*app_setting_get)(void* mh, const char* key);
+
+	/* S17 — News API */
+	int (*news_get_entry_count)(void* mh);
+	const char* (*news_get_entry_title)(void* mh, int index);
+	const char* (*news_get_entry_link)(void* mh, int index);
+	const char* (*news_get_entry_content)(void* mh, int index);
+	const char* (*news_get_entry_author)(void* mh, int index);
+	const char* (*news_get_entry_date)(void* mh, int index);
+	int (*news_get_entry_feed_index)(void* mh, int index);
+	int (*news_add_feed_url)(void* mh, const char* url);
+	int (*news_get_feed_count)(void* mh);
+	const char* (*news_get_feed_url)(void* mh, int index);
+	int (*news_reload)(void* mh);
 };
 
 #define MMCO_DEFINE_MODULE_6(mod_name, mod_version, mod_author, mod_desc,      \

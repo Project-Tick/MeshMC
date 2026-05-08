@@ -85,6 +85,8 @@ class MainWindow : public QMainWindow
 	void updatesAllowedChanged(bool allowed);
 
 	void droppedURLs(QList<QUrl> urls);
+
+	NewsChecker* newsChecker() const { return m_newsChecker.get(); }
   signals:
 	void isClosing();
 

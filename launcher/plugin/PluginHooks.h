@@ -66,6 +66,9 @@ enum MMCOHookId : uint32_t {
 	MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602, /* payload: MMCOInstancePagesEvent* */
 	MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES =
 		0x0603, /* payload: MMCOGlobalSettingsPagesEvent* */
+
+	/* News */
+	MMCO_HOOK_NEWS_UPDATED = 0x0700, /* payload: nullptr — fires after feeds reload */
 };
 
 /*

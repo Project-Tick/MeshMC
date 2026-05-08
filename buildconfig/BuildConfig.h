@@ -130,6 +130,8 @@ class Config
 	 * It defaults in CMakeLists.txt to "https://projecttick.org/rss.xml"
 	 */
 	QString NEWS_RSS_URL;
+	/// Semicolon-separated extra RSS feed URLs for the NewsViewer plugin.
+	QString NEWS_EXTRA_FEEDS;
 
 	QString MSAClientID;
 
