@@ -102,11 +102,11 @@
 
 #define MMCO_MAGIC 0x4D4D434F
 #define MMCO_VERSION "8.0.0"
-#define MMCO_ABI_VERSION 1
+#define MMCO_ABI_VERSION 2
 #define MMCO_EXTENSION ".mmco"
 #define MMCO_FLAG_NONE 0x00000000
 #define MMCO_VERNUM                                                            \
-	0x07000000L /* MMNNRRSM: major minor revision status modified */
+	0x08000000L /* MMNNRRSM: major minor revision status modified */
 #define MMCO_VER_MAJOR 8
 #define MMCO_VER_MINOR 0
 #define MMCO_VER_REVISION 0
@@ -192,6 +192,27 @@ struct MMCOInstancePagesEvent {
 	const char* instance_path;
 	void* page_list_handle;
 	void* instance_handle;
+};
+
+/*
+ * Payload for MMCO_HOOK_UI_MAIN_READY (ABI 2+).
+ *
+ * Direct opaque handles to the main window's long-lived widgets, so
+ * plugins can wire callbacks without scanning qApp->allWidgets().
+ *
+ *   main_window       — QMainWindow*  (MainWindow*)
+ *   news_toolbar      — QToolBar*
+ *   more_news_action  — QAction*       (the "More News..." action)
+ *   news_label_button — QToolButton*   (the clickable news headline)
+ *
+ * All handles are owned by MeshMC and stay valid for the lifetime of the
+ * main window. Plugins must NOT delete or take ownership of them.
+ */
+struct MMCOUiMainReadyPayload {
+	void* main_window;
+	void* news_toolbar;
+	void* more_news_action;
+	void* news_label_button;
 };
 
 struct MMCOGlobalSettingsPagesEvent {

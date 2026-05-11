@@ -1072,7 +1072,18 @@ MainWindow::MainWindow(QWidget* parent)
 			m_pluginInstanceActions.append(qa);
 		}
 
-		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_MAIN_READY);
+		// Hand plugins direct handles to the long-lived widgets they
+		// most commonly want to hook (saves them from scanning
+		// qApp->allWidgets() on every load).
+		MMCOUiMainReadyPayload mainReady{};
+		mainReady.main_window = static_cast<void*>(this);
+		mainReady.news_toolbar =
+			static_cast<void*>(ui->newsToolBar.operator->());
+		mainReady.more_news_action =
+			static_cast<void*>(ui->actionMoreNews.operator->());
+		mainReady.news_label_button = static_cast<void*>(newsLabel);
+		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_MAIN_READY,
+												   &mainReady);
 	}
 }
 

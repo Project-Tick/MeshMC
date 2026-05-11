@@ -61,14 +61,15 @@ enum MMCOHookId : uint32_t {
 	MMCO_HOOK_NETWORK_POST_REQUEST = 0x0501, /* payload: MMCONetworkEvent* */
 
 	/* UI extension points */
-	MMCO_HOOK_UI_MAIN_READY = 0x0600,	  /* payload: nullptr */
+	MMCO_HOOK_UI_MAIN_READY = 0x0600,	  /* payload: MMCOUiMainReadyPayload* */
 	MMCO_HOOK_UI_CONTEXT_MENU = 0x0601,	  /* payload: MMCOMenuEvent* */
 	MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602, /* payload: MMCOInstancePagesEvent* */
 	MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES =
 		0x0603, /* payload: MMCOGlobalSettingsPagesEvent* */
 
 	/* News */
-	MMCO_HOOK_NEWS_UPDATED = 0x0700, /* payload: nullptr — fires after feeds reload */
+	MMCO_HOOK_NEWS_UPDATED =
+		0x0700, /* payload: nullptr — fires after feeds reload */
 };
 
 /*
@@ -139,4 +140,23 @@ struct MMCOInstancePagesEvent {
  */
 struct MMCOGlobalSettingsPagesEvent {
 	void* page_list_handle; /* Opaque: QList<BasePage*>* */
+};
+
+/*
+ * Payload for MMCO_HOOK_UI_MAIN_READY.
+ *
+ * Fired once after MainWindow has finished assembling its top-level
+ * widgets (toolbars, news label, status bar). Plugins that need to hook
+ * into the main UI receive direct opaque handles to the long-lived
+ * widgets here, so they no longer need to walk `qApp->allWidgets()`.
+ *
+ * Handles are valid for the lifetime of the main window. Plugins should
+ * NOT take ownership of them or delete them. Cast them through Qt's
+ * normal qobject_cast<>() to the documented concrete type.
+ */
+struct MMCOUiMainReadyPayload {
+	void* main_window;		 /* Opaque: QMainWindow* (MainWindow*)  */
+	void* news_toolbar;		 /* Opaque: QToolBar*                    */
+	void* more_news_action;	 /* Opaque: QAction*                     */
+	void* news_label_button; /* Opaque: QToolButton*                 */
 };

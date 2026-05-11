@@ -30,7 +30,8 @@
 #include "BuildConfig.h"
 #include "plugin/PluginManager.h"
 
-namespace {
+namespace
+{
 
 	QString getPluginsHtml()
 	{
@@ -107,7 +108,7 @@ namespace {
 		return html;
 	}
 
-} //namespace
+} // namespace
 
 PluginsDialog::PluginsDialog(QWidget* parent)
 	: QDialog(parent), ui(new Ui::PluginsDialog)
@@ -117,7 +118,8 @@ PluginsDialog::PluginsDialog(QWidget* parent)
 	QString phtml = getPluginsHtml();
 	ui->pluginsText->setHtml(phtml);
 
-	connect(ui->closeButton, &QPushButton::clicked, this, &PluginsDialog::close);
+	connect(ui->closeButton, &QPushButton::clicked, this,
+			&PluginsDialog::close);
 }
 
 PluginsDialog::~PluginsDialog()

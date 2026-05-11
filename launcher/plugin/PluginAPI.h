@@ -345,5 +345,4 @@ struct MMCOContext {
 	/* Triggers a reload of all news feeds. Non-blocking — results arrive
 	 * via the MMCO_HOOK_NEWS_UPDATED hook. Returns 0 on success. */
 	int (*news_reload)(void* mh);
-
 };

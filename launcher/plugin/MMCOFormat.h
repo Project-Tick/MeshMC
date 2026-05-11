@@ -44,11 +44,11 @@
 
 #define MMCO_MAGIC 0x4D4D434F
 #define MMCO_VERSION "8.0.0"
-#define MMCO_ABI_VERSION 1
+#define MMCO_ABI_VERSION 2
 #define MMCO_EXTENSION ".mmco"
 #define MMCO_FLAG_NONE 0x00000000
 #define MMCO_VERNUM                                                            \
-	0x07000000L /* MMNNRRSM: major minor revision status modified */
+	0x08000000L /* MMNNRRSM: major minor revision status modified */
 #define MMCO_VER_MAJOR 8
 #define MMCO_VER_MINOR 0
 #define MMCO_VER_REVISION 0
