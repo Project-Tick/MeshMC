@@ -21,51 +21,37 @@
  *
  *   You should have received a copy of the MeshMC MMCO Module Exception 1.0
  *   along with this program.  If not, see <https://projecttick.org/licenses/>.
- *
  */
 
 #pragma once
 
-#include <QObject>
+#include <QDialog>
 #include <QList>
-#include <QString>
-#include <memory>
+#include <QTreeWidget>
 
 #include "modplatform/ModDownloadTypes.h"
-#include "net/NetJob.h"
-#include "tasks/Task.h"
+#include "modplatform/ModUpdateCheckTask.h"
 
-class ModMetadataIndex;
-
-class ContentDownloadTask : public Task
+/*
+ * ModUpdateDialog
+ *
+ * Shows the user the set of mods for which a newer compatible version was
+ * found, lets them tick which updates to apply, and produces a list of
+ * DownloadItem objects ready to be fed into a ContentDownloadTask.
+ */
+class ModUpdateDialog : public QDialog
 {
 	Q_OBJECT
-
   public:
-	explicit ContentDownloadTask(const QList<ModPlatform::DownloadItem>& items,
-								 const QString& targetDir,
-								 QObject* parent = nullptr);
+	ModUpdateDialog(const QList<ModUpdateCheckTask::UpdateInfo>& updates,
+					QWidget* parent = nullptr);
 
-	/* When provided, the downloader writes a provenance sidecar for every
-	 * file it places on disk and removes the sidecar for any file it
-	 * supersedes (`DownloadItem::replacesFileName`). The pointer is held
-	 * by shared ownership so callers can hand off the model-owned index
-	 * without lifetime concerns. */
-	void setMetadataIndex(std::shared_ptr<ModMetadataIndex> index);
-
-  protected:
-	void executeTask() override;
-
-  private slots:
-	void onDownloadSucceeded();
-	void onDownloadFailed(QString reason);
-	void onDownloadProgress(qint64 current, qint64 total);
+	/* Returns only the items whose row is checked. */
+	QList<ModPlatform::DownloadItem> selectedDownloadItems() const;
 
   private:
-	void writeSidecars();
+	void setupUi(const QList<ModUpdateCheckTask::UpdateInfo>& updates);
 
-	QList<ModPlatform::DownloadItem> m_items;
-	QString m_targetDir;
-	NetJob::Ptr m_netJob;
-	std::shared_ptr<ModMetadataIndex> m_metadata;
+	QTreeWidget* m_tree = nullptr;
+	QList<ModUpdateCheckTask::UpdateInfo> m_updates;
 };

@@ -38,7 +38,9 @@ DownloadSummaryDialog::DownloadSummaryDialog(
 	: QDialog(parent), m_selectedMods(selectedMods),
 	  m_dependencies(dependencies), m_unresolvedDeps(unresolvedDeps)
 {
-	// Build download items list
+	// Build download items list. Provenance fields are propagated so the
+	// downloader can write a sidecar pinning the file to its remote origin
+	// (used by the update/conflict pipeline on subsequent runs).
 	for (const auto& mod : m_selectedMods) {
 		ModPlatform::DownloadItem item;
 		item.name = mod.name;
@@ -47,6 +49,9 @@ DownloadSummaryDialog::DownloadSummaryDialog(
 		item.sha1 = mod.sha1;
 		item.fileSize = mod.fileSize;
 		item.isDependency = false;
+		item.platform = mod.platform;
+		item.projectId = mod.projectId;
+		item.versionId = mod.versionId;
 		m_downloadItems.append(item);
 	}
 	for (const auto& dep : m_dependencies) {
@@ -57,6 +62,10 @@ DownloadSummaryDialog::DownloadSummaryDialog(
 		item.sha1 = dep.sha1;
 		item.fileSize = dep.fileSize;
 		item.isDependency = true;
+		item.platform = dep.platform;
+		item.projectId = dep.projectId;
+		item.versionId = dep.versionId;
+		item.slug = dep.slug;
 		m_downloadItems.append(item);
 	}
 

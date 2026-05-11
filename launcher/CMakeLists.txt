@@ -312,6 +312,8 @@ set(MINECRAFT_SOURCES
     minecraft/mod/ModFolderLoadTask.cpp
     minecraft/mod/LocalModParseTask.h
     minecraft/mod/LocalModParseTask.cpp
+    minecraft/mod/ModMetadataIndex.h
+    minecraft/mod/ModMetadataIndex.cpp
     minecraft/mod/ResourcePackFolderModel.h
     minecraft/mod/ResourcePackFolderModel.cpp
     minecraft/mod/TexturePackFolderModel.h
@@ -542,6 +544,10 @@ set(CONTENT_DOWNLOAD_SOURCES
     modplatform/DependencyResolver.cpp
     modplatform/ContentDownloadTask.h
     modplatform/ContentDownloadTask.cpp
+    modplatform/ModInstallConflictAnalyzer.h
+    modplatform/ModInstallConflictAnalyzer.cpp
+    modplatform/ModUpdateCheckTask.h
+    modplatform/ModUpdateCheckTask.cpp
 )
 
 set(PLUGIN_SOURCES
@@ -832,6 +838,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/DownloadContentDialog.h
     ui/dialogs/DownloadSummaryDialog.cpp
     ui/dialogs/DownloadSummaryDialog.h
+    ui/dialogs/ModUpdateDialog.cpp
+    ui/dialogs/ModUpdateDialog.h
     ui/dialogs/MeshMCLogsDialog.cpp
     ui/dialogs/MeshMCLogsDialog.h
     ui/dialogs/UpdateProgressDialog.cpp

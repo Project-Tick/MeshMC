@@ -29,10 +29,13 @@
 #include <QObject>
 #include <QList>
 #include <QString>
+#include <memory>
 
 #include "modplatform/ModDownloadTypes.h"
 #include "net/NetJob.h"
 #include "tasks/Task.h"
+
+class ModMetadataIndex;
 
 class DependencyResolver : public Task
 {
@@ -43,6 +46,12 @@ class DependencyResolver : public Task
 		const QList<ModPlatform::SelectedMod>& selectedMods,
 		const QString& mcVersion, const QString& loader,
 		QObject* parent = nullptr);
+
+	/* Optional: hand the resolver the persistent install index for the
+	 * destination mods folder. When set, any project/version already
+	 * present on disk is treated as already-resolved, so transitive
+	 * dependencies that are already installed are no longer re-fetched. */
+	void setInstalledIndex(std::shared_ptr<ModMetadataIndex> index);
 
 	QList<ModPlatform::DependencyInfo> resolvedDependencies() const
 	{
@@ -87,6 +96,7 @@ class DependencyResolver : public Task
 	QSet<QString> m_resolvedProjectIds; // avoid duplicates (platform:projectId)
 	QSet<QString>
 		m_resolvedNames; // avoid cross-platform duplicates (normalized name)
+	std::shared_ptr<ModMetadataIndex> m_installed;
 	QString m_mcVersion;
 	QString m_loader;
 	int m_currentModIndex = 0;

@@ -21,51 +21,67 @@
  *
  *   You should have received a copy of the MeshMC MMCO Module Exception 1.0
  *   along with this program.  If not, see <https://projecttick.org/licenses/>.
- *
  */
 
 #pragma once
 
-#include <QObject>
 #include <QList>
+#include <QObject>
 #include <QString>
 #include <memory>
 
 #include "modplatform/ModDownloadTypes.h"
-#include "net/NetJob.h"
 #include "tasks/Task.h"
 
 class ModMetadataIndex;
 
-class ContentDownloadTask : public Task
+/*
+ * ModUpdateCheckTask
+ *
+ * Walks every entry of a ModMetadataIndex that has a remote provenance and
+ * asks the source platform for the newest compatible version. Whenever the
+ * remote version differs from the recorded one, a ready-to-download
+ * DownloadItem is produced (with replaceExisting + replacesFileName already
+ * populated).
+ *
+ * This task is read-only with respect to the index — it never mutates the
+ * sidecars itself. The caller is expected to hand the resulting plan to a
+ * ContentDownloadTask, which both writes the new files and updates the
+ * sidecars on success.
+ */
+class ModUpdateCheckTask : public Task
 {
 	Q_OBJECT
-
   public:
-	explicit ContentDownloadTask(const QList<ModPlatform::DownloadItem>& items,
-								 const QString& targetDir,
-								 QObject* parent = nullptr);
+	struct UpdateInfo {
+		QString currentFileName;
+		QString currentVersionId;
+		QString newVersionId;
+		QString name;
+		QString platform;
+		ModPlatform::DownloadItem item;
+	};
 
-	/* When provided, the downloader writes a provenance sidecar for every
-	 * file it places on disk and removes the sidecar for any file it
-	 * supersedes (`DownloadItem::replacesFileName`). The pointer is held
-	 * by shared ownership so callers can hand off the model-owned index
-	 * without lifetime concerns. */
-	void setMetadataIndex(std::shared_ptr<ModMetadataIndex> index);
+	ModUpdateCheckTask(std::shared_ptr<ModMetadataIndex> index,
+					   QString mcVersion, QString loader,
+					   QObject* parent = nullptr);
+
+	QList<UpdateInfo> availableUpdates() const
+	{
+		return m_updates;
+	}
 
   protected:
 	void executeTask() override;
 
-  private slots:
-	void onDownloadSucceeded();
-	void onDownloadFailed(QString reason);
-	void onDownloadProgress(qint64 current, qint64 total);
-
   private:
-	void writeSidecars();
+	void onOneDone();
 
-	QList<ModPlatform::DownloadItem> m_items;
-	QString m_targetDir;
-	NetJob::Ptr m_netJob;
-	std::shared_ptr<ModMetadataIndex> m_metadata;
+	std::shared_ptr<ModMetadataIndex> m_index;
+	QString m_mcVersion;
+	QString m_loader;
+	QList<UpdateInfo> m_updates;
+	int m_pending = 0;
+	int m_total = 0;
+	int m_completed = 0;
 };
