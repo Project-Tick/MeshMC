@@ -179,6 +179,34 @@ find_package(classparser REQUIRED)
 find_package(optional-bare REQUIRED)
 find_package(xz-embedded REQUIRED)
 find_package(Katabasis REQUIRED)
+
+# GpgME (C++ bindings) — used by the MMCO plugin signature verifier.
+# KDE's gpgmepp distribution exports the bare target name "Gpgmepp".
+#
+# Upstream only ships an unconfigured ("NOCONFIG") import, which trips
+# the Ninja Multi-Config generator with errors like:
+#   IMPORTED_LOCATION not set for imported target "Gpgmepp"
+#   configuration "RelWithDebInfo"
+# Replicate the NOCONFIG IMPORTED_LOCATION / IMPORTED_SONAME on every
+# build configuration we use.
+find_package(Gpgmepp REQUIRED)
+if(TARGET Gpgmepp)
+    get_target_property(_gpgmepp_loc Gpgmepp IMPORTED_LOCATION_NOCONFIG)
+    get_target_property(_gpgmepp_son Gpgmepp IMPORTED_SONAME_NOCONFIG)
+    if(_gpgmepp_loc)
+        foreach(_cfg DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+            set_property(TARGET Gpgmepp APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS ${_cfg})
+            set_target_properties(Gpgmepp PROPERTIES
+                IMPORTED_LOCATION_${_cfg} "${_gpgmepp_loc}")
+            if(_gpgmepp_son)
+                set_target_properties(Gpgmepp PROPERTIES
+                    IMPORTED_SONAME_${_cfg} "${_gpgmepp_son}")
+            endif()
+        endforeach()
+    endif()
+endif()
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ####################################### Branding #######################################

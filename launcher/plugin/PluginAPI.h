@@ -345,4 +345,23 @@ struct MMCOContext {
 	/* Triggers a reload of all news feeds. Non-blocking — results arrive
 	 * via the MMCO_HOOK_NEWS_UPDATED hook. Returns 0 on success. */
 	int (*news_reload)(void* mh);
+
+	/* S18 — Plugin icon set (ABI 2+) */
+
+	/* Resolve a logical icon name from the calling module's bundled
+	 * icon set into a Qt resource path that can be passed to the
+	 * ui_* widget creators above (which forward to QIcon::fromTheme()
+	 * and QIcon::QIcon(QString)).
+	 *
+	 * Returns a string of the form ":/plugins/<icon_set>/<name>" or
+	 * nullptr if the module did not declare an icon_set_resource or
+	 * the icon does not exist. The pointer is valid until the next
+	 * API call on the same module.
+	 *
+	 * Example:
+	 *   const char* iconPath = ctx->ui_plugin_icon(MMCO_MH, "settings");
+	 *   ctx->ui_button_create(MMCO_MH, parent, "Settings", iconPath,
+	 *                         cb, ud);
+	 */
+	const char* (*ui_plugin_icon)(void* mh, const char* name);
 };

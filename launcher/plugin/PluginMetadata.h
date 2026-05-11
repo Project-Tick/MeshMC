@@ -29,7 +29,45 @@
 #include "plugin/PluginAPI.h"
 
 #include <QString>
+#include <QStringList>
+#include <QVector>
 #include <string>
+
+/*
+ * Result of running the signature verification step against a .mmco file.
+ *
+ * Used by PluginLoader to decide whether the module is allowed to load
+ * based on the license/signature policy.
+ */
+enum class PluginSignatureState {
+	NotChecked,	  /* Verification has not run yet */
+	Absent,		  /* No trailer present in the .mmco file */
+	Valid,		  /* Trailer present and signature verified by trusted key */
+	Untrusted,	  /* Signature verified but signing key is not in the keyring */
+	BadSignature, /* Signature did not verify against the file contents */
+	Malformed,	  /* Trailer present but malformed / unreadable */
+	Error,		  /* GPG backend error (gpgme failure, no keyring, etc.) */
+};
+
+/*
+ * Why the loader refused to initialise a discovered module. `None` is the
+ * "no problem" state. Disabled modules also use this enum so the UI can
+ * show why a module is greyed out without scattering string keys around.
+ */
+enum class PluginDisableReason {
+	None,
+	UserDisabled,	   /* Explicitly disabled via the plugins dialog */
+	SignatureRequired, /* Non-OSS license with no/invalid signature */
+	SignatureInvalid,  /* Trailer is malformed or signature bad */
+	DependencyMissing, /* A required dependency is not loaded */
+	DependencyCycle,   /* This module is part of a dependency cycle */
+};
+
+struct PluginDependencyRecord {
+	QString name;
+	QString minVersion;
+	bool optional = false;
+};
 
 /*
  * PluginMetadata holds the parsed information about a loaded .mmco module,
@@ -51,6 +89,11 @@ struct PluginMetadata {
 	QString codeLink;
 	uint32_t flags = 0;
 
+	/* ABI 2 additions */
+	QString iconSetResource;
+	QString signingKeyId;
+	QVector<PluginDependencyRecord> dependencies;
+
 	/* Runtime state */
 	void* libraryHandle = nullptr; /* dlopen/LoadLibrary handle */
 	MMCOModuleInfo* moduleInfo = nullptr;
@@ -64,6 +107,19 @@ struct PluginMetadata {
 
 	bool loaded = false;
 	bool initialized = false;
+
+	/* Signature verification result and any human-readable diagnostic
+	 * from the GPG backend (empty when state == NotChecked / Absent). */
+	PluginSignatureState signatureState = PluginSignatureState::NotChecked;
+	QString signatureDetail;
+	QString signatureFingerprint; /* Fingerprint of the signing key, if any */
+
+	/* Set when the loader (or the user, via settings) decides the module
+	 * should not be initialised. PluginManager honours this flag and
+	 * skips mmco_init() for it. */
+	bool disabled = false;
+	PluginDisableReason disableReason = PluginDisableReason::None;
+	QString disableDetail; /* free-form human-readable explanation */
 
 	/* Convenience: unique identifier derived from file name */
 	QString moduleId() const

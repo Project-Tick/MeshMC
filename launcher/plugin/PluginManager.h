@@ -36,6 +36,7 @@
 #include <QVector>
 #include <QMap>
 #include <QMultiMap>
+#include <QSet>
 #include <memory>
 #include <vector>
 #include <functional>
@@ -91,6 +92,20 @@ class PluginManager : public QObject
 	{
 		return m_modules.size();
 	}
+
+	/*
+	 * Disable / enable management.
+	 *
+	 * The disabled-set is persisted in the application settings under
+	 * the key "plugins.disabled" as a comma-separated list of module
+	 * names (case-insensitive). Toggling a module DOES NOT load or
+	 * unload anything at runtime — the change takes effect on the next
+	 * launcher start. PluginsDialog calls these to mutate the set; the
+	 * dialog warns the user that a restart is required.
+	 */
+	bool isModuleDisabled(const QString& moduleName) const;
+	void setModuleDisabled(const QString& moduleName, bool disabled);
+	QSet<QString> disabledModuleNames() const;
 
 	/*
 	 * ModuleRuntime — the opaque object behind module_handle.
@@ -335,6 +350,9 @@ class PluginManager : public QObject
 
 	/* Section 16: Application Settings */
 	static const char* api_app_setting_get(void* mh, const char* key);
+
+	/* Section 18: Plugin Icon Set (ABI 2+) */
+	static const char* api_ui_plugin_icon(void* mh, const char* name);
 
 	/* S17 — News API */
 	void rebuildNewsCache();

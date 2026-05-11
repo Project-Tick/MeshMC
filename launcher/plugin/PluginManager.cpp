@@ -24,6 +24,8 @@
  */
 
 #include "plugin/PluginManager.h"
+#include "plugin/PluginDependencyResolver.h"
+#include "plugin/PluginSignature.h"
 #include "Application.h"
 #include "BuildConfig.h"
 #include "InstanceList.h"
@@ -87,34 +89,55 @@ void PluginManager::initializeAll()
 {
 	qDebug() << "[PluginManager] Discovering modules...";
 
-	m_modules = m_loader.discoverModules();
+	// Configure GPG keyring location before discovery — the loader's
+	// signature pre-flight runs inside discoverModules().
+	if (m_app && m_app->settings()) {
+		const QString key = QStringLiteral("plugin.signing.keyring_path");
+		if (!m_app->settings()->contains(key))
+			m_app->settings()->registerSetting(key, QString());
+		const QString path = m_app->settings()->get(key).toString();
+		if (!path.isEmpty())
+			PluginSignature::setKeyringPath(path);
+	}
+
+	const QSet<QString> disabled = disabledModuleNames();
+	m_modules = m_loader.discoverModules(disabled);
 
 	if (m_modules.isEmpty()) {
 		qDebug() << "[PluginManager] No modules found.";
 		return;
 	}
 
-	// Prepare runtimes and contexts
+	// Resolve dependencies and produce a load order.
+	const auto resolved = PluginDependencyResolver::resolve(m_modules);
+
+	// Prepare runtimes and contexts — sized to the full module list so
+	// that disabled modules still have a slot (they just never get an
+	// active context). Indexing stays consistent with m_modules.
 	m_runtimes.resize(static_cast<size_t>(m_modules.size()));
 	m_contexts.resize(static_cast<size_t>(m_modules.size()));
 
-	for (int i = 0; i < m_modules.size(); ++i) {
+	for (int i : resolved.loadOrder) {
 		auto& meta = m_modules[i];
+
+		if (meta.disabled) {
+			// Defensive — resolver should have excluded these already.
+			qDebug() << "[PluginManager] Skipping disabled module:" << meta.name
+					 << "-" << meta.disableDetail;
+			continue;
+		}
 
 		ensurePluginDataDir(meta);
 
-		// Create runtime
 		auto runtime = std::make_unique<ModuleRuntime>();
 		runtime->manager = this;
 		runtime->moduleIndex = i;
 		runtime->dataDir = meta.dataDir.toStdString();
 		m_runtimes[i] = std::move(runtime);
 
-		// Build context
 		m_contexts[i] = buildContext(meta);
 		m_contexts[i].module_handle = m_runtimes[i].get();
 
-		// Call mmco_init
 		qDebug() << "[PluginManager] Initializing module:" << meta.name;
 		int rc = meta.initFunc(&m_contexts[i]);
 		if (rc != 0) {
@@ -132,8 +155,70 @@ void PluginManager::initializeAll()
 		emit moduleLoaded(meta.name);
 	}
 
+	// Log the modules that were excluded from the load order so users
+	// can find them in the launcher logs.
+	for (const auto& meta : m_modules) {
+		if (meta.disabled) {
+			qInfo().noquote() << "[PluginManager] Module" << meta.name
+							  << "not loaded:" << meta.disableDetail;
+		}
+	}
+
 	// Fire app-initialized hook
 	dispatchHook(MMCO_HOOK_APP_INITIALIZED);
+}
+
+bool PluginManager::isModuleDisabled(const QString& moduleName) const
+{
+	return disabledModuleNames().contains(moduleName.toLower());
+}
+
+void PluginManager::setModuleDisabled(const QString& moduleName, bool disabled)
+{
+	if (!m_app || !m_app->settings() || moduleName.isEmpty())
+		return;
+
+	const QString key = QStringLiteral("plugins.disabled");
+	if (!m_app->settings()->contains(key))
+		m_app->settings()->registerSetting(key, QString());
+
+	QSet<QString> current = disabledModuleNames();
+	const QString lname = moduleName.toLower();
+	if (disabled)
+		current.insert(lname);
+	else
+		current.remove(lname);
+
+	QStringList list(current.begin(), current.end());
+	list.sort();
+	m_app->settings()->set(key, list.join(QLatin1Char(',')));
+}
+
+QSet<QString> PluginManager::disabledModuleNames() const
+{
+	QSet<QString> out;
+	if (!m_app || !m_app->settings())
+		return out;
+	const QString key = QStringLiteral("plugins.disabled");
+
+	// SettingsObject::contains() only reports settings that have been
+	// explicitly registered with registerSetting() — even if the INI
+	// file on disk has a value for that key. If we are the first caller
+	// of the session we must register the setting here, otherwise the
+	// `get()` below would always return an empty default and the user's
+	// disable list would silently be ignored after a restart.
+	if (!m_app->settings()->contains(key)) {
+		m_app->settings()->registerSetting(key, QString());
+	}
+
+	const QString raw = m_app->settings()->get(key).toString();
+	for (const QString& part :
+		 raw.split(QLatin1Char(','), Qt::SkipEmptyParts)) {
+		const QString trimmed = part.trimmed().toLower();
+		if (!trimmed.isEmpty())
+			out.insert(trimmed);
+	}
+	return out;
 }
 
 void PluginManager::shutdownAll()
@@ -362,6 +447,9 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 	ctx.news_get_feed_count = api_news_get_feed_count;
 	ctx.news_get_feed_url = api_news_get_feed_url;
 	ctx.news_reload = api_news_reload;
+
+	// S18 — Plugin Icon Set (ABI 2+)
+	ctx.ui_plugin_icon = api_ui_plugin_icon;
 
 	return ctx;
 }
@@ -1703,6 +1791,10 @@ namespace
 		}
 		QIcon icon() const override
 		{
+			// Accept either a Qt resource path (":/...") or a themed
+			// icon name. Resource paths come from ui_plugin_icon().
+			if (m_iconName.startsWith(QLatin1Char(':')))
+				return QIcon(m_iconName);
 			return QIcon::fromTheme(m_iconName);
 		}
 		bool shouldDisplay() const override
@@ -1812,8 +1904,12 @@ void* PluginManager::api_ui_button_create(void* mh, void* parent,
 {
 	(void)mh;
 	auto* btn = new QPushButton(text ? QString::fromUtf8(text) : QString());
-	if (iconName && iconName[0] != '\0')
-		btn->setIcon(QIcon::fromTheme(QString::fromUtf8(iconName)));
+	if (iconName && iconName[0] != '\0') {
+		const QString iname = QString::fromUtf8(iconName);
+		btn->setIcon(iname.startsWith(QLatin1Char(':'))
+						 ? QIcon(iname)
+						 : QIcon::fromTheme(iname));
+	}
 	if (parent)
 		btn->setParent(static_cast<QWidget*>(parent));
 	if (cb) {
@@ -2038,6 +2134,51 @@ QString PluginManager::takePendingLaunchWrapper()
 	QString w;
 	w.swap(m_pendingLaunchWrapper);
 	return w;
+}
+
+/* ── S18 — Plugin Icon Set (ABI 2+) ────────────────────────────────── */
+
+const char* PluginManager::api_ui_plugin_icon(void* mh, const char* name)
+{
+	auto* r = rt(mh);
+	if (!r || !name)
+		return nullptr;
+
+	auto& meta = r->manager->m_modules[r->moduleIndex];
+	if (meta.iconSetResource.isEmpty())
+		return nullptr;
+
+	// Normalise the icon-set name: strip leading ':' or '/'.
+	QString setName = meta.iconSetResource;
+	while (setName.startsWith(QLatin1Char(':')) ||
+		   setName.startsWith(QLatin1Char('/')))
+		setName.remove(0, 1);
+	// And the leading "plugins/" if the plugin already includes it.
+	if (setName.startsWith(QLatin1String("plugins/")))
+		setName.remove(0, 8);
+
+	// Candidate paths to try, in order. We accept both common
+	// extensions and the bare name so plugins can pass either.
+	const QString rawName = QString::fromUtf8(name);
+	QStringList candidates;
+	candidates << QStringLiteral(":/plugins/%1/%2").arg(setName, rawName);
+	if (!rawName.contains(QLatin1Char('.'))) {
+		candidates
+			<< QStringLiteral(":/plugins/%1/%2.svg").arg(setName, rawName)
+			<< QStringLiteral(":/plugins/%1/%2.png").arg(setName, rawName);
+	}
+
+	for (const QString& path : candidates) {
+		if (QFile::exists(path)) {
+			r->tempString = path.toStdString();
+			return r->tempString.c_str();
+		}
+	}
+
+	qWarning().noquote() << "[Plugin:" << meta.name
+						 << "] Icon not found:" << rawName << "(set:" << setName
+						 << ")";
+	return nullptr;
 }
 
 /* ── S17 — News API ────────────────────────────────────────────────── */

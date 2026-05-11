@@ -24,6 +24,7 @@
  */
 
 #include "plugin/PluginLoader.h"
+#include "plugin/PluginSignature.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -85,13 +86,14 @@ void PluginLoader::addSearchPath(const QString& path)
 		m_extraPaths.prepend(path);
 }
 
-QVector<PluginMetadata> PluginLoader::discoverModules() const
+QVector<PluginMetadata>
+PluginLoader::discoverModules(const QSet<QString>& disabledNames) const
 {
 	QVector<PluginMetadata> result;
 	QSet<QString> seen; // avoid loading the same module twice
 
 	for (const QString& dir : searchPaths()) {
-		for (auto& meta : scanDirectory(dir)) {
+		for (auto& meta : scanDirectory(dir, disabledNames)) {
 			QString id = meta.moduleId();
 			if (seen.contains(id)) {
 				qDebug() << "[PluginLoader] Skipping duplicate module" << id
@@ -109,7 +111,9 @@ QVector<PluginMetadata> PluginLoader::discoverModules() const
 	return result;
 }
 
-QVector<PluginMetadata> PluginLoader::scanDirectory(const QString& dir) const
+QVector<PluginMetadata>
+PluginLoader::scanDirectory(const QString& dir,
+							const QSet<QString>& disabledNames) const
 {
 	QVector<PluginMetadata> result;
 	QDir d(dir);
@@ -124,9 +128,22 @@ QVector<PluginMetadata> PluginLoader::scanDirectory(const QString& dir) const
 	while (it.hasNext()) {
 		QString path = it.next();
 		auto meta = loadModule(path);
-		if (meta.loaded) {
-			result.append(std::move(meta));
+		if (!meta.loaded)
+			continue;
+
+		// Apply user disable list. We keep the library loaded so that
+		// the plugins dialog can still display the module's metadata
+		// (name, version, signature state, etc.) — but flag it so the
+		// manager refuses to call mmco_init() on it.
+		if (disabledNames.contains(meta.name.toLower()) ||
+			disabledNames.contains(meta.moduleId().toLower())) {
+			meta.disabled = true;
+			meta.disableReason = PluginDisableReason::UserDisabled;
+			meta.disableDetail =
+				QStringLiteral("Disabled by user in the plugins dialog");
 		}
+
+		result.append(std::move(meta));
 	}
 
 	return result;
@@ -212,6 +229,25 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 	meta.codeLink = QString::fromUtf8(info->code_link ? info->code_link : "");
 	meta.flags = info->flags;
 
+	// ABI 2 fields
+	meta.iconSetResource = QString::fromUtf8(
+		info->icon_set_resource ? info->icon_set_resource : "");
+	meta.signingKeyId =
+		QString::fromUtf8(info->signing_key_id ? info->signing_key_id : "");
+	if (info->dependencies && info->dependency_count > 0) {
+		meta.dependencies.reserve(static_cast<int>(info->dependency_count));
+		for (uint32_t k = 0; k < info->dependency_count; ++k) {
+			const MMCODependency& d = info->dependencies[k];
+			PluginDependencyRecord rec;
+			rec.name = QString::fromUtf8(d.name ? d.name : "");
+			rec.minVersion =
+				QString::fromUtf8(d.min_version ? d.min_version : "");
+			rec.optional = (d.optional != 0);
+			if (!rec.name.isEmpty())
+				meta.dependencies.append(rec);
+		}
+	}
+
 	// Resolve mmco_init
 #ifdef Q_OS_WIN
 	meta.initFunc = reinterpret_cast<PluginMetadata::InitFunc>(
@@ -243,7 +279,87 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 		<< "[PluginLoader] Loaded module: " << meta.name << " v" << meta.version
 		<< " by " << meta.author;
 
+	// Trust pre-flight — sets meta.signatureState and may set meta.disabled.
+	verifySignatureAndPolicy(meta);
+	if (meta.disabled) {
+		qWarning().noquote() << "[PluginLoader] Module" << meta.name
+							 << "marked disabled:" << meta.disableDetail;
+	}
+
 	return meta;
+}
+
+void PluginLoader::verifySignatureAndPolicy(PluginMetadata& meta)
+{
+	QString detail;
+	QString fingerprint;
+	const PluginSignatureState state =
+		PluginSignature::verifyFile(meta.filePath, detail, fingerprint);
+
+	meta.signatureState = state;
+	meta.signatureDetail = detail;
+	meta.signatureFingerprint = fingerprint;
+
+	const bool isOss = PluginSignature::isOpenSourceLicense(meta.license);
+
+	auto markDisabled = [&](PluginDisableReason r, const QString& d) {
+		meta.disabled = true;
+		meta.disableReason = r;
+		meta.disableDetail = d;
+	};
+
+	switch (state) {
+		case PluginSignatureState::Valid:
+			// Always accepted, regardless of license.
+			break;
+		case PluginSignatureState::Absent:
+			if (!isOss) {
+				markDisabled(PluginDisableReason::SignatureRequired,
+							 QStringLiteral(
+								 "Module is not under an OSS license (%1) and "
+								 "carries no GPG signature")
+								 .arg(meta.license.isEmpty()
+										  ? QStringLiteral("unspecified")
+										  : meta.license));
+			}
+			break;
+		case PluginSignatureState::Untrusted:
+			if (!isOss) {
+				markDisabled(
+					PluginDisableReason::SignatureRequired,
+					QStringLiteral(
+						"Signed by an untrusted key (%1) and not under an "
+						"OSS license")
+						.arg(detail));
+			}
+			break;
+		case PluginSignatureState::BadSignature:
+		case PluginSignatureState::Malformed:
+			// Hard fail regardless of license — the trailer is corrupt
+			// or forged. An attacker could ship a non-OSS module wrapped
+			// in a tampered signature; refuse to load it.
+			markDisabled(PluginDisableReason::SignatureInvalid,
+						 detail.isEmpty()
+							 ? QStringLiteral("Invalid module signature")
+							 : detail);
+			break;
+		case PluginSignatureState::Error:
+			// GPG backend errors are treated as untrusted for non-OSS modules
+			// but allowed for OSS so a missing keyring doesn't break the
+			// whole plugin system.
+			if (!isOss) {
+				markDisabled(PluginDisableReason::SignatureRequired,
+							 QStringLiteral(
+								 "Signature could not be verified (%1) and the "
+								 "module is not under an OSS license")
+								 .arg(detail));
+			}
+			break;
+		case PluginSignatureState::NotChecked:
+			// Should be unreachable — verifyFile() always sets one of the
+			// terminal states.
+			break;
+	}
 }
 
 void PluginLoader::unloadModule(PluginMetadata& meta)

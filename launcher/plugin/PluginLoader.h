@@ -27,6 +27,7 @@
 
 #include "plugin/PluginMetadata.h"
 
+#include <QSet>
 #include <QStringList>
 #include <QVector>
 
@@ -35,6 +36,16 @@
  * performs the low-level dlopen / symbol resolution.
  *
  * It does NOT call mmco_init(); that is the PluginManager's job.
+ *
+ * In addition to loading, the loader runs the *trust pre-flight*: it
+ * extracts and verifies any GPG signature trailer, then applies the
+ * "OSS license → signature optional / otherwise mandatory" policy. A
+ * module that fails the policy is returned with `disabled=true` set so
+ * that the manager skips it without unloading the shared library (the
+ * library may still be needed by other tooling, e.g. the about dialog).
+ *
+ * Modules whose name appears in the disabled-set passed to discoverModules()
+ * are likewise returned with disabled=true.
  */
 
 class PluginLoader
@@ -45,10 +56,16 @@ class PluginLoader
 
 	/*
 	 * Scan all configured search paths and return metadata for every
-	 * valid .mmco module found. Invalid modules (bad magic, ABI mismatch,
-	 * missing symbols) are logged and skipped.
+	 * valid .mmco module found.
+	 *
+	 * `disabledNames` is a case-insensitive set of module names that
+	 * should be marked PluginDisableReason::UserDisabled. The .mmco file
+	 * is still opened (so the metadata block can be displayed in the
+	 * plugins dialog), but the module's `disabled` flag is set and the
+	 * caller must not call mmco_init() on it.
 	 */
-	QVector<PluginMetadata> discoverModules() const;
+	QVector<PluginMetadata>
+	discoverModules(const QSet<QString>& disabledNames = {}) const;
 
 	/*
 	 * Open a single .mmco file: dlopen, validate magic/ABI, resolve
@@ -77,5 +94,12 @@ class PluginLoader
 	QStringList m_extraPaths;
 
 	static QStringList defaultSearchPaths();
-	QVector<PluginMetadata> scanDirectory(const QString& dir) const;
+	QVector<PluginMetadata>
+	scanDirectory(const QString& dir, const QSet<QString>& disabledNames) const;
+
+	/* Run the trust pre-flight on `meta`: verify the GPG trailer (if any)
+	 * and apply the license-based signature policy. Updates the
+	 * signature_state / disabled fields on `meta`. Called from
+	 * loadModule() before that function returns. */
+	static void verifySignatureAndPolicy(PluginMetadata& meta);
 };

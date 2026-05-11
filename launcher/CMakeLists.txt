@@ -560,6 +560,10 @@ set(PLUGIN_SOURCES
     plugin/PluginLoader.cpp
     plugin/PluginManager.h
     plugin/PluginManager.cpp
+    plugin/PluginSignature.h
+    plugin/PluginSignature.cpp
+    plugin/PluginDependencyResolver.h
+    plugin/PluginDependencyResolver.cpp
 )
 
 add_unit_test(Index
@@ -1013,6 +1017,9 @@ target_link_libraries(MeshMC_logic
 if(UNIX AND NOT APPLE)
     target_link_libraries(MeshMC_logic ${CMAKE_DL_LIBS})
 endif()
+
+# GpgME (C++ bindings) — MMCO plugin signature verification. KDE ships
+target_link_libraries(MeshMC_logic Gpgmepp)
 
 if(APPLE)
     set(CMAKE_MACOSX_RPATH 1)

@@ -105,6 +105,7 @@
 #define MMCO_ABI_VERSION 2
 #define MMCO_EXTENSION ".mmco"
 #define MMCO_FLAG_NONE 0x00000000
+#define MMCO_TRAILER_MAGIC 0x53434D4D /* ASCII "MMCS" — see MMCOFormat.h */
 #define MMCO_VERNUM                                                            \
 	0x08000000L /* MMNNRRSM: major minor revision status modified */
 #define MMCO_VER_MAJOR 8
@@ -122,6 +123,15 @@
 #define MMCO_EXPORT __attribute__((visibility("default")))
 #endif
 
+/*
+ * Optional dependency on another .mmco module.
+ */
+struct MMCODependency {
+	const char* name;
+	const char* min_version; /* nullptr or "" = any version */
+	uint32_t optional;		 /* non-zero = optional dep */
+};
+
 struct MMCOModuleInfo {
 	uint32_t magic;
 	uint32_t abi_version;
@@ -132,6 +142,12 @@ struct MMCOModuleInfo {
 	const char* license;
 	uint32_t flags;
 	const char* code_link;
+
+	/* Icon set, dependency table, GPG signing key — see MMCOFormat.h */
+	const char* icon_set_resource;
+	const MMCODependency* dependencies;
+	uint32_t dependency_count;
+	const char* signing_key_id;
 };
 
 enum MMCOHookId : uint32_t {
@@ -449,25 +465,83 @@ struct MMCOContext {
 	int (*news_get_feed_count)(void* mh);
 	const char* (*news_get_feed_url)(void* mh, int index);
 	int (*news_reload)(void* mh);
+
+	/* S18 — Plugin icon set */
+
+	/* Resolve a logical icon name from the calling module's bundled
+	 * icon set into a Qt resource path (e.g. ":/plugins/MyPlugin/foo").
+	 * Returns nullptr if the module did not declare icon_set_resource
+	 * or the icon does not exist. The returned pointer is valid until
+	 * the next API call on the same module. */
+	const char* (*ui_plugin_icon)(void* mh, const char* name);
 };
+
+/*
+ * MMCO_DEFINE_MODULE — emit the mmco_module_info struct.
+ *
+ * Accepts 5 to 7 positional arguments:
+ *   1. name
+ *   2. version
+ *   3. author
+ *   4. description
+ *   5. license            (SPDX identifier)
+ *   6. code_link          (optional, source URL — pass nullptr to skip)
+ *   7. icon_set_resource  (optional, logical icon-set name — see
+ *                          MMCOModuleInfo::icon_set_resource)
+ *
+ * Modules that need to declare dependencies or a signing key id should
+ * use MMCO_DEFINE_MODULE_EX() below and supply them explicitly.
+ */
+
+#define MMCO_DEFINE_MODULE_7(mod_name, mod_version, mod_author, mod_desc,      \
+							 mod_license, mod_code_link, mod_icon_set)         \
+	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+		MMCO_MAGIC,	   MMCO_ABI_VERSION, mod_name,	  mod_version,             \
+		mod_author,	   mod_desc,		 mod_license, MMCO_FLAG_NONE,          \
+		mod_code_link, mod_icon_set,	 nullptr,	  0u,                      \
+		nullptr}
 
 #define MMCO_DEFINE_MODULE_6(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license, mod_code_link)                       \
-	extern "C" MMCO_EXPORT MMCOModuleInfo                                      \
-		mmco_module_info = {MMCO_MAGIC,	 MMCO_ABI_VERSION, mod_name,           \
-							mod_version, mod_author,	   mod_desc,           \
-							mod_license, MMCO_FLAG_NONE,   mod_code_link}
+	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+		MMCO_MAGIC,	   MMCO_ABI_VERSION, mod_name,	  mod_version,             \
+		mod_author,	   mod_desc,		 mod_license, MMCO_FLAG_NONE,          \
+		mod_code_link, nullptr,			 nullptr,	  0u,                      \
+		nullptr}
 
 #define MMCO_DEFINE_MODULE_5(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license)                                      \
 	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
-		MMCO_MAGIC, MMCO_ABI_VERSION, mod_name,		  mod_version, mod_author, \
-		mod_desc,	mod_license,	  MMCO_FLAG_NONE, nullptr}
+		MMCO_MAGIC, MMCO_ABI_VERSION, mod_name,	   mod_version,                \
+		mod_author, mod_desc,		  mod_license, MMCO_FLAG_NONE,             \
+		nullptr,	nullptr,		  nullptr,	   0u,                         \
+		nullptr}
+
+/*
+ * Full-fledged variant for modules that need to declare an icon set,
+ * a dependency table, and / or a signing-key id explicitly.
+ *
+ *   MMCO_DEFINE_MODULE_EX("MyMod", "1.0", "Me", "desc", "MIT",
+ *                         "https://example.org", "my_icons",
+ *                         my_deps_array, 2,
+ *                         "ABCD1234...");
+ *
+ * Pass nullptr / 0 for any field you don't use.
+ */
+#define MMCO_DEFINE_MODULE_EX(mod_name, mod_version, mod_author, mod_desc,     \
+							  mod_license, mod_code_link, mod_icon_set,        \
+							  mod_deps_ptr, mod_deps_count, mod_signing_key)   \
+	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+		MMCO_MAGIC,		MMCO_ABI_VERSION, mod_name,		mod_version,           \
+		mod_author,		mod_desc,		  mod_license,	MMCO_FLAG_NONE,        \
+		mod_code_link,	mod_icon_set,	  mod_deps_ptr, mod_deps_count,        \
+		mod_signing_key}
 
 #define MMCO_EXPAND(x) x
-#define MMCO_GET_MACRO(_1, _2, _3, _4, _5, _6, NAME, ...) NAME
+#define MMCO_GET_MACRO(_1, _2, _3, _4, _5, _6, _7, NAME, ...) NAME
 #define MMCO_DEFINE_MODULE(...)                                                \
-	MMCO_EXPAND(MMCO_GET_MACRO(__VA_ARGS__, MMCO_DEFINE_MODULE_6,              \
+	MMCO_EXPAND(MMCO_GET_MACRO(__VA_ARGS__, MMCO_DEFINE_MODULE_7,              \
+							   MMCO_DEFINE_MODULE_6,                           \
 							   MMCO_DEFINE_MODULE_5)(__VA_ARGS__))
 
 #define MMCO_LOG(ctx, msg) (ctx)->log_info((ctx)->module_handle, (msg))
