@@ -42,9 +42,20 @@
 
 #include <cstdint>
 
-#define MMCO_MAGIC 0x4D4D434F /* "MMCO" in big-endian ASCII */
+#define MMCO_MAGIC 0x4D4D434F
+#define MMCO_VERSION "8.0.0"
 #define MMCO_ABI_VERSION 1
 #define MMCO_EXTENSION ".mmco"
+#define MMCO_FLAG_NONE 0x00000000
+#define MMCO_VERNUM                                                            \
+	0x07000000L /* MMNNRRSM: major minor revision status modified */
+#define MMCO_VER_MAJOR 8
+#define MMCO_VER_MINOR 0
+#define MMCO_VER_REVISION 0
+#define MMCO_VER_STATUS 0 /* 0=devel, 1-E=beta, F=Release (DEPRECATED) */
+#define MMCO_VER_STATUSH                                                       \
+	0x0 /* Hex values: 0=devel, 1-9=beta, A-E=Release Candidate, F=Release */
+#define MMCO_VER_MODIFIED 0 /* non-zero if modified externally from mmco */
 
 struct MMCOModuleInfo {
 	uint32_t magic;			 /* Must be MMCO_MAGIC */

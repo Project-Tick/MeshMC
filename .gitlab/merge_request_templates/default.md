@@ -59,7 +59,7 @@ please ensure you are submitting it to the correct organization.
 
 <!-- ⚠️⚠️⚠️ DO NOT REMOVE TEMPLATE ⚠️⚠️⚠️ -->
 
-/label ~"3.type::MR" ~"9.needs: triage" ~"6.topic::MeshMC"
+/label ~"3.type::MR" ~"9.needs::triage"
 /cc @project-tick/developers
 /cc @project-tick/maintainers
 /assign me

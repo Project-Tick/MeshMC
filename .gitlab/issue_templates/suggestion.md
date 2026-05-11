@@ -19,7 +19,7 @@
 
 <!-- ⚠️⚠️⚠️ DO NOT REMOVE TEMPLATE ⚠️⚠️⚠️ -->
 
-/label ~"2.this::idea" ~"9.needs::triage" ~"6.topic::MeshMC"
+/label ~"2.this::idea" ~"9.needs::triage" ~"6.topic::meshmc"
 /cc @project-tick/developers
 /cc @project-tick/maintainers
 /assign me

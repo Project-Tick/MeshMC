@@ -203,8 +203,8 @@ add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")
 add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MESHMC_VERSION\\' value=\\'${MeshMC_RELEASE_VERSION_NAME}\\']")
 
 ######## Secondly, please set version numbers ########
-set(MeshMC_VERSION_MAJOR    7)
-set(MeshMC_VERSION_MINOR    19)
+set(MeshMC_VERSION_MAJOR    8)
+set(MeshMC_VERSION_MINOR    0)
 set(MeshMC_VERSION_HOTFIX   0)
 
 set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
@@ -215,7 +215,7 @@ set(MeshMC_VERSION_NAME4_COMMA "${MeshMC_VERSION_MAJOR},${MeshMC_VERSION_MINOR},
 ######## Thirdly, please define URLs and API keys ########
 
 set(MeshMC_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch MeshMC's news RSS feed from.")
-set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml" CACHE STRING "Semicolon-separated list of extra RSS feed URLs for the NewsViewer plugin.")
+set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml;" CACHE STRING "Semicolon-separated list of extra RSS feed URLs for the NewsViewer plugin.")
 
 # Build number
 set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
