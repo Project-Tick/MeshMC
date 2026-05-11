@@ -1036,8 +1036,11 @@ void Application::initSubsystems()
 	if (BuildConfig.UPDATER_ENABLED && UpdateChecker::isUpdaterSupported()) {
 		m_updateChecker.reset(new UpdateChecker(m_network));
 		qDebug() << "<> Updater initialized (feed:"
-				 << BuildConfig.UPDATER_FEED_URL
-				 << "| github:" << BuildConfig.UPDATER_GITHUB_API_URL << ").";
+				 << BuildConfig.UPDATER_FEED_URL << "| latest.json:"
+				 << (BuildConfig.UPDATER_LATEST_JSON_URL.isEmpty()
+						 ? QStringLiteral("(disabled)")
+						 : BuildConfig.UPDATER_LATEST_JSON_URL)
+				 << ").";
 	} else if (BuildConfig.UPDATER_ENABLED) {
 		qDebug() << "<> Updater disabled on this platform/mode.";
 	}

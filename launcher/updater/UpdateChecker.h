@@ -37,34 +37,56 @@ class UpdateCheckerTest;
  * UpdateController and the UpdateDialog.
  */
 struct UpdateAvailableStatus {
-	/// Normalized version string, e.g. "7.1.0"
+	/// Normalized version string, e.g. "7.19.0"
 	QString version;
 	/// Direct download URL for this platform's artifact (from the feed).
 	QString downloadUrl;
 	/// HTML release notes extracted from the feed's <description> element.
 	QString releaseNotes;
+	/// Expected SHA-256 of the artifact (lower-case hex). May be empty for
+	/// legacy entries that did not embed a checksum.
+	QString sha256;
+	/// Expected file size in bytes, if the feed declared one. 0 = unknown.
+	qint64 fileSize = 0;
 };
 Q_DECLARE_METATYPE(UpdateAvailableStatus)
 
 /*!
- * UpdateChecker performs the two-source update check used by MeshMC.
+ * UpdateChecker performs the dual-source update check used by MeshMC.
+ *
+ * Sources (Project Tick polyrepo, product-based release chain):
+ *
+ *   1. RSS feed at `BuildConfig.UPDATER_FEED_URL`
+ *      (https://projecttick.org/product/meshmc/feed.xml).
+ *      Authoritative: provides the latest stable item, per-platform asset
+ *      list with `platform`, `arch`, `portable`, `kind`, `sha256` and
+ *      `size` attributes in the `https://projecttick.org/ns/product-feed`
+ *      namespace.
+ *
+ *   2. `latest.json` mirror at `BuildConfig.UPDATER_LATEST_JSON_URL`
+ *      (https://ftp.projecttick.org/Project-Tick/latest.json).
+ *      Cross-check: `products.meshmc.stable.version` must match the feed's
+ *      `<projt:version>`. The mirror does not carry SHA-256 checksums today,
+ *      so it is treated as a sanity gate only and never used as the primary
+ *      source.
  *
  * Algorithm:
- *   1. Download the RSS feed at BuildConfig.UPDATER_FEED_URL in parallel with
- *      the GitHub releases JSON at BuildConfig.UPDATER_GITHUB_API_URL.
- *   2. Parse the latest stable <item> from the feed -> extract <projt:version>
- *      and the <projt:asset> URL whose name contains
- *      BuildConfig.BUILD_ARTIFACT. Feed metadata accepts both the current
- *      Project Tick product-feed namespace and the legacy launcher-feed
- *      namespace.
- *   3. From the GitHub JSON, locate the components.json asset and download it.
- *      Extract the canonical MeshMC version from components.meshmc.version.
- *      Fallback: strip leading "v" from tag_name if components.json is absent.
- *   4. Both versions must match and be greater than the running version;
- *      otherwise the check is considered a no-update or failure.
+ *
+ *   1. Download both sources in parallel.
+ *   2. Parse the first stable `<item>` from the feed. Pick the asset whose
+ *      `platform`/`arch`/`portable`/`kind` attributes best match the running
+ *      build's identity (see BuildIdentity below). The legacy substring
+ *      match on `BUILD_ARTIFACT` is kept as a last-resort fallback.
+ *   3. Parse `latest.json` and read `products.meshmc.stable.version`.
+ *   4. If the two versions agree and exceed the running version, emit
+ *      `updateAvailable()`. If they disagree, the check is downgraded to a
+ *      warning and we still trust the feed (it is the authoritative source)
+ *      but log the discrepancy. If the feed itself fails to parse, the
+ *      check fails outright.
  *
  * Platform / mode gating (runtime):
- *   - Linux + APPIMAGE env variable set  -> updater disabled.
+ *   - Linux + APPIMAGE env variable set  -> updater disabled (the AppImage
+ *     is updated externally).
  *   - Linux + no portable.txt in app dir -> updater disabled.
  *   - Windows / macOS / Linux-portable   -> updater active.
  */
@@ -77,7 +99,7 @@ class UpdateChecker : public QObject
 						   QObject* parent = nullptr);
 
 	/*!
-	 * Starts an asynchronous two-source update check.
+	 * Starts an asynchronous dual-source update check.
 	 * If \a notifyNoUpdate is true, noUpdateFound() is emitted when the running
 	 * version is already the latest; otherwise the signal is suppressed.
 	 * Repeated calls while a check is in progress are silently ignored.
@@ -91,19 +113,37 @@ class UpdateChecker : public QObject
 	 */
 	static bool isUpdaterSupported();
 
+	/*!
+	 * Describes the running build's identity used to pick a matching asset
+	 * out of the feed. Populated from BuildConfig at compile time.
+	 */
+	struct BuildIdentity {
+		QString platform; /* "linux" | "windows" | "macos"          */
+		QString arch;	  /* "x86_64" | "aarch64"                   */
+		QString portable; /* "true" | "false"                       */
+		QString kind;	  /* "archive" | "appimage" | "installer"   */
+		/* Legacy substring fallback (e.g. "MeshMC-Linux-Portable"). */
+		QString legacyArtifact;
+
+		bool hasStructuredAttributes() const
+		{
+			return !platform.isEmpty() && !arch.isEmpty() && !kind.isEmpty();
+		}
+	};
+
   signals:
-	//! Emitted when both sources agree that a newer version is available.
+	//! Emitted when the feed reports a newer version and (when available) the
+	//! latest.json mirror agrees with it.
 	void updateAvailable(UpdateAvailableStatus status);
 
 	//! Emitted when the check completes but the running version is current.
 	void noUpdateFound();
 
-	//! Emitted on any network or parse failure.
+	//! Emitted on any network or parse failure on the authoritative feed.
 	void checkFailed(QString reason);
 
   private slots:
-	void onPhase1Finished(bool notifyNoUpdate);
-	void onComponentsDownloaded(bool notifyNoUpdate);
+	void onSourcesDownloaded(bool notifyNoUpdate);
 	void onDownloadsFailed(QString reason);
 
   private:
@@ -117,31 +157,29 @@ class UpdateChecker : public QObject
 	static QString normalizeVersion(const QString& v);
 	/// Compares two "X.Y.Z" strings numerically. Returns >0 if v1 > v2.
 	static int compareVersions(const QString& v1, const QString& v2);
-	/// Accepts current and legacy Project Tick feed namespaces.
+	/// Accepts the current Project Tick feed namespace.
 	static bool isSupportedFeedNamespace(QStringView namespaceUri);
-	/// Extracts the first stable item from the feed and reports parse errors.
+
+	/// Build the runtime build identity from BuildConfig.
+	static BuildIdentity buildIdentity();
+
+	/// Extracts the first stable <item> from the feed and reports parse
+	/// errors. Picks the matching asset using the structured attribute set
+	/// from \a identity, falling back to the legacy artifact substring.
 	static bool parseStableFeedItem(const QByteArray& feedData,
-									const QString& buildArtifact,
+									const BuildIdentity& identity,
 									QString* version, QString* downloadUrl,
-									QString* releaseNotes, QString* parseError);
+									QString* releaseNotes, QString* sha256,
+									qint64* fileSize, QString* parseError);
 
-	/// Parse GitHub releases JSON, return components.json browser_download_url.
-	/// Stores tag_name fallback in m_githubTagVersion.
-	QString findComponentsUrl();
-
-	/// Finalize the version comparison after all data is available.
-	void finalizeCheck(bool notifyNoUpdate, const QString& githubVersion);
+	/// Parse `latest.json` and return `products.meshmc.stable.version`
+	/// (normalized). Returns an empty string if the mirror is malformed or
+	/// the meshmc product is absent.
+	static QString parseLatestJsonVersion(const QByteArray& jsonData);
 
 	shared_qobject_ptr<QNetworkAccessManager> m_network;
 	NetJob::Ptr m_checkJob;
 	QByteArray m_feedData;
-	QByteArray m_githubData;
-	QByteArray m_componentsData;
+	QByteArray m_latestJsonData;
 	bool m_checking = false;
-
-	// Intermediate state between Phase 1 and Phase 2
-	QString m_feedVersion;
-	QString m_downloadUrl;
-	QString m_releaseNotes;
-	QString m_githubTagVersion; // fallback if no components.json
 };

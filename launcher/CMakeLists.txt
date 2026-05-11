@@ -155,7 +155,7 @@ set(UPDATE_SOURCES
 )
 
 add_unit_test(UpdateChecker
-    SOURCES updater/UpdateChecker_test.cpp
+    SOURCES updater/UpdateChecker_test.cpp updater/UpdateChecker_test.h
     LIBS MeshMC_logic
     )
 

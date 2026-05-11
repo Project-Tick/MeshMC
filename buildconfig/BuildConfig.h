@@ -67,11 +67,17 @@ class Config
 	/// URL for the updater's channel (legacy, unused)
 	QString UPDATER_BASE;
 
-	/// RSS feed URL for the new updater (projt: namespace).
+	/// RSS feed URL for the updater (projt: namespace).
+	/// Authoritative source; carries the per-platform asset list with
+	/// `platform`, `arch`, `portable`, `kind`, `sha256` and `size`
+	/// attributes used to pick the correct artifact.
 	QString UPDATER_FEED_URL;
 
-	/// GitHub releases API URL for update verification.
-	QString UPDATER_GITHUB_API_URL;
+	/// Project Tick `latest.json` mirror URL.
+	/// Cross-checked against the feed for the canonical stable version.
+	/// Empty disables the mirror sanity check (the feed is then trusted on
+	/// its own).
+	QString UPDATER_LATEST_JSON_URL;
 
 	/// A string containing the build timestamp
 	QString BUILD_DATE;
@@ -82,9 +88,23 @@ class Config
 	/// User-Agent to use for uncached requests.
 	QString USER_AGENT_UNCACHED;
 
-	/// A short string identifying this build's valid artifacts int he updater.
-	/// For example, "lin64" or "win32".
+	/// A short string identifying this build's valid artifacts in the
+	/// updater. Legacy substring-match identifier (e.g.
+	/// "MeshMC-Linux-Portable") used as a fallback when the feed asset does
+	/// not carry the new structured `platform`/`arch`/`kind` attributes.
 	QString BUILD_ARTIFACT;
+
+	/// Structured build identity used to pick a matching asset out of the
+	/// product feed without resorting to substring matching.
+	///
+	///   BUILD_PLATFORM_ID — "linux" | "windows" | "macos"
+	///   BUILD_ARCH        — "x86_64" | "aarch64"
+	///   BUILD_PORTABLE    — "true" | "false"
+	///   BUILD_KIND        — "archive" | "appimage" | "installer"
+	QString BUILD_PLATFORM_ID;
+	QString BUILD_ARCH;
+	QString BUILD_PORTABLE;
+	QString BUILD_KIND;
 
 	/// Compiler name
 	QString COMPILER_NAME;

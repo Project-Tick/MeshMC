@@ -220,8 +220,18 @@ set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml;" CACHE STRING "Se
 # Build number
 set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
 
-# Name to help updater identify valid artifacts
-set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Artifact name to help the updater identify valid artifacts.")
+# Legacy substring artifact name (e.g. "MeshMC-Linux-Portable"). Used as a
+# last-resort fallback when the product feed's assets do not carry the new
+# structured attributes. Prefer setting the four structured cache vars below
+# instead.
+set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Legacy substring used to match a feed asset when structured attributes are unavailable.")
+
+# Structured build identity. Matched directly against the feed asset's
+# `platform`, `arch`, `portable` and `kind` attributes.
+set(MeshMC_BUILD_PLATFORM_ID "" CACHE STRING "Updater asset platform id: linux | windows | macos.")
+set(MeshMC_BUILD_ARCH        "" CACHE STRING "Updater asset arch: x86_64 | aarch64.")
+set(MeshMC_BUILD_PORTABLE    "" CACHE STRING "Updater asset portable flag: true | false.")
+set(MeshMC_BUILD_KIND        "" CACHE STRING "Updater asset kind: archive | appimage | installer.")
 
 # Build platform.
 set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
@@ -229,11 +239,11 @@ set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platfo
 # Channel list URL (legacy - kept for compatibility)
 set(MeshMC_UPDATER_BASE "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "Base URL for the legacy GoUpdate system (unused).")
 
-# New updater: RSS feed URL (projt: namespace)
-set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "RSS feed URL for the updater (projt: namespace.)")
+# Updater: authoritative product feed URL (projt: namespace).
+set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "RSS product feed URL for the updater (projt: namespace).")
 
-# New updater: GitHub releases API URL
-set(MeshMC_UPDATER_GITHUB_API_URL "https://api.github.com/repos/Project-Tick/Project-Tick/releases/latest" CACHE STRING "GitHub Releases API URL for update verification.")
+# Updater: latest.json mirror URL (used as a cross-check; empty disables it).
+set(MeshMC_UPDATER_LATEST_JSON_URL "https://ftp.projecttick.org/Project-Tick/latest.json" CACHE STRING "Project Tick latest.json mirror used as a sanity check against the feed.")
 
 # Notification URL
 set(MeshMC_NOTIFICATION_URL "https://projecttick.org/" CACHE STRING "URL for checking for notifications.")
@@ -481,7 +491,14 @@ install(FILES "${NEWLAUNCH_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "NewLaunc
 
 add_subdirectory(buildconfig)
 
-if(NOT MeshMC_BUILD_ARTIFACT STREQUAL "" AND NOT MeshMC_UPDATER_FEED_URL STREQUAL "" AND NOT MeshMC_UPDATER_GITHUB_API_URL STREQUAL "")
+# The standalone meshmc-updater binary is built whenever the updater feed
+# URL is configured AND the build supplies either a structured asset
+# identity (platform/arch/kind) or the legacy substring identifier.
+if(NOT MeshMC_UPDATER_FEED_URL STREQUAL "" AND
+   ((NOT MeshMC_BUILD_PLATFORM_ID STREQUAL "" AND
+     NOT MeshMC_BUILD_ARCH STREQUAL "" AND
+     NOT MeshMC_BUILD_KIND STREQUAL "") OR
+    NOT MeshMC_BUILD_ARTIFACT STREQUAL ""))
     add_subdirectory(updater)
 endif()
 
