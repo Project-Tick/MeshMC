@@ -1018,8 +1018,17 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(MeshMC_logic ${CMAKE_DL_LIBS})
 endif()
 
-# GpgME (C++ bindings) — MMCO plugin signature verification. KDE ships
-target_link_libraries(MeshMC_logic Gpgmepp)
+# GpgME (C++ bindings) — MMCO plugin signature verification.
+# Only linked when MeshMC_PLUGIN_SIGNATURES is ON (default off on MSVC,
+# because upstream gpgme does not support MSVC). When disabled,
+# PluginSignature.cpp compiles into a stub that reports every module
+# as unsigned and never tries to include any gpgme++ headers.
+if(MeshMC_PLUGIN_SIGNATURES)
+    target_link_libraries(MeshMC_logic Gpgmepp)
+    target_compile_definitions(MeshMC_logic PRIVATE MESHMC_PLUGIN_SIGNATURES=1)
+else()
+    target_compile_definitions(MeshMC_logic PRIVATE MESHMC_PLUGIN_SIGNATURES=0)
+endif()
 
 if(APPLE)
     set(CMAKE_MACOSX_RPATH 1)

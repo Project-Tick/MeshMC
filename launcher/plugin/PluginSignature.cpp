@@ -38,12 +38,25 @@
 #include <QStringList>
 #include <QtEndian>
 
+/*
+ * MESHMC_PLUGIN_SIGNATURES is defined in launcher/CMakeLists.txt:
+ *   1 → full GpgME-backed verifier (Linux, macOS, MinGW Windows)
+ *   0 → stub verifier that always reports modules as unsigned. Used on
+ *       MSVC where upstream gpgme has no working build (autotools-only,
+ *       C++ ABI incompatibilities with MSVC).
+ */
+#ifndef MESHMC_PLUGIN_SIGNATURES
+#define MESHMC_PLUGIN_SIGNATURES 1
+#endif
+
+#if MESHMC_PLUGIN_SIGNATURES
 #include <gpgme++/context.h>
 #include <gpgme++/data.h>
 #include <gpgme++/global.h>
 #include <gpgme++/key.h>
 #include <gpgme++/verificationresult.h>
 #include <gpgme++/engineinfo.h>
+#endif
 
 namespace PluginSignature
 {
@@ -54,6 +67,8 @@ namespace PluginSignature
 		 * themselves are short-lived and constructed per-call. */
 		QMutex g_mutex;
 		QString g_keyringPath;
+
+#if MESHMC_PLUGIN_SIGNATURES
 		bool g_gpgmeInitialised = false;
 
 		void ensureGpgmeInit()
@@ -63,6 +78,7 @@ namespace PluginSignature
 			GpgME::initializeLibrary();
 			g_gpgmeInitialised = true;
 		}
+#endif
 
 		/* Curated allow-list of OSI-approved / FSF-libre SPDX identifiers.
 		 * This is deliberately a fixed list rather than a regex against
@@ -254,10 +270,22 @@ namespace PluginSignature
 								const QByteArray& signature, QString& detail,
 								QString& fingerprint)
 	{
-		ensureGpgmeInit();
-
 		detail.clear();
 		fingerprint.clear();
+
+#if !MESHMC_PLUGIN_SIGNATURES
+		(void)payload;
+		(void)signature;
+		// Stub build (MSVC): no GpgME backend is linked. Report an
+		// engine-unavailable Error so the license/signature policy
+		// treats the module the same way it would on a Linux box
+		// without a working keyring. OSS modules still load; non-OSS
+		// modules are rejected with SignatureRequired.
+		detail = QStringLiteral(
+			"GPG verification is not available in this build of MeshMC");
+		return PluginSignatureState::Error;
+#else
+		ensureGpgmeInit();
 
 		// Engine check
 		const auto err = GpgME::checkEngine(GpgME::OpenPGP);
@@ -343,6 +371,7 @@ namespace PluginSignature
 		detail =
 			QStringLiteral("Signature present but signing key not trusted");
 		return PluginSignatureState::Untrusted;
+#endif // MESHMC_PLUGIN_SIGNATURES
 	}
 
 	PluginSignatureState verifyFile(const QString& filePath, QString& detail,
