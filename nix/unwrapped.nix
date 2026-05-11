@@ -20,7 +20,7 @@
   ganalytics,
   rainbow,
   iconfix,
-  LocalPeer,
+  localpeer,
   classparser,
   optional-bare,
   xz-embedded,
@@ -98,7 +98,7 @@ stdenv.mkDerivation {
     ganalytics
     rainbow
     iconfix
-    LocalPeer
+    localpeer
     classparser
     optional-bare
     xz-embedded
