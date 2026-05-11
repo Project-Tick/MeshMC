@@ -87,7 +87,7 @@
 #include <news/NewsChecker.h>
 #include <notifications/NotificationChecker.h>
 #include <tools/BaseProfiler.h>
-#include <updater/DownloadTask.h>
+
 #include <updater/UpdateChecker.h>
 #include <DesktopServices.h>
 #include "InstanceWindow.h"
@@ -416,8 +416,7 @@ class MainWindow::Ui
 			actionPlugins = TranslatedAction(MainWindow);
 			actionPlugins->setObjectName(QStringLiteral("actionPlugins"));
 			actionPlugins->setIcon(APPLICATION->getThemedIcon("plugins"));
-			actionPlugins.setTextId(
-				QT_TRANSLATE_NOOP("MainWindow", "Plugins"));
+			actionPlugins.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Plugins"));
 			actionPlugins.setTooltipId(QT_TRANSLATE_NOOP(
 				"MainWindow", "View and manage MMCO Plugins."));
 			all_actions.append(&actionPlugins);

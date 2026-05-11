@@ -183,7 +183,10 @@ class Application : public QApplication
 	InstanceWindow* showInstanceWindow(InstancePtr instance,
 									   QString page = QString());
 	MainWindow* showMainWindow(bool minimized = false);
-	MainWindow* mainWindow() const { return m_mainWindow; }
+	MainWindow* mainWindow() const
+	{
+		return m_mainWindow;
+	}
 
 	void updateIsRunning(bool running);
 	bool updatesAreAllowed();

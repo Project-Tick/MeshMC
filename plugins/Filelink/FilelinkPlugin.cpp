@@ -124,7 +124,7 @@ static QString desktopExecQuote(QString argument)
 }
 
 static QString buildShortcutExecLine(const QString& instanceId,
-							 const QString& serverAddress)
+									 const QString& serverAddress)
 {
 #ifdef Q_OS_LINUX
 	if (isFlatpakSandbox()) {
@@ -132,21 +132,20 @@ static QString buildShortcutExecLine(const QString& instanceId,
 		if (appId.isEmpty())
 			appId = QStringLiteral("org.projecttick.MeshMC");
 
-		QString execLine =
-			QStringLiteral("flatpak run %1 --launch %2")
-				.arg(appId, desktopExecQuote(instanceId));
+		QString execLine = QStringLiteral("flatpak run %1 --launch %2")
+							   .arg(appId, desktopExecQuote(instanceId));
 		if (!serverAddress.isEmpty()) {
-			execLine +=
-				QStringLiteral(" --server %1").arg(desktopExecQuote(serverAddress));
+			execLine += QStringLiteral(" --server %1")
+							.arg(desktopExecQuote(serverAddress));
 		}
 		return execLine;
 	}
 #endif
 
-	QString execLine = QStringLiteral("%1 --launch %2")
-					   .arg(
-						   desktopExecQuote(QCoreApplication::applicationFilePath()),
-						   desktopExecQuote(instanceId));
+	QString execLine =
+		QStringLiteral("%1 --launch %2")
+			.arg(desktopExecQuote(QCoreApplication::applicationFilePath()),
+				 desktopExecQuote(instanceId));
 	if (!serverAddress.isEmpty()) {
 		execLine +=
 			QStringLiteral(" --server %1").arg(desktopExecQuote(serverAddress));

@@ -33,58 +33,72 @@
 #include <QJsonDocument>
 #include <QFile>
 
-static QString applyFilters(QString logContent) {
-    QMap<QString, QString> filter;
+static QString applyFilters(QString logContent)
+{
+	QMap<QString, QString> filter;
 
-    QString homePath = QDir::homePath();
-    if (!homePath.isEmpty()) {
-        filter[homePath] = "/home/<USERNAME>";
-    }
+	QString homePath = QDir::homePath();
+	if (!homePath.isEmpty()) {
+		filter[homePath] = "/home/<USERNAME>";
+	}
 
-    QString userName = qEnvironmentVariable("USER");
-    if (userName.isEmpty()) {
-        userName = qEnvironmentVariable("USERNAME");
-    }
+	QString userName = qEnvironmentVariable("USER");
+	if (userName.isEmpty()) {
+		userName = qEnvironmentVariable("USERNAME");
+	}
 
-    if (!userName.isEmpty()) {
-        filter["/" + userName + "/"] = "/<USERNAME>";
-    }
+	if (!userName.isEmpty()) {
+		filter["/" + userName + "/"] = "/<USERNAME>";
+	}
 
-    QList<QPair<QRegularExpression, QString>> regexFilters = {
-        {QRegularExpression(R"((?im)^.*(?:access_token|refresh_token|id_token|token|authorization|utoken|xsts|xbl|IssueInstant|NotAfter|DisplayClaims|xuid|uhs|xid|gtg|usr|utr|prv|ugc).*$)"), "<CENSOR_AUTHLINE>"},
-        {QRegularExpression(R"((?i)\bBearer\s+[A-Za-z0-9._~+/=-]{20,}\b)"), "<CENSOR_BEARER>"},
-        {QRegularExpression(R"(\b[A-Za-z0-9_-]{10,}(?:\.[A-Za-z0-9_-]{10,}){2,4}\b)"), "<CENSOR_JWT>"},
-        {QRegularExpression(R"(\beyJ[A-Za-z0-9_-]{10,}(?:\.[A-Za-z0-9_-]{10,}){2,5}\b)"), "<CENSOR_JWT>"},
-        {QRegularExpression(R"((?i)\b(?:access_token|refresh_token|id_token|token)\b\s*[:=]\s*(?:\\?")?(?:[^"\\]|\\.){16,}(?:\\?")?)"), "<CENSOR_JSONTOKEN>"},
-        {QRegularExpression(R"(\b[A-Za-z0-9_-]{16,}(?:\.[A-Za-z0-9_-]{8,}){2,6}\b)"), "<CENSOR_TOKEN>"},
-        {QRegularExpression(R"(\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}\b)"), "<CENSOR_UUID>"},
-        {QRegularExpression(R"(\b[0-9a-fA-F]{32,64}\b)"), "<CENSOR_HEX>"},
-        {QRegularExpression(R"(\b\d{10,20}\b)"), "<CENSOR_ID>"}
-    };
+	QList<QPair<QRegularExpression, QString>> regexFilters = {
+		{QRegularExpression(
+			 R"((?im)^.*(?:access_token|refresh_token|id_token|token|authorization|utoken|xsts|xbl|IssueInstant|NotAfter|DisplayClaims|xuid|uhs|xid|gtg|usr|utr|prv|ugc).*$)"),
+		 "<CENSOR_AUTHLINE>"},
+		{QRegularExpression(R"((?i)\bBearer\s+[A-Za-z0-9._~+/=-]{20,}\b)"),
+		 "<CENSOR_BEARER>"},
+		{QRegularExpression(
+			 R"(\b[A-Za-z0-9_-]{10,}(?:\.[A-Za-z0-9_-]{10,}){2,4}\b)"),
+		 "<CENSOR_JWT>"},
+		{QRegularExpression(
+			 R"(\beyJ[A-Za-z0-9_-]{10,}(?:\.[A-Za-z0-9_-]{10,}){2,5}\b)"),
+		 "<CENSOR_JWT>"},
+		{QRegularExpression(
+			 R"((?i)\b(?:access_token|refresh_token|id_token|token)\b\s*[:=]\s*(?:\\?")?(?:[^"\\]|\\.){16,}(?:\\?")?)"),
+		 "<CENSOR_JSONTOKEN>"},
+		{QRegularExpression(
+			 R"(\b[A-Za-z0-9_-]{16,}(?:\.[A-Za-z0-9_-]{8,}){2,6}\b)"),
+		 "<CENSOR_TOKEN>"},
+		{QRegularExpression(
+			 R"(\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}\b)"),
+		 "<CENSOR_UUID>"},
+		{QRegularExpression(R"(\b[0-9a-fA-F]{32,64}\b)"), "<CENSOR_HEX>"},
+		{QRegularExpression(R"(\b\d{10,20}\b)"), "<CENSOR_ID>"}};
 
-    for (auto &pair : regexFilters) {
-        auto it = pair.first.globalMatch(logContent);
-        while (it.hasNext()) {
-            auto m = it.next();
-            QString matchedText = m.captured(0);
-            if (matchedText.length() > 10) {
-                filter[matchedText] = pair.second;
-            }
-        }
-    }
+	for (auto& pair : regexFilters) {
+		auto it = pair.first.globalMatch(logContent);
+		while (it.hasNext()) {
+			auto m = it.next();
+			QString matchedText = m.captured(0);
+			if (matchedText.length() > 10) {
+				filter[matchedText] = pair.second;
+			}
+		}
+	}
 
-    QStringList keys = filter.keys();
-    std::sort(keys.begin(), keys.end(), [](const QString &s1, const QString &s2) {
-        return s1.length() > s2.length();
-    });
+	QStringList keys = filter.keys();
+	std::sort(keys.begin(), keys.end(),
+			  [](const QString& s1, const QString& s2) {
+				  return s1.length() > s2.length();
+			  });
 
-    for (const QString &key : keys) {
-        if (!key.isEmpty()) {
-            logContent.replace(key, filter[key]);
-        }
-    }
+	for (const QString& key : keys) {
+		if (!key.isEmpty()) {
+			logContent.replace(key, filter[key]);
+		}
+	}
 
-    return logContent;
+	return logContent;
 }
 
 PasteUpload::PasteUpload(QWidget* window, QString text, QString key)
