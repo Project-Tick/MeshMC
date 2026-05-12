@@ -184,17 +184,51 @@ void AccountListPage::on_actionAddOffline_triggered()
 		return;
 	}
 
-	bool ok = false;
-	QString username =
-		QInputDialog::getText(this, tr("Add Offline Account"),
-							  tr("Enter a username for the offline account:"),
-							  QLineEdit::Normal, tr("User"), &ok);
-	if (!ok || username.trimmed().isEmpty()) {
+	/*
+	 * Re-prompt loop. The user is allowed to retry with a different
+	 * username if the one they chose is already taken by another
+	 * offline account, so we don't bounce them back to the accounts
+	 * page on every collision. Whitespace-only and duplicate names
+	 * keep them in the dialog; Cancel exits.
+	 */
+	QString suggestion = tr("User");
+	while (true) {
+		bool ok = false;
+		QString username = QInputDialog::getText(
+			this, tr("Add Offline Account"),
+			tr("Enter a username for the offline account:"),
+			QLineEdit::Normal, suggestion, &ok);
+		if (!ok)
+			return;
+
+		const QString trimmed = username.trimmed();
+		if (trimmed.isEmpty()) {
+			CustomMessageBox::selectable(
+				this, tr("Invalid username"),
+				tr("The username cannot be empty or whitespace-only."),
+				QMessageBox::Warning)
+				->exec();
+			suggestion = username;
+			continue;
+		}
+
+		if (m_accounts->findOfflineAccountByUsername(trimmed) != -1) {
+			CustomMessageBox::selectable(
+				this, tr("Duplicate offline account"),
+				tr("An offline account named \"%1\" already exists. "
+				   "Offline account names must be unique — please pick "
+				   "a different one.")
+					.arg(trimmed),
+				QMessageBox::Warning)
+				->exec();
+			suggestion = trimmed;
+			continue;
+		}
+
+		auto account = MinecraftAccount::createOffline(trimmed);
+		m_accounts->addAccount(account);
 		return;
 	}
-
-	auto account = MinecraftAccount::createOffline(username.trimmed());
-	m_accounts->addAccount(account);
 }
 
 void AccountListPage::on_actionRemove_triggered()

@@ -143,6 +143,11 @@ class MinecraftAccount : public QObject, public Usable
 		return data.type == AccountType::MSA;
 	}
 
+	bool isOffline() const
+	{
+		return data.type == AccountType::Offline;
+	}
+
 	bool ownsMinecraft() const
 	{
 		if (data.type == AccountType::Offline)
