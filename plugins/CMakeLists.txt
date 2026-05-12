@@ -27,10 +27,16 @@ endif()
 set(MESHMC_IN_TREE_PLUGIN_TARGETS
     BackupSystem
     NewsViewer
+    SystemTray
+    DesktopNotifier
+    DiscordRPC
 )
 
 add_subdirectory(BackupSystem)
 add_subdirectory(NewsViewer)
+add_subdirectory(SystemTray)
+add_subdirectory(DesktopNotifier)
+add_subdirectory(DiscordRPC)
 
 if(UNIX AND NOT APPLE)
     add_subdirectory(NVIDIAPrime)
