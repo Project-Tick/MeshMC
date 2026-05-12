@@ -15,13 +15,14 @@
  *  config file (or another plugin) — but the defaults are chosen so
  *  that the out-of-the-box behaviour is sensible.
  *
- *  Settings (all booleans):
- *    notify_launch       — fire on INSTANCE_POST_LAUNCH    (default 1)
- *    notify_created      — fire on INSTANCE_CREATED        (default 1)
- *    notify_removed      — fire on INSTANCE_REMOVED        (default 0)
- *    notify_news         — fire on NEWS_UPDATED            (default 0)
- *    notify_startup      — say hello on APP_INITIALIZED    (default 0)
- *    timeout_ms          — notification timeout            (default 5000)
+ *  Settings (all booleans / int):
+ *    notify_launch       — instance starting (PRE_LAUNCH)   (default 1)
+ *    notify_exit         — instance stopped  (POST_LAUNCH)  (default 1)
+ *    notify_created      — fire on INSTANCE_CREATED         (default 1)
+ *    notify_removed      — fire on INSTANCE_REMOVED         (default 0)
+ *    notify_news         — fire on NEWS_UPDATED             (default 0)
+ *    notify_startup      — say hello on APP_INITIALIZED     (default 0)
+ *    timeout_ms          — notification timeout             (default 5000)
  */
 
 #include "plugin/sdk/mmco_sdk.h"
@@ -96,8 +97,18 @@ static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,
 	return 0;
 }
 
-static int on_instance_post_launch(void* /*mh*/, uint32_t /*hook_id*/,
-								   void* payload, void* /*ud*/)
+/*
+ * NOTE: MMCO ABI 2 names its launch hooks confusingly:
+ *
+ *   MMCO_HOOK_INSTANCE_PRE_LAUNCH   — game is about to start
+ *   MMCO_HOOK_INSTANCE_POST_LAUNCH  — game has *exited* (LaunchTask
+ *                                     succeeded, m_instance->setRunning(false)
+ *                                     has already been called)
+ *
+ * So PRE_LAUNCH is the right edge for "instance started" notifications.
+ */
+static int on_instance_pre_launch(void* /*mh*/, uint32_t /*hook_id*/,
+								  void* payload, void* /*ud*/)
 {
 	if (!settingBool("notify_launch", true))
 		return 0;
@@ -110,10 +121,26 @@ static int on_instance_post_launch(void* /*mh*/, uint32_t /*hook_id*/,
 					  ? QString::fromUtf8(info->minecraft_version)
 					  : QString();
 	QString body = ver.isEmpty()
-					   ? QStringLiteral("Launched %1.").arg(name)
-					   : QStringLiteral("Launched %1 (Minecraft %2).")
+					   ? QStringLiteral("Launching %1…").arg(name)
+					   : QStringLiteral("Launching %1 (Minecraft %2)…")
 							 .arg(name, ver);
-	notify(QStringLiteral("MeshMC instance started"), body, 1);
+	notify(QStringLiteral("MeshMC instance starting"), body, 1);
+	return 0;
+}
+
+/* POST_LAUNCH = game exited. Optionally tell the user. */
+static int on_instance_post_launch(void* /*mh*/, uint32_t /*hook_id*/,
+								   void* payload, void* /*ud*/)
+{
+	if (!settingBool("notify_exit", true))
+		return 0;
+	auto* info = static_cast<MMCOInstanceInfo*>(payload);
+	if (!info)
+		return 0;
+	QString name = info->instance_name ? QString::fromUtf8(info->instance_name)
+									   : QStringLiteral("(unnamed)");
+	notify(QStringLiteral("MeshMC instance stopped"),
+		   QStringLiteral("%1 has exited.").arg(name), 1);
 	return 0;
 }
 
@@ -171,7 +198,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	MMCO_LOG(ctx, "DesktopNotifier initializing...");
 
 	/* Seed defaults exactly once. */
-	settingDefault("notify_launch", "1");
+	settingDefault("notify_launch", "1");  /* PRE_LAUNCH: game starting   */
+	settingDefault("notify_exit", "1");	   /* POST_LAUNCH: game exited    */
 	settingDefault("notify_created", "1");
 	settingDefault("notify_removed", "0");
 	settingDefault("notify_news", "0");
@@ -192,6 +220,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
 					   on_app_initialized, nullptr);
+	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_PRE_LAUNCH,
+					   on_instance_pre_launch, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_POST_LAUNCH,
 					   on_instance_post_launch, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_CREATED,
