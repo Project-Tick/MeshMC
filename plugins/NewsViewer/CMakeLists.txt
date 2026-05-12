@@ -37,3 +37,10 @@ endforeach()
 install(TARGETS NewsViewer
     LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
 )
+
+# Opt-in GPG signing — see cmake/MMCOSign.cmake. Called from this
+# CMakeLists so the POST_BUILD command attaches to the target in the
+# directory that created it (CMake 3.27+ enforces this).
+if(MeshMC_PLUGIN_SIGN_ALL)
+    mmco_sign_plugin(NewsViewer)
+endif()

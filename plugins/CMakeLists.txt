@@ -49,12 +49,16 @@ if(NOT APPLE)
     list(APPEND MESHMC_IN_TREE_PLUGIN_TARGETS Filelink)
 endif()
 
-# Automatic signing pass — runs only when both a key is configured and
-# the user explicitly opted in to "sign every in-tree plugin".
-if(MeshMC_PLUGIN_SIGN_ALL AND MeshMC_PLUGIN_SIGNING_KEY)
-    foreach(_plugin IN LISTS MESHMC_IN_TREE_PLUGIN_TARGETS)
-        if(TARGET ${_plugin})
-            mmco_sign_plugin(${_plugin})
-        endif()
-    endforeach()
-endif()
+# Automatic signing is wired *inside each plugin's own CMakeLists.txt*
+# at the end of its target definition.
+#
+# Why not loop here? CMake (3.27+) tightened the rules around
+# add_custom_command(TARGET <name> POST_BUILD …): the call must come
+# from the *same CMakeLists.txt that created the target*. Calling it
+# from this aggregator file works on older CMakes but breaks the
+# macOS toolchain (Xcode 26 ships a strict CMake). The per-plugin
+# pattern is portable and avoids the policy change entirely.
+#
+# The list MESHMC_IN_TREE_PLUGIN_TARGETS is kept above for tooling /
+# documentation that wants to know which targets exist, but no longer
+# drives signing.
