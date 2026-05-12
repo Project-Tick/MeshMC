@@ -247,6 +247,16 @@ typedef void (*MMCODirEntryCallback)(void* user_data, const char* entry_name,
 typedef void (*MMCOButtonCallback)(void* user_data);
 typedef void (*MMCOTreeSelectionCallback)(void* user_data, int row);
 
+/* S19 — System Tray activation reason
+ *   0=Unknown, 1=Trigger (single click), 2=DoubleClick,
+ *   3=MiddleClick, 4=Context (right click).
+ * Mirrors QSystemTrayIcon::ActivationReason 1..4. */
+typedef void (*MMCOTrayActivationCallback)(void* user_data, int reason);
+
+/* S20 — Main-window close-event filter.
+ *   Return 0 to let the close proceed, 1 to swallow it (hide-to-tray). */
+typedef int (*MMCOMainWindowCloseCallback)(void* user_data);
+
 struct MMCOContext {
 	/* ABI guard */
 	uint32_t struct_size;
@@ -474,6 +484,46 @@ struct MMCOContext {
 	 * or the icon does not exist. The returned pointer is valid until
 	 * the next API call on the same module. */
 	const char* (*ui_plugin_icon)(void* mh, const char* name);
+
+	/* S19 — System Tray (additive; no ABI bump) */
+	void* (*tray_create)(void* mh, const char* icon_name, const char* tooltip);
+	int (*tray_destroy)(void* mh, void* tray_handle);
+	int (*tray_is_available)(void* mh);
+	int (*tray_set_icon)(void* mh, void* tray_handle, const char* icon_name);
+	int (*tray_set_tooltip)(void* mh, void* tray_handle, const char* tooltip);
+	int (*tray_set_visible)(void* mh, void* tray_handle, int visible);
+	/* icon_type: 0=None, 1=Info, 2=Warning, 3=Critical.
+	 * tray_handle may be nullptr — a transient hidden tray is used. */
+	int (*tray_show_message)(void* mh, void* tray_handle, const char* title,
+							 const char* message, int icon_type, int msecs);
+	int (*tray_set_menu)(void* mh, void* tray_handle, void* menu_handle);
+	int (*tray_set_activation_cb)(void* mh, void* tray_handle,
+								  MMCOTrayActivationCallback cb, void* ud);
+	void* (*tray_menu_create)(void* mh);
+	int (*tray_menu_destroy)(void* mh, void* menu_handle);
+	int (*tray_menu_clear)(void* mh, void* menu_handle);
+	int (*tray_menu_add_separator)(void* mh, void* menu_handle);
+	void* (*tray_menu_add_action)(void* mh, void* menu_handle,
+								  const char* label, const char* icon_name,
+								  MMCOMenuActionCallback cb, void* ud);
+	int (*tray_menu_action_set_enabled)(void* mh, void* action_handle,
+										int enabled);
+	int (*tray_menu_action_set_text)(void* mh, void* action_handle,
+									 const char* text);
+	/* Create a nested submenu under `parent_menu`. The returned handle
+	 * is a QMenu* — pass it to the other tray_menu_* helpers. The
+	 * submenu is parented to the parent menu and freed automatically
+	 * when the parent menu is destroyed. */
+	void* (*tray_menu_add_submenu)(void* mh, void* parent_menu,
+								   const char* label, const char* icon_name);
+
+	/* S20 — Main window helpers (additive) */
+	int (*main_window_install_close_filter)(void* mh,
+											MMCOMainWindowCloseCallback cb,
+											void* user_data);
+	int (*main_window_show)(void* mh);
+	int (*main_window_hide)(void* mh);
+	int (*main_window_is_visible)(void* mh);
 };
 
 /*

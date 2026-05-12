@@ -74,6 +74,10 @@
 #include <QStandardPaths>
 #include <QTreeWidget>
 #include <QHeaderView>
+#include <QAction>
+#include <QCloseEvent>
+#include <QIcon>
+#include <QSystemTrayIcon>
 
 PluginManager::PluginManager(Application* app, QObject* parent)
 	: QObject(parent), m_app(app)
@@ -237,10 +241,24 @@ void PluginManager::shutdownAll()
 			continue;
 
 		qDebug().noquote() << "[PluginManager] Unloading module:" << meta.name;
+		/* Tear down tray icons, menus, actions and close filters owned by
+		 * this module *before* invoking mmco_unload(). The plugin may
+		 * still hold raw pointers to these QObjects in its C state, but
+		 * after this point they are dead — and that is fine because the
+		 * plugin won't touch them once mmco_unload() returns. */
+		releaseTrayResourcesForModule(m_runtimes[i].get());
 		if (meta.unloadFunc) {
 			meta.unloadFunc();
 		}
 		meta.initialized = false;
+	}
+
+	/* Belt-and-braces: if the main window outlives PluginManager (Application
+	 * teardown is awkward), unhook our event filter so it doesn't fire into
+	 * a dead `this`. */
+	if (m_closeFilterInstalled && m_filteredMainWindow) {
+		m_filteredMainWindow->removeEventFilter(this);
+		m_closeFilterInstalled = false;
 	}
 
 	// DO NOT call dlclose() or clear() data structures here.
@@ -450,6 +468,32 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 
 	// S18 — Plugin Icon Set (ABI 2+)
 	ctx.ui_plugin_icon = api_ui_plugin_icon;
+
+	// S19 — System Tray
+	ctx.tray_create = api_tray_create;
+	ctx.tray_destroy = api_tray_destroy;
+	ctx.tray_is_available = api_tray_is_available;
+	ctx.tray_set_icon = api_tray_set_icon;
+	ctx.tray_set_tooltip = api_tray_set_tooltip;
+	ctx.tray_set_visible = api_tray_set_visible;
+	ctx.tray_show_message = api_tray_show_message;
+	ctx.tray_set_menu = api_tray_set_menu;
+	ctx.tray_set_activation_cb = api_tray_set_activation_cb;
+	ctx.tray_menu_create = api_tray_menu_create;
+	ctx.tray_menu_destroy = api_tray_menu_destroy;
+	ctx.tray_menu_clear = api_tray_menu_clear;
+	ctx.tray_menu_add_separator = api_tray_menu_add_separator;
+	ctx.tray_menu_add_action = api_tray_menu_add_action;
+	ctx.tray_menu_action_set_enabled = api_tray_menu_action_set_enabled;
+	ctx.tray_menu_action_set_text = api_tray_menu_action_set_text;
+	ctx.tray_menu_add_submenu = api_tray_menu_add_submenu;
+
+	// S20 — Main window helpers
+	ctx.main_window_install_close_filter =
+		api_main_window_install_close_filter;
+	ctx.main_window_show = api_main_window_show;
+	ctx.main_window_hide = api_main_window_hide;
+	ctx.main_window_is_visible = api_main_window_is_visible;
 
 	return ctx;
 }
@@ -2409,6 +2453,560 @@ int PluginManager::api_news_reload(void* mh)
 	}
 
 	return 0;
+}
+
+/* ═════════════════════════════════════════════════════════════════════
+ * S19 — System Tray  /  S20 — Main Window helpers
+ * ═════════════════════════════════════════════════════════════════════
+ *
+ * All resources are tracked per-module so they can be torn down in
+ * releaseTrayResourcesForModule() when a plugin is unloaded. We never
+ * hand raw QObject pointers to plugins; everything is opaque.
+ *
+ * Icon resolution mirrors the existing UI builder: a logical name is
+ * first looked up via QIcon::fromTheme(), then treated as a Qt
+ * resource path. Empty / null inputs produce a null icon (Qt-safe).
+ */
+
+namespace
+{
+QIcon mmco_resolve_icon(const char* name)
+{
+	if (!name || !*name)
+		return QIcon();
+	QString s = QString::fromUtf8(name);
+	QIcon themed = QIcon::fromTheme(s);
+	if (!themed.isNull())
+		return themed;
+	return QIcon(s);
+}
+
+QSystemTrayIcon::MessageIcon mmco_message_icon(int icon_type)
+{
+	switch (icon_type) {
+		case 1:
+			return QSystemTrayIcon::Information;
+		case 2:
+			return QSystemTrayIcon::Warning;
+		case 3:
+			return QSystemTrayIcon::Critical;
+		default:
+			return QSystemTrayIcon::NoIcon;
+	}
+}
+} // namespace
+
+QWidget* PluginManager::resolveMainWindow()
+{
+	if (m_filteredMainWindow)
+		return m_filteredMainWindow.data();
+
+	for (auto* w : qApp->topLevelWidgets()) {
+		if (w->objectName() == QStringLiteral("MainWindow")) {
+			m_filteredMainWindow = w;
+			return w;
+		}
+	}
+	return nullptr;
+}
+
+void PluginManager::ensureCloseFilterInstalled()
+{
+	if (m_closeFilterInstalled)
+		return;
+	QWidget* mw = resolveMainWindow();
+	if (!mw)
+		return;
+	mw->installEventFilter(this);
+	m_closeFilterInstalled = true;
+}
+
+bool PluginManager::eventFilter(QObject* watched, QEvent* event)
+{
+	/* Only filter close events on the main window. */
+	if (event && event->type() == QEvent::Close && watched &&
+		watched == m_filteredMainWindow.data() && !m_closeFilters.isEmpty()) {
+		bool swallow = false;
+		/* Iterate over a copy: callbacks may install/remove filters. */
+		const auto filters = m_closeFilters;
+		for (const auto& f : filters) {
+			if (!f.cb)
+				continue;
+			int rc = f.cb(f.user_data);
+			if (rc != 0)
+				swallow = true;
+		}
+		if (swallow) {
+			auto* ce = static_cast<QCloseEvent*>(event);
+			ce->ignore();
+			/* Hide rather than close — mirrors what tray-aware apps do. */
+			if (auto* mw = qobject_cast<QWidget*>(watched))
+				mw->hide();
+			return true;
+		}
+	}
+	return QObject::eventFilter(watched, event);
+}
+
+void PluginManager::releaseTrayResourcesForModule(void* module_handle)
+{
+	/*
+	 * Two cleanup modes:
+	 *
+	 *   • Normal runtime unload  → deleteLater() the QObjects so Qt
+	 *     unwinds them properly on the next event-loop turn.
+	 *
+	 *   • Shutdown mode (m_shutdownDone is true *while we walk the
+	 *     unload loop*)            → just hide() + sever signal
+	 *     connections via the per-tray guard object, but DO NOT delete.
+	 *     Calling deleteLater() during Application teardown trips Qt's
+	 *     own signal/slot doubly-linked-list bookkeeping the same way
+	 *     dlclose() would corrupt it (see the long comment in
+	 *     shutdownAll()) — the OS reclaims everything at process exit
+	 *     anyway.
+	 *
+	 * Also: when a single module owns both a QMenu *and* its child
+	 * QActions, deleting the menu auto-deletes the actions. To avoid
+	 * double-free we delete actions first **and let Qt sever the
+	 * parent-child link** before the menu's own deleteLater runs.
+	 */
+
+	const bool shuttingDown = m_shutdownDone;
+
+	/* Close filters — pure C-struct entries, safe to drop unconditionally. */
+	for (int i = m_closeFilters.size() - 1; i >= 0; --i) {
+		if (m_closeFilters[i].module_handle == module_handle)
+			m_closeFilters.removeAt(i);
+	}
+	if (m_closeFilters.isEmpty() && m_closeFilterInstalled &&
+		m_filteredMainWindow && !shuttingDown) {
+		m_filteredMainWindow->removeEventFilter(this);
+		m_closeFilterInstalled = false;
+	}
+
+	/* Tray icons — hide first so the platform plugin lets go of any
+	 * embedded popup menu reference before we touch the QMenu. */
+	for (int i = m_trayIcons.size() - 1; i >= 0; --i) {
+		if (m_trayIcons[i].module_handle != module_handle)
+			continue;
+		auto* icon = m_trayIcons[i].icon;
+		auto* guard = m_trayIcons[i].guard;
+		if (icon) {
+			/* Detach the context menu *before* hiding; some Qt
+			 * platforms (XCB tray) re-enter the menu during hide
+			 * otherwise. */
+			icon->setContextMenu(nullptr);
+			icon->hide();
+			if (!shuttingDown)
+				icon->deleteLater();
+		}
+		if (guard && !shuttingDown)
+			guard->deleteLater();
+		m_trayIcons.removeAt(i);
+	}
+
+	/* Tray-menu actions — only delete in normal mode, AND only if the
+	 * action's parent menu does NOT also belong to this module (the
+	 * QMenu's destructor will sweep its own children).  In shutdown
+	 * mode we just forget about them; the process is going away. */
+	if (!shuttingDown) {
+		/* Gather the menu handles owned by this module so we can skip
+		 * actions whose parent will be deleted anyway. */
+		QSet<QObject*> ownedMenus;
+		for (const auto& m : m_trayMenus) {
+			if (m.module_handle == module_handle && m.menu)
+				ownedMenus.insert(m.menu);
+		}
+		for (int i = m_trayActions.size() - 1; i >= 0; --i) {
+			if (m_trayActions[i].module_handle != module_handle)
+				continue;
+			QAction* a = m_trayActions[i].action;
+			if (a) {
+				if (!ownedMenus.contains(a->parent()))
+					a->deleteLater();
+				/* else: parent menu will deleteLater itself below
+				 * and Qt will free this action through QObject's
+				 * normal parent-child cascade. */
+			}
+			m_trayActions.removeAt(i);
+		}
+	} else {
+		/* Shutdown: just drop the records. */
+		for (int i = m_trayActions.size() - 1; i >= 0; --i) {
+			if (m_trayActions[i].module_handle == module_handle)
+				m_trayActions.removeAt(i);
+		}
+	}
+
+	/* Tray menus.
+	 *
+	 * Submenus are tracked in m_trayMenus too (added by
+	 * api_tray_menu_add_submenu) but their parent is another QMenu in
+	 * the same module. To avoid double-free we only call deleteLater
+	 * on menus whose parent is NOT one of our own menus — Qt's
+	 * parent-child cascade will sweep the rest. */
+	if (!shuttingDown) {
+		QSet<QObject*> ownedMenus;
+		for (const auto& m : m_trayMenus) {
+			if (m.module_handle == module_handle && m.menu)
+				ownedMenus.insert(m.menu);
+		}
+		for (int i = m_trayMenus.size() - 1; i >= 0; --i) {
+			if (m_trayMenus[i].module_handle != module_handle)
+				continue;
+			QMenu* menu = m_trayMenus[i].menu;
+			if (menu && !ownedMenus.contains(menu->parent()))
+				menu->deleteLater();
+			m_trayMenus.removeAt(i);
+		}
+	} else {
+		for (int i = m_trayMenus.size() - 1; i >= 0; --i) {
+			if (m_trayMenus[i].module_handle == module_handle)
+				m_trayMenus.removeAt(i);
+		}
+	}
+}
+
+/* ── S19 trampolines ─────────────────────────────────────────────── */
+
+void* PluginManager::api_tray_create(void* mh, const char* icon_name,
+									 const char* tooltip)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	if (!QSystemTrayIcon::isSystemTrayAvailable())
+		return nullptr;
+
+	auto* tray = new QSystemTrayIcon();
+	if (icon_name && *icon_name)
+		tray->setIcon(mmco_resolve_icon(icon_name));
+	if (tooltip)
+		tray->setToolTip(QString::fromUtf8(tooltip));
+
+	TrayRecord rec{mh, tray, new QObject()};
+	r->manager->m_trayIcons.append(rec);
+	return tray;
+}
+
+int PluginManager::api_tray_destroy(void* mh, void* tray_handle)
+{
+	auto* r = rt(mh);
+	if (!r || !tray_handle)
+		return -1;
+	auto& vec = r->manager->m_trayIcons;
+	for (int i = 0; i < vec.size(); ++i) {
+		if (vec[i].icon == tray_handle && vec[i].module_handle == mh) {
+			if (vec[i].icon) {
+				vec[i].icon->hide();
+				vec[i].icon->deleteLater();
+			}
+			if (vec[i].guard)
+				vec[i].guard->deleteLater();
+			vec.removeAt(i);
+			return 0;
+		}
+	}
+	return -1;
+}
+
+int PluginManager::api_tray_is_available(void* /*mh*/)
+{
+	return QSystemTrayIcon::isSystemTrayAvailable() ? 1 : 0;
+}
+
+int PluginManager::api_tray_set_icon(void* /*mh*/, void* tray_handle,
+									 const char* icon_name)
+{
+	if (!tray_handle)
+		return -1;
+	static_cast<QSystemTrayIcon*>(tray_handle)
+		->setIcon(mmco_resolve_icon(icon_name));
+	return 0;
+}
+
+int PluginManager::api_tray_set_tooltip(void* /*mh*/, void* tray_handle,
+										const char* tooltip)
+{
+	if (!tray_handle)
+		return -1;
+	static_cast<QSystemTrayIcon*>(tray_handle)
+		->setToolTip(QString::fromUtf8(tooltip ? tooltip : ""));
+	return 0;
+}
+
+int PluginManager::api_tray_set_visible(void* /*mh*/, void* tray_handle,
+										int visible)
+{
+	if (!tray_handle)
+		return -1;
+	static_cast<QSystemTrayIcon*>(tray_handle)->setVisible(visible != 0);
+	return 0;
+}
+
+int PluginManager::api_tray_show_message(void* mh, void* tray_handle,
+										 const char* title, const char* message,
+										 int icon_type, int msecs)
+{
+	if (msecs <= 0)
+		msecs = 10000;
+	const QString qtitle = QString::fromUtf8(title ? title : "");
+	const QString qmsg = QString::fromUtf8(message ? message : "");
+	const auto micon = mmco_message_icon(icon_type);
+
+	if (tray_handle) {
+		auto* tray = static_cast<QSystemTrayIcon*>(tray_handle);
+		const bool wasVisible = tray->isVisible();
+		if (!wasVisible)
+			tray->show();
+		tray->showMessage(qtitle, qmsg, micon, msecs);
+		if (!wasVisible) {
+			/* Restore prior state on the next event-loop turn so the
+			 * notification has a chance to be raised. */
+			QTimer::singleShot(msecs + 200, tray, [tray]() {
+				if (tray)
+					tray->hide();
+			});
+		}
+		return 0;
+	}
+
+	/* Fire-and-forget mode — host owns a transient tray icon. */
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	if (!QSystemTrayIcon::isSystemTrayAvailable())
+		return -1;
+	auto* tray = new QSystemTrayIcon();
+	tray->show();
+	tray->showMessage(qtitle, qmsg, micon, msecs);
+	QTimer::singleShot(msecs + 500, tray, [tray]() {
+		if (tray) {
+			tray->hide();
+			tray->deleteLater();
+		}
+	});
+	return 0;
+}
+
+int PluginManager::api_tray_set_menu(void* /*mh*/, void* tray_handle,
+									 void* menu_handle)
+{
+	if (!tray_handle)
+		return -1;
+	static_cast<QSystemTrayIcon*>(tray_handle)
+		->setContextMenu(static_cast<QMenu*>(menu_handle));
+	return 0;
+}
+
+int PluginManager::api_tray_set_activation_cb(void* mh, void* tray_handle,
+											  MMCOTrayActivationCallback cb,
+											  void* ud)
+{
+	auto* r = rt(mh);
+	if (!r || !tray_handle)
+		return -1;
+	auto& vec = r->manager->m_trayIcons;
+	for (auto& rec : vec) {
+		if (rec.icon != tray_handle || rec.module_handle != mh)
+			continue;
+		/* Disconnect any previous connection by deleting & recreating
+		 * the per-tray guard QObject. Qt severs every signal
+		 * connection automatically. */
+		if (rec.guard)
+			rec.guard->deleteLater();
+		rec.guard = new QObject();
+		if (!cb)
+			return 0;
+		QObject::connect(
+			rec.icon, &QSystemTrayIcon::activated, rec.guard,
+			[cb, ud](QSystemTrayIcon::ActivationReason reason) {
+				cb(ud, static_cast<int>(reason));
+			});
+		return 0;
+	}
+	return -1;
+}
+
+void* PluginManager::api_tray_menu_create(void* mh)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto* menu = new QMenu();
+	r->manager->m_trayMenus.append({mh, menu});
+	return menu;
+}
+
+int PluginManager::api_tray_menu_destroy(void* mh, void* menu_handle)
+{
+	auto* r = rt(mh);
+	if (!r || !menu_handle)
+		return -1;
+	auto& vec = r->manager->m_trayMenus;
+	for (int i = 0; i < vec.size(); ++i) {
+		if (vec[i].menu == menu_handle && vec[i].module_handle == mh) {
+			/* Drop any actions registered against this menu first. */
+			auto& acts = r->manager->m_trayActions;
+			for (int j = acts.size() - 1; j >= 0; --j) {
+				if (acts[j].action &&
+					acts[j].action->parent() ==
+						static_cast<QObject*>(menu_handle)) {
+					acts[j].action->deleteLater();
+					acts.removeAt(j);
+				}
+			}
+			vec[i].menu->deleteLater();
+			vec.removeAt(i);
+			return 0;
+		}
+	}
+	return -1;
+}
+
+int PluginManager::api_tray_menu_clear(void* /*mh*/, void* menu_handle)
+{
+	if (!menu_handle)
+		return -1;
+	static_cast<QMenu*>(menu_handle)->clear();
+	return 0;
+}
+
+int PluginManager::api_tray_menu_add_separator(void* /*mh*/, void* menu_handle)
+{
+	if (!menu_handle)
+		return -1;
+	static_cast<QMenu*>(menu_handle)->addSeparator();
+	return 0;
+}
+
+void* PluginManager::api_tray_menu_add_action(void* mh, void* menu_handle,
+											  const char* label,
+											  const char* icon_name,
+											  MMCOMenuActionCallback cb,
+											  void* ud)
+{
+	auto* r = rt(mh);
+	if (!r || !menu_handle || !label)
+		return nullptr;
+	auto* menu = static_cast<QMenu*>(menu_handle);
+	QAction* act = menu->addAction(QString::fromUtf8(label));
+	if (icon_name && *icon_name)
+		act->setIcon(mmco_resolve_icon(icon_name));
+	if (cb) {
+		QObject::connect(act, &QAction::triggered, act,
+						 [cb, ud]() { cb(ud); });
+	}
+	r->manager->m_trayActions.append({mh, act});
+	return act;
+}
+
+int PluginManager::api_tray_menu_action_set_enabled(void* /*mh*/,
+													void* action_handle,
+													int enabled)
+{
+	if (!action_handle)
+		return -1;
+	static_cast<QAction*>(action_handle)->setEnabled(enabled != 0);
+	return 0;
+}
+
+int PluginManager::api_tray_menu_action_set_text(void* /*mh*/,
+												 void* action_handle,
+												 const char* text)
+{
+	if (!action_handle)
+		return -1;
+	static_cast<QAction*>(action_handle)
+		->setText(QString::fromUtf8(text ? text : ""));
+	return 0;
+}
+
+void* PluginManager::api_tray_menu_add_submenu(void* mh, void* parent_menu,
+											   const char* label,
+											   const char* icon_name)
+{
+	auto* r = rt(mh);
+	if (!r || !parent_menu || !label)
+		return nullptr;
+	auto* parent = static_cast<QMenu*>(parent_menu);
+	auto* child = parent->addMenu(QString::fromUtf8(label));
+	if (!child)
+		return nullptr;
+	if (icon_name && *icon_name)
+		child->setIcon(mmco_resolve_icon(icon_name));
+	/* Track in the per-module registry so shutdown / unload finds it.
+	 * The QMenu is parented to `parent` so we don't deleteLater it
+	 * during unload — the parent menu's cascade will. */
+	r->manager->m_trayMenus.append({mh, child});
+	return child;
+}
+
+/* ── S20 trampolines ─────────────────────────────────────────────── */
+
+int PluginManager::api_main_window_install_close_filter(
+	void* mh, MMCOMainWindowCloseCallback cb, void* user_data)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	auto* self = r->manager;
+
+	if (!cb) {
+		/* Clear all filters registered by this module. */
+		for (int i = self->m_closeFilters.size() - 1; i >= 0; --i) {
+			if (self->m_closeFilters[i].module_handle == mh)
+				self->m_closeFilters.removeAt(i);
+		}
+		if (self->m_closeFilters.isEmpty() && self->m_closeFilterInstalled &&
+			self->m_filteredMainWindow) {
+			self->m_filteredMainWindow->removeEventFilter(self);
+			self->m_closeFilterInstalled = false;
+		}
+		return 0;
+	}
+
+	if (!self->resolveMainWindow())
+		return -1;
+
+	self->m_closeFilters.append({mh, cb, user_data});
+	self->ensureCloseFilterInstalled();
+	return 0;
+}
+
+int PluginManager::api_main_window_show(void* mh)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	QWidget* mw = r->manager->resolveMainWindow();
+	if (!mw)
+		return -1;
+	mw->show();
+	mw->raise();
+	mw->activateWindow();
+	return 0;
+}
+
+int PluginManager::api_main_window_hide(void* mh)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	QWidget* mw = r->manager->resolveMainWindow();
+	if (!mw)
+		return -1;
+	mw->hide();
+	return 0;
+}
+
+int PluginManager::api_main_window_is_visible(void* mh)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return 0;
+	QWidget* mw = r->manager->resolveMainWindow();
+	return (mw && mw->isVisible()) ? 1 : 0;
 }
 
 /* PluginPage MOC — required because PluginPage has Q_OBJECT */

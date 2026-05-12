@@ -56,6 +56,34 @@ typedef void (*MMCODirEntryCallback)(void* user_data, const char* entry_name,
 typedef void (*MMCOButtonCallback)(void* user_data);
 typedef void (*MMCOTreeSelectionCallback)(void* user_data, int row);
 
+/*
+ * Tray-icon activation reason — passed to MMCOTrayActivationCallback.
+ *
+ *   0 = unknown
+ *   1 = single click (left)
+ *   2 = double click (left)
+ *   3 = middle click
+ *   4 = context menu (right click) — note that if the tray icon has a
+ *       menu attached via tray_set_menu(), the menu is shown automatically
+ *       and this callback fires *in addition* to the menu popup.
+ *
+ * Values mirror QSystemTrayIcon::ActivationReason 1..4.
+ */
+typedef void (*MMCOTrayActivationCallback)(void* user_data, int reason);
+
+/*
+ * Main-window close-event filter callback.
+ *
+ * Returns:
+ *   0 = let the close happen normally (default Qt behaviour)
+ *   1 = swallow the close event (e.g. hide-to-tray instead of quitting)
+ *
+ * If multiple filters are installed, the first one to return non-zero
+ * wins; later filters in the chain are still invoked so they can run
+ * their bookkeeping but cannot override the decision.
+ */
+typedef int (*MMCOMainWindowCloseCallback)(void* user_data);
+
 struct MMCOContext {
 	/* ABI guard */
 	uint32_t struct_size; /* sizeof(MMCOContext) for forward compat */
@@ -364,4 +392,110 @@ struct MMCOContext {
 	 *                         cb, ud);
 	 */
 	const char* (*ui_plugin_icon)(void* mh, const char* name);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S19 — System Tray (ABI 2+, additive)
+	 *
+	 * Lets a plugin own one or more QSystemTrayIcon instances and a
+	 * detached QMenu tree to attach to them. Memory is owned by
+	 * PluginManager — every handle handed out here is released either
+	 * on tray_destroy / menu_destroy, or automatically when the owning
+	 * module is unloaded (no leaks at shutdown).
+	 *
+	 * All handles are opaque pointers — never cast them yourself.
+	 * Returns from creation functions: nullptr on failure (e.g. system
+	 * tray not available on the host desktop).
+	 *
+	 * Notify-style usage without a real tray icon: pass nullptr for the
+	 * tray handle to tray_show_message() and the host falls back to a
+	 * transient hidden icon — useful for DesktopNotifier-style plugins
+	 * that do not want a persistent indicator.
+	 * ─────────────────────────────────────────────────────────────── */
+
+	/* Create a new system-tray icon. Returns opaque handle or nullptr if
+	 * the platform has no usable system tray (call is_available() first
+	 * to discriminate from other failures). */
+	void* (*tray_create)(void* mh, const char* icon_name, const char* tooltip);
+
+	/* Destroy a tray handle previously returned by tray_create(). Idempotent;
+	 * passing nullptr is a no-op. */
+	int (*tray_destroy)(void* mh, void* tray_handle);
+
+	/* Returns 1 if QSystemTrayIcon::isSystemTrayAvailable() is true. */
+	int (*tray_is_available)(void* mh);
+
+	/* Update icon — accepts the same names as ui_button_create() (theme
+	 * names + ":/..." Qt resource paths). */
+	int (*tray_set_icon)(void* mh, void* tray_handle, const char* icon_name);
+	int (*tray_set_tooltip)(void* mh, void* tray_handle, const char* tooltip);
+	int (*tray_set_visible)(void* mh, void* tray_handle, int visible);
+
+	/* Show a balloon / native notification through the tray.
+	 *   icon_type: 0=None, 1=Info, 2=Warning, 3=Critical
+	 *   msecs:     timeout hint in ms (10000 if 0)
+	 * If tray_handle is nullptr, a transient hidden tray is created and
+	 * torn down behind the scenes — useful for fire-and-forget notify. */
+	int (*tray_show_message)(void* mh, void* tray_handle, const char* title,
+							 const char* message, int icon_type, int msecs);
+
+	/* Attach a menu to the tray icon — the menu pops up on right-click.
+	 * Pass nullptr to detach. The plugin retains ownership of the menu;
+	 * the tray references it. */
+	int (*tray_set_menu)(void* mh, void* tray_handle, void* menu_handle);
+
+	/* Register an activation callback (fires on left/middle/double click).
+	 * Pass cb=nullptr to clear. Only one callback per tray. */
+	int (*tray_set_activation_cb)(void* mh, void* tray_handle,
+								  MMCOTrayActivationCallback cb, void* ud);
+
+	/* Create a standalone QMenu owned by the plugin. Compatible with
+	 * ui_add_menu_item() and tray_set_menu(). */
+	void* (*tray_menu_create)(void* mh);
+	int (*tray_menu_destroy)(void* mh, void* menu_handle);
+	int (*tray_menu_clear)(void* mh, void* menu_handle);
+	int (*tray_menu_add_separator)(void* mh, void* menu_handle);
+	/* Add an entry. Returns opaque action handle (or nullptr). */
+	void* (*tray_menu_add_action)(void* mh, void* menu_handle,
+								  const char* label, const char* icon_name,
+								  MMCOMenuActionCallback cb, void* ud);
+	int (*tray_menu_action_set_enabled)(void* mh, void* action_handle,
+										int enabled);
+	int (*tray_menu_action_set_text)(void* mh, void* action_handle,
+									 const char* text);
+
+	/* Create a nested submenu under `parent_menu` with the given label.
+	 * Returns an opaque QMenu* compatible with the rest of the
+	 * tray_menu_* family (add_action, clear, add_separator, etc).
+	 *
+	 * The child menu is parented to the parent menu, so deleting the
+	 * parent will sweep the child — plugins do NOT need to call
+	 * tray_menu_destroy() on submenus they obtained this way.
+	 * Returns nullptr on failure. */
+	void* (*tray_menu_add_submenu)(void* mh, void* parent_menu,
+								   const char* label, const char* icon_name);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S20 — Main-window helpers (ABI 2+, additive)
+	 * ─────────────────────────────────────────────────────────────── */
+
+	/* Install a filter that runs whenever the main window receives a
+	 * QCloseEvent. The callback decides whether the close proceeds
+	 * (return 0) or is swallowed and the window is hidden instead
+	 * (return 1 — host calls hide() on the main window).
+	 *
+	 * Multiple filters can be installed; PluginManager removes all of
+	 * a plugin's filters automatically on mmco_unload(). Pass cb=nullptr
+	 * to clear all filters previously installed by this module.
+	 *
+	 * Returns 0 on success, -1 if the main window is not yet alive
+	 * (e.g. called too early — wait for MMCO_HOOK_UI_MAIN_READY). */
+	int (*main_window_install_close_filter)(void* mh,
+											MMCOMainWindowCloseCallback cb,
+											void* user_data);
+
+	/* Show / raise the main window (counterpart to the close filter for
+	 * "Show MeshMC" tray actions). hide() is also exposed for symmetry. */
+	int (*main_window_show)(void* mh);
+	int (*main_window_hide)(void* mh);
+	int (*main_window_is_visible)(void* mh);
 };

@@ -80,48 +80,226 @@ namespace PluginSignature
 		}
 #endif
 
-		/* Curated allow-list of OSI-approved / FSF-libre SPDX identifiers.
-		 * This is deliberately a fixed list rather than a regex against
-		 * the upstream SPDX database — we want a predictable, auditable
-		 * set of licenses that exempt plugins from signing.
+		/* OSI-approved SPDX identifier allow-list.
 		 *
-		 * The names are stored lower-case so the check is case-insensitive. */
+		 * Source of truth: the OSI License Index
+		 *   <https://opensource.org/licenses/>
+		 * cross-referenced against the SPDX License List
+		 *   <https://spdx.org/licenses/>
+		 *
+		 * Snapshot taken from SPDX License List 3.24+ — every identifier
+		 * in the "OSI Approved" section below is flagged
+		 * "OSI Approved? Yes" upstream. A handful of non-OSI but widely
+		 * accepted FSF-libre / public-domain identifiers (CC0-1.0,
+		 * Unlicense, WTFPL, Vim, BSD-3-Clause-Clear, …) follow in their
+		 * own block so that public-domain dedications and niche
+		 * permissive picks do not force authors into the signing pipeline
+		 * unnecessarily.
+		 *
+		 * Names are stored lower-case so the lookup is case-insensitive.
+		 *
+		 * Maintenance: when SPDX adds a new OSI-approved license, append
+		 * the lower-cased identifier here. Do NOT remove identifiers —
+		 * doing so retroactively breaks every plugin that uses them. */
 		const QSet<QString>& ossSpdxIds()
 		{
 			static const QSet<QString> ids = {
-				// GPL family
-				QStringLiteral("gpl-2.0-only"),
-				QStringLiteral("gpl-2.0-or-later"),
-				QStringLiteral("gpl-3.0-only"),
-				QStringLiteral("gpl-3.0-or-later"),
-				QStringLiteral("lgpl-2.1-only"),
-				QStringLiteral("lgpl-2.1-or-later"),
-				QStringLiteral("lgpl-3.0-only"),
-				QStringLiteral("lgpl-3.0-or-later"),
+				/* ══ OSI-approved ══════════════════════════════════ */
+
+				/* ── 0–9 ─────────────────────────────────────────── */
+				QStringLiteral("0bsd"),
+
+				/* ── A ───────────────────────────────────────────── */
+				QStringLiteral("aal"),
+				QStringLiteral("afl-1.1"),
+				QStringLiteral("afl-1.2"),
+				QStringLiteral("afl-2.0"),
+				QStringLiteral("afl-2.1"),
+				QStringLiteral("afl-3.0"),
+				QStringLiteral("agpl-3.0"),
 				QStringLiteral("agpl-3.0-only"),
 				QStringLiteral("agpl-3.0-or-later"),
-				// Permissive
-				QStringLiteral("mit"),
-				QStringLiteral("mit-0"),
+				QStringLiteral("apache-1.1"),
 				QStringLiteral("apache-2.0"),
+				QStringLiteral("apl-1.0"),
+				QStringLiteral("apsl-1.0"),
+				QStringLiteral("apsl-1.1"),
+				QStringLiteral("apsl-1.2"),
+				QStringLiteral("apsl-2.0"),
+				QStringLiteral("artistic-1.0"),
+				QStringLiteral("artistic-1.0-cl8"),
+				QStringLiteral("artistic-1.0-perl"),
+				QStringLiteral("artistic-2.0"),
+
+				/* ── B ───────────────────────────────────────────── */
+				QStringLiteral("bsd-1-clause"),
 				QStringLiteral("bsd-2-clause"),
+				QStringLiteral("bsd-2-clause-patent"),
 				QStringLiteral("bsd-3-clause"),
-				QStringLiteral("bsd-3-clause-clear"),
-				QStringLiteral("isc"),
-				QStringLiteral("zlib"),
-				QStringLiteral("unlicense"),
-				QStringLiteral("0bsd"),
-				// Weak copyleft
-				QStringLiteral("mpl-2.0"),
-				QStringLiteral("epl-1.0"),
-				QStringLiteral("epl-2.0"),
+				QStringLiteral("bsd-3-clause-lbnl"),
+				QStringLiteral("bsd-3-clause-modification"),
+				QStringLiteral("bsl-1.0"),
+
+				/* ── C ───────────────────────────────────────────── */
+				QStringLiteral("cal-1.0"),
+				QStringLiteral("cal-1.0-combined-work-exception"),
+				QStringLiteral("catosl-1.1"),
 				QStringLiteral("cddl-1.0"),
 				QStringLiteral("cddl-1.1"),
-				// Public domain-ish
+				QStringLiteral("cecill-2.1"),
+				QStringLiteral("cern-ohl-p-2.0"),
+				QStringLiteral("cern-ohl-s-2.0"),
+				QStringLiteral("cern-ohl-w-2.0"),
+				QStringLiteral("cnri-python"),
+				QStringLiteral("cpal-1.0"),
+				QStringLiteral("cpl-1.0"),
+				QStringLiteral("cua-opl-1.0"),
+
+				/* ── E ───────────────────────────────────────────── */
+				QStringLiteral("ecl-1.0"),
+				QStringLiteral("ecl-2.0"),
+				QStringLiteral("efl-1.0"),
+				QStringLiteral("efl-2.0"),
+				QStringLiteral("entessa"),
+				QStringLiteral("epl-1.0"),
+				QStringLiteral("epl-2.0"),
+				QStringLiteral("eudatagrid"),
+				QStringLiteral("eupl-1.1"),
+				QStringLiteral("eupl-1.2"),
+
+				/* ── F ───────────────────────────────────────────── */
+				QStringLiteral("fair"),
+				QStringLiteral("frameworx-1.0"),
+
+				/* ── G ───────────────────────────────────────────── */
+				QStringLiteral("gpl-2.0"),
+				QStringLiteral("gpl-2.0-only"),
+				QStringLiteral("gpl-2.0-or-later"),
+				QStringLiteral("gpl-3.0"),
+				QStringLiteral("gpl-3.0-only"),
+				QStringLiteral("gpl-3.0-or-later"),
+
+				/* ── H ───────────────────────────────────────────── */
+				QStringLiteral("hpnd"),
+
+				/* ── I ───────────────────────────────────────────── */
+				QStringLiteral("intel"),
+				QStringLiteral("ipa"),
+				QStringLiteral("ipl-1.0"),
+				QStringLiteral("isc"),
+
+				/* ── J ───────────────────────────────────────────── */
+				QStringLiteral("jam"),
+
+				/* ── L ───────────────────────────────────────────── */
+				QStringLiteral("lgpl-2.0"),
+				QStringLiteral("lgpl-2.0-only"),
+				QStringLiteral("lgpl-2.0-or-later"),
+				QStringLiteral("lgpl-2.1"),
+				QStringLiteral("lgpl-2.1-only"),
+				QStringLiteral("lgpl-2.1-or-later"),
+				QStringLiteral("lgpl-3.0"),
+				QStringLiteral("lgpl-3.0-only"),
+				QStringLiteral("lgpl-3.0-or-later"),
+				QStringLiteral("liliq-p-1.1"),
+				QStringLiteral("liliq-r-1.1"),
+				QStringLiteral("liliq-rplus-1.1"),
+				QStringLiteral("lppl-1.3c"),
+
+				/* ── M ───────────────────────────────────────────── */
+				QStringLiteral("miros"),
+				QStringLiteral("mit"),
+				QStringLiteral("mit-0"),
+				QStringLiteral("mit-modern-variant"),
+				QStringLiteral("motosoto"),
+				QStringLiteral("mpl-1.0"),
+				QStringLiteral("mpl-1.1"),
+				QStringLiteral("mpl-2.0"),
+				QStringLiteral("mpl-2.0-no-copyleft-exception"),
+				QStringLiteral("ms-pl"),
+				QStringLiteral("ms-rl"),
+				QStringLiteral("mulanpsl-2.0"),
+				QStringLiteral("multics"),
+
+				/* ── N ───────────────────────────────────────────── */
+				QStringLiteral("nasa-1.3"),
+				QStringLiteral("naumen"),
+				QStringLiteral("ncsa"),
+				QStringLiteral("nokia"),
+				QStringLiteral("nposl-3.0"),
+				QStringLiteral("ntp"),
+
+				/* ── O ───────────────────────────────────────────── */
+				QStringLiteral("ofl-1.1"),
+				QStringLiteral("ofl-1.1-no-rfn"),
+				QStringLiteral("ofl-1.1-rfn"),
+				QStringLiteral("oldap-2.8"),
+				QStringLiteral("oset-pl-2.1"),
+				QStringLiteral("osl-1.0"),
+				QStringLiteral("osl-2.0"),
+				QStringLiteral("osl-2.1"),
+				QStringLiteral("osl-3.0"),
+
+				/* ── P ───────────────────────────────────────────── */
+				QStringLiteral("php-3.0"),
+				QStringLiteral("php-3.01"),
+				QStringLiteral("postgresql"),
+				QStringLiteral("python-2.0"),
+				QStringLiteral("python-2.0.1"),
+
+				/* ── Q ───────────────────────────────────────────── */
+				QStringLiteral("qpl-1.0"),
+
+				/* ── R ───────────────────────────────────────────── */
+				QStringLiteral("rpl-1.1"),
+				QStringLiteral("rpl-1.5"),
+				QStringLiteral("rpsl-1.0"),
+				QStringLiteral("rscpl"),
+
+				/* ── S ───────────────────────────────────────────── */
+				QStringLiteral("simpl-2.0"),
+				QStringLiteral("sissl"),
+				QStringLiteral("sleepycat"),
+				QStringLiteral("spl-1.0"),
+
+				/* ── U ───────────────────────────────────────────── */
+				QStringLiteral("ucl-1.0"),
+				QStringLiteral("upl-1.0"),
+
+				/* ── V ───────────────────────────────────────────── */
+				QStringLiteral("vsl-1.0"),
+
+				/* ── W ───────────────────────────────────────────── */
+				QStringLiteral("w3c"),
+				QStringLiteral("w3c-19980720"),
+				QStringLiteral("w3c-20150513"),
+				QStringLiteral("watcom-1.0"),
+
+				/* ── X ───────────────────────────────────────────── */
+				QStringLiteral("xnet"),
+
+				/* ── Z ───────────────────────────────────────────── */
+				QStringLiteral("zlib"),
+				QStringLiteral("zpl-2.0"),
+				QStringLiteral("zpl-2.1"),
+
+				/* ══ Non-OSI but widely accepted libre ════════════ *
+				 * These pass FSF / Debian / Fedora as free-software
+				 * licenses even though they are not on the OSI list. */
+				QStringLiteral("bsd-3-clause-clear"),
+				QStringLiteral("bsd-4-clause"),
 				QStringLiteral("cc0-1.0"),
+				QStringLiteral("cc-by-4.0"),
+				QStringLiteral("cc-by-sa-4.0"),
+				QStringLiteral("unlicense"),
+				QStringLiteral("vim"),
 				QStringLiteral("wtfpl"),
-				// MeshMC's own modular GPL variant — modules using this
-				// follow the launcher's exception language.
+
+				/* ══ MeshMC's own modular-GPL identifier ══════════ *
+				 * Plugins shipped under the launcher's combined GPL +
+				 * MMCO-Module-Exception SPDX expression are recognised
+				 * as a single atomic identifier here so splitSpdx() does
+				 * not have to special-case the "WITH" clause. */
 				QStringLiteral("gpl-3.0-or-later with "
 							   "licenseref-meshmc-mmco-module-exception-1.0"),
 			};
