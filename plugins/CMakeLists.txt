@@ -30,6 +30,7 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
     SystemTray
     DesktopNotifier
     DiscordRPC
+    SkinManager
 )
 
 add_subdirectory(BackupSystem)
@@ -37,6 +38,7 @@ add_subdirectory(NewsViewer)
 add_subdirectory(SystemTray)
 add_subdirectory(DesktopNotifier)
 add_subdirectory(DiscordRPC)
+add_subdirectory(SkinManager)
 
 if(UNIX AND NOT APPLE)
     add_subdirectory(NVIDIAPrime)

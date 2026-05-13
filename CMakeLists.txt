@@ -131,6 +131,8 @@ find_package(Qt6 REQUIRED COMPONENTS
     NetworkAuth
     Test
     Xml
+    OpenGL
+    OpenGLWidgets
 )
 if(DEFINED Qt6Core_VERSION)
     set(_projt_qt_version "${Qt6Core_VERSION}")
