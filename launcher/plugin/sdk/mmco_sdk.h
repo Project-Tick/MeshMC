@@ -169,6 +169,10 @@ enum MMCOHookId : uint32_t {
 
 	/* News */
 	MMCO_HOOK_NEWS_UPDATED = 0x0700, /* payload: nullptr */
+
+	/* Plugin-driven authentication providers (ABI 2+ additive) */
+	MMCO_HOOK_AUTH_REQUEST = 0x0800, /* payload: MMCOAuthRequestEvent* */
+	MMCO_HOOK_SESSION_FILL = 0x0801, /* payload: MMCOSessionFillEvent* */
 };
 
 struct MMCOInstanceInfo {
@@ -233,6 +237,75 @@ struct MMCOUiMainReadyPayload {
 
 struct MMCOGlobalSettingsPagesEvent {
 	void* page_list_handle;
+};
+
+/*
+ * Payload for MMCO_HOOK_AUTH_REQUEST (ABI 2+).
+ *
+ *   url            — effective URL of the in-flight request (read-only).
+ *   method         — "GET" | "POST" | "PUT" | "DELETE" | …  (read-only).
+ *   body / body_size — POST/PUT body bytes (read-only). NULL/0 for GETs.
+ *
+ *   redirect_url   — set non-null to rewrite the URL before send. The
+ *                    host copies the string; plugin retains ownership.
+ *   request_handle — opaque cookie; pass to add_header() below.
+ *   add_header     — append "Key: value" to the request's HTTP headers.
+ *                    Returns 0 on success.
+ *
+ * Returning non-zero from the hook callback cancels the request:
+ * AuthRequest emits a network error and the calling AuthStep fails.
+ */
+struct MMCOAuthRequestEvent {
+	const char* url;
+	const char* method;
+	const char* body;
+	int body_size;
+
+	const char* redirect_url;
+
+	void* request_handle;
+	int (*add_header)(void* request_handle, const char* key, const char* value);
+};
+
+/*
+ * Payload for MMCO_HOOK_SESSION_FILL (ABI 2+).
+ *
+ * Lets a plugin overwrite any field on the AuthSession after the host
+ * has populated its defaults and before the launch task is built.
+ * NULL in any overwrite_* slot means "leave the host default alone".
+ *
+ *   account_id            — internal id of the account being used.
+ *   account_is_msa        — 1 if MSA, 0 if offline.
+ *   wants_online          — 1 if the user requested an online launch.
+ *
+ *   current_*             — read-only snapshot of the host-filled
+ *                           session fields.
+ *
+ *   overwrite_access_token, overwrite_session, overwrite_player_name,
+ *   overwrite_uuid, overwrite_user_type, overwrite_client_token
+ *                         — set non-null to replace the corresponding
+ *                           field.  Strings copied by the host.
+ *
+ *   extra_user_properties — appended to AuthSession::user_properties
+ *                           verbatim. NULL = nothing to add.
+ */
+struct MMCOSessionFillEvent {
+	const char* account_id;
+	int account_is_msa;
+	int wants_online;
+
+	const char* current_player_name;
+	const char* current_uuid;
+	const char* current_user_type;
+
+	const char* overwrite_access_token;
+	const char* overwrite_session;
+	const char* overwrite_player_name;
+	const char* overwrite_uuid;
+	const char* overwrite_user_type;
+	const char* overwrite_client_token;
+
+	const char* extra_user_properties;
 };
 
 typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,

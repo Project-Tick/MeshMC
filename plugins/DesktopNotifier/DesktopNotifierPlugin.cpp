@@ -90,7 +90,8 @@ static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,
 		return 0;
 	const char* name = g_ctx->get_app_name(g_ctx->module_handle);
 	const char* ver = g_ctx->get_app_version(g_ctx->module_handle);
-	notify(QStringLiteral("%1 ready").arg(QString::fromUtf8(name ? name : "MeshMC")),
+	notify(QStringLiteral("%1 ready")
+			   .arg(QString::fromUtf8(name ? name : "MeshMC")),
 		   QStringLiteral("Version %1 is running.")
 			   .arg(QString::fromUtf8(ver ? ver : "?")),
 		   1);
@@ -120,10 +121,10 @@ static int on_instance_pre_launch(void* /*mh*/, uint32_t /*hook_id*/,
 	QString ver = info->minecraft_version
 					  ? QString::fromUtf8(info->minecraft_version)
 					  : QString();
-	QString body = ver.isEmpty()
-					   ? QStringLiteral("Launching %1…").arg(name)
-					   : QStringLiteral("Launching %1 (Minecraft %2)…")
-							 .arg(name, ver);
+	QString body =
+		ver.isEmpty()
+			? QStringLiteral("Launching %1…").arg(name)
+			: QStringLiteral("Launching %1 (Minecraft %2)…").arg(name, ver);
 	notify(QStringLiteral("MeshMC instance starting"), body, 1);
 	return 0;
 }
@@ -198,8 +199,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	MMCO_LOG(ctx, "DesktopNotifier initializing...");
 
 	/* Seed defaults exactly once. */
-	settingDefault("notify_launch", "1");  /* PRE_LAUNCH: game starting   */
-	settingDefault("notify_exit", "1");	   /* POST_LAUNCH: game exited    */
+	settingDefault("notify_launch", "1"); /* PRE_LAUNCH: game starting   */
+	settingDefault("notify_exit", "1");	  /* POST_LAUNCH: game exited    */
 	settingDefault("notify_created", "1");
 	settingDefault("notify_removed", "0");
 	settingDefault("notify_news", "0");
@@ -214,8 +215,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 		/* Long-lived hidden tray icon — gives notifications a stable
 		 * source identity on KDE / GNOME / Windows. We never show()
 		 * it. The host owns this icon and tears it down at unload. */
-		g_tray = ctx->tray_create(ctx->module_handle,
-								  "dialog-information", "MeshMC");
+		g_tray = ctx->tray_create(ctx->module_handle, "dialog-information",
+								  "MeshMC");
 	}
 
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,

@@ -205,6 +205,51 @@ void LaunchController::login()
 		m_session->wants_online = m_online;
 		m_accountToUse->fillSession(m_session);
 
+		/* MMCO plugin hook: let plugins overwrite the freshly-filled
+		 * session with custom auth-provider data (Drasl, Ely.by,
+		 * LittleSkin, …). This is where authlib-injector-style
+		 * launchers do their work. The hook runs *after* the host
+		 * has set its defaults, so plugins always have a fully-formed
+		 * baseline to mutate. */
+		if (APPLICATION->pluginManager()) {
+			const QByteArray accIdUtf8 = m_accountToUse->internalId().toUtf8();
+			const QByteArray curName = m_session->player_name.toUtf8();
+			const QByteArray curUuid = m_session->uuid.toUtf8();
+			const QByteArray curType = m_session->user_type.toUtf8();
+
+			MMCOSessionFillEvent fillEv{};
+			fillEv.account_id = accIdUtf8.constData();
+			fillEv.account_is_msa = m_accountToUse->isMSA() ? 1 : 0;
+			fillEv.wants_online = m_session->wants_online ? 1 : 0;
+			fillEv.current_player_name = curName.constData();
+			fillEv.current_uuid = curUuid.constData();
+			fillEv.current_user_type = curType.constData();
+			fillEv.overwrite_access_token = nullptr;
+			fillEv.overwrite_session = nullptr;
+			fillEv.overwrite_player_name = nullptr;
+			fillEv.overwrite_uuid = nullptr;
+			fillEv.overwrite_user_type = nullptr;
+			fillEv.overwrite_client_token = nullptr;
+			fillEv.extra_user_properties = nullptr;
+
+			APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_SESSION_FILL,
+													   &fillEv);
+
+			auto apply = [](QString& field, const char* override_value) {
+				if (override_value)
+					field = QString::fromUtf8(override_value);
+			};
+			apply(m_session->access_token, fillEv.overwrite_access_token);
+			apply(m_session->session, fillEv.overwrite_session);
+			apply(m_session->player_name, fillEv.overwrite_player_name);
+			apply(m_session->uuid, fillEv.overwrite_uuid);
+			apply(m_session->user_type, fillEv.overwrite_user_type);
+			apply(m_session->client_token, fillEv.overwrite_client_token);
+			if (fillEv.extra_user_properties)
+				m_session->user_properties =
+					QString::fromUtf8(fillEv.extra_user_properties);
+		}
+
 		switch (m_accountToUse->accountState()) {
 			case AccountState::Offline: {
 				m_session->wants_online = false;

@@ -489,8 +489,7 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 	ctx.tray_menu_add_submenu = api_tray_menu_add_submenu;
 
 	// S20 — Main window helpers
-	ctx.main_window_install_close_filter =
-		api_main_window_install_close_filter;
+	ctx.main_window_install_close_filter = api_main_window_install_close_filter;
 	ctx.main_window_show = api_main_window_show;
 	ctx.main_window_hide = api_main_window_hide;
 	ctx.main_window_is_visible = api_main_window_is_visible;
@@ -2470,30 +2469,30 @@ int PluginManager::api_news_reload(void* mh)
 
 namespace
 {
-QIcon mmco_resolve_icon(const char* name)
-{
-	if (!name || !*name)
-		return QIcon();
-	QString s = QString::fromUtf8(name);
-	QIcon themed = QIcon::fromTheme(s);
-	if (!themed.isNull())
-		return themed;
-	return QIcon(s);
-}
-
-QSystemTrayIcon::MessageIcon mmco_message_icon(int icon_type)
-{
-	switch (icon_type) {
-		case 1:
-			return QSystemTrayIcon::Information;
-		case 2:
-			return QSystemTrayIcon::Warning;
-		case 3:
-			return QSystemTrayIcon::Critical;
-		default:
-			return QSystemTrayIcon::NoIcon;
+	QIcon mmco_resolve_icon(const char* name)
+	{
+		if (!name || !*name)
+			return QIcon();
+		QString s = QString::fromUtf8(name);
+		QIcon themed = QIcon::fromTheme(s);
+		if (!themed.isNull())
+			return themed;
+		return QIcon(s);
 	}
-}
+
+	QSystemTrayIcon::MessageIcon mmco_message_icon(int icon_type)
+	{
+		switch (icon_type) {
+			case 1:
+				return QSystemTrayIcon::Information;
+			case 2:
+				return QSystemTrayIcon::Warning;
+			case 3:
+				return QSystemTrayIcon::Critical;
+			default:
+				return QSystemTrayIcon::NoIcon;
+		}
+	}
 } // namespace
 
 QWidget* PluginManager::resolveMainWindow()
@@ -2818,11 +2817,10 @@ int PluginManager::api_tray_set_activation_cb(void* mh, void* tray_handle,
 		rec.guard = new QObject();
 		if (!cb)
 			return 0;
-		QObject::connect(
-			rec.icon, &QSystemTrayIcon::activated, rec.guard,
-			[cb, ud](QSystemTrayIcon::ActivationReason reason) {
-				cb(ud, static_cast<int>(reason));
-			});
+		QObject::connect(rec.icon, &QSystemTrayIcon::activated, rec.guard,
+						 [cb, ud](QSystemTrayIcon::ActivationReason reason) {
+							 cb(ud, static_cast<int>(reason));
+						 });
 		return 0;
 	}
 	return -1;
@@ -2849,9 +2847,8 @@ int PluginManager::api_tray_menu_destroy(void* mh, void* menu_handle)
 			/* Drop any actions registered against this menu first. */
 			auto& acts = r->manager->m_trayActions;
 			for (int j = acts.size() - 1; j >= 0; --j) {
-				if (acts[j].action &&
-					acts[j].action->parent() ==
-						static_cast<QObject*>(menu_handle)) {
+				if (acts[j].action && acts[j].action->parent() ==
+										  static_cast<QObject*>(menu_handle)) {
 					acts[j].action->deleteLater();
 					acts.removeAt(j);
 				}
@@ -2894,8 +2891,7 @@ void* PluginManager::api_tray_menu_add_action(void* mh, void* menu_handle,
 	if (icon_name && *icon_name)
 		act->setIcon(mmco_resolve_icon(icon_name));
 	if (cb) {
-		QObject::connect(act, &QAction::triggered, act,
-						 [cb, ud]() { cb(ud); });
+		QObject::connect(act, &QAction::triggered, act, [cb, ud]() { cb(ud); });
 	}
 	r->manager->m_trayActions.append({mh, act});
 	return act;

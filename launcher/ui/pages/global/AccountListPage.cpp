@@ -196,8 +196,8 @@ void AccountListPage::on_actionAddOffline_triggered()
 		bool ok = false;
 		QString username = QInputDialog::getText(
 			this, tr("Add Offline Account"),
-			tr("Enter a username for the offline account:"),
-			QLineEdit::Normal, suggestion, &ok);
+			tr("Enter a username for the offline account:"), QLineEdit::Normal,
+			suggestion, &ok);
 		if (!ok)
 			return;
 

@@ -49,7 +49,7 @@ static constexpr const char* LARGE_IMAGE_KEY = "org_projecttick_meshmc";
 static MMCOContext* g_ctx = nullptr;
 static QPointer<DiscordIpc> g_ipc;
 static qint64 g_launchEpoch = 0; /* unix sec; 0 = idle  (game session start) */
-static qint64 g_idleEpoch = 0;	 /* unix sec;          (launcher session start) */
+static qint64 g_idleEpoch = 0; /* unix sec;          (launcher session start) */
 static QString g_activeInstance;
 static QString g_activeMcVersion;
 static QString g_activeInstanceId; /* stable id used to disconnect later  */
@@ -203,29 +203,28 @@ static void hook_instance_running_signal(const QString& instanceId)
 	QObject::disconnect(inst.get(), &BaseInstance::runningStatusChanged,
 						g_guard.data(), nullptr);
 
-	QObject::connect(
-		inst.get(), &BaseInstance::runningStatusChanged, g_guard.data(),
-		[instanceId](bool running) {
-			if (!g_ipc)
-				return;
-			if (running) {
-				/* Game actually started — refresh the playing
-				 * presence in case the version wasn't known yet at
-				 * PRE_LAUNCH time. */
-				if (instanceId == g_activeInstanceId)
-					publish_playing_presence();
-			} else {
-				/* Game exited — fall back to idle, but only if it
-				 * was *this* instance we were tracking. */
-				if (instanceId == g_activeInstanceId) {
-					g_activeInstance.clear();
-					g_activeMcVersion.clear();
-					g_activeInstanceId.clear();
-					g_launchEpoch = 0;
-					publish_idle_presence();
-				}
-			}
-		});
+	QObject::connect(inst.get(), &BaseInstance::runningStatusChanged,
+					 g_guard.data(), [instanceId](bool running) {
+						 if (!g_ipc)
+							 return;
+						 if (running) {
+							 /* Game actually started — refresh the playing
+							  * presence in case the version wasn't known yet at
+							  * PRE_LAUNCH time. */
+							 if (instanceId == g_activeInstanceId)
+								 publish_playing_presence();
+						 } else {
+							 /* Game exited — fall back to idle, but only if it
+							  * was *this* instance we were tracking. */
+							 if (instanceId == g_activeInstanceId) {
+								 g_activeInstance.clear();
+								 g_activeMcVersion.clear();
+								 g_activeInstanceId.clear();
+								 g_launchEpoch = 0;
+								 publish_idle_presence();
+							 }
+						 }
+					 });
 }
 
 /*
@@ -268,9 +267,9 @@ static int on_instance_post_launch(void* /*mh*/, uint32_t /*hook_id*/,
 								   void* payload, void* /*ud*/)
 {
 	auto* info = static_cast<MMCOInstanceInfo*>(payload);
-	const QString exitedId =
-		(info && info->instance_id) ? QString::fromUtf8(info->instance_id)
-									: QString();
+	const QString exitedId = (info && info->instance_id)
+								 ? QString::fromUtf8(info->instance_id)
+								 : QString();
 	/* If a *different* instance was launched in the meantime (e.g. the
 	 * user launched B while A was still shutting down), don't clobber
 	 * B's presence. */
@@ -324,34 +323,33 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	/* Track the previous state so we only log meaningful transitions
 	 * (Ready→Disconnected) rather than every retry-cycle bounce. */
 	static DiscordIpc::State s_lastState = DiscordIpc::State::Disconnected;
-	QObject::connect(
-		g_ipc.data(), &DiscordIpc::stateChanged, g_ipc.data(),
-		[](DiscordIpc::State s) {
-			if (!g_ctx)
-				return;
-			if (s == DiscordIpc::State::Ready) {
-				MMCO_LOG(g_ctx, "DiscordRPC: connected.");
-				if (g_launchEpoch > 0)
-					publish_playing_presence();
-				else
-					publish_idle_presence();
-			} else if (s == DiscordIpc::State::Disconnected &&
-					   s_lastState == DiscordIpc::State::Ready) {
-				/* Only log the moment we *lose* an established
-				 * connection, not the silent retry-loop bounces
-				 * while Discord is offline. */
-				MMCO_DBG(g_ctx, "DiscordRPC: disconnected; will retry.");
-			}
-			s_lastState = s;
-		});
+	QObject::connect(g_ipc.data(), &DiscordIpc::stateChanged, g_ipc.data(),
+					 [](DiscordIpc::State s) {
+						 if (!g_ctx)
+							 return;
+						 if (s == DiscordIpc::State::Ready) {
+							 MMCO_LOG(g_ctx, "DiscordRPC: connected.");
+							 if (g_launchEpoch > 0)
+								 publish_playing_presence();
+							 else
+								 publish_idle_presence();
+						 } else if (s == DiscordIpc::State::Disconnected &&
+									s_lastState == DiscordIpc::State::Ready) {
+							 /* Only log the moment we *lose* an established
+							  * connection, not the silent retry-loop bounces
+							  * while Discord is offline. */
+							 MMCO_DBG(g_ctx,
+									  "DiscordRPC: disconnected; will retry.");
+						 }
+						 s_lastState = s;
+					 });
 	QObject::connect(g_ipc.data(), &DiscordIpc::errorOccurred, g_ipc.data(),
 					 [](const QString& msg) {
 						 if (g_ctx)
-							 MMCO_DBG(g_ctx,
-									  QStringLiteral("DiscordRPC: %1")
-										  .arg(msg)
-										  .toUtf8()
-										  .constData());
+							 MMCO_DBG(g_ctx, QStringLiteral("DiscordRPC: %1")
+												 .arg(msg)
+												 .toUtf8()
+												 .constData());
 					 });
 
 	g_ipc->connectToDiscord();

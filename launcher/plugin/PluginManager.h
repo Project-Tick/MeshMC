@@ -404,10 +404,8 @@ class PluginManager : public QObject
 										   const char* icon_name);
 
 	/* Section 20: Main window helpers */
-	static int
-	api_main_window_install_close_filter(void* mh,
-										 MMCOMainWindowCloseCallback cb,
-										 void* user_data);
+	static int api_main_window_install_close_filter(
+		void* mh, MMCOMainWindowCloseCallback cb, void* user_data);
 	static int api_main_window_show(void* mh);
 	static int api_main_window_hide(void* mh);
 	static int api_main_window_is_visible(void* mh);

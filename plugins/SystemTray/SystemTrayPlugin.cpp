@@ -57,8 +57,8 @@ MMCO_DEFINE_MODULE_EX(
 /* ── module-local state ───────────────────────────────────────────── */
 
 static MMCOContext* g_ctx = nullptr;
-static void* g_tray = nullptr;	   /* QSystemTrayIcon*           */
-static void* g_menu = nullptr;	   /* QMenu*                     */
+static void* g_tray = nullptr;		 /* QSystemTrayIcon*           */
+static void* g_menu = nullptr;		 /* QMenu*                     */
 static void* g_launchMenu = nullptr; /* QMenu* (submenu)        */
 static void* g_showAction = nullptr;
 static void* g_hideAction = nullptr;
@@ -219,8 +219,8 @@ static void rebuild_launch_submenu()
 	if (shown == 0) {
 		/* Add a disabled placeholder so the submenu is never empty. */
 		void* placeholder = g_ctx->tray_menu_add_action(
-			g_ctx->module_handle, g_launchMenu, "(no instances)",
-			nullptr, nullptr, nullptr);
+			g_ctx->module_handle, g_launchMenu, "(no instances)", nullptr,
+			nullptr, nullptr);
 		if (placeholder)
 			g_ctx->tray_menu_action_set_enabled(g_ctx->module_handle,
 												placeholder, 0);
@@ -275,8 +275,7 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	}
 
 	if (!ctx->tray_is_available(ctx->module_handle)) {
-		MMCO_WARN(ctx,
-				  "SystemTray: host has no system tray available; idle.");
+		MMCO_WARN(ctx, "SystemTray: host has no system tray available; idle.");
 		return 0;
 	}
 
@@ -298,10 +297,10 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	 * and is loaded directly. We try a few fallbacks so the tray still
 	 * gets a sensible icon on stripped/older builds. */
 	const char* iconCandidates[] = {
-		":/org.projecttick.MeshMC.svg", /* primary — MeshMC logo  */
+		":/org.projecttick.MeshMC.svg",			 /* primary — MeshMC logo  */
 		":/multimc/scalable/instances/logo.svg", /* instance default */
-		"meshmc",						/* themed name (XDG)      */
-		"applications-games",			/* last-ditch fallback    */
+		"meshmc",								 /* themed name (XDG)      */
+		"applications-games",					 /* last-ditch fallback    */
 	};
 	g_tray = nullptr;
 	for (const char* name : iconCandidates) {
@@ -333,21 +332,21 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	 * cope with a long flat menu of unknown length. */
 	g_menu = ctx->tray_menu_create(ctx->module_handle);
 
-	g_showAction = ctx->tray_menu_add_action(
-		ctx->module_handle, g_menu, "Open MeshMC", nullptr,
-		on_show_clicked, nullptr);
-	g_hideAction = ctx->tray_menu_add_action(
-		ctx->module_handle, g_menu, "Hide window", nullptr,
-		on_hide_clicked, nullptr);
+	g_showAction =
+		ctx->tray_menu_add_action(ctx->module_handle, g_menu, "Open MeshMC",
+								  nullptr, on_show_clicked, nullptr);
+	g_hideAction =
+		ctx->tray_menu_add_action(ctx->module_handle, g_menu, "Hide window",
+								  nullptr, on_hide_clicked, nullptr);
 	ctx->tray_menu_add_separator(ctx->module_handle, g_menu);
 
 	g_launchMenu = ctx->tray_menu_add_submenu(ctx->module_handle, g_menu,
 											  "Launch instance", nullptr);
 
 	ctx->tray_menu_add_separator(ctx->module_handle, g_menu);
-	g_quitAction = ctx->tray_menu_add_action(
-		ctx->module_handle, g_menu, "Quit MeshMC", nullptr, on_quit_clicked,
-		nullptr);
+	g_quitAction =
+		ctx->tray_menu_add_action(ctx->module_handle, g_menu, "Quit MeshMC",
+								  nullptr, on_quit_clicked, nullptr);
 
 	ctx->tray_set_menu(ctx->module_handle, g_tray, g_menu);
 	ctx->tray_set_activation_cb(ctx->module_handle, g_tray, on_tray_activated,
