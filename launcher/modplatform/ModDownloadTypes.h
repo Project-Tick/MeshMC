@@ -67,6 +67,26 @@ namespace ModPlatform
 		QString sha1;
 		int fileSize = 0;
 		bool isDependency = false;
+
+		/* Provenance — required to write the sidecar after install and to
+		 * power conflict / update detection. Fill these in when the item
+		 * originates from a known platform; leave them empty for purely
+		 * local installs. */
+		QString platform; /* "modrinth" | "curseforge" | ""               */
+		QString projectId;
+		QString versionId;
+		QString slug;
+
+		/* When set, the downloader will replace any existing file with the
+		 * same target name (typical for an "update" flow). When false, an
+		 * existing file with matching SHA-1 is silently kept; mismatched
+		 * but already-named files are an error. */
+		bool replaceExisting = false;
+
+		/* Used by the conflict analyzer to communicate which file on disk
+		 * is being replaced. Optional; if non-empty the downloader will
+		 * remove this file (and its sidecar) before writing the new one. */
+		QString replacesFileName;
 	};
 
 	struct UnresolvedDep {

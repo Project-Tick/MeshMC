@@ -455,11 +455,17 @@ These options can be set during configuration with `-D<OPTION>=<VALUE>`:
 | Option                         | Default  | Description                                |
 |--------------------------------|----------|--------------------------------------------|
 | `ENABLE_LTO`                   | `OFF`\*  | Enable Link Time Optimization              |
-| `MeshMC_BUILD_PLATFORM`       | `""`     | Platform identifier string                 |
-| `MeshMC_BUILD_ARTIFACT`       | `""`     | Artifact name for the updater              |
+| `MeshMC_BUILD_PLATFORM`       | `""`     | Platform identifier string (display only)  |
+| `MeshMC_BUILD_ARTIFACT`       | `""`     | Legacy substring used to match a feed asset when structured attributes are unavailable |
+| `MeshMC_BUILD_PLATFORM_ID`    | `""`     | Updater asset platform id: `linux` / `windows` / `macos` |
+| `MeshMC_BUILD_ARCH`           | `""`     | Updater asset arch: `x86_64` / `aarch64`   |
+| `MeshMC_BUILD_PORTABLE`       | `""`     | Updater asset portable flag: `true` / `false` |
+| `MeshMC_BUILD_KIND`           | `""`     | Updater asset kind: `archive` / `appimage` / `installer` |
 | `MeshMC_META_URL`             | (set)    | URL for meta server                        |
 | `MeshMC_NEWS_RSS_URL`         | (set)    | URL for news RSS feed                      |
-| `MeshMC_UPDATER_BASE`         | `""`     | Base URL for the updater                   |
+| `MeshMC_UPDATER_BASE`         | `""`     | Legacy GoUpdate base URL (unused)          |
+| `MeshMC_UPDATER_FEED_URL`     | (set)    | Authoritative product feed URL             |
+| `MeshMC_UPDATER_LATEST_JSON_URL` | (set) | Cross-check mirror URL (empty disables it) |
 | `MeshMC_NOTIFICATION_URL`     | (set)    | URL for notifications                      |
 | `MeshMC_PASTE_EE_API_KEY`     | (set)    | paste.ee API key                           |
 | `MeshMC_IMGUR_CLIENT_ID`      | (set)    | Imgur API client ID                        |

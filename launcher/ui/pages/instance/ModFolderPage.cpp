@@ -66,6 +66,9 @@
 #include "minecraft/PackProfile.h"
 #include "modplatform/DependencyResolver.h"
 #include "modplatform/ContentDownloadTask.h"
+#include "modplatform/ModInstallConflictAnalyzer.h"
+#include "modplatform/ModUpdateCheckTask.h"
+#include "ui/dialogs/ModUpdateDialog.h"
 
 #include "Version.h"
 
@@ -247,7 +250,16 @@ void ModFolderPage::ShowContextMenu(const QPoint& pos)
 
 void ModFolderPage::openedImpl()
 {
+	// startWatching() implicitly triggers the first update; subsequent
+	// opens of the same page (after the user switched away and back) only
+	// re-arm the QFileSystemWatcher without re-scanning, so we force an
+	// update() so the list reflects anything that changed while the page
+	// was closed (e.g. mods edited from another instance window).
+	const bool wasWatching = m_mods->isValid() && m_mods->dir().exists();
 	m_mods->startWatching();
+	if (wasWatching) {
+		m_mods->update();
+	}
 }
 
 void ModFolderPage::closedImpl()
@@ -282,6 +294,16 @@ void ModFolderPage::runningStateChanged(bool running)
 		return;
 	}
 	m_controlsEnabled = !running;
+
+	// When the instance stops running, the user may have edited mods from
+	// inside the game (Modrinth in-game browser, Fabric loom, etc.). The
+	// QFileSystemWatcher should already have fired in most cases, but a
+	// belt-and-braces refresh guarantees the list reflects the on-disk
+	// reality the moment the launch session ends. We also refresh on
+	// transition into running so the pre-launch state is visible.
+	if (m_mods) {
+		m_mods->update();
+	}
 	ui->actionAdd->setEnabled(m_controlsEnabled);
 	ui->actionDisable->setEnabled(m_controlsEnabled);
 	ui->actionEnable->setEnabled(m_controlsEnabled);
@@ -295,6 +317,15 @@ void ModFolderPage::runningStateChanged(bool running)
 		m_contentType == ModPlatform::ContentType::ShaderPack;
 	ui->actionDownload->setEnabled(canDownload);
 	ui->actionAdd->setEnabled(m_controlsEnabled || canDownload);
+	// Update is mod-only: we don't track resource/shader pack provenance
+	// across versions today.
+	if (ui->actionUpdate) {
+		const bool canUpdate =
+			canDownload && m_contentType == ModPlatform::ContentType::Mod;
+		ui->actionUpdate->setEnabled(canUpdate);
+		ui->actionUpdate->setVisible(m_contentType ==
+									 ModPlatform::ContentType::Mod);
+	}
 }
 
 bool ModFolderPage::shouldDisplay() const
@@ -472,12 +503,15 @@ void ModFolderPage::on_actionDownload_triggered()
 		return;
 	}
 
-	// Step 2: Resolve dependencies (only for mods)
+	// Step 2: Resolve dependencies (only for mods). Feed the resolver
+	// the persistent install index so transitive deps that are already
+	// on disk are not re-fetched and re-downloaded.
 	QList<ModPlatform::DependencyInfo> dependencies;
 	QList<ModPlatform::UnresolvedDep> unresolvedDeps;
 	if (m_contentType == ModPlatform::ContentType::Mod) {
 		auto* resolver = new DependencyResolver(
 			selectedMods, browseDialog.mcVersion(), browseDialog.loaderType());
+		resolver->setInstalledIndex(m_mods->metadataIndex());
 
 		ProgressDialog depProgress(this->parentWidget());
 		depProgress.setSkipButton(true, tr("Skip"));
@@ -498,11 +532,50 @@ void ModFolderPage::on_actionDownload_triggered()
 		return;
 	}
 
-	// Step 4: Download everything
+	// Step 3.5: Conflict / duplicate analysis against the on-disk index.
+	// This drops items whose exact version is already installed and turns
+	// items that match an existing project into in-place replacements.
 	auto downloadItems = summaryDialog.downloadItems();
+	auto decisions = ModInstallConflictAnalyzer::analyze(
+		downloadItems, m_mods->metadataIndex());
+
+	int alreadyInstalled = 0;
+	int updates = 0;
+	for (const auto& d : decisions) {
+		switch (d.status) {
+			case ModInstallConflictAnalyzer::Status::AlreadyInstalled:
+				alreadyInstalled++;
+				break;
+			case ModInstallConflictAnalyzer::Status::UpdateAvailable:
+			case ModInstallConflictAnalyzer::Status::NameConflict:
+			case ModInstallConflictAnalyzer::Status::FileNameClash:
+				updates++;
+				break;
+			default:
+				break;
+		}
+	}
+	if (alreadyInstalled > 0 || updates > 0) {
+		qDebug() << "Mod install plan:" << alreadyInstalled
+				 << "already installed," << updates << "replace,"
+				 << (decisions.size() - alreadyInstalled - updates) << "fresh";
+	}
+
+	const auto plan = ModInstallConflictAnalyzer::toDownloadPlan(decisions);
+
+	if (plan.isEmpty()) {
+		QMessageBox::information(
+			this->parentWidget(), tr("Nothing to do"),
+			tr("Every selected mod (and its dependencies) is already "
+			   "installed at the requested version."));
+		return;
+	}
+
+	// Step 4: Download everything
 	QString targetDir = m_mods->dir().absolutePath();
 
-	auto* downloadTask = new ContentDownloadTask(downloadItems, targetDir);
+	auto* downloadTask = new ContentDownloadTask(plan, targetDir);
+	downloadTask->setMetadataIndex(m_mods->metadataIndex());
 	ProgressDialog downloadProgress(this->parentWidget());
 	downloadProgress.execWithTask(downloadTask);
 
@@ -514,4 +587,79 @@ void ModFolderPage::on_actionDownload_triggered()
 								 .arg(downloadTask->failReason()));
 	}
 	delete downloadTask;
+}
+
+void ModFolderPage::on_actionUpdate_triggered()
+{
+	if (!m_controlsEnabled) {
+		return;
+	}
+	if (m_contentType != ModPlatform::ContentType::Mod) {
+		return;
+	}
+	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
+	if (!mcInst) {
+		return;
+	}
+
+	auto index = m_mods->metadataIndex();
+	if (!index) {
+		return;
+	}
+
+	// Figure out the instance's MC version + primary loader so the update
+	// query stays compatible with the configured profile.
+	QString mcVersion;
+	QString loader;
+	auto profile = mcInst->getPackProfile();
+	if (profile) {
+		mcVersion = profile->getComponentVersion("net.minecraft");
+		if (profile->getComponent("net.fabricmc.fabric-loader")) {
+			loader = QStringLiteral("fabric");
+		} else if (profile->getComponent("org.quiltmc.quilt-loader")) {
+			loader = QStringLiteral("quilt");
+		} else if (profile->getComponent("net.neoforged.neoforge")) {
+			loader = QStringLiteral("neoforge");
+		} else if (profile->getComponent("net.minecraftforge")) {
+			loader = QStringLiteral("forge");
+		}
+	}
+
+	if (mcVersion.isEmpty()) {
+		QMessageBox::warning(
+			this->parentWidget(), tr("Cannot Check Updates"),
+			tr("This instance has no Minecraft version configured."));
+		return;
+	}
+
+	auto* check = new ModUpdateCheckTask(index, mcVersion, loader);
+	ProgressDialog progress(this->parentWidget());
+	progress.setSkipButton(true, tr("Skip"));
+	progress.execWithTask(check);
+
+	const auto updates = check->availableUpdates();
+	delete check;
+
+	ModUpdateDialog dlg(updates, this->parentWidget());
+	if (dlg.exec() != QDialog::Accepted) {
+		return;
+	}
+
+	const auto plan = dlg.selectedDownloadItems();
+	if (plan.isEmpty()) {
+		return;
+	}
+
+	auto* dl = new ContentDownloadTask(plan, m_mods->dir().absolutePath());
+	dl->setMetadataIndex(index);
+	ProgressDialog dlProgress(this->parentWidget());
+	dlProgress.execWithTask(dl);
+	if (dl->wasSuccessful()) {
+		m_mods->update();
+	} else {
+		QMessageBox::warning(
+			this->parentWidget(), tr("Update Failed"),
+			tr("Some updates failed to download: %1").arg(dl->failReason()));
+	}
+	delete dl;
 }

@@ -42,16 +42,35 @@
 
 #include "ModFolderModel.h"
 #include <FileSystem.h>
+#include <QCryptographicHash>
+#include <QDateTime>
+#include <QFile>
+#include <QFileSystemWatcher>
 #include <QMimeData>
+#include <QString>
+#include <QThreadPool>
 #include <QUrl>
 #include <QUuid>
-#include <QString>
-#include <QFileSystemWatcher>
 #include <QDebug>
 #include "ModFolderLoadTask.h"
-#include <QThreadPool>
 #include <algorithm>
 #include "LocalModParseTask.h"
+
+namespace
+{
+	QString sha1OfFile(const QString& path)
+	{
+		QFile f(path);
+		if (!f.open(QIODevice::ReadOnly)) {
+			return {};
+		}
+		QCryptographicHash hash(QCryptographicHash::Sha1);
+		if (!hash.addData(&f)) {
+			return {};
+		}
+		return QString::fromLatin1(hash.result().toHex());
+	}
+} // namespace
 
 ModFolderModel::ModFolderModel(const QString& dir)
 	: QAbstractListModel(), m_dir(dir)
@@ -63,6 +82,12 @@ ModFolderModel::ModFolderModel(const QString& dir)
 	m_watcher = new QFileSystemWatcher(this);
 	connect(m_watcher, &QFileSystemWatcher::directoryChanged, this,
 			&ModFolderModel::directoryChanged);
+
+	// Persistent metadata index — sibling `.index/` directory. Loaded
+	// eagerly so install/dep tasks see the previous install state right
+	// away.
+	m_metadata = std::make_shared<ModMetadataIndex>(m_dir);
+	m_metadata->load();
 }
 
 void ModFolderModel::startWatching()
@@ -296,15 +321,24 @@ bool ModFolderModel::installMod(const QString& filename)
 
 	if (type == Mod::MOD_SINGLEFILE || type == Mod::MOD_ZIPFILE ||
 		type == Mod::MOD_LITEMOD) {
-		if (QFile::exists(newpath) ||
-			QFile::exists(newpath + QString(".disabled"))) {
-			if (!QFile::remove(newpath)) {
+		const QString disabledPath = newpath + QStringLiteral(".disabled");
+		const QString existing =
+			QFile::exists(newpath)
+				? newpath
+				: (QFile::exists(disabledPath) ? disabledPath : QString());
+
+		if (!existing.isEmpty()) {
+			if (!QFile::remove(existing)) {
 				// FIXME: report error in a user-visible way
 				qWarning() << "Copy from" << originalPath << "to" << newpath
-						   << "has failed.";
+						   << "has failed: cannot remove existing" << existing;
 				return false;
 			}
-			qDebug() << newpath << "has been deleted.";
+			if (m_metadata) {
+				// Drop the old sidecar; we are replacing the file.
+				m_metadata->remove(QFileInfo(existing).fileName());
+			}
+			qDebug() << existing << "has been deleted (replacing).";
 		}
 		if (!QFile::copy(fileinfo.filePath(), newpath)) {
 			qWarning() << "Copy from" << originalPath << "to" << newpath
@@ -313,6 +347,20 @@ bool ModFolderModel::installMod(const QString& filename)
 			return false;
 		}
 		FS::updateTimestamp(newpath);
+
+		// Record a "local" provenance sidecar so duplicate detection and
+		// the conflict analyzer can reason about manually-added files.
+		if (m_metadata) {
+			ModMetadataIndex::Entry e;
+			e.fileName = QFileInfo(newpath).fileName();
+			e.platform = QStringLiteral("local");
+			e.name = installedMod.name();
+			e.sha1 = sha1OfFile(newpath);
+			e.fileSize = QFileInfo(newpath).size();
+			e.isDependency = false;
+			e.installedAt = QDateTime::currentDateTimeUtc();
+			m_metadata->put(e);
+		}
 		installedMod.repath(QFileInfo(newpath));
 		update();
 		return true;
@@ -366,7 +414,12 @@ bool ModFolderModel::deleteMods(const QModelIndexList& indexes)
 
 	for (auto i : indexes) {
 		Mod& m = mods[i.row()];
-		m.destroy();
+		const QString fileName = m.filename().fileName();
+		if (m.destroy()) {
+			if (m_metadata) {
+				m_metadata->remove(fileName);
+			}
+		}
 	}
 	return true;
 }
@@ -477,6 +530,12 @@ bool ModFolderModel::setModStatus(int row,
 	}
 	modsIndex.remove(oldId);
 	modsIndex[newId] = row;
+	// The on-disk file name changed (toggled `.disabled` suffix); migrate
+	// the sidecar so it tracks the new name. canonicalFileName() collapses
+	// both forms so this is a no-op on the metadata payload itself.
+	if (m_metadata) {
+		m_metadata->rename(oldId, newId);
+	}
 	emit dataChanged(index(row, 0), index(row, columnCount(QModelIndex()) - 1));
 	return true;
 }

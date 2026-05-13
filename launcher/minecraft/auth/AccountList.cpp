@@ -86,6 +86,26 @@ int AccountList::findAccountByProfileId(const QString& profileId) const
 	return -1;
 }
 
+int AccountList::findOfflineAccountByUsername(const QString& username) const
+{
+	if (username.isEmpty())
+		return -1;
+	const QString needle = username.trimmed().toLower();
+	if (needle.isEmpty())
+		return -1;
+
+	for (int i = 0; i < count(); i++) {
+		MinecraftAccountPtr account = at(i);
+		if (!account || !account->isOffline())
+			continue;
+		/* profileName() returns the offlineUsername for offline accounts —
+		 * see AccountData::profileName(). Compare case-insensitively. */
+		if (account->profileName().trimmed().toLower() == needle)
+			return i;
+	}
+	return -1;
+}
+
 MinecraftAccountPtr
 AccountList::getAccountByProfileName(const QString& profileName) const
 {
@@ -121,6 +141,38 @@ void AccountList::addAccount(const MinecraftAccountPtr account)
 	// NOTE: Do not allow adding something that's already there
 	if (m_accounts.contains(account)) {
 		return;
+	}
+
+	/*
+	 * Offline-account duplicate guard.
+	 *
+	 * Offline accounts have an empty profileId (no Mojang profile is
+	 * ever fetched for them), so the existing profileId-based
+	 * deduplication a few lines below silently lets a second offline
+	 * account with the same username slip through. That used to
+	 * surface as two identically-named "User" rows in the accounts
+	 * list, both of which would refresh into AccountState::Offline and
+	 * neither of which could be told apart in the picker.
+	 *
+	 * The right fix is to reject the addition at the source: if an
+	 * offline account with this username already exists (case-
+	 * insensitive — Minecraft is case-sensitive but the launcher
+	 * profile picker is not, and users routinely conflate the two),
+	 * silently drop the new one rather than replace the existing
+	 * record. Replacing would change the account's internal id, which
+	 * would orphan every instance setting that references it by id.
+	 *
+	 * UI code is expected to validate before calling addAccount(),
+	 * but this guard makes the AccountList itself safe even when
+	 * called from places that forgot to (config-file load, plugin
+	 * APIs, future import paths, …).
+	 */
+	if (account && account->isOffline()) {
+		const int existing =
+			findOfflineAccountByUsername(account->profileName());
+		if (existing != -1) {
+			return;
+		}
 	}
 
 	// hook up notifications for changes in the account
@@ -498,6 +550,20 @@ bool AccountList::loadV3(QJsonObject& root)
 			auto profileId = account->profileId();
 			if (profileId.size()) {
 				if (findAccountByProfileId(profileId) != -1) {
+					continue;
+				}
+			} else if (account->isOffline()) {
+				/* Offline accounts have no profileId, so the profileId
+				 * dedupe above does nothing for them. Match by
+				 * username instead — this rescues users whose
+				 * accounts.json picked up duplicate offline entries
+				 * before the addAccount() guard was added. The first
+				 * one wins; later duplicates are silently dropped. */
+				if (findOfflineAccountByUsername(account->profileName()) !=
+					-1) {
+					qWarning().noquote()
+						<< "Dropping duplicate offline account on load:"
+						<< account->profileName();
 					continue;
 				}
 			}

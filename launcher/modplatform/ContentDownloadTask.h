@@ -29,10 +29,13 @@
 #include <QObject>
 #include <QList>
 #include <QString>
+#include <memory>
 
 #include "modplatform/ModDownloadTypes.h"
 #include "net/NetJob.h"
 #include "tasks/Task.h"
+
+class ModMetadataIndex;
 
 class ContentDownloadTask : public Task
 {
@@ -43,6 +46,13 @@ class ContentDownloadTask : public Task
 								 const QString& targetDir,
 								 QObject* parent = nullptr);
 
+	/* When provided, the downloader writes a provenance sidecar for every
+	 * file it places on disk and removes the sidecar for any file it
+	 * supersedes (`DownloadItem::replacesFileName`). The pointer is held
+	 * by shared ownership so callers can hand off the model-owned index
+	 * without lifetime concerns. */
+	void setMetadataIndex(std::shared_ptr<ModMetadataIndex> index);
+
   protected:
 	void executeTask() override;
 
@@ -52,7 +62,10 @@ class ContentDownloadTask : public Task
 	void onDownloadProgress(qint64 current, qint64 total);
 
   private:
+	void writeSidecars();
+
 	QList<ModPlatform::DownloadItem> m_items;
 	QString m_targetDir;
 	NetJob::Ptr m_netJob;
+	std::shared_ptr<ModMetadataIndex> m_metadata;
 };

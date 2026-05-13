@@ -1,0 +1,26 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Project Tick
+  SPDX-License-Identifier: LGPL-3.0-or-later
+
+  SkinManager — embed the launcher's GLSL shaders into the plugin binary.
+
+  We reuse the same shader files the launcher ships in
+  launcher/resources/shaders/, but compile them into the *plugin's*
+  own Qt resource segment under the "/skinmanager/shaders/" prefix.
+
+  Why a copy?  The launcher's shaders.qrc isn't currently wired into
+  the launcher's own build (no Q_INIT_RESOURCE call references it),
+  so a runtime lookup for ":/shaders/..." resolves to nothing.  By
+  bundling the shaders into the plugin's resource segment we make the
+  paths reliable without touching the launcher's build.
+
+  The alias attribute strips the long ../../launcher/resources path
+  away so the runtime URL stays short:
+      :/skinmanager/shaders/vshader_skin_model.glsl
+-->
+<RCC>
+  <qresource prefix="/skinmanager/shaders">
+    <file alias="vshader_skin_model.glsl">../../launcher/resources/shaders/vshader_skin_model.glsl</file>
+    <file alias="fshader.glsl">../../launcher/resources/shaders/fshader.glsl</file>
+  </qresource>
+</RCC>

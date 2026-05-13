@@ -131,6 +131,8 @@ find_package(Qt6 REQUIRED COMPONENTS
     NetworkAuth
     Test
     Xml
+    OpenGL
+    OpenGLWidgets
 )
 if(DEFINED Qt6Core_VERSION)
     set(_projt_qt_version "${Qt6Core_VERSION}")
@@ -179,6 +181,77 @@ find_package(classparser REQUIRED)
 find_package(optional-bare REQUIRED)
 find_package(xz-embedded REQUIRED)
 find_package(Katabasis REQUIRED)
+
+# GpgME (C++ bindings) — used by the MMCO plugin signature verifier.
+# KDE's gpgmepp distribution exports the bare target name "Gpgmepp".
+#
+# Upstream gpgme does not support MSVC (its build system is autotools
+# and the C++ bindings are not ABI-compatible with MSVC), so the plugin
+# signature verifier compiles into a stub on MSVC builds: the launcher
+# still loads OSS plugins and rejects non-OSS plugins on signature
+# grounds, it just cannot actually verify trailers. Linux and native
+# (single-arch) macOS / MinGW Windows builds get the full GpgME-backed
+# verifier.
+#
+# macOS universal builds (CMAKE_OSX_ARCHITECTURES contains both
+# "x86_64" and "arm64") get the stub too. The reason is purely a
+# distribution-side limitation: Homebrew ships gpgme/gpgmepp dylibs
+# for the host architecture only — on an Apple Silicon CI runner
+# /opt/homebrew/lib/libgpgmepp.dylib is arm64-only, so a universal
+# binary fails to link the x86_64 slice. Notarized macOS releases
+# get plugin trust through Apple codesigning + Sparkle anyway, so
+# the GPG verifier is not a useful second layer there.
+if(MSVC)
+    set(_meshmc_default_plugin_signatures OFF)
+elseif(APPLE)
+    # Detect a universal build: CMAKE_OSX_ARCHITECTURES is a list, and
+    # a "universal" build is any list with more than one architecture.
+    list(LENGTH CMAKE_OSX_ARCHITECTURES _meshmc_osx_arch_count)
+    if(_meshmc_osx_arch_count GREATER 1)
+        set(_meshmc_default_plugin_signatures OFF)
+        message(STATUS
+            "macOS universal build detected (CMAKE_OSX_ARCHITECTURES="
+            "${CMAKE_OSX_ARCHITECTURES}). "
+            "Defaulting MeshMC_PLUGIN_SIGNATURES=OFF because Homebrew "
+            "gpgmepp only ships single-arch dylibs. Override with "
+            "-DMeshMC_PLUGIN_SIGNATURES=ON if you have a fat gpgmepp.")
+    else()
+        set(_meshmc_default_plugin_signatures ON)
+    endif()
+    unset(_meshmc_osx_arch_count)
+else()
+    set(_meshmc_default_plugin_signatures ON)
+endif()
+option(MeshMC_PLUGIN_SIGNATURES
+    "Enable GPG-backed plugin signature verification (requires Gpgmepp)"
+    ${_meshmc_default_plugin_signatures})
+
+if(MeshMC_PLUGIN_SIGNATURES)
+    find_package(Gpgmepp REQUIRED)
+    if(TARGET Gpgmepp)
+        # Upstream only ships an unconfigured ("NOCONFIG") import, which
+        # trips the Ninja Multi-Config generator with errors like:
+        #   IMPORTED_LOCATION not set for imported target "Gpgmepp"
+        #   configuration "RelWithDebInfo"
+        # Replicate the NOCONFIG IMPORTED_LOCATION / IMPORTED_SONAME on
+        # every build configuration we use.
+        get_target_property(_gpgmepp_loc Gpgmepp IMPORTED_LOCATION_NOCONFIG)
+        get_target_property(_gpgmepp_son Gpgmepp IMPORTED_SONAME_NOCONFIG)
+        if(_gpgmepp_loc)
+            foreach(_cfg DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+                set_property(TARGET Gpgmepp APPEND PROPERTY
+                    IMPORTED_CONFIGURATIONS ${_cfg})
+                set_target_properties(Gpgmepp PROPERTIES
+                    IMPORTED_LOCATION_${_cfg} "${_gpgmepp_loc}")
+                if(_gpgmepp_son)
+                    set_target_properties(Gpgmepp PROPERTIES
+                        IMPORTED_SONAME_${_cfg} "${_gpgmepp_son}")
+                endif()
+            endforeach()
+        endif()
+    endif()
+endif()
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ####################################### Branding #######################################
@@ -203,8 +276,8 @@ add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")
 add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MESHMC_VERSION\\' value=\\'${MeshMC_RELEASE_VERSION_NAME}\\']")
 
 ######## Secondly, please set version numbers ########
-set(MeshMC_VERSION_MAJOR    7)
-set(MeshMC_VERSION_MINOR    19)
+set(MeshMC_VERSION_MAJOR    8)
+set(MeshMC_VERSION_MINOR    0)
 set(MeshMC_VERSION_HOTFIX   0)
 
 set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
@@ -215,13 +288,23 @@ set(MeshMC_VERSION_NAME4_COMMA "${MeshMC_VERSION_MAJOR},${MeshMC_VERSION_MINOR},
 ######## Thirdly, please define URLs and API keys ########
 
 set(MeshMC_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch MeshMC's news RSS feed from.")
-set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml" CACHE STRING "Semicolon-separated list of extra RSS feed URLs for the NewsViewer plugin.")
+set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml;" CACHE STRING "Semicolon-separated list of extra RSS feed URLs for the NewsViewer plugin.")
 
 # Build number
 set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
 
-# Name to help updater identify valid artifacts
-set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Artifact name to help the updater identify valid artifacts.")
+# Legacy substring artifact name (e.g. "MeshMC-Linux-Portable"). Used as a
+# last-resort fallback when the product feed's assets do not carry the new
+# structured attributes. Prefer setting the four structured cache vars below
+# instead.
+set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Legacy substring used to match a feed asset when structured attributes are unavailable.")
+
+# Structured build identity. Matched directly against the feed asset's
+# `platform`, `arch`, `portable` and `kind` attributes.
+set(MeshMC_BUILD_PLATFORM_ID "" CACHE STRING "Updater asset platform id: linux | windows | macos.")
+set(MeshMC_BUILD_ARCH        "" CACHE STRING "Updater asset arch: x86_64 | aarch64.")
+set(MeshMC_BUILD_PORTABLE    "" CACHE STRING "Updater asset portable flag: true | false.")
+set(MeshMC_BUILD_KIND        "" CACHE STRING "Updater asset kind: archive | appimage | installer.")
 
 # Build platform.
 set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
@@ -229,11 +312,11 @@ set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platfo
 # Channel list URL (legacy - kept for compatibility)
 set(MeshMC_UPDATER_BASE "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "Base URL for the legacy GoUpdate system (unused).")
 
-# New updater: RSS feed URL (projt: namespace)
-set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "RSS feed URL for the updater (projt: namespace.)")
+# Updater: authoritative product feed URL (projt: namespace).
+set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "RSS product feed URL for the updater (projt: namespace).")
 
-# New updater: GitHub releases API URL
-set(MeshMC_UPDATER_GITHUB_API_URL "https://api.github.com/repos/Project-Tick/Project-Tick/releases/latest" CACHE STRING "GitHub Releases API URL for update verification.")
+# Updater: latest.json mirror URL (used as a cross-check; empty disables it).
+set(MeshMC_UPDATER_LATEST_JSON_URL "https://ftp.projecttick.org/Project-Tick/latest.json" CACHE STRING "Project Tick latest.json mirror used as a sanity check against the feed.")
 
 # Notification URL
 set(MeshMC_NOTIFICATION_URL "https://projecttick.org/" CACHE STRING "URL for checking for notifications.")
@@ -481,7 +564,14 @@ install(FILES "${NEWLAUNCH_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "NewLaunc
 
 add_subdirectory(buildconfig)
 
-if(NOT MeshMC_BUILD_ARTIFACT STREQUAL "" AND NOT MeshMC_UPDATER_FEED_URL STREQUAL "" AND NOT MeshMC_UPDATER_GITHUB_API_URL STREQUAL "")
+# The standalone meshmc-updater binary is built whenever the updater feed
+# URL is configured AND the build supplies either a structured asset
+# identity (platform/arch/kind) or the legacy substring identifier.
+if(NOT MeshMC_UPDATER_FEED_URL STREQUAL "" AND
+   ((NOT MeshMC_BUILD_PLATFORM_ID STREQUAL "" AND
+     NOT MeshMC_BUILD_ARCH STREQUAL "" AND
+     NOT MeshMC_BUILD_KIND STREQUAL "") OR
+    NOT MeshMC_BUILD_ARTIFACT STREQUAL ""))
     add_subdirectory(updater)
 endif()
 

@@ -101,13 +101,14 @@
 #include "ui/pages/BasePage.h"
 
 #define MMCO_MAGIC 0x4D4D434F
-#define MMCO_VERSION "7.0.0"
-#define MMCO_ABI_VERSION 1
+#define MMCO_VERSION "8.0.0"
+#define MMCO_ABI_VERSION 2
 #define MMCO_EXTENSION ".mmco"
 #define MMCO_FLAG_NONE 0x00000000
+#define MMCO_TRAILER_MAGIC 0x53434D4D /* ASCII "MMCS" — see MMCOFormat.h */
 #define MMCO_VERNUM                                                            \
-	0x07000000L /* MMNNRRSM: major minor revision status modified */
-#define MMCO_VER_MAJOR 7
+	0x08000000L /* MMNNRRSM: major minor revision status modified */
+#define MMCO_VER_MAJOR 8
 #define MMCO_VER_MINOR 0
 #define MMCO_VER_REVISION 0
 #define MMCO_VER_STATUS 0 /* 0=devel, 1-E=beta, F=Release (DEPRECATED) */
@@ -122,6 +123,15 @@
 #define MMCO_EXPORT __attribute__((visibility("default")))
 #endif
 
+/*
+ * Optional dependency on another .mmco module.
+ */
+struct MMCODependency {
+	const char* name;
+	const char* min_version; /* nullptr or "" = any version */
+	uint32_t optional;		 /* non-zero = optional dep */
+};
+
 struct MMCOModuleInfo {
 	uint32_t magic;
 	uint32_t abi_version;
@@ -132,6 +142,12 @@ struct MMCOModuleInfo {
 	const char* license;
 	uint32_t flags;
 	const char* code_link;
+
+	/* Icon set, dependency table, GPG signing key — see MMCOFormat.h */
+	const char* icon_set_resource;
+	const MMCODependency* dependencies;
+	uint32_t dependency_count;
+	const char* signing_key_id;
 };
 
 enum MMCOHookId : uint32_t {
@@ -153,6 +169,10 @@ enum MMCOHookId : uint32_t {
 
 	/* News */
 	MMCO_HOOK_NEWS_UPDATED = 0x0700, /* payload: nullptr */
+
+	/* Plugin-driven authentication providers (ABI 2+ additive) */
+	MMCO_HOOK_AUTH_REQUEST = 0x0800, /* payload: MMCOAuthRequestEvent* */
+	MMCO_HOOK_SESSION_FILL = 0x0801, /* payload: MMCOSessionFillEvent* */
 };
 
 struct MMCOInstanceInfo {
@@ -194,8 +214,98 @@ struct MMCOInstancePagesEvent {
 	void* instance_handle;
 };
 
+/*
+ * Payload for MMCO_HOOK_UI_MAIN_READY (ABI 2+).
+ *
+ * Direct opaque handles to the main window's long-lived widgets, so
+ * plugins can wire callbacks without scanning qApp->allWidgets().
+ *
+ *   main_window       — QMainWindow*  (MainWindow*)
+ *   news_toolbar      — QToolBar*
+ *   more_news_action  — QAction*       (the "More News..." action)
+ *   news_label_button — QToolButton*   (the clickable news headline)
+ *
+ * All handles are owned by MeshMC and stay valid for the lifetime of the
+ * main window. Plugins must NOT delete or take ownership of them.
+ */
+struct MMCOUiMainReadyPayload {
+	void* main_window;
+	void* news_toolbar;
+	void* more_news_action;
+	void* news_label_button;
+};
+
 struct MMCOGlobalSettingsPagesEvent {
 	void* page_list_handle;
+};
+
+/*
+ * Payload for MMCO_HOOK_AUTH_REQUEST (ABI 2+).
+ *
+ *   url            — effective URL of the in-flight request (read-only).
+ *   method         — "GET" | "POST" | "PUT" | "DELETE" | …  (read-only).
+ *   body / body_size — POST/PUT body bytes (read-only). NULL/0 for GETs.
+ *
+ *   redirect_url   — set non-null to rewrite the URL before send. The
+ *                    host copies the string; plugin retains ownership.
+ *   request_handle — opaque cookie; pass to add_header() below.
+ *   add_header     — append "Key: value" to the request's HTTP headers.
+ *                    Returns 0 on success.
+ *
+ * Returning non-zero from the hook callback cancels the request:
+ * AuthRequest emits a network error and the calling AuthStep fails.
+ */
+struct MMCOAuthRequestEvent {
+	const char* url;
+	const char* method;
+	const char* body;
+	int body_size;
+
+	const char* redirect_url;
+
+	void* request_handle;
+	int (*add_header)(void* request_handle, const char* key, const char* value);
+};
+
+/*
+ * Payload for MMCO_HOOK_SESSION_FILL (ABI 2+).
+ *
+ * Lets a plugin overwrite any field on the AuthSession after the host
+ * has populated its defaults and before the launch task is built.
+ * NULL in any overwrite_* slot means "leave the host default alone".
+ *
+ *   account_id            — internal id of the account being used.
+ *   account_is_msa        — 1 if MSA, 0 if offline.
+ *   wants_online          — 1 if the user requested an online launch.
+ *
+ *   current_*             — read-only snapshot of the host-filled
+ *                           session fields.
+ *
+ *   overwrite_access_token, overwrite_session, overwrite_player_name,
+ *   overwrite_uuid, overwrite_user_type, overwrite_client_token
+ *                         — set non-null to replace the corresponding
+ *                           field.  Strings copied by the host.
+ *
+ *   extra_user_properties — appended to AuthSession::user_properties
+ *                           verbatim. NULL = nothing to add.
+ */
+struct MMCOSessionFillEvent {
+	const char* account_id;
+	int account_is_msa;
+	int wants_online;
+
+	const char* current_player_name;
+	const char* current_uuid;
+	const char* current_user_type;
+
+	const char* overwrite_access_token;
+	const char* overwrite_session;
+	const char* overwrite_player_name;
+	const char* overwrite_uuid;
+	const char* overwrite_user_type;
+	const char* overwrite_client_token;
+
+	const char* extra_user_properties;
 };
 
 typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,
@@ -209,6 +319,16 @@ typedef void (*MMCODirEntryCallback)(void* user_data, const char* entry_name,
 									 int is_dir);
 typedef void (*MMCOButtonCallback)(void* user_data);
 typedef void (*MMCOTreeSelectionCallback)(void* user_data, int row);
+
+/* S19 — System Tray activation reason
+ *   0=Unknown, 1=Trigger (single click), 2=DoubleClick,
+ *   3=MiddleClick, 4=Context (right click).
+ * Mirrors QSystemTrayIcon::ActivationReason 1..4. */
+typedef void (*MMCOTrayActivationCallback)(void* user_data, int reason);
+
+/* S20 — Main-window close-event filter.
+ *   Return 0 to let the close proceed, 1 to swallow it (hide-to-tray). */
+typedef int (*MMCOMainWindowCloseCallback)(void* user_data);
 
 struct MMCOContext {
 	/* ABI guard */
@@ -428,25 +548,123 @@ struct MMCOContext {
 	int (*news_get_feed_count)(void* mh);
 	const char* (*news_get_feed_url)(void* mh, int index);
 	int (*news_reload)(void* mh);
+
+	/* S18 — Plugin icon set */
+
+	/* Resolve a logical icon name from the calling module's bundled
+	 * icon set into a Qt resource path (e.g. ":/plugins/MyPlugin/foo").
+	 * Returns nullptr if the module did not declare icon_set_resource
+	 * or the icon does not exist. The returned pointer is valid until
+	 * the next API call on the same module. */
+	const char* (*ui_plugin_icon)(void* mh, const char* name);
+
+	/* S19 — System Tray (additive; no ABI bump) */
+	void* (*tray_create)(void* mh, const char* icon_name, const char* tooltip);
+	int (*tray_destroy)(void* mh, void* tray_handle);
+	int (*tray_is_available)(void* mh);
+	int (*tray_set_icon)(void* mh, void* tray_handle, const char* icon_name);
+	int (*tray_set_tooltip)(void* mh, void* tray_handle, const char* tooltip);
+	int (*tray_set_visible)(void* mh, void* tray_handle, int visible);
+	/* icon_type: 0=None, 1=Info, 2=Warning, 3=Critical.
+	 * tray_handle may be nullptr — a transient hidden tray is used. */
+	int (*tray_show_message)(void* mh, void* tray_handle, const char* title,
+							 const char* message, int icon_type, int msecs);
+	int (*tray_set_menu)(void* mh, void* tray_handle, void* menu_handle);
+	int (*tray_set_activation_cb)(void* mh, void* tray_handle,
+								  MMCOTrayActivationCallback cb, void* ud);
+	void* (*tray_menu_create)(void* mh);
+	int (*tray_menu_destroy)(void* mh, void* menu_handle);
+	int (*tray_menu_clear)(void* mh, void* menu_handle);
+	int (*tray_menu_add_separator)(void* mh, void* menu_handle);
+	void* (*tray_menu_add_action)(void* mh, void* menu_handle,
+								  const char* label, const char* icon_name,
+								  MMCOMenuActionCallback cb, void* ud);
+	int (*tray_menu_action_set_enabled)(void* mh, void* action_handle,
+										int enabled);
+	int (*tray_menu_action_set_text)(void* mh, void* action_handle,
+									 const char* text);
+	/* Create a nested submenu under `parent_menu`. The returned handle
+	 * is a QMenu* — pass it to the other tray_menu_* helpers. The
+	 * submenu is parented to the parent menu and freed automatically
+	 * when the parent menu is destroyed. */
+	void* (*tray_menu_add_submenu)(void* mh, void* parent_menu,
+								   const char* label, const char* icon_name);
+
+	/* S20 — Main window helpers (additive) */
+	int (*main_window_install_close_filter)(void* mh,
+											MMCOMainWindowCloseCallback cb,
+											void* user_data);
+	int (*main_window_show)(void* mh);
+	int (*main_window_hide)(void* mh);
+	int (*main_window_is_visible)(void* mh);
 };
+
+/*
+ * MMCO_DEFINE_MODULE — emit the mmco_module_info struct.
+ *
+ * Accepts 5 to 7 positional arguments:
+ *   1. name
+ *   2. version
+ *   3. author
+ *   4. description
+ *   5. license            (SPDX identifier)
+ *   6. code_link          (optional, source URL — pass nullptr to skip)
+ *   7. icon_set_resource  (optional, logical icon-set name — see
+ *                          MMCOModuleInfo::icon_set_resource)
+ *
+ * Modules that need to declare dependencies or a signing key id should
+ * use MMCO_DEFINE_MODULE_EX() below and supply them explicitly.
+ */
+
+#define MMCO_DEFINE_MODULE_7(mod_name, mod_version, mod_author, mod_desc,      \
+							 mod_license, mod_code_link, mod_icon_set)         \
+	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+		MMCO_MAGIC,	   MMCO_ABI_VERSION, mod_name,	  mod_version,             \
+		mod_author,	   mod_desc,		 mod_license, MMCO_FLAG_NONE,          \
+		mod_code_link, mod_icon_set,	 nullptr,	  0u,                      \
+		nullptr}
 
 #define MMCO_DEFINE_MODULE_6(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license, mod_code_link)                       \
-	extern "C" MMCO_EXPORT MMCOModuleInfo                                      \
-		mmco_module_info = {MMCO_MAGIC,	 MMCO_ABI_VERSION, mod_name,           \
-							mod_version, mod_author,	   mod_desc,           \
-							mod_license, MMCO_FLAG_NONE,   mod_code_link}
+	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+		MMCO_MAGIC,	   MMCO_ABI_VERSION, mod_name,	  mod_version,             \
+		mod_author,	   mod_desc,		 mod_license, MMCO_FLAG_NONE,          \
+		mod_code_link, nullptr,			 nullptr,	  0u,                      \
+		nullptr}
 
 #define MMCO_DEFINE_MODULE_5(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license)                                      \
 	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
-		MMCO_MAGIC, MMCO_ABI_VERSION, mod_name,		  mod_version, mod_author, \
-		mod_desc,	mod_license,	  MMCO_FLAG_NONE, nullptr}
+		MMCO_MAGIC, MMCO_ABI_VERSION, mod_name,	   mod_version,                \
+		mod_author, mod_desc,		  mod_license, MMCO_FLAG_NONE,             \
+		nullptr,	nullptr,		  nullptr,	   0u,                         \
+		nullptr}
+
+/*
+ * Full-fledged variant for modules that need to declare an icon set,
+ * a dependency table, and / or a signing-key id explicitly.
+ *
+ *   MMCO_DEFINE_MODULE_EX("MyMod", "1.0", "Me", "desc", "MIT",
+ *                         "https://example.org", "my_icons",
+ *                         my_deps_array, 2,
+ *                         "ABCD1234...");
+ *
+ * Pass nullptr / 0 for any field you don't use.
+ */
+#define MMCO_DEFINE_MODULE_EX(mod_name, mod_version, mod_author, mod_desc,     \
+							  mod_license, mod_code_link, mod_icon_set,        \
+							  mod_deps_ptr, mod_deps_count, mod_signing_key)   \
+	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+		MMCO_MAGIC,		MMCO_ABI_VERSION, mod_name,		mod_version,           \
+		mod_author,		mod_desc,		  mod_license,	MMCO_FLAG_NONE,        \
+		mod_code_link,	mod_icon_set,	  mod_deps_ptr, mod_deps_count,        \
+		mod_signing_key}
 
 #define MMCO_EXPAND(x) x
-#define MMCO_GET_MACRO(_1, _2, _3, _4, _5, _6, NAME, ...) NAME
+#define MMCO_GET_MACRO(_1, _2, _3, _4, _5, _6, _7, NAME, ...) NAME
 #define MMCO_DEFINE_MODULE(...)                                                \
-	MMCO_EXPAND(MMCO_GET_MACRO(__VA_ARGS__, MMCO_DEFINE_MODULE_6,              \
+	MMCO_EXPAND(MMCO_GET_MACRO(__VA_ARGS__, MMCO_DEFINE_MODULE_7,              \
+							   MMCO_DEFINE_MODULE_6,                           \
 							   MMCO_DEFINE_MODULE_5)(__VA_ARGS__))
 
 #define MMCO_LOG(ctx, msg) (ctx)->log_info((ctx)->module_handle, (msg))

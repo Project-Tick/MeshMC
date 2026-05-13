@@ -35,6 +35,11 @@ void ModFolderLoadTask::run()
 {
 	m_dir.refresh();
 	for (auto entry : m_dir.entryInfoList()) {
+		// The persistent sidecar dir lives next to the mod files and must
+		// never be exposed as a "mod folder" entry.
+		if (entry.isDir() && entry.fileName() == QStringLiteral(".index")) {
+			continue;
+		}
 		Mod m(entry);
 		m_result->mods[m.mmc_id()] = m;
 	}

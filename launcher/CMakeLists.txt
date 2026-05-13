@@ -155,7 +155,7 @@ set(UPDATE_SOURCES
 )
 
 add_unit_test(UpdateChecker
-    SOURCES updater/UpdateChecker_test.cpp
+    SOURCES updater/UpdateChecker_test.cpp updater/UpdateChecker_test.h
     LIBS MeshMC_logic
     )
 
@@ -312,6 +312,8 @@ set(MINECRAFT_SOURCES
     minecraft/mod/ModFolderLoadTask.cpp
     minecraft/mod/LocalModParseTask.h
     minecraft/mod/LocalModParseTask.cpp
+    minecraft/mod/ModMetadataIndex.h
+    minecraft/mod/ModMetadataIndex.cpp
     minecraft/mod/ResourcePackFolderModel.h
     minecraft/mod/ResourcePackFolderModel.cpp
     minecraft/mod/TexturePackFolderModel.h
@@ -542,6 +544,10 @@ set(CONTENT_DOWNLOAD_SOURCES
     modplatform/DependencyResolver.cpp
     modplatform/ContentDownloadTask.h
     modplatform/ContentDownloadTask.cpp
+    modplatform/ModInstallConflictAnalyzer.h
+    modplatform/ModInstallConflictAnalyzer.cpp
+    modplatform/ModUpdateCheckTask.h
+    modplatform/ModUpdateCheckTask.cpp
 )
 
 set(PLUGIN_SOURCES
@@ -554,6 +560,10 @@ set(PLUGIN_SOURCES
     plugin/PluginLoader.cpp
     plugin/PluginManager.h
     plugin/PluginManager.cpp
+    plugin/PluginSignature.h
+    plugin/PluginSignature.cpp
+    plugin/PluginDependencyResolver.h
+    plugin/PluginDependencyResolver.cpp
 )
 
 add_unit_test(Index
@@ -832,6 +842,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/DownloadContentDialog.h
     ui/dialogs/DownloadSummaryDialog.cpp
     ui/dialogs/DownloadSummaryDialog.h
+    ui/dialogs/ModUpdateDialog.cpp
+    ui/dialogs/ModUpdateDialog.h
     ui/dialogs/MeshMCLogsDialog.cpp
     ui/dialogs/MeshMCLogsDialog.h
     ui/dialogs/UpdateProgressDialog.cpp
@@ -1004,6 +1016,18 @@ target_link_libraries(MeshMC_logic
 # Plugin system needs dlopen/dlsym on Unix
 if(UNIX AND NOT APPLE)
     target_link_libraries(MeshMC_logic ${CMAKE_DL_LIBS})
+endif()
+
+# GpgME (C++ bindings) — MMCO plugin signature verification.
+# Only linked when MeshMC_PLUGIN_SIGNATURES is ON (default off on MSVC,
+# because upstream gpgme does not support MSVC). When disabled,
+# PluginSignature.cpp compiles into a stub that reports every module
+# as unsigned and never tries to include any gpgme++ headers.
+if(MeshMC_PLUGIN_SIGNATURES)
+    target_link_libraries(MeshMC_logic Gpgmepp)
+    target_compile_definitions(MeshMC_logic PRIVATE MESHMC_PLUGIN_SIGNATURES=1)
+else()
+    target_compile_definitions(MeshMC_logic PRIVATE MESHMC_PLUGIN_SIGNATURES=0)
 endif()
 
 if(APPLE)

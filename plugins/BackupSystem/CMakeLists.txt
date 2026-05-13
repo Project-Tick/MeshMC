@@ -48,3 +48,12 @@ endforeach()
 install(TARGETS BackupSystem
     LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
 )
+
+# Opt-in GPG signing — no-op unless MeshMC_PLUGIN_SIGN_ALL is ON and
+# MeshMC_PLUGIN_SIGNING_KEY is set (see cmake/MMCOSign.cmake). The
+# call must happen in *this* CMakeLists.txt (the one that owns the
+# target) — modern CMake forbids add_custom_command(TARGET …) from
+# a different directory.
+if(MeshMC_PLUGIN_SIGN_ALL)
+    mmco_sign_plugin(BackupSystem)
+endif()

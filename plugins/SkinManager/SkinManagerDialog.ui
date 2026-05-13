@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SkinManagerDialog</class>
+ <widget class="QDialog" name="SkinManagerDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>820</width>
+    <height>540</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Skin Upload</string>
+  </property>
+  <layout class="QVBoxLayout" name="rootLayout">
+   <item>
+    <widget class="QLabel" name="accountLabel">
+     <property name="text"><string>Account: —</string></property>
+     <property name="styleSheet">
+      <string>font-weight: bold; padding: 4px 0;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSplitter" name="bodySplitter">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="childrenCollapsible"><bool>false</bool></property>
+     <widget class="QWidget" name="viewerHost">
+      <property name="minimumSize">
+       <size><width>260</width><height>360</height></size>
+      </property>
+      <layout class="QVBoxLayout" name="viewerHostLayout">
+       <property name="margin"><number>0</number></property>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="controlPane">
+      <property name="minimumSize">
+       <size><width>320</width><height>360</height></size>
+      </property>
+      <layout class="QVBoxLayout" name="controlLayout">
+       <!-- Skin file picker -->
+       <item>
+        <widget class="QGroupBox" name="skinGroup">
+         <property name="title"><string>Skin file</string></property>
+         <layout class="QVBoxLayout" name="skinLayout">
+          <item>
+           <layout class="QHBoxLayout" name="skinPathRow">
+            <item>
+             <widget class="QLineEdit" name="skinPathText">
+              <property name="placeholderText">
+               <string>Keep current skin, or pick a new PNG…</string>
+              </property>
+              <property name="readOnly"><bool>true</bool></property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnBrowse">
+              <property name="text"><string>Browse…</string></property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="dropHint">
+            <property name="text">
+             <string>Tip: drag-and-drop a 64×64 PNG onto the preview.</string>
+            </property>
+            <property name="styleSheet">
+             <string>color: palette(mid); font-size: 11px;</string>
+            </property>
+            <property name="wordWrap"><bool>true</bool></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <!-- Variant -->
+       <item>
+        <widget class="QGroupBox" name="variantGroup">
+         <property name="title"><string>Model</string></property>
+         <layout class="QVBoxLayout" name="variantLayout">
+          <item>
+           <widget class="QRadioButton" name="rdoClassic">
+            <property name="text"><string>Classic (4-pixel arms, Steve)</string></property>
+            <property name="checked"><bool>true</bool></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rdoSlim">
+            <property name="text"><string>Slim (3-pixel arms, Alex)</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <!-- Display options -->
+       <item>
+        <widget class="QGroupBox" name="displayGroup">
+         <property name="title"><string>Preview</string></property>
+         <layout class="QVBoxLayout" name="displayLayout">
+          <item>
+           <widget class="QCheckBox" name="chkOverlay">
+            <property name="text"><string>Show second-layer overlay</string></property>
+            <property name="checked"><bool>true</bool></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="chkAutoRotate">
+            <property name="text"><string>Auto-rotate</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <!-- Cape -->
+       <item>
+        <widget class="QGroupBox" name="capeGroup">
+         <property name="title"><string>Cape</string></property>
+         <layout class="QFormLayout" name="capeForm">
+          <item row="0" column="0">
+           <widget class="QLabel" name="lblCape">
+            <property name="text"><string>Active cape:</string></property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="capeCombo"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <!-- Status -->
+       <item>
+        <widget class="QLabel" name="statusLabel">
+         <property name="text"><string/></property>
+         <property name="wordWrap"><bool>true</bool></property>
+         <property name="styleSheet">
+          <string>color: palette(mid); font-size: 11px;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="vSpacer">
+         <property name="orientation"><enum>Qt::Vertical</enum></property>
+         <property name="sizeHint" stdset="0">
+          <size><width>20</width><height>40</height></size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttonRow">
+     <item>
+      <widget class="QPushButton" name="btnReset">
+       <property name="text"><string>Reset to default skin…</string></property>
+       <property name="toolTip">
+        <string>Remove the active custom skin and revert to Steve / Alex.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="hSpacer">
+       <property name="orientation"><enum>Qt::Horizontal</enum></property>
+       <property name="sizeHint" stdset="0">
+        <size><width>40</width><height>20</height></size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

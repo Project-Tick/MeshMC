@@ -70,6 +70,18 @@ struct AuthSession {
 
 	// Is this a demo session?
 	bool demo = false;
+
+	/*
+	 * Optional user properties payload, populated by plugins through
+	 * MMCO_HOOK_SESSION_FILL. Expected to be either:
+	 *   - a JSON object literal (e.g. `{"textures":["..."]}`); or
+	 *   - empty (the default).
+	 *
+	 * Consumed by serializeUserProperties() when building the JVM
+	 * command line. authlib-injector and Yggdrasil-compatible servers
+	 * use this slot to ship things like signed cape/skin texture URLs.
+	 */
+	QString user_properties;
 };
 
 typedef std::shared_ptr<AuthSession> AuthSessionPtr;

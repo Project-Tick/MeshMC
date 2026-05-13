@@ -86,7 +86,10 @@ class MainWindow : public QMainWindow
 
 	void droppedURLs(QList<QUrl> urls);
 
-	NewsChecker* newsChecker() const { return m_newsChecker.get(); }
+	NewsChecker* newsChecker() const
+	{
+		return m_newsChecker.get();
+	}
   signals:
 	void isClosing();
 

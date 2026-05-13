@@ -53,6 +53,9 @@
 
 #include "ModFolderLoadTask.h"
 #include "LocalModParseTask.h"
+#include "ModMetadataIndex.h"
+
+#include <memory>
 
 class LegacyInstance;
 class BaseInstance;
@@ -144,6 +147,16 @@ class ModFolderModel : public QAbstractListModel
 		return mods;
 	}
 
+	/* Access to the persistent install metadata for this folder.
+	 * Lifetime is bound to the model. May be null only before construction
+	 * completes; otherwise always non-null. Use this from install and
+	 * dependency-resolution code to skip already-installed projects and
+	 * to drive update checks. */
+	std::shared_ptr<ModMetadataIndex> metadataIndex() const
+	{
+		return m_metadata;
+	}
+
   public slots:
 	void disableInteraction(bool disabled);
 
@@ -170,4 +183,5 @@ class ModFolderModel : public QAbstractListModel
 	QMap<int, LocalModParseTask::ResultPtr> activeTickets;
 	int nextResolutionTicket = 0;
 	QList<Mod> mods;
+	std::shared_ptr<ModMetadataIndex> m_metadata;
 };

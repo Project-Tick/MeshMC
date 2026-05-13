@@ -31,16 +31,22 @@
 
 QString AuthSession::serializeUserProperties()
 {
-	QJsonObject userAttrs;
 	/*
-	for (auto key : u.properties.keys())
-	{
-		auto array = QJsonArray::fromStringList(u.properties.values(key));
-		userAttrs.insert(key, array);
+	 * If a plugin filled user_properties through MMCO_HOOK_SESSION_FILL,
+	 * pass it through as-is — it is expected to already be a valid JSON
+	 * object literal. Otherwise emit the empty-object default, which is
+	 * what vanilla Mojang flows want.
+	 */
+	const QString trimmed = user_properties.trimmed();
+	if (!trimmed.isEmpty()) {
+		QJsonParseError err{};
+		auto doc = QJsonDocument::fromJson(trimmed.toUtf8(), &err);
+		if (err.error == QJsonParseError::NoError && doc.isObject())
+			return doc.toJson(QJsonDocument::Compact);
+		/* Malformed → fall through to the empty default so the launch
+		 * doesn't break. */
 	}
-	*/
-	QJsonDocument value(userAttrs);
-	return value.toJson(QJsonDocument::Compact);
+	return QJsonDocument(QJsonObject{}).toJson(QJsonDocument::Compact);
 }
 
 bool AuthSession::MakeOffline(QString offline_playername)

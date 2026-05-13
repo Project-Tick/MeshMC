@@ -40,3 +40,7 @@ endforeach()
 install(TARGETS LinuxPerf
     LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
 )
+
+if(MeshMC_PLUGIN_SIGN_ALL)
+    mmco_sign_plugin(LinuxPerf)
+endif()

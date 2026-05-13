@@ -35,7 +35,7 @@
 
 <!-- ⚠️⚠️⚠️ DO NOT REMOVE TEMPLATE ⚠️⚠️⚠️ -->
 
-/label ~"3.type::enhancement" ~"9.has::discussion" ~"9.needs: triage" ~"2.this::idea" ~"6.topic::MeshMC"
+/label ~"3.type::enhancement" ~"9.has::discussion" ~"9.needs: triage" ~"2.this::idea" ~"6.topic::meshmc"
 /cc @project-tick/developers
 /cc @project-tick/maintainers
 /assign me

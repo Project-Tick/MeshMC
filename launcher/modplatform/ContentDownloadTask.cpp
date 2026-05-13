@@ -26,9 +26,11 @@
 
 #include "ContentDownloadTask.h"
 #include "Application.h"
+#include "minecraft/mod/ModMetadataIndex.h"
 #include "net/Download.h"
 #include "net/ChecksumValidator.h"
 
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -39,6 +41,12 @@ ContentDownloadTask::ContentDownloadTask(
 	QObject* parent)
 	: Task(parent), m_items(items), m_targetDir(targetDir)
 {
+}
+
+void ContentDownloadTask::setMetadataIndex(
+	std::shared_ptr<ModMetadataIndex> index)
+{
+	m_metadata = std::move(index);
 }
 
 void ContentDownloadTask::executeTask()
@@ -61,8 +69,34 @@ void ContentDownloadTask::executeTask()
 	for (const auto& item : m_items) {
 		QString targetPath = dir.filePath(item.fileName);
 
-		// Skip if file already exists with matching SHA1 checksum
-		if (QFileInfo::exists(targetPath) && !item.sha1.isEmpty()) {
+		// Updates explicitly target a different on-disk file ("foo-1.0.jar"
+		// -> "foo-1.1.jar"). Drop the old file (and its sidecar) before
+		// downloading so the directory never holds both versions at once.
+		if (!item.replacesFileName.isEmpty() &&
+			item.replacesFileName != item.fileName) {
+			const QString oldEnabled = dir.filePath(item.replacesFileName);
+			const QString oldDisabled =
+				oldEnabled + QStringLiteral(".disabled");
+			for (const QString& candidate : {oldEnabled, oldDisabled}) {
+				if (QFile::exists(candidate)) {
+					if (QFile::remove(candidate)) {
+						qDebug() << "ContentDownload: removed superseded"
+								 << candidate;
+					} else {
+						qWarning()
+							<< "ContentDownload: failed to remove" << candidate;
+					}
+				}
+			}
+			if (m_metadata) {
+				m_metadata->remove(item.replacesFileName);
+			}
+		}
+
+		// Skip if file already exists with matching SHA1 checksum and the
+		// caller did not request a forced replace.
+		if (!item.replaceExisting && QFileInfo::exists(targetPath) &&
+			!item.sha1.isEmpty()) {
 			QFile existingFile(targetPath);
 			if (existingFile.open(QIODevice::ReadOnly)) {
 				QCryptographicHash hash(QCryptographicHash::Sha1);
@@ -74,6 +108,17 @@ void ContentDownloadTask::executeTask()
 					skipped++;
 					continue;
 				}
+			}
+		}
+
+		// A forced replace must clear the destination first so the
+		// downloader writes a fresh file rather than appending or failing.
+		if (item.replaceExisting && QFileInfo::exists(targetPath)) {
+			if (!QFile::remove(targetPath)) {
+				qWarning() << "ContentDownload: cannot replace" << targetPath;
+			}
+			if (m_metadata) {
+				m_metadata->remove(item.fileName);
 			}
 		}
 
@@ -93,6 +138,7 @@ void ContentDownloadTask::executeTask()
 	// If all files were skipped, nothing to download
 	if (m_netJob->size() == 0) {
 		m_netJob.reset();
+		writeSidecars();
 		emitSucceeded();
 		return;
 	}
@@ -107,9 +153,41 @@ void ContentDownloadTask::executeTask()
 	m_netJob->start();
 }
 
+void ContentDownloadTask::writeSidecars()
+{
+	if (!m_metadata) {
+		return;
+	}
+	const QDir dir(m_targetDir);
+	for (const auto& item : m_items) {
+		// We only persist sidecars for items that finished on disk and that
+		// we can reason about later. Pure-local installs are recorded by
+		// ModFolderModel::installMod directly.
+		const QString path = dir.filePath(item.fileName);
+		if (!QFile::exists(path)) {
+			continue;
+		}
+
+		ModMetadataIndex::Entry e;
+		e.fileName = item.fileName;
+		e.platform = item.platform;
+		e.projectId = item.projectId;
+		e.versionId = item.versionId;
+		e.name = item.name;
+		e.slug = QString();
+		e.downloadUrl = item.downloadUrl;
+		e.sha1 = item.sha1.toLower();
+		e.fileSize = item.fileSize;
+		e.isDependency = item.isDependency;
+		e.installedAt = QDateTime::currentDateTimeUtc();
+		m_metadata->put(e);
+	}
+}
+
 void ContentDownloadTask::onDownloadSucceeded()
 {
 	m_netJob.reset();
+	writeSidecars();
 	emitSucceeded();
 }
 

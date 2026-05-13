@@ -88,6 +88,16 @@ class AccountList : public QAbstractListModel
 	void addAccount(const MinecraftAccountPtr account);
 	void removeAccount(QModelIndex index);
 	int findAccountByProfileId(const QString& profileId) const;
+	/*!
+	 * Returns the index of the first **offline** account whose stored
+	 * offlineUsername matches \a username case-insensitively (Minecraft
+	 * itself is case-sensitive but the launcher's profile listing is
+	 * not, and users routinely confuse "Player" with "player").
+	 * Returns -1 if no such account exists. MSA accounts are skipped —
+	 * an MSA profile that happens to share a name with an offline one
+	 * does NOT count as a duplicate.
+	 */
+	int findOfflineAccountByUsername(const QString& username) const;
 	MinecraftAccountPtr
 	getAccountByProfileName(const QString& profileName) const;
 	QStringList profileNames() const;

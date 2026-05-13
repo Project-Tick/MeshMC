@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2026 Project Tick -->
 <component type="desktop">
   <id>org.projecttick.MeshMC</id>
   <name>MeshMC</name>
-  <summary>Custom Minecraft Launcher to easily manage multiple Minecraft installations at once</summary>
+  <summary>Custom Minecraft Launcher to easily manage multiple Minecraft installations at once with MMCO Plugins</summary>
   <developer id="org.projecttick">
     <name>Project Tick</name>
   </developer>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <description>
-    <p>MeshMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity.</p>
+    <p>MeshMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity. With MMCO Plugin system.</p>
     <p>Features:</p>
     <ul>
       <li>Easily install game modifications, such as Fabric, Forge, NeoForge and Quilt</li>
       <li>Easily install and update modpacks from the MeshMC</li>
       <li>Control your Java settings</li>
+      <li>Ability to install MMCO plugin from outside</li>
+      <li>Ability to use proprietary plugins signed with MMCS.</li>
       <li>Manage worlds and resource packs from the launcher</li>
       <li>See logs and other details easily through a dashboard</li>
       <li>Kill Minecraft in case of a crash/freeze</li>
+      <li>Ability to disable MMCO plugins you don't want.</li>
       <li>Isolate Minecraft instances to keep everything clean</li>
       <li>Install and update mods directly from the launcher</li>
       <li>Customize the launcher with themes, and more</li>
       <li>And cats :3</li>
+      <li>With more themes, UwU</li>
     </ul>
   </description>
   <screenshots>
@@ -58,6 +63,43 @@
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="8.0.0" date="2026-06-15">
+      <description>
+        <p><em>Highlights</em></p>
+        <ul>
+          <li>New plugins and hooks have been added.</li>
+          <li>Numerous minor bugs have been fixed.</li>
+          <li>That gave me quite a bit of trouble again.</li>
+        </ul>
+        <p>Look how I summarized it in just three points! I think I should win a Nobel Prize. :)</p>
+        <p><em>Added</em></p>
+        <ul>
+          <li>The SkinManager plugin has been added, allowing you to view and edit your skins in 3D.</li>
+          <li>The Discord RPC plugin has been added so you can show off your MeshMC status on Discord.</li>
+          <li>The SystemTray plugin has been added so you can now easily use MeshMC in the system tray.</li>
+          <li>The DesktopNotifier plugin has been added to provide you with more detailed notifications.</li>
+          <li>APIs S18, S19, and S20 have been added.</li>
+          <li>MMCS security extension added. You can now sign your plugins.</li>
+          <li>The dependency graph feature has been added.</li>
+          <li>Mod metadata index and conflict analysis system added.</li>
+        </ul>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>DependencyResolver used in mods has been improved.</li>
+          <li>The update system has been completely revamped.</li>
+          <li>The UI injector system in Plugin Manager has been improved.</li>
+        </ul>
+        <p><em>Fixed</em></p>
+        <ul>
+          <li>The error of adding multiple offline accounts with the same name has been fixed.</li>
+          <li>The mod system has been fixed to prevent the same mod from being downloaded repeatedly.</li>
+        </ul>
+        <p><em>Removed</em></p>
+        <ul>
+          <li>The old, deprecated Update system has been completely removed.</li>
+        </ul>
+      </description>
+    </release>
     <release version="7.19.0" date="2026-05-10">
       <description>
         <p><em>Added</em></p>

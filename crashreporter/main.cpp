@@ -56,17 +56,18 @@ static QString readLogFile(const QString& logDir, const QString& baseName)
 
 static QString censorText(QString text, const QMap<QString, QString>& filter)
 {
-    QStringList keys = filter.keys();
-    std::sort(keys.begin(), keys.end(), [](const QString &s1, const QString &s2) {
-        return s1.length() > s2.length();
-    });
+	QStringList keys = filter.keys();
+	std::sort(keys.begin(), keys.end(),
+			  [](const QString& s1, const QString& s2) {
+				  return s1.length() > s2.length();
+			  });
 
-    for (const QString &key : keys) {
-        if (!key.isEmpty()) {
-            text.replace(key, filter[key]);
-        }
-    }
-    return text;
+	for (const QString& key : keys) {
+		if (!key.isEmpty()) {
+			text.replace(key, filter[key]);
+		}
+	}
+	return text;
 }
 
 static QString uploadToPasteEE(QNetworkAccessManager* nam, const QString& text,

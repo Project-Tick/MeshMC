@@ -28,6 +28,8 @@
 
 #include <QDialog>
 
+class QTreeWidgetItem;
+
 namespace Ui
 {
 	class PluginsDialog;
@@ -41,7 +43,22 @@ class PluginsDialog : public QDialog
 	explicit PluginsDialog(QWidget* parent = nullptr);
 	~PluginsDialog();
 
+  private slots:
+	/* Selection in the module tree changed — show details for the
+	 * currently selected plugin in the right-hand text panel. */
+	void onSelectionChanged();
+
+	/* Checkbox in column 0 toggled — persist the new enable/disable
+	 * state through PluginManager. */
+	void onItemChanged(QTreeWidgetItem* item, int column);
+
   private:
+	/* Rebuild the module tree from PluginManager::modules(). */
+	void populateTree();
+
+	/* Render the HTML details for a single module into the text panel. */
+	void showDetailsForRow(int row);
+
 	Ui::PluginsDialog* ui;
 };
 

@@ -27,6 +27,7 @@
 #include "DependencyResolver.h"
 #include "Application.h"
 #include "Json.h"
+#include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/ContentType.h"
 #include "net/Download.h"
 #include "net/NetJob.h"
@@ -48,6 +49,26 @@ DependencyResolver::DependencyResolver(
 	for (const auto& mod : m_selectedMods) {
 		m_resolvedProjectIds.insert(mod.platform + ":" + mod.projectId);
 		m_resolvedNames.insert(normalizeName(mod.name));
+	}
+}
+
+void DependencyResolver::setInstalledIndex(
+	std::shared_ptr<ModMetadataIndex> index)
+{
+	m_installed = std::move(index);
+	if (!m_installed) {
+		return;
+	}
+	// Treat anything already on disk as "already resolved". Without this
+	// the resolver would happily refetch transitively-required libraries
+	// that an earlier install already pulled in.
+	for (const auto& entry : m_installed->all()) {
+		if (entry.hasPlatformOrigin()) {
+			m_resolvedProjectIds.insert(entry.platform + ":" + entry.projectId);
+		}
+		if (!entry.name.isEmpty()) {
+			m_resolvedNames.insert(normalizeName(entry.name));
+		}
 	}
 }
 

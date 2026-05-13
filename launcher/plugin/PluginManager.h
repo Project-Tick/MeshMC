@@ -31,14 +31,22 @@
 #include "plugin/PluginAPI.h"
 
 #include <QObject>
+#include <QPointer>
 #include <QString>
 #include <QStringList>
 #include <QVector>
 #include <QMap>
 #include <QMultiMap>
+#include <QSet>
 #include <memory>
 #include <vector>
 #include <functional>
+
+class QAction;
+class QEvent;
+class QMenu;
+class QSystemTrayIcon;
+class QWidget;
 
 /*
  * PluginManager — owns the plugin lifecycle and provides the bridge
@@ -93,6 +101,20 @@ class PluginManager : public QObject
 	}
 
 	/*
+	 * Disable / enable management.
+	 *
+	 * The disabled-set is persisted in the application settings under
+	 * the key "plugins.disabled" as a comma-separated list of module
+	 * names (case-insensitive). Toggling a module DOES NOT load or
+	 * unload anything at runtime — the change takes effect on the next
+	 * launcher start. PluginsDialog calls these to mutate the set; the
+	 * dialog warns the user that a restart is required.
+	 */
+	bool isModuleDisabled(const QString& moduleName) const;
+	void setModuleDisabled(const QString& moduleName, bool disabled);
+	QSet<QString> disabledModuleNames() const;
+
+	/*
 	 * ModuleRuntime — the opaque object behind module_handle.
 	 * Lets static API callbacks find their way back to the manager.
 	 * Public so helper functions in the .cpp can use it.
@@ -105,6 +127,14 @@ class PluginManager : public QObject
 	};
 
 	Application* m_app;
+
+	/*
+	 * QObject event filter — installed on the main window when at least
+	 * one plugin has registered a close-event callback via
+	 * main_window_install_close_filter(). Intercepts QCloseEvent and
+	 * lets registered callbacks decide whether to accept or swallow it.
+	 */
+	bool eventFilter(QObject* watched, QEvent* event) override;
 
   signals:
 	void moduleLoaded(const QString& name);
@@ -336,6 +366,50 @@ class PluginManager : public QObject
 	/* Section 16: Application Settings */
 	static const char* api_app_setting_get(void* mh, const char* key);
 
+	/* Section 18: Plugin Icon Set (ABI 2+) */
+	static const char* api_ui_plugin_icon(void* mh, const char* name);
+
+	/* Section 19: System Tray (additive) */
+	static void* api_tray_create(void* mh, const char* icon_name,
+								 const char* tooltip);
+	static int api_tray_destroy(void* mh, void* tray_handle);
+	static int api_tray_is_available(void* mh);
+	static int api_tray_set_icon(void* mh, void* tray_handle,
+								 const char* icon_name);
+	static int api_tray_set_tooltip(void* mh, void* tray_handle,
+									const char* tooltip);
+	static int api_tray_set_visible(void* mh, void* tray_handle, int visible);
+	static int api_tray_show_message(void* mh, void* tray_handle,
+									 const char* title, const char* message,
+									 int icon_type, int msecs);
+	static int api_tray_set_menu(void* mh, void* tray_handle,
+								 void* menu_handle);
+	static int api_tray_set_activation_cb(void* mh, void* tray_handle,
+										  MMCOTrayActivationCallback cb,
+										  void* ud);
+	static void* api_tray_menu_create(void* mh);
+	static int api_tray_menu_destroy(void* mh, void* menu_handle);
+	static int api_tray_menu_clear(void* mh, void* menu_handle);
+	static int api_tray_menu_add_separator(void* mh, void* menu_handle);
+	static void* api_tray_menu_add_action(void* mh, void* menu_handle,
+										  const char* label,
+										  const char* icon_name,
+										  MMCOMenuActionCallback cb, void* ud);
+	static int api_tray_menu_action_set_enabled(void* mh, void* action_handle,
+												int enabled);
+	static int api_tray_menu_action_set_text(void* mh, void* action_handle,
+											 const char* text);
+	static void* api_tray_menu_add_submenu(void* mh, void* parent_menu,
+										   const char* label,
+										   const char* icon_name);
+
+	/* Section 20: Main window helpers */
+	static int api_main_window_install_close_filter(
+		void* mh, MMCOMainWindowCloseCallback cb, void* user_data);
+	static int api_main_window_show(void* mh);
+	static int api_main_window_hide(void* mh);
+	static int api_main_window_is_visible(void* mh);
+
 	/* S17 — News API */
 	void rebuildNewsCache();
 	static int api_news_get_entry_count(void* mh);
@@ -408,6 +482,45 @@ class PluginManager : public QObject
 		QString date; /* ISO 8601 */
 	};
 	QVector<NewsEntryCache> m_newsCache;
+
+	/* S19 / S20 — system-tray and main-window helpers state.
+	 * All tray icons, menus, actions and close filters are tracked per
+	 * owning module so PluginManager can release them en masse when a
+	 * module is unloaded — preventing leaks and dangling Qt parents. */
+	struct TrayRecord {
+		void* module_handle;
+		QSystemTrayIcon* icon;
+		QObject* guard; /* relay for activation signal */
+	};
+	struct MenuRecord {
+		void* module_handle;
+		QMenu* menu;
+	};
+	struct ActionRecord {
+		void* module_handle;
+		QAction* action;
+	};
+	struct CloseFilterRecord {
+		void* module_handle;
+		MMCOMainWindowCloseCallback cb;
+		void* user_data;
+	};
+	QVector<TrayRecord> m_trayIcons;
+	QVector<MenuRecord> m_trayMenus;
+	QVector<ActionRecord> m_trayActions;
+	QVector<CloseFilterRecord> m_closeFilters;
+	bool m_closeFilterInstalled = false;
+	QPointer<QWidget> m_filteredMainWindow;
+
+	/* Resolve the launcher's main window (objectName == "MainWindow"),
+	 * cached for the lifetime of the QPointer. Returns nullptr if the
+	 * window has not been built yet. */
+	QWidget* resolveMainWindow();
+	/* Make sure our QObject::eventFilter is installed on the main
+	 * window. Safe to call multiple times — installs at most once. */
+	void ensureCloseFilterInstalled();
+	/* Release all S19/S20 resources owned by the given module handle. */
+	void releaseTrayResourcesForModule(void* module_handle);
 
 	bool m_shutdownDone = false;
 

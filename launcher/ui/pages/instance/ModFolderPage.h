@@ -133,6 +133,7 @@ class ModFolderPage : public QMainWindow, public BasePage
 	void on_actionView_Folder_triggered();
 	void on_actionView_configs_triggered();
 	void on_actionDownload_triggered();
+	void on_actionUpdate_triggered();
 	void ShowContextMenu(const QPoint& pos);
 };
 

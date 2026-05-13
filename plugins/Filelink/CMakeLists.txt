@@ -33,3 +33,7 @@ endforeach()
 install(TARGETS Filelink
     LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
 )
+
+if(MeshMC_PLUGIN_SIGN_ALL)
+    mmco_sign_plugin(Filelink)
+endif()

@@ -85,6 +85,7 @@
    </attribute>
    <addaction name="actionAdd"/>
    <addaction name="actionDownload"/>
+   <addaction name="actionUpdate"/>
    <addaction name="separator"/>
    <addaction name="actionRemove"/>
    <addaction name="actionEnable"/>
@@ -143,6 +144,14 @@
    </property>
    <property name="toolTip">
     <string>Download content from CurseForge and Modrinth</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="text">
+    <string>&amp;Update</string>
+   </property>
+   <property name="toolTip">
+    <string>Check tracked mods for newer compatible versions and update them.</string>
    </property>
   </action>
  </widget>

@@ -50,6 +50,10 @@ Config::Config()
 
 	BUILD_PLATFORM = "@MeshMC_BUILD_PLATFORM@";
 	BUILD_ARTIFACT = "@MeshMC_BUILD_ARTIFACT@";
+	BUILD_PLATFORM_ID = "@MeshMC_BUILD_PLATFORM_ID@";
+	BUILD_ARCH = "@MeshMC_BUILD_ARCH@";
+	BUILD_PORTABLE = "@MeshMC_BUILD_PORTABLE@";
+	BUILD_KIND = "@MeshMC_BUILD_KIND@";
 	BUILD_DATE = "@MeshMC_BUILD_TIMESTAMP@";
 	COMPILER_NAME = "@MeshMC_COMPILER_NAME@";
 	COMPILER_VERSION = "@MeshMC_COMPILER_VERSION@";
@@ -58,7 +62,7 @@ Config::Config()
 	COMPILER_TARGET_SYSTEM_PROCESSOR = "@MeshMC_COMPILER_TARGET_PROCESSOR@";
 	UPDATER_BASE = "@MeshMC_UPDATER_BASE@";
 	UPDATER_FEED_URL = "@MeshMC_UPDATER_FEED_URL@";
-	UPDATER_GITHUB_API_URL = "@MeshMC_UPDATER_GITHUB_API_URL@";
+	UPDATER_LATEST_JSON_URL = "@MeshMC_UPDATER_LATEST_JSON_URL@";
 	ANALYTICS_ID = "@MeshMC_ANALYTICS_ID@";
 	ANALYTICS_SECRET = "@MeshMC_ANALYTICS_SECRET@";
 	NOTIFICATION_URL = "@MeshMC_NOTIFICATION_URL@";
@@ -69,11 +73,16 @@ Config::Config()
 	GIT_REFSPEC = "@MeshMC_GIT_REFSPEC@";
 	GIT_TAG = "@MeshMC_GIT_TAG@";
 
-	// New updater: enabled when both feed and GitHub API URLs are configured
-	// and a build artifact name is provided for platform-specific asset
-	// matching.
-	if (!UPDATER_FEED_URL.isEmpty() && !UPDATER_GITHUB_API_URL.isEmpty() &&
-		!BUILD_ARTIFACT.isEmpty()) {
+	// Updater is enabled when the authoritative product feed URL is
+	// configured and the build can identify itself either through the new
+	// structured attributes (BUILD_PLATFORM_ID + BUILD_ARCH + BUILD_KIND)
+	// or via the legacy BUILD_ARTIFACT substring match.
+	const bool hasStructuredIdentity = !BUILD_PLATFORM_ID.isEmpty() &&
+									   !BUILD_ARCH.isEmpty() &&
+									   !BUILD_KIND.isEmpty();
+	const bool hasLegacyIdentity = !BUILD_ARTIFACT.isEmpty();
+	if (!UPDATER_FEED_URL.isEmpty() &&
+		(hasStructuredIdentity || hasLegacyIdentity)) {
 		UPDATER_ENABLED = true;
 	}
 
