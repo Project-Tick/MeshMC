@@ -187,11 +187,36 @@ find_package(Katabasis REQUIRED)
 # and the C++ bindings are not ABI-compatible with MSVC), so the plugin
 # signature verifier compiles into a stub on MSVC builds: the launcher
 # still loads OSS plugins and rejects non-OSS plugins on signature
-# grounds, it just cannot actually verify trailers. Linux and macOS
-# (and MinGW Windows, if the matrix is ever re-enabled) get the full
-# GpgME-backed verifier.
+# grounds, it just cannot actually verify trailers. Linux and native
+# (single-arch) macOS / MinGW Windows builds get the full GpgME-backed
+# verifier.
+#
+# macOS universal builds (CMAKE_OSX_ARCHITECTURES contains both
+# "x86_64" and "arm64") get the stub too. The reason is purely a
+# distribution-side limitation: Homebrew ships gpgme/gpgmepp dylibs
+# for the host architecture only — on an Apple Silicon CI runner
+# /opt/homebrew/lib/libgpgmepp.dylib is arm64-only, so a universal
+# binary fails to link the x86_64 slice. Notarized macOS releases
+# get plugin trust through Apple codesigning + Sparkle anyway, so
+# the GPG verifier is not a useful second layer there.
 if(MSVC)
     set(_meshmc_default_plugin_signatures OFF)
+elseif(APPLE)
+    # Detect a universal build: CMAKE_OSX_ARCHITECTURES is a list, and
+    # a "universal" build is any list with more than one architecture.
+    list(LENGTH CMAKE_OSX_ARCHITECTURES _meshmc_osx_arch_count)
+    if(_meshmc_osx_arch_count GREATER 1)
+        set(_meshmc_default_plugin_signatures OFF)
+        message(STATUS
+            "macOS universal build detected (CMAKE_OSX_ARCHITECTURES="
+            "${CMAKE_OSX_ARCHITECTURES}). "
+            "Defaulting MeshMC_PLUGIN_SIGNATURES=OFF because Homebrew "
+            "gpgmepp only ships single-arch dylibs. Override with "
+            "-DMeshMC_PLUGIN_SIGNATURES=ON if you have a fat gpgmepp.")
+    else()
+        set(_meshmc_default_plugin_signatures ON)
+    endif()
+    unset(_meshmc_osx_arch_count)
 else()
     set(_meshmc_default_plugin_signatures ON)
 endif()
