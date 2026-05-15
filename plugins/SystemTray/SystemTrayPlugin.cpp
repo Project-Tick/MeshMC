@@ -20,6 +20,7 @@
  */
 
 #include "plugin/sdk/mmco_sdk.h"
+#include "settings/SettingsObject.h"
 
 /* ── dependencies ─────────────────────────────────────────────────── *
  *
@@ -63,6 +64,18 @@ static void* g_launchMenu = nullptr; /* QMenu* (submenu)        */
 static void* g_showAction = nullptr;
 static void* g_hideAction = nullptr;
 static void* g_quitAction = nullptr;
+static QObject* g_guard = nullptr;	 /* anchor for our Qt connections */
+static QCheckBox* g_enabledCheckbox = nullptr;
+
+/* The launcher-wide setting key we mirror our "enabled" plugin-local
+ * setting onto. Lives in APPLICATION->settings() so it's visible in
+ * Settings → MeshMC and can be toggled by the user without poking at
+ * raw config files. The plugin still treats its own plugin-namespaced
+ * "enabled" setting as the runtime source of truth — the global key
+ * just drives the UI checkbox and is mirrored back into the plugin
+ * namespace whenever the user flips it. */
+static constexpr const char SETTING_GLOBAL_ENABLED[] =
+	"plugin.system_tray.Enabled";
 
 static constexpr int MAX_INSTANCE_ENTRIES = 8;
 
@@ -227,6 +240,76 @@ static void rebuild_launch_submenu()
 	}
 }
 
+/* ── Settings UI injection ────────────────────────────────────────── */
+
+/* Walk qApp->allWidgets() for the MeshMCPage (the first tab on the
+ * global Settings dialog). Same pattern BackupSystem and GitVersioning
+ * use — the page is rebuilt every time the dialog opens, so we have
+ * to re-find it and re-inject after every globalSettingsAboutToOpen.
+ *
+ * The injected checkbox is wired to APPLICATION->settings()
+ * "plugin.system_tray.Enabled". Flipping it doesn't tear down or
+ * re-initialise the plugin live (Qt has no graceful way to reverse
+ * mmco_init mid-session) — instead we explain that the change takes
+ * effect after restart, and on the next launcher startup mmco_init
+ * sees the new value and either skips itself or comes up normally. */
+static void injectCheckboxIntoMeshMCPage()
+{
+	QWidget* meshMCPage = nullptr;
+	for (auto* w : qApp->allWidgets()) {
+		if (w->objectName() == QStringLiteral("MeshMCPage")) {
+			meshMCPage = w;
+			break;
+		}
+	}
+	if (!meshMCPage)
+		return;
+
+	auto* layout = meshMCPage->findChild<QVBoxLayout*>(
+		QStringLiteral("verticalLayout_9"));
+	if (!layout)
+		return;
+
+	auto* groupBox = new QGroupBox(QObject::tr("System Tray"));
+	groupBox->setObjectName(QStringLiteral("systemTrayGroupBox"));
+	auto* gl = new QVBoxLayout(groupBox);
+
+	g_enabledCheckbox = new QCheckBox(
+		QObject::tr("Show MeshMC system tray icon (Restart required.)"), groupBox);
+	g_enabledCheckbox->setObjectName(QStringLiteral("systemTrayEnabledCheck"));
+	g_enabledCheckbox->setToolTip(QObject::tr(
+		"When on, MeshMC keeps a persistent tray icon with quick-launch "
+		"shortcuts and an optional minimise-to-tray close handler.\n\n"
+		"Toggle takes effect after restarting MeshMC."));
+	gl->addWidget(g_enabledCheckbox);
+
+	int spacerIdx = layout->count() - 1;
+	layout->insertWidget(spacerIdx, groupBox);
+
+	auto s = APPLICATION->settings();
+	g_enabledCheckbox->setChecked(
+		s->get(QString::fromLatin1(SETTING_GLOBAL_ENABLED)).toBool());
+
+	QObject::connect(g_enabledCheckbox, &QCheckBox::toggled, g_guard,
+					 [](bool checked) {
+						 APPLICATION->settings()->set(
+							 QString::fromLatin1(SETTING_GLOBAL_ENABLED),
+							 checked);
+						 settingSetBool("enabled", checked);
+					 });
+}
+
+static int on_app_initialized(void*, uint32_t, void*, void*)
+{
+	QObject::connect(APPLICATION, &Application::globalSettingsAboutToOpen,
+					 g_guard, []() {
+						 g_enabledCheckbox = nullptr;
+						 QTimer::singleShot(0, qApp,
+											injectCheckboxIntoMeshMCPage);
+					 });
+	return 0;
+}
+
 /* ── hooks ────────────────────────────────────────────────────────── */
 
 static int on_ui_main_ready(void* /*mh*/, uint32_t /*hook_id*/,
@@ -269,8 +352,40 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	g_ctx = ctx;
 	MMCO_LOG(ctx, "SystemTray initializing...");
 
-	if (!settingBool("enabled", true)) {
-		MMCO_LOG(ctx, "SystemTray: disabled via 'enabled' setting; idle.");
+	/* Lifetime anchor for our Qt connections (settings-page injection,
+	 * checkbox toggled signal). We intentionally never delete this;
+	 * Qt may still have queued events targeting it at shutdown. */
+	g_guard = new QObject();
+
+	/* Mirror the plugin-local "enabled" key onto a launcher-wide
+	 * setting so the user can toggle it from Settings → MeshMC. The
+	 * global setting wins on conflict — every plugin-local read
+	 * delegates here first. */
+	auto* appSettings = APPLICATION ? APPLICATION->settings().get() : nullptr;
+	if (appSettings) {
+		const QString globalKey =
+			QString::fromLatin1(SETTING_GLOBAL_ENABLED);
+		if (!appSettings->contains(globalKey)) {
+			// First run — seed from the plugin-local value (if any),
+			// otherwise default ON.
+			appSettings->registerSetting(globalKey,
+										 settingBool("enabled", true));
+		}
+		const bool globalEnabled = appSettings->get(globalKey).toBool();
+		// Re-sync the plugin-local copy so existing call-sites see the
+		// canonical answer.
+		settingSetBool("enabled", globalEnabled);
+		if (!globalEnabled) {
+			MMCO_LOG(ctx, "SystemTray: disabled via global setting; idle "
+						  "(re-enable from Settings → MeshMC).");
+			// Still wire up APP_INITIALIZED so we can inject the
+			// checkbox — the user needs a way to flip it back on.
+			ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
+							   on_app_initialized, nullptr);
+			return 0;
+		}
+	} else if (!settingBool("enabled", true)) {
+		MMCO_LOG(ctx, "SystemTray: disabled via plugin setting; idle.");
 		return 0;
 	}
 
@@ -354,6 +469,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	ctx->tray_set_visible(ctx->module_handle, g_tray, 1);
 
 	/* Hooks. */
+	ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
+					   on_app_initialized, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_UI_MAIN_READY,
 					   on_ui_main_ready, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_CREATED,

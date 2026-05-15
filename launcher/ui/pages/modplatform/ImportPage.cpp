@@ -84,12 +84,19 @@ void ImportPage::updateState()
 		QString input = ui->modpackEdit->text();
 		auto url = QUrl::fromUserInput(input);
 		if (url.isLocalFile()) {
-			// FIXME: actually do some validation of what's inside here... this
-			// is fake AF
+			// Accept every common modpack-archive extension. The real
+			// format sniff (mrpack vs CurseForge zip vs MultiMC zip vs
+			// Technic) happens later inside InstanceImportTask, which
+			// scans the archive's entry list — extension is only a hint.
 			QFileInfo fi(input);
-			if (fi.exists() && fi.suffix() == "zip") {
-				QFileInfo fi(url.fileName());
-				dialog->setSuggestedPack(fi.completeBaseName(),
+			const QString suffix = fi.suffix().toLower();
+			const bool looksLikeArchive =
+				suffix == QStringLiteral("zip") ||
+				suffix == QStringLiteral("mrpack") ||
+				suffix == QStringLiteral("jar");
+			if (fi.exists() && looksLikeArchive) {
+				QFileInfo nameFi(url.fileName());
+				dialog->setSuggestedPack(nameFi.completeBaseName(),
 										 new InstanceImportTask(url));
 				dialog->setSuggestedIcon("default");
 			}
@@ -118,8 +125,17 @@ void ImportPage::setUrl(const QString& url)
 
 void ImportPage::on_modpackBtn_clicked()
 {
+	// The launcher's InstanceImportTask understands four archive
+	// dialects (CurseForge zip, Modrinth .mrpack, MultiMC zip,
+	// Technic .zip). Expose all of them in the file dialog so the
+	// user can pick a .mrpack without renaming it first.
+	const QString filter =
+		tr("Modpack archives (*.zip *.mrpack);;"
+		   "Modrinth packs (*.mrpack);;"
+		   "Zip archives (*.zip);;"
+		   "All files (*)");
 	const QUrl url = QFileDialog::getOpenFileUrl(
-		this, tr("Choose modpack"), modpackUrl(), tr("Zip (*.zip)"));
+		this, tr("Choose modpack"), modpackUrl(), filter);
 	if (url.isValid()) {
 		if (url.isLocalFile()) {
 			ui->modpackEdit->setText(url.toLocalFile());

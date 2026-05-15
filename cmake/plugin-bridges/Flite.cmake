@@ -99,6 +99,22 @@ ExternalProject_Add(MeshMCPlugins_Flite_ep
                           "CFLAGS=${_flite_cflags}"
                           "${_flite_mirror}/configure"
                           --prefix=${_flite_install}
+                          # `--with-audio=none` is essential. The
+                          # plugin pipes synthesised PCM through Qt's
+                          # QAudioSink rather than letting Flite touch
+                          # ALSA / PulseAudio / OSS directly. Without
+                          # this flag, upstream's configure auto-picks
+                          # ALSA on Linux (and OSS on FreeBSD, etc.),
+                          # and the resulting libflite.a pulls in
+                          # `snd_pcm_*` symbols the .mmco can't
+                          # resolve at dlopen() time — we deliberately
+                          # do not link against libasound so the plugin
+                          # stays portable across Wayland-only or
+                          # PipeWire-only systems. Setting the driver
+                          # to `none` keeps Flite's audio backend a
+                          # stub, which is exactly what we want for
+                          # a launcher-driven playback path.
+                          --with-audio=none
     BUILD_COMMAND     ${_flite_make}
     INSTALL_COMMAND   ${_flite_make} install
     BUILD_BYPRODUCTS  ${_flite_lib_paths}
