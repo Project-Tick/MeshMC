@@ -24,6 +24,12 @@ endif()
 
 # Track every in-tree plugin target name so we can drive automatic
 # signing at the end of this listfile.
+#
+# This list deliberately does NOT include staging plugins. Staging
+# lives under plugins/staging/ and is gated behind the
+# `MeshMC_STAGING_PLUGINS` cache option (off by default). Plugins
+# graduate out of staging by moving their subdirectory back up one
+# level and being re-listed below.
 set(MESHMC_IN_TREE_PLUGIN_TARGETS
     BackupSystem
     NewsViewer
@@ -31,6 +37,7 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
     DesktopNotifier
     DiscordRPC
     SkinManager
+    PackPortal
 )
 
 add_subdirectory(BackupSystem)
@@ -39,6 +46,7 @@ add_subdirectory(SystemTray)
 add_subdirectory(DesktopNotifier)
 add_subdirectory(DiscordRPC)
 add_subdirectory(SkinManager)
+add_subdirectory(PackPortal)
 
 if(UNIX AND NOT APPLE)
     add_subdirectory(NVIDIAPrime)
