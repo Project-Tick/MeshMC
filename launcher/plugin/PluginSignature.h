@@ -81,9 +81,18 @@ namespace PluginSignature
 	/*
 	 * Convenience: read the trailer from the file, then verify it. If
 	 * the file has no trailer, returns Absent without touching GpgME.
+	 *
+	 * Result is memoised in a persistent disk cache keyed on
+	 * (path, size, mtime). The cache is the single biggest reason a
+	 * second-and-later launcher startup is fast; the first startup
+	 * after a `make install` still runs the full GpgME verification
+	 * because the (size, mtime) tuple is new. Set `bypassCache=true`
+	 * to force a fresh verification (used by the plugins dialog's
+	 * "Re-verify" button).
 	 */
 	PluginSignatureState verifyFile(const QString& filePath, QString& detail,
-									QString& fingerprint);
+									QString& fingerprint,
+									bool bypassCache = false);
 
 	/*
 	 * Override the path used as the GnuPG home directory (where the
@@ -93,6 +102,24 @@ namespace PluginSignature
 	 * startup from a value read out of the application settings.
 	 */
 	void setKeyringPath(const QString& path);
+
+	/*
+	 * Configure where the on-disk verification cache lives. Calling
+	 * this also loads the existing cache from disk (no-op if the file
+	 * is missing or unreadable). Empty path disables the cache.
+	 *
+	 * Called once during launcher startup, before the first plugin is
+	 * loaded. The cache is shared across every verifyFile() call in
+	 * the process. Thread-safe.
+	 */
+	void setCachePath(const QString& path);
+
+	/*
+	 * Flush the in-memory cache out to its configured path. Safe to
+	 * call on shutdown; cheap (few hundred bytes per cached plugin).
+	 * Called automatically at the end of PluginLoader::discoverModules().
+	 */
+	void flushCache();
 
 	/*
 	 * Check whether the given SPDX license expression refers to an
