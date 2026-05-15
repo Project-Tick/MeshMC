@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "name": "Mod loader & mod-specific patterns",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "fabric.missing-dep",
+      "title": "Fabric mod missing a required dependency",
+      "severity": "high",
+      "patterns": [
+        "net\\.fabricmc\\.loader\\.impl\\.FormattedException: net\\.fabricmc\\.loader\\.impl\\.discovery\\.ModResolutionException",
+        "requires .*, which is missing"
+      ],
+      "advice": "Fabric mods declare dependencies on each other. The error usually lists the missing mod (`requires fabric-api`, `requires cloth-config`, …). Install the missing mod and matching version into your `mods/` folder, or remove the dependent mod.",
+      "tags": ["fabric", "deps"]
+    },
+    {
+      "id": "forge.dupe-mod",
+      "title": "Duplicate mod jar",
+      "severity": "medium",
+      "patterns": [
+        "Found duplicate mods loaded from files",
+        "FMLModContainer.*already loaded"
+      ],
+      "advice": "Two jars in `mods/` declare the same mod id. Delete the older version. Run-of-the-mill cause: a leftover `Sodium-0.5.3.jar` next to a freshly-downloaded `Sodium-0.5.8.jar`.",
+      "tags": ["forge", "fabric", "mods"]
+    },
+    {
+      "id": "mod.signature-mismatch",
+      "title": "Mod jar is corrupted or partially downloaded",
+      "severity": "high",
+      "patterns": [
+        "Invalid or corrupt jarfile",
+        "java\\.util\\.zip\\.ZipException",
+        "Could not find or load main class.*from jar"
+      ],
+      "advice": "One of the jars in `mods/`, `coremods/`, or the loader itself is corrupted. The launcher log usually names it on the previous line. Re-download just that file, or delete the `libraries/` folder and let MeshMC re-fetch.",
+      "tags": ["mods", "download"]
+    },
+    {
+      "id": "mixin.apply-failed",
+      "title": "Mixin transform failed",
+      "severity": "high",
+      "patterns": [
+        "MixinApplyError",
+        "Mixin transformation .* failed",
+        "InvalidInjectionException"
+      ],
+      "advice": "Two mods are trying to rewrite the same class in incompatible ways. The Mixin name in the error (`Mixin{...}`) tells you which mod's transformer failed — disable it and the conflict source one at a time. A common pair: Sodium + a too-new Lithium build.",
+      "tags": ["mixin", "compat"]
+    }
+  ]
+}
