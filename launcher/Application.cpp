@@ -838,6 +838,9 @@ void Application::initSettings()
 	m_settings->registerSetting("IconTheme", QString("pe_colored"));
 	m_settings->registerSetting("ApplicationTheme", QString("system"));
 
+	// Native macOS top bar (no-op on other platforms).
+	m_settings->registerSetting("UseMacNativeMenuBar", true);
+
 	// Notifications
 	m_settings->registerSetting("ShownNotifications", QString());
 
