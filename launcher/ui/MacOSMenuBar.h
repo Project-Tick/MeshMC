@@ -15,6 +15,12 @@
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *   You should have received a copy of the MeshMC MMCO Module Exception 1.0
+ *   along with this program.  If not, see <https://projecttick.org/licenses/>.
  */
 
 #pragma once
@@ -24,23 +30,8 @@ class QMainWindow;
 class QMenu;
 class QMenuBar;
 
-/**
- * Builds and installs the native macOS menu bar (top bar) for the main window.
- *
- * On macOS, Qt translates a QMenuBar attached via QMainWindow::setMenuBar() to
- * the system-wide menu bar at the top of the screen. This class composes the
- * menu structure from QActions already created by the toolbars in MainWindow,
- * so the same action triggers a single slot regardless of whether the user
- * clicked the toolbar button or the top-bar menu item.
- *
- * Actions tagged with QAction::PreferencesRole / QAction::AboutRole /
- * QAction::QuitRole are auto-relocated to the application menu by Qt; they
- * are still added to their natural File/Help menus here so the cross-platform
- * fallback behaves identically.
- *
- * Use the `UseMacNativeMenuBar` application setting to enable/disable.
- * On non-Apple builds, install() is a no-op that returns nullptr.
- */
+/// Installs a native macOS top menu bar built from MainWindow's existing
+/// QActions. Toggled by the `UseMacNativeMenuBar` setting; no-op off macOS.
 class MacOSMenuBar
 {
   public:
