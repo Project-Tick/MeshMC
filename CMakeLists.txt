@@ -460,6 +460,23 @@ if(UNIX AND APPLE)
     set(MMCO_MODULES_DEST_DIR
         "${MeshMC_Name}.app/Contents/PlugIns/mmcmodules")
 
+    # Plugin-shipped DATA files (rule packs, templates, ...) MUST
+    # NOT live next to the .mmco under Contents/PlugIns/. Apple's
+    # strict-signing pass walks Contents/PlugIns/ recursively and
+    # treats every non-code file it finds as a subcomponent of the
+    # main executable, demanding it be signed. We observed
+    #     "code object is not signed at all
+    #      In subcomponent: .../PlugIns/mmcmodules/ErrorOracle/rules/jvm.json"
+    # in CI before this fix. The cure is to push plugin data into
+    # Contents/Resources/ — codesign hashes those files via
+    # CodeResources without trying to interpret them as nested
+    # code. Each plugin gets its own subdirectory under
+    # MMCOPluginData/ so namespaces don't collide.
+    # Runtime path resolution lives in the individual plugins
+    # (e.g. ErrorOraclePlugin::builtInRulesDir).
+    set(MMCO_PLUGIN_DATA_DEST_DIR
+        "${MeshMC_Name}.app/Contents/Resources/MMCOPluginData")
+
     # Mac bundle settings
     set(MACOSX_BUNDLE_BUNDLE_NAME "${MeshMC_DisplayName}")
     set(MACOSX_BUNDLE_INFO_STRING "${MeshMC_DisplayName}: A custom launcher for Minecraft that allows you to easily manage multiple installations of Minecraft at once.")
@@ -535,6 +552,12 @@ elseif(UNIX)
     # a named variable so plugin CMakeLists files can reference one
     # symbol regardless of platform.
     set(MMCO_MODULES_DEST_DIR "${BINARY_DEST_DIR}/mmcmodules")
+    # On Linux there is no codesign machinery walking PlugIns/, so
+    # plugin data can keep living next to the .mmco. We still expose
+    # the variable so plugin CMakeLists files can write
+    #   install(... DESTINATION ${MMCO_PLUGIN_DATA_DEST_DIR}/<Name> ...)
+    # uniformly across platforms.
+    set(MMCO_PLUGIN_DATA_DEST_DIR "${MMCO_MODULES_DEST_DIR}")
 
     # Set RPATH
     SET(MeshMC_BINARY_RPATH "$ORIGIN/../lib${LIB_SUFFIX}")
@@ -579,6 +602,11 @@ elseif(WIN32)
     # next to meshmc.exe under <install>/mmcmodules. Variable exists
     # so plugin CMakeLists files can refer to it uniformly.
     set(MMCO_MODULES_DEST_DIR "${BINARY_DEST_DIR}/mmcmodules")
+    # Windows has no codesign-style strict mode that distinguishes
+    # code from data inside the plugin directory, so plugin data
+    # can stay alongside the .mmco. Variable mirrors the macOS one
+    # for cross-platform plugin CMakeLists.
+    set(MMCO_PLUGIN_DATA_DEST_DIR "${MMCO_MODULES_DEST_DIR}")
 else()
     message(FATAL_ERROR "Platform not supported")
 endif()

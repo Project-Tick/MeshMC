@@ -28,20 +28,40 @@ namespace
 
 	QString builtInRulesDir()
 	{
-		// Search order:
-		//   1) Next to the .mmco: <plugin install dir>/ErrorOracle/rules
-		//   2) Build-tree staging area
-		//   3) Source-tree fallback for developers (env var)
+		// Search order (first directory that exists wins):
+		//   1) $MESHMC_ERROR_ORACLE_RULES                (dev override)
+		//   2) macOS: Contents/Resources/MMCOPluginData/
+		//             ErrorOracle/rules                  (current install)
+		//   3) macOS: Contents/PlugIns/mmcmodules/
+		//             ErrorOracle/rules                  (legacy fallback)
+		//   4) <appDir>/mmcmodules/ErrorOracle/rules     (Linux/Windows install)
+		//   5) <appDir>/ErrorOracle/rules                (build-tree staging)
+		//
+		// Rule packs ship as plain JSON. On macOS that means they
+		// must live under Contents/Resources/ — Apple's codesign
+		// strict pass treats any non-Mach-O file it finds inside
+		// Contents/PlugIns/ as an unsigned subcomponent of the
+		// main executable and aborts with
+		//   "code object is not signed at all
+		//    In subcomponent: .../PlugIns/mmcmodules/ErrorOracle/rules/jvm.json"
+		// Files under Resources/ are hashed opaquely via
+		// CodeResources, which is what we want.
+		// See MMCO_PLUGIN_DATA_DEST_DIR in the top-level
+		// CMakeLists.txt for the install-side counterpart.
 		QStringList candidates;
 #ifdef Q_OS_MAC
-		// On macOS .mmco bundles install under
-		// MeshMC.app/Contents/PlugIns/mmcmodules (see PluginLoader.cpp
-		// for the full rationale — short version: Apple's codesign
-		// --strict refuses our trailer-signed Mach-Os if they live
-		// under Contents/MacOS). The rule data ships beside the .mmco.
+		// applicationDirPath() inside an .app is
+		//   <bundle>/Contents/MacOS
+		// — one cdUp lands us at Contents/, the shared parent of
+		// Resources/ and PlugIns/.
 		{
 			QDir bundleDir(QCoreApplication::applicationDirPath());
 			if (bundleDir.cdUp()) { // MacOS -> Contents
+				candidates << bundleDir.filePath(
+					"Resources/MMCOPluginData/ErrorOracle/rules");
+				// Legacy location from a previous macOS layout
+				// attempt; kept so installs that predate this
+				// commit keep finding their rules.
 				candidates << bundleDir.filePath(
 					"PlugIns/mmcmodules/ErrorOracle/rules");
 			}

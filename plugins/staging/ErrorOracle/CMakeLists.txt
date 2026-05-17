@@ -55,12 +55,21 @@ foreach(CFG ${CMAKE_CONFIGURATION_TYPES})
     )
 endforeach()
 
-# Install the bundled rules so the runtime can find them next to the
-# .mmco.  We use a runtime fallback chain: plugin_data → install_dir →
-# build_dir, so the plugin works both in CI tests and in installed
-# environments.
+# Install the bundled rule pack as PLUGIN DATA, not next to the
+# .mmco. On macOS the .mmco lives under Contents/PlugIns/mmcmodules,
+# which Apple's codesign treats as nested-code territory; dropping
+# JSON files there causes
+#   "code object is not signed at all
+#    In subcomponent: .../PlugIns/mmcmodules/ErrorOracle/rules/jvm.json"
+# at signing time. MMCO_PLUGIN_DATA_DEST_DIR resolves to:
+#   Linux/Windows -> <install>/mmcmodules        (legacy, next to .mmco)
+#   macOS         -> MeshMC.app/Contents/Resources/MMCOPluginData
+# The runtime lookup chain in ErrorOraclePlugin::builtInRulesDir
+# probes the platform-specific location first, then falls back to
+# the legacy "next to the .mmco" path so older installs and ad-hoc
+# developer builds keep working.
 install(DIRECTORY rules
-    DESTINATION "${MMCO_MODULES_DEST_DIR}/ErrorOracle"
+    DESTINATION "${MMCO_PLUGIN_DATA_DEST_DIR}/ErrorOracle"
     FILES_MATCHING PATTERN "*.json"
 )
 
