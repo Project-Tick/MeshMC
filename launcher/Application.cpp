@@ -1947,6 +1947,29 @@ QString Application::getJarsPath()
 			return installedPath;
 		}
 		return FS::PathCombine(appDir, "jars");
+#elif defined(Q_OS_MAC)
+		// Inside the .app bundle applicationDirPath() returns
+		//   <bundle>/Contents/MacOS
+		// Java archives are installed under
+		//   <bundle>/Contents/Resources/jars
+		// instead of beside the executable, because Apple's
+		// codesign refuses to seal the main executable while
+		// non-Mach-O files live under Contents/MacOS — the strict-
+		// validation pass treats every such file as an unsigned
+		// subcomponent and aborts with
+		//     "code object is not signed at all
+		//      In subcomponent: .../jars/JavaCheck.jar"
+		// (See JARS_DEST_DIR in the top-level CMakeLists.txt and
+		// the macOS bundle anatomy guide.) We still check the
+		// legacy Contents/MacOS/jars location as a fallback so
+		// older installs and ad-hoc developer builds keep working.
+		auto appDir = QCoreApplication::applicationDirPath();
+		auto resourcesJars =
+			FS::PathCombine(appDir, "..", "Resources", "jars");
+		if (QDir(resourcesJars).exists()) {
+			return resourcesJars;
+		}
+		return FS::PathCombine(appDir, "jars");
 #else
 		return FS::PathCombine(QCoreApplication::applicationDirPath(), "jars");
 #endif

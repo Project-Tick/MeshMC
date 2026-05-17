@@ -351,7 +351,18 @@ if(UNIX AND APPLE)
     set(LIBRARY_DEST_DIR "${FRAMEWORK_DEST_DIR}")
     set(PLUGIN_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS")
     set(RESOURCES_DEST_DIR "${MeshMC_Name}.app/Contents/Resources")
-    set(JARS_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS/jars")
+    # Java archives (JavaCheck.jar / NewLaunch.jar) MUST NOT live
+    # under Contents/MacOS. Apple's signing tooling reserves that
+    # directory exclusively for the main executable and its Mach-O
+    # helpers; every other file it finds there is treated as a
+    # subcomponent of the main executable and gets seal-hashed in
+    # the strict-validation pass. The result, observed in CI:
+    #     "code object is not signed at all
+    #      In subcomponent: .../Contents/MacOS/jars/JavaCheck.jar"
+    # The bundle anatomy guide explicitly puts non-code data under
+    # Contents/Resources/, which is what we do. Application::
+    # getJarsPath() has a matching macOS branch.
+    set(JARS_DEST_DIR "${MeshMC_Name}.app/Contents/Resources/jars")
     set(BUNDLE_DEST_DIR ".")
 
     # Mac bundle settings
