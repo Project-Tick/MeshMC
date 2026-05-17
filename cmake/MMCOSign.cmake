@@ -146,28 +146,42 @@ function(mmco_sign_plugin target)
     # correct fail-safe.
     #
     # In-tree plugins all share the convention
-    #   LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
+    #   LIBRARY DESTINATION "${MMCO_MODULES_DEST_DIR}"
+    # (defined alongside BINARY_DEST_DIR in the top-level CMakeLists)
     # so we can predict the install path at configure time. If you
     # break that convention in a custom plugin, override the
     # destination with an explicit DESTINATION argument to
     # mmco_sign_plugin (left as a TODO for now — drop us an issue
     # if you need it).
-
-    set(_install_subdir "mmcmodules")
+    #
+    # MMCO_MODULES_DEST_DIR is platform-aware:
+    #   Linux    -> bin/mmcmodules
+    #   Windows  -> ./mmcmodules
+    #   macOS    -> MeshMC.app/Contents/PlugIns/mmcmodules
+    # The macOS branch deliberately routes around Contents/MacOS to
+    # avoid colliding with Apple's `codesign --strict` subcomponent
+    # treatment of Mach-O files found there.
+    if(NOT DEFINED MMCO_MODULES_DEST_DIR)
+        message(FATAL_ERROR
+            "mmco_sign_plugin(${target}): MMCO_MODULES_DEST_DIR is not set. "
+            "It is defined alongside BINARY_DEST_DIR in the top-level "
+            "CMakeLists.txt; make sure that block runs before plugin "
+            "subdirectories are added.")
+    endif()
 
     # Escape backslashes so the CODE template survives generation
     # on Windows paths.
-    set(_resign_script   "${_script}")
-    set(_resign_python   "${Python3_EXECUTABLE}")
-    set(_resign_key      "${_arg_KEY}")
-    set(_resign_homedir  "${_arg_HOMEDIR}")
-    set(_resign_bindir   "${BINARY_DEST_DIR}")
+    set(_resign_script      "${_script}")
+    set(_resign_python      "${Python3_EXECUTABLE}")
+    set(_resign_key         "${_arg_KEY}")
+    set(_resign_homedir     "${_arg_HOMEDIR}")
+    set(_resign_modules_dir "${MMCO_MODULES_DEST_DIR}")
 
     install(CODE
 "
         set(_mmco_resign_target_name \"$<TARGET_FILE_NAME:${target}>\")
         set(_mmco_resign_install_dir
-            \"\${CMAKE_INSTALL_PREFIX}/${_resign_bindir}/${_install_subdir}\")
+            \"\${CMAKE_INSTALL_PREFIX}/${_resign_modules_dir}\")
         if(DEFINED ENV{DESTDIR} AND NOT \"\$ENV{DESTDIR}\" STREQUAL \"\")
             set(_mmco_resign_install_dir
                 \"\$ENV{DESTDIR}\${_mmco_resign_install_dir}\")

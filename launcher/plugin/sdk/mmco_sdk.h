@@ -30,10 +30,12 @@
  *   2. Define mmco_module_info, mmco_init(), and mmco_unload()
  *   3. Compile as a shared library with the .mmco extension
  *   4. Place the .mmco file in one of the search paths:
- *        - <app_dir>/mmcmodules/       (in-tree / portable)
- *        - ~/.local/lib/mmcmodules/    (user-local on Linux)
- *        - /usr/local/lib/mmcmodules/  (system-wide)
- *        - /usr/lib/mmcmodules/        (distro packages)
+ *        - <app_dir>/mmcmodules/                       (Linux + Windows
+ * portable)
+ *        - MeshMC.app/Contents/PlugIns/mmcmodules/     (macOS app bundle)
+ *        - ~/.local/lib/mmcmodules/                    (user-local on Linux)
+ *        - /usr/local/lib/mmcmodules/                  (system-wide)
+ *        - /usr/lib/mmcmodules/                        (distro packages)
  *
  * Plugins MUST NOT:
  *   - Directly #include Qt or MeshMC headers (use this SDK header instead)

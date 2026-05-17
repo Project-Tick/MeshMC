@@ -60,7 +60,7 @@ endforeach()
 # build_dir, so the plugin works both in CI tests and in installed
 # environments.
 install(DIRECTORY rules
-    DESTINATION "${BINARY_DEST_DIR}/mmcmodules/ErrorOracle"
+    DESTINATION "${MMCO_MODULES_DEST_DIR}/ErrorOracle"
     FILES_MATCHING PATTERN "*.json"
 )
 
@@ -72,7 +72,7 @@ foreach(_rule ${_eo_rule_files})
 endforeach()
 
 install(TARGETS ErrorOracle
-    LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
+    LIBRARY DESTINATION "${MMCO_MODULES_DEST_DIR}"
 )
 
 if(MeshMC_PLUGIN_SIGN_ALL)

@@ -16,65 +16,78 @@
 
 #include <QStandardPaths>
 
-MMCO_DEFINE_MODULE(
-	"ErrorOracle", "1.0.0", "Project Tick",
-	"LLM-free crash/log analyser with a learning feedback loop.",
-	"GPL-3.0-or-later");
+MMCO_DEFINE_MODULE("ErrorOracle", "1.0.0", "Project Tick",
+				   "LLM-free crash/log analyser with a learning feedback loop.",
+				   "GPL-3.0-or-later");
 
 namespace
 {
-MMCOContext* g_ctx = nullptr;
-RuleEngine* g_engine = nullptr;
-LearningStore* g_learning = nullptr;
+	MMCOContext* g_ctx = nullptr;
+	RuleEngine* g_engine = nullptr;
+	LearningStore* g_learning = nullptr;
 
-QString builtInRulesDir()
-{
-	// Search order:
-	//   1) Next to the .mmco: <plugin install dir>/ErrorOracle/rules
-	//   2) Build-tree staging area
-	//   3) Source-tree fallback for developers (env var)
-	QStringList candidates;
-	candidates << QCoreApplication::applicationDirPath() +
-					  "/mmcmodules/ErrorOracle/rules";
-	candidates << QCoreApplication::applicationDirPath() +
-					  "/ErrorOracle/rules";
-	if (auto envDir = qEnvironmentVariable("MESHMC_ERROR_ORACLE_RULES");
-		!envDir.isEmpty())
-		candidates.prepend(envDir);
+	QString builtInRulesDir()
+	{
+		// Search order:
+		//   1) Next to the .mmco: <plugin install dir>/ErrorOracle/rules
+		//   2) Build-tree staging area
+		//   3) Source-tree fallback for developers (env var)
+		QStringList candidates;
+#ifdef Q_OS_MAC
+		// On macOS .mmco bundles install under
+		// MeshMC.app/Contents/PlugIns/mmcmodules (see PluginLoader.cpp
+		// for the full rationale — short version: Apple's codesign
+		// --strict refuses our trailer-signed Mach-Os if they live
+		// under Contents/MacOS). The rule data ships beside the .mmco.
+		{
+			QDir bundleDir(QCoreApplication::applicationDirPath());
+			if (bundleDir.cdUp()) { // MacOS -> Contents
+				candidates << bundleDir.filePath(
+					"PlugIns/mmcmodules/ErrorOracle/rules");
+			}
+		}
+#endif
+		candidates << QCoreApplication::applicationDirPath() +
+						  "/mmcmodules/ErrorOracle/rules";
+		candidates << QCoreApplication::applicationDirPath() +
+						  "/ErrorOracle/rules";
+		if (auto envDir = qEnvironmentVariable("MESHMC_ERROR_ORACLE_RULES");
+			!envDir.isEmpty())
+			candidates.prepend(envDir);
 
-	for (const auto& d : candidates) {
-		if (QDir(d).exists())
-			return d;
-	}
-	return {};
-}
-
-QString userRulesDir()
-{
-	QString data = QString::fromUtf8(
-		g_ctx ? g_ctx->fs_plugin_data_dir(g_ctx->module_handle) : "");
-	if (data.isEmpty())
-		data = QStandardPaths::writableLocation(
-				   QStandardPaths::AppDataLocation) +
-			   "/error-oracle";
-	return QDir(data).filePath("userrules");
-}
-
-void loadAllRules()
-{
-	if (!g_engine)
-		return;
-
-	QString builtin = builtInRulesDir();
-	if (!builtin.isEmpty()) {
-		QString err;
-		g_engine->loadDirectory(builtin, &err);
+		for (const auto& d : candidates) {
+			if (QDir(d).exists())
+				return d;
+		}
+		return {};
 	}
 
-	QString user = userRulesDir();
-	QDir().mkpath(user);
-	g_engine->loadDirectory(user);
-}
+	QString userRulesDir()
+	{
+		QString data = QString::fromUtf8(
+			g_ctx ? g_ctx->fs_plugin_data_dir(g_ctx->module_handle) : "");
+		if (data.isEmpty())
+			data = QStandardPaths::writableLocation(
+					   QStandardPaths::AppDataLocation) +
+				   "/error-oracle";
+		return QDir(data).filePath("userrules");
+	}
+
+	void loadAllRules()
+	{
+		if (!g_engine)
+			return;
+
+		QString builtin = builtInRulesDir();
+		if (!builtin.isEmpty()) {
+			QString err;
+			g_engine->loadDirectory(builtin, &err);
+		}
+
+		QString user = userRulesDir();
+		QDir().mkpath(user);
+		g_engine->loadDirectory(user);
+	}
 } // namespace
 
 static int on_instance_pages(void*, uint32_t, void* payload, void*)
@@ -85,8 +98,8 @@ static int on_instance_pages(void*, uint32_t, void* payload, void*)
 
 	auto* pages = static_cast<QList<BasePage*>*>(evt->page_list_handle);
 	auto* instRaw = static_cast<BaseInstance*>(evt->instance_handle);
-	InstancePtr inst = std::shared_ptr<BaseInstance>(
-		instRaw, [](BaseInstance*) {});
+	InstancePtr inst =
+		std::shared_ptr<BaseInstance>(instRaw, [](BaseInstance*) {});
 
 	pages->append(new AnalysisPage(inst, g_engine, g_learning));
 	return 0;
@@ -104,8 +117,7 @@ static int on_post_launch(void*, uint32_t, void* payload, void*)
 		return 0;
 
 	LogIngester ing;
-	auto bundle =
-		ing.ingestForInstance(QString::fromUtf8(info->instance_path));
+	auto bundle = ing.ingestForInstance(QString::fromUtf8(info->instance_path));
 	auto matches = g_engine->analyse(bundle.combinedText);
 
 	if (matches.isEmpty()) {
@@ -147,15 +159,15 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	loadAllRules();
 
 	g_learning = new LearningStore();
-	QString plug = QString::fromUtf8(ctx->fs_plugin_data_dir(ctx->module_handle));
+	QString plug =
+		QString::fromUtf8(ctx->fs_plugin_data_dir(ctx->module_handle));
 	g_learning->open(QDir(plug).filePath("learn.json"));
 
 	qputenv("MESHMC_USER_RULES_DIR", userRulesDir().toUtf8());
 
 	{
 		QByteArray msg = "ErrorOracle: loaded " +
-						 QByteArray::number(g_engine->ruleCount()) +
-						 " rules";
+						 QByteArray::number(g_engine->ruleCount()) + " rules";
 		MMCO_LOG(ctx, msg.constData());
 	}
 
