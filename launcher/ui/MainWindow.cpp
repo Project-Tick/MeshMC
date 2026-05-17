@@ -45,6 +45,7 @@
 #include "plugin/PluginHooks.h"
 
 #include "MainWindow.h"
+#include "ui/MacOSMenuBar.h"
 #include "ui/themes/ThemeManager.h"
 
 #include <QtCore/QVariant>
@@ -971,6 +972,58 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// Show initial account
 	defaultAccountChanged();
+
+	// macOS native top bar — composed of the same QActions that drive the
+	// toolbars, so triggering a menu item runs the same slot as the toolbar
+	// button. No-op on non-Apple builds.
+	{
+		MacOSMenuBar::Actions menuActions;
+		menuActions.addInstance = ui->actionAddInstance.operator->();
+		menuActions.launch = ui->actionLaunchInstance.operator->();
+		menuActions.launchOffline = ui->actionLaunchInstanceOffline.operator->();
+		menuActions.editInstance = ui->actionEditInstance.operator->();
+		menuActions.instanceSettings = ui->actionInstanceSettings.operator->();
+		menuActions.editNotes = ui->actionEditInstNotes.operator->();
+		menuActions.viewMods = ui->actionMods.operator->();
+		menuActions.viewWorlds = ui->actionWorlds.operator->();
+		menuActions.screenshots = ui->actionScreenshots.operator->();
+		menuActions.rename = ui->actionRenameInstance.operator->();
+		menuActions.changeGroup = ui->actionChangeInstGroup.operator->();
+		menuActions.changeIcon = ui->actionChangeInstIcon.operator->();
+		menuActions.copyInstance = ui->actionCopyInstance.operator->();
+		menuActions.exportInstance = ui->actionExportInstance.operator->();
+		menuActions.deleteInstance = ui->actionDeleteInstance.operator->();
+
+		menuActions.viewInstanceFolder =
+			ui->actionViewInstanceFolder.operator->();
+		menuActions.viewCentralModsFolder =
+			ui->actionViewCentralModsFolder.operator->();
+		menuActions.viewSelectedMCFolder =
+			ui->actionViewSelectedMCFolder.operator->();
+		menuActions.viewSelectedModsFolder =
+			ui->actionViewSelectedModsFolder.operator->();
+		menuActions.viewSelectedConfigFolder =
+			ui->actionConfig_Folder.operator->();
+		menuActions.viewSelectedInstFolder =
+			ui->actionViewSelectedInstFolder.operator->();
+
+		menuActions.toggleCat = ui->actionCAT.operator->();
+
+		menuActions.preferences = ui->actionSettings.operator->();
+		menuActions.about = ui->actionAbout.operator->();
+
+		menuActions.manageAccounts = ui->actionManageAccounts.operator->();
+		menuActions.accountSubmenu = accountMenu;
+
+		menuActions.reportBug = ui->actionReportBug.operator->();
+		menuActions.discord = ui->actionDISCORD.operator->();
+		menuActions.reddit = ui->actionREDDIT.operator->();
+		menuActions.plugins = ui->actionPlugins.operator->();
+		menuActions.viewLogs = ui->actionMeshMCLogs.operator->();
+		menuActions.checkUpdate = ui->actionCheckUpdate.operator->();
+
+		MacOSMenuBar::install(this, menuActions);
+	}
 
 	// TODO: refresh accounts here?
 	// auto accounts = APPLICATION->accounts();
