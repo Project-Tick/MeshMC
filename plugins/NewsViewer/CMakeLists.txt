@@ -35,5 +35,5 @@ foreach(CFG ${CMAKE_CONFIGURATION_TYPES})
 endforeach()
 
 install(TARGETS NewsViewer
-    LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
+    LIBRARY DESTINATION "${MMCO_MODULES_DEST_DIR}"
 )

@@ -46,7 +46,33 @@ QStringList PluginLoader::defaultSearchPaths()
 
 	// In-tree: next to the binary
 	QString appDir = QCoreApplication::applicationDirPath();
+
+#ifdef Q_OS_MAC
+	// Inside a .app bundle applicationDirPath() returns
+	//   <bundle>/Contents/MacOS
+	// We deliberately install .mmco loadable bundles into
+	//   <bundle>/Contents/PlugIns/mmcmodules
+	// instead of Contents/MacOS/mmcmodules, because Apple's
+	// `codesign --strict` (enforced implicitly by notarization)
+	// treats every Mach-O it finds under Contents/MacOS as a
+	// subcomponent of the main executable and tries to seal it
+	// itself — which collides with the custom RSA trailer that
+	// mmco_sign.py appends after the Mach-O image. PlugIns/ is
+	// Apple's canonical location for dlopen()-able loadable
+	// bundles, so the strict-validation logic does not fire there.
+	//
+	// We still probe the legacy Contents/MacOS/mmcmodules location
+	// as a fallback so that older installs and ad-hoc developer
+	// builds keep working. The new path is searched first so it
+	// wins on freshly-built bundles.
+	QDir bundleDir(appDir);
+	if (bundleDir.cdUp()) { // MacOS -> Contents
+		paths << bundleDir.filePath("PlugIns/mmcmodules");
+	}
+	paths << QDir(appDir).filePath("mmcmodules"); // legacy fallback
+#else
 	paths << QDir(appDir).filePath("mmcmodules");
+#endif
 
 	// User-local
 #ifdef Q_OS_WIN

@@ -31,5 +31,5 @@ endforeach()
 
 # Install the .mmco alongside the binary (bin/mmcmodules/)
 install(TARGETS Filelink
-    LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
+    LIBRARY DESTINATION "${MMCO_MODULES_DEST_DIR}"
 )

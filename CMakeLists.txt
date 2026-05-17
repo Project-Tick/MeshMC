@@ -364,6 +364,18 @@ if(UNIX AND APPLE)
     # getJarsPath() has a matching macOS branch.
     set(JARS_DEST_DIR "${MeshMC_Name}.app/Contents/Resources/jars")
     set(BUNDLE_DEST_DIR ".")
+    # .mmco loadable bundles must NOT live under Contents/MacOS.
+    # Apple's `codesign --strict` (implicitly enforced by notarization)
+    # treats every Mach-O it discovers there as a "subcomponent" of
+    # the main executable and recomputes its seal — which collides
+    # with the custom RSA trailer mmco_sign.py appends after the
+    # Mach-O image (see scripts/mmco_sign.py + cmake/MMCOSign.cmake).
+    # The canonical Apple home for dlopen()-able loadable bundles is
+    # Contents/PlugIns/, so we route .mmco install there. The plugin
+    # loader (PluginLoader::defaultSearchPaths) has a matching macOS
+    # branch that points at Contents/PlugIns/mmcmodules.
+    set(MMCO_MODULES_DEST_DIR
+        "${MeshMC_Name}.app/Contents/PlugIns/mmcmodules")
 
     # Mac bundle settings
     set(MACOSX_BUNDLE_BUNDLE_NAME "${MeshMC_DisplayName}")
@@ -434,6 +446,12 @@ elseif(UNIX)
     set(BINARY_DEST_DIR "bin")
     set(LIBRARY_DEST_DIR "lib${LIB_SUFFIX}")
     set(JARS_DEST_DIR "share/${MeshMC_Name}")
+    # On Linux .mmco loadable bundles continue to live next to the
+    # launcher binary, matching the pre-existing layout (and the
+    # search paths in PluginLoader::defaultSearchPaths). Exposed as
+    # a named variable so plugin CMakeLists files can reference one
+    # symbol regardless of platform.
+    set(MMCO_MODULES_DEST_DIR "${BINARY_DEST_DIR}/mmcmodules")
 
     # Set RPATH
     SET(MeshMC_BINARY_RPATH "$ORIGIN/../lib${LIB_SUFFIX}")
@@ -474,6 +492,10 @@ elseif(WIN32)
     set(FRAMEWORK_DEST_DIR ".")
     set(RESOURCES_DEST_DIR ".")
     set(JARS_DEST_DIR "jars")
+    # Windows keeps the flat layout it has always used: .mmco files
+    # next to meshmc.exe under <install>/mmcmodules. Variable exists
+    # so plugin CMakeLists files can refer to it uniformly.
+    set(MMCO_MODULES_DEST_DIR "${BINARY_DEST_DIR}/mmcmodules")
 else()
     message(FATAL_ERROR "Platform not supported")
 endif()
