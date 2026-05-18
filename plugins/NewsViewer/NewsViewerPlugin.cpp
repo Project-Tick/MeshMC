@@ -29,9 +29,6 @@ static QWidget* findMainWindow()
 
 /*
  * openNewsDialog — opens (or raises) the dialog.
- *
- * sidebarVisible = true  → "More News" mode: sidebar open, all entries
- * sidebarVisible = false → "Latest" mode: sidebar hidden, first entry shown
  */
 static void openNewsDialog(bool sidebarVisible)
 {
@@ -67,57 +64,12 @@ static int on_ui_main_ready(void* /*mh*/, uint32_t /*hook_id*/, void* payload,
 
 	auto* p = static_cast<MMCOUiMainReadyPayload*>(payload);
 
-	if (p && p->more_news_action) {
-		if (auto* action = static_cast<QAction*>(p->more_news_action)) {
-			action->disconnect();
-			QObject::connect(action, &QAction::triggered, qApp,
-							 []() { openNewsDialog(true); });
-			MMCO_LOG(g_ctx, "NewsViewer: wired actionMoreNews (fast path).");
-		}
-	} else {
-		/* Fallback: scan toolbars for actionMoreNews. */
-		for (auto* w : qApp->allWidgets()) {
-			if (auto* toolbar = qobject_cast<QToolBar*>(w)) {
-				for (auto* action : toolbar->actions()) {
-					if (action->objectName() ==
-						QStringLiteral("actionMoreNews")) {
-						action->disconnect();
-						QObject::connect(action, &QAction::triggered, qApp,
-										 []() { openNewsDialog(true); });
-						MMCO_LOG(g_ctx,
-								 "NewsViewer: wired actionMoreNews (scan).");
-						break;
-					}
-				}
-			}
-		}
-	}
-
 	if (p && p->news_label_button) {
 		if (auto* btn = static_cast<QToolButton*>(p->news_label_button)) {
 			btn->disconnect();
 			QObject::connect(btn, &QAbstractButton::clicked, qApp,
 							 []() { openNewsDialog(false); });
 			MMCO_LOG(g_ctx, "NewsViewer: wired newsLabel (fast path).");
-		}
-	} else {
-		/* Fallback: walk the news toolbar for a QToolButton that is not
-		 * the More News action widget. */
-		for (auto* w : qApp->allWidgets()) {
-			if (auto* btn = qobject_cast<QToolButton*>(w)) {
-				auto* tb = qobject_cast<QToolBar*>(btn->parent());
-				if (tb && tb->objectName() == QStringLiteral("newsToolBar")) {
-					if (btn->defaultAction() == nullptr ||
-						btn->defaultAction()->objectName() !=
-							QStringLiteral("actionMoreNews")) {
-						btn->disconnect();
-						QObject::connect(btn, &QAbstractButton::clicked, qApp,
-										 []() { openNewsDialog(false); });
-						MMCO_LOG(g_ctx, "NewsViewer: wired newsLabel (scan).");
-						break;
-					}
-				}
-			}
 		}
 	}
 
@@ -168,8 +120,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_NEWS_UPDATED,
 					   on_news_updated, nullptr);
 
-	ctx->ui_register_instance_action_cb(ctx->module_handle, "News",
-										"Open the news viewer", "news",
+	ctx->ui_register_instance_action_cb(ctx->module_handle, "All News",
+										"Open the news viewer with all sections", "news",
 										on_news_toolbar_action, nullptr);
 
 	MMCO_LOG(ctx, "NewsViewer initialized.");

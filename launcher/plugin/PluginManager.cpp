@@ -93,8 +93,9 @@ void PluginManager::initializeAll()
 {
 	qDebug() << "[PluginManager] Discovering modules...";
 
-	// Configure GPG keyring location before discovery — the loader's
-	// signature pre-flight runs inside discoverModules().
+	// Configure GPG keyring location and the verification-result cache
+	// before discovery — the loader's signature pre-flight runs inside
+	// discoverModules() and consumes both.
 	if (m_app && m_app->settings()) {
 		const QString key = QStringLiteral("plugin.signing.keyring_path");
 		if (!m_app->settings()->contains(key))
@@ -104,8 +105,27 @@ void PluginManager::initializeAll()
 			PluginSignature::setKeyringPath(path);
 	}
 
+	// Cache path lives next to the launcher's other settings. The cache
+	// is the single biggest reason a second-and-later startup is fast:
+	// the (size, mtime) tuple of each .mmco is enough to skip the
+	// GpgME round-trip entirely. First-startup cost stays the same.
+	{
+		const QString cacheDir =
+			QStandardPaths::writableLocation(
+				QStandardPaths::AppLocalDataLocation);
+		if (!cacheDir.isEmpty()) {
+			PluginSignature::setCachePath(
+				QDir(cacheDir).filePath(QStringLiteral(
+					"plugin-signature-cache.json")));
+		}
+	}
+
 	const QSet<QString> disabled = disabledModuleNames();
 	m_modules = m_loader.discoverModules(disabled);
+	// Persist the cache once discovery has settled — every newly-seen
+	// plugin is now memoised so the next launcher startup skips
+	// straight to the cache hit.
+	PluginSignature::flushCache();
 
 	if (m_modules.isEmpty()) {
 		qDebug() << "[PluginManager] No modules found.";

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "name": "LWJGL / graphics",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "lwjgl.glfw-init-failed",
+      "title": "GLFW failed to initialise",
+      "severity": "high",
+      "patterns": [
+        "GLFW: Failed to (initialize|initialise)",
+        "Failed to initialize GLFW"
+      ],
+      "advice": "Usually a display-server issue. On Wayland install **libdecor-0** and enable the *Display Server Tweaks* plugin's `Force libdecor` toggle. On X11, make sure `DISPLAY` is set. Inside SSH/VNC, you may need to launch with `__GL_FORCE_GENERIC_CPU=1`.",
+      "tags": ["display", "wayland", "x11"]
+    },
+    {
+      "id": "lwjgl.no-opengl",
+      "title": "OpenGL is not available",
+      "severity": "high",
+      "patterns": [
+        "Could not create OpenGL context",
+        "OpenGL [0-9.]+ post-processing is not supported"
+      ],
+      "advice": "Your GPU driver doesn't expose the OpenGL profile Minecraft needs. Update graphics drivers. On Linux, check that `glxinfo` reports a `direct rendering: Yes`. Inside flatpak make sure the **GL** runtime extension matches your driver (`flatpak install org.freedesktop.Platform.GL.default`).",
+      "tags": ["gpu", "opengl"]
+    },
+    {
+      "id": "lwjgl.optifine-shaders",
+      "title": "Shader pack causes crash",
+      "severity": "medium",
+      "patterns": [
+        "Shaders Mod crash",
+        "Iris/OptiFine: Failed to compile shader"
+      ],
+      "advice": "The active shader pack failed to compile against your driver. Try disabling shaders (in-game F3 + R), or remove the shader pack from `shaderpacks/`. Mesa users can sometimes fix it by switching to `MESA_GL_VERSION_OVERRIDE=4.6`.",
+      "tags": ["shaders", "gpu"]
+    }
+  ]
+}

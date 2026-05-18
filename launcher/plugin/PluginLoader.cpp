@@ -47,7 +47,45 @@ QStringList PluginLoader::defaultSearchPaths()
 
 	// In-tree: next to the binary
 	QString appDir = QCoreApplication::applicationDirPath();
+
+#ifdef Q_OS_MAC
+	// Inside a .app bundle applicationDirPath() returns
+	//   <bundle>/Contents/MacOS
+	//
+	// We install .mmco loadable bundles into
+	//   <bundle>/Contents/Resources/mmcmodules
+	//
+	// Two earlier macOS layouts failed:
+	//   * Contents/MacOS/mmcmodules — codesign treats every
+	//     non-main-executable Mach-O under Contents/MacOS as a
+	//     subcomponent and demands its own signature.
+	//   * Contents/PlugIns/mmcmodules — codesign --strict walks
+	//     PlugIns/ recursively and verifies each Mach-O's Apple
+	//     signature covers the entire file. Our custom RSA trailer
+	//     (scripts/mmco_sign.py) appended past __LINKEDIT trips
+	//     that check with
+	//       "main executable failed strict validation
+	//        In subcomponent: .../mmcmodules/Foo.mmco"
+	//
+	// Contents/Resources/ is the only directory codesign treats as
+	// opaque data: files there are hashed into CodeResources but
+	// never parsed as code. dlopen() against them is fully
+	// supported by the dyld loader — Apple's loader doesn't care
+	// which bundle subdirectory a library lives in at runtime.
+	//
+	// The legacy Contents/PlugIns/mmcmodules and Contents/MacOS/
+	// mmcmodules locations are probed as fallbacks so installs
+	// that predate this commit keep working until the user
+	// reinstalls.
+	QDir bundleDir(appDir);
+	if (bundleDir.cdUp()) { // MacOS -> Contents
+		paths << bundleDir.filePath("Resources/mmcmodules");
+		paths << bundleDir.filePath("PlugIns/mmcmodules");   // legacy
+	}
+	paths << QDir(appDir).filePath("mmcmodules"); // legacy
+#else
 	paths << QDir(appDir).filePath("mmcmodules");
+#endif
 
 	// User-local
 #ifdef Q_OS_WIN

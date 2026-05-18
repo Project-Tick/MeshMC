@@ -5,7 +5,7 @@ TODO List for MeshMC
 - Write an integrated MMCO package manager.
 - Create a theme plugin that includes at least two themes.
 - Run flite, xrandr, and libdecor as plugins.
-- Add the ability to export instances using Flame zip, mcpack, and other export methods.
+- Add the ability to export instances using Flame zip, mrpack, and other export methods.
 - Write the Flame mod list as a parser, and similarly, do the same for mrpack format.
 - Write an offline wiki plugin.
 - Integrate Project Tick MNV, Kate, and Notepad++ with plugin.

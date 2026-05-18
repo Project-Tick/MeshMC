@@ -434,8 +434,70 @@ if(UNIX AND APPLE)
     set(LIBRARY_DEST_DIR "${FRAMEWORK_DEST_DIR}")
     set(PLUGIN_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS")
     set(RESOURCES_DEST_DIR "${MeshMC_Name}.app/Contents/Resources")
-    set(JARS_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS/jars")
+    # Java archives (JavaCheck.jar / NewLaunch.jar) MUST NOT live
+    # under Contents/MacOS. Apple's signing tooling reserves that
+    # directory exclusively for the main executable and its Mach-O
+    # helpers; every other file it finds there is treated as a
+    # subcomponent of the main executable and gets seal-hashed in
+    # the strict-validation pass. The result, observed in CI:
+    #     "code object is not signed at all
+    #      In subcomponent: .../Contents/MacOS/jars/JavaCheck.jar"
+    # The bundle anatomy guide explicitly puts non-code data under
+    # Contents/Resources/, which is what we do. Application::
+    # getJarsPath() has a matching macOS branch.
+    set(JARS_DEST_DIR "${MeshMC_Name}.app/Contents/Resources/jars")
     set(BUNDLE_DEST_DIR ".")
+    # .mmco loadable bundles on macOS live under
+    #   MeshMC.app/Contents/Resources/mmcmodules
+    #
+    # Why not Contents/MacOS/:
+    #   Apple's codesign reserves Contents/MacOS/ for the main
+    #   executable + Mach-O helpers; every other file there is
+    #   treated as an unsigned subcomponent and aborts strict
+    #   validation.
+    #
+    # Why not Contents/PlugIns/ (Apple's "official" plug-in dir):
+    #   codesign --strict walks Contents/PlugIns/ recursively and
+    #   demands every Mach-O carry a valid Apple LC_CODE_SIGNATURE
+    #   covering the whole file. Our .mmco files have a custom RSA
+    #   trailer (scripts/mmco_sign.py) appended past __LINKEDIT,
+    #   which Apple's strict mode rejects as
+    #     "main executable failed strict validation
+    #      In subcomponent: .../mmcmodules/Foo.mmco"
+    #   even when the Mach-O image was correctly signed before the
+    #   trailer was reattached. The two signing schemes are
+    #   physically incompatible inside the same file.
+    #
+    # Why Contents/Resources/ works:
+    #   codesign treats Resources/ as opaque data — every file is
+    #   hashed verbatim into _CodeSignature/CodeResources but its
+    #   bytes are never parsed as code. Trailer-signed Mach-Os
+    #   live there without tripping strict mode. dlopen() against
+    #   them still works (Apple's loader doesn't care which bundle
+    #   directory a library is loaded from at runtime, only that
+    #   codesign was able to seal it).
+    #
+    # PluginLoader::defaultSearchPaths has the matching macOS
+    # branch that points at Contents/Resources/mmcmodules.
+    set(MMCO_MODULES_DEST_DIR
+        "${MeshMC_Name}.app/Contents/Resources/mmcmodules")
+
+    # Plugin-shipped DATA files (rule packs, templates, ...) MUST
+    # NOT live next to the .mmco under Contents/PlugIns/. Apple's
+    # strict-signing pass walks Contents/PlugIns/ recursively and
+    # treats every non-code file it finds as a subcomponent of the
+    # main executable, demanding it be signed. We observed
+    #     "code object is not signed at all
+    #      In subcomponent: .../PlugIns/mmcmodules/ErrorOracle/rules/jvm.json"
+    # in CI before this fix. The cure is to push plugin data into
+    # Contents/Resources/ — codesign hashes those files via
+    # CodeResources without trying to interpret them as nested
+    # code. Each plugin gets its own subdirectory under
+    # MMCOPluginData/ so namespaces don't collide.
+    # Runtime path resolution lives in the individual plugins
+    # (e.g. ErrorOraclePlugin::builtInRulesDir).
+    set(MMCO_PLUGIN_DATA_DEST_DIR
+        "${MeshMC_Name}.app/Contents/Resources/MMCOPluginData")
 
     # Mac bundle settings
     set(MACOSX_BUNDLE_BUNDLE_NAME "${MeshMC_DisplayName}")
@@ -506,6 +568,18 @@ elseif(UNIX)
     set(BINARY_DEST_DIR "bin")
     set(LIBRARY_DEST_DIR "lib${LIB_SUFFIX}")
     set(JARS_DEST_DIR "share/${MeshMC_Name}")
+    # On Linux .mmco loadable bundles continue to live next to the
+    # launcher binary, matching the pre-existing layout (and the
+    # search paths in PluginLoader::defaultSearchPaths). Exposed as
+    # a named variable so plugin CMakeLists files can reference one
+    # symbol regardless of platform.
+    set(MMCO_MODULES_DEST_DIR "${BINARY_DEST_DIR}/mmcmodules")
+    # On Linux there is no codesign machinery walking PlugIns/, so
+    # plugin data can keep living next to the .mmco. We still expose
+    # the variable so plugin CMakeLists files can write
+    #   install(... DESTINATION ${MMCO_PLUGIN_DATA_DEST_DIR}/<Name> ...)
+    # uniformly across platforms.
+    set(MMCO_PLUGIN_DATA_DEST_DIR "${MMCO_MODULES_DEST_DIR}")
 
     # Set RPATH
     SET(MeshMC_BINARY_RPATH "$ORIGIN/../lib${LIB_SUFFIX}")
@@ -546,6 +620,15 @@ elseif(WIN32)
     set(FRAMEWORK_DEST_DIR ".")
     set(RESOURCES_DEST_DIR ".")
     set(JARS_DEST_DIR "jars")
+    # Windows keeps the flat layout it has always used: .mmco files
+    # next to meshmc.exe under <install>/mmcmodules. Variable exists
+    # so plugin CMakeLists files can refer to it uniformly.
+    set(MMCO_MODULES_DEST_DIR "${BINARY_DEST_DIR}/mmcmodules")
+    # Windows has no codesign-style strict mode that distinguishes
+    # code from data inside the plugin directory, so plugin data
+    # can stay alongside the .mmco. Variable mirrors the macOS one
+    # for cross-platform plugin CMakeLists.
+    set(MMCO_PLUGIN_DATA_DEST_DIR "${MMCO_MODULES_DEST_DIR}")
 else()
     message(FATAL_ERROR "Platform not supported")
 endif()

@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "name": "Network & login",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "net.disconnected-multiplayer",
+      "title": "Server disconnected the client",
+      "severity": "low",
+      "patterns": [
+        "Internal Exception: io\\.netty\\.handler\\.codec\\.DecoderException",
+        "Disconnected from server: .*"
+      ],
+      "advice": "The server kicked you, usually because of a mismatch between your client mods and the server's. Match your modlist and versions exactly, or join with a vanilla client to verify connectivity.",
+      "tags": ["multiplayer", "netty"]
+    },
+    {
+      "id": "auth.invalid-session",
+      "title": "Microsoft / Mojang session expired",
+      "severity": "medium",
+      "patterns": [
+        "Authentication servers are down",
+        "Invalid session id",
+        "Failed to login: Invalid session token"
+      ],
+      "advice": "Your auth token has expired. Open **Accounts** and re-sign-in to your Microsoft account. If you use a third-party auth provider (Drasl, Ely.by) make sure its plugin is still enabled and its server is reachable.",
+      "tags": ["auth"]
+    },
+    {
+      "id": "asset.download-failed",
+      "title": "Asset download failed",
+      "severity": "medium",
+      "patterns": [
+        "Failed to download .*\\.jar",
+        "java\\.net\\.ConnectException",
+        "java\\.net\\.UnknownHostException"
+      ],
+      "advice": "MeshMC couldn't reach one of Minecraft's asset CDNs. Check your network connection or proxy. Some corporate firewalls block `resources.download.minecraft.net` and `libraries.minecraft.net` — add those to the allow-list.",
+      "tags": ["network", "download"]
+    }
+  ]
+}

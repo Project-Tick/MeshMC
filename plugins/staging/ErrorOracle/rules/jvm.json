@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "name": "JVM core errors",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "jvm.oom-heap",
+      "title": "Java ran out of heap memory",
+      "severity": "high",
+      "patterns": [
+        "java\\.lang\\.OutOfMemoryError: Java heap space",
+        "OutOfMemoryError.*Java heap"
+      ],
+      "advice": "The JVM exhausted its heap. Open the instance's **Settings → Java** page and raise the maximum memory allocation. For modern modpacks, 6 GB is a reasonable starting point; very large packs may need 8–10 GB. If you only have 8 GB of RAM total, close other applications before launching.",
+      "tags": ["memory", "jvm"],
+      "actions": [
+        { "kind": "open-instance-page", "page": "settings" }
+      ]
+    },
+    {
+      "id": "jvm.oom-metaspace",
+      "title": "Metaspace exhausted",
+      "severity": "high",
+      "patterns": [
+        "java\\.lang\\.OutOfMemoryError: Metaspace",
+        "Metaspace.*used.*committed"
+      ],
+      "advice": "The class-metadata area is full. Add `-XX:MaxMetaspaceSize=512m` (or higher) to the instance JVM args. This usually triggers in modpacks with hundreds of mods.",
+      "tags": ["memory", "jvm"]
+    },
+    {
+      "id": "jvm.unsupported-class-version",
+      "title": "Java version mismatch",
+      "severity": "high",
+      "patterns": [
+        "Unsupported class file major version (\\d+)",
+        "has been compiled by a more recent version of the Java Runtime"
+      ],
+      "advice": "Minecraft was compiled for a newer Java than is running. Open **Settings → Java** and pick a Java install that matches: 1.16.5 and older want Java 8, 1.17 wants Java 16, 1.18 → 1.20.4 want Java 17, 1.20.5+ wants Java 21.",
+      "tags": ["java", "version"]
+    },
+    {
+      "id": "jvm.no-such-method",
+      "title": "Mod targets a different Minecraft version",
+      "severity": "medium",
+      "patterns": [
+        "java\\.lang\\.NoSuchMethodError",
+        "java\\.lang\\.NoSuchFieldError"
+      ],
+      "advice": "A mod is calling a method that doesn't exist in this Minecraft version. Usually means one of your mods was built for a different MC version. Check the line above the NoSuchMethodError — the class on the left of the missing method belongs to the misbehaving mod.",
+      "tags": ["mod", "compat"]
+    }
+  ]
+}

@@ -30,7 +30,7 @@ foreach(CFG ${CMAKE_CONFIGURATION_TYPES})
 endforeach()
 
 install(TARGETS DesktopNotifier
-    LIBRARY DESTINATION "${BINARY_DEST_DIR}/mmcmodules"
+    LIBRARY DESTINATION "${MMCO_MODULES_DEST_DIR}"
 )
 
 if(MeshMC_PLUGIN_SIGN_ALL)
