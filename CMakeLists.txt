@@ -447,18 +447,40 @@ if(UNIX AND APPLE)
     # getJarsPath() has a matching macOS branch.
     set(JARS_DEST_DIR "${MeshMC_Name}.app/Contents/Resources/jars")
     set(BUNDLE_DEST_DIR ".")
-    # .mmco loadable bundles must NOT live under Contents/MacOS.
-    # Apple's `codesign --strict` (implicitly enforced by notarization)
-    # treats every Mach-O it discovers there as a "subcomponent" of
-    # the main executable and recomputes its seal — which collides
-    # with the custom RSA trailer mmco_sign.py appends after the
-    # Mach-O image (see scripts/mmco_sign.py + cmake/MMCOSign.cmake).
-    # The canonical Apple home for dlopen()-able loadable bundles is
-    # Contents/PlugIns/, so we route .mmco install there. The plugin
-    # loader (PluginLoader::defaultSearchPaths) has a matching macOS
-    # branch that points at Contents/PlugIns/mmcmodules.
+    # .mmco loadable bundles on macOS live under
+    #   MeshMC.app/Contents/Resources/mmcmodules
+    #
+    # Why not Contents/MacOS/:
+    #   Apple's codesign reserves Contents/MacOS/ for the main
+    #   executable + Mach-O helpers; every other file there is
+    #   treated as an unsigned subcomponent and aborts strict
+    #   validation.
+    #
+    # Why not Contents/PlugIns/ (Apple's "official" plug-in dir):
+    #   codesign --strict walks Contents/PlugIns/ recursively and
+    #   demands every Mach-O carry a valid Apple LC_CODE_SIGNATURE
+    #   covering the whole file. Our .mmco files have a custom RSA
+    #   trailer (scripts/mmco_sign.py) appended past __LINKEDIT,
+    #   which Apple's strict mode rejects as
+    #     "main executable failed strict validation
+    #      In subcomponent: .../mmcmodules/Foo.mmco"
+    #   even when the Mach-O image was correctly signed before the
+    #   trailer was reattached. The two signing schemes are
+    #   physically incompatible inside the same file.
+    #
+    # Why Contents/Resources/ works:
+    #   codesign treats Resources/ as opaque data — every file is
+    #   hashed verbatim into _CodeSignature/CodeResources but its
+    #   bytes are never parsed as code. Trailer-signed Mach-Os
+    #   live there without tripping strict mode. dlopen() against
+    #   them still works (Apple's loader doesn't care which bundle
+    #   directory a library is loaded from at runtime, only that
+    #   codesign was able to seal it).
+    #
+    # PluginLoader::defaultSearchPaths has the matching macOS
+    # branch that points at Contents/Resources/mmcmodules.
     set(MMCO_MODULES_DEST_DIR
-        "${MeshMC_Name}.app/Contents/PlugIns/mmcmodules")
+        "${MeshMC_Name}.app/Contents/Resources/mmcmodules")
 
     # Plugin-shipped DATA files (rule packs, templates, ...) MUST
     # NOT live next to the .mmco under Contents/PlugIns/. Apple's

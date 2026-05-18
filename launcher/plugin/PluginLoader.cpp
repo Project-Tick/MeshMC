@@ -51,26 +51,38 @@ QStringList PluginLoader::defaultSearchPaths()
 #ifdef Q_OS_MAC
 	// Inside a .app bundle applicationDirPath() returns
 	//   <bundle>/Contents/MacOS
-	// We deliberately install .mmco loadable bundles into
-	//   <bundle>/Contents/PlugIns/mmcmodules
-	// instead of Contents/MacOS/mmcmodules, because Apple's
-	// `codesign --strict` (enforced implicitly by notarization)
-	// treats every Mach-O it finds under Contents/MacOS as a
-	// subcomponent of the main executable and tries to seal it
-	// itself — which collides with the custom RSA trailer that
-	// mmco_sign.py appends after the Mach-O image. PlugIns/ is
-	// Apple's canonical location for dlopen()-able loadable
-	// bundles, so the strict-validation logic does not fire there.
 	//
-	// We still probe the legacy Contents/MacOS/mmcmodules location
-	// as a fallback so that older installs and ad-hoc developer
-	// builds keep working. The new path is searched first so it
-	// wins on freshly-built bundles.
+	// We install .mmco loadable bundles into
+	//   <bundle>/Contents/Resources/mmcmodules
+	//
+	// Two earlier macOS layouts failed:
+	//   * Contents/MacOS/mmcmodules — codesign treats every
+	//     non-main-executable Mach-O under Contents/MacOS as a
+	//     subcomponent and demands its own signature.
+	//   * Contents/PlugIns/mmcmodules — codesign --strict walks
+	//     PlugIns/ recursively and verifies each Mach-O's Apple
+	//     signature covers the entire file. Our custom RSA trailer
+	//     (scripts/mmco_sign.py) appended past __LINKEDIT trips
+	//     that check with
+	//       "main executable failed strict validation
+	//        In subcomponent: .../mmcmodules/Foo.mmco"
+	//
+	// Contents/Resources/ is the only directory codesign treats as
+	// opaque data: files there are hashed into CodeResources but
+	// never parsed as code. dlopen() against them is fully
+	// supported by the dyld loader — Apple's loader doesn't care
+	// which bundle subdirectory a library lives in at runtime.
+	//
+	// The legacy Contents/PlugIns/mmcmodules and Contents/MacOS/
+	// mmcmodules locations are probed as fallbacks so installs
+	// that predate this commit keep working until the user
+	// reinstalls.
 	QDir bundleDir(appDir);
 	if (bundleDir.cdUp()) { // MacOS -> Contents
-		paths << bundleDir.filePath("PlugIns/mmcmodules");
+		paths << bundleDir.filePath("Resources/mmcmodules");
+		paths << bundleDir.filePath("PlugIns/mmcmodules");   // legacy
 	}
-	paths << QDir(appDir).filePath("mmcmodules"); // legacy fallback
+	paths << QDir(appDir).filePath("mmcmodules"); // legacy
 #else
 	paths << QDir(appDir).filePath("mmcmodules");
 #endif
