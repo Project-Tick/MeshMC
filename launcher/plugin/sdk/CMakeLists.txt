@@ -61,21 +61,42 @@ set(SDK_LAUNCHER_HEADERS
     ${CMAKE_SOURCE_DIR}/launcher/BaseInstance.h
     ${CMAKE_SOURCE_DIR}/launcher/BaseVersion.h
     ${CMAKE_SOURCE_DIR}/launcher/BaseVersionList.h
+    ${CMAKE_SOURCE_DIR}/launcher/DefaultVariable.h
+    ${CMAKE_SOURCE_DIR}/launcher/Exception.h
     ${CMAKE_SOURCE_DIR}/launcher/InstanceList.h
+    ${CMAKE_SOURCE_DIR}/launcher/JavaCommon.h
     ${CMAKE_SOURCE_DIR}/launcher/MMCZip.h
     ${CMAKE_SOURCE_DIR}/launcher/MessageLevel.h
+    ${CMAKE_SOURCE_DIR}/launcher/ProblemProvider.h
     ${CMAKE_SOURCE_DIR}/launcher/QObjectPtr.h
     ${CMAKE_SOURCE_DIR}/launcher/Usable.h
 )
 
 set(SDK_MINECRAFT_HEADERS
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/AssetsUtils.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/Component.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/GradleSpecifier.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/LaunchProfile.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/Library.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/MinecraftInstance.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/MojangDownloadInfo.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/OpSys.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/PackProfile.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/ProfileUtils.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/Rule.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/VersionFile.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/World.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/WorldList.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/auth/AccountData.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/auth/AuthSession.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/auth/MinecraftAccount.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/auth/AccountList.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/launch/MinecraftServerTarget.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/mod/Mod.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/mod/ModDetails.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/services/CapeChange.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/services/SkinUpload.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/services/SkinDelete.h
 )
 
 set(SDK_NET_HEADERS
@@ -89,6 +110,7 @@ set(SDK_NET_HEADERS
 )
 
 set(SDK_MISC_HEADERS
+    ${CMAKE_SOURCE_DIR}/launcher/icons/IconList.h
     ${CMAKE_SOURCE_DIR}/launcher/java/JavaVersion.h
     ${CMAKE_SOURCE_DIR}/launcher/pathmatcher/IPathMatcher.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/INIFile.h
@@ -121,16 +143,34 @@ install(FILES ${SDK_PLUGIN_HEADERS}
 install(FILES ${SDK_LAUNCHER_HEADERS}
     DESTINATION "${SDK_INSTALL_DIR}"
 )
+install(FILES
+    ${CMAKE_SOURCE_DIR}/buildconfig/BuildConfig.h
+    DESTINATION "${SDK_INSTALL_DIR}"
+)
 
 # minecraft/ subtree
 install(FILES
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/AssetsUtils.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/Component.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/GradleSpecifier.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/LaunchProfile.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/Library.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/MinecraftInstance.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/MojangDownloadInfo.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/OpSys.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/PackProfile.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/ProfileUtils.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/Rule.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/VersionFile.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/World.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/WorldList.h
     DESTINATION "${SDK_INSTALL_DIR}/minecraft"
 )
 install(FILES
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/auth/AccountData.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/auth/AuthSession.h
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/auth/MinecraftAccount.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/auth/AccountList.h
     DESTINATION "${SDK_INSTALL_DIR}/minecraft/auth"
 )
 install(FILES
@@ -142,14 +182,43 @@ install(FILES
     ${CMAKE_SOURCE_DIR}/launcher/minecraft/mod/ModDetails.h
     DESTINATION "${SDK_INSTALL_DIR}/minecraft/mod"
 )
+install(FILES
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/services/CapeChange.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/services/SkinUpload.h
+    ${CMAKE_SOURCE_DIR}/launcher/minecraft/services/SkinDelete.h
+    DESTINATION "${SDK_INSTALL_DIR}/minecraft/services"
+)
 
 # net/ subtree
 install(FILES ${SDK_NET_HEADERS}
     DESTINATION "${SDK_INSTALL_DIR}/net"
 )
 
+# meta/
+install(FILES
+    ${CMAKE_SOURCE_DIR}/launcher/meta/BaseEntity.h
+    ${CMAKE_SOURCE_DIR}/launcher/meta/Index.h
+    ${CMAKE_SOURCE_DIR}/launcher/meta/JsonFormat.h
+    ${CMAKE_SOURCE_DIR}/launcher/meta/Version.h
+    ${CMAKE_SOURCE_DIR}/launcher/meta/VersionList.h
+    DESTINATION "${SDK_INSTALL_DIR}/meta"
+)
+
+# icons/
+install(FILES
+    ${CMAKE_SOURCE_DIR}/launcher/icons/IconList.h
+    ${CMAKE_SOURCE_DIR}/launcher/icons/IconUtils.h
+    ${CMAKE_SOURCE_DIR}/launcher/icons/MMCIcon.h
+    DESTINATION "${SDK_INSTALL_DIR}/icons"
+)
+
 # java/
 install(FILES
+    ${CMAKE_SOURCE_DIR}/launcher/java/JavaChecker.h
+    ${CMAKE_SOURCE_DIR}/launcher/java/JavaCheckerJob.h
+    ${CMAKE_SOURCE_DIR}/launcher/java/JavaInstall.h
+    ${CMAKE_SOURCE_DIR}/launcher/java/JavaInstallList.h
+    ${CMAKE_SOURCE_DIR}/launcher/java/JavaUtils.h
     ${CMAKE_SOURCE_DIR}/launcher/java/JavaVersion.h
     DESTINATION "${SDK_INSTALL_DIR}/java"
 )
@@ -163,12 +232,17 @@ install(FILES
 # settings/
 install(FILES
     ${CMAKE_SOURCE_DIR}/launcher/settings/INIFile.h
+    ${CMAKE_SOURCE_DIR}/launcher/settings/INISettingsObject.h
+    ${CMAKE_SOURCE_DIR}/launcher/settings/OverrideSetting.h
+    ${CMAKE_SOURCE_DIR}/launcher/settings/PassthroughSetting.h
+    ${CMAKE_SOURCE_DIR}/launcher/settings/Setting.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/SettingsObject.h
     DESTINATION "${SDK_INSTALL_DIR}/settings"
 )
 
 # tasks/
 install(FILES
+    ${CMAKE_SOURCE_DIR}/launcher/tasks/SequentialTask.h
     ${CMAKE_SOURCE_DIR}/launcher/tasks/Task.h
     DESTINATION "${SDK_INSTALL_DIR}/tasks"
 )
@@ -178,6 +252,15 @@ install(FILES
     ${CMAKE_SOURCE_DIR}/launcher/ui/pages/BasePage.h
     ${CMAKE_SOURCE_DIR}/launcher/ui/pages/BasePageContainer.h
     DESTINATION "${SDK_INSTALL_DIR}/ui/pages"
+)
+install(FILES
+    ${CMAKE_SOURCE_DIR}/launcher/ui/pages/instance/InstanceSettingsPage.h
+    DESTINATION "${SDK_INSTALL_DIR}/ui/pages/instance"
+)
+install(FILES
+    ${CMAKE_SOURCE_DIR}/launcher/ui/dialogs/CustomMessageBox.h
+    ${CMAKE_SOURCE_DIR}/launcher/ui/dialogs/ProgressDialog.h
+    DESTINATION "${SDK_INSTALL_DIR}/ui/dialogs"
 )
 
 # updater/
