@@ -38,6 +38,16 @@ target_link_libraries(MeshMC_sdk INTERFACE
     Katabasis::Katabasis
 )
 
+if(APPLE)
+    target_link_options(MeshMC_sdk INTERFACE
+        $<BUILD_INTERFACE:-Wl,-undefined,dynamic_lookup>
+    )
+elseif(WIN32 AND TARGET ${MeshMC_Name})
+    target_link_libraries(MeshMC_sdk INTERFACE
+        $<BUILD_INTERFACE:${MeshMC_Name}>
+    )
+endif()
+
 # ---------------------------------------------------------------------------
 # Collect SDK headers — preserving directory structure
 # ---------------------------------------------------------------------------
