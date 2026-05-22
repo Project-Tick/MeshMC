@@ -203,6 +203,19 @@ void PluginManager::initializeAll()
 	// those hooks inside mmco_init() see the very first dispatch.
 	connectAppSignals();
 
+	// Seed the news extra-feed list from BuildConfig so plugins that
+	// consume the news API see every feed configured at build time
+	// without having to link BuildConfig themselves.
+	if (!BuildConfig.NEWS_EXTRA_FEEDS.isEmpty()) {
+		const QStringList urls = BuildConfig.NEWS_EXTRA_FEEDS.split(
+			QLatin1Char(';'), Qt::SkipEmptyParts);
+		for (const QString& url : urls) {
+			const QString trimmed = url.trimmed();
+			if (!trimmed.isEmpty() && !m_extraFeedUrls.contains(trimmed))
+				m_extraFeedUrls.append(trimmed);
+		}
+	}
+
 	// Fire app-initialized hook
 	dispatchHook(MMCO_HOOK_APP_INITIALIZED);
 }

@@ -4,7 +4,6 @@
 
 #include "plugin/sdk/mmco_sdk.h"
 #include "NewsViewerDialog.h"
-#include "BuildConfig.h"
 
 MMCO_DEFINE_MODULE(
 	"NewsViewer", "2.0.0", "Project Tick",
@@ -102,18 +101,10 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	g_ctx = ctx;
 	MMCO_LOG(ctx, "NewsViewer initializing...");
 
-	/* Extra feeds are defined at build time via -DMeshMC_NEWS_EXTRA_FEEDS=
-	 * and baked into BuildConfig — users cannot change them at runtime. */
-	if (!BuildConfig.NEWS_EXTRA_FEEDS.isEmpty()) {
-		const QStringList urls = BuildConfig.NEWS_EXTRA_FEEDS.split(
-			QLatin1Char(';'), Qt::SkipEmptyParts);
-		for (const QString& url : urls) {
-			QString trimmed = url.trimmed();
-			if (!trimmed.isEmpty())
-				ctx->news_add_feed_url(ctx->module_handle,
-									   trimmed.toUtf8().constData());
-		}
-	}
+	/* Extra feeds configured at build time via -DMeshMC_NEWS_EXTRA_FEEDS
+	 * are seeded into the host's news feed list by PluginManager during
+	 * its own init, before this plugin is loaded; the dialog picks them
+	 * up via the standard news_get_feed_count / news_get_feed_url API. */
 
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_UI_MAIN_READY,
 					   on_ui_main_ready, nullptr);
