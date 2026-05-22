@@ -25,6 +25,11 @@ namespace pack
 class ExportEngine
 {
   public:
+	/* `ctx` is the MMCOContext owned by the plugin. The engine drives
+	 * every host-side query through it (instance list walks, component
+	 * versions, icon key, zip compression). */
+	explicit ExportEngine(MMCOContext* ctx = nullptr) : m_ctx(ctx) {}
+
 	struct Options {
 		Format format = Format::MrPack;
 
@@ -72,6 +77,8 @@ class ExportEngine
 								 const QString& instanceRoot);
 
 	bool writeFile(const QString& abs, const QByteArray& bytes);
+
+	MMCOContext* m_ctx = nullptr;
 };
 
 } // namespace pack

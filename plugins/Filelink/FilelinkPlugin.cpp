@@ -83,36 +83,40 @@ static QString currentSelectedInstanceId()
 
 static QString resolveShortcutIconPath(const QString& iconKey)
 {
-	auto iconList = APPLICATION->icons();
-	if (!iconList)
+	if (!g_ctx)
 		return {};
 
-	QString effectiveKey =
+	const QString effectiveKey =
 		iconKey.isEmpty() ? QStringLiteral("default") : iconKey;
-	if (auto* iconEntry = iconList->icon(effectiveKey)) {
-		QString existingPath = iconEntry->getFilePath();
-		if (!existingPath.isEmpty() && QFileInfo::exists(existingPath))
-			return existingPath;
-	}
+	const QByteArray keyUtf8 = effectiveKey.toUtf8();
 
+	/* Prefer the on-disk path the launcher already keeps for the
+	 * icon (custom user icons live as files; built-ins resolve to a
+	 * Qt resource path which Windows .lnk can't reference). */
+	const char* existing = g_ctx->icon_list_get_file_path(
+		g_ctx->module_handle, keyUtf8.constData());
+	if (existing && *existing && QFileInfo::exists(QString::fromUtf8(existing)))
+		return QString::fromUtf8(existing);
+
+	/* Fall back to materialising the icon as a PNG under our own
+	 * data dir so the shortcut has a real file to reference. */
 	QString dataRoot =
 		QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 	if (dataRoot.isEmpty())
 		dataRoot = QDir::tempPath();
-
 	QString iconDir =
 		QDir(dataRoot).filePath(QStringLiteral("filelink-shortcut-icons"));
 	if (!QDir().mkpath(iconDir))
 		return {};
-
 	QString safeKey = effectiveKey;
 	safeKey.replace(QRegularExpression(R"([^A-Za-z0-9_.-])"), "_");
 	if (safeKey.isEmpty())
 		safeKey = QStringLiteral("default");
-
 	QString exportedPath =
 		QDir(iconDir).filePath(safeKey + QStringLiteral(".png"));
-	iconList->saveIcon(effectiveKey, exportedPath, "PNG");
+	const QByteArray destUtf8 = exportedPath.toUtf8();
+	g_ctx->icon_list_save_png(g_ctx->module_handle, keyUtf8.constData(),
+							  destUtf8.constData());
 	return QFileInfo::exists(exportedPath) ? exportedPath : QString();
 }
 
@@ -298,21 +302,26 @@ static void showFilelinkDialog(const QString& preselectedId = {})
 	if (!win)
 		return;
 
-	auto instList = APPLICATION->instances();
-	if (!instList || instList->count() == 0) {
+	const int total = g_ctx->instance_count(g_ctx->module_handle);
+	if (total <= 0) {
 		QMessageBox::information(win, QObject::tr("Filelink"),
 								 QObject::tr("No instances available."));
 		return;
 	}
 
-	// Build instance name/id lists
+	// Build instance name/id lists via the C ABI.
 	QStringList instNames, instIds;
-	for (int i = 0; i < instList->count(); i++) {
-		auto inst = instList->at(i);
-		if (inst && (preselectedId.isEmpty() || inst->id() == preselectedId)) {
-			instNames << inst->name();
-			instIds << inst->id();
-		}
+	for (int i = 0; i < total; i++) {
+		const char* idC = g_ctx->instance_get_id(g_ctx->module_handle, i);
+		if (!idC)
+			continue;
+		const QString id = QString::fromUtf8(idC);
+		if (!preselectedId.isEmpty() && id != preselectedId)
+			continue;
+		const char* nameC =
+			g_ctx->instance_get_name(g_ctx->module_handle, id.toUtf8().constData());
+		instNames << (nameC ? QString::fromUtf8(nameC) : id);
+		instIds << id;
 	}
 	if (instIds.isEmpty()) {
 		QMessageBox::information(
@@ -341,11 +350,19 @@ static void showFilelinkDialog(const QString& preselectedId = {})
 		auto* item = new QTreeWidgetItem(instTree);
 		item->setText(0, instNames[i]);
 		item->setData(0, Qt::UserRole, instIds[i]);
-		// Instance icon
+		// Instance icon — resolve via the icon list C ABI; fall back
+		// to a theme lookup so unknown keys still get a reasonable
+		// glyph.
 		QString iconKey = g_ctx->instance_get_icon_key(g_ctx->module_handle,
 													   qPrintable(instIds[i]));
-		if (!iconKey.isEmpty())
-			item->setIcon(0, APPLICATION->icons()->getIcon(iconKey));
+		if (!iconKey.isEmpty()) {
+			const char* path = g_ctx->icon_list_get_file_path(
+				g_ctx->module_handle, iconKey.toUtf8().constData());
+			if (path && *path)
+				item->setIcon(0, QIcon(QString::fromUtf8(path)));
+			else
+				item->setIcon(0, QIcon::fromTheme(iconKey));
+		}
 	}
 	if (instTree->topLevelItemCount() > 0) {
 		// Pre-select the requested instance, or fall back to the first
@@ -428,14 +445,27 @@ static void showFilelinkDialog(const QString& preselectedId = {})
 	iconTree->setIconSize(QSize(32, 32));
 	iconTree->setMaximumHeight(180);
 
-	// Populate icon list from APPLICATION->icons()
+	// Populate the icon picker via the icon list C ABI. We can't
+	// reach IconList's QIcon directly any more (would need a QIcon
+	// handle through the ABI), so we resolve each entry's on-disk
+	// path and build a QIcon from that. For built-in icons whose
+	// path is a Qt resource (":/..."), QIcon(QString) DTRT.
 	QString selectedIconKey;
-	auto* iconListModel = APPLICATION->icons().get();
-	for (int i = 0; i < iconListModel->rowCount(); i++) {
-		QModelIndex idx = iconListModel->index(i, 0);
-		QString key = iconListModel->data(idx, Qt::UserRole).toString();
-		QString name = iconListModel->data(idx, Qt::DisplayRole).toString();
-		QIcon ico = iconListModel->data(idx, Qt::DecorationRole).value<QIcon>();
+	const int iconTotal = g_ctx->icon_list_count(g_ctx->module_handle);
+	for (int i = 0; i < iconTotal; i++) {
+		const char* keyC = g_ctx->icon_list_get_key(g_ctx->module_handle, i);
+		const char* nameC = g_ctx->icon_list_get_name(g_ctx->module_handle, i);
+		const QString key = keyC ? QString::fromUtf8(keyC) : QString();
+		const QString name = nameC ? QString::fromUtf8(nameC) : QString();
+		QIcon ico;
+		if (!key.isEmpty()) {
+			const char* pathC = g_ctx->icon_list_get_file_path(
+				g_ctx->module_handle, key.toUtf8().constData());
+			if (pathC && *pathC)
+				ico = QIcon(QString::fromUtf8(pathC));
+			if (ico.isNull())
+				ico = QIcon::fromTheme(key);
+		}
 
 		auto* item = new QTreeWidgetItem(iconTree);
 		item->setText(0, name.isEmpty() ? key : name);

@@ -32,7 +32,7 @@ class WikiPage : public QWidget, public BasePage
 	}
 	QIcon icon() const override
 	{
-		return APPLICATION->icons()->getIcon(QStringLiteral("help-browser"));
+		return QIcon::fromTheme(QStringLiteral("help-browser"));
 	}
 
   private slots:

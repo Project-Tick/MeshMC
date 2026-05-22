@@ -4,8 +4,11 @@
 
 #include "FilelinkPage.h"
 
-FilelinkPage::FilelinkPage(InstancePtr inst, FilelinkManager* mgr)
-	: m_instance(inst), m_manager(mgr)
+FilelinkPage::FilelinkPage(const QString& instanceId,
+						   const QString& instanceRoot, FilelinkManager* mgr,
+						   MMCOContext* ctx)
+	: m_instanceId(instanceId), m_instanceRoot(instanceRoot), m_manager(mgr),
+	  m_ctx(ctx)
 {
 	ui.setupUi(this);
 	refreshTable();
@@ -21,27 +24,27 @@ void FilelinkPage::refreshTable()
 {
 	ui.linkTreeWidget->clear();
 
-	auto links = m_manager->linksForInstance(m_instance->id());
+	/* Helper: resolve an instance id to its display name via the C ABI.
+	 * Empty / unknown ids fall back to the raw id string. */
+	auto nameFor = [this](const QString& id) -> QString {
+		if (!m_ctx || id.isEmpty())
+			return id;
+		const char* n = m_ctx->instance_get_name(m_ctx->module_handle,
+												 id.toUtf8().constData());
+		return n ? QString::fromUtf8(n) : id;
+	};
+
+	auto links = m_manager->linksForInstance(m_instanceId);
 	for (const auto& e : links) {
 		auto* item = new QTreeWidgetItem(ui.linkTreeWidget);
 		item->setText(0, e.fileName);
 		item->setText(1, e.subDir);
 
 		// Show direction relative to this instance
-		if (e.targetInstance == m_instance->id()) {
-			QString srcName = e.sourceInstance;
-			auto srcInst =
-				APPLICATION->instances()->getInstanceById(e.sourceInstance);
-			if (srcInst)
-				srcName = srcInst->name();
-			item->setText(2, tr("From: %1").arg(srcName));
+		if (e.targetInstance == m_instanceId) {
+			item->setText(2, tr("From: %1").arg(nameFor(e.sourceInstance)));
 		} else {
-			QString tgtName = e.targetInstance;
-			auto tgtInst =
-				APPLICATION->instances()->getInstanceById(e.targetInstance);
-			if (tgtInst)
-				tgtName = tgtInst->name();
-			item->setText(2, tr("To: %1").arg(tgtName));
+			item->setText(2, tr("To: %1").arg(nameFor(e.targetInstance)));
 		}
 
 		item->setText(3, QLocale().toString(e.linkedAt, QLocale::ShortFormat));
@@ -53,16 +56,24 @@ void FilelinkPage::refreshTable()
 
 void FilelinkPage::on_linkButton_clicked()
 {
-	// Build a list of other instances to choose from
-	auto instList = APPLICATION->instances();
+	if (!m_ctx)
+		return;
+
+	/* Build a list of other instances via the C ABI. */
 	QStringList names;
 	QStringList ids;
-	for (int i = 0; i < instList->count(); i++) {
-		auto inst = instList->at(i);
-		if (inst && inst->id() != m_instance->id()) {
-			names << inst->name();
-			ids << inst->id();
-		}
+	const int total = m_ctx->instance_count(m_ctx->module_handle);
+	for (int i = 0; i < total; i++) {
+		const char* idC = m_ctx->instance_get_id(m_ctx->module_handle, i);
+		if (!idC)
+			continue;
+		const QString id = QString::fromUtf8(idC);
+		if (id == m_instanceId)
+			continue;
+		const char* nameC =
+			m_ctx->instance_get_name(m_ctx->module_handle, idC);
+		names << (nameC ? QString::fromUtf8(nameC) : id);
+		ids << id;
 	}
 
 	if (names.isEmpty()) {
@@ -72,7 +83,6 @@ void FilelinkPage::on_linkButton_clicked()
 		return;
 	}
 
-	// Simple selection: pick instance via input dialog
 	bool ok = false;
 	QString chosen = QInputDialog::getItem(this, tr("Link from instance"),
 										   tr("Select the source instance:"),
@@ -85,9 +95,12 @@ void FilelinkPage::on_linkButton_clicked()
 		return;
 
 	QString sourceId = ids[idx];
-	auto sourceInst = instList->getInstanceById(sourceId);
-	if (!sourceInst)
+	/* The source instance's filesystem root via the C ABI. */
+	const char* sourceRootC = m_ctx->instance_get_path(
+		m_ctx->module_handle, sourceId.toUtf8().constData());
+	if (!sourceRootC)
 		return;
+	const QString sourceRoot = QString::fromUtf8(sourceRootC);
 
 	// Pick which sub-directory to link
 	QStringList subDirs = {"mods", "resourcepacks", "shaderpacks"};
@@ -97,12 +110,10 @@ void FilelinkPage::on_linkButton_clicked()
 	if (!ok || subDir.isEmpty())
 		return;
 
-	QString srcDir =
-		QDir(sourceInst->instanceRoot()).filePath(".minecraft/" + subDir);
-	QString dstDir =
-		QDir(m_instance->instanceRoot()).filePath(".minecraft/" + subDir);
+	QString srcDir = QDir(sourceRoot).filePath(".minecraft/" + subDir);
+	QString dstDir = QDir(m_instanceRoot).filePath(".minecraft/" + subDir);
 
-	int count = m_manager->linkDirectory(sourceId, srcDir, m_instance->id(),
+	int count = m_manager->linkDirectory(sourceId, srcDir, m_instanceId,
 										 dstDir, subDir);
 
 	if (count < 0) {
@@ -136,13 +147,13 @@ void FilelinkPage::on_unlinkButton_clicked()
 	if (answer != QMessageBox::Yes)
 		return;
 
-	m_manager->unlinkFile(m_instance->id(), targetPath);
+	m_manager->unlinkFile(m_instanceId, targetPath);
 	refreshTable();
 }
 
 void FilelinkPage::on_verifyButton_clicked()
 {
-	auto broken = m_manager->verifyLinks(m_instance->id());
+	auto broken = m_manager->verifyLinks(m_instanceId);
 	if (broken.isEmpty()) {
 		QMessageBox::information(this, tr("Filelink"),
 								 tr("All links are intact."));

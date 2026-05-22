@@ -17,7 +17,6 @@
 #include "plugin/sdk/mmco_sdk.h"
 #include "GitRepo.h"
 #include "GitVersioningPage.h"
-#include "settings/SettingsObject.h"
 
 MMCO_DEFINE_MODULE(
 	"GitVersioning", "1.0.0", "Project Tick",
@@ -34,17 +33,28 @@ static bool g_gitAvailable = false;
 
 static bool autoSnapshotEnabled()
 {
-	auto s = APPLICATION->settings();
-	QString key = QString::fromLatin1(SETTING_AUTO_SNAPSHOT);
-	return s->contains(key) && s->get(key).toBool();
+	if (!g_ctx)
+		return false;
+	if (!g_ctx->app_setting_contains(g_ctx->module_handle,
+									 SETTING_AUTO_SNAPSHOT))
+		return false;
+	const char* v = g_ctx->app_setting_get(g_ctx->module_handle,
+										   SETTING_AUTO_SNAPSHOT);
+	if (!v)
+		return false;
+	QString s = QString::fromUtf8(v).trimmed().toLower();
+	return s == QLatin1String("1") || s == QLatin1String("true") ||
+		   s == QLatin1String("yes") || s == QLatin1String("on");
 }
 
 static void ensureSettingRegistered()
 {
-	auto s = APPLICATION->settings();
-	QString key = QString::fromLatin1(SETTING_AUTO_SNAPSHOT);
-	if (!s->contains(key))
-		s->registerSetting(key, false);
+	if (!g_ctx)
+		return;
+	if (!g_ctx->app_setting_contains(g_ctx->module_handle,
+									 SETTING_AUTO_SNAPSHOT))
+		g_ctx->app_setting_register(g_ctx->module_handle,
+									SETTING_AUTO_SNAPSHOT, "0");
 }
 
 static void injectCheckboxIntoMeshMCPage()
@@ -93,9 +103,10 @@ static void injectCheckboxIntoMeshMCPage()
 
 	QObject::connect(g_checkbox, &QCheckBox::toggled, g_guard,
 					 [](bool checked) {
-						 APPLICATION->settings()->set(
-							 QString::fromLatin1(SETTING_AUTO_SNAPSHOT),
-							 checked);
+						 if (g_ctx)
+							 g_ctx->app_setting_set(g_ctx->module_handle,
+													SETTING_AUTO_SNAPSHOT,
+													checked ? "1" : "0");
 					 });
 }
 
@@ -103,8 +114,7 @@ static int on_app_initialized(void*, uint32_t, void*, void*)
 {
 	g_gitAvailable = GitRepo::gitAvailable();
 	if (g_gitAvailable && g_ctx) {
-		QByteArray msg =
-			"git detected: " + GitRepo::gitVersion().toUtf8();
+		QByteArray msg = "git detected: " + GitRepo::gitVersion().toUtf8();
 		MMCO_LOG(g_ctx, msg.constData());
 	} else if (g_ctx) {
 		MMCO_WARN(g_ctx,
@@ -114,12 +124,15 @@ static int on_app_initialized(void*, uint32_t, void*, void*)
 	}
 
 	g_guard = new QObject();
-	QObject::connect(APPLICATION, &Application::globalSettingsAboutToOpen,
-					 g_guard, []() {
-						 g_checkbox = nullptr;
-						 QTimer::singleShot(0, qApp,
-											injectCheckboxIntoMeshMCPage);
-					 });
+	return 0;
+}
+
+/* MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN handler — replaces the
+ * legacy direct connect to Application::globalSettingsAboutToOpen. */
+static int on_global_settings_about_to_open(void*, uint32_t, void*, void*)
+{
+	g_checkbox = nullptr;
+	QTimer::singleShot(0, qApp, injectCheckboxIntoMeshMCPage);
 	return 0;
 }
 
@@ -163,16 +176,15 @@ static int on_pre_launch(void*, uint32_t, void* payload, void*)
 static int on_instance_pages(void*, uint32_t, void* payload, void*)
 {
 	auto* evt = static_cast<MMCOInstancePagesEvent*>(payload);
-	if (!evt || !evt->page_list_handle || !evt->instance_handle)
+	if (!evt || !evt->page_list_handle || !evt->instance_id)
 		return 0;
 
 	auto* pages = static_cast<QList<BasePage*>*>(evt->page_list_handle);
-	auto* instRaw = static_cast<BaseInstance*>(evt->instance_handle);
 
-	InstancePtr inst = std::shared_ptr<BaseInstance>(
-		instRaw, [](BaseInstance*) { /* no-op deleter — host owns it */ });
-
-	pages->append(new GitVersioningPage(inst));
+	const QString instId = QString::fromUtf8(evt->instance_id);
+	const QString instRoot =
+		evt->instance_path ? QString::fromUtf8(evt->instance_path) : QString();
+	pages->append(new GitVersioningPage(instId, instRoot));
 	return 0;
 }
 
@@ -187,6 +199,9 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
 					   on_app_initialized, nullptr);
+	ctx->hook_register(ctx->module_handle,
+					   MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN,
+					   on_global_settings_about_to_open, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_PRE_LAUNCH,
 					   on_pre_launch, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_UI_INSTANCE_PAGES,

@@ -9,16 +9,6 @@
 #include "SkinViewerWidget.h"
 #include "ui_SkinManagerDialog.h"
 
-#include "Application.h"
-#include "minecraft/auth/AccountList.h"
-#include "minecraft/auth/AccountData.h"
-#include "minecraft/services/SkinUpload.h"
-#include "minecraft/services/SkinDelete.h"
-#include "minecraft/services/CapeChange.h"
-#include "ui/dialogs/CustomMessageBox.h"
-#include "ui/dialogs/ProgressDialog.h"
-#include "tasks/SequentialTask.h"
-
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -75,14 +65,36 @@ namespace
 
 } // namespace
 
-SkinManagerDialog::SkinManagerDialog(MinecraftAccountPtr account,
+/* Helper: pull the player-facing profile name from the C ABI. The
+ * accountId is the same string S7's account_get_profile_id returns. */
+static QString profileNameFromCtx(MMCOContext* ctx, const QString& accountId)
+{
+	if (!ctx || accountId.isEmpty())
+		return {};
+	const int total = ctx->account_count(ctx->module_handle);
+	for (int i = 0; i < total; ++i) {
+		const char* idC = ctx->account_get_id_by_index(ctx->module_handle, i);
+		if (!idC)
+			continue;
+		if (QString::fromUtf8(idC) != accountId)
+			continue;
+		const char* n =
+			ctx->account_get_profile_name(ctx->module_handle, i);
+		return n ? QString::fromUtf8(n) : QString();
+	}
+	return {};
+}
+
+SkinManagerDialog::SkinManagerDialog(const QString& accountId, MMCOContext* ctx,
 									 QWidget* parent)
-	: QDialog(parent), ui(new Ui::SkinManagerDialog), m_account(account)
+	: QDialog(parent), ui(new Ui::SkinManagerDialog), m_accountId(accountId),
+	  m_ctx(ctx)
 {
 	ui->setupUi(this);
-	setWindowTitle(
-		tr("Skin Upload — %1")
-			.arg(account ? account->profileName() : tr("(no account)")));
+	const QString profileName = profileNameFromCtx(m_ctx, m_accountId);
+	setWindowTitle(tr("Skin Upload — %1")
+					   .arg(profileName.isEmpty() ? tr("(no account)")
+												  : profileName));
 
 	/* Replace the placeholder viewerHost with a real OpenGL viewer. */
 	m_viewer = new SkinViewerWidget(ui->viewerHost);
@@ -122,54 +134,86 @@ SkinManagerDialog::~SkinManagerDialog()
 
 void SkinManagerDialog::loadAccountState()
 {
-	if (!m_account || !m_account->accountData())
+	if (!m_ctx || m_accountId.isEmpty())
 		return;
 
-	const auto& data = *m_account->accountData();
-	ui->accountLabel->setText(tr("Account: %1").arg(m_account->profileName()));
+	const QByteArray idUtf8 = m_accountId.toUtf8();
+	ui->accountLabel->setText(
+		tr("Account: %1").arg(profileNameFromCtx(m_ctx, m_accountId)));
 
-	/* Skin */
+	/* Skin blob via the C ABI. */
 	QImage skinImg;
-	if (!data.minecraftProfile.skin.data.isEmpty()) {
-		skinImg.loadFromData(data.minecraftProfile.skin.data, "PNG");
+	const void* skinPtr = nullptr;
+	const int64_t skinLen =
+		m_ctx->account_get_skin_blob(m_ctx->module_handle, idUtf8.constData(),
+									 &skinPtr);
+	if (skinLen > 0 && skinPtr) {
+		skinImg.loadFromData(
+			QByteArray::fromRawData(static_cast<const char*>(skinPtr),
+									static_cast<int>(skinLen)),
+			"PNG");
 		skinImg = normaliseSkin(skinImg);
 	}
+
+	const char* variantC =
+		m_ctx->account_get_skin_variant(m_ctx->module_handle,
+										idUtf8.constData());
 	ModelVariant variant = ModelVariant::Classic;
-	if (data.minecraftProfile.skin.variant.compare(QStringLiteral("SLIM"),
-												   Qt::CaseInsensitive) == 0) {
+	if (variantC && QString::fromUtf8(variantC).compare(
+						QStringLiteral("SLIM"), Qt::CaseInsensitive) == 0) {
 		variant = ModelVariant::Slim;
 	} else if (!skinImg.isNull()) {
 		variant = detectVariant(skinImg);
 	}
-	if (variant == ModelVariant::Slim) {
+	if (variant == ModelVariant::Slim)
 		ui->rdoSlim->setChecked(true);
-	} else {
+	else
 		ui->rdoClassic->setChecked(true);
-	}
 	m_viewer->setSkin(skinImg, variant);
 
-	/* Capes */
+	/* Capes — walk the C ABI cape list. */
+	const char* currentCapeC =
+		m_ctx->account_get_current_cape_id(m_ctx->module_handle,
+										   idUtf8.constData());
+	const QString currentCape =
+		currentCapeC ? QString::fromUtf8(currentCapeC) : QString();
+
 	ui->capeCombo->blockSignals(true);
 	ui->capeCombo->clear();
 	ui->capeCombo->addItem(tr("No Cape"), QString());
 	int activeRow = 0;
-	int row = 1;
-	for (auto it = data.minecraftProfile.capes.cbegin();
-		 it != data.minecraftProfile.capes.cend(); ++it, ++row) {
-		const Cape& c = it.value();
+	const int capeTotal =
+		m_ctx->account_cape_count(m_ctx->module_handle, idUtf8.constData());
+	for (int i = 0; i < capeTotal; ++i) {
+		const char* capeIdC = m_ctx->account_cape_get_id(
+			m_ctx->module_handle, idUtf8.constData(), i);
+		const char* capeAliasC = m_ctx->account_cape_get_alias(
+			m_ctx->module_handle, idUtf8.constData(), i);
+		const void* capePtr = nullptr;
+		const int64_t capeLen = m_ctx->account_cape_get_blob(
+			m_ctx->module_handle, idUtf8.constData(), i, &capePtr);
+
+		const QString capeId = capeIdC ? QString::fromUtf8(capeIdC) : QString();
+		const QString alias =
+			capeAliasC ? QString::fromUtf8(capeAliasC) : QString();
+
 		QPixmap preview;
-		if (!c.data.isEmpty()) {
+		if (capeLen > 0 && capePtr) {
 			QPixmap pix;
-			if (pix.loadFromData(c.data, "PNG")) {
+			if (pix.loadFromData(QByteArray::fromRawData(
+									 static_cast<const char*>(capePtr),
+									 static_cast<int>(capeLen)),
+								 "PNG")) {
 				preview = pix.copy(1, 1, 10, 16);
 			}
 		}
-		QString label = c.alias.isEmpty() ? c.id : c.alias;
+		const QString label = alias.isEmpty() ? capeId : alias;
+		const int row = i + 1; /* +1 for the "No Cape" entry */
 		if (preview.isNull())
-			ui->capeCombo->addItem(label, c.id);
+			ui->capeCombo->addItem(label, capeId);
 		else
-			ui->capeCombo->addItem(QIcon(preview), label, c.id);
-		if (c.id == data.minecraftProfile.currentCape)
+			ui->capeCombo->addItem(QIcon(preview), label, capeId);
+		if (capeId == currentCape)
 			activeRow = row;
 	}
 	ui->capeCombo->setCurrentIndex(activeRow);
@@ -230,31 +274,31 @@ void SkinManagerDialog::loadSkinFile(const QString& path)
 
 void SkinManagerDialog::onResetClicked()
 {
-	if (!m_account)
+	if (!m_ctx || m_accountId.isEmpty())
 		return;
 
+	const QString profileName = profileNameFromCtx(m_ctx, m_accountId);
 	const int rc = QMessageBox::question(
 		this, tr("Reset skin"),
 		tr("Remove the active custom skin for %1?\n\n"
 		   "Mojang will revert the account to the "
 		   "default Steve or Alex skin.")
-			.arg(m_account->profileName()),
+			.arg(profileName),
 		QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 	if (rc != QMessageBox::Yes)
 		return;
 
-	ProgressDialog prog(this);
-	auto task = std::make_shared<SkinDelete>(this, m_account->accessToken());
-	if (prog.execWithTask(task.get()) != QDialog::Accepted) {
-		CustomMessageBox::selectable(this, tr("Skin reset failed"),
-									 tr("Mojang did not process the request."),
-									 QMessageBox::Warning)
-			->exec();
+	const QByteArray idUtf8 = m_accountId.toUtf8();
+	if (m_ctx->account_skin_reset(m_ctx->module_handle, idUtf8.constData()) !=
+		0) {
+		QMessageBox::warning(this, tr("Skin reset failed"),
+							 tr("Mojang did not process the request."));
 		return;
 	}
 
 	/* Drop the cached skin so the next refresh re-fetches the default. */
-	m_account->accountData()->minecraftProfile.skin = Skin{};
+	m_ctx->account_set_skin_blob(m_ctx->module_handle, idUtf8.constData(),
+								 nullptr, 0);
 	m_viewer->clearSkin();
 	setStatus(tr("Skin reset to the Mojang default."));
 }
@@ -268,11 +312,17 @@ void SkinManagerDialog::onVariantToggled()
 	QImage current;
 	if (!m_chosenSkinImage.isNull()) {
 		current = m_chosenSkinImage;
-	} else if (m_account && !m_account->accountData()
-								 ->minecraftProfile.skin.data.isEmpty()) {
-		current.loadFromData(
-			m_account->accountData()->minecraftProfile.skin.data, "PNG");
-		current = normaliseSkin(current);
+	} else if (m_ctx && !m_accountId.isEmpty()) {
+		const void* ptr = nullptr;
+		const int64_t len = m_ctx->account_get_skin_blob(
+			m_ctx->module_handle, m_accountId.toUtf8().constData(), &ptr);
+		if (len > 0 && ptr) {
+			current.loadFromData(
+				QByteArray::fromRawData(static_cast<const char*>(ptr),
+										static_cast<int>(len)),
+				"PNG");
+			current = normaliseSkin(current);
+		}
 	}
 	m_viewer->setSkin(current, v);
 }
@@ -289,35 +339,51 @@ void SkinManagerDialog::onAutoRotateToggled(bool on)
 
 void SkinManagerDialog::onCapeChanged(int row)
 {
-	if (!m_account)
+	if (!m_ctx || m_accountId.isEmpty())
 		return;
 	const QString capeId = ui->capeCombo->itemData(row).toString();
 	if (capeId.isEmpty()) {
 		m_viewer->setCape(QImage());
 		return;
 	}
-	const Cape& c =
-		m_account->accountData()->minecraftProfile.capes.value(capeId);
-	QImage capeImg;
-	if (!c.data.isEmpty())
-		capeImg.loadFromData(c.data, "PNG");
-	m_viewer->setCape(capeImg);
+	/* Find the cape blob whose id matches the user's pick. */
+	const QByteArray idUtf8 = m_accountId.toUtf8();
+	const int total =
+		m_ctx->account_cape_count(m_ctx->module_handle, idUtf8.constData());
+	for (int i = 0; i < total; ++i) {
+		const char* cid = m_ctx->account_cape_get_id(
+			m_ctx->module_handle, idUtf8.constData(), i);
+		if (!cid || QString::fromUtf8(cid) != capeId)
+			continue;
+		const void* ptr = nullptr;
+		const int64_t len = m_ctx->account_cape_get_blob(
+			m_ctx->module_handle, idUtf8.constData(), i, &ptr);
+		QImage capeImg;
+		if (len > 0 && ptr)
+			capeImg.loadFromData(
+				QByteArray::fromRawData(static_cast<const char*>(ptr),
+										static_cast<int>(len)),
+				"PNG");
+		m_viewer->setCape(capeImg);
+		return;
+	}
+	m_viewer->setCape(QImage());
 }
 
 /* ── commit ───────────────────────────────────────────────────────── */
 
 void SkinManagerDialog::onAccept()
 {
-	if (!m_account) {
+	if (!m_ctx || m_accountId.isEmpty()) {
 		reject();
 		return;
 	}
 
-	/* Build a SequentialTask matching the stock SkinUploadDialog
-	 * behaviour: optional SkinUpload + optional CapeChange. */
-	SequentialTask seq;
-	bool anything = false;
+	const QByteArray idUtf8 = m_accountId.toUtf8();
 
+	/* Read the user's chosen skin bytes once up front so we don't
+	 * touch the file twice on the happy path. */
+	QByteArray skinBytes;
 	if (!m_chosenSkinPath.isEmpty()) {
 		QFile f(m_chosenSkinPath);
 		if (!f.open(QIODevice::ReadOnly)) {
@@ -326,56 +392,65 @@ void SkinManagerDialog::onAccept()
 					  /*error=*/true);
 			return;
 		}
-		const QByteArray bytes = f.readAll();
-		f.close();
-		const SkinUpload::Model model =
-			ui->rdoSlim->isChecked() ? SkinUpload::ALEX : SkinUpload::STEVE;
-		seq.addTask(shared_qobject_ptr<SkinUpload>(
-			new SkinUpload(this, m_account->accessToken(), bytes, model)));
-		anything = true;
+		skinBytes = f.readAll();
 	}
 
+	/* Mirror the legacy SequentialTask: optional skin upload, then
+	 * optional cape change, both routed through the S26 helpers
+	 * which pump their own modal progress dialogs. */
 	const QString chosenCape = ui->capeCombo->currentData().toString();
-	if (chosenCape != m_account->accountData()->minecraftProfile.currentCape) {
-		seq.addTask(shared_qobject_ptr<CapeChange>(
-			new CapeChange(this, m_account->accessToken(), chosenCape)));
-		anything = true;
-	}
+	const char* currentCapeC = m_ctx->account_get_current_cape_id(
+		m_ctx->module_handle, idUtf8.constData());
+	const QString currentCape =
+		currentCapeC ? QString::fromUtf8(currentCapeC) : QString();
+	const bool capeChanged = chosenCape != currentCape;
 
-	if (!anything) {
-		/* Nothing to apply — just close the dialog quietly. */
+	if (skinBytes.isEmpty() && !capeChanged) {
 		accept();
 		return;
 	}
 
-	ProgressDialog prog(this);
-	if (prog.execWithTask(&seq) != QDialog::Accepted) {
-		CustomMessageBox::selectable(this, tr("Skin Upload"),
-									 tr("Failed to apply skin changes."),
-									 QMessageBox::Warning)
-			->exec();
-		return;
-	}
-
-	/* Update in-memory cache so the launcher's account list re-renders
-	 * immediately. */
-	if (!m_chosenSkinPath.isEmpty()) {
-		QFile f(m_chosenSkinPath);
-		if (f.open(QIODevice::ReadOnly)) {
-			m_account->accountData()->minecraftProfile.skin.data = f.readAll();
-			f.close();
+	if (!skinBytes.isEmpty()) {
+		const char* variant =
+			ui->rdoSlim->isChecked() ? "ALEX" : "STEVE";
+		if (m_ctx->account_skin_upload(m_ctx->module_handle,
+									   idUtf8.constData(),
+									   skinBytes.constData(),
+									   skinBytes.size(), variant) != 0) {
+			QMessageBox::warning(this, tr("Skin Upload"),
+								 tr("Failed to apply skin changes."));
+			return;
 		}
-		m_account->accountData()->minecraftProfile.skin.variant =
-			ui->rdoSlim->isChecked() ? QStringLiteral("SLIM")
-									 : QStringLiteral("CLASSIC");
 	}
-	if (chosenCape != m_account->accountData()->minecraftProfile.currentCape)
-		m_account->accountData()->minecraftProfile.currentCape = chosenCape;
+	if (capeChanged) {
+		const QByteArray capeUtf8 = chosenCape.toUtf8();
+		if (m_ctx->account_cape_set(m_ctx->module_handle,
+									idUtf8.constData(),
+									capeUtf8.constData()) != 0) {
+			QMessageBox::warning(this, tr("Skin Upload"),
+								 tr("Failed to apply cape change."));
+			return;
+		}
+	}
 
-	CustomMessageBox::selectable(this, tr("Skin Upload"),
-								 tr("Successfully applied skin changes."),
-								 QMessageBox::Information)
-		->exec();
+	/* Update in-memory cache via the C ABI setters so the launcher's
+	 * account list re-renders immediately. */
+	if (!skinBytes.isEmpty()) {
+		m_ctx->account_set_skin_blob(m_ctx->module_handle, idUtf8.constData(),
+									 skinBytes.constData(), skinBytes.size());
+		m_ctx->account_set_skin_variant(
+			m_ctx->module_handle, idUtf8.constData(),
+			ui->rdoSlim->isChecked() ? "SLIM" : "CLASSIC");
+	}
+	if (capeChanged) {
+		const QByteArray capeUtf8 = chosenCape.toUtf8();
+		m_ctx->account_set_current_cape(m_ctx->module_handle,
+										idUtf8.constData(),
+										capeUtf8.constData());
+	}
+
+	QMessageBox::information(this, tr("Skin Upload"),
+							 tr("Successfully applied skin changes."));
 	accept();
 }
 

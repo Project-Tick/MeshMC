@@ -113,15 +113,16 @@ namespace
 static int on_instance_pages(void*, uint32_t, void* payload, void*)
 {
 	auto* evt = static_cast<MMCOInstancePagesEvent*>(payload);
-	if (!evt || !evt->page_list_handle || !evt->instance_handle)
+	if (!evt || !evt->page_list_handle || !evt->instance_id)
 		return 0;
 
 	auto* pages = static_cast<QList<BasePage*>*>(evt->page_list_handle);
-	auto* instRaw = static_cast<BaseInstance*>(evt->instance_handle);
-	InstancePtr inst =
-		std::shared_ptr<BaseInstance>(instRaw, [](BaseInstance*) {});
 
-	pages->append(new AnalysisPage(inst, g_engine, g_learning));
+	const QString instId = QString::fromUtf8(evt->instance_id);
+	const QString instRoot =
+		evt->instance_path ? QString::fromUtf8(evt->instance_path) : QString();
+
+	pages->append(new AnalysisPage(instId, instRoot, g_engine, g_learning));
 	return 0;
 }
 

@@ -9,14 +9,7 @@
 #include <QCryptographicHash>
 #include <QStandardPaths>
 #include <QUuid>
-
-// The SDK header forward-declares PackProfile but never includes its
-// definition. We call getComponentVersion() through a shared_ptr, so
-// we need the complete type here. Net::Mode is the parameter type for
-// reload() — we want the Offline variant so the export never blocks
-// on a network round-trip.
-#include "minecraft/PackProfile.h"
-#include "net/Mode.h"
+#include <cstring>
 
 namespace pack
 {
@@ -56,29 +49,39 @@ QString gameRootOf(const QString& instanceRoot)
 bool ExportEngine::collectComponents(const QString& instanceId,
 									 ComponentSet& out)
 {
-	auto instList = APPLICATION->instances();
-	if (!instList)
+	if (!m_ctx)
 		return false;
-	auto inst = instList->getInstanceById(instanceId);
-	if (!inst)
-		return false;
-	auto mc = std::dynamic_pointer_cast<MinecraftInstance>(inst);
-	if (!mc)
-		return false;
+	const QByteArray idUtf8 = instanceId.toUtf8();
 
-	auto profile = mc->getPackProfile();
-	if (!profile)
+	/* The C ABI's instance_get_mc_version mirrors PackProfile::
+	 * getComponentVersion("net.minecraft"); for the other components
+	 * we walk the component list and pick out matching uids. */
+	const char* mcVer =
+		m_ctx->instance_get_mc_version(m_ctx->module_handle, idUtf8.constData());
+	if (!mcVer)
 		return false;
+	out.minecraftVersion = QString::fromUtf8(mcVer);
 
-	profile->reload(Net::Mode::Offline);
+	auto lookup = [&](const char* uid) -> QString {
+		const int n =
+			m_ctx->instance_component_count(m_ctx->module_handle,
+											idUtf8.constData());
+		for (int i = 0; i < n; ++i) {
+			const char* u = m_ctx->instance_component_get_uid(
+				m_ctx->module_handle, idUtf8.constData(), i);
+			if (u && std::strcmp(u, uid) == 0) {
+				const char* v = m_ctx->instance_component_get_version(
+					m_ctx->module_handle, idUtf8.constData(), i);
+				return v ? QString::fromUtf8(v) : QString();
+			}
+		}
+		return {};
+	};
 
-	out.minecraftVersion = profile->getComponentVersion("net.minecraft");
-	out.forgeVersion = profile->getComponentVersion("net.minecraftforge");
-	out.neoForgeVersion = profile->getComponentVersion("net.neoforged");
-	out.fabricVersion =
-		profile->getComponentVersion("net.fabricmc.fabric-loader");
-	out.quiltVersion =
-		profile->getComponentVersion("org.quiltmc.quilt-loader");
+	out.forgeVersion = lookup("net.minecraftforge");
+	out.neoForgeVersion = lookup("net.neoforged");
+	out.fabricVersion = lookup("net.fabricmc.fabric-loader");
+	out.quiltVersion = lookup("org.quiltmc.quilt-loader");
 	return true;
 }
 
@@ -297,26 +300,35 @@ ExportEngine::exportInstance(const QString& instanceId, const Options& opts,
 {
 	Result r;
 
-	auto instList = APPLICATION->instances();
-	if (!instList) {
-		r.errorMsg = "Instance list unavailable";
+	if (!m_ctx) {
+		r.errorMsg = "No MMCO context available";
 		return r;
 	}
-	auto inst = instList->getInstanceById(instanceId);
-	if (!inst) {
+	const QByteArray idUtf8 = instanceId.toUtf8();
+	const char* rootC =
+		m_ctx->instance_get_path(m_ctx->module_handle, idUtf8.constData());
+	if (!rootC) {
 		r.errorMsg = "Instance not found";
 		return r;
 	}
+	const char* nameC =
+		m_ctx->instance_get_name(m_ctx->module_handle, idUtf8.constData());
+	const char* iconKeyC =
+		m_ctx->instance_get_icon_key(m_ctx->module_handle, idUtf8.constData());
 
 	ExportStage stage;
-	stage.instanceRoot = inst->instanceRoot();
-	stage.info.name =
-		opts.name.isEmpty() ? inst->name() : opts.name;
+	stage.instanceRoot = QString::fromUtf8(rootC);
+	stage.info.name = opts.name.isEmpty() && nameC
+						  ? QString::fromUtf8(nameC)
+						  : opts.name;
+	if (stage.info.name.isEmpty())
+		stage.info.name = instanceId;
 	stage.info.version =
 		opts.version.isEmpty() ? QStringLiteral("1.0.0") : opts.version;
 	stage.info.author = opts.author;
 	stage.info.summary = opts.summary;
-	stage.info.iconKey = inst->iconKey();
+	stage.info.iconKey =
+		iconKeyC ? QString::fromUtf8(iconKeyC) : QString();
 	if (stage.info.iconKey.isEmpty())
 		stage.info.iconKey = QStringLiteral("default");
 	if (!collectComponents(instanceId, stage.info.components)) {
@@ -383,12 +395,16 @@ ExportEngine::exportInstance(const QString& instanceId, const Options& opts,
 			++r.filesReferenced;
 	}
 
-	if (!MMCZip::compressDir(
-			outputPath, stage.stageDir,
-			[](const QString&) -> bool { return false; })) {
-		r.errorMsg = "Failed to compress staging directory";
-		QDir(stage.stageDir).removeRecursively();
-		return r;
+	{
+		const QByteArray outUtf8 = outputPath.toUtf8();
+		const QByteArray stageUtf8 = stage.stageDir.toUtf8();
+		if (m_ctx->zip_compress_dir(m_ctx->module_handle,
+									outUtf8.constData(),
+									stageUtf8.constData()) != 0) {
+			r.errorMsg = "Failed to compress staging directory";
+			QDir(stage.stageDir).removeRecursively();
+			return r;
+		}
 	}
 	QDir(stage.stageDir).removeRecursively();
 

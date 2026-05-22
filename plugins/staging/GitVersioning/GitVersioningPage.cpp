@@ -20,9 +20,11 @@ QString humanSize(qint64 bytes)
 }
 } // namespace
 
-GitVersioningPage::GitVersioningPage(InstancePtr instance, QWidget* parent)
-	: QWidget(parent), m_instance(instance),
-	  m_repo(instance->id(), instance->instanceRoot())
+GitVersioningPage::GitVersioningPage(const QString& instanceId,
+									 const QString& instanceRoot,
+									 QWidget* parent)
+	: QWidget(parent), m_instanceId(instanceId), m_instanceRoot(instanceRoot),
+	  m_repo(instanceId, instanceRoot)
 {
 	buildUi();
 	reloadHistory();
@@ -30,7 +32,11 @@ GitVersioningPage::GitVersioningPage(InstancePtr instance, QWidget* parent)
 
 QIcon GitVersioningPage::icon() const
 {
-	return APPLICATION->icons()->getIcon(QStringLiteral("version-control"));
+	/* The launcher's icon theme is reachable through QIcon::fromTheme
+	 * once Qt has been initialised; the host installs the MeshMC theme
+	 * search paths during Application::init() so plugin code finds the
+	 * same icon set the launcher does. */
+	return QIcon::fromTheme(QStringLiteral("version-control"));
 }
 
 void GitVersioningPage::buildUi()

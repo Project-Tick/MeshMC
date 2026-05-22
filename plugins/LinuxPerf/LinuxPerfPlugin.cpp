@@ -3,7 +3,6 @@
  */
 
 #include "plugin/sdk/mmco_sdk.h"
-#include "ui/pages/instance/InstanceSettingsPage.h"
 #include "vendor/gamemode_client.h"
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -126,13 +125,43 @@ static QString gamemode_status_text()
 		"gamemoded\" or check gamemode install");
 }
 
+static bool ctxBoolApp(const char* key)
+{
+	if (!g_ctx)
+		return false;
+	if (!g_ctx->app_setting_contains(g_ctx->module_handle, key))
+		return false;
+	const char* v = g_ctx->app_setting_get(g_ctx->module_handle, key);
+	if (!v)
+		return false;
+	QString s = QString::fromUtf8(v).trimmed().toLower();
+	return s == QLatin1String("1") || s == QLatin1String("true") ||
+		   s == QLatin1String("yes") || s == QLatin1String("on");
+}
+
+static bool ctxBoolInstance(const char* instanceId, const char* key)
+{
+	if (!g_ctx || !instanceId)
+		return false;
+	if (!g_ctx->instance_setting_contains(g_ctx->module_handle, instanceId,
+										  key))
+		return false;
+	const char* v = g_ctx->instance_setting_get(g_ctx->module_handle,
+												instanceId, key);
+	if (!v)
+		return false;
+	QString s = QString::fromUtf8(v).trimmed().toLower();
+	return s == QLatin1String("1") || s == QLatin1String("true") ||
+		   s == QLatin1String("yes") || s == QLatin1String("on");
+}
+
 static void ensureSettingsRegistered()
 {
-	auto s = APPLICATION->settings();
+	if (!g_ctx)
+		return;
 	auto ensureKey = [&](const char* key) {
-		QString k = QString::fromLatin1(key);
-		if (!s->contains(k))
-			s->registerSetting(k, false);
+		if (!g_ctx->app_setting_contains(g_ctx->module_handle, key))
+			g_ctx->app_setting_register(g_ctx->module_handle, key, "0");
 	};
 	ensureKey(SETTING_MANGOHUD);
 	ensureKey(SETTING_GAMEMODE);
@@ -140,71 +169,48 @@ static void ensureSettingsRegistered()
 
 static bool isMangohudEnabled()
 {
-	auto s = APPLICATION->settings();
-	QString k = QString::fromLatin1(SETTING_MANGOHUD);
-	return s->contains(k) && s->get(k).toBool();
+	return ctxBoolApp(SETTING_MANGOHUD);
 }
 
 static bool isGamemodeEnabled()
 {
-	auto s = APPLICATION->settings();
-	QString k = QString::fromLatin1(SETTING_GAMEMODE);
-	return s->contains(k) && s->get(k).toBool();
+	return ctxBoolApp(SETTING_GAMEMODE);
 }
 
-static void ensureInstanceSettingsRegistered(BaseInstance* instance)
+static void ensureInstanceSettingsRegistered(const char* instanceId)
 {
-	if (!instance)
+	if (!g_ctx || !instanceId)
 		return;
 
 	ensureSettingsRegistered();
 
-	auto settings = instance->settings();
-	if (!settings)
-		return;
-
-	auto gateKey = QString::fromLatin1(SETTING_INSTANCE_OVERRIDE);
-	auto gate = settings->getSetting(gateKey);
-	if (!gate)
-		gate = settings->registerSetting(gateKey, false);
-	if (!gate)
-		return;
-
-	auto registerOverrideIfMissing = [&](const char* key) {
-		QString settingKey = QString::fromLatin1(key);
-		if (settings->contains(settingKey))
-			return;
-		auto original = APPLICATION->settings()->getSetting(settingKey);
-		if (original)
-			settings->registerOverride(original, gate);
-	};
-
-	registerOverrideIfMissing(SETTING_MANGOHUD);
-	registerOverrideIfMissing(SETTING_GAMEMODE);
+	if (!g_ctx->instance_setting_contains(g_ctx->module_handle, instanceId,
+										  SETTING_INSTANCE_OVERRIDE)) {
+		g_ctx->instance_setting_register(g_ctx->module_handle, instanceId,
+										 SETTING_INSTANCE_OVERRIDE, "0");
+	}
+	g_ctx->instance_setting_register_override(g_ctx->module_handle,
+											  instanceId, SETTING_MANGOHUD,
+											  SETTING_INSTANCE_OVERRIDE);
+	g_ctx->instance_setting_register_override(g_ctx->module_handle,
+											  instanceId, SETTING_GAMEMODE,
+											  SETTING_INSTANCE_OVERRIDE);
 }
 
-static bool isMangohudEnabledForInstance(BaseInstance* instance)
+static bool isMangohudEnabledForInstance(const char* instanceId)
 {
-	if (!instance)
+	if (!instanceId)
 		return isMangohudEnabled();
-
-	ensureInstanceSettingsRegistered(instance);
-
-	auto settings = instance->settings();
-	QString key = QString::fromLatin1(SETTING_MANGOHUD);
-	return settings && settings->contains(key) && settings->get(key).toBool();
+	ensureInstanceSettingsRegistered(instanceId);
+	return ctxBoolInstance(instanceId, SETTING_MANGOHUD);
 }
 
-static bool isGamemodeEnabledForInstance(BaseInstance* instance)
+static bool isGamemodeEnabledForInstance(const char* instanceId)
 {
-	if (!instance)
+	if (!instanceId)
 		return isGamemodeEnabled();
-
-	ensureInstanceSettingsRegistered(instance);
-
-	auto settings = instance->settings();
-	QString key = QString::fromLatin1(SETTING_GAMEMODE);
-	return settings && settings->contains(key) && settings->get(key).toBool();
+	ensureInstanceSettingsRegistered(instanceId);
+	return ctxBoolInstance(instanceId, SETTING_GAMEMODE);
 }
 
 static void injectCheckboxesIntoMinecraftPage()
@@ -297,23 +303,74 @@ static void injectCheckboxesIntoMinecraftPage()
 
 	QObject::connect(g_mangoCheckbox, &QCheckBox::toggled, g_guard,
 					 [](bool checked) {
-						 APPLICATION->settings()->set(
-							 QString::fromLatin1(SETTING_MANGOHUD), checked);
+						 if (g_ctx)
+							 g_ctx->app_setting_set(g_ctx->module_handle,
+													SETTING_MANGOHUD,
+													checked ? "1" : "0");
 					 });
 	QObject::connect(g_gamemodeCheckbox, &QCheckBox::toggled, g_guard,
 					 [](bool checked) {
-						 APPLICATION->settings()->set(
-							 QString::fromLatin1(SETTING_GAMEMODE), checked);
+						 if (g_ctx)
+							 g_ctx->app_setting_set(g_ctx->module_handle,
+													SETTING_GAMEMODE,
+													checked ? "1" : "0");
 					 });
 }
 
-static void injectCheckboxesIntoInstanceSettingsPage(InstanceSettingsPage* page,
-													 BaseInstance* instance)
+/* Per-page widget bag, keyed by the page QWidget* so we can refresh
+ * it when the page emits its loaded / about-to-apply edges via the
+ * matching ABI 3 hooks. */
+struct InstancePageWidgets {
+	QGroupBox* groupBox;
+	QCheckBox* mango;
+	QCheckBox* gm;
+	QByteArray instanceId; /* copied — survives signal storm */
+};
+static QHash<QWidget*, InstancePageWidgets*> g_pageWidgets;
+
+static void syncInstanceWidgets(InstancePageWidgets* w)
 {
-	if (!page || !instance)
+	if (!w || !g_ctx)
+		return;
+	const char* id = w->instanceId.constData();
+	const bool overrideEnabled =
+		ctxBoolInstance(id, SETTING_INSTANCE_OVERRIDE);
+	w->groupBox->setChecked(overrideEnabled);
+	w->mango->setChecked(isMangohudEnabledForInstance(id) &&
+						 w->mango->isEnabled());
+	w->gm->setChecked(isGamemodeEnabledForInstance(id) && w->gm->isEnabled());
+}
+
+static void applyInstanceWidgets(InstancePageWidgets* w)
+{
+	if (!w || !g_ctx)
+		return;
+	const char* id = w->instanceId.constData();
+	ensureInstanceSettingsRegistered(id);
+	const bool overrideEnabled = w->groupBox->isChecked();
+	g_ctx->instance_setting_set(g_ctx->module_handle, id,
+								SETTING_INSTANCE_OVERRIDE,
+								overrideEnabled ? "1" : "0");
+	if (overrideEnabled) {
+		g_ctx->instance_setting_set(g_ctx->module_handle, id, SETTING_MANGOHUD,
+									w->mango->isChecked() ? "1" : "0");
+		g_ctx->instance_setting_set(g_ctx->module_handle, id, SETTING_GAMEMODE,
+									w->gm->isChecked() ? "1" : "0");
+	} else {
+		g_ctx->instance_setting_reset(g_ctx->module_handle, id,
+									  SETTING_MANGOHUD);
+		g_ctx->instance_setting_reset(g_ctx->module_handle, id,
+									  SETTING_GAMEMODE);
+	}
+}
+
+static void injectCheckboxesIntoInstanceSettingsPage(QWidget* page,
+													 const char* instanceId)
+{
+	if (!page || !instanceId)
 		return;
 
-	ensureInstanceSettingsRegistered(instance);
+	ensureInstanceSettingsRegistered(instanceId);
 
 	auto* layout =
 		page->findChild<QVBoxLayout*>(QStringLiteral("verticalLayout_8"));
@@ -385,46 +442,25 @@ static void injectCheckboxesIntoInstanceSettingsPage(InstanceSettingsPage* page,
 	int spacerIdx = layout->count() - 1;
 	layout->insertWidget(spacerIdx, groupBox);
 
-	auto syncFromSettings = [instance, groupBox, mangoCheckbox,
-							 gamemodeCheckbox]() {
-		auto settings = instance->settings();
-		if (!settings)
-			return;
+	/* Stash the widget bag so the LOADED / APPLYING hook callbacks can
+	 * find it again when the page emits its lifecycle signals. The
+	 * bag is freed when the page is destroyed. */
+	auto* bag = new InstancePageWidgets;
+	bag->groupBox = groupBox;
+	bag->mango = mangoCheckbox;
+	bag->gm = gamemodeCheckbox;
+	bag->instanceId = QByteArray(instanceId);
+	g_pageWidgets.insert(page, bag);
 
-		groupBox->setChecked(
-			settings->get(QString::fromLatin1(SETTING_INSTANCE_OVERRIDE))
-				.toBool());
-		mangoCheckbox->setChecked(isMangohudEnabledForInstance(instance) &&
-								  mangoCheckbox->isEnabled());
-		gamemodeCheckbox->setChecked(isGamemodeEnabledForInstance(instance) &&
-									 gamemodeCheckbox->isEnabled());
-	};
+	QObject::connect(page, &QObject::destroyed, qApp, [page]() {
+		auto it = g_pageWidgets.find(page);
+		if (it != g_pageWidgets.end()) {
+			delete it.value();
+			g_pageWidgets.erase(it);
+		}
+	});
 
-	QObject::connect(page, &InstanceSettingsPage::settingsLoaded, page,
-					 [syncFromSettings]() { syncFromSettings(); });
-	QObject::connect(
-		page, &InstanceSettingsPage::settingsAboutToApply, page,
-		[instance, groupBox, mangoCheckbox, gamemodeCheckbox]() {
-			ensureInstanceSettingsRegistered(instance);
-			auto settings = instance->settings();
-			if (!settings)
-				return;
-
-			bool overrideEnabled = groupBox->isChecked();
-			settings->set(QString::fromLatin1(SETTING_INSTANCE_OVERRIDE),
-						  overrideEnabled);
-			if (overrideEnabled) {
-				settings->set(QString::fromLatin1(SETTING_MANGOHUD),
-							  mangoCheckbox->isChecked());
-				settings->set(QString::fromLatin1(SETTING_GAMEMODE),
-							  gamemodeCheckbox->isChecked());
-			} else {
-				settings->reset(QString::fromLatin1(SETTING_MANGOHUD));
-				settings->reset(QString::fromLatin1(SETTING_GAMEMODE));
-			}
-		});
-
-	syncFromSettings();
+	syncInstanceWidgets(bag);
 }
 
 static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,
@@ -440,22 +476,61 @@ static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,
 			 isGamemodeEnabled() ? "yes" : "no");
 	MMCO_LOG(g_ctx, buf);
 
-	/* Hook into the global settings dialog lifecycle so we can inject the
-	 * checkboxes each time the dialog opens.  g_guard severs the connections
-	 * during mmco_unload() via Qt's automatic signal disconnection on delete.
-	 */
-	QObject::connect(
-		APPLICATION, &Application::globalSettingsAboutToOpen, g_guard, []() {
-			g_mangoCheckbox = nullptr;
-			g_gamemodeCheckbox = nullptr;
-			QTimer::singleShot(0, qApp, injectCheckboxesIntoMinecraftPage);
-		});
-	QObject::connect(
-		APPLICATION, &Application::instanceSettingsPageCreated, g_guard,
-		[](InstanceSettingsPage* page, BaseInstance* instance) {
-			injectCheckboxesIntoInstanceSettingsPage(page, instance);
-		});
+	/* Settings dialog lifecycle is now driven via ABI 3 hooks; see
+	 * the handlers below. */
+	return 0;
+}
 
+/* MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN — replaces the legacy
+ * direct connect to Application::globalSettingsAboutToOpen. */
+static int on_global_settings_about_to_open(void*, uint32_t, void*, void*)
+{
+	g_mangoCheckbox = nullptr;
+	g_gamemodeCheckbox = nullptr;
+	QTimer::singleShot(0, qApp, injectCheckboxesIntoMinecraftPage);
+	return 0;
+}
+
+/* MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED — replaces direct
+ * Application::instanceSettingsPageCreated. The page_handle is an
+ * opaque QWidget*; we cast it (a Qt operation, allowed) and inject
+ * our group box. */
+static int on_instance_settings_page_created(void*, uint32_t, void* payload,
+											 void*)
+{
+	auto* evt = static_cast<MMCOInstanceSettingsPageEvent*>(payload);
+	if (!evt || !evt->page_handle || !evt->instance_id)
+		return 0;
+	injectCheckboxesIntoInstanceSettingsPage(
+		static_cast<QWidget*>(evt->page_handle), evt->instance_id);
+	return 0;
+}
+
+/* MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED — page just refreshed its
+ * values from the backing store; mirror them into our checkboxes. */
+static int on_instance_settings_page_loaded(void*, uint32_t, void* payload,
+											void*)
+{
+	auto* evt = static_cast<MMCOInstanceSettingsPageEvent*>(payload);
+	if (!evt || !evt->page_handle)
+		return 0;
+	auto it = g_pageWidgets.find(static_cast<QWidget*>(evt->page_handle));
+	if (it != g_pageWidgets.end())
+		syncInstanceWidgets(it.value());
+	return 0;
+}
+
+/* MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING — page is about to commit
+ * its values; push our widgets back into the instance settings. */
+static int on_instance_settings_page_applying(void*, uint32_t, void* payload,
+											  void*)
+{
+	auto* evt = static_cast<MMCOInstanceSettingsPageEvent*>(payload);
+	if (!evt || !evt->page_handle)
+		return 0;
+	auto it = g_pageWidgets.find(static_cast<QWidget*>(evt->page_handle));
+	if (it != g_pageWidgets.end())
+		applyInstanceWidgets(it.value());
 	return 0;
 }
 
@@ -464,6 +539,7 @@ static int on_instance_pre_launch(void* mh, uint32_t /*hook_id*/, void* payload,
 {
 	auto* info = static_cast<MMCOInstanceInfo*>(payload);
 	const char* iname = info->instance_name ? info->instance_name : "?";
+	const char* iid = info ? info->instance_id : nullptr;
 
 	/*
 	 * Wrapper command build order (each call *prepends* to the chain):
@@ -476,19 +552,10 @@ static int on_instance_pre_launch(void* mh, uint32_t /*hook_id*/, void* payload,
 	 * gamemoderun wraps the entire chain and requests GameMode for the child;
 	 * mangohud hooks into the JVM's graphics APIs via LD_PRELOAD.
 	 */
-
-	BaseInstance* instance = nullptr;
-	if (APPLICATION->instances() && info->instance_id) {
-		auto resolved = APPLICATION->instances()->getInstanceById(
-			QString::fromUtf8(info->instance_id));
-		if (resolved)
-			instance = resolved.get();
-	}
-
 	bool mangoEnabled =
-		isMangohudEnabledForInstance(instance) && mangohud_available();
+		isMangohudEnabledForInstance(iid) && mangohud_available();
 	bool gamemodeEnabled =
-		isGamemodeEnabledForInstance(instance) && gamemoderun_available();
+		isGamemodeEnabledForInstance(iid) && gamemoderun_available();
 
 	if (mangoEnabled) {
 		QByteArray mangohudWrapper = mangohud_executable().toUtf8();
@@ -554,6 +621,18 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
 					   on_app_initialized, nullptr);
+	ctx->hook_register(ctx->module_handle,
+					   MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN,
+					   on_global_settings_about_to_open, nullptr);
+	ctx->hook_register(ctx->module_handle,
+					   MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED,
+					   on_instance_settings_page_created, nullptr);
+	ctx->hook_register(ctx->module_handle,
+					   MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED,
+					   on_instance_settings_page_loaded, nullptr);
+	ctx->hook_register(ctx->module_handle,
+					   MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING,
+					   on_instance_settings_page_applying, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_PRE_LAUNCH,
 					   on_instance_pre_launch, nullptr);
 
@@ -568,6 +647,9 @@ MMCO_EXPORT void mmco_unload()
 	g_ctx = nullptr;
 	g_mangoCheckbox = nullptr;
 	g_gamemodeCheckbox = nullptr;
+	for (auto* w : g_pageWidgets)
+		delete w;
+	g_pageWidgets.clear();
 	/* g_guard intentionally not deleted — see NVIDIAPrime note */
 	g_guard = nullptr;
 }

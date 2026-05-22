@@ -28,8 +28,6 @@
 #include "plugin/sdk/mmco_sdk.h"
 #include "SkinModel.h"
 
-#include "minecraft/auth/MinecraftAccount.h"
-
 namespace Ui
 {
 	class SkinManagerDialog;
@@ -45,8 +43,8 @@ class SkinManagerDialog : public QDialog
 	Q_OBJECT
 
   public:
-	explicit SkinManagerDialog(MinecraftAccountPtr account,
-							   QWidget* parent = nullptr);
+	SkinManagerDialog(const QString& accountId, MMCOContext* ctx,
+					  QWidget* parent = nullptr);
 	~SkinManagerDialog() override;
 
   private slots:
@@ -67,7 +65,8 @@ class SkinManagerDialog : public QDialog
 
 	Ui::SkinManagerDialog* ui;
 	SkinManagerNS::SkinViewerWidget* m_viewer = nullptr;
-	MinecraftAccountPtr m_account;
+	QString m_accountId;
+	MMCOContext* m_ctx = nullptr;
 
 	/* Tracks the user's intent. m_chosenSkinPath empty == "keep
 	 * current skin", otherwise upload from that path on OK. */

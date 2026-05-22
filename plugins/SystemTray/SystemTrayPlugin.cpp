@@ -20,7 +20,6 @@
  */
 
 #include "plugin/sdk/mmco_sdk.h"
-#include "settings/SettingsObject.h"
 
 /* ── dependencies ─────────────────────────────────────────────────── *
  *
@@ -286,27 +285,44 @@ static void injectCheckboxIntoMeshMCPage()
 	int spacerIdx = layout->count() - 1;
 	layout->insertWidget(spacerIdx, groupBox);
 
-	auto s = APPLICATION->settings();
-	g_enabledCheckbox->setChecked(
-		s->get(QString::fromLatin1(SETTING_GLOBAL_ENABLED)).toBool());
+	bool current = false;
+	if (g_ctx) {
+		const char* v =
+			g_ctx->app_setting_get(g_ctx->module_handle,
+								   SETTING_GLOBAL_ENABLED);
+		if (v) {
+			QString s = QString::fromUtf8(v).trimmed().toLower();
+			current = s == QLatin1String("1") || s == QLatin1String("true") ||
+					  s == QLatin1String("yes") || s == QLatin1String("on");
+		}
+	}
+	g_enabledCheckbox->setChecked(current);
 
 	QObject::connect(g_enabledCheckbox, &QCheckBox::toggled, g_guard,
 					 [](bool checked) {
-						 APPLICATION->settings()->set(
-							 QString::fromLatin1(SETTING_GLOBAL_ENABLED),
-							 checked);
+						 if (!g_ctx)
+							 return;
+						 g_ctx->app_setting_set(g_ctx->module_handle,
+												SETTING_GLOBAL_ENABLED,
+												checked ? "1" : "0");
 						 settingSetBool("enabled", checked);
 					 });
 }
 
+/* Hook handler for MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN — replaces
+ * the legacy direct connect to Application::globalSettingsAboutToOpen. */
+static int on_global_settings_about_to_open(void*, uint32_t, void*, void*)
+{
+	g_enabledCheckbox = nullptr;
+	QTimer::singleShot(0, qApp, injectCheckboxIntoMeshMCPage);
+	return 0;
+}
+
 static int on_app_initialized(void*, uint32_t, void*, void*)
 {
-	QObject::connect(APPLICATION, &Application::globalSettingsAboutToOpen,
-					 g_guard, []() {
-						 g_enabledCheckbox = nullptr;
-						 QTimer::singleShot(0, qApp,
-											injectCheckboxIntoMeshMCPage);
-					 });
+	/* Re-injection is now triggered via the hook above; this handler
+	 * stays around as a placeholder so we can wire it up next to the
+	 * other APP_INITIALIZED-dependent state if needed. */
 	return 0;
 }
 
@@ -361,31 +377,37 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	 * setting so the user can toggle it from Settings → MeshMC. The
 	 * global setting wins on conflict — every plugin-local read
 	 * delegates here first. */
-	auto* appSettings = APPLICATION ? APPLICATION->settings().get() : nullptr;
-	if (appSettings) {
-		const QString globalKey =
-			QString::fromLatin1(SETTING_GLOBAL_ENABLED);
-		if (!appSettings->contains(globalKey)) {
-			// First run — seed from the plugin-local value (if any),
-			// otherwise default ON.
-			appSettings->registerSetting(globalKey,
-										 settingBool("enabled", true));
+	if (!ctx->app_setting_contains(ctx->module_handle, SETTING_GLOBAL_ENABLED)) {
+		/* First run — seed from the plugin-local value (if any), otherwise
+		 * default ON. */
+		ctx->app_setting_register(ctx->module_handle, SETTING_GLOBAL_ENABLED,
+								  settingBool("enabled", true) ? "1" : "0");
+	}
+	bool globalEnabled = false;
+	{
+		const char* v = ctx->app_setting_get(ctx->module_handle,
+											 SETTING_GLOBAL_ENABLED);
+		if (v) {
+			QString s = QString::fromUtf8(v).trimmed().toLower();
+			globalEnabled = s == QLatin1String("1") ||
+							s == QLatin1String("true") ||
+							s == QLatin1String("yes") ||
+							s == QLatin1String("on");
 		}
-		const bool globalEnabled = appSettings->get(globalKey).toBool();
-		// Re-sync the plugin-local copy so existing call-sites see the
-		// canonical answer.
-		settingSetBool("enabled", globalEnabled);
-		if (!globalEnabled) {
-			MMCO_LOG(ctx, "SystemTray: disabled via global setting; idle "
-						  "(re-enable from Settings → MeshMC).");
-			// Still wire up APP_INITIALIZED so we can inject the
-			// checkbox — the user needs a way to flip it back on.
-			ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
-							   on_app_initialized, nullptr);
-			return 0;
-		}
-	} else if (!settingBool("enabled", true)) {
-		MMCO_LOG(ctx, "SystemTray: disabled via plugin setting; idle.");
+	}
+	/* Re-sync the plugin-local copy so existing call-sites see the
+	 * canonical answer. */
+	settingSetBool("enabled", globalEnabled);
+	if (!globalEnabled) {
+		MMCO_LOG(ctx, "SystemTray: disabled via global setting; idle "
+					  "(re-enable from Settings → MeshMC).");
+		/* Still wire up the hook so we can inject the checkbox — the
+		 * user needs a way to flip it back on. */
+		ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
+						   on_app_initialized, nullptr);
+		ctx->hook_register(ctx->module_handle,
+						   MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN,
+						   on_global_settings_about_to_open, nullptr);
 		return 0;
 	}
 
@@ -471,6 +493,9 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	/* Hooks. */
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
 					   on_app_initialized, nullptr);
+	ctx->hook_register(ctx->module_handle,
+					   MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN,
+					   on_global_settings_about_to_open, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_UI_MAIN_READY,
 					   on_ui_main_ready, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_CREATED,

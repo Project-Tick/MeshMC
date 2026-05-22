@@ -24,10 +24,11 @@ const char* severityName(Severity s)
 }
 } // namespace
 
-AnalysisPage::AnalysisPage(InstancePtr instance, RuleEngine* engine,
+AnalysisPage::AnalysisPage(const QString& instanceId,
+						   const QString& instanceRoot, RuleEngine* engine,
 						   LearningStore* learning, QWidget* parent)
-	: QWidget(parent), m_instance(instance), m_engine(engine),
-	  m_learning(learning)
+	: QWidget(parent), m_instanceId(instanceId), m_instanceRoot(instanceRoot),
+	  m_engine(engine), m_learning(learning)
 {
 	buildUi();
 	runAnalysis();
@@ -95,14 +96,14 @@ void AnalysisPage::buildUi()
 void AnalysisPage::runAnalysis()
 {
 	LogIngester ing;
-	auto bundle = ing.ingestForInstance(m_instance->instanceRoot());
+	auto bundle = ing.ingestForInstance(m_instanceRoot);
 
 	m_matches = m_engine->analyse(bundle.combinedText);
 
 	// Score each rule via LearningStore.
 	for (auto& m : m_matches) {
-		m.score = m_learning->scoreFor(m.ruleId, m_instance->id());
-		m_learning->recordSeen(m.ruleId, m_instance->id());
+		m.score = m_learning->scoreFor(m.ruleId, m_instanceId);
+		m_learning->recordSeen(m.ruleId, m_instanceId);
 	}
 	std::sort(m_matches.begin(), m_matches.end(),
 			  [](const Match& a, const Match& b) {
@@ -137,7 +138,7 @@ void AnalysisPage::runAnalysis()
 	// Record novel fingerprint if no rule fired but we have a signature.
 	if (m_matches.isEmpty() && !m_currentFingerprint.isEmpty()) {
 		m_learning->recordNovel(m_currentFingerprint, m_currentSampleLine,
-								m_instance->id());
+								m_instanceId);
 		m_learning->save();
 		m_promoteBtn->setEnabled(true);
 	} else {
@@ -204,7 +205,7 @@ void AnalysisPage::onHelped()
 	auto m = selectedMatch();
 	if (m.ruleId.isEmpty())
 		return;
-	m_learning->recordHelped(m.ruleId, m_instance->id());
+	m_learning->recordHelped(m.ruleId, m_instanceId);
 	m_learning->save();
 	m_summaryLabel->setText(tr("Recorded: rule <b>%1</b> helped on this "
 							   "instance.")
@@ -216,7 +217,7 @@ void AnalysisPage::onDidNotHelp()
 	auto m = selectedMatch();
 	if (m.ruleId.isEmpty())
 		return;
-	m_learning->recordDidNotHelp(m.ruleId, m_instance->id());
+	m_learning->recordDidNotHelp(m.ruleId, m_instanceId);
 	m_learning->save();
 	m_summaryLabel->setText(tr("Recorded: rule <b>%1</b> did not help.")
 								.arg(m.ruleTitle));

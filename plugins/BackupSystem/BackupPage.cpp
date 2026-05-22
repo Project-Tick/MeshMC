@@ -5,13 +5,15 @@
 #include "BackupPage.h"
 #include "ui_BackupPage.h"
 
-BackupPage::BackupPage(InstancePtr instance, QWidget* parent)
-	: QWidget(parent), ui(new Ui::BackupPage), m_instance(instance)
+BackupPage::BackupPage(const QString& instanceId, const QString& instanceRoot,
+					   MMCOContext* ctx, QWidget* parent)
+	: QWidget(parent), ui(new Ui::BackupPage), m_instanceId(instanceId),
+	  m_instanceRoot(instanceRoot)
 {
 	ui->setupUi(this);
 
-	m_manager = std::make_unique<BackupManager>(m_instance->id(),
-												m_instance->instanceRoot());
+	m_manager =
+		std::make_unique<BackupManager>(m_instanceId, m_instanceRoot, ctx);
 
 	ui->backupList->header()->setStretchLastSection(false);
 	ui->backupList->header()->setSectionResizeMode(0, QHeaderView::Stretch);
@@ -33,7 +35,7 @@ BackupPage::~BackupPage()
 
 QIcon BackupPage::icon() const
 {
-	return APPLICATION->getThemedIcon("backup");
+	return QIcon::fromTheme(QStringLiteral("backup"));
 }
 
 void BackupPage::openedImpl()

@@ -17,7 +17,6 @@
  */
 
 #include "plugin/sdk/mmco_sdk.h"
-#include "settings/SettingsObject.h"
 
 MMCO_DEFINE_MODULE("NVIDIA Prime Module", "1.0.0", "Project Tick",
 				   "Discrete GPU offload via NVIDIA Prime Render Offload",
@@ -36,18 +35,24 @@ static bool is_flatpak()
 
 static bool is_enabled()
 {
-	auto s = APPLICATION->settings();
-	QString key = QString::fromLatin1(SETTING_KEY);
-	return s->contains(key) && s->get(key).toBool();
+	if (!g_ctx)
+		return false;
+	if (!g_ctx->app_setting_contains(g_ctx->module_handle, SETTING_KEY))
+		return false;
+	const char* v = g_ctx->app_setting_get(g_ctx->module_handle, SETTING_KEY);
+	if (!v)
+		return false;
+	const QString s = QString::fromUtf8(v).trimmed().toLower();
+	return s == QLatin1String("1") || s == QLatin1String("true") ||
+		   s == QLatin1String("yes") || s == QLatin1String("on");
 }
 
 static void ensureSettingRegistered()
 {
-	auto s = APPLICATION->settings();
-	QString key = QString::fromLatin1(SETTING_KEY);
-	if (!s->contains(key)) {
-		s->registerSetting(key, false);
-	}
+	if (!g_ctx)
+		return;
+	if (!g_ctx->app_setting_contains(g_ctx->module_handle, SETTING_KEY))
+		g_ctx->app_setting_register(g_ctx->module_handle, SETTING_KEY, "0");
 }
 
 static void injectCheckboxIntoMinecraftPage()
@@ -91,14 +96,31 @@ static void injectCheckboxIntoMinecraftPage()
 	/* Load current setting */
 	g_primeCheckbox->setChecked(is_enabled());
 
-	/* Save immediately when toggled — avoids relying on
-	 * globalSettingsClosed which fires after the dialog (and checkbox)
-	 * is already destroyed. */
+	/* Save immediately when toggled — avoids relying on a
+	 * close-dialog hook that would fire after the checkbox (and the
+	 * page widget) is already destroyed. */
 	QObject::connect(g_primeCheckbox, &QCheckBox::toggled, g_guard,
 					 [](bool checked) {
-						 auto s = APPLICATION->settings();
-						 s->set(QString::fromLatin1(SETTING_KEY), checked);
+						 if (!g_ctx)
+							 return;
+						 g_ctx->app_setting_set(g_ctx->module_handle,
+												SETTING_KEY,
+												checked ? "1" : "0");
 					 });
+}
+
+/* Hook handler for MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN — the C-ABI
+ * replacement for the legacy
+ *   QObject::connect(APPLICATION,
+ *                    &Application::globalSettingsAboutToOpen, ...)
+ * direct connection.  The hook fires before the dialog is built;
+ * QTimer::singleShot(0, ...) defers the widget walk to the next
+ * event-loop turn so the MinecraftPage already exists. */
+static int on_global_settings_about_to_open(void*, uint32_t, void*, void*)
+{
+	g_primeCheckbox = nullptr;
+	QTimer::singleShot(0, qApp, injectCheckboxIntoMinecraftPage);
+	return 0;
 }
 
 static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,
@@ -110,22 +132,11 @@ static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,
 		is_enabled() ? "ENABLED" : "disabled", is_flatpak() ? "yes" : "no");
 	MMCO_LOG(g_ctx, buf);
 
-	/* Connect to Application signals for settings dialog lifecycle.
-	 * globalSettingsAboutToOpen fires BEFORE the dialog is created,
-	 * so we use QTimer::singleShot(0) to run after PageDialog
-	 * construction (inside its event loop).
-	 *
-	 * g_guard acts as the receiver — when deleted in mmco_unload(),
-	 * Qt automatically severs every connection, so nothing dangles
-	 * into unloaded .so memory during dlclose(). */
+	/* g_guard receives the QCheckBox::toggled connection later, when
+	 * the settings dialog opens.  Deleting (well, nulling) the guard
+	 * in mmco_unload() severs every connection that has been anchored
+	 * on it, so nothing dangles into unloaded .so memory. */
 	g_guard = new QObject();
-
-	QObject::connect(
-		APPLICATION, &Application::globalSettingsAboutToOpen, g_guard, []() {
-			g_primeCheckbox = nullptr;
-			QTimer::singleShot(0, qApp, injectCheckboxIntoMinecraftPage);
-		});
-
 	return 0;
 }
 
@@ -171,6 +182,10 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
 					   on_app_initialized, nullptr);
+
+	ctx->hook_register(ctx->module_handle,
+					   MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN,
+					   on_global_settings_about_to_open, nullptr);
 
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_PRE_LAUNCH,
 					   on_instance_pre_launch, nullptr);

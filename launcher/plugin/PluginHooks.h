@@ -67,6 +67,40 @@ enum MMCOHookId : uint32_t {
 	MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES =
 		0x0603, /* payload: MMCOGlobalSettingsPagesEvent* */
 
+	/* ABI 3+ — global-settings dialog lifecycle.
+	 *
+	 * Fires just before the Application's global settings dialog is
+	 * built. Plugins that mutate the dialog's pages on every open
+	 * (e.g. to inject a checkbox into the MeshMCPage) hook here and
+	 * schedule a deferred QTimer::singleShot(0, …) to do the actual
+	 * widget walk on the next event-loop turn (after the dialog's
+	 * own setupUi has run).  Payload: nullptr. */
+	MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN = 0x0604,
+
+	/* ABI 3+ — per-instance settings page just constructed.
+	 *
+	 * Fires from InstanceSettingsPage's ctor right after its UI is
+	 * assembled. Replaces the legacy
+	 *   QObject::connect(APPLICATION,
+	 *                    &Application::instanceSettingsPageCreated, …)
+	 * dance.
+	 *
+	 * Payload: MMCOInstanceSettingsPageEvent* — see below. */
+	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED = 0x0605,
+
+	/* ABI 3+ — per-instance settings page finished loading values from
+	 * its backing store. Plugins that mirror values out of the
+	 * instance into their own widgets hook here to refresh.
+	 * Payload: MMCOInstanceSettingsPageEvent* (same fields as 0x0605). */
+	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED = 0x0606,
+
+	/* ABI 3+ — per-instance settings page about to write back its values.
+	 * Plugins that own custom widgets on the page hook here to push
+	 * the user's choice back into the instance settings before the
+	 * page commits.
+	 * Payload: MMCOInstanceSettingsPageEvent*. */
+	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING = 0x0607,
+
 	/* News */
 	MMCO_HOOK_NEWS_UPDATED =
 		0x0700, /* payload: nullptr — fires after feeds reload */
@@ -171,6 +205,52 @@ struct MMCOInstancePagesEvent {
 	void* page_list_handle; /* Opaque: QList<BasePage*>* */
 	void* instance_handle;	/* Opaque: InstancePtr raw pointer */
 };
+
+/*
+ * Payload for MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED (ABI 3+).
+ *
+ * Fires from InstanceSettingsPage's ctor right after its UI is
+ * assembled. Lets plugins inject extra widgets into the launcher's
+ * built-in per-instance settings page without subclassing.
+ *
+ *   instance_id     — internal id of the instance the page belongs to.
+ *   page_handle     — opaque pointer to the just-built page widget
+ *                     (a QWidget*). Plugins may qobject_cast<QWidget*>
+ *                     this handle (Qt operation, allowed) but MUST
+ *                     NOT cast it to InstanceSettingsPage* — that
+ *                     would require including a launcher header and
+ *                     break standalone builds.
+ *   instance_handle — opaque pointer to the BaseInstance the page is
+ *                     editing. Same casting rules apply.
+ *
+ * Handles are valid for the lifetime of the settings dialog; plugins
+ * must NOT delete them. Returning non-zero from the callback has no
+ * effect — this is a notification, not a veto point.
+ */
+struct MMCOInstanceSettingsPageEvent {
+	const char* instance_id;
+	void* page_handle;
+	void* instance_handle;
+};
+
+/*
+ * MMCOInstanceRunningCallback — ABI 3+ replacement for the legacy
+ * pattern of grabbing an InstancePtr via
+ *   APPLICATION->instances()->getInstanceById(id)
+ * and connecting to BaseInstance::runningStatusChanged.
+ *
+ * Registered through MMCOContext::instance_running_register; the host
+ * tracks every registration per-module and severs them on mmco_unload
+ * so a stale callback can never fire into freed plugin memory.
+ *
+ *   user_data    — the cookie the plugin passed at registration time.
+ *   instance_id  — the id of the instance whose state changed.
+ *   running      — 1 if the instance just started running, 0 if it
+ *                  just stopped.
+ */
+typedef void (*MMCOInstanceRunningCallback)(void* user_data,
+											const char* instance_id,
+											int running);
 
 /*
  * Payload for MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES.

@@ -248,11 +248,22 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 		return meta;
 	}
 
-	// Validate ABI version
-	if (info->abi_version != MMCO_ABI_VERSION) {
+	// Validate ABI version.
+	//
+	// Range-accept: any ABI from MMCO_ABI_VERSION_MIN through the
+	// current MMCO_ABI_VERSION is loadable. Plugins built against an
+	// older-but-still-supported ABI simply never use the
+	// fields/hooks/entries the launcher added in a later revision —
+	// those slots are appended to MMCOContext (never reordered), so a
+	// stale plugin reads the slots it knows about and ignores the
+	// rest. Reject anything newer than the launcher knows.
+	constexpr uint32_t MMCO_ABI_VERSION_MIN = 2;
+	if (info->abi_version < MMCO_ABI_VERSION_MIN ||
+		info->abi_version > MMCO_ABI_VERSION) {
 		qWarning() << "[PluginLoader]" << path
 				   << "ABI version mismatch:" << info->abi_version
-				   << "(expected" << MMCO_ABI_VERSION << ")";
+				   << "(host supports" << MMCO_ABI_VERSION_MIN << ".."
+				   << MMCO_ABI_VERSION << ")";
 		unloadModule(meta);
 		return meta;
 	}

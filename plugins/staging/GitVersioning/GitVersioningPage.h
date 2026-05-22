@@ -14,7 +14,10 @@ class GitVersioningPage : public QWidget, public BasePage
 {
 	Q_OBJECT
   public:
-	explicit GitVersioningPage(InstancePtr instance, QWidget* parent = nullptr);
+	/* Constructed from a string instance id + filesystem root rather
+	 * than InstancePtr — keeps the page off the launcher type system. */
+	GitVersioningPage(const QString& instanceId, const QString& instanceRoot,
+					  QWidget* parent = nullptr);
 
 	QString id() const override
 	{
@@ -47,7 +50,8 @@ class GitVersioningPage : public QWidget, public BasePage
 	void reloadHistory();
 	GitCommit selectedCommit() const;
 
-	InstancePtr m_instance;
+	QString m_instanceId;
+	QString m_instanceRoot;
 	GitRepo m_repo;
 	QList<GitCommit> m_commits;
 

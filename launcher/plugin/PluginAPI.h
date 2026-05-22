@@ -498,4 +498,196 @@ struct MMCOContext {
 	int (*main_window_show)(void* mh);
 	int (*main_window_hide)(void* mh);
 	int (*main_window_is_visible)(void* mh);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S21 — Application-scope settings (ABI 3+, additive)
+	 *
+	 * The S16 `app_setting_get` field above is read-only and limited to
+	 * settings that have already been registered.  S21 adds the write
+	 * side, a registration helper, and an existence probe so plugins
+	 * never need to reach into APPLICATION->settings() directly:
+	 *
+	 *   • app_setting_register: create the key if missing with the
+	 *     supplied UTF-8 default. Returns 0 on success, -1 on error,
+	 *     and is a no-op (returning 0) when the key already exists.
+	 *   • app_setting_set:      overwrite the value of an existing key.
+	 *     Returns 0 on success, -1 on error.  The caller is expected
+	 *     to have registered the key first (either via this API or by
+	 *     the launcher itself).
+	 *   • app_setting_contains: 1 if the key is registered, 0 otherwise.
+	 *
+	 * All three are namespaced exactly the way the launcher's own
+	 * settings are — there is no automatic plugin-private prefix on
+	 * top.  Callers that want a private namespace should keep using
+	 * setting_get / setting_set from S3.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*app_setting_set)(void* mh, const char* key, const char* value);
+	int (*app_setting_register)(void* mh, const char* key,
+								const char* default_value);
+	int (*app_setting_contains)(void* mh, const char* key);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S22 — Themed icon resolution (ABI 3+, additive)
+	 *
+	 * Resolves a logical name to a string suitable for the existing
+	 * icon-name parameters in S12/S13/S19 (button/tray/menu APIs all
+	 * accept either an XDG theme name or a ":/..." Qt resource path).
+	 *
+	 * The returned pointer is valid until the next API call on the
+	 * same module. Returns nullptr if the name does not resolve.
+	 *
+	 * Replaces direct calls to APPLICATION->getThemedIcon(name) and
+	 * APPLICATION->icons()->getIcon(name) inside plugin code.
+	 * ─────────────────────────────────────────────────────────────── */
+	const char* (*ui_themed_icon)(void* mh, const char* name);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S23 — Instance running-state signal bridge (ABI 3+, additive)
+	 *
+	 * Replaces the legacy pattern of resolving an InstancePtr via
+	 * APPLICATION->instances()->getInstanceById(id) and connecting to
+	 * its `runningStatusChanged(bool)` Qt signal.
+	 *
+	 *   instance_running_register   — start delivering running-state
+	 *     transitions for the given instance id to `cb(ud, id, r)`.
+	 *     The host owns the underlying Qt connection through a
+	 *     per-module guard QObject; mmco_unload() automatically
+	 *     severs every connection for that module.
+	 *     Returns 0 on success, -1 if the id does not resolve.
+	 *
+	 *   instance_running_unregister — stop delivering transitions for
+	 *     the given id.  Returns 0 on success.  Calling with an id
+	 *     that has no registration is a no-op (returns 0).
+	 *
+	 * A single module may have at most one callback per instance id.
+	 * Re-registering replaces the previous callback for that id.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*instance_running_register)(void* mh, const char* instance_id,
+									 MMCOInstanceRunningCallback cb, void* ud);
+	int (*instance_running_unregister)(void* mh, const char* instance_id);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S24 — Per-instance settings (ABI 3+, additive)
+	 *
+	 * Replaces inst->settings()->{get,set,registerSetting,
+	 * registerOverride,reset,contains}.  All values are exchanged as
+	 * UTF-8 strings; plugins convert to bool / int as needed.
+	 *
+	 * Each call resolves the BaseInstance via APPLICATION->instances()
+	 * inside PluginManager and routes the call to the instance's own
+	 * SettingsObject. Returns 0 on success, -1 on failure (unknown
+	 * instance id, missing key, etc.).  The "register override" call
+	 * mirrors SettingsObject::registerOverride(): expose an
+	 * application-scope setting on the instance, controlled by a
+	 * per-instance bool gate (`gate_key`).
+	 * ─────────────────────────────────────────────────────────────── */
+	const char* (*instance_setting_get)(void* mh, const char* instance_id,
+										const char* key);
+	int (*instance_setting_set)(void* mh, const char* instance_id,
+								const char* key, const char* value);
+	int (*instance_setting_register)(void* mh, const char* instance_id,
+									 const char* key,
+									 const char* default_value);
+	int (*instance_setting_register_override)(void* mh,
+											  const char* instance_id,
+											  const char* key,
+											  const char* gate_key);
+	int (*instance_setting_reset)(void* mh, const char* instance_id,
+								  const char* key);
+	int (*instance_setting_contains)(void* mh, const char* instance_id,
+									 const char* key);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S25 — MinecraftAccount / skin / cape access (ABI 3+, additive)
+	 *
+	 * Replaces SkinManager's direct AccountList / MinecraftAccountPtr
+	 * / AccountData access. PluginManager looks up the account on the
+	 * host's AccountList by id and returns the requested field.
+	 *
+	 * `account_get_id_by_index` exposes the account id matching S7's
+	 * `account_get_profile_id` — same indexing, separate getter so
+	 * plugins can scan by index and then drive everything else by id.
+	 *
+	 * Skin / cape blobs are PNG byte sequences; the pointer returned
+	 * via `out_ptr` is valid until the next API call on the same
+	 * module. The function returns the size in bytes (0 if absent,
+	 * -1 on error).
+	 *
+	 * Variant strings are "CLASSIC" / "SLIM" (case-insensitive).
+	 * Setters return 0 on success, -1 on failure.  account_skin_blob
+	 * is the in-memory cache; account_skin_upload below is what
+	 * actually pushes a new skin to Mojang's servers.
+	 * ─────────────────────────────────────────────────────────────── */
+	const char* (*account_get_id_by_index)(void* mh, int index);
+	int (*account_is_msa_by_id)(void* mh, const char* account_id);
+	const char* (*account_get_access_token)(void* mh, const char* account_id);
+	const char* (*account_get_current_cape_id)(void* mh,
+											   const char* account_id);
+	const char* (*account_get_skin_variant)(void* mh, const char* account_id);
+	int64_t (*account_get_skin_blob)(void* mh, const char* account_id,
+									 const void** out_ptr);
+	int (*account_cape_count)(void* mh, const char* account_id);
+	const char* (*account_cape_get_id)(void* mh, const char* account_id,
+									   int index);
+	const char* (*account_cape_get_alias)(void* mh, const char* account_id,
+										  int index);
+	int64_t (*account_cape_get_blob)(void* mh, const char* account_id,
+									 int index, const void** out_ptr);
+	int (*account_set_skin_variant)(void* mh, const char* account_id,
+									const char* variant);
+	int (*account_set_current_cape)(void* mh, const char* account_id,
+									const char* cape_id);
+	int (*account_set_skin_blob)(void* mh, const char* account_id,
+								 const void* data, int64_t size);
+
+	/* S26 — Synchronous task helpers (ABI 3+, additive)
+	 *
+	 * Run launcher-side network tasks that used to be wrapped in
+	 * SequentialTask + ProgressDialog::execWithTask. The C-ABI pumps
+	 * a modal progress dialog parented to the active window so the
+	 * UX matches what the plugin used to drive manually.
+	 *
+	 *   account_skin_upload  — POST a new skin PNG (variant == "STEVE"
+	 *                          or "ALEX").
+	 *   account_skin_reset   — DELETE the active skin.
+	 *   account_cape_set     — PUT the active cape id (empty string
+	 *                          == "no cape").
+	 *
+	 * Returns 0 on success, -1 on failure (the task reported an error
+	 * or the user cancelled). */
+	int (*account_skin_upload)(void* mh, const char* account_id,
+							   const void* png_bytes, int64_t size,
+							   const char* variant);
+	int (*account_skin_reset)(void* mh, const char* account_id);
+	int (*account_cape_set)(void* mh, const char* account_id,
+							const char* cape_id);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S27 — Icon list enumeration (ABI 3+, additive)
+	 *
+	 * Exposes the launcher's IconList through the C ABI for plugins
+	 * that need to render an icon picker (Filelink's "choose
+	 * shortcut icon" dialog is the canonical case). Replaces direct
+	 * APPLICATION->icons() / IconList::rowCount() / IconList::data()
+	 * access.
+	 *
+	 *   icon_list_count    — number of icons known to the host.
+	 *   icon_list_get_key  — stable key for the icon at the given
+	 *                        index (suitable for instance_set_icon_key
+	 *                        and tray/menu icon parameters).
+	 *   icon_list_get_name — human-readable display name (same
+	 *                        column the launcher's icon list shows).
+	 *   icon_list_get_file_path — absolute path on disk for the icon
+	 *                        (or "" if the icon is in-memory only).
+	 *                        Used by Filelink to embed the icon in a
+	 *                        platform-native shortcut.
+	 *   icon_list_save_png — write the icon's PNG bytes to
+	 *                        `dest_path`. Returns 0 on success.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*icon_list_count)(void* mh);
+	const char* (*icon_list_get_key)(void* mh, int index);
+	const char* (*icon_list_get_name)(void* mh, int index);
+	const char* (*icon_list_get_file_path)(void* mh, const char* icon_key);
+	int (*icon_list_save_png)(void* mh, const char* icon_key,
+							  const char* dest_path);
 };

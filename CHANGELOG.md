@@ -1,4 +1,4 @@
-# MeshMC 8.0.0
+# MeshMC 8.0.0 (DRAFT)
 
 ### Highlights
 
@@ -24,6 +24,7 @@ Look how I summarized it in just three points! I think I should win a Nobel Priz
 * DependencyResolver used in mods has been improved.
 * The update system has been completely revamped.
 * The UI injector system in Plugin Manager has been improved.
+* Plugins are now fully independent of the launcher binary; they build standalone, both in-tree and out-of-tree, against the SDK alone.
 
 ### Fixed
 

@@ -366,6 +366,87 @@ class PluginManager : public QObject
 	/* Section 16: Application Settings */
 	static const char* api_app_setting_get(void* mh, const char* key);
 
+	/* Section 21: Application Settings — write side (ABI 3+) */
+	static int api_app_setting_set(void* mh, const char* key,
+								   const char* value);
+	static int api_app_setting_register(void* mh, const char* key,
+										const char* default_value);
+	static int api_app_setting_contains(void* mh, const char* key);
+
+	/* Section 22: Themed icon resolution (ABI 3+) */
+	static const char* api_ui_themed_icon(void* mh, const char* name);
+
+	/* Section 23: Instance running-state signal bridge (ABI 3+) */
+	static int
+	api_instance_running_register(void* mh, const char* instance_id,
+								  MMCOInstanceRunningCallback cb, void* ud);
+	static int api_instance_running_unregister(void* mh,
+											   const char* instance_id);
+
+	/* Section 24: Per-instance settings (ABI 3+) */
+	static const char* api_instance_setting_get(void* mh,
+												const char* instance_id,
+												const char* key);
+	static int api_instance_setting_set(void* mh, const char* instance_id,
+										const char* key, const char* value);
+	static int api_instance_setting_register(void* mh,
+											 const char* instance_id,
+											 const char* key,
+											 const char* default_value);
+	static int
+	api_instance_setting_register_override(void* mh, const char* instance_id,
+										   const char* key,
+										   const char* gate_key);
+	static int api_instance_setting_reset(void* mh, const char* instance_id,
+										  const char* key);
+	static int api_instance_setting_contains(void* mh,
+											 const char* instance_id,
+											 const char* key);
+
+	/* Section 25: Account / skin / cape access (ABI 3+) */
+	static const char* api_account_get_id_by_index(void* mh, int index);
+	static int api_account_is_msa_by_id(void* mh, const char* account_id);
+	static const char* api_account_get_access_token(void* mh,
+													const char* account_id);
+	static const char*
+	api_account_get_current_cape_id(void* mh, const char* account_id);
+	static const char* api_account_get_skin_variant(void* mh,
+													const char* account_id);
+	static int64_t api_account_get_skin_blob(void* mh, const char* account_id,
+											 const void** out_ptr);
+	static int api_account_cape_count(void* mh, const char* account_id);
+	static const char* api_account_cape_get_id(void* mh,
+											   const char* account_id,
+											   int index);
+	static const char* api_account_cape_get_alias(void* mh,
+												  const char* account_id,
+												  int index);
+	static int64_t api_account_cape_get_blob(void* mh, const char* account_id,
+											 int index, const void** out_ptr);
+	static int api_account_set_skin_variant(void* mh, const char* account_id,
+											const char* variant);
+	static int api_account_set_current_cape(void* mh, const char* account_id,
+											const char* cape_id);
+	static int api_account_set_skin_blob(void* mh, const char* account_id,
+										 const void* data, int64_t size);
+
+	/* Section 26: Synchronous task helpers (ABI 3+) */
+	static int api_account_skin_upload(void* mh, const char* account_id,
+									   const void* png_bytes, int64_t size,
+									   const char* variant);
+	static int api_account_skin_reset(void* mh, const char* account_id);
+	static int api_account_cape_set(void* mh, const char* account_id,
+									const char* cape_id);
+
+	/* Section 27: Icon list enumeration (ABI 3+) */
+	static int api_icon_list_count(void* mh);
+	static const char* api_icon_list_get_key(void* mh, int index);
+	static const char* api_icon_list_get_name(void* mh, int index);
+	static const char* api_icon_list_get_file_path(void* mh,
+												   const char* icon_key);
+	static int api_icon_list_save_png(void* mh, const char* icon_key,
+									  const char* dest_path);
+
 	/* Section 18: Plugin Icon Set (ABI 2+) */
 	static const char* api_ui_plugin_icon(void* mh, const char* name);
 
@@ -512,6 +593,26 @@ class PluginManager : public QObject
 	bool m_closeFilterInstalled = false;
 	QPointer<QWidget> m_filteredMainWindow;
 
+	/* S23 (ABI 3+) — per-module per-instance running-state callbacks.
+	 *
+	 * Each record owns one QObject `guard` that anchors the Qt
+	 * QObject::connect to the resolved BaseInstance's
+	 * runningStatusChanged signal. mmco_unload() / module teardown
+	 * deletes the guard, which severs the connection automatically
+	 * — Qt's normal sender/receiver bookkeeping then guarantees the
+	 * plugin's callback can never fire into freed memory.
+	 *
+	 * A single module may have at most one record per (module_handle,
+	 * instance_id) pair; re-registering replaces the existing one. */
+	struct InstanceRunningRecord {
+		void* module_handle;
+		QString instanceId;
+		MMCOInstanceRunningCallback cb;
+		void* user_data;
+		QObject* guard;
+	};
+	QVector<InstanceRunningRecord> m_instanceRunning;
+
 	/* Resolve the launcher's main window (objectName == "MainWindow"),
 	 * cached for the lifetime of the QPointer. Returns nullptr if the
 	 * window has not been built yet. */
@@ -519,8 +620,17 @@ class PluginManager : public QObject
 	/* Make sure our QObject::eventFilter is installed on the main
 	 * window. Safe to call multiple times — installs at most once. */
 	void ensureCloseFilterInstalled();
-	/* Release all S19/S20 resources owned by the given module handle. */
+	/* Release all S19/S20/S23 resources owned by the given module
+	 * handle.  Called from shutdownAll() right before mmco_unload(). */
 	void releaseTrayResourcesForModule(void* module_handle);
+
+	/* Wire the two Application Qt signals we re-publish as hooks:
+	 *   • globalSettingsAboutToOpen   -> MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN
+	 *   • instanceSettingsPageCreated -> MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED
+	 * Called once from initializeAll() after modules are up. The
+	 * connections are owned by `this` (PluginManager is a QObject)
+	 * and severed automatically on destruction. */
+	void connectAppSignals();
 
 	bool m_shutdownDone = false;
 

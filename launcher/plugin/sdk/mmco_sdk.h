@@ -94,17 +94,85 @@
 #include <QWidget>
 #include <QJsonDocument>
 #include <QLocale>
-#include "Application.h"
-#include "BaseInstance.h"
-#include "InstanceList.h"
-#include "MMCZip.h"
-#include "icons/IconList.h"
-#include "minecraft/MinecraftInstance.h"
-#include "ui/pages/BasePage.h"
+
+/*
+ * NOTE: As of MMCO ABI 3, the SDK header is deliberately Qt-only.
+ *
+ * Earlier versions pulled in launcher headers (Application.h,
+ * BaseInstance.h, InstanceList.h, MMCZip.h, icons/IconList.h,
+ * minecraft/MinecraftInstance.h, ui/pages/BasePage.h) so plugins
+ * could call APPLICATION->settings(), subclass BasePage, etc.
+ * Every one of those back-doors pulled `meshmc.lib` (Windows) or
+ * `MeshMC_logic.a` (Linux/macOS) onto the plugin's link line and
+ * made standalone plugin builds impossible.
+ *
+ * The launcher headers have been removed from this file. Plugins
+ * reach launcher state EXCLUSIVELY through the MMCOContext function
+ * pointers defined in plugin/PluginAPI.h below. See
+ * launcher/plugin/sdk/README.md for the canonical replacement
+ * patterns.
+ *
+ * --- BasePage / BasePageContainer ---
+ *
+ * BasePage is a pure header-only interface (every method is inline);
+ * we copy its declaration here verbatim so plugins can subclass it
+ * for MMCO_HOOK_UI_INSTANCE_PAGES / MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES
+ * payloads without including launcher/ui/pages/BasePage.h. The vtable
+ * layout MUST stay byte-identical to launcher/ui/pages/BasePage.h —
+ * the host iterates the QList<BasePage*> handed back by plugins and
+ * calls these virtuals through that layout. If you change BasePage on
+ * the launcher side you must mirror the change here in lock-step.
+ */
+class BasePageContainer; // forward-declared, plugin never deref's it
+
+class BasePage
+{
+  public:
+	virtual ~BasePage() {}
+	virtual QString id() const = 0;
+	virtual QString displayName() const = 0;
+	virtual QIcon icon() const = 0;
+	virtual bool apply()
+	{
+		return true;
+	}
+	virtual bool shouldDisplay() const
+	{
+		return true;
+	}
+	virtual QString helpPage() const
+	{
+		return QString();
+	}
+	void opened()
+	{
+		isOpened = true;
+		openedImpl();
+	}
+	void closed()
+	{
+		isOpened = false;
+		closedImpl();
+	}
+	virtual void openedImpl() {}
+	virtual void closedImpl() {}
+	virtual void setParentContainer(BasePageContainer* container)
+	{
+		m_container = container;
+	}
+
+  public:
+	int stackIndex = -1;
+	int listIndex = -1;
+
+  protected:
+	BasePageContainer* m_container = nullptr;
+	bool isOpened = false;
+};
 
 #define MMCO_MAGIC 0x4D4D434F
 #define MMCO_VERSION "8.0.0"
-#define MMCO_ABI_VERSION 2
+#define MMCO_ABI_VERSION 3
 #define MMCO_EXTENSION ".mmco"
 #define MMCO_FLAG_NONE 0x00000000
 #define MMCO_TRAILER_MAGIC 0x53434D4D /* ASCII "MMCS" — see MMCOFormat.h */
@@ -169,6 +237,16 @@ enum MMCOHookId : uint32_t {
 	MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602,
 	MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES = 0x0603,
 
+	/* ABI 3+ — global-settings dialog about to open. Payload: nullptr.
+	 * Replaces direct connection to Application::globalSettingsAboutToOpen. */
+	MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN = 0x0604,
+
+	/* ABI 3+ — per-instance settings page constructed.
+	 * Payload: MMCOInstanceSettingsPageEvent*. */
+	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED = 0x0605,
+	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED = 0x0606,
+	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING = 0x0607,
+
 	/* News */
 	MMCO_HOOK_NEWS_UPDATED = 0x0700, /* payload: nullptr */
 
@@ -215,6 +293,23 @@ struct MMCOInstancePagesEvent {
 	void* page_list_handle;
 	void* instance_handle;
 };
+
+/* ABI 3+ — payload for MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED.
+ * page_handle is an opaque QWidget* to the just-built per-instance
+ * settings page; instance_handle is an opaque BaseInstance*. Plugins
+ * may qobject_cast<QWidget*>(page_handle) but must not cast to any
+ * launcher-private type. */
+struct MMCOInstanceSettingsPageEvent {
+	const char* instance_id;
+	void* page_handle;
+	void* instance_handle;
+};
+
+/* ABI 3+ — callback for MMCOContext::instance_running_register.
+ * `running` is 1 when the instance just started, 0 when it just stopped. */
+typedef void (*MMCOInstanceRunningCallback)(void* user_data,
+											const char* instance_id,
+											int running);
 
 /*
  * Payload for MMCO_HOOK_UI_MAIN_READY (ABI 2+).
@@ -599,6 +694,88 @@ struct MMCOContext {
 	int (*main_window_show)(void* mh);
 	int (*main_window_hide)(void* mh);
 	int (*main_window_is_visible)(void* mh);
+
+	/* S21 — Application-scope settings (ABI 3+, additive).
+	 * Replaces direct APPLICATION->settings()->set/registerSetting/contains
+	 * calls in plugin code. Keys are NOT auto-namespaced. */
+	int (*app_setting_set)(void* mh, const char* key, const char* value);
+	int (*app_setting_register)(void* mh, const char* key,
+								const char* default_value);
+	int (*app_setting_contains)(void* mh, const char* key);
+
+	/* S22 — Themed icon resolution (ABI 3+, additive).
+	 * Returns a string suitable for the icon-name parameters of every
+	 * other UI/tray/menu API. Replaces APPLICATION->getThemedIcon() and
+	 * APPLICATION->icons()->getIcon(). */
+	const char* (*ui_themed_icon)(void* mh, const char* name);
+
+	/* S23 — Instance running-state signal bridge (ABI 3+, additive).
+	 * Replaces APPLICATION->instances()->getInstanceById(id) +
+	 * QObject::connect to BaseInstance::runningStatusChanged. */
+	int (*instance_running_register)(void* mh, const char* instance_id,
+									 MMCOInstanceRunningCallback cb, void* ud);
+	int (*instance_running_unregister)(void* mh, const char* instance_id);
+
+	/* S24 — Per-instance settings (ABI 3+, additive). Replaces
+	 * inst->settings()->{get,set,registerSetting,registerOverride,
+	 * reset,contains}. Values exchanged as UTF-8 strings. Returns 0
+	 * on success, -1 on failure. */
+	const char* (*instance_setting_get)(void* mh, const char* instance_id,
+										const char* key);
+	int (*instance_setting_set)(void* mh, const char* instance_id,
+								const char* key, const char* value);
+	int (*instance_setting_register)(void* mh, const char* instance_id,
+									 const char* key,
+									 const char* default_value);
+	int (*instance_setting_register_override)(void* mh,
+											  const char* instance_id,
+											  const char* key,
+											  const char* gate_key);
+	int (*instance_setting_reset)(void* mh, const char* instance_id,
+								  const char* key);
+	int (*instance_setting_contains)(void* mh, const char* instance_id,
+									 const char* key);
+
+	/* S25 — MinecraftAccount / skin / cape access (ABI 3+, additive).
+	 * Replaces SkinManager's direct AccountList / AccountData usage. */
+	const char* (*account_get_id_by_index)(void* mh, int index);
+	int (*account_is_msa_by_id)(void* mh, const char* account_id);
+	const char* (*account_get_access_token)(void* mh, const char* account_id);
+	const char* (*account_get_current_cape_id)(void* mh,
+											   const char* account_id);
+	const char* (*account_get_skin_variant)(void* mh, const char* account_id);
+	int64_t (*account_get_skin_blob)(void* mh, const char* account_id,
+									 const void** out_ptr);
+	int (*account_cape_count)(void* mh, const char* account_id);
+	const char* (*account_cape_get_id)(void* mh, const char* account_id,
+									   int index);
+	const char* (*account_cape_get_alias)(void* mh, const char* account_id,
+										  int index);
+	int64_t (*account_cape_get_blob)(void* mh, const char* account_id,
+									 int index, const void** out_ptr);
+	int (*account_set_skin_variant)(void* mh, const char* account_id,
+									const char* variant);
+	int (*account_set_current_cape)(void* mh, const char* account_id,
+									const char* cape_id);
+	int (*account_set_skin_blob)(void* mh, const char* account_id,
+								 const void* data, int64_t size);
+
+	/* S26 — Synchronous task helpers (ABI 3+, additive). Pump modal
+	 * progress dialogs for skin/cape network operations. */
+	int (*account_skin_upload)(void* mh, const char* account_id,
+							   const void* png_bytes, int64_t size,
+							   const char* variant);
+	int (*account_skin_reset)(void* mh, const char* account_id);
+	int (*account_cape_set)(void* mh, const char* account_id,
+							const char* cape_id);
+
+	/* S27 — Icon list enumeration (ABI 3+, additive). */
+	int (*icon_list_count)(void* mh);
+	const char* (*icon_list_get_key)(void* mh, int index);
+	const char* (*icon_list_get_name)(void* mh, int index);
+	const char* (*icon_list_get_file_path)(void* mh, const char* icon_key);
+	int (*icon_list_save_png)(void* mh, const char* icon_key,
+							  const char* dest_path);
 };
 
 /*

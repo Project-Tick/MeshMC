@@ -81,13 +81,20 @@ static void runExportDialogFor(const QString& instanceId)
 						"click Export Instance again."));
 		return;
 	}
-	auto instList = APPLICATION->instances();
-	auto inst = instList ? instList->getInstanceById(instanceId) : nullptr;
-	if (!inst) {
+	if (!g_ctx) {
+		QMessageBox::warning(parent, QObject::tr("PackPortal"),
+							 QObject::tr("Plugin context not ready."));
+		return;
+	}
+	const QByteArray idUtf8 = instanceId.toUtf8();
+	const char* instNameC =
+		g_ctx->instance_get_name(g_ctx->module_handle, idUtf8.constData());
+	if (!instNameC) {
 		QMessageBox::warning(parent, QObject::tr("PackPortal"),
 							 QObject::tr("Instance no longer exists."));
 		return;
 	}
+	const QString instName = QString::fromUtf8(instNameC);
 
 	QDialog dlg(parent);
 	dlg.setWindowTitle(QObject::tr("Export Instance as Pack"));
@@ -105,7 +112,7 @@ static void runExportDialogFor(const QString& instanceId)
 					  int(pack::Format::MultiMC));
 	form->addRow(QObject::tr("Format:"), fmtCombo);
 
-	auto* nameEdit = new QLineEdit(inst->name(), &dlg);
+	auto* nameEdit = new QLineEdit(instName, &dlg);
 	auto* versionEdit = new QLineEdit(QStringLiteral("1.0.0"), &dlg);
 	auto* authorEdit = new QLineEdit(&dlg);
 	auto* summaryEdit = new QLineEdit(&dlg);
@@ -185,7 +192,7 @@ static void runExportDialogFor(const QString& instanceId)
 										 "minute for large instances."));
 		QApplication::processEvents();
 
-		pack::ExportEngine eng;
+		pack::ExportEngine eng(g_ctx);
 		auto r = eng.exportInstance(instanceId, opts, out);
 
 		if (!r.ok) {
