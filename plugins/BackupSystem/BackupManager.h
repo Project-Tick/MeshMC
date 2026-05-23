@@ -9,6 +9,13 @@
 
 #include "plugin/sdk/mmco_sdk.h"
 
+/*
+ * BackupManager talks to the host through the MMCO C ABI: every zip
+ * operation is routed via the MMCOContext's zip_* function pointers
+ * rather than #include "MMCZip.h". Callers hand the live context to
+ * each instance.
+ */
+
 struct BackupEntry {
 	QString name;		 // human-readable label
 	QString fileName;	 // zip file name (e.g. "2026-01-15_14-30-00.zip")
@@ -20,8 +27,11 @@ struct BackupEntry {
 class BackupManager
 {
   public:
-	explicit BackupManager(const QString& instanceId,
-						   const QString& instanceRoot);
+	/* `ctx` is the MMCOContext owned by the plugin; the manager only
+	 * uses it to drive zip_compress_dir / zip_extract.  May be null
+	 * in unit tests — the zip-dependent methods will then no-op. */
+	BackupManager(const QString& instanceId, const QString& instanceRoot,
+				  MMCOContext* ctx = nullptr);
 
 	QString backupDir() const;
 	QList<BackupEntry> listBackups() const;
@@ -37,7 +47,14 @@ class BackupManager
 	QString generateFileName(const QString& label) const;
 	BackupEntry entryFromFile(const QString& filePath) const;
 
+	/* Stage the instance root into a temp dir, skipping `.backups/`
+	 * so we don't recurse into our own zip archive collection.
+	 * Returns the temp dir path (caller deletes when done) or an
+	 * empty string on failure. */
+	QString stageInstance() const;
+
 	QString m_instanceId;
 	QString m_instanceRoot;
 	QString m_backupDir;
+	MMCOContext* m_ctx = nullptr;
 };

@@ -32,8 +32,8 @@ WikiBundle* openBundle(const QString& path)
 		delete b;
 		return nullptr;
 	}
-	if (fi.isFile() && path.endsWith(QStringLiteral(".zim"),
-									 Qt::CaseInsensitive)) {
+	if (fi.isFile() &&
+		path.endsWith(QStringLiteral(".zim"), Qt::CaseInsensitive)) {
 		auto* b = new ZimBundle();
 		if (b->open(path))
 			return b;

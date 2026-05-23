@@ -33,10 +33,6 @@
 #include "plugin/sdk/mmco_sdk.h"
 #include "SkinManagerDialog.h"
 
-#include "Application.h"
-#include "minecraft/auth/AccountList.h"
-#include "minecraft/auth/MinecraftAccount.h"
-
 #include <QAbstractItemView>
 #include <QPointer>
 #include <QToolBar>
@@ -77,7 +73,7 @@ static QWidget* findAccountListPage()
  * picks. */
 static void openSkinManagerForSelection(QWidget* accountListPage)
 {
-	if (!accountListPage)
+	if (!accountListPage || !g_ctx)
 		return;
 
 	auto* listView = accountListPage->findChild<QAbstractItemView*>(
@@ -96,15 +92,22 @@ static void openSkinManagerForSelection(QWidget* accountListPage)
 		return;
 	}
 
+	/* AccountListPage's listView is bound straight to the host's
+	 * AccountList QAbstractListModel. The selected row index maps
+	 * 1:1 onto the index that S25's account_get_id_by_index expects. */
 	const QModelIndex idx = indexes.first();
-	MinecraftAccountPtr account =
-		idx.data(AccountList::PointerRole).value<MinecraftAccountPtr>();
-	if (!account) {
-		MMCO_WARN(g_ctx, "SkinManager: selection has no MinecraftAccountPtr — "
-						 "ignoring click.");
+	const int row = idx.row();
+	const char* accountIdC =
+		g_ctx->account_get_id_by_index(g_ctx->module_handle, row);
+	if (!accountIdC) {
+		MMCO_WARN(g_ctx, "SkinManager: selection index has no resolvable "
+						 "account id — ignoring click.");
 		return;
 	}
-	if (!account->isMSA()) {
+	const QString accountId = QString::fromUtf8(accountIdC);
+
+	if (!g_ctx->account_is_msa_by_id(g_ctx->module_handle,
+									 accountId.toUtf8().constData())) {
 		QMessageBox::information(
 			accountListPage, QObject::tr("Offline account"),
 			QObject::tr("Offline accounts have no Mojang profile to "
@@ -113,7 +116,7 @@ static void openSkinManagerForSelection(QWidget* accountListPage)
 		return;
 	}
 
-	SkinManagerDialog dlg(account, accountListPage);
+	SkinManagerDialog dlg(accountId, g_ctx, accountListPage);
 	dlg.exec();
 }
 
@@ -298,9 +301,17 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	g_guard = new QObject();
 
 	/* Re-hook every time the settings dialog opens — the page is
-	 * destroyed and rebuilt each open, so the action handle is fresh. */
-	QObject::connect(APPLICATION, &Application::globalSettingsAboutToOpen,
-					 g_guard, []() { scheduleRewire(); });
+	 * destroyed and rebuilt each open, so the action handle is fresh.
+	 * The MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN hook is the C ABI
+	 * replacement for the legacy Application::globalSettingsAboutToOpen
+	 * signal connection. */
+	ctx->hook_register(
+		ctx->module_handle, MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN,
+		[](void*, uint32_t, void*, void*) -> int {
+			scheduleRewire();
+			return 0;
+		},
+		nullptr);
 
 	/* The plugin may load *after* the settings dialog is already
 	 * visible (rare, but possible if the user opens settings before

@@ -15,7 +15,7 @@
 
 struct WikiNavNode {
 	QString title;
-	QString slug;  // empty if this node is a category
+	QString slug; // empty if this node is a category
 	QList<WikiNavNode> children;
 };
 
@@ -40,7 +40,8 @@ class WikiBundle
 
 	/* Return up to `limit` slugs whose titles contain `query`
 	 * (case-insensitive substring match). */
-	virtual QStringList searchTitles(const QString& query, int limit = 50) const = 0;
+	virtual QStringList searchTitles(const QString& query,
+									 int limit = 50) const = 0;
 
 	/* Optional full-text search. Default implementation falls back to
 	 * a substring scan over rendered article text — slow but correct. */

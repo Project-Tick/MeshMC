@@ -4,6 +4,7 @@
   cmake,
   extra-cmake-modules,
   gamemode,
+  gpgme,
   jdk17,
   kdePackages,
   ninja,
@@ -89,6 +90,8 @@ stdenv.mkDerivation {
     project-tick-cmark
     kdePackages.qtbase
     kdePackages.qtnetworkauth
+    kdePackages.qgpgme
+    gpgme
     qrencode
     libarchive
     project-tick-tomlplusplus

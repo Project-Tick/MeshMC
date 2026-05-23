@@ -28,9 +28,6 @@
 #include "plugin/sdk/mmco_sdk.h"
 #include "discord_ipc/discord_ipc.h"
 
-#include "minecraft/MinecraftInstance.h"
-#include "minecraft/PackProfile.h"
-
 #include <QDateTime>
 #include <QMetaObject>
 #include <QObject>
@@ -55,12 +52,12 @@ static QString g_activeMcVersion;
 static QString g_activeInstanceId; /* stable id used to disconnect later  */
 
 /*
- * Guard QObject — owns every Qt signal connection we make to instances.
- * Created in mmco_init(), deleted in mmco_unload(). When deleted, Qt
- * automatically severs every connection from running BaseInstance
- * objects so the plugin's lambdas never fire into freed memory.
+ * Running-state callback registrations are now owned by PluginManager
+ * via the S23 instance_running_register API.  PluginManager severs
+ * every registration automatically on mmco_unload() so the plugin's
+ * callback can never fire into freed memory — no per-plugin guard
+ * QObject is required for this side any more.
  */
-static QPointer<QObject> g_guard;
 
 /* ── settings ─────────────────────────────────────────────────────── */
 
@@ -173,58 +170,64 @@ static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,
  *   running=true/false signal is a defensive fallback for both edges.
  */
 
-/* Hook the running-state signal of a freshly-launched BaseInstance so
- * we still flip to idle if POST_LAUNCH somehow doesn't fire (custom
- * profilers, hard process kills, etc.). The connection is owned by
- * g_guard so mmco_unload() severs it cleanly. */
-static void hook_instance_running_signal(const QString& instanceId)
+/* C-ABI callback installed via instance_running_register.  Mirrors the
+ * old QObject::connect(&BaseInstance::runningStatusChanged) handler:
+ * if the running edge fires for the instance we currently track in
+ * Discord, refresh or clear the presence accordingly. */
+static void on_instance_running(void* /*ud*/, const char* instance_id,
+								int running)
 {
-	if (!APPLICATION || !APPLICATION->instances() || !g_guard)
+	if (!g_ipc || !instance_id)
 		return;
-
-	auto inst = APPLICATION->instances()->getInstanceById(instanceId);
-	if (!inst)
-		return;
-
-	/* Capture the MC version from the pack profile — POST_LAUNCH's
-	 * payload doesn't include it (LaunchController passes nullptr). */
-	if (auto mc = std::dynamic_pointer_cast<MinecraftInstance>(inst)) {
-		if (auto pp = mc->getPackProfile()) {
-			QString v = pp->getComponentVersion("net.minecraft");
-			if (!v.isEmpty())
-				g_activeMcVersion = v;
+	const QString id = QString::fromUtf8(instance_id);
+	if (running) {
+		/* Game actually started — refresh the playing presence in
+		 * case the MC version wasn't known yet at PRE_LAUNCH time
+		 * (it might have been late-resolved by the launcher). */
+		if (id == g_activeInstanceId) {
+			if (g_ctx) {
+				const char* mc = g_ctx->instance_get_mc_version(
+					g_ctx->module_handle, instance_id);
+				if (mc && *mc)
+					g_activeMcVersion = QString::fromUtf8(mc);
+			}
+			publish_playing_presence();
+		}
+	} else {
+		/* Game exited — fall back to idle, but only if it was *this*
+		 * instance we were tracking. */
+		if (id == g_activeInstanceId) {
+			g_activeInstance.clear();
+			g_activeMcVersion.clear();
+			g_activeInstanceId.clear();
+			g_launchEpoch = 0;
+			publish_idle_presence();
 		}
 	}
+}
 
-	/* Dedupe: drop every prior connection from this BaseInstance to
-	 * g_guard before installing a fresh one. (Qt::UniqueConnection only
-	 * works with member-function slots, not lambdas — using it here
-	 * makes Qt assert.) */
-	QObject::disconnect(inst.get(), &BaseInstance::runningStatusChanged,
-						g_guard.data(), nullptr);
+/* Replaces the old hook_instance_running_signal() / direct
+ * APPLICATION->instances() + BaseInstance signal connection.  Asks
+ * PluginManager (S23) to deliver runningStatusChanged transitions for
+ * the named instance to on_instance_running.  Re-registration replaces
+ * any prior callback for the same id, matching the old QObject::
+ * disconnect() before connect() dedupe behaviour. */
+static void hook_instance_running_signal(const QString& instanceId)
+{
+	if (!g_ctx)
+		return;
 
-	QObject::connect(inst.get(), &BaseInstance::runningStatusChanged,
-					 g_guard.data(), [instanceId](bool running) {
-						 if (!g_ipc)
-							 return;
-						 if (running) {
-							 /* Game actually started — refresh the playing
-							  * presence in case the version wasn't known yet at
-							  * PRE_LAUNCH time. */
-							 if (instanceId == g_activeInstanceId)
-								 publish_playing_presence();
-						 } else {
-							 /* Game exited — fall back to idle, but only if it
-							  * was *this* instance we were tracking. */
-							 if (instanceId == g_activeInstanceId) {
-								 g_activeInstance.clear();
-								 g_activeMcVersion.clear();
-								 g_activeInstanceId.clear();
-								 g_launchEpoch = 0;
-								 publish_idle_presence();
-							 }
-						 }
-					 });
+	/* Capture the MC version from the C-ABI — the value is the same
+	 * one MinecraftInstance::getPackProfile()->getComponentVersion(
+	 * "net.minecraft") used to return. */
+	const char* mc = g_ctx->instance_get_mc_version(
+		g_ctx->module_handle, instanceId.toUtf8().constData());
+	if (mc && *mc)
+		g_activeMcVersion = QString::fromUtf8(mc);
+
+	g_ctx->instance_running_register(g_ctx->module_handle,
+									 instanceId.toUtf8().constData(),
+									 &on_instance_running, nullptr);
 }
 
 /*
@@ -313,10 +316,6 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 		return 0;
 	}
 
-	/* g_guard owns every connection we make to BaseInstance signals.
-	 * Deleting it on unload severs them — see comment in hook setup. */
-	g_guard = new QObject();
-
 	g_ipc = new DiscordIpc();
 	g_ipc->setClientId(QString::fromLatin1(DISCORD_APP_ID));
 
@@ -377,12 +376,10 @@ MMCO_EXPORT void mmco_unload()
 		g_ipc->deleteLater();
 		g_ipc.clear();
 	}
-	/* Following the NVIDIAPrime / LinuxPerf precedent we do NOT
-	 * delete g_guard during Application teardown — deleting a QObject
-	 * mid-shutdown can trip Qt's signal/slot bookkeeping. Setting the
-	 * pointer to nullptr is enough; the OS reclaims the QObject at
-	 * process exit. */
-	g_guard = nullptr;
+	/* The S23 instance_running_register callbacks are owned by
+	 * PluginManager — it severs every registration for this module
+	 * automatically during the unload sweep, so there is nothing for
+	 * us to do here. */
 	g_activeInstance.clear();
 	g_activeMcVersion.clear();
 	g_activeInstanceId.clear();

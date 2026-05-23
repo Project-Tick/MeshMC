@@ -1970,8 +1970,7 @@ QString Application::getJarsPath()
 		// legacy Contents/MacOS/jars location as a fallback so
 		// older installs and ad-hoc developer builds keep working.
 		auto appDir = QCoreApplication::applicationDirPath();
-		auto resourcesJars =
-			FS::PathCombine(appDir, "..", "Resources", "jars");
+		auto resourcesJars = FS::PathCombine(appDir, "..", "Resources", "jars");
 		if (QDir(resourcesJars).exists()) {
 			return resourcesJars;
 		}

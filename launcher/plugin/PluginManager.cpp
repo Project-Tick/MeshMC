@@ -40,6 +40,15 @@
 #include "minecraft/World.h"
 #include "minecraft/auth/AccountList.h"
 #include "minecraft/auth/MinecraftAccount.h"
+#include "minecraft/auth/AccountData.h"
+#include "minecraft/services/SkinUpload.h"
+#include "minecraft/services/SkinDelete.h"
+#include "minecraft/services/CapeChange.h"
+#include "tasks/SequentialTask.h"
+#include "ui/dialogs/ProgressDialog.h"
+#include "ui/pages/instance/InstanceSettingsPage.h"
+#include "icons/IconList.h"
+#include "icons/MMCIcon.h"
 #include "java/JavaInstallList.h"
 #include "java/JavaInstall.h"
 #include "settings/SettingsObject.h"
@@ -110,13 +119,11 @@ void PluginManager::initializeAll()
 	// the (size, mtime) tuple of each .mmco is enough to skip the
 	// GpgME round-trip entirely. First-startup cost stays the same.
 	{
-		const QString cacheDir =
-			QStandardPaths::writableLocation(
-				QStandardPaths::AppLocalDataLocation);
+		const QString cacheDir = QStandardPaths::writableLocation(
+			QStandardPaths::AppLocalDataLocation);
 		if (!cacheDir.isEmpty()) {
-			PluginSignature::setCachePath(
-				QDir(cacheDir).filePath(QStringLiteral(
-					"plugin-signature-cache.json")));
+			PluginSignature::setCachePath(QDir(cacheDir).filePath(
+				QStringLiteral("plugin-signature-cache.json")));
 		}
 	}
 
@@ -185,6 +192,25 @@ void PluginManager::initializeAll()
 		if (meta.disabled) {
 			qInfo().noquote() << "[PluginManager] Module" << meta.name
 							  << "not loaded:" << meta.disableDetail;
+		}
+	}
+
+	// Wire the Application Qt signals we re-publish as MMCO hooks
+	// (global-settings open, instance-settings-page created). Must
+	// happen before APP_INITIALIZED so plugins that register for
+	// those hooks inside mmco_init() see the very first dispatch.
+	connectAppSignals();
+
+	// Seed the news extra-feed list from BuildConfig so plugins that
+	// consume the news API see every feed configured at build time
+	// without having to link BuildConfig themselves.
+	if (!BuildConfig.NEWS_EXTRA_FEEDS.isEmpty()) {
+		const QStringList urls = BuildConfig.NEWS_EXTRA_FEEDS.split(
+			QLatin1Char(';'), Qt::SkipEmptyParts);
+		for (const QString& url : urls) {
+			const QString trimmed = url.trimmed();
+			if (!trimmed.isEmpty() && !m_extraFeedUrls.contains(trimmed))
+				m_extraFeedUrls.append(trimmed);
 		}
 	}
 
@@ -513,6 +539,54 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 	ctx.main_window_show = api_main_window_show;
 	ctx.main_window_hide = api_main_window_hide;
 	ctx.main_window_is_visible = api_main_window_is_visible;
+
+	// S21 — Application Settings (write side, ABI 3+)
+	ctx.app_setting_set = api_app_setting_set;
+	ctx.app_setting_register = api_app_setting_register;
+	ctx.app_setting_contains = api_app_setting_contains;
+
+	// S22 — Themed icon resolution (ABI 3+)
+	ctx.ui_themed_icon = api_ui_themed_icon;
+
+	// S23 — Instance running-state signal bridge (ABI 3+)
+	ctx.instance_running_register = api_instance_running_register;
+	ctx.instance_running_unregister = api_instance_running_unregister;
+
+	// S24 — Per-instance settings (ABI 3+)
+	ctx.instance_setting_get = api_instance_setting_get;
+	ctx.instance_setting_set = api_instance_setting_set;
+	ctx.instance_setting_register = api_instance_setting_register;
+	ctx.instance_setting_register_override =
+		api_instance_setting_register_override;
+	ctx.instance_setting_reset = api_instance_setting_reset;
+	ctx.instance_setting_contains = api_instance_setting_contains;
+
+	// S25 — Account / skin / cape access (ABI 3+)
+	ctx.account_get_id_by_index = api_account_get_id_by_index;
+	ctx.account_is_msa_by_id = api_account_is_msa_by_id;
+	ctx.account_get_access_token = api_account_get_access_token;
+	ctx.account_get_current_cape_id = api_account_get_current_cape_id;
+	ctx.account_get_skin_variant = api_account_get_skin_variant;
+	ctx.account_get_skin_blob = api_account_get_skin_blob;
+	ctx.account_cape_count = api_account_cape_count;
+	ctx.account_cape_get_id = api_account_cape_get_id;
+	ctx.account_cape_get_alias = api_account_cape_get_alias;
+	ctx.account_cape_get_blob = api_account_cape_get_blob;
+	ctx.account_set_skin_variant = api_account_set_skin_variant;
+	ctx.account_set_current_cape = api_account_set_current_cape;
+	ctx.account_set_skin_blob = api_account_set_skin_blob;
+
+	// S26 — Synchronous task helpers (ABI 3+)
+	ctx.account_skin_upload = api_account_skin_upload;
+	ctx.account_skin_reset = api_account_skin_reset;
+	ctx.account_cape_set = api_account_cape_set;
+
+	// S27 — Icon list enumeration (ABI 3+)
+	ctx.icon_list_count = api_icon_list_count;
+	ctx.icon_list_get_key = api_icon_list_get_key;
+	ctx.icon_list_get_name = api_icon_list_get_name;
+	ctx.icon_list_get_file_path = api_icon_list_get_file_path;
+	ctx.icon_list_save_png = api_icon_list_save_png;
 
 	return ctx;
 }
@@ -2684,6 +2758,258 @@ void PluginManager::releaseTrayResourcesForModule(void* module_handle)
 				m_trayMenus.removeAt(i);
 		}
 	}
+
+	/* S23 — instance running-state callbacks owned by this module.
+	 * Deleting each record's guard QObject severs the Qt connection
+	 * to BaseInstance::runningStatusChanged automatically. In shutdown
+	 * mode we leave the guard alone (same rationale as the tray
+	 * section above) and just forget the record. */
+	for (int i = m_instanceRunning.size() - 1; i >= 0; --i) {
+		if (m_instanceRunning[i].module_handle != module_handle)
+			continue;
+		QObject* g = m_instanceRunning[i].guard;
+		if (g && !shuttingDown)
+			g->deleteLater();
+		m_instanceRunning.removeAt(i);
+	}
+}
+
+/* ── ABI 3 — Application signal bridges ──────────────────────────── */
+
+void PluginManager::connectAppSignals()
+{
+	if (!m_app)
+		return;
+
+	/* globalSettingsAboutToOpen → MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN
+	 *
+	 * Replaces the legacy pattern of plugins doing
+	 *   QObject::connect(APPLICATION,
+	 *                    &Application::globalSettingsAboutToOpen,
+	 *                    g_guard, []{ ... });
+	 * which required the plugin to link against Application::staticMetaObject
+	 * (i.e. against meshmc.lib / MeshMC_logic). The bridge re-publishes
+	 * the signal as a hook so plugins reach it through the C ABI only.
+	 *
+	 * The connection is parented on `this` (PluginManager is a QObject),
+	 * so Qt severs it automatically when PluginManager is destroyed. */
+	QObject::connect(m_app, &Application::globalSettingsAboutToOpen, this,
+					 [this]() {
+						 this->dispatchHook(
+							 MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN, nullptr);
+					 });
+
+	/* instanceSettingsPageCreated → MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED
+	 *
+	 * The signal carries (InstanceSettingsPage* page, InstancePtr inst).
+	 * We can't expose the launcher types in the payload (would force a
+	 * launcher include into plugin source), so we project both pointers
+	 * through `void*` slots and let plugins qobject_cast<QWidget*> on
+	 * page_handle if they need to interact with the widget.
+	 *
+	 * We also wire the page's own settingsLoaded / settingsAboutToApply
+	 * signals to the matching ABI 3 hooks, so plugins can mirror values
+	 * in/out of their custom widgets without needing the launcher
+	 * InstanceSettingsPage type. The page itself owns the connection
+	 * (anchored on the page) — when the dialog is destroyed the
+	 * signal is severed and our hook dispatch stops automatically. */
+	QObject::connect(
+		m_app, &Application::instanceSettingsPageCreated, this,
+		[this](InstanceSettingsPage* page, BaseInstance* inst) {
+			MMCOInstanceSettingsPageEvent ev{};
+			QByteArray idBytes;
+			if (inst) {
+				idBytes = inst->id().toUtf8();
+				ev.instance_id = idBytes.constData();
+				ev.instance_handle = inst;
+			}
+			ev.page_handle = page;
+			this->dispatchHook(MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED, &ev);
+
+			if (!page)
+				return;
+			/* Capture the raw BaseInstance pointer + a copy of its id
+			 * so the lambdas can re-build the event when the page
+			 * emits its loaded / about-to-apply edges. The pointer
+			 * is owned by the host's InstanceList; the QObject::connect
+			 * receiver-anchor (`page`) guarantees the lambda stops
+			 * firing once the settings dialog is destroyed. */
+			BaseInstance* capturedRaw = inst;
+			QByteArray capturedId = idBytes;
+			QObject::connect(page, &InstanceSettingsPage::settingsLoaded, page,
+							 [this, page, capturedRaw, capturedId]() {
+								 MMCOInstanceSettingsPageEvent ev2{};
+								 if (capturedRaw) {
+									 ev2.instance_id = capturedId.constData();
+									 ev2.instance_handle = capturedRaw;
+								 }
+								 ev2.page_handle = page;
+								 this->dispatchHook(
+									 MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED,
+									 &ev2);
+							 });
+			QObject::connect(page, &InstanceSettingsPage::settingsAboutToApply,
+							 page, [this, page, capturedRaw, capturedId]() {
+								 MMCOInstanceSettingsPageEvent ev2{};
+								 if (capturedRaw) {
+									 ev2.instance_id = capturedId.constData();
+									 ev2.instance_handle = capturedRaw;
+								 }
+								 ev2.page_handle = page;
+								 this->dispatchHook(
+									 MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING,
+									 &ev2);
+							 });
+		});
+}
+
+/* ── S21 — Application Settings (write side, ABI 3+) ─────────────── */
+
+int PluginManager::api_app_setting_set(void* mh, const char* key,
+									   const char* value)
+{
+	auto* r = rt(mh);
+	if (!r || !key)
+		return -1;
+	auto* app = r->manager->m_app;
+	if (!app || !app->settings())
+		return -1;
+	const QString qKey = QString::fromUtf8(key);
+	const QString qVal = value ? QString::fromUtf8(value) : QString();
+	if (!app->settings()->contains(qKey))
+		return -1;
+	app->settings()->set(qKey, qVal);
+	return 0;
+}
+
+int PluginManager::api_app_setting_register(void* mh, const char* key,
+											const char* default_value)
+{
+	auto* r = rt(mh);
+	if (!r || !key)
+		return -1;
+	auto* app = r->manager->m_app;
+	if (!app || !app->settings())
+		return -1;
+	const QString qKey = QString::fromUtf8(key);
+	if (app->settings()->contains(qKey))
+		return 0; /* already registered — treat as success */
+	const QString qDef =
+		default_value ? QString::fromUtf8(default_value) : QString();
+	app->settings()->registerSetting(qKey, qDef);
+	return 0;
+}
+
+int PluginManager::api_app_setting_contains(void* mh, const char* key)
+{
+	auto* r = rt(mh);
+	if (!r || !key)
+		return 0;
+	auto* app = r->manager->m_app;
+	if (!app || !app->settings())
+		return 0;
+	return app->settings()->contains(QString::fromUtf8(key)) ? 1 : 0;
+}
+
+/* ── S22 — Themed icon resolution (ABI 3+) ───────────────────────── */
+
+const char* PluginManager::api_ui_themed_icon(void* mh, const char* name)
+{
+	auto* r = rt(mh);
+	if (!r || !name || !*name)
+		return nullptr;
+	auto* app = r->manager->m_app;
+	if (!app)
+		return nullptr;
+
+	/* Application::getThemedIcon() returns a QIcon. We can't hand a
+	 * QIcon to a C ABI; we instead return a string the existing
+	 * icon-name parameters of the UI/tray/menu APIs already accept
+	 * (XDG theme name or ":/..." Qt resource path).
+	 *
+	 * Strategy:
+	 *   1. If the launcher's icon list owns an entry under this name,
+	 *      return the themed resource path it resolves to.
+	 *   2. Otherwise fall back to the bare name — QIcon::fromTheme()
+	 *      inside the consumer API will pick it up via the XDG theme. */
+	const QString qName = QString::fromUtf8(name);
+	if (app->icons()) {
+		const QIcon icon = app->icons()->getIcon(qName);
+		if (!icon.isNull()) {
+			/* QIcon doesn't expose the originating path, so we just
+			 * return the logical name — the UI APIs already accept
+			 * it and resolve via the same code path. */
+			r->tempString = qName.toStdString();
+			return r->tempString.c_str();
+		}
+	}
+	r->tempString = qName.toStdString();
+	return r->tempString.c_str();
+}
+
+/* ── S23 — Instance running-state signal bridge (ABI 3+) ─────────── */
+
+int PluginManager::api_instance_running_register(void* mh,
+												 const char* instance_id,
+												 MMCOInstanceRunningCallback cb,
+												 void* ud)
+{
+	auto* r = rt(mh);
+	if (!r || !instance_id || !cb)
+		return -1;
+	auto* app = r->manager->m_app;
+	if (!app || !app->instances())
+		return -1;
+
+	const QString qId = QString::fromUtf8(instance_id);
+	auto inst = app->instances()->getInstanceById(qId);
+	if (!inst)
+		return -1;
+
+	/* Replace any existing registration for this (module, instance)
+	 * pair so we never have two callbacks firing for the same edge. */
+	auto& vec = r->manager->m_instanceRunning;
+	for (int i = vec.size() - 1; i >= 0; --i) {
+		if (vec[i].module_handle == mh && vec[i].instanceId == qId) {
+			if (vec[i].guard)
+				vec[i].guard->deleteLater();
+			vec.removeAt(i);
+		}
+	}
+
+	auto* guard = new QObject();
+	InstanceRunningRecord rec{mh, qId, cb, ud, guard};
+
+	/* Capture by value: the bare BaseInstance pointer is what the Qt
+	 * connection actually anchors on; instanceId is copied so we
+	 * survive instance rename / re-bind. */
+	const QByteArray idUtf8 = qId.toUtf8();
+	QObject::connect(inst.get(), &BaseInstance::runningStatusChanged, guard,
+					 [cb, ud, idUtf8](bool running) {
+						 if (cb)
+							 cb(ud, idUtf8.constData(), running ? 1 : 0);
+					 });
+
+	vec.append(rec);
+	return 0;
+}
+
+int PluginManager::api_instance_running_unregister(void* mh,
+												   const char* instance_id)
+{
+	auto* r = rt(mh);
+	if (!r || !instance_id)
+		return -1;
+	const QString qId = QString::fromUtf8(instance_id);
+	auto& vec = r->manager->m_instanceRunning;
+	for (int i = vec.size() - 1; i >= 0; --i) {
+		if (vec[i].module_handle == mh && vec[i].instanceId == qId) {
+			if (vec[i].guard)
+				vec[i].guard->deleteLater();
+			vec.removeAt(i);
+		}
+	}
+	return 0; /* idempotent */
 }
 
 /* ── S19 trampolines ─────────────────────────────────────────────── */
@@ -3023,6 +3349,535 @@ int PluginManager::api_main_window_is_visible(void* mh)
 		return 0;
 	QWidget* mw = r->manager->resolveMainWindow();
 	return (mw && mw->isVisible()) ? 1 : 0;
+}
+
+/* ── S24 — Per-instance settings (ABI 3+) ────────────────────────── */
+
+namespace
+{
+	/* Resolve an instance pointer by id without polluting the public
+	 * surface with another helper signature. Returns nullptr if the id
+	 * does not resolve or the host has no instance list yet. */
+	InstancePtr resolveInstance(Application* app, const char* instance_id)
+	{
+		if (!app || !app->instances() || !instance_id)
+			return {};
+		return app->instances()->getInstanceById(
+			QString::fromUtf8(instance_id));
+	}
+} // namespace
+
+const char* PluginManager::api_instance_setting_get(void* mh,
+													const char* instance_id,
+													const char* key)
+{
+	auto* r = rt(mh);
+	if (!r || !key)
+		return nullptr;
+	auto inst = resolveInstance(r->manager->m_app, instance_id);
+	if (!inst || !inst->settings())
+		return nullptr;
+	const QString qKey = QString::fromUtf8(key);
+	if (!inst->settings()->contains(qKey))
+		return nullptr;
+	r->tempString = inst->settings()->get(qKey).toString().toStdString();
+	return r->tempString.c_str();
+}
+
+int PluginManager::api_instance_setting_set(void* mh, const char* instance_id,
+											const char* key, const char* value)
+{
+	auto* r = rt(mh);
+	if (!r || !key)
+		return -1;
+	auto inst = resolveInstance(r->manager->m_app, instance_id);
+	if (!inst || !inst->settings())
+		return -1;
+	const QString qKey = QString::fromUtf8(key);
+	const QString qVal = value ? QString::fromUtf8(value) : QString();
+	if (!inst->settings()->contains(qKey))
+		return -1;
+	inst->settings()->set(qKey, qVal);
+	return 0;
+}
+
+int PluginManager::api_instance_setting_register(void* mh,
+												 const char* instance_id,
+												 const char* key,
+												 const char* default_value)
+{
+	auto* r = rt(mh);
+	if (!r || !key)
+		return -1;
+	auto inst = resolveInstance(r->manager->m_app, instance_id);
+	if (!inst || !inst->settings())
+		return -1;
+	const QString qKey = QString::fromUtf8(key);
+	if (inst->settings()->contains(qKey))
+		return 0;
+	const QString qDef =
+		default_value ? QString::fromUtf8(default_value) : QString();
+	inst->settings()->registerSetting(qKey, qDef);
+	return 0;
+}
+
+int PluginManager::api_instance_setting_register_override(
+	void* mh, const char* instance_id, const char* key, const char* gate_key)
+{
+	auto* r = rt(mh);
+	if (!r || !key || !gate_key)
+		return -1;
+	auto inst = resolveInstance(r->manager->m_app, instance_id);
+	auto* app = r->manager->m_app;
+	if (!inst || !inst->settings() || !app || !app->settings())
+		return -1;
+
+	const QString qKey = QString::fromUtf8(key);
+	const QString qGate = QString::fromUtf8(gate_key);
+
+	/* Ensure the per-instance gate exists. The gate is a bool; we
+	 * seed it to false (= use the global default) the first time we
+	 * see this instance. */
+	auto gate = inst->settings()->getSetting(qGate);
+	if (!gate)
+		gate = inst->settings()->registerSetting(qGate, false);
+	if (!gate)
+		return -1;
+
+	/* Don't register the override twice: registerOverride() on the
+	 * same key is a no-op-safe in SettingsObject, but checking
+	 * contains() lets us short-circuit before we hit it. */
+	if (inst->settings()->contains(qKey))
+		return 0;
+	auto original = app->settings()->getSetting(qKey);
+	if (!original)
+		return -1;
+	inst->settings()->registerOverride(original, gate);
+	return 0;
+}
+
+int PluginManager::api_instance_setting_reset(void* mh, const char* instance_id,
+											  const char* key)
+{
+	auto* r = rt(mh);
+	if (!r || !key)
+		return -1;
+	auto inst = resolveInstance(r->manager->m_app, instance_id);
+	if (!inst || !inst->settings())
+		return -1;
+	inst->settings()->reset(QString::fromUtf8(key));
+	return 0;
+}
+
+int PluginManager::api_instance_setting_contains(void* mh,
+												 const char* instance_id,
+												 const char* key)
+{
+	auto* r = rt(mh);
+	if (!r || !key)
+		return 0;
+	auto inst = resolveInstance(r->manager->m_app, instance_id);
+	if (!inst || !inst->settings())
+		return 0;
+	return inst->settings()->contains(QString::fromUtf8(key)) ? 1 : 0;
+}
+
+/* ── S25 — Account / skin / cape access (ABI 3+) ─────────────────── */
+
+namespace
+{
+	/* Resolve a MinecraftAccountPtr by the same string id S7's
+	 * account_get_profile_id() returns. Linear scan; the account list is
+	 * tiny (typically < 5 entries) so this is cheaper than maintaining a
+	 * cache that needs invalidation. */
+	MinecraftAccountPtr resolveAccount(Application* app, const char* account_id)
+	{
+		if (!app || !account_id)
+			return {};
+		auto accounts = app->accounts();
+		if (!accounts)
+			return {};
+		const QString qId = QString::fromUtf8(account_id);
+		for (int i = 0; i < accounts->count(); ++i) {
+			auto a = accounts->at(i);
+			if (a && a->profileId() == qId)
+				return a;
+		}
+		return {};
+	}
+} // namespace
+
+const char* PluginManager::api_account_get_id_by_index(void* mh, int index)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto* app = r->manager->m_app;
+	if (!app || !app->accounts())
+		return nullptr;
+	if (index < 0 || index >= app->accounts()->count())
+		return nullptr;
+	auto a = app->accounts()->at(index);
+	if (!a)
+		return nullptr;
+	r->tempString = a->profileId().toStdString();
+	return r->tempString.c_str();
+}
+
+int PluginManager::api_account_is_msa_by_id(void* mh, const char* account_id)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return 0;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	return (a && a->isMSA()) ? 1 : 0;
+}
+
+const char* PluginManager::api_account_get_access_token(void* mh,
+														const char* account_id)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a)
+		return nullptr;
+	r->tempString = a->accessToken().toStdString();
+	return r->tempString.c_str();
+}
+
+const char*
+PluginManager::api_account_get_current_cape_id(void* mh, const char* account_id)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a || !a->accountData())
+		return nullptr;
+	r->tempString =
+		a->accountData()->minecraftProfile.currentCape.toStdString();
+	return r->tempString.c_str();
+}
+
+const char* PluginManager::api_account_get_skin_variant(void* mh,
+														const char* account_id)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a || !a->accountData())
+		return nullptr;
+	r->tempString =
+		a->accountData()->minecraftProfile.skin.variant.toStdString();
+	return r->tempString.c_str();
+}
+
+/* Skin / cape PNG blobs are returned by stashing a pointer-to-bytes
+ * inside the per-module ModuleRuntime alongside the existing
+ * tempString slot. We can't reuse tempString (it's a std::string and
+ * mangles binary data); a separate QByteArray-shaped cache is needed.
+ *
+ * To avoid bloating ModuleRuntime with another field we re-use
+ * tempString as raw bytes — std::string is byte-clean and its
+ * c_str()/data() returns a valid pointer for the configured length.
+ * The caller treats it as `void*` so the embedded NULs don't matter.
+ * Same lifetime contract as every other getter on this struct: valid
+ * until the next API call on the same module. */
+int64_t PluginManager::api_account_get_skin_blob(void* mh,
+												 const char* account_id,
+												 const void** out_ptr)
+{
+	auto* r = rt(mh);
+	if (!r || !out_ptr) {
+		if (out_ptr)
+			*out_ptr = nullptr;
+		return -1;
+	}
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a || !a->accountData()) {
+		*out_ptr = nullptr;
+		return -1;
+	}
+	const QByteArray& blob = a->accountData()->minecraftProfile.skin.data;
+	r->tempString.assign(blob.constData(), blob.size());
+	*out_ptr = r->tempString.data();
+	return blob.size();
+}
+
+int PluginManager::api_account_cape_count(void* mh, const char* account_id)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a || !a->accountData())
+		return -1;
+	return a->accountData()->minecraftProfile.capes.size();
+}
+
+namespace
+{
+	/* Index → cape pair on the active account, using deterministic
+	 * insertion order (QMap iterates sorted by key, which matches what
+	 * SkinManagerDialog used to do when it walked the QMap directly). */
+	const Cape* capeAt(MinecraftAccountPtr a, int index)
+	{
+		if (!a || !a->accountData() || index < 0)
+			return nullptr;
+		const auto& capes = a->accountData()->minecraftProfile.capes;
+		if (index >= capes.size())
+			return nullptr;
+		int i = 0;
+		for (auto it = capes.cbegin(); it != capes.cend(); ++it, ++i) {
+			if (i == index)
+				return &it.value();
+		}
+		return nullptr;
+	}
+} // namespace
+
+const char* PluginManager::api_account_cape_get_id(void* mh,
+												   const char* account_id,
+												   int index)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	const Cape* c = capeAt(a, index);
+	if (!c)
+		return nullptr;
+	r->tempString = c->id.toStdString();
+	return r->tempString.c_str();
+}
+
+const char* PluginManager::api_account_cape_get_alias(void* mh,
+													  const char* account_id,
+													  int index)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	const Cape* c = capeAt(a, index);
+	if (!c)
+		return nullptr;
+	r->tempString = c->alias.toStdString();
+	return r->tempString.c_str();
+}
+
+int64_t PluginManager::api_account_cape_get_blob(void* mh,
+												 const char* account_id,
+												 int index,
+												 const void** out_ptr)
+{
+	auto* r = rt(mh);
+	if (!r || !out_ptr) {
+		if (out_ptr)
+			*out_ptr = nullptr;
+		return -1;
+	}
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	const Cape* c = capeAt(a, index);
+	if (!c) {
+		*out_ptr = nullptr;
+		return -1;
+	}
+	r->tempString.assign(c->data.constData(), c->data.size());
+	*out_ptr = r->tempString.data();
+	return c->data.size();
+}
+
+int PluginManager::api_account_set_skin_variant(void* mh,
+												const char* account_id,
+												const char* variant)
+{
+	auto* r = rt(mh);
+	if (!r || !variant)
+		return -1;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a || !a->accountData())
+		return -1;
+	a->accountData()->minecraftProfile.skin.variant =
+		QString::fromUtf8(variant);
+	return 0;
+}
+
+int PluginManager::api_account_set_current_cape(void* mh,
+												const char* account_id,
+												const char* cape_id)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a || !a->accountData())
+		return -1;
+	a->accountData()->minecraftProfile.currentCape =
+		cape_id ? QString::fromUtf8(cape_id) : QString();
+	return 0;
+}
+
+int PluginManager::api_account_set_skin_blob(void* mh, const char* account_id,
+											 const void* data, int64_t size)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a || !a->accountData())
+		return -1;
+	if (data && size > 0)
+		a->accountData()->minecraftProfile.skin.data =
+			QByteArray(static_cast<const char*>(data), static_cast<int>(size));
+	else
+		a->accountData()->minecraftProfile.skin.data.clear();
+	return 0;
+}
+
+/* ── S26 — Synchronous task helpers (ABI 3+) ─────────────────────── */
+
+int PluginManager::api_account_skin_upload(void* mh, const char* account_id,
+										   const void* png_bytes, int64_t size,
+										   const char* variant)
+{
+	auto* r = rt(mh);
+	if (!r || !png_bytes || size <= 0 || !variant)
+		return -1;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a)
+		return -1;
+
+	const QByteArray bytes(static_cast<const char*>(png_bytes),
+						   static_cast<int>(size));
+	const QString variantStr = QString::fromUtf8(variant).trimmed().toUpper();
+	const SkinUpload::Model model = variantStr == QLatin1String("SLIM") ||
+											variantStr == QLatin1String("ALEX")
+										? SkinUpload::ALEX
+										: SkinUpload::STEVE;
+
+	QWidget* parent = QApplication::activeWindow();
+	auto task = shared_qobject_ptr<SkinUpload>(
+		new SkinUpload(nullptr, a->accessToken(), bytes, model));
+	ProgressDialog prog(parent);
+	if (prog.execWithTask(task.get()) != QDialog::Accepted)
+		return -1;
+	return 0;
+}
+
+int PluginManager::api_account_skin_reset(void* mh, const char* account_id)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a)
+		return -1;
+
+	QWidget* parent = QApplication::activeWindow();
+	auto task = shared_qobject_ptr<SkinDelete>(
+		new SkinDelete(nullptr, a->accessToken()));
+	ProgressDialog prog(parent);
+	if (prog.execWithTask(task.get()) != QDialog::Accepted)
+		return -1;
+	return 0;
+}
+
+int PluginManager::api_account_cape_set(void* mh, const char* account_id,
+										const char* cape_id)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return -1;
+	auto a = resolveAccount(r->manager->m_app, account_id);
+	if (!a)
+		return -1;
+
+	const QString cape = cape_id ? QString::fromUtf8(cape_id) : QString();
+	QWidget* parent = QApplication::activeWindow();
+	auto task = shared_qobject_ptr<CapeChange>(
+		new CapeChange(nullptr, a->accessToken(), cape));
+	ProgressDialog prog(parent);
+	if (prog.execWithTask(task.get()) != QDialog::Accepted)
+		return -1;
+	return 0;
+}
+
+/* ── S27 — Icon list enumeration (ABI 3+) ─────────────────────── */
+
+int PluginManager::api_icon_list_count(void* mh)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return 0;
+	auto* app = r->manager->m_app;
+	if (!app || !app->icons())
+		return 0;
+	return app->icons()->rowCount();
+}
+
+const char* PluginManager::api_icon_list_get_key(void* mh, int index)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto* app = r->manager->m_app;
+	if (!app || !app->icons())
+		return nullptr;
+	auto* model = app->icons().get();
+	if (index < 0 || index >= model->rowCount())
+		return nullptr;
+	QModelIndex idx = model->index(index, 0);
+	r->tempString = model->data(idx, Qt::UserRole).toString().toStdString();
+	return r->tempString.c_str();
+}
+
+const char* PluginManager::api_icon_list_get_name(void* mh, int index)
+{
+	auto* r = rt(mh);
+	if (!r)
+		return nullptr;
+	auto* app = r->manager->m_app;
+	if (!app || !app->icons())
+		return nullptr;
+	auto* model = app->icons().get();
+	if (index < 0 || index >= model->rowCount())
+		return nullptr;
+	QModelIndex idx = model->index(index, 0);
+	r->tempString = model->data(idx, Qt::DisplayRole).toString().toStdString();
+	return r->tempString.c_str();
+}
+
+const char* PluginManager::api_icon_list_get_file_path(void* mh,
+													   const char* icon_key)
+{
+	auto* r = rt(mh);
+	if (!r || !icon_key)
+		return nullptr;
+	auto* app = r->manager->m_app;
+	if (!app || !app->icons())
+		return nullptr;
+	const MMCIcon* ic = app->icons()->icon(QString::fromUtf8(icon_key));
+	if (!ic)
+		return nullptr;
+	r->tempString = ic->getFilePath().toStdString();
+	return r->tempString.c_str();
+}
+
+int PluginManager::api_icon_list_save_png(void* mh, const char* icon_key,
+										  const char* dest_path)
+{
+	auto* r = rt(mh);
+	if (!r || !icon_key || !dest_path)
+		return -1;
+	auto* app = r->manager->m_app;
+	if (!app || !app->icons())
+		return -1;
+	app->icons()->saveIcon(QString::fromUtf8(icon_key),
+						   QString::fromUtf8(dest_path), "PNG");
+	return QFileInfo::exists(QString::fromUtf8(dest_path)) ? 0 : -1;
 }
 
 /* PluginPage MOC — required because PluginPage has Q_OBJECT */

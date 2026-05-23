@@ -28,7 +28,8 @@ void SearchIndex::addBundle(WikiBundle* bundle)
 	walk(bundle->buildNav());
 }
 
-QList<SearchIndex::Hit> SearchIndex::search(const QString& query, int limit) const
+QList<SearchIndex::Hit> SearchIndex::search(const QString& query,
+											int limit) const
 {
 	QList<Hit> out;
 	if (query.isEmpty())

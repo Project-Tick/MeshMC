@@ -18,8 +18,9 @@ class AnalysisPage : public QWidget, public BasePage
 {
 	Q_OBJECT
   public:
-	AnalysisPage(InstancePtr instance, RuleEngine* engine,
-				 class LearningStore* learning, QWidget* parent = nullptr);
+	AnalysisPage(const QString& instanceId, const QString& instanceRoot,
+				 RuleEngine* engine, class LearningStore* learning,
+				 QWidget* parent = nullptr);
 
 	QString id() const override
 	{
@@ -31,7 +32,7 @@ class AnalysisPage : public QWidget, public BasePage
 	}
 	QIcon icon() const override
 	{
-		return APPLICATION->icons()->getIcon(QStringLiteral("status-bad"));
+		return QIcon::fromTheme(QStringLiteral("status-bad"));
 	}
 
   private slots:
@@ -46,7 +47,8 @@ class AnalysisPage : public QWidget, public BasePage
 	void runAnalysis();
 	Match selectedMatch() const;
 
-	InstancePtr m_instance;
+	QString m_instanceId;
+	QString m_instanceRoot;
 	RuleEngine* m_engine = nullptr;
 	class LearningStore* m_learning = nullptr;
 	QList<Match> m_matches;

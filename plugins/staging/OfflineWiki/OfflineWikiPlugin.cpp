@@ -17,43 +17,43 @@ MMCO_DEFINE_MODULE(
 
 namespace
 {
-MMCOContext* g_ctx = nullptr;
-QList<WikiBundle*> g_bundles;
-SearchIndex* g_index = nullptr;
+	MMCOContext* g_ctx = nullptr;
+	QList<WikiBundle*> g_bundles;
+	SearchIndex* g_index = nullptr;
 
-QString bundlesDir()
-{
-	if (!g_ctx)
-		return {};
-	QString plug =
-		QString::fromUtf8(g_ctx->fs_plugin_data_dir(g_ctx->module_handle));
-	return QDir(plug).filePath("bundles");
-}
-
-void scanBundlesDir()
-{
-	QString dir = bundlesDir();
-	QDir().mkpath(dir);
-	QDir d(dir);
-	if (!d.exists())
-		return;
-
-	// Each subdirectory or .zim file inside bundles/ is a bundle.
-	for (const auto& fi :
-		 d.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot)) {
-		QString path = fi.absoluteFilePath();
-		if (fi.isFile() &&
-			!path.endsWith(QStringLiteral(".zim"), Qt::CaseInsensitive))
-			continue;
-		auto* b = openBundle(path);
-		if (b)
-			g_bundles.append(b);
+	QString bundlesDir()
+	{
+		if (!g_ctx)
+			return {};
+		QString plug =
+			QString::fromUtf8(g_ctx->fs_plugin_data_dir(g_ctx->module_handle));
+		return QDir(plug).filePath("bundles");
 	}
 
-	g_index->reset();
-	for (auto* b : g_bundles)
-		g_index->addBundle(b);
-}
+	void scanBundlesDir()
+	{
+		QString dir = bundlesDir();
+		QDir().mkpath(dir);
+		QDir d(dir);
+		if (!d.exists())
+			return;
+
+		// Each subdirectory or .zim file inside bundles/ is a bundle.
+		for (const auto& fi :
+			 d.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot)) {
+			QString path = fi.absoluteFilePath();
+			if (fi.isFile() &&
+				!path.endsWith(QStringLiteral(".zim"), Qt::CaseInsensitive))
+				continue;
+			auto* b = openBundle(path);
+			if (b)
+				g_bundles.append(b);
+		}
+
+		g_index->reset();
+		for (auto* b : g_bundles)
+			g_index->addBundle(b);
+	}
 } // namespace
 
 static int on_global_settings_pages(void*, uint32_t, void* payload, void*)

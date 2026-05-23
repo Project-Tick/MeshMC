@@ -1,12 +1,5 @@
 TODO List for MeshMC
-- Add the ability to use the macOS topbar.
 - An instance that can run inside a sandbox? Try this.
-- Add an instance feature that works with Git.
 - Write an integrated MMCO package manager.
 - Create a theme plugin that includes at least two themes.
-- Run flite, xrandr, and libdecor as plugins.
-- Add the ability to export instances using Flame zip, mrpack, and other export methods.
-- Write the Flame mod list as a parser, and similarly, do the same for mrpack format.
-- Write an offline wiki plugin.
 - Integrate Project Tick MNV, Kate, and Notepad++ with plugin.
-- Write an analyzer that automatically detects crashes but does not include an LLM.

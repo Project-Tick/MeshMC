@@ -33,7 +33,7 @@ struct Rule {
 	QList<QRegularExpression> patterns;
 	QString advice;
 	QStringList tags;
-	QString packName;  // source rule pack
+	QString packName;	// source rule pack
 	QJsonArray actions; // free-form action descriptors from the JSON
 };
 
@@ -57,8 +57,14 @@ class RuleEngine
 	bool loadFromBytes(const QByteArray& bytes, const QString& packName,
 					   QString* errorMsg = nullptr);
 
-	const QList<Rule>& rules() const { return m_rules; }
-	int ruleCount() const { return m_rules.size(); }
+	const QList<Rule>& rules() const
+	{
+		return m_rules;
+	}
+	int ruleCount() const
+	{
+		return m_rules.size();
+	}
 
 	/* Run every rule against `text` and return the matches in
 	 * descending severity, then descending learning score. */

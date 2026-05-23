@@ -7,23 +7,23 @@
 
 namespace
 {
-WikiNavNode parseNavJson(const QJsonArray& arr)
-{
-	WikiNavNode root;
-	for (auto v : arr) {
-		auto obj = v.toObject();
-		WikiNavNode n;
-		n.title = obj.value("title").toString();
-		n.slug = obj.value("slug").toString();
-		auto children = obj.value("children").toArray();
-		if (!children.isEmpty()) {
-			WikiNavNode sub = parseNavJson(children);
-			n.children = sub.children;
+	WikiNavNode parseNavJson(const QJsonArray& arr)
+	{
+		WikiNavNode root;
+		for (auto v : arr) {
+			auto obj = v.toObject();
+			WikiNavNode n;
+			n.title = obj.value("title").toString();
+			n.slug = obj.value("slug").toString();
+			auto children = obj.value("children").toArray();
+			if (!children.isEmpty()) {
+				WikiNavNode sub = parseNavJson(children);
+				n.children = sub.children;
+			}
+			root.children.append(n);
 		}
-		root.children.append(n);
+		return root;
 	}
-	return root;
-}
 } // namespace
 
 bool DirectoryBundle::open(const QString& dir)
@@ -111,10 +111,9 @@ QString DirectoryBundle::renderArticleHtml(const QString& slug) const
 	// Rewrite relative image paths to absolute paths so the article
 	// renderer can find them.
 	QString html = doc.toHtml();
-	QString baseUrl = QUrl::fromLocalFile(QFileInfo(abs).absolutePath() + "/")
-						  .toString();
-	html.replace(QStringLiteral("src=\""),
-				 QStringLiteral("src=\"") + baseUrl);
+	QString baseUrl =
+		QUrl::fromLocalFile(QFileInfo(abs).absolutePath() + "/").toString();
+	html.replace(QStringLiteral("src=\""), QStringLiteral("src=\"") + baseUrl);
 	return html;
 }
 

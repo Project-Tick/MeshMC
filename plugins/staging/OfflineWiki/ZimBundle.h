@@ -30,11 +30,26 @@ class ZimBundle : public WikiBundle
   public:
 	bool open(const QString& path);
 
-	QString name() const override { return m_name; }
-	QString format() const override { return QStringLiteral("zim"); }
-	QString rootPath() const override { return m_path; }
-	bool isOpen() const override { return m_open; }
-	int articleCount() const override { return m_titles.size(); }
+	QString name() const override
+	{
+		return m_name;
+	}
+	QString format() const override
+	{
+		return QStringLiteral("zim");
+	}
+	QString rootPath() const override
+	{
+		return m_path;
+	}
+	bool isOpen() const override
+	{
+		return m_open;
+	}
+	int articleCount() const override
+	{
+		return m_titles.size();
+	}
 
 	WikiNavNode buildNav() const override;
 	QString renderArticleHtml(const QString& slug) const override;

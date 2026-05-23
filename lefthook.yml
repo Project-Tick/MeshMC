@@ -57,6 +57,18 @@ pre-commit:
       files: git diff --name-only --diff-filter=d --staged
       glob: 'docs/*.md'
       run: markdownlint-cli2 {files}
+    plugin-independence:
+      # Guard rail for the MMCO ABI 3 promise: every staged change to
+      # `plugins/**` must keep the in-tree `.mmco` modules free of the
+      # closed-over launcher back-doors (APPLICATION->…, direct
+      # launcher header #includes, BasePage / Application::* signals).
+      # `--source-only` skips the Ninja link-edge check, which is the
+      # CI job's responsibility — the pre-commit hook only sees the
+      # working tree.
+      tags: plugin abi
+      files: git diff --name-only --diff-filter=d --staged
+      glob: 'plugins/**/*.{c,cc,cpp,cxx,h,hpp}'
+      run: scripts/check-plugin-independence.sh --source-only
   jobs:
     - name: reuse-lint
       run: |

@@ -172,8 +172,7 @@ namespace PluginSignature
 			qint64 mtimeMs;
 			bool operator==(const CacheKey& o) const
 			{
-				return size == o.size && mtimeMs == o.mtimeMs &&
-					   path == o.path;
+				return size == o.size && mtimeMs == o.mtimeMs && path == o.path;
 			}
 		};
 		uint qHash(const CacheKey& k, uint seed = 0) noexcept
@@ -195,13 +194,20 @@ namespace PluginSignature
 		const char* stateToToken(PluginSignatureState s)
 		{
 			switch (s) {
-				case PluginSignatureState::Valid:		 return "Valid";
-				case PluginSignatureState::Untrusted:	 return "Untrusted";
-				case PluginSignatureState::BadSignature: return "BadSignature";
-				case PluginSignatureState::Malformed:	 return "Malformed";
-				case PluginSignatureState::Absent:		 return "Absent";
-				case PluginSignatureState::Error:		 return "Error";
-				case PluginSignatureState::NotChecked:	 return "NotChecked";
+				case PluginSignatureState::Valid:
+					return "Valid";
+				case PluginSignatureState::Untrusted:
+					return "Untrusted";
+				case PluginSignatureState::BadSignature:
+					return "BadSignature";
+				case PluginSignatureState::Malformed:
+					return "Malformed";
+				case PluginSignatureState::Absent:
+					return "Absent";
+				case PluginSignatureState::Error:
+					return "Error";
+				case PluginSignatureState::NotChecked:
+					return "NotChecked";
 			}
 			return "NotChecked";
 		}
@@ -824,8 +830,8 @@ namespace PluginSignature
 			fingerprint.clear();
 			state = PluginSignatureState::Malformed;
 		} else {
-			state = verify(trailer.payload, trailer.signature, detail,
-						   fingerprint);
+			state =
+				verify(trailer.payload, trailer.signature, detail, fingerprint);
 		}
 
 		// ── Memoise the result ─────────────────────────────────

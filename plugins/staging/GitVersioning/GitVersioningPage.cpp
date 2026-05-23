@@ -5,24 +5,26 @@
 
 namespace
 {
-QString humanSize(qint64 bytes)
-{
-	if (bytes < 1024)
-		return QObject::tr("%1 B").arg(bytes);
-	double v = bytes / 1024.0;
-	if (v < 1024.0)
-		return QObject::tr("%1 KiB").arg(QString::number(v, 'f', 1));
-	v /= 1024.0;
-	if (v < 1024.0)
-		return QObject::tr("%1 MiB").arg(QString::number(v, 'f', 1));
-	v /= 1024.0;
-	return QObject::tr("%1 GiB").arg(QString::number(v, 'f', 2));
-}
+	QString humanSize(qint64 bytes)
+	{
+		if (bytes < 1024)
+			return QObject::tr("%1 B").arg(bytes);
+		double v = bytes / 1024.0;
+		if (v < 1024.0)
+			return QObject::tr("%1 KiB").arg(QString::number(v, 'f', 1));
+		v /= 1024.0;
+		if (v < 1024.0)
+			return QObject::tr("%1 MiB").arg(QString::number(v, 'f', 1));
+		v /= 1024.0;
+		return QObject::tr("%1 GiB").arg(QString::number(v, 'f', 2));
+	}
 } // namespace
 
-GitVersioningPage::GitVersioningPage(InstancePtr instance, QWidget* parent)
-	: QWidget(parent), m_instance(instance),
-	  m_repo(instance->id(), instance->instanceRoot())
+GitVersioningPage::GitVersioningPage(const QString& instanceId,
+									 const QString& instanceRoot,
+									 QWidget* parent)
+	: QWidget(parent), m_instanceId(instanceId), m_instanceRoot(instanceRoot),
+	  m_repo(instanceId, instanceRoot)
 {
 	buildUi();
 	reloadHistory();
@@ -30,7 +32,11 @@ GitVersioningPage::GitVersioningPage(InstancePtr instance, QWidget* parent)
 
 QIcon GitVersioningPage::icon() const
 {
-	return APPLICATION->icons()->getIcon(QStringLiteral("version-control"));
+	/* The launcher's icon theme is reachable through QIcon::fromTheme
+	 * once Qt has been initialised; the host installs the MeshMC theme
+	 * search paths during Application::init() so plugin code finds the
+	 * same icon set the launcher does. */
+	return QIcon::fromTheme(QStringLiteral("version-control"));
 }
 
 void GitVersioningPage::buildUi()
@@ -95,9 +101,8 @@ void GitVersioningPage::reloadHistory()
 {
 	auto st = m_repo.status();
 	if (!GitRepo::gitAvailable()) {
-		m_statusLabel->setText(
-			tr("<b>git</b> is not installed on your system. "
-			   "Install Git and reopen this page."));
+		m_statusLabel->setText(tr("<b>git</b> is not installed on your system. "
+								  "Install Git and reopen this page."));
 		m_commitBtn->setEnabled(false);
 		m_restoreBtn->setEnabled(false);
 		m_tagBtn->setEnabled(false);

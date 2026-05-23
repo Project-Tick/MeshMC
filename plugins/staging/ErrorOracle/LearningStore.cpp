@@ -108,8 +108,7 @@ double LearningStore::scoreFor(const QString& ruleId,
 	return (frac * 2.0 - 1.0) * std::min(obs, 1.5);
 }
 
-void LearningStore::recordSeen(const QString& ruleId,
-							   const QString& instanceId)
+void LearningStore::recordSeen(const QString& ruleId, const QString& instanceId)
 {
 	Key k{ruleId, instanceId};
 	auto& s = m_outcomes[k];
@@ -142,8 +141,8 @@ QString LearningStore::fingerprint(const QString& logText)
 	//   • drop the line number     (":at Foo.bar(Foo.java:123)")
 	//   • drop trailing $hash       ("$1abc")
 	//   • lower-case the class name
-	QRegularExpression re(
-		QStringLiteral(R"(at\s+([A-Za-z_][A-Za-z0-9_$.]+)\.([A-Za-z_<][A-Za-z0-9_>$]*)\()"));
+	QRegularExpression re(QStringLiteral(
+		R"(at\s+([A-Za-z_][A-Za-z0-9_$.]+)\.([A-Za-z_<][A-Za-z0-9_>$]*)\()"));
 	auto it = re.globalMatch(logText);
 	QStringList frames;
 	while (it.hasNext() && frames.size() < 5) {
@@ -158,7 +157,9 @@ QString LearningStore::fingerprint(const QString& logText)
 
 	QByteArray src = frames.join('\n').toUtf8();
 	return QString::fromLatin1(
-		QCryptographicHash::hash(src, QCryptographicHash::Sha1).toHex().left(16));
+		QCryptographicHash::hash(src, QCryptographicHash::Sha1)
+			.toHex()
+			.left(16));
 }
 
 void LearningStore::recordNovel(const QString& signature,

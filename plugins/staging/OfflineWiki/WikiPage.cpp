@@ -103,8 +103,7 @@ void WikiPage::onAddBundle()
 	if (chosen == aDir) {
 		path = QFileDialog::getExistingDirectory(this, tr("Choose bundle"));
 	} else if (chosen == aZim) {
-		path = QFileDialog::getOpenFileName(this, tr("Choose ZIM"),
-											QString(),
+		path = QFileDialog::getOpenFileName(this, tr("Choose ZIM"), QString(),
 											tr("Kiwix ZIM (*.zim)"));
 	} else {
 		return;

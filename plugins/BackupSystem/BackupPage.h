@@ -20,7 +20,8 @@ class BackupPage : public QWidget, public BasePage
 	Q_OBJECT
 
   public:
-	explicit BackupPage(InstancePtr instance, QWidget* parent = nullptr);
+	BackupPage(const QString& instanceId, const QString& instanceRoot,
+			   MMCOContext* ctx, QWidget* parent = nullptr);
 	~BackupPage() override;
 
 	QString id() const override
@@ -58,7 +59,8 @@ class BackupPage : public QWidget, public BasePage
 	QString humanFileSize(qint64 bytes) const;
 
 	Ui::BackupPage* ui;
-	InstancePtr m_instance;
+	QString m_instanceId;
+	QString m_instanceRoot;
 	std::unique_ptr<BackupManager> m_manager;
 	QList<BackupEntry> m_entries;
 };

@@ -5,31 +5,32 @@
 
 namespace
 {
-QString readFileTail(const QString& path, int maxBytes = 512 * 1024)
-{
-	QFile f(path);
-	if (!f.open(QIODevice::ReadOnly))
-		return {};
-	qint64 size = f.size();
-	if (size > maxBytes)
-		f.seek(size - maxBytes);
-	return QString::fromUtf8(f.readAll());
-}
+	QString readFileTail(const QString& path, int maxBytes = 512 * 1024)
+	{
+		QFile f(path);
+		if (!f.open(QIODevice::ReadOnly))
+			return {};
+		qint64 size = f.size();
+		if (size > maxBytes)
+			f.seek(size - maxBytes);
+		return QString::fromUtf8(f.readAll());
+	}
 
-QString latestCrashReport(const QString& crashDir)
-{
-	QDir d(crashDir);
-	if (!d.exists())
-		return {};
-	const auto files =
-		d.entryInfoList({"*.txt"}, QDir::Files, QDir::Time | QDir::Reversed);
-	if (files.isEmpty())
-		return {};
-	return files.last().absoluteFilePath();
-}
+	QString latestCrashReport(const QString& crashDir)
+	{
+		QDir d(crashDir);
+		if (!d.exists())
+			return {};
+		const auto files = d.entryInfoList({"*.txt"}, QDir::Files,
+										   QDir::Time | QDir::Reversed);
+		if (files.isEmpty())
+			return {};
+		return files.last().absoluteFilePath();
+	}
 } // namespace
 
-LogIngester::Bundle LogIngester::ingestForInstance(const QString& instancePath) const
+LogIngester::Bundle
+LogIngester::ingestForInstance(const QString& instancePath) const
 {
 	Bundle b;
 	QString gameRoot = QDir(instancePath).filePath(".minecraft");
@@ -45,7 +46,8 @@ LogIngester::Bundle LogIngester::ingestForInstance(const QString& instancePath) 
 	}
 
 	// 2. most-recent crash report (if any)
-	QString crashFile = latestCrashReport(QDir(gameRoot).filePath("crash-reports"));
+	QString crashFile =
+		latestCrashReport(QDir(gameRoot).filePath("crash-reports"));
 	if (!crashFile.isEmpty()) {
 		b.combinedText += "==== " + crashFile + " ====\n";
 		b.combinedText += readFileTail(crashFile);

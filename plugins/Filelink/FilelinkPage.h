@@ -14,7 +14,8 @@ class FilelinkPage : public QWidget, public BasePage
 	Q_OBJECT
 
   public:
-	explicit FilelinkPage(InstancePtr inst, FilelinkManager* mgr);
+	FilelinkPage(const QString& instanceId, const QString& instanceRoot,
+				 FilelinkManager* mgr, MMCOContext* ctx);
 
 	QString displayName() const override
 	{
@@ -43,6 +44,8 @@ class FilelinkPage : public QWidget, public BasePage
 	void refreshTable();
 
 	Ui::FilelinkPage ui;
-	InstancePtr m_instance;
+	QString m_instanceId;
+	QString m_instanceRoot;
 	FilelinkManager* m_manager;
+	MMCOContext* m_ctx;
 };

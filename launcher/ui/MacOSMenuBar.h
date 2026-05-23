@@ -35,8 +35,7 @@ class QMenuBar;
 class MacOSMenuBar
 {
   public:
-	struct Actions
-	{
+	struct Actions {
 		// Instance lifecycle
 		QAction* addInstance = nullptr;
 		QAction* launch = nullptr;
@@ -66,12 +65,12 @@ class MacOSMenuBar
 		QAction* toggleCat = nullptr;
 
 		// App-menu (auto-relocated via menuRole)
-		QAction* preferences = nullptr;  // PreferencesRole
-		QAction* about = nullptr;        // AboutRole
+		QAction* preferences = nullptr; // PreferencesRole
+		QAction* about = nullptr;		// AboutRole
 
 		// Accounts
 		QAction* manageAccounts = nullptr;
-		QMenu* accountSubmenu = nullptr;  // dynamic account list, may be null
+		QMenu* accountSubmenu = nullptr; // dynamic account list, may be null
 
 		// Help & updates
 		QAction* reportBug = nullptr;

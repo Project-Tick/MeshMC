@@ -10,7 +10,6 @@
 #include "plugin/sdk/mmco_sdk.h"
 #include "BackupPage.h"
 #include "BackupManager.h"
-#include "settings/SettingsObject.h"
 
 MMCO_DEFINE_MODULE(
 	"BackupSystem", "1.1.0", "Project Tick",
@@ -25,18 +24,24 @@ static QObject* g_guard = nullptr;
 
 static bool is_enabled()
 {
-	auto s = APPLICATION->settings();
-	QString key = QString::fromLatin1(SETTING_KEY);
-	return s->contains(key) && s->get(key).toBool();
+	if (!g_ctx)
+		return false;
+	if (!g_ctx->app_setting_contains(g_ctx->module_handle, SETTING_KEY))
+		return false;
+	const char* v = g_ctx->app_setting_get(g_ctx->module_handle, SETTING_KEY);
+	if (!v)
+		return false;
+	QString s = QString::fromUtf8(v).trimmed().toLower();
+	return s == QLatin1String("1") || s == QLatin1String("true") ||
+		   s == QLatin1String("yes") || s == QLatin1String("on");
 }
 
 static void ensureSettingRegistered()
 {
-	auto s = APPLICATION->settings();
-	QString key = QString::fromLatin1(SETTING_KEY);
-	if (!s->contains(key)) {
-		s->registerSetting(key, false);
-	}
+	if (!g_ctx)
+		return;
+	if (!g_ctx->app_setting_contains(g_ctx->module_handle, SETTING_KEY))
+		g_ctx->app_setting_register(g_ctx->module_handle, SETTING_KEY, "0");
 }
 
 static void injectCheckboxIntoMeshMCPage()
@@ -74,24 +79,27 @@ static void injectCheckboxIntoMeshMCPage()
 
 	g_backupCheckbox->setChecked(is_enabled());
 
-	QObject::connect(g_backupCheckbox, &QCheckBox::toggled, g_guard,
-					 [](bool checked) {
-						 auto s = APPLICATION->settings();
-						 s->set(QString::fromLatin1(SETTING_KEY), checked);
-					 });
+	QObject::connect(
+		g_backupCheckbox, &QCheckBox::toggled, g_guard, [](bool checked) {
+			if (g_ctx)
+				g_ctx->app_setting_set(g_ctx->module_handle, SETTING_KEY,
+									   checked ? "1" : "0");
+		});
 }
 
 static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,
 							  void* /*payload*/, void* /*user_data*/)
 {
 	g_guard = new QObject();
+	return 0;
+}
 
-	QObject::connect(
-		APPLICATION, &Application::globalSettingsAboutToOpen, g_guard, []() {
-			g_backupCheckbox = nullptr;
-			QTimer::singleShot(0, qApp, injectCheckboxIntoMeshMCPage);
-		});
-
+/* MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN — replaces the legacy
+ * direct connect to Application::globalSettingsAboutToOpen. */
+static int on_global_settings_about_to_open(void*, uint32_t, void*, void*)
+{
+	g_backupCheckbox = nullptr;
+	QTimer::singleShot(0, qApp, injectCheckboxIntoMeshMCPage);
 	return 0;
 }
 
@@ -111,7 +119,7 @@ static int on_pre_launch(void* /*mh*/, uint32_t /*hook_id*/, void* payload,
 	MMCO_LOG(g_ctx, "Pre-launch backup triggered for instance.");
 
 	BackupManager mgr(QString::fromUtf8(info->instance_id),
-					  QString::fromUtf8(info->instance_path));
+					  QString::fromUtf8(info->instance_path), g_ctx);
 	auto entry = mgr.createBackup("pre-launch");
 	if (entry.fullPath.isEmpty()) {
 		MMCO_WARN(g_ctx, "Pre-launch backup failed.");
@@ -125,16 +133,14 @@ static int on_instance_pages(void* /*mh*/, uint32_t /*hook_id*/, void* payload,
 							 void* /*ud*/)
 {
 	auto* evt = static_cast<MMCOInstancePagesEvent*>(payload);
-	if (!evt || !evt->page_list_handle || !evt->instance_handle)
+	if (!evt || !evt->page_list_handle || !evt->instance_id)
 		return 0;
 
 	auto* pages = static_cast<QList<BasePage*>*>(evt->page_list_handle);
-	auto* instRaw = static_cast<BaseInstance*>(evt->instance_handle);
-
-	InstancePtr inst = std::shared_ptr<BaseInstance>(
-		instRaw, [](BaseInstance*) { /* no-op deleter */ });
-
-	pages->append(new BackupPage(inst));
+	const QString instId = QString::fromUtf8(evt->instance_id);
+	const QString instRoot =
+		evt->instance_path ? QString::fromUtf8(evt->instance_path) : QString();
+	pages->append(new BackupPage(instId, instRoot, g_ctx));
 	return 0;
 }
 
@@ -150,6 +156,9 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_APP_INITIALIZED,
 					   on_app_initialized, nullptr);
+	ctx->hook_register(ctx->module_handle,
+					   MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN,
+					   on_global_settings_about_to_open, nullptr);
 
 	int rc = ctx->hook_register(ctx->module_handle, MMCO_HOOK_UI_INSTANCE_PAGES,
 								on_instance_pages, nullptr);
