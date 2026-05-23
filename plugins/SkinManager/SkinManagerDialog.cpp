@@ -78,8 +78,7 @@ static QString profileNameFromCtx(MMCOContext* ctx, const QString& accountId)
 			continue;
 		if (QString::fromUtf8(idC) != accountId)
 			continue;
-		const char* n =
-			ctx->account_get_profile_name(ctx->module_handle, i);
+		const char* n = ctx->account_get_profile_name(ctx->module_handle, i);
 		return n ? QString::fromUtf8(n) : QString();
 	}
 	return {};
@@ -92,9 +91,9 @@ SkinManagerDialog::SkinManagerDialog(const QString& accountId, MMCOContext* ctx,
 {
 	ui->setupUi(this);
 	const QString profileName = profileNameFromCtx(m_ctx, m_accountId);
-	setWindowTitle(tr("Skin Upload — %1")
-					   .arg(profileName.isEmpty() ? tr("(no account)")
-												  : profileName));
+	setWindowTitle(
+		tr("Skin Upload — %1")
+			.arg(profileName.isEmpty() ? tr("(no account)") : profileName));
 
 	/* Replace the placeholder viewerHost with a real OpenGL viewer. */
 	m_viewer = new SkinViewerWidget(ui->viewerHost);
@@ -144,9 +143,8 @@ void SkinManagerDialog::loadAccountState()
 	/* Skin blob via the C ABI. */
 	QImage skinImg;
 	const void* skinPtr = nullptr;
-	const int64_t skinLen =
-		m_ctx->account_get_skin_blob(m_ctx->module_handle, idUtf8.constData(),
-									 &skinPtr);
+	const int64_t skinLen = m_ctx->account_get_skin_blob(
+		m_ctx->module_handle, idUtf8.constData(), &skinPtr);
 	if (skinLen > 0 && skinPtr) {
 		skinImg.loadFromData(
 			QByteArray::fromRawData(static_cast<const char*>(skinPtr),
@@ -155,9 +153,8 @@ void SkinManagerDialog::loadAccountState()
 		skinImg = normaliseSkin(skinImg);
 	}
 
-	const char* variantC =
-		m_ctx->account_get_skin_variant(m_ctx->module_handle,
-										idUtf8.constData());
+	const char* variantC = m_ctx->account_get_skin_variant(m_ctx->module_handle,
+														   idUtf8.constData());
 	ModelVariant variant = ModelVariant::Classic;
 	if (variantC && QString::fromUtf8(variantC).compare(
 						QStringLiteral("SLIM"), Qt::CaseInsensitive) == 0) {
@@ -172,9 +169,8 @@ void SkinManagerDialog::loadAccountState()
 	m_viewer->setSkin(skinImg, variant);
 
 	/* Capes — walk the C ABI cape list. */
-	const char* currentCapeC =
-		m_ctx->account_get_current_cape_id(m_ctx->module_handle,
-										   idUtf8.constData());
+	const char* currentCapeC = m_ctx->account_get_current_cape_id(
+		m_ctx->module_handle, idUtf8.constData());
 	const QString currentCape =
 		currentCapeC ? QString::fromUtf8(currentCapeC) : QString();
 
@@ -185,8 +181,8 @@ void SkinManagerDialog::loadAccountState()
 	const int capeTotal =
 		m_ctx->account_cape_count(m_ctx->module_handle, idUtf8.constData());
 	for (int i = 0; i < capeTotal; ++i) {
-		const char* capeIdC = m_ctx->account_cape_get_id(
-			m_ctx->module_handle, idUtf8.constData(), i);
+		const char* capeIdC = m_ctx->account_cape_get_id(m_ctx->module_handle,
+														 idUtf8.constData(), i);
 		const char* capeAliasC = m_ctx->account_cape_get_alias(
 			m_ctx->module_handle, idUtf8.constData(), i);
 		const void* capePtr = nullptr;
@@ -200,10 +196,10 @@ void SkinManagerDialog::loadAccountState()
 		QPixmap preview;
 		if (capeLen > 0 && capePtr) {
 			QPixmap pix;
-			if (pix.loadFromData(QByteArray::fromRawData(
-									 static_cast<const char*>(capePtr),
-									 static_cast<int>(capeLen)),
-								 "PNG")) {
+			if (pix.loadFromData(
+					QByteArray::fromRawData(static_cast<const char*>(capePtr),
+											static_cast<int>(capeLen)),
+					"PNG")) {
 				preview = pix.copy(1, 1, 10, 16);
 			}
 		}
@@ -351,8 +347,8 @@ void SkinManagerDialog::onCapeChanged(int row)
 	const int total =
 		m_ctx->account_cape_count(m_ctx->module_handle, idUtf8.constData());
 	for (int i = 0; i < total; ++i) {
-		const char* cid = m_ctx->account_cape_get_id(
-			m_ctx->module_handle, idUtf8.constData(), i);
+		const char* cid = m_ctx->account_cape_get_id(m_ctx->module_handle,
+													 idUtf8.constData(), i);
 		if (!cid || QString::fromUtf8(cid) != capeId)
 			continue;
 		const void* ptr = nullptr;
@@ -411,12 +407,10 @@ void SkinManagerDialog::onAccept()
 	}
 
 	if (!skinBytes.isEmpty()) {
-		const char* variant =
-			ui->rdoSlim->isChecked() ? "ALEX" : "STEVE";
-		if (m_ctx->account_skin_upload(m_ctx->module_handle,
-									   idUtf8.constData(),
-									   skinBytes.constData(),
-									   skinBytes.size(), variant) != 0) {
+		const char* variant = ui->rdoSlim->isChecked() ? "ALEX" : "STEVE";
+		if (m_ctx->account_skin_upload(m_ctx->module_handle, idUtf8.constData(),
+									   skinBytes.constData(), skinBytes.size(),
+									   variant) != 0) {
 			QMessageBox::warning(this, tr("Skin Upload"),
 								 tr("Failed to apply skin changes."));
 			return;
@@ -424,8 +418,7 @@ void SkinManagerDialog::onAccept()
 	}
 	if (capeChanged) {
 		const QByteArray capeUtf8 = chosenCape.toUtf8();
-		if (m_ctx->account_cape_set(m_ctx->module_handle,
-									idUtf8.constData(),
+		if (m_ctx->account_cape_set(m_ctx->module_handle, idUtf8.constData(),
 									capeUtf8.constData()) != 0) {
 			QMessageBox::warning(this, tr("Skin Upload"),
 								 tr("Failed to apply cape change."));
@@ -444,9 +437,8 @@ void SkinManagerDialog::onAccept()
 	}
 	if (capeChanged) {
 		const QByteArray capeUtf8 = chosenCape.toUtf8();
-		m_ctx->account_set_current_cape(m_ctx->module_handle,
-										idUtf8.constData(),
-										capeUtf8.constData());
+		m_ctx->account_set_current_cape(
+			m_ctx->module_handle, idUtf8.constData(), capeUtf8.constData());
 	}
 
 	QMessageBox::information(this, tr("Skin Upload"),

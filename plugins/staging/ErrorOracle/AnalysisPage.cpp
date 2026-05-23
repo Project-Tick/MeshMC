@@ -10,18 +10,18 @@
 
 namespace
 {
-const char* severityName(Severity s)
-{
-	switch (s) {
-		case Severity::High:
-			return "high";
-		case Severity::Medium:
-			return "medium";
-		case Severity::Low:
-		default:
-			return "low";
+	const char* severityName(Severity s)
+	{
+		switch (s) {
+			case Severity::High:
+				return "high";
+			case Severity::Medium:
+				return "medium";
+			case Severity::Low:
+			default:
+				return "low";
+		}
 	}
-}
 } // namespace
 
 AnalysisPage::AnalysisPage(const QString& instanceId,
@@ -119,7 +119,8 @@ void AnalysisPage::runAnalysis()
 
 	// Pull a representative line for the novel promotion UI:
 	// first matching `Exception in thread` or first `at <class>.<method>`.
-	QRegularExpression re(QStringLiteral("(Exception in thread.*|at\\s+[A-Za-z][\\w.$]+)"));
+	QRegularExpression re(
+		QStringLiteral("(Exception in thread.*|at\\s+[A-Za-z][\\w.$]+)"));
 	auto it = re.match(bundle.combinedText);
 	if (it.hasMatch())
 		m_currentSampleLine = it.captured(1).left(160);
@@ -154,9 +155,8 @@ void AnalysisPage::runAnalysis()
 		   "<code>%3</code>")
 			.arg(src.toHtmlEscaped())
 			.arg(m_matches.size())
-			.arg(m_currentFingerprint.isEmpty()
-					 ? tr("(no stack trace)")
-					 : m_currentFingerprint));
+			.arg(m_currentFingerprint.isEmpty() ? tr("(no stack trace)")
+												: m_currentFingerprint));
 
 	if (m_matches.isEmpty()) {
 		m_adviceView->setMarkdown(
@@ -189,8 +189,8 @@ void AnalysisPage::onSelectionChanged()
 	if (!enable)
 		return;
 	QString matchLine = m.matchedLine.toHtmlEscaped();
-	QString md = QStringLiteral("### %1\n\n").arg(m.ruleTitle) +
-				 m.advice + QStringLiteral("\n\n---\n\n**Matched line:** `") +
+	QString md = QStringLiteral("### %1\n\n").arg(m.ruleTitle) + m.advice +
+				 QStringLiteral("\n\n---\n\n**Matched line:** `") +
 				 m.matchedLine + QStringLiteral("`\n");
 	m_adviceView->setMarkdown(md);
 }
@@ -219,8 +219,8 @@ void AnalysisPage::onDidNotHelp()
 		return;
 	m_learning->recordDidNotHelp(m.ruleId, m_instanceId);
 	m_learning->save();
-	m_summaryLabel->setText(tr("Recorded: rule <b>%1</b> did not help.")
-								.arg(m.ruleTitle));
+	m_summaryLabel->setText(
+		tr("Recorded: rule <b>%1</b> did not help.").arg(m.ruleTitle));
 }
 
 void AnalysisPage::onPromoteNovel()
@@ -231,7 +231,8 @@ void AnalysisPage::onPromoteNovel()
 	QDialog dlg(this);
 	dlg.setWindowTitle(tr("Promote crash signature to a user rule"));
 	auto* v = new QVBoxLayout(&dlg);
-	v->addWidget(new QLabel(tr("Signature: <code>%1</code>").arg(m_currentFingerprint)));
+	v->addWidget(
+		new QLabel(tr("Signature: <code>%1</code>").arg(m_currentFingerprint)));
 	v->addWidget(new QLabel(tr("Sample: <code>%1</code>")
 								.arg(m_currentSampleLine.toHtmlEscaped())));
 
@@ -280,7 +281,8 @@ void AnalysisPage::onPromoteNovel()
 		QString::fromUtf8(/* plugin will fill this in via ctx */
 						  qgetenv("MESHMC_USER_RULES_DIR"));
 	if (userRulesDir.isEmpty())
-		userRulesDir = QDir::homePath() + "/.local/share/meshmc/errororacle/userrules";
+		userRulesDir =
+			QDir::homePath() + "/.local/share/meshmc/errororacle/userrules";
 	QDir().mkpath(userRulesDir);
 
 	QString fileName = "promoted-" + m_currentFingerprint + ".json";

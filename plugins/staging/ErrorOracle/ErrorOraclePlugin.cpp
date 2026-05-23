@@ -34,8 +34,9 @@ namespace
 		//             ErrorOracle/rules                  (current install)
 		//   3) macOS: Contents/PlugIns/mmcmodules/
 		//             ErrorOracle/rules                  (legacy fallback)
-		//   4) <appDir>/mmcmodules/ErrorOracle/rules     (Linux/Windows install)
-		//   5) <appDir>/ErrorOracle/rules                (build-tree staging)
+		//   4) <appDir>/mmcmodules/ErrorOracle/rules     (Linux/Windows
+		//   install) 5) <appDir>/ErrorOracle/rules                (build-tree
+		//   staging)
 		//
 		// Rule packs ship as plain JSON. On macOS that means they
 		// must live under Contents/Resources/ — Apple's codesign
@@ -43,7 +44,8 @@ namespace
 		// Contents/PlugIns/ as an unsigned subcomponent of the
 		// main executable and aborts with
 		//   "code object is not signed at all
-		//    In subcomponent: .../PlugIns/mmcmodules/ErrorOracle/rules/jvm.json"
+		//    In subcomponent:
+		//    .../PlugIns/mmcmodules/ErrorOracle/rules/jvm.json"
 		// Files under Resources/ are hashed opaquely via
 		// CodeResources, which is what we want.
 		// See MMCO_PLUGIN_DATA_DEST_DIR in the top-level

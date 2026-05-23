@@ -63,7 +63,7 @@ static void* g_launchMenu = nullptr; /* QMenu* (submenu)        */
 static void* g_showAction = nullptr;
 static void* g_hideAction = nullptr;
 static void* g_quitAction = nullptr;
-static QObject* g_guard = nullptr;	 /* anchor for our Qt connections */
+static QObject* g_guard = nullptr; /* anchor for our Qt connections */
 static QCheckBox* g_enabledCheckbox = nullptr;
 
 /* The launcher-wide setting key we mirror our "enabled" plugin-local
@@ -264,8 +264,8 @@ static void injectCheckboxIntoMeshMCPage()
 	if (!meshMCPage)
 		return;
 
-	auto* layout = meshMCPage->findChild<QVBoxLayout*>(
-		QStringLiteral("verticalLayout_9"));
+	auto* layout =
+		meshMCPage->findChild<QVBoxLayout*>(QStringLiteral("verticalLayout_9"));
 	if (!layout)
 		return;
 
@@ -274,7 +274,8 @@ static void injectCheckboxIntoMeshMCPage()
 	auto* gl = new QVBoxLayout(groupBox);
 
 	g_enabledCheckbox = new QCheckBox(
-		QObject::tr("Show MeshMC system tray icon (Restart required.)"), groupBox);
+		QObject::tr("Show MeshMC system tray icon (Restart required.)"),
+		groupBox);
 	g_enabledCheckbox->setObjectName(QStringLiteral("systemTrayEnabledCheck"));
 	g_enabledCheckbox->setToolTip(QObject::tr(
 		"When on, MeshMC keeps a persistent tray icon with quick-launch "
@@ -287,9 +288,8 @@ static void injectCheckboxIntoMeshMCPage()
 
 	bool current = false;
 	if (g_ctx) {
-		const char* v =
-			g_ctx->app_setting_get(g_ctx->module_handle,
-								   SETTING_GLOBAL_ENABLED);
+		const char* v = g_ctx->app_setting_get(g_ctx->module_handle,
+											   SETTING_GLOBAL_ENABLED);
 		if (v) {
 			QString s = QString::fromUtf8(v).trimmed().toLower();
 			current = s == QLatin1String("1") || s == QLatin1String("true") ||
@@ -298,15 +298,14 @@ static void injectCheckboxIntoMeshMCPage()
 	}
 	g_enabledCheckbox->setChecked(current);
 
-	QObject::connect(g_enabledCheckbox, &QCheckBox::toggled, g_guard,
-					 [](bool checked) {
-						 if (!g_ctx)
-							 return;
-						 g_ctx->app_setting_set(g_ctx->module_handle,
-												SETTING_GLOBAL_ENABLED,
-												checked ? "1" : "0");
-						 settingSetBool("enabled", checked);
-					 });
+	QObject::connect(
+		g_enabledCheckbox, &QCheckBox::toggled, g_guard, [](bool checked) {
+			if (!g_ctx)
+				return;
+			g_ctx->app_setting_set(g_ctx->module_handle, SETTING_GLOBAL_ENABLED,
+								   checked ? "1" : "0");
+			settingSetBool("enabled", checked);
+		});
 }
 
 /* Hook handler for MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN — replaces
@@ -377,7 +376,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	 * setting so the user can toggle it from Settings → MeshMC. The
 	 * global setting wins on conflict — every plugin-local read
 	 * delegates here first. */
-	if (!ctx->app_setting_contains(ctx->module_handle, SETTING_GLOBAL_ENABLED)) {
+	if (!ctx->app_setting_contains(ctx->module_handle,
+								   SETTING_GLOBAL_ENABLED)) {
 		/* First run — seed from the plugin-local value (if any), otherwise
 		 * default ON. */
 		ctx->app_setting_register(ctx->module_handle, SETTING_GLOBAL_ENABLED,
@@ -385,14 +385,13 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	}
 	bool globalEnabled = false;
 	{
-		const char* v = ctx->app_setting_get(ctx->module_handle,
-											 SETTING_GLOBAL_ENABLED);
+		const char* v =
+			ctx->app_setting_get(ctx->module_handle, SETTING_GLOBAL_ENABLED);
 		if (v) {
 			QString s = QString::fromUtf8(v).trimmed().toLower();
-			globalEnabled = s == QLatin1String("1") ||
-							s == QLatin1String("true") ||
-							s == QLatin1String("yes") ||
-							s == QLatin1String("on");
+			globalEnabled =
+				s == QLatin1String("1") || s == QLatin1String("true") ||
+				s == QLatin1String("yes") || s == QLatin1String("on");
 		}
 	}
 	/* Re-sync the plugin-local copy so existing call-sites see the

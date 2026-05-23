@@ -18,11 +18,10 @@
 #include "GitRepo.h"
 #include "GitVersioningPage.h"
 
-MMCO_DEFINE_MODULE(
-	"GitVersioning", "1.0.0", "Project Tick",
-	"Track instance changes as Git commits — snapshot, restore, "
-	"per-file history, tags.",
-	"GPL-3.0-or-later");
+MMCO_DEFINE_MODULE("GitVersioning", "1.0.0", "Project Tick",
+				   "Track instance changes as Git commits — snapshot, restore, "
+				   "per-file history, tags.",
+				   "GPL-3.0-or-later");
 
 static MMCOContext* g_ctx = nullptr;
 static constexpr const char SETTING_AUTO_SNAPSHOT[] =
@@ -38,8 +37,8 @@ static bool autoSnapshotEnabled()
 	if (!g_ctx->app_setting_contains(g_ctx->module_handle,
 									 SETTING_AUTO_SNAPSHOT))
 		return false;
-	const char* v = g_ctx->app_setting_get(g_ctx->module_handle,
-										   SETTING_AUTO_SNAPSHOT);
+	const char* v =
+		g_ctx->app_setting_get(g_ctx->module_handle, SETTING_AUTO_SNAPSHOT);
 	if (!v)
 		return false;
 	QString s = QString::fromUtf8(v).trimmed().toLower();
@@ -53,8 +52,8 @@ static void ensureSettingRegistered()
 		return;
 	if (!g_ctx->app_setting_contains(g_ctx->module_handle,
 									 SETTING_AUTO_SNAPSHOT))
-		g_ctx->app_setting_register(g_ctx->module_handle,
-									SETTING_AUTO_SNAPSHOT, "0");
+		g_ctx->app_setting_register(g_ctx->module_handle, SETTING_AUTO_SNAPSHOT,
+									"0");
 }
 
 static void injectCheckboxIntoMeshMCPage()
@@ -69,8 +68,8 @@ static void injectCheckboxIntoMeshMCPage()
 	if (!meshMCPage)
 		return;
 
-	auto* layout = meshMCPage->findChild<QVBoxLayout*>(
-		QStringLiteral("verticalLayout_9"));
+	auto* layout =
+		meshMCPage->findChild<QVBoxLayout*>(QStringLiteral("verticalLayout_9"));
 	if (!layout)
 		return;
 
@@ -82,10 +81,10 @@ static void injectCheckboxIntoMeshMCPage()
 		QObject::tr("Auto-snapshot instance state before every launch"),
 		groupBox);
 	g_checkbox->setObjectName(QStringLiteral("gitAutoSnapshotCheck"));
-	g_checkbox->setToolTip(QObject::tr(
-		"Commit any pending changes to the instance's Git history "
-		"right before the JVM starts. The history lives in the "
-		"instance's .history/ directory."));
+	g_checkbox->setToolTip(
+		QObject::tr("Commit any pending changes to the instance's Git history "
+					"right before the JVM starts. The history lives in the "
+					"instance's .history/ directory."));
 	gl->addWidget(g_checkbox);
 
 	if (!g_gitAvailable) {
@@ -117,10 +116,9 @@ static int on_app_initialized(void*, uint32_t, void*, void*)
 		QByteArray msg = "git detected: " + GitRepo::gitVersion().toUtf8();
 		MMCO_LOG(g_ctx, msg.constData());
 	} else if (g_ctx) {
-		MMCO_WARN(g_ctx,
-				  "system git not found — GitVersioning will run in "
-				  "read-only mode (instance page still visible but "
-				  "every operation will fail gracefully).");
+		MMCO_WARN(g_ctx, "system git not found — GitVersioning will run in "
+						 "read-only mode (instance page still visible but "
+						 "every operation will fail gracefully).");
 	}
 
 	g_guard = new QObject();
@@ -150,8 +148,7 @@ static int on_pre_launch(void*, uint32_t, void* payload, void*)
 	if (!repo.isInitialized()) {
 		QString err;
 		if (!repo.initialize(&err)) {
-			QByteArray msg =
-				"GitVersioning: init failed: " + err.toUtf8();
+			QByteArray msg = "GitVersioning: init failed: " + err.toUtf8();
 			MMCO_WARN(g_ctx, msg.constData());
 			return 0;
 		}
@@ -209,8 +206,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 
 	ctx->ui_register_instance_action(
 		ctx->module_handle, "Version History",
-		"View and manage the instance's snapshot history",
-		"version-control", "git-versioning");
+		"View and manage the instance's snapshot history", "version-control",
+		"git-versioning");
 
 	MMCO_LOG(ctx, "GitVersioning ready.");
 	return 0;

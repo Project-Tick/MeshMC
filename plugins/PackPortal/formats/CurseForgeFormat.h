@@ -22,16 +22,16 @@
 namespace pack::curseforge
 {
 
-/* Emit manifest.json + modlist.html. Returns the manifest bytes;
- * modlist HTML returned through the out-parameter. */
-QByteArray buildManifest(const ExportStage& stage, QByteArray* modlistHtml);
+	/* Emit manifest.json + modlist.html. Returns the manifest bytes;
+	 * modlist HTML returned through the out-parameter. */
+	QByteArray buildManifest(const ExportStage& stage, QByteArray* modlistHtml);
 
-/* Parse manifest.json. Files with project+file id stay external,
- * everything else is reported with `embed=true` so the caller knows
- * to look under overrides/. */
-bool parseManifest(const QByteArray& json, PackInfo& info,
-				   QList<PackFile>& outFiles, QString* errorMsg = nullptr);
+	/* Parse manifest.json. Files with project+file id stay external,
+	 * everything else is reported with `embed=true` so the caller knows
+	 * to look under overrides/. */
+	bool parseManifest(const QByteArray& json, PackInfo& info,
+					   QList<PackFile>& outFiles, QString* errorMsg = nullptr);
 
-QString suggestedFileName(const PackInfo& info);
+	QString suggestedFileName(const PackInfo& info);
 
 } // namespace pack::curseforge

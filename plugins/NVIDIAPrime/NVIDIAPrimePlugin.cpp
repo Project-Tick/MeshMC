@@ -99,14 +99,13 @@ static void injectCheckboxIntoMinecraftPage()
 	/* Save immediately when toggled — avoids relying on a
 	 * close-dialog hook that would fire after the checkbox (and the
 	 * page widget) is already destroyed. */
-	QObject::connect(g_primeCheckbox, &QCheckBox::toggled, g_guard,
-					 [](bool checked) {
-						 if (!g_ctx)
-							 return;
-						 g_ctx->app_setting_set(g_ctx->module_handle,
-												SETTING_KEY,
-												checked ? "1" : "0");
-					 });
+	QObject::connect(
+		g_primeCheckbox, &QCheckBox::toggled, g_guard, [](bool checked) {
+			if (!g_ctx)
+				return;
+			g_ctx->app_setting_set(g_ctx->module_handle, SETTING_KEY,
+								   checked ? "1" : "0");
+		});
 }
 
 /* Hook handler for MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN — the C-ABI

@@ -377,9 +377,9 @@ class PluginManager : public QObject
 	static const char* api_ui_themed_icon(void* mh, const char* name);
 
 	/* Section 23: Instance running-state signal bridge (ABI 3+) */
-	static int
-	api_instance_running_register(void* mh, const char* instance_id,
-								  MMCOInstanceRunningCallback cb, void* ud);
+	static int api_instance_running_register(void* mh, const char* instance_id,
+											 MMCOInstanceRunningCallback cb,
+											 void* ud);
 	static int api_instance_running_unregister(void* mh,
 											   const char* instance_id);
 
@@ -389,18 +389,16 @@ class PluginManager : public QObject
 												const char* key);
 	static int api_instance_setting_set(void* mh, const char* instance_id,
 										const char* key, const char* value);
-	static int api_instance_setting_register(void* mh,
-											 const char* instance_id,
+	static int api_instance_setting_register(void* mh, const char* instance_id,
 											 const char* key,
 											 const char* default_value);
-	static int
-	api_instance_setting_register_override(void* mh, const char* instance_id,
-										   const char* key,
-										   const char* gate_key);
+	static int api_instance_setting_register_override(void* mh,
+													  const char* instance_id,
+													  const char* key,
+													  const char* gate_key);
 	static int api_instance_setting_reset(void* mh, const char* instance_id,
 										  const char* key);
-	static int api_instance_setting_contains(void* mh,
-											 const char* instance_id,
+	static int api_instance_setting_contains(void* mh, const char* instance_id,
 											 const char* key);
 
 	/* Section 25: Account / skin / cape access (ABI 3+) */
@@ -408,19 +406,17 @@ class PluginManager : public QObject
 	static int api_account_is_msa_by_id(void* mh, const char* account_id);
 	static const char* api_account_get_access_token(void* mh,
 													const char* account_id);
-	static const char*
-	api_account_get_current_cape_id(void* mh, const char* account_id);
+	static const char* api_account_get_current_cape_id(void* mh,
+													   const char* account_id);
 	static const char* api_account_get_skin_variant(void* mh,
 													const char* account_id);
 	static int64_t api_account_get_skin_blob(void* mh, const char* account_id,
 											 const void** out_ptr);
 	static int api_account_cape_count(void* mh, const char* account_id);
-	static const char* api_account_cape_get_id(void* mh,
-											   const char* account_id,
+	static const char* api_account_cape_get_id(void* mh, const char* account_id,
 											   int index);
-	static const char* api_account_cape_get_alias(void* mh,
-												  const char* account_id,
-												  int index);
+	static const char*
+	api_account_cape_get_alias(void* mh, const char* account_id, int index);
 	static int64_t api_account_cape_get_blob(void* mh, const char* account_id,
 											 int index, const void** out_ptr);
 	static int api_account_set_skin_variant(void* mh, const char* account_id,
@@ -625,11 +621,11 @@ class PluginManager : public QObject
 	void releaseTrayResourcesForModule(void* module_handle);
 
 	/* Wire the two Application Qt signals we re-publish as hooks:
-	 *   • globalSettingsAboutToOpen   -> MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN
-	 *   • instanceSettingsPageCreated -> MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED
-	 * Called once from initializeAll() after modules are up. The
-	 * connections are owned by `this` (PluginManager is a QObject)
-	 * and severed automatically on destruction. */
+	 *   • globalSettingsAboutToOpen   ->
+	 * MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN • instanceSettingsPageCreated ->
+	 * MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED Called once from initializeAll()
+	 * after modules are up. The connections are owned by `this` (PluginManager
+	 * is a QObject) and severed automatically on destruction. */
 	void connectAppSignals();
 
 	bool m_shutdownDone = false;

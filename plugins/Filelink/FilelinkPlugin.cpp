@@ -93,8 +93,8 @@ static QString resolveShortcutIconPath(const QString& iconKey)
 	/* Prefer the on-disk path the launcher already keeps for the
 	 * icon (custom user icons live as files; built-ins resolve to a
 	 * Qt resource path which Windows .lnk can't reference). */
-	const char* existing = g_ctx->icon_list_get_file_path(
-		g_ctx->module_handle, keyUtf8.constData());
+	const char* existing = g_ctx->icon_list_get_file_path(g_ctx->module_handle,
+														  keyUtf8.constData());
 	if (existing && *existing && QFileInfo::exists(QString::fromUtf8(existing)))
 		return QString::fromUtf8(existing);
 
@@ -318,8 +318,8 @@ static void showFilelinkDialog(const QString& preselectedId = {})
 		const QString id = QString::fromUtf8(idC);
 		if (!preselectedId.isEmpty() && id != preselectedId)
 			continue;
-		const char* nameC =
-			g_ctx->instance_get_name(g_ctx->module_handle, id.toUtf8().constData());
+		const char* nameC = g_ctx->instance_get_name(g_ctx->module_handle,
+													 id.toUtf8().constData());
 		instNames << (nameC ? QString::fromUtf8(nameC) : id);
 		instIds << id;
 	}

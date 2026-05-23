@@ -128,8 +128,7 @@ static void runExportDialogFor(const QString& instanceId)
 		QObject::tr("Skip logs / crash reports / screenshots"), &dlg);
 	chkSkipVolatile->setChecked(true);
 	auto* chkEmbedAll = new QCheckBox(
-		QObject::tr("Embed every mod (no external download references)"),
-		&dlg);
+		QObject::tr("Embed every mod (no external download references)"), &dlg);
 	root->addWidget(chkSkipWorlds);
 	root->addWidget(chkSkipVolatile);
 	root->addWidget(chkEmbedAll);
@@ -181,8 +180,8 @@ static void runExportDialogFor(const QString& instanceId)
 		}
 
 		QString out = QFileDialog::getSaveFileName(
-			&dlg, QObject::tr("Export pack"),
-			QDir::home().filePath(suggested), filter);
+			&dlg, QObject::tr("Export pack"), QDir::home().filePath(suggested),
+			filter);
 		if (out.isEmpty())
 			return;
 
@@ -197,16 +196,15 @@ static void runExportDialogFor(const QString& instanceId)
 
 		if (!r.ok) {
 			resultLabel->setText(
-				QObject::tr(
-					"<b style='color:#cc6666'>Export failed:</b> %1")
+				QObject::tr("<b style='color:#cc6666'>Export failed:</b> %1")
 					.arg(r.errorMsg.toHtmlEscaped()));
 		} else {
 			QString warnHtml;
 			if (!r.warnings.isEmpty()) {
 				warnHtml = QObject::tr("<br><br><b>Warnings:</b><ul>");
 				for (const auto& w : r.warnings)
-					warnHtml += QStringLiteral("<li>%1</li>")
-									.arg(w.toHtmlEscaped());
+					warnHtml +=
+						QStringLiteral("<li>%1</li>").arg(w.toHtmlEscaped());
 				warnHtml += QStringLiteral("</ul>");
 			}
 			resultLabel->setText(
@@ -254,19 +252,17 @@ static int on_ui_main_ready(void*, uint32_t, void* payload, void*)
 		}
 	}
 	if (!mainWindow) {
-		MMCO_WARN(g_ctx,
-				  "PackPortal: MainWindow not reachable; "
-				  "actionExportInstance override skipped.");
+		MMCO_WARN(g_ctx, "PackPortal: MainWindow not reachable; "
+						 "actionExportInstance override skipped.");
 		return 0;
 	}
 
-	auto* action = mainWindow->findChild<QAction*>(
-		QStringLiteral("actionExportInstance"));
+	auto* action =
+		mainWindow->findChild<QAction*>(QStringLiteral("actionExportInstance"));
 	if (!action) {
-		MMCO_WARN(g_ctx,
-				  "PackPortal: actionExportInstance not found on "
-				  "MainWindow — host may have renamed it. Skipping "
-				  "override.");
+		MMCO_WARN(g_ctx, "PackPortal: actionExportInstance not found on "
+						 "MainWindow — host may have renamed it. Skipping "
+						 "override.");
 		return 0;
 	}
 
@@ -279,9 +275,8 @@ static int on_ui_main_ready(void*, uint32_t, void* payload, void*)
 	QObject::connect(action, &QAction::triggered, g_guard,
 					 []() { runExportDialogFor(currentSelectedInstanceId()); });
 
-	MMCO_LOG(g_ctx,
-			 "PackPortal: actionExportInstance hijacked — multi-format "
-			 "export dialog now active.");
+	MMCO_LOG(g_ctx, "PackPortal: actionExportInstance hijacked — multi-format "
+					"export dialog now active.");
 	return 0;
 }
 

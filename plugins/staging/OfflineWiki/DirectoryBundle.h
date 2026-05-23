@@ -4,7 +4,8 @@
  * DirectoryBundle — wiki backed by a plain directory tree.
  *
  * Layout:
- *   index.json   — { name, articles: [{slug, title, file, category?}], nav?: [...] }
+ *   index.json   — { name, articles: [{slug, title, file, category?}], nav?:
+ * [...] }
  *   *.md         — markdown articles, addressed by their `file` field
  *   media/       — images, fonts, etc. referenced from articles
  *
@@ -22,11 +23,26 @@ class DirectoryBundle : public WikiBundle
   public:
 	bool open(const QString& dir);
 
-	QString name() const override { return m_name; }
-	QString format() const override { return QStringLiteral("directory"); }
-	QString rootPath() const override { return m_root; }
-	bool isOpen() const override { return !m_root.isEmpty(); }
-	int articleCount() const override { return m_articles.size(); }
+	QString name() const override
+	{
+		return m_name;
+	}
+	QString format() const override
+	{
+		return QStringLiteral("directory");
+	}
+	QString rootPath() const override
+	{
+		return m_root;
+	}
+	bool isOpen() const override
+	{
+		return !m_root.isEmpty();
+	}
+	int articleCount() const override
+	{
+		return m_articles.size();
+	}
 
 	WikiNavNode buildNav() const override;
 	QString renderArticleHtml(const QString& slug) const override;

@@ -76,8 +76,7 @@ QString DiscordIpc::candidatePipePath(int index) const
 	bases << QStringLiteral("/tmp");
 
 	QStringList suffixes;
-	suffixes << QString()
-			 << QStringLiteral("app/com.discordapp.Discord/")
+	suffixes << QString() << QStringLiteral("app/com.discordapp.Discord/")
 			 << QStringLiteral("snap.discord/")
 			 << QStringLiteral("snap.discord-canary/");
 
@@ -126,9 +125,8 @@ void DiscordIpc::tryNextPipe()
 		 * after the first announcement — the reconnect timer will
 		 * try again later. */
 		if (!m_errorEmitted) {
-			emit errorOccurred(
-				QStringLiteral("Discord IPC: no socket in 0..9 "
-							   "(is Discord running?)"));
+			emit errorOccurred(QStringLiteral("Discord IPC: no socket in 0..9 "
+											  "(is Discord running?)"));
 			m_errorEmitted = true;
 		}
 		setState(State::Disconnected);
@@ -156,14 +154,11 @@ void DiscordIpc::tryNextPipe()
 
 	setState(State::Connecting);
 	m_socket = new QLocalSocket(this);
-	connect(m_socket, &QLocalSocket::connected, this,
-			&DiscordIpc::onConnected);
+	connect(m_socket, &QLocalSocket::connected, this, &DiscordIpc::onConnected);
 	connect(m_socket, &QLocalSocket::disconnected, this,
 			&DiscordIpc::onDisconnected);
-	connect(m_socket, &QLocalSocket::readyRead, this,
-			&DiscordIpc::onReadyRead);
-	connect(m_socket, &QLocalSocket::errorOccurred, this,
-			&DiscordIpc::onError);
+	connect(m_socket, &QLocalSocket::readyRead, this, &DiscordIpc::onReadyRead);
+	connect(m_socket, &QLocalSocket::errorOccurred, this, &DiscordIpc::onError);
 
 	/* Use setServerName() + connectToServer(OpenMode) rather than the
 	 * combined connectToServer(name, OpenMode) overload — the latter
@@ -235,8 +230,8 @@ void DiscordIpc::writeFrame(Opcode op, const QByteArray& payload)
 	if (!m_socket || m_socket->state() != QLocalSocket::ConnectedState)
 		return;
 	quint32 opLE = qToLittleEndian<quint32>(static_cast<quint32>(op));
-	quint32 lenLE = qToLittleEndian<quint32>(
-		static_cast<quint32>(payload.size()));
+	quint32 lenLE =
+		qToLittleEndian<quint32>(static_cast<quint32>(payload.size()));
 	m_socket->write(reinterpret_cast<const char*>(&opLE), sizeof(opLE));
 	m_socket->write(reinterpret_cast<const char*>(&lenLE), sizeof(lenLE));
 	m_socket->write(payload);
@@ -301,7 +296,8 @@ void DiscordIpc::sendHandshake()
 	QJsonObject hello;
 	hello[QStringLiteral("v")] = 1;
 	hello[QStringLiteral("client_id")] = m_clientId;
-	writeFrame(OpHandshake, QJsonDocument(hello).toJson(QJsonDocument::Compact));
+	writeFrame(OpHandshake,
+			   QJsonDocument(hello).toJson(QJsonDocument::Compact));
 }
 
 void DiscordIpc::setActivity(const DiscordActivity& a)
@@ -319,7 +315,8 @@ void DiscordIpc::clearActivity()
 		return;
 
 	QJsonObject args;
-	args[QStringLiteral("pid")] = static_cast<int>(QCoreApplication::applicationPid());
+	args[QStringLiteral("pid")] =
+		static_cast<int>(QCoreApplication::applicationPid());
 	/* "activity": null → clears */
 	args[QStringLiteral("activity")] = QJsonValue();
 

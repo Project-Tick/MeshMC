@@ -119,13 +119,11 @@ void PluginManager::initializeAll()
 	// the (size, mtime) tuple of each .mmco is enough to skip the
 	// GpgME round-trip entirely. First-startup cost stays the same.
 	{
-		const QString cacheDir =
-			QStandardPaths::writableLocation(
-				QStandardPaths::AppLocalDataLocation);
+		const QString cacheDir = QStandardPaths::writableLocation(
+			QStandardPaths::AppLocalDataLocation);
 		if (!cacheDir.isEmpty()) {
-			PluginSignature::setCachePath(
-				QDir(cacheDir).filePath(QStringLiteral(
-					"plugin-signature-cache.json")));
+			PluginSignature::setCachePath(QDir(cacheDir).filePath(
+				QStringLiteral("plugin-signature-cache.json")));
 		}
 	}
 
@@ -2838,30 +2836,30 @@ void PluginManager::connectAppSignals()
 			 * firing once the settings dialog is destroyed. */
 			BaseInstance* capturedRaw = inst;
 			QByteArray capturedId = idBytes;
-			QObject::connect(
-				page, &InstanceSettingsPage::settingsLoaded, page,
-				[this, page, capturedRaw, capturedId]() {
-					MMCOInstanceSettingsPageEvent ev2{};
-					if (capturedRaw) {
-						ev2.instance_id = capturedId.constData();
-						ev2.instance_handle = capturedRaw;
-					}
-					ev2.page_handle = page;
-					this->dispatchHook(
-						MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED, &ev2);
-				});
-			QObject::connect(
-				page, &InstanceSettingsPage::settingsAboutToApply, page,
-				[this, page, capturedRaw, capturedId]() {
-					MMCOInstanceSettingsPageEvent ev2{};
-					if (capturedRaw) {
-						ev2.instance_id = capturedId.constData();
-						ev2.instance_handle = capturedRaw;
-					}
-					ev2.page_handle = page;
-					this->dispatchHook(
-						MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING, &ev2);
-				});
+			QObject::connect(page, &InstanceSettingsPage::settingsLoaded, page,
+							 [this, page, capturedRaw, capturedId]() {
+								 MMCOInstanceSettingsPageEvent ev2{};
+								 if (capturedRaw) {
+									 ev2.instance_id = capturedId.constData();
+									 ev2.instance_handle = capturedRaw;
+								 }
+								 ev2.page_handle = page;
+								 this->dispatchHook(
+									 MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED,
+									 &ev2);
+							 });
+			QObject::connect(page, &InstanceSettingsPage::settingsAboutToApply,
+							 page, [this, page, capturedRaw, capturedId]() {
+								 MMCOInstanceSettingsPageEvent ev2{};
+								 if (capturedRaw) {
+									 ev2.instance_id = capturedId.constData();
+									 ev2.instance_handle = capturedRaw;
+								 }
+								 ev2.page_handle = page;
+								 this->dispatchHook(
+									 MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING,
+									 &ev2);
+							 });
 		});
 }
 
@@ -2986,12 +2984,11 @@ int PluginManager::api_instance_running_register(void* mh,
 	 * connection actually anchors on; instanceId is copied so we
 	 * survive instance rename / re-bind. */
 	const QByteArray idUtf8 = qId.toUtf8();
-	QObject::connect(
-		inst.get(), &BaseInstance::runningStatusChanged, guard,
-		[cb, ud, idUtf8](bool running) {
-			if (cb)
-				cb(ud, idUtf8.constData(), running ? 1 : 0);
-		});
+	QObject::connect(inst.get(), &BaseInstance::runningStatusChanged, guard,
+					 [cb, ud, idUtf8](bool running) {
+						 if (cb)
+							 cb(ud, idUtf8.constData(), running ? 1 : 0);
+					 });
 
 	vec.append(rec);
 	return 0;
@@ -3358,15 +3355,16 @@ int PluginManager::api_main_window_is_visible(void* mh)
 
 namespace
 {
-/* Resolve an instance pointer by id without polluting the public
- * surface with another helper signature. Returns nullptr if the id
- * does not resolve or the host has no instance list yet. */
-InstancePtr resolveInstance(Application* app, const char* instance_id)
-{
-	if (!app || !app->instances() || !instance_id)
-		return {};
-	return app->instances()->getInstanceById(QString::fromUtf8(instance_id));
-}
+	/* Resolve an instance pointer by id without polluting the public
+	 * surface with another helper signature. Returns nullptr if the id
+	 * does not resolve or the host has no instance list yet. */
+	InstancePtr resolveInstance(Application* app, const char* instance_id)
+	{
+		if (!app || !app->instances() || !instance_id)
+			return {};
+		return app->instances()->getInstanceById(
+			QString::fromUtf8(instance_id));
+	}
 } // namespace
 
 const char* PluginManager::api_instance_setting_get(void* mh,
@@ -3423,10 +3421,8 @@ int PluginManager::api_instance_setting_register(void* mh,
 	return 0;
 }
 
-int PluginManager::api_instance_setting_register_override(void* mh,
-														  const char* instance_id,
-														  const char* key,
-														  const char* gate_key)
+int PluginManager::api_instance_setting_register_override(
+	void* mh, const char* instance_id, const char* key, const char* gate_key)
 {
 	auto* r = rt(mh);
 	if (!r || !key || !gate_key)
@@ -3490,25 +3486,25 @@ int PluginManager::api_instance_setting_contains(void* mh,
 
 namespace
 {
-/* Resolve a MinecraftAccountPtr by the same string id S7's
- * account_get_profile_id() returns. Linear scan; the account list is
- * tiny (typically < 5 entries) so this is cheaper than maintaining a
- * cache that needs invalidation. */
-MinecraftAccountPtr resolveAccount(Application* app, const char* account_id)
-{
-	if (!app || !account_id)
+	/* Resolve a MinecraftAccountPtr by the same string id S7's
+	 * account_get_profile_id() returns. Linear scan; the account list is
+	 * tiny (typically < 5 entries) so this is cheaper than maintaining a
+	 * cache that needs invalidation. */
+	MinecraftAccountPtr resolveAccount(Application* app, const char* account_id)
+	{
+		if (!app || !account_id)
+			return {};
+		auto accounts = app->accounts();
+		if (!accounts)
+			return {};
+		const QString qId = QString::fromUtf8(account_id);
+		for (int i = 0; i < accounts->count(); ++i) {
+			auto a = accounts->at(i);
+			if (a && a->profileId() == qId)
+				return a;
+		}
 		return {};
-	auto accounts = app->accounts();
-	if (!accounts)
-		return {};
-	const QString qId = QString::fromUtf8(account_id);
-	for (int i = 0; i < accounts->count(); ++i) {
-		auto a = accounts->at(i);
-		if (a && a->profileId() == qId)
-			return a;
 	}
-	return {};
-}
 } // namespace
 
 const char* PluginManager::api_account_get_id_by_index(void* mh, int index)
@@ -3623,23 +3619,23 @@ int PluginManager::api_account_cape_count(void* mh, const char* account_id)
 
 namespace
 {
-/* Index → cape pair on the active account, using deterministic
- * insertion order (QMap iterates sorted by key, which matches what
- * SkinManagerDialog used to do when it walked the QMap directly). */
-const Cape* capeAt(MinecraftAccountPtr a, int index)
-{
-	if (!a || !a->accountData() || index < 0)
+	/* Index → cape pair on the active account, using deterministic
+	 * insertion order (QMap iterates sorted by key, which matches what
+	 * SkinManagerDialog used to do when it walked the QMap directly). */
+	const Cape* capeAt(MinecraftAccountPtr a, int index)
+	{
+		if (!a || !a->accountData() || index < 0)
+			return nullptr;
+		const auto& capes = a->accountData()->minecraftProfile.capes;
+		if (index >= capes.size())
+			return nullptr;
+		int i = 0;
+		for (auto it = capes.cbegin(); it != capes.cend(); ++it, ++i) {
+			if (i == index)
+				return &it.value();
+		}
 		return nullptr;
-	const auto& capes = a->accountData()->minecraftProfile.capes;
-	if (index >= capes.size())
-		return nullptr;
-	int i = 0;
-	for (auto it = capes.cbegin(); it != capes.cend(); ++it, ++i) {
-		if (i == index)
-			return &it.value();
 	}
-	return nullptr;
-}
 } // namespace
 
 const char* PluginManager::api_account_cape_get_id(void* mh,
@@ -3735,8 +3731,7 @@ int PluginManager::api_account_set_skin_blob(void* mh, const char* account_id,
 		return -1;
 	if (data && size > 0)
 		a->accountData()->minecraftProfile.skin.data =
-			QByteArray(static_cast<const char*>(data),
-					   static_cast<int>(size));
+			QByteArray(static_cast<const char*>(data), static_cast<int>(size));
 	else
 		a->accountData()->minecraftProfile.skin.data.clear();
 	return 0;
@@ -3757,13 +3752,11 @@ int PluginManager::api_account_skin_upload(void* mh, const char* account_id,
 
 	const QByteArray bytes(static_cast<const char*>(png_bytes),
 						   static_cast<int>(size));
-	const QString variantStr =
-		QString::fromUtf8(variant).trimmed().toUpper();
-	const SkinUpload::Model model =
-		variantStr == QLatin1String("SLIM") ||
-				variantStr == QLatin1String("ALEX")
-			? SkinUpload::ALEX
-			: SkinUpload::STEVE;
+	const QString variantStr = QString::fromUtf8(variant).trimmed().toUpper();
+	const SkinUpload::Model model = variantStr == QLatin1String("SLIM") ||
+											variantStr == QLatin1String("ALEX")
+										? SkinUpload::ALEX
+										: SkinUpload::STEVE;
 
 	QWidget* parent = QApplication::activeWindow();
 	auto task = shared_qobject_ptr<SkinUpload>(

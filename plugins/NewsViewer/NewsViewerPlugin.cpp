@@ -111,9 +111,10 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_NEWS_UPDATED,
 					   on_news_updated, nullptr);
 
-	ctx->ui_register_instance_action_cb(ctx->module_handle, "All News",
-										"Open the news viewer with all sections", "news",
-										on_news_toolbar_action, nullptr);
+	ctx->ui_register_instance_action_cb(
+		ctx->module_handle, "All News",
+		"Open the news viewer with all sections", "news",
+		on_news_toolbar_action, nullptr);
 
 	MMCO_LOG(ctx, "NewsViewer initialized.");
 	return 0;

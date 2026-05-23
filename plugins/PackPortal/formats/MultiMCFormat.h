@@ -19,16 +19,17 @@
 namespace pack::multimc
 {
 
-/* The MultiMC export is a *directory tree* layered into the zip rather
- * than a separate JSON manifest, so the "manifest" the caller cares
- * about is just the synthesised instance.cfg / mmc-pack.json pair. */
-QByteArray buildInstanceCfg(const ExportStage& stage);
-QByteArray buildMmcPackJson(const ExportStage& stage);
+	/* The MultiMC export is a *directory tree* layered into the zip rather
+	 * than a separate JSON manifest, so the "manifest" the caller cares
+	 * about is just the synthesised instance.cfg / mmc-pack.json pair. */
+	QByteArray buildInstanceCfg(const ExportStage& stage);
+	QByteArray buildMmcPackJson(const ExportStage& stage);
 
-/* Parse an extracted MultiMC pack tree. instance.cfg + mmc-pack.json
- * are read from `rootDir`. The overrides are .minecraft/ inside. */
-bool parseTree(const QString& rootDir, PackInfo& info, QString* errorMsg = nullptr);
+	/* Parse an extracted MultiMC pack tree. instance.cfg + mmc-pack.json
+	 * are read from `rootDir`. The overrides are .minecraft/ inside. */
+	bool parseTree(const QString& rootDir, PackInfo& info,
+				   QString* errorMsg = nullptr);
 
-QString suggestedFileName(const PackInfo& info);
+	QString suggestedFileName(const PackInfo& info);
 
 } // namespace pack::multimc

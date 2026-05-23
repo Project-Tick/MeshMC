@@ -24,9 +24,9 @@
 #include <QProcess>
 
 struct GitCommit {
-	QString sha;		 // short sha (8 chars)
-	QString fullSha;	 // full 40-char sha
-	QString subject;	 // commit subject (single line)
+	QString sha;	 // short sha (8 chars)
+	QString fullSha; // full 40-char sha
+	QString subject; // commit subject (single line)
 	QString author;
 	QDateTime when;
 	qint64 sizeAdded = 0;	// +bytes (best-effort, from --shortstat)
@@ -37,7 +37,7 @@ struct GitCommit {
 
 struct GitRepoStatus {
 	bool initialized = false;
-	bool dirty = false;	  // working tree has changes
+	bool dirty = false; // working tree has changes
 	int untrackedCount = 0;
 	int modifiedCount = 0;
 	int deletedCount = 0;
@@ -54,8 +54,14 @@ class GitRepo
 	static QString gitVersion();
 
 	bool isInitialized() const;
-	QString repoDir() const { return m_repoDir; }
-	QString workTree() const { return m_instanceRoot; }
+	QString repoDir() const
+	{
+		return m_repoDir;
+	}
+	QString workTree() const
+	{
+		return m_instanceRoot;
+	}
 
 	/* Idempotent: creates .history/, runs `git init --bare`, writes a
 	 * sensible .gitignore for the work-tree, and pins the local author

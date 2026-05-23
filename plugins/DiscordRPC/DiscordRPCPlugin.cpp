@@ -186,9 +186,8 @@ static void on_instance_running(void* /*ud*/, const char* instance_id,
 		 * (it might have been late-resolved by the launcher). */
 		if (id == g_activeInstanceId) {
 			if (g_ctx) {
-				const char* mc =
-					g_ctx->instance_get_mc_version(g_ctx->module_handle,
-												   instance_id);
+				const char* mc = g_ctx->instance_get_mc_version(
+					g_ctx->module_handle, instance_id);
 				if (mc && *mc)
 					g_activeMcVersion = QString::fromUtf8(mc);
 			}

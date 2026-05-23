@@ -5,28 +5,28 @@
 
 namespace
 {
-Severity severityFromString(const QString& s)
-{
-	QString l = s.toLower();
-	if (l == QStringLiteral("high") || l == QStringLiteral("critical"))
-		return Severity::High;
-	if (l == QStringLiteral("low") || l == QStringLiteral("info"))
-		return Severity::Low;
-	return Severity::Medium;
-}
-
-int severityRank(Severity s)
-{
-	switch (s) {
-		case Severity::High:
-			return 2;
-		case Severity::Medium:
-			return 1;
-		case Severity::Low:
-		default:
-			return 0;
+	Severity severityFromString(const QString& s)
+	{
+		QString l = s.toLower();
+		if (l == QStringLiteral("high") || l == QStringLiteral("critical"))
+			return Severity::High;
+		if (l == QStringLiteral("low") || l == QStringLiteral("info"))
+			return Severity::Low;
+		return Severity::Medium;
 	}
-}
+
+	int severityRank(Severity s)
+	{
+		switch (s) {
+			case Severity::High:
+				return 2;
+			case Severity::Medium:
+				return 1;
+			case Severity::Low:
+			default:
+				return 0;
+		}
+	}
 } // namespace
 
 bool RuleEngine::loadDirectory(const QString& dir, QString* errorMsg)

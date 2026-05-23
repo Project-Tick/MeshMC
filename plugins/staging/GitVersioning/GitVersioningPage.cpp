@@ -5,19 +5,19 @@
 
 namespace
 {
-QString humanSize(qint64 bytes)
-{
-	if (bytes < 1024)
-		return QObject::tr("%1 B").arg(bytes);
-	double v = bytes / 1024.0;
-	if (v < 1024.0)
-		return QObject::tr("%1 KiB").arg(QString::number(v, 'f', 1));
-	v /= 1024.0;
-	if (v < 1024.0)
-		return QObject::tr("%1 MiB").arg(QString::number(v, 'f', 1));
-	v /= 1024.0;
-	return QObject::tr("%1 GiB").arg(QString::number(v, 'f', 2));
-}
+	QString humanSize(qint64 bytes)
+	{
+		if (bytes < 1024)
+			return QObject::tr("%1 B").arg(bytes);
+		double v = bytes / 1024.0;
+		if (v < 1024.0)
+			return QObject::tr("%1 KiB").arg(QString::number(v, 'f', 1));
+		v /= 1024.0;
+		if (v < 1024.0)
+			return QObject::tr("%1 MiB").arg(QString::number(v, 'f', 1));
+		v /= 1024.0;
+		return QObject::tr("%1 GiB").arg(QString::number(v, 'f', 2));
+	}
 } // namespace
 
 GitVersioningPage::GitVersioningPage(const QString& instanceId,
@@ -101,9 +101,8 @@ void GitVersioningPage::reloadHistory()
 {
 	auto st = m_repo.status();
 	if (!GitRepo::gitAvailable()) {
-		m_statusLabel->setText(
-			tr("<b>git</b> is not installed on your system. "
-			   "Install Git and reopen this page."));
+		m_statusLabel->setText(tr("<b>git</b> is not installed on your system. "
+								  "Install Git and reopen this page."));
 		m_commitBtn->setEnabled(false);
 		m_restoreBtn->setEnabled(false);
 		m_tagBtn->setEnabled(false);

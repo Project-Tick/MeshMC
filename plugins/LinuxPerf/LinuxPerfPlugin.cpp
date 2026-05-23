@@ -146,8 +146,8 @@ static bool ctxBoolInstance(const char* instanceId, const char* key)
 	if (!g_ctx->instance_setting_contains(g_ctx->module_handle, instanceId,
 										  key))
 		return false;
-	const char* v = g_ctx->instance_setting_get(g_ctx->module_handle,
-												instanceId, key);
+	const char* v =
+		g_ctx->instance_setting_get(g_ctx->module_handle, instanceId, key);
 	if (!v)
 		return false;
 	QString s = QString::fromUtf8(v).trimmed().toLower();
@@ -189,11 +189,11 @@ static void ensureInstanceSettingsRegistered(const char* instanceId)
 		g_ctx->instance_setting_register(g_ctx->module_handle, instanceId,
 										 SETTING_INSTANCE_OVERRIDE, "0");
 	}
-	g_ctx->instance_setting_register_override(g_ctx->module_handle,
-											  instanceId, SETTING_MANGOHUD,
+	g_ctx->instance_setting_register_override(g_ctx->module_handle, instanceId,
+											  SETTING_MANGOHUD,
 											  SETTING_INSTANCE_OVERRIDE);
-	g_ctx->instance_setting_register_override(g_ctx->module_handle,
-											  instanceId, SETTING_GAMEMODE,
+	g_ctx->instance_setting_register_override(g_ctx->module_handle, instanceId,
+											  SETTING_GAMEMODE,
 											  SETTING_INSTANCE_OVERRIDE);
 }
 
@@ -301,20 +301,18 @@ static void injectCheckboxesIntoMinecraftPage()
 	int spacerIdx = layout->count() - 1;
 	layout->insertWidget(spacerIdx, groupBox);
 
-	QObject::connect(g_mangoCheckbox, &QCheckBox::toggled, g_guard,
-					 [](bool checked) {
-						 if (g_ctx)
-							 g_ctx->app_setting_set(g_ctx->module_handle,
-													SETTING_MANGOHUD,
-													checked ? "1" : "0");
-					 });
-	QObject::connect(g_gamemodeCheckbox, &QCheckBox::toggled, g_guard,
-					 [](bool checked) {
-						 if (g_ctx)
-							 g_ctx->app_setting_set(g_ctx->module_handle,
-													SETTING_GAMEMODE,
-													checked ? "1" : "0");
-					 });
+	QObject::connect(
+		g_mangoCheckbox, &QCheckBox::toggled, g_guard, [](bool checked) {
+			if (g_ctx)
+				g_ctx->app_setting_set(g_ctx->module_handle, SETTING_MANGOHUD,
+									   checked ? "1" : "0");
+		});
+	QObject::connect(
+		g_gamemodeCheckbox, &QCheckBox::toggled, g_guard, [](bool checked) {
+			if (g_ctx)
+				g_ctx->app_setting_set(g_ctx->module_handle, SETTING_GAMEMODE,
+									   checked ? "1" : "0");
+		});
 }
 
 /* Per-page widget bag, keyed by the page QWidget* so we can refresh
@@ -333,8 +331,7 @@ static void syncInstanceWidgets(InstancePageWidgets* w)
 	if (!w || !g_ctx)
 		return;
 	const char* id = w->instanceId.constData();
-	const bool overrideEnabled =
-		ctxBoolInstance(id, SETTING_INSTANCE_OVERRIDE);
+	const bool overrideEnabled = ctxBoolInstance(id, SETTING_INSTANCE_OVERRIDE);
 	w->groupBox->setChecked(overrideEnabled);
 	w->mango->setChecked(isMangohudEnabledForInstance(id) &&
 						 w->mango->isEnabled());

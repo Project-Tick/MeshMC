@@ -588,8 +588,7 @@ struct MMCOContext {
 	int (*instance_setting_register)(void* mh, const char* instance_id,
 									 const char* key,
 									 const char* default_value);
-	int (*instance_setting_register_override)(void* mh,
-											  const char* instance_id,
+	int (*instance_setting_register_override)(void* mh, const char* instance_id,
 											  const char* key,
 											  const char* gate_key);
 	int (*instance_setting_reset)(void* mh, const char* instance_id,

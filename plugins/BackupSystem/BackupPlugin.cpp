@@ -79,13 +79,12 @@ static void injectCheckboxIntoMeshMCPage()
 
 	g_backupCheckbox->setChecked(is_enabled());
 
-	QObject::connect(g_backupCheckbox, &QCheckBox::toggled, g_guard,
-					 [](bool checked) {
-						 if (g_ctx)
-							 g_ctx->app_setting_set(g_ctx->module_handle,
-													SETTING_KEY,
-													checked ? "1" : "0");
-					 });
+	QObject::connect(
+		g_backupCheckbox, &QCheckBox::toggled, g_guard, [](bool checked) {
+			if (g_ctx)
+				g_ctx->app_setting_set(g_ctx->module_handle, SETTING_KEY,
+									   checked ? "1" : "0");
+		});
 }
 
 static int on_app_initialized(void* /*mh*/, uint32_t /*hook_id*/,

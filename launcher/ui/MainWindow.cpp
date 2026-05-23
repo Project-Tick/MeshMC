@@ -973,7 +973,8 @@ MainWindow::MainWindow(QWidget* parent)
 		MacOSMenuBar::Actions menuActions;
 		menuActions.addInstance = ui->actionAddInstance.operator->();
 		menuActions.launch = ui->actionLaunchInstance.operator->();
-		menuActions.launchOffline = ui->actionLaunchInstanceOffline.operator->();
+		menuActions.launchOffline =
+			ui->actionLaunchInstanceOffline.operator->();
 		menuActions.editInstance = ui->actionEditInstance.operator->();
 		menuActions.instanceSettings = ui->actionInstanceSettings.operator->();
 		menuActions.editNotes = ui->actionEditInstNotes.operator->();

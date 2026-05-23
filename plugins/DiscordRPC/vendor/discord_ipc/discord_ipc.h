@@ -34,7 +34,7 @@
 class DiscordActivity
 {
   public:
-	QString state;	  /* second line, e.g. "Playing on 1.21" */
+	QString state;	 /* second line, e.g. "Playing on 1.21" */
 	QString details; /* first line,  e.g. "MeshMC" */
 	QString largeImageKey;
 	QString largeImageText;

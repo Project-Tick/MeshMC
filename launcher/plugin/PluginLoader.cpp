@@ -80,7 +80,7 @@ QStringList PluginLoader::defaultSearchPaths()
 	QDir bundleDir(appDir);
 	if (bundleDir.cdUp()) { // MacOS -> Contents
 		paths << bundleDir.filePath("Resources/mmcmodules");
-		paths << bundleDir.filePath("PlugIns/mmcmodules");   // legacy
+		paths << bundleDir.filePath("PlugIns/mmcmodules"); // legacy
 	}
 	paths << QDir(appDir).filePath("mmcmodules"); // legacy
 #else

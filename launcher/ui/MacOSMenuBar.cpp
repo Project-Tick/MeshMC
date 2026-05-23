@@ -39,25 +39,23 @@
 
 namespace
 {
-inline void addIfPresent(QMenu* menu, QAction* action)
-{
-	if (menu && action) {
-		menu->addAction(action);
+	inline void addIfPresent(QMenu* menu, QAction* action)
+	{
+		if (menu && action) {
+			menu->addAction(action);
+		}
 	}
-}
 
 #ifdef Q_OS_MACOS
-bool useNativeMenuBar()
-{
-	if (!APPLICATION || !APPLICATION->settings()) {
-		return true;
+	bool useNativeMenuBar()
+	{
+		if (!APPLICATION || !APPLICATION->settings()) {
+			return true;
+		}
+		return APPLICATION->settings()->get(MacOSMenuBar::kSettingKey).toBool();
 	}
-	return APPLICATION->settings()
-		->get(MacOSMenuBar::kSettingKey)
-		.toBool();
-}
 #endif
-}  // namespace
+} // namespace
 
 QMenuBar* MacOSMenuBar::install(QMainWindow* window, const Actions& actions)
 {
@@ -145,8 +143,8 @@ QMenuBar* MacOSMenuBar::install(QMainWindow* window, const Actions& actions)
 	}
 
 	// === Accounts =========================================================
-	auto* accountsMenu = bar->addMenu(
-		QCoreApplication::translate("MacOSMenuBar", "&Accounts"));
+	auto* accountsMenu =
+		bar->addMenu(QCoreApplication::translate("MacOSMenuBar", "&Accounts"));
 	addIfPresent(accountsMenu, actions.manageAccounts);
 	if (actions.accountSubmenu) {
 		// Flatten the dynamic profile list into the menu so users don't have

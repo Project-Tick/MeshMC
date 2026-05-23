@@ -26,9 +26,7 @@ QString BackupManager::stageInstance() const
 		QStandardPaths::writableLocation(QStandardPaths::TempLocation);
 	const QString stage = QDir(tempBase).filePath(
 		QStringLiteral("meshmc-backup-%1")
-			.arg(QUuid::createUuid()
-					 .toString(QUuid::Id128)
-					 .left(12)));
+			.arg(QUuid::createUuid().toString(QUuid::Id128).left(12)));
 	if (!QDir().mkpath(stage))
 		return {};
 
@@ -47,9 +45,9 @@ QString BackupManager::stageInstance() const
 			if (fi.isDir()) {
 				if (!QDir().mkpath(dst))
 					return false;
-				QDirIterator inner(
-					src,
-					QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+				QDirIterator inner(src, QDir::AllEntries |
+											QDir::NoDotAndDotDot |
+											QDir::Hidden);
 				while (inner.hasNext()) {
 					inner.next();
 					const QString childSrc = inner.filePath();
@@ -173,8 +171,7 @@ bool BackupManager::restoreBackup(const BackupEntry& entry)
 	}
 	const QByteArray zipUtf8 = entry.fullPath.toUtf8();
 	const QByteArray rootUtf8 = m_instanceRoot.toUtf8();
-	const int rc = m_ctx->zip_extract(m_ctx->module_handle,
-									  zipUtf8.constData(),
+	const int rc = m_ctx->zip_extract(m_ctx->module_handle, zipUtf8.constData(),
 									  rootUtf8.constData());
 	if (rc != 0) {
 		qWarning() << "[BackupSystem] Failed to extract backup:"

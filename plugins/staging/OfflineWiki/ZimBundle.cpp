@@ -7,7 +7,7 @@
 
 namespace
 {
-constexpr quint32 ZIM_MAGIC = 0x44D495A; // "ZIMD" little-endian
+	constexpr quint32 ZIM_MAGIC = 0x44D495A; // "ZIMD" little-endian
 }
 
 bool ZimBundle::open(const QString& path)
@@ -98,11 +98,12 @@ WikiNavNode ZimBundle::buildNav() const
 QString ZimBundle::renderArticleHtml(const QString& slug) const
 {
 	return QStringLiteral(
-		"<h2>Article '%1' from ZIM bundle</h2>"
-		"<p>This OfflineWiki build can index a ZIM file's article list "
-		"but does not yet decompress article bodies. Use a directory "
-		"bundle for now, or install <a href=\"https://kiwix.org\">Kiwix</a> "
-		"to read the full content.</p>")
+			   "<h2>Article '%1' from ZIM bundle</h2>"
+			   "<p>This OfflineWiki build can index a ZIM file's article list "
+			   "but does not yet decompress article bodies. Use a directory "
+			   "bundle for now, or install <a "
+			   "href=\"https://kiwix.org\">Kiwix</a> "
+			   "to read the full content.</p>")
 		.arg(slug.toHtmlEscaped());
 }
 

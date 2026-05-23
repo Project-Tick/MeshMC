@@ -70,8 +70,7 @@ void FilelinkPage::on_linkButton_clicked()
 		const QString id = QString::fromUtf8(idC);
 		if (id == m_instanceId)
 			continue;
-		const char* nameC =
-			m_ctx->instance_get_name(m_ctx->module_handle, idC);
+		const char* nameC = m_ctx->instance_get_name(m_ctx->module_handle, idC);
 		names << (nameC ? QString::fromUtf8(nameC) : id);
 		ids << id;
 	}
@@ -113,8 +112,8 @@ void FilelinkPage::on_linkButton_clicked()
 	QString srcDir = QDir(sourceRoot).filePath(".minecraft/" + subDir);
 	QString dstDir = QDir(m_instanceRoot).filePath(".minecraft/" + subDir);
 
-	int count = m_manager->linkDirectory(sourceId, srcDir, m_instanceId,
-										 dstDir, subDir);
+	int count = m_manager->linkDirectory(sourceId, srcDir, m_instanceId, dstDir,
+										 subDir);
 
 	if (count < 0) {
 		QMessageBox::warning(this, tr("Filelink"),
