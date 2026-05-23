@@ -314,7 +314,8 @@
 
         <file>50x50/instances/enderman_legacy.png</file>
 
-        <file>scalable/instances/logo.svg</file>
+        <file>scalable/instances/meshmc.svg</file>
+        <file>scalable/instances/projecttick.svg</file>
         <file>scalable/instances/fox_legacy.svg</file>
         <file>scalable/instances/bee_legacy.svg</file>
 
