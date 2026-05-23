@@ -4,6 +4,7 @@
   cmake,
   extra-cmake-modules,
   gamemode,
+  gpgme,
   jdk17,
   kdePackages,
   ninja,
