@@ -45,6 +45,7 @@
 #include "InstanceTask.h"
 #include "net/NetJob.h"
 #include <QUrl>
+#include <QVector>
 #include <QFuture>
 #include <QFutureWatcher>
 #include "settings/SettingsObject.h"
@@ -56,13 +57,51 @@ namespace Flame
 {
 	class FileResolvingTask;
 	struct Manifest;
+	struct File;
 } // namespace Flame
+
+namespace Modrinth
+{
+	struct File;
+}
+
+class MinecraftInstance;
 
 class InstanceImportTask : public InstanceTask
 {
 	Q_OBJECT
   public:
+	/* Catalogue identifiers for a pack the user picked through the
+	 * launcher's own Modrinth / CurseForge browser. The browser
+	 * already knows the slug + version, so we hand them over here
+	 * instead of trying to recover them from the manifest after
+	 * import. Drag-drop imports leave this empty and let
+	 * processFlame / processModrinth populate the same fields from
+	 * the manifest. */
+	struct PackSourceHint {
+		QString provider;	   /* "modrinth" / "curseforge" */
+		QString packId;		   /* numeric project id as string */
+		QString packSlug;	   /* Modrinth slug, empty for CF */
+		QString versionId;	   /* version id (Modrinth) / file id (CF) */
+		QString versionLabel;  /* human "1.2.3" */
+		QString iconUrl;	   /* upstream icon */
+		QString sourceUrl;	   /* canonical pack page */
+		bool isEmpty() const
+		{
+			return provider.isEmpty();
+		}
+	};
+
 	explicit InstanceImportTask(const QUrl sourceUrl);
+
+	/* Optional — set by the browser page right before NewInstanceDialog
+	 * adopts the task. The task records these fields into the freshly
+	 * created instance's instance.cfg so PackUpdater can read them
+	 * back through `instance_setting_get` without sniffing manifests. */
+	void setPackSourceHint(const PackSourceHint& hint)
+	{
+		m_packHint = hint;
+	}
 
   protected:
 	//! Entry point for tasks.
@@ -111,4 +150,19 @@ class InstanceImportTask : public InstanceTask
 	};
 	QFuture<DetectResult> m_detectFuture;
 	QFutureWatcher<DetectResult> m_detectFutureWatcher;
+	PackSourceHint m_packHint;
+
+	/* Helper: persist the pack source hint into the freshly created
+	 * MinecraftInstance's instance.cfg. Called by processFlame and
+	 * processModrinth right after they finish setting up the
+	 * instance. Centralised here so the key names stay in one
+	 * place; BaseInstance pre-registers the same keys so the values
+	 * survive a save+reload cycle. */
+	void writePackSourceToInstance(MinecraftInstance& instance,
+								   const PackSourceHint& hint);
+
+	/* Mod-metadata sidecar writers (declared as free helpers in
+	 * the cpp — see writeModrinthModSidecars / writeFlameModSidecars
+	 * — to keep this header free of full Flame/Modrinth manifest
+	 * type definitions). */
 };

@@ -215,8 +215,32 @@ void ModrinthPage::suggestCurrent()
 		return;
 	}
 
-	dialog->setSuggestedPack(current.name,
-							 new InstanceImportTask(selectedVersion));
+	/* Build the source hint up front. Everything we need to seed
+	 * PackUpdater is already in `current` (the pack) and the
+	 * version that matches the user's selection in the combo box.
+	 * The combo stores the version's download URL as user data —
+	 * we walk `current.versions` to find the matching IndexedVersion
+	 * so we can pull its id + version_number too. */
+	InstanceImportTask::PackSourceHint hint;
+	hint.provider = QStringLiteral("modrinth");
+	hint.packId = current.projectId;
+	hint.packSlug = current.slug;
+	hint.iconUrl = current.iconUrl;
+	if (!current.slug.isEmpty()) {
+		hint.sourceUrl =
+			QStringLiteral("https://modrinth.com/modpack/%1").arg(current.slug);
+	}
+	for (const auto& v : current.versions) {
+		if (v.downloadUrl == selectedVersion) {
+			hint.versionId = v.id;
+			hint.versionLabel = v.versionNumber;
+			break;
+		}
+	}
+
+	auto* task = new InstanceImportTask(selectedVersion);
+	task->setPackSourceHint(hint);
+	dialog->setSuggestedPack(current.name, task);
 	QString editedLogoName;
 	editedLogoName = "modrinth_" + current.slug;
 	listModel->getLogo(

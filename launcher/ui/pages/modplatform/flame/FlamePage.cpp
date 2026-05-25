@@ -210,23 +210,34 @@ void FlamePage::suggestCurrent()
 
 	auto& version = current.versions[selectedVersionIndex];
 
-	if (!version.downloadUrl.isEmpty()) {
-		// Normal download — direct URL available
-		dialog->setSuggestedPack(current.name,
-								 new InstanceImportTask(version.downloadUrl));
-	} else {
+	/* Build pack source hint from the browser's own state — same
+	 * thing PackUpdater would otherwise have to guess from the
+	 * downloaded manifest.json. CurseForge has no slug concept; we
+	 * fall back to the addonId both as `packId` and (for display)
+	 * as `packSlug`. */
+	InstanceImportTask::PackSourceHint hint;
+	hint.provider = QStringLiteral("curseforge");
+	hint.packId = QString::number(version.addonId);
+	hint.versionId = QString::number(version.fileId);
+	hint.versionLabel = version.version;
+	hint.iconUrl = current.logoUrl;
+	hint.sourceUrl = current.websiteUrl;
+
+	QString downloadUrl = version.downloadUrl;
+	if (downloadUrl.isEmpty()) {
 		// Restricted download — construct CurseForge browser download URL
 		// This URL triggers a browser download when opened, respecting ToS
-		QString browserUrl =
+		downloadUrl =
 			QString(
 				"https://www.curseforge.com/api/v1/mods/%1/files/%2/download")
 				.arg(version.addonId)
 				.arg(version.fileId);
-		dialog->setSuggestedPack(current.name,
-								 new InstanceImportTask(browserUrl));
 		qDebug() << "Pack has no API download URL, using browser download URL:"
-				 << browserUrl;
+				 << downloadUrl;
 	}
+	auto* task = new InstanceImportTask(downloadUrl);
+	task->setPackSourceHint(hint);
+	dialog->setSuggestedPack(current.name, task);
 
 	QString editedLogoName;
 	editedLogoName = "curseforge_" + current.logoName.section(".", 0, 0);

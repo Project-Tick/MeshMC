@@ -374,6 +374,9 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 	ctx.instance_can_launch = api_instance_can_launch;
 	ctx.instance_has_crashed = api_instance_has_crashed;
 	ctx.instance_has_update = api_instance_has_update;
+	ctx.instance_set_update_available = api_instance_set_update_available;
+	ctx.instance_component_set_version = api_instance_component_set_version;
+	ctx.http_get_with_headers = api_http_get_with_headers;
 	ctx.instance_get_total_play_time = api_instance_get_total_play_time;
 	ctx.instance_get_last_play_time = api_instance_get_last_play_time;
 	ctx.instance_get_last_launch = api_instance_get_last_launch;
@@ -891,6 +894,41 @@ int PluginManager::api_instance_has_update(void* mh, const char* id)
 	return inst ? (inst->hasUpdateAvailable() ? 1 : 0) : 0;
 }
 
+int PluginManager::api_instance_set_update_available(void* mh, const char* id,
+													 int value)
+{
+	auto* r = rt(mh);
+	auto* inst = resolveInstance(r, id);
+	if (!inst)
+		return -1;
+	/* setUpdateAvailable already short-circuits on no-op (==value) and
+	 * emits propertiesChanged() so the InstanceView delegate repaints
+	 * the badge. We just normalise the int → bool conversion here. */
+	inst->setUpdateAvailable(value != 0);
+	return 0;
+}
+
+int PluginManager::api_instance_component_set_version(void* mh, const char* id,
+													  const char* uid,
+													  const char* version)
+{
+	auto* r = rt(mh);
+	auto* mc = resolveMC(r, id);
+	if (!mc || !mc->getPackProfile() || !uid || !version)
+		return -1;
+	/* `important=true` matches what InstanceImportTask does for loader
+	 * components, so the resolver treats the version as user-pinned and
+	 * doesn't quietly bump it later. PackUpdater is the user proxy
+	 * here — when it writes a version it means "this is the version
+	 * the pack publisher chose". */
+	const bool ok = mc->getPackProfile()->setComponentVersion(
+		QString::fromUtf8(uid), QString::fromUtf8(version),
+		/*important=*/true);
+	return ok ? 0 : -1;
+}
+
+
+
 int64_t PluginManager::api_instance_get_total_play_time(void* mh,
 														const char* id)
 {
@@ -1199,6 +1237,64 @@ int PluginManager::api_http_get(void* mh, const char* url, MMCOHttpCallback cb,
 
 	QNetworkRequest request{QUrl(qurl)};
 	request.setHeader(QNetworkRequest::UserAgentHeader, BuildConfig.USER_AGENT);
+
+	QNetworkReply* reply = nam->get(request);
+
+	QObject::connect(reply, &QNetworkReply::finished, [reply, cb, ud]() {
+		int status =
+			reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+		QByteArray body = reply->readAll();
+		cb(ud, status, body.constData(), static_cast<size_t>(body.size()));
+		reply->deleteLater();
+	});
+
+	return 0;
+}
+
+int PluginManager::api_http_get_with_headers(void* mh, const char* url,
+											 const char* const* headers,
+											 int header_count,
+											 MMCOHttpCallback cb, void* ud)
+{
+	auto* r = rt(mh);
+	auto* app = r->manager->m_app;
+
+	if (!url || !cb)
+		return -1;
+	if (header_count > 0 && !headers)
+		return -1;
+
+	QString qurl = QString::fromUtf8(url);
+	if (!qurl.startsWith("http://") && !qurl.startsWith("https://"))
+		return -1;
+
+	auto nam = app->network();
+	if (!nam)
+		return -1;
+
+	QNetworkRequest request{QUrl(qurl)};
+	/* User-Agent is always launcher-controlled — overrides anything
+	 * the caller passed. Keeps outbound traffic identifiable and
+	 * lets us swap the UA in one place when the version bumps. */
+	request.setHeader(QNetworkRequest::UserAgentHeader, BuildConfig.USER_AGENT);
+
+	for (int i = 0; i < header_count; ++i) {
+		if (!headers[i])
+			continue;
+		QByteArray line(headers[i]);
+		int sep = line.indexOf(':');
+		if (sep <= 0)
+			continue;
+		QByteArray name = line.left(sep).trimmed();
+		QByteArray value = line.mid(sep + 1).trimmed();
+		if (name.isEmpty())
+			continue;
+		/* Reject caller-supplied User-Agent — see comment above.
+		 * Case-insensitive compare so "user-agent: ..." also bounces. */
+		if (name.toLower() == "user-agent")
+			continue;
+		request.setRawHeader(name, value);
+	}
 
 	QNetworkReply* reply = nam->get(request);
 

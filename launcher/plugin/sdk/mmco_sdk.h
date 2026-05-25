@@ -775,6 +775,63 @@ struct MMCOContext {
 	const char* (*icon_list_get_file_path)(void* mh, const char* icon_key);
 	int (*icon_list_save_png)(void* mh, const char* icon_key,
 							  const char* dest_path);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S28 — Instance update-flag write (ABI 3+, additive)
+	 *
+	 * Companion setter to `instance_has_update`. Lets plugins drive
+	 * the per-instance "update available" badge that the launcher's
+	 * InstanceView delegate paints over the instance icon.
+	 *
+	 * Pass a non-zero `value` to mark the instance as having an
+	 * update available; pass 0 to clear the flag. The launcher does
+	 * NOT run its own modpack-update scanner — this flag is the
+	 * surface a plugin like PackUpdater drives.
+	 *
+	 * Returns 0 on success, -1 if the instance id is unknown.
+	 * Must be called from the main / GUI thread.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*instance_set_update_available)(void* mh, const char* id, int value);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S29 — Component version write (ABI 3+, additive)
+	 *
+	 * Sets the version of a `PackProfile` component by uid, or
+	 * creates the component if the instance doesn't have one. Same
+	 * call the in-tree pack importers use to wire loaders. Pass uids
+	 * like:
+	 *
+	 *   "net.minecraft"
+	 *   "net.minecraftforge"
+	 *   "net.fabricmc.fabric-loader"
+	 *   "net.neoforged"
+	 *   "org.quiltmc.quilt-loader"
+	 *
+	 * Returns 0 on success, -1 on failure. GUI thread only.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*instance_component_set_version)(void* mh, const char* id,
+										  const char* uid,
+										  const char* version);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S30 — HTTP GET with custom headers (ABI 3+, additive)
+	 *
+	 * Variant of S11's `http_get` that lets you set request
+	 * headers. Pass `headers` as an array of "Name: Value" C
+	 * strings and `header_count` as the array length. User-Agent
+	 * is always set by the launcher; do not bother passing one.
+	 * Use for endpoints gated by auth headers (e.g. CurseForge's
+	 * `x-api-key`); pull the secret from your plugin's
+	 * `#include "BuildConfig.h"`.
+	 *
+	 * Returns 0 on queue, -1 on argument errors. Callback body
+	 * lifetime matches `http_get`.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*http_get_with_headers)(void* mh, const char* url,
+								 const char* const* headers,
+								 int header_count,
+								 MMCOHttpCallback callback,
+								 void* user_data);
 };
 
 /*

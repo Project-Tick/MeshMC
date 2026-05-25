@@ -689,4 +689,89 @@ struct MMCOContext {
 	const char* (*icon_list_get_file_path)(void* mh, const char* icon_key);
 	int (*icon_list_save_png)(void* mh, const char* icon_key,
 							  const char* dest_path);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S28 — Instance update-flag write (ABI 3+, additive)
+	 *
+	 * Companion setter to `instance_has_update`. Lets plugins drive
+	 * the per-instance "update available" indicator that the
+	 * InstanceView delegate renders as the `checkupdate` badge.
+	 *
+	 * Until this API landed, `BaseInstance::m_hasUpdate` had a
+	 * setter (`setUpdateAvailable`) but no caller anywhere in the
+	 * codebase, which meant the badge slot was permanently dark.
+	 * The launcher intentionally has no built-in modpack-update
+	 * scanner — that surface belongs to a plugin (PackUpdater). This
+	 * API is the seam through which such a plugin reports its
+	 * findings back to the launcher's UI.
+	 *
+	 *   value != 0 → mark instance as having an update available
+	 *   value == 0 → clear the flag
+	 *
+	 * Returns 0 on success, -1 if the instance id is unknown.
+	 * Thread: main / GUI thread only (touches BaseInstance which
+	 * emits propertiesChanged).
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*instance_set_update_available)(void* mh, const char* id, int value);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S29 — Component version write (ABI 3+, additive)
+	 *
+	 * Set the version of a `PackProfile` component by uid, or create
+	 * the component if the instance doesn't have one yet. Mirrors
+	 * `PackProfile::setComponentVersion(uid, version, important)`
+	 * which is the same call the in-tree pack importers (Flame,
+	 * Modrinth, FTB, ATL, Technic) use to wire loader + Minecraft
+	 * versions into a freshly imported instance.
+	 *
+	 * The complement of the read-only `instance_component_get_version`
+	 * accessor: where that one resolves by *index* (after counting
+	 * via `instance_component_count`), this one resolves by *uid*,
+	 * which is what a plugin actually knows when it wants to set a
+	 * specific loader's version (`net.fabricmc.fabric-loader`,
+	 * `net.neoforged`, `net.minecraft`, …).
+	 *
+	 * Behaviour:
+	 *   - If a component with that uid exists, its version is reverted
+	 *     to the catalogue entry and the requested version is applied
+	 *     (`important=1` flags it as user-pinned so the resolver
+	 *     doesn't try to upgrade it out from under you).
+	 *   - If the component doesn't exist, a new one is appended to
+	 *     the profile with the given version.
+	 *
+	 * Returns 0 on success, -1 on failure (unknown instance, no
+	 * PackProfile, or PackProfile::setComponentVersion refused —
+	 * typically because the component couldn't be reverted to a clean
+	 * state, see PackProfile::setComponentVersion's `revert()` path).
+	 *
+	 * Thread: main / GUI thread only. The change emits dataChanged
+	 * on the PackProfile model, which Qt expects from the GUI thread.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*instance_component_set_version)(void* mh, const char* id,
+										  const char* uid,
+										  const char* version);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S30 — HTTP GET with custom headers (ABI 3+, additive)
+	 *
+	 * S11's `http_get` only ever sets User-Agent. Plugins that talk
+	 * to APIs gated by auth headers (CurseForge's `x-api-key` is
+	 * the canonical case) use this variant instead. Keys come from
+	 * the plugin's own `#include "BuildConfig.h"` — the launcher
+	 * does NOT pass keys through this surface; that's deliberate so
+	 * a key doesn't have to traverse a generic plugin API.
+	 *
+	 * `headers` is an array of NUL-terminated "Name: Value"
+	 * strings; `header_count` is the array length. The launcher
+	 * always sets/overrides User-Agent regardless of what you pass,
+	 * to keep outbound traffic identifiable.
+	 *
+	 * Returns 0 if the request was queued, -1 on argument errors.
+	 * Body-lifetime contract matches `http_get`.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*http_get_with_headers)(void* mh, const char* url,
+								 const char* const* headers,
+								 int header_count,
+								 MMCOHttpCallback callback,
+								 void* user_data);
 };
