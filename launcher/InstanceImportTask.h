@@ -79,13 +79,13 @@ class InstanceImportTask : public InstanceTask
 	 * processFlame / processModrinth populate the same fields from
 	 * the manifest. */
 	struct PackSourceHint {
-		QString provider;	   /* "modrinth" / "curseforge" */
-		QString packId;		   /* numeric project id as string */
-		QString packSlug;	   /* Modrinth slug, empty for CF */
-		QString versionId;	   /* version id (Modrinth) / file id (CF) */
-		QString versionLabel;  /* human "1.2.3" */
-		QString iconUrl;	   /* upstream icon */
-		QString sourceUrl;	   /* canonical pack page */
+		QString provider;	  /* "modrinth" / "curseforge" */
+		QString packId;		  /* numeric project id as string */
+		QString packSlug;	  /* Modrinth slug, empty for CF */
+		QString versionId;	  /* version id (Modrinth) / file id (CF) */
+		QString versionLabel; /* human "1.2.3" */
+		QString iconUrl;	  /* upstream icon */
+		QString sourceUrl;	  /* canonical pack page */
 		bool isEmpty() const
 		{
 			return provider.isEmpty();

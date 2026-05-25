@@ -61,9 +61,9 @@ namespace
 			return 0;
 		auto* pages = static_cast<QList<BasePage*>*>(evt->page_list_handle);
 		const QString instId = QString::fromUtf8(evt->instance_id);
-		const QString instPath =
-			evt->instance_path ? QString::fromUtf8(evt->instance_path)
-							   : QString();
+		const QString instPath = evt->instance_path
+									 ? QString::fromUtf8(evt->instance_path)
+									 : QString();
 		pages->append(new PackUpdaterPage(instId, instPath, g_ctx));
 		return 0;
 	}
@@ -77,8 +77,7 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	g_ctx = ctx;
 	MMCO_LOG(ctx, "PackUpdater initialising…");
 
-	int rc = ctx->hook_register(ctx->module_handle,
-								MMCO_HOOK_UI_INSTANCE_PAGES,
+	int rc = ctx->hook_register(ctx->module_handle, MMCO_HOOK_UI_INSTANCE_PAGES,
 								on_instance_pages, nullptr);
 	if (rc != 0) {
 		MMCO_ERR(ctx, "PackUpdater: failed to register UI_INSTANCE_PAGES hook");

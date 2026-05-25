@@ -932,7 +932,6 @@ void InstanceImportTask::writePackSourceToInstance(MinecraftInstance& instance,
 	s->set("PackVersionLabel", hint.versionLabel);
 	s->set("PackIconUrl", hint.iconUrl);
 	s->set("PackSourceUrl", hint.sourceUrl);
-	s->set("PackInstalledAt", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+	s->set("PackInstalledAt",
+		   QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
 }
-
-

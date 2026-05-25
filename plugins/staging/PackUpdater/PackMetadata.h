@@ -39,13 +39,13 @@ namespace pack_updater
 	struct PackRecord {
 		Provider provider = Provider::Unknown;
 
-		QString packId;	   /* Modrinth project id / CF projectID as string */
-		QString packSlug;  /* Modrinth slug; on CF we reuse the addonId */
+		QString packId;	  /* Modrinth project id / CF projectID as string */
+		QString packSlug; /* Modrinth slug; on CF we reuse the addonId */
 		QString installedVersionId;	   /* version id / file id */
 		QString installedVersionLabel; /* human-readable "1.2.3" */
-		QString sourceUrl; /* canonical pack page */
-		QString iconUrl;   /* upstream icon */
-		QString manifestSha512;	   /* future: used by the planner */
+		QString sourceUrl;			   /* canonical pack page */
+		QString iconUrl;			   /* upstream icon */
+		QString manifestSha512;		   /* future: used by the planner */
 		QString installedAtIso8601;
 	};
 

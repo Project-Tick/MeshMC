@@ -217,12 +217,14 @@ void PackUpdaterPage::refreshState()
 
 void PackUpdaterPage::renderLinked(const pack_updater::PackRecord& rec)
 {
-	m_providerLabel->setText(tr("Provider: %1").arg(providerDisplay(rec.provider)));
+	m_providerLabel->setText(
+		tr("Provider: %1").arg(providerDisplay(rec.provider)));
 	m_packNameLabel->setText(rec.packSlug.isEmpty() ? tr("(unnamed pack)")
 													: rec.packSlug);
-	m_versionLabel->setText(tr("Version: %1").arg(
-		rec.installedVersionLabel.isEmpty() ? QStringLiteral("—")
-											: rec.installedVersionLabel));
+	m_versionLabel->setText(tr("Version: %1")
+								.arg(rec.installedVersionLabel.isEmpty()
+										 ? QStringLiteral("—")
+										 : rec.installedVersionLabel));
 	m_installedAtLabel->setText(
 		tr("Installed: %1").arg(prettifyTimestamp(rec.installedAtIso8601)));
 	if (rec.sourceUrl.isEmpty()) {
@@ -253,8 +255,8 @@ void PackUpdaterPage::applyIconPixmap(const QByteArray& pngBytes)
 	QPixmap pm;
 	if (!pm.loadFromData(pngBytes))
 		return; /* bad payload — keep the placeholder */
-	m_iconLabel->setPixmap(pm.scaled(96, 96, Qt::KeepAspectRatio,
-									 Qt::SmoothTransformation));
+	m_iconLabel->setPixmap(
+		pm.scaled(96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 struct PackUpdaterPage::IconThunk {
@@ -376,8 +378,9 @@ void PackUpdaterPage::onCheckForUpdates()
 				return;
 			}
 
-			const bool sameById = !result.versionId.isEmpty() &&
-								  result.versionId == installed.installedVersionId;
+			const bool sameById =
+				!result.versionId.isEmpty() &&
+				result.versionId == installed.installedVersionId;
 			const bool sameByLabel =
 				!result.versionLabel.isEmpty() &&
 				result.versionLabel == installed.installedVersionLabel;
@@ -394,8 +397,7 @@ void PackUpdaterPage::onCheckForUpdates()
 				 * other means. */
 				if (ctx && ctx->instance_set_update_available) {
 					ctx->instance_set_update_available(
-						ctx->module_handle, instanceId.toUtf8().constData(),
-						0);
+						ctx->module_handle, instanceId.toUtf8().constData(), 0);
 				}
 				return;
 			}
@@ -416,8 +418,7 @@ void PackUpdaterPage::onCheckForUpdates()
 				const QString line =
 					QStringLiteral("pending update url=%1 versionId=%2 "
 								   "label=%3 valid=%4")
-						.arg(result.manifestUrl,
-							 result.versionId,
+						.arg(result.manifestUrl, result.versionId,
 							 result.versionLabel,
 							 m_pendingUpdateUrl.isValid() ? "yes" : "no");
 				MMCO_LOG(ctx, line.toUtf8().constData());
@@ -464,16 +465,14 @@ void PackUpdaterPage::onDetachClicked()
 void PackUpdaterPage::onApplyClicked()
 {
 	if (!m_pendingUpdateUrl.isValid()) {
-		QMessageBox::information(
-			this, tr("Apply Update"),
-			tr("Run \"Check for Updates\" first."));
+		QMessageBox::information(this, tr("Apply Update"),
+								 tr("Run \"Check for Updates\" first."));
 		return;
 	}
 	auto rec = pack_updater::load(m_ctx, m_instanceId);
 	if (!rec) {
-		QMessageBox::warning(
-			this, tr("Apply Update"),
-			tr("Instance is no longer pack-managed."));
+		QMessageBox::warning(this, tr("Apply Update"),
+							 tr("Instance is no longer pack-managed."));
 		return;
 	}
 

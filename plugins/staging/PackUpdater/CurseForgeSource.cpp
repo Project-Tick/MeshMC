@@ -59,8 +59,8 @@ namespace pack_updater
 			QJsonParseError err{};
 			const QJsonDocument doc = QJsonDocument::fromJson(bytes, &err);
 			if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-				out.errorMessage = QObject::tr(
-					"CurseForge response was not a JSON object");
+				out.errorMessage =
+					QObject::tr("CurseForge response was not a JSON object");
 				self->cb(out);
 				return;
 			}
@@ -68,8 +68,8 @@ namespace pack_updater
 			const QJsonArray arr =
 				doc.object().value(QStringLiteral("data")).toArray();
 			if (arr.isEmpty()) {
-				out.errorMessage = QObject::tr(
-					"CurseForge lists no files for this pack");
+				out.errorMessage =
+					QObject::tr("CurseForge lists no files for this pack");
 				self->cb(out);
 				return;
 			}
@@ -110,7 +110,8 @@ namespace pack_updater
 			{
 				if (!ctx) {
 					LatestVersion bad;
-					bad.errorMessage = QObject::tr("Plugin context unavailable");
+					bad.errorMessage =
+						QObject::tr("Plugin context unavailable");
 					cb(bad);
 					return;
 				}
@@ -156,9 +157,9 @@ namespace pack_updater
 
 				auto* heap = new CurseForgeCtx{std::move(cb)};
 				const QByteArray urlUtf8 = url.toUtf8();
-				int rc = ctx->http_get_with_headers(
-					ctx->module_handle, urlUtf8.constData(), headers, 1,
-					&onHttp, heap);
+				int rc = ctx->http_get_with_headers(ctx->module_handle,
+													urlUtf8.constData(),
+													headers, 1, &onHttp, heap);
 				if (rc != 0) {
 					delete heap;
 					/* cb already moved — no clean way to surface this

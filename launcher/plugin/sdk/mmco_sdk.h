@@ -810,8 +810,7 @@ struct MMCOContext {
 	 * Returns 0 on success, -1 on failure. GUI thread only.
 	 * ─────────────────────────────────────────────────────────────── */
 	int (*instance_component_set_version)(void* mh, const char* id,
-										  const char* uid,
-										  const char* version);
+										  const char* uid, const char* version);
 
 	/* ───────────────────────────────────────────────────────────────
 	 * S30 — HTTP GET with custom headers (ABI 3+, additive)
@@ -828,10 +827,8 @@ struct MMCOContext {
 	 * lifetime matches `http_get`.
 	 * ─────────────────────────────────────────────────────────────── */
 	int (*http_get_with_headers)(void* mh, const char* url,
-								 const char* const* headers,
-								 int header_count,
-								 MMCOHttpCallback callback,
-								 void* user_data);
+								 const char* const* headers, int header_count,
+								 MMCOHttpCallback callback, void* user_data);
 };
 
 /*

@@ -927,8 +927,6 @@ int PluginManager::api_instance_component_set_version(void* mh, const char* id,
 	return ok ? 0 : -1;
 }
 
-
-
 int64_t PluginManager::api_instance_get_total_play_time(void* mh,
 														const char* id)
 {

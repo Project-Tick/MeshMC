@@ -93,8 +93,8 @@ void AttachDialog::buildUi()
 
 	/* Version dropdown */
 	auto* verRow = new QHBoxLayout();
-	verRow->addWidget(new QLabel(tr("Version installed in this instance:"),
-								 this));
+	verRow->addWidget(
+		new QLabel(tr("Version installed in this instance:"), this));
 	m_versionCombo = new QComboBox(this);
 	m_versionCombo->setMinimumWidth(200);
 	verRow->addWidget(m_versionCombo, 1);
@@ -223,10 +223,9 @@ void AttachDialog::searchCurseForge(const QString& query, int reqId)
 					   "sortOrder=desc&pageSize=20&searchFilter=%1")
 			.arg(QString::fromUtf8(QUrl::toPercentEncoding(query)));
 
-	const QByteArray header =
-		QStringLiteral("x-api-key: %1")
-			.arg(BuildConfig.CURSEFORGE_API_KEY)
-			.toUtf8();
+	const QByteArray header = QStringLiteral("x-api-key: %1")
+								  .arg(BuildConfig.CURSEFORGE_API_KEY)
+								  .toUtf8();
 	const char* headers[] = {header.constData()};
 
 	auto* thunk = new HttpThunk{this, Step::SearchCurseForge, reqId};
@@ -258,7 +257,8 @@ void AttachDialog::onResultSelected()
 
 	const int reqId = ++m_nextRequestId;
 	m_inflightVersionsId = reqId;
-	m_statusLabel->setText(tr("Loading versions for %1…").arg(m_selectedPack.name));
+	m_statusLabel->setText(
+		tr("Loading versions for %1…").arg(m_selectedPack.name));
 
 	if (m_selectedPack.provider == QLatin1String("modrinth"))
 		fetchVersionsModrinth(m_selectedPack.packSlug, reqId);
@@ -283,12 +283,12 @@ void AttachDialog::fetchVersionsModrinth(const QString& slug, int reqId)
 void AttachDialog::fetchVersionsCurseForge(const QString& projectId, int reqId)
 {
 	const QString url =
-		QStringLiteral("https://api.curseforge.com/v1/mods/%1/files?pageSize=50")
+		QStringLiteral(
+			"https://api.curseforge.com/v1/mods/%1/files?pageSize=50")
 			.arg(projectId);
-	const QByteArray header =
-		QStringLiteral("x-api-key: %1")
-			.arg(BuildConfig.CURSEFORGE_API_KEY)
-			.toUtf8();
+	const QByteArray header = QStringLiteral("x-api-key: %1")
+								  .arg(BuildConfig.CURSEFORGE_API_KEY)
+								  .toUtf8();
 	const char* headers[] = {header.constData()};
 
 	auto* thunk = new HttpThunk{this, Step::VersionsCurseForge, reqId};
@@ -296,8 +296,7 @@ void AttachDialog::fetchVersionsCurseForge(const QString& projectId, int reqId)
 	if (m_ctx->http_get_with_headers(m_ctx->module_handle, urlUtf8.constData(),
 									 headers, 1, &onHttpRaw, thunk) != 0) {
 		delete thunk;
-		m_statusLabel->setText(
-			tr("Could not queue CurseForge files request"));
+		m_statusLabel->setText(tr("Could not queue CurseForge files request"));
 	}
 }
 
@@ -321,8 +320,8 @@ void AttachDialog::handleResponse(Step step, int reqId, int status,
 	QJsonParseError err{};
 	const QJsonDocument doc = QJsonDocument::fromJson(body, &err);
 	if (err.error != QJsonParseError::NoError) {
-		m_statusLabel->setText(tr("Could not parse response: %1")
-								   .arg(err.errorString()));
+		m_statusLabel->setText(
+			tr("Could not parse response: %1").arg(err.errorString()));
 		return;
 	}
 
@@ -364,12 +363,10 @@ void AttachDialog::handleResponse(Step step, int reqId, int status,
 			m_resultList->clear();
 			for (const auto& v : data) {
 				const QJsonObject o = v.toObject();
-				const QString name =
-					o.value(QStringLiteral("name")).toString();
+				const QString name = o.value(QStringLiteral("name")).toString();
 				const QString id =
 					QString::number(o.value(QStringLiteral("id")).toInteger());
-				const QString slug =
-					o.value(QStringLiteral("slug")).toString();
+				const QString slug = o.value(QStringLiteral("slug")).toString();
 				const QString websiteUrl =
 					o.value(QStringLiteral("links"))
 						.toObject()
@@ -400,11 +397,10 @@ void AttachDialog::handleResponse(Step step, int reqId, int status,
 				const QString id = o.value(QStringLiteral("id")).toString();
 				const QString label =
 					o.value(QStringLiteral("version_number")).toString();
-				const QString mc =
-					o.value(QStringLiteral("game_versions"))
-						.toArray()
-						.first()
-						.toString();
+				const QString mc = o.value(QStringLiteral("game_versions"))
+									   .toArray()
+									   .first()
+									   .toString();
 				const QString display =
 					mc.isEmpty() ? label
 								 : QStringLiteral("%1  [%2]").arg(label, mc);
@@ -455,7 +451,8 @@ void AttachDialog::onVersionSelected()
 
 void AttachDialog::onAttachClicked()
 {
-	if (m_selectedPack.packId.isEmpty() || m_selectedVersion.versionId.isEmpty())
+	if (m_selectedPack.packId.isEmpty() ||
+		m_selectedVersion.versionId.isEmpty())
 		return;
 
 	pack_updater::PackRecord rec;

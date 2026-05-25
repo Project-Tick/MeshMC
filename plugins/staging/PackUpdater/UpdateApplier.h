@@ -92,8 +92,8 @@ namespace pack_updater
 		bool ok = false;
 		QString errorMessage;
 
-		PackRecord installed;	  /* what we found in instance.cfg */
-		ParsedManifest target;	  /* what the new pack wants */
+		PackRecord installed;  /* what we found in instance.cfg */
+		ParsedManifest target; /* what the new pack wants */
 		QVector<FileAction> files;
 		QVector<ComponentChange> components;
 
@@ -118,15 +118,13 @@ namespace pack_updater
 	 * the GUI thread. */
 	using ManifestCallback = std::function<void(ParsedManifest)>;
 	void fetchAndParseManifest(MMCOContext* ctx, Provider provider,
-							   const QUrl& packUrl,
-							   const QString& scratchDir,
+							   const QUrl& packUrl, const QString& scratchDir,
 							   ManifestCallback cb);
 
 	/* Step 2: build a plan by diffing the new manifest against the
 	 * instance's existing mod sidecars + component list. Pure
 	 * function; safe to test in isolation. */
-	UpdatePlan diffAgainstInstance(MMCOContext* ctx,
-								   const QString& instanceId,
+	UpdatePlan diffAgainstInstance(MMCOContext* ctx, const QString& instanceId,
 								   const QString& instanceRoot,
 								   const PackRecord& installed,
 								   ParsedManifest manifest);

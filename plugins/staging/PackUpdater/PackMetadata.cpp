@@ -40,8 +40,8 @@ namespace pack_updater
 			if (!ctx)
 				return {};
 			const QByteArray idUtf8 = instanceId.toUtf8();
-			const char* v = ctx->instance_setting_get(
-				ctx->module_handle, idUtf8.constData(), key);
+			const char* v = ctx->instance_setting_get(ctx->module_handle,
+													  idUtf8.constData(), key);
 			return v ? QString::fromUtf8(v) : QString();
 		}
 
@@ -118,7 +118,8 @@ namespace pack_updater
 		ok &= writeKey(ctx, instanceId, kPackId, rec.packId);
 		ok &= writeKey(ctx, instanceId, kPackSlug, rec.packSlug);
 		ok &= writeKey(ctx, instanceId, kVersionId, rec.installedVersionId);
-		ok &= writeKey(ctx, instanceId, kVersionLabel, rec.installedVersionLabel);
+		ok &=
+			writeKey(ctx, instanceId, kVersionLabel, rec.installedVersionLabel);
 		ok &= writeKey(ctx, instanceId, kIconUrl, rec.iconUrl);
 		ok &= writeKey(ctx, instanceId, kSourceUrl, rec.sourceUrl);
 		ok &= writeKey(ctx, instanceId, kInstalledAt, rec.installedAtIso8601);

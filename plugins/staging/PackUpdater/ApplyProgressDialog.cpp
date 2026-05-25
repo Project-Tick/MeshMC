@@ -37,10 +37,10 @@ ApplyProgressDialog::ApplyProgressDialog(
 	 * dialog instance but cleans up on next reboot. The pack id +
 	 * a uuid component prevent collisions when the user applies
 	 * updates across multiple instances back to back. */
-	m_scratchDir = QStandardPaths::writableLocation(
-					   QStandardPaths::TempLocation) +
-				   QStringLiteral("/packupdater/") +
-				   QUuid::createUuid().toString(QUuid::WithoutBraces);
+	m_scratchDir =
+		QStandardPaths::writableLocation(QStandardPaths::TempLocation) +
+		QStringLiteral("/packupdater/") +
+		QUuid::createUuid().toString(QUuid::WithoutBraces);
 
 	/* Kick off the download as soon as the dialog is visible —
 	 * single shot so the layout has a tick to settle. */
@@ -150,9 +150,8 @@ void ApplyProgressDialog::doDiff()
 	m_plan = pack_updater::diffAgainstInstance(
 		m_ctx, m_instanceId, m_instanceRoot, m_installed, m_manifest);
 	if (!m_plan.ok) {
-		fail(m_plan.errorMessage.isEmpty()
-				 ? tr("Could not build update plan.")
-				 : m_plan.errorMessage);
+		fail(m_plan.errorMessage.isEmpty() ? tr("Could not build update plan.")
+										   : m_plan.errorMessage);
 		return;
 	}
 	setProgress(30);
@@ -225,11 +224,10 @@ void ApplyProgressDialog::doBackup()
 
 	const QString stamp = QDateTime::currentDateTimeUtc().toString(
 		QStringLiteral("yyyyMMdd-HHmmss"));
-	const QString backupDir =
-		m_instanceRoot + QStringLiteral("/.backups");
+	const QString backupDir = m_instanceRoot + QStringLiteral("/.backups");
 	QDir().mkpath(backupDir);
-	m_backupPath = QStringLiteral("%1/%2-pre-pack-update.zip")
-					   .arg(backupDir, stamp);
+	m_backupPath =
+		QStringLiteral("%1/%2-pre-pack-update.zip").arg(backupDir, stamp);
 
 	if (!m_ctx || !m_ctx->zip_compress_dir) {
 		fail(tr("This launcher build is missing zip compress support."));
@@ -282,8 +280,8 @@ namespace
 		const int n =
 			ctx->mod_count(ctx->module_handle, idUtf8.constData(), type);
 		for (int i = 0; i < n; ++i) {
-			const char* fn = ctx->mod_get_filename(
-				ctx->module_handle, idUtf8.constData(), type, i);
+			const char* fn = ctx->mod_get_filename(ctx->module_handle,
+												   idUtf8.constData(), type, i);
 			if (!fn)
 				continue;
 			if (QString::fromUtf8(fn) == fileName)
@@ -299,8 +297,7 @@ void ApplyProgressDialog::doFiles()
 	setProgress(60);
 
 	if (!m_ctx || !m_ctx->mod_remove || !m_ctx->mod_install ||
-		!m_ctx->mod_refresh || !m_ctx->mod_count ||
-		!m_ctx->mod_get_filename) {
+		!m_ctx->mod_refresh || !m_ctx->mod_count || !m_ctx->mod_get_filename) {
 		fail(tr("Mod-management API unavailable on this launcher."));
 		return;
 	}
@@ -329,29 +326,26 @@ void ApplyProgressDialog::doFiles()
 			 * it imported, so anything else is invisible to
 			 * mod_remove). */
 			const QString diskPath = m_instanceRoot +
-									 QStringLiteral("/.minecraft/") +
-									 a.folder + QStringLiteral("/") +
-									 a.fileName;
+									 QStringLiteral("/.minecraft/") + a.folder +
+									 QStringLiteral("/") + a.fileName;
 			if (QFile::remove(diskPath)) {
 				removed++;
-				MMCO_LOG(m_ctx,
-						 QString("PackUpdater: removed orphan %1/%2")
-							 .arg(a.folder, a.fileName)
-							 .toUtf8()
-							 .constData());
+				MMCO_LOG(m_ctx, QString("PackUpdater: removed orphan %1/%2")
+									.arg(a.folder, a.fileName)
+									.toUtf8()
+									.constData());
 			} else {
 				missed++;
-				MMCO_LOG(m_ctx,
-						 QString("PackUpdater: could not remove %1/%2 "
-								 "(not found on disk?)")
-							 .arg(a.folder, a.fileName)
-							 .toUtf8()
-							 .constData());
+				MMCO_LOG(m_ctx, QString("PackUpdater: could not remove %1/%2 "
+										"(not found on disk?)")
+									.arg(a.folder, a.fileName)
+									.toUtf8()
+									.constData());
 			}
 			continue;
 		}
-		if (m_ctx->mod_remove(m_ctx->module_handle, idUtf8.constData(),
-							  type, idx) == 0) {
+		if (m_ctx->mod_remove(m_ctx->module_handle, idUtf8.constData(), type,
+							  idx) == 0) {
 			removed++;
 		} else {
 			missed++;
@@ -422,10 +416,8 @@ void ApplyProgressDialog::doFiles()
 				bool ok = (status >= 200 && status < 300);
 				if (ok) {
 					QFile out(s->stagedPath);
-					if (out.open(QIODevice::WriteOnly |
-								 QIODevice::Truncate)) {
-						out.write(static_cast<const char*>(body),
-								  qint64(size));
+					if (out.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+						out.write(static_cast<const char*>(body), qint64(size));
 						out.close();
 					} else {
 						ok = false;
@@ -438,21 +430,18 @@ void ApplyProgressDialog::doFiles()
 					 * (re)written by the launcher's normal install
 					 * flow. */
 					MMCOContext* ctx = s->dlg->m_ctx;
-					const QByteArray idUtf8 =
-						s->dlg->m_instanceId.toUtf8();
+					const QByteArray idUtf8 = s->dlg->m_instanceId.toUtf8();
 					const char* type = s05TypeForFolder(s->folder);
 					if (type) {
 						if (s->isReplace) {
-							const int idx = findModIndex(ctx, idUtf8, type,
-														 s->fileName);
+							const int idx =
+								findModIndex(ctx, idUtf8, type, s->fileName);
 							if (idx >= 0) {
 								ctx->mod_remove(ctx->module_handle,
-												idUtf8.constData(), type,
-												idx);
+												idUtf8.constData(), type, idx);
 							}
 						}
-						const QByteArray pathUtf8 =
-							s->stagedPath.toUtf8();
+						const QByteArray pathUtf8 = s->stagedPath.toUtf8();
 						if (ctx->mod_install(ctx->module_handle,
 											 idUtf8.constData(), type,
 											 pathUtf8.constData()) != 0)
@@ -464,8 +453,8 @@ void ApplyProgressDialog::doFiles()
 				}
 
 				int p = s->dlg->property("packupd_pending").toInt() - 1;
-				int f = s->dlg->property("packupd_failed").toInt() +
-						(ok ? 0 : 1);
+				int f =
+					s->dlg->property("packupd_failed").toInt() + (ok ? 0 : 1);
 				s->dlg->setProperty("packupd_pending", p);
 				s->dlg->setProperty("packupd_failed", f);
 				if (p <= 0) {
@@ -503,11 +492,11 @@ void ApplyProgressDialog::onFilesDone(bool ok, const QString& failMsg)
 	}
 	/* Refresh the mod lists so the launcher's in-memory model
 	 * picks up the new files. */
-	for (const char* folder : {"loader", "core", "resourcepack",
-							   "shaderpack", "texturepack"}) {
+	for (const char* folder :
+		 {"loader", "core", "resourcepack", "shaderpack", "texturepack"}) {
 		const QByteArray idUtf8 = m_instanceId.toUtf8();
-		(void) m_ctx->mod_refresh(m_ctx->module_handle, idUtf8.constData(),
-								  folder);
+		(void)m_ctx->mod_refresh(m_ctx->module_handle, idUtf8.constData(),
+								 folder);
 	}
 	setProgress(75);
 	m_step = StepOverrides;
@@ -525,24 +514,21 @@ void ApplyProgressDialog::doOverrides()
 		/* Drop the entire mrpack zip into a scratch tree so we can
 		 * pick the overrides/ subtree out without re-implementing
 		 * a zip reader. */
-		const QString outDir =
-			m_scratchDir + QStringLiteral("/extracted");
+		const QString outDir = m_scratchDir + QStringLiteral("/extracted");
 		QDir().mkpath(outDir);
 		const QByteArray zipUtf8 = m_manifest.downloadedZipPath.toUtf8();
 		const QByteArray outUtf8 = outDir.toUtf8();
 		if (m_ctx->zip_extract(m_ctx->module_handle, zipUtf8.constData(),
 							   outUtf8.constData()) == 0) {
 			const QString src = outDir + QStringLiteral("/overrides");
-			const QString dst =
-				m_instanceRoot + QStringLiteral("/.minecraft");
+			const QString dst = m_instanceRoot + QStringLiteral("/.minecraft");
 			if (QFileInfo::exists(src)) {
 				/* QDir doesn't recursively copy out of the box;
 				 * we walk and copy. It's not big — overrides are
 				 * normally configs and scripts. */
 				QDir s(src);
 				const auto entries = s.entryInfoList(
-					QDir::AllEntries | QDir::NoDotAndDotDot |
-					QDir::Hidden);
+					QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
 				std::function<bool(const QFileInfo&, const QString&)> copy;
 				copy = [&copy](const QFileInfo& fi, const QString& tgt) {
 					if (fi.isDir()) {
@@ -552,9 +538,8 @@ void ApplyProgressDialog::doOverrides()
 								 .entryInfoList(QDir::AllEntries |
 												QDir::NoDotAndDotDot |
 												QDir::Hidden)) {
-							if (!copy(sub,
-									  tgt + QStringLiteral("/") +
-										  sub.fileName()))
+							if (!copy(sub, tgt + QStringLiteral("/") +
+											   sub.fileName()))
 								return false;
 						}
 						return true;
@@ -601,9 +586,9 @@ void ApplyProgressDialog::doComponents()
 		for (const auto& c : m_plan.components) {
 			const QByteArray uidUtf8 = c.uid.toUtf8();
 			const QByteArray verUtf8 = c.newVersion.toUtf8();
-			(void) m_ctx->instance_component_set_version(
-				m_ctx->module_handle, idUtf8.constData(),
-				uidUtf8.constData(), verUtf8.constData());
+			(void)m_ctx->instance_component_set_version(
+				m_ctx->module_handle, idUtf8.constData(), uidUtf8.constData(),
+				verUtf8.constData());
 		}
 	}
 	setProgress(94);

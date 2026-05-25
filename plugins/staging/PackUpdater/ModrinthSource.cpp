@@ -131,15 +131,16 @@ namespace pack_updater
 				}
 
 				const QString url =
-					QStringLiteral("https://api.modrinth.com/v2/project/%1/version")
+					QStringLiteral(
+						"https://api.modrinth.com/v2/project/%1/version")
 						.arg(rec.packSlug);
 
 				/* The HTTP callback owns its context heap-allocated
 				 * so it survives the original stack frame. */
 				auto* heap = new ModrinthCtx{std::move(cb)};
 				const QByteArray urlUtf8 = url.toUtf8();
-				int rc = ctx->http_get(ctx->module_handle,
-									   urlUtf8.constData(), &onHttp, heap);
+				int rc = ctx->http_get(ctx->module_handle, urlUtf8.constData(),
+									   &onHttp, heap);
 				if (rc != 0) {
 					delete heap;
 					LatestVersion bad;

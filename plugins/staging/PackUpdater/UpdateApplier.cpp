@@ -76,11 +76,9 @@ namespace pack_updater
 			const QJsonObject o = doc.object();
 			m.name = o.value(QStringLiteral("name")).toString();
 			m.versionId = o.value(QStringLiteral("versionId")).toString();
-			m.components =
-				parseComponents(o.value(QStringLiteral("dependencies"))
-									.toObject());
-			for (const auto& v :
-				 o.value(QStringLiteral("files")).toArray()) {
+			m.components = parseComponents(
+				o.value(QStringLiteral("dependencies")).toObject());
+			for (const auto& v : o.value(QStringLiteral("files")).toArray()) {
 				const QJsonObject fo = v.toObject();
 				ManifestFile mf;
 				mf.path = fo.value(QStringLiteral("path")).toString();
@@ -105,8 +103,7 @@ namespace pack_updater
 		QString sidecarFolderForPath(const QString& minecraftDir,
 									 const QString& packRelativePath)
 		{
-			const QString fwd =
-				QString(packRelativePath).replace('\\', '/');
+			const QString fwd = QString(packRelativePath).replace('\\', '/');
 			const int slash = fwd.indexOf('/');
 			if (slash < 1)
 				return {};
@@ -156,8 +153,7 @@ namespace pack_updater
 				minecraftObj.value(QStringLiteral("modLoaders")).toArray();
 			for (const auto& lv : loaders) {
 				const QJsonObject lo = lv.toObject();
-				const QString id =
-					lo.value(QStringLiteral("id")).toString();
+				const QString id = lo.value(QStringLiteral("id")).toString();
 				const int dash = id.indexOf('-');
 				if (dash <= 0)
 					continue;
@@ -187,18 +183,16 @@ namespace pack_updater
 			m.version = o.value(QStringLiteral("version")).toString();
 			m.components = parseCfComponents(
 				o.value(QStringLiteral("minecraft")).toObject());
-			for (const auto& v :
-				 o.value(QStringLiteral("files")).toArray()) {
+			for (const auto& v : o.value(QStringLiteral("files")).toArray()) {
 				const QJsonObject fo = v.toObject();
 				CfFileRef ref;
 				ref.projectID =
 					fo.value(QStringLiteral("projectID")).toInteger();
-				ref.fileID =
-					fo.value(QStringLiteral("fileID")).toInteger();
+				ref.fileID = fo.value(QStringLiteral("fileID")).toInteger();
 				/* Required defaults to true when missing — that's
 				 * what the CF importer in the launcher does too. */
-				ref.required = fo.value(QStringLiteral("required"))
-								   .toBool(true);
+				ref.required =
+					fo.value(QStringLiteral("required")).toBool(true);
 				if (ref.projectID > 0 && ref.fileID > 0)
 					m.files.append(ref);
 			}
@@ -252,8 +246,8 @@ namespace pack_updater
 			rctx->cb(out);
 		}
 
-		void onCfFileResolved(void* user_data, int status,
-							  const void* body, size_t body_size)
+		void onCfFileResolved(void* user_data, int status, const void* body,
+							  size_t body_size)
 		{
 			std::unique_ptr<CfFileFetchThunk> self(
 				static_cast<CfFileFetchThunk*>(user_data));
@@ -262,10 +256,9 @@ namespace pack_updater
 			rctx->pending--;
 
 			if (status < 200 || status >= 300) {
-				PU_LOG(rctx->ctx,
-					   QString("  CF file resolve slot=%1 HTTP %2")
-						   .arg(slot)
-						   .arg(status));
+				PU_LOG(rctx->ctx, QString("  CF file resolve slot=%1 HTTP %2")
+									  .arg(slot)
+									  .arg(status));
 				cfFinishIfDone(rctx);
 				return;
 			}
@@ -275,8 +268,7 @@ namespace pack_updater
 			const QJsonDocument doc = QJsonDocument::fromJson(bytes, &err);
 			if (err.error != QJsonParseError::NoError || !doc.isObject()) {
 				PU_LOG(rctx->ctx,
-					   QString("  CF file resolve slot=%1 bad JSON")
-						   .arg(slot));
+					   QString("  CF file resolve slot=%1 bad JSON").arg(slot));
 				cfFinishIfDone(rctx);
 				return;
 			}
@@ -285,8 +277,8 @@ namespace pack_updater
 			ManifestFile& mf = rctx->resolved[slot];
 			mf.path = QStringLiteral("mods/") +
 					  data.value(QStringLiteral("fileName")).toString();
-			mf.size = qint64(
-				data.value(QStringLiteral("fileLength")).toDouble());
+			mf.size =
+				qint64(data.value(QStringLiteral("fileLength")).toDouble());
 			const QString dl =
 				data.value(QStringLiteral("downloadUrl")).toString();
 			if (!dl.isEmpty()) {
@@ -296,25 +288,24 @@ namespace pack_updater
 				 * opted out of third-party launchers. Fall back to
 				 * the conventional `edge.forgecdn.net` URL the
 				 * launcher's own importer uses. */
-				const qint64 fileId = data.value(QStringLiteral("id"))
-										  .toInteger();
+				const qint64 fileId =
+					data.value(QStringLiteral("id")).toInteger();
 				const QString name =
 					data.value(QStringLiteral("fileName")).toString();
 				if (fileId > 0 && !name.isEmpty()) {
-					mf.downloadUrl = QUrl(
-						QStringLiteral(
-							"https://edge.forgecdn.net/files/%1/%2/%3")
-							.arg(fileId / 1000)
-							.arg(fileId % 1000)
-							.arg(name));
+					mf.downloadUrl =
+						QUrl(QStringLiteral(
+								 "https://edge.forgecdn.net/files/%1/%2/%3")
+								 .arg(fileId / 1000)
+								 .arg(fileId % 1000)
+								 .arg(name));
 				}
 			}
 			const QJsonArray hashes =
 				data.value(QStringLiteral("hashes")).toArray();
 			for (const auto& hv : hashes) {
 				const QJsonObject ho = hv.toObject();
-				const int algo =
-					ho.value(QStringLiteral("algo")).toInt();
+				const int algo = ho.value(QStringLiteral("algo")).toInt();
 				const QString val =
 					ho.value(QStringLiteral("value")).toString();
 				/* CF algo enum: 1=sha1, 2=md5. We only care about
@@ -335,9 +326,8 @@ namespace pack_updater
 				return;
 			}
 			if (!rctx->ctx->http_get_with_headers) {
-				PU_LOG(rctx->ctx,
-					   "  CF resolve: launcher ABI lacks "
-					   "http_get_with_headers");
+				PU_LOG(rctx->ctx, "  CF resolve: launcher ABI lacks "
+								  "http_get_with_headers");
 				rctx->failed = true;
 				cfFinishIfDone(rctx);
 				return;
@@ -364,17 +354,16 @@ namespace pack_updater
 				auto* thunk = new CfFileFetchThunk{rctx, i};
 				const QByteArray urlUtf8 = url.toUtf8();
 				int rc = rctx->ctx->http_get_with_headers(
-					rctx->ctx->module_handle, urlUtf8.constData(), headers,
-					1, &onCfFileResolved, thunk);
+					rctx->ctx->module_handle, urlUtf8.constData(), headers, 1,
+					&onCfFileResolved, thunk);
 				if (rc != 0) {
 					/* Couldn't queue this request; account for it
 					 * so cfFinishIfDone still fires eventually. */
 					delete thunk;
 					rctx->pending--;
-					PU_LOG(rctx->ctx,
-						   QString("  CF resolve: failed to queue "
-								   "request for slot %1")
-							   .arg(i));
+					PU_LOG(rctx->ctx, QString("  CF resolve: failed to queue "
+											  "request for slot %1")
+										  .arg(i));
 				}
 			}
 			/* If every queue call failed synchronously, finish now. */
@@ -432,8 +421,8 @@ namespace pack_updater
 			}
 			out.write(bytes);
 			out.close();
-			PU_LOG(ctx, QString("  wrote %1 bytes")
-							.arg(QFileInfo(zipPath).size()));
+			PU_LOG(ctx,
+				   QString("  wrote %1 bytes").arg(QFileInfo(zipPath).size()));
 
 			if (self->provider == Provider::CurseForge) {
 				/* CurseForge pack: read `manifest.json`, then
@@ -473,8 +462,8 @@ namespace pack_updater
 				self->cb(empty);
 				return;
 			}
-			PU_LOG(ctx, QString("  manifest json size=%1")
-							.arg(indexBytes.size()));
+			PU_LOG(ctx,
+				   QString("  manifest json size=%1").arg(indexBytes.size()));
 			ParsedManifest m = parseManifestJson(indexBytes);
 			PU_LOG(ctx, QString("  parsed: versionId=%1 files=%2 name=%3")
 							.arg(m.versionId)
@@ -486,16 +475,14 @@ namespace pack_updater
 	} /* namespace */
 
 	void fetchAndParseManifest(MMCOContext* ctx, Provider provider,
-							   const QUrl& packUrl,
-							   const QString& scratchDir,
+							   const QUrl& packUrl, const QString& scratchDir,
 							   ManifestCallback cb)
 	{
 		if (!ctx || !ctx->http_get || !packUrl.isValid()) {
 			cb(ParsedManifest{});
 			return;
 		}
-		auto* thunk =
-			new FetchThunk{ctx, scratchDir, provider, std::move(cb)};
+		auto* thunk = new FetchThunk{ctx, scratchDir, provider, std::move(cb)};
 		const QByteArray urlUtf8 = packUrl.toString().toUtf8();
 		if (ctx->http_get(ctx->module_handle, urlUtf8.constData(),
 						  &onPackZipHttp, thunk) != 0) {
@@ -514,13 +501,12 @@ namespace pack_updater
 		plan.target = std::move(manifest);
 
 		if (plan.target.files.isEmpty() && plan.target.versionId.isEmpty()) {
-			plan.errorMessage = QObject::tr(
-				"Could not parse the new pack manifest.");
+			plan.errorMessage =
+				QObject::tr("Could not parse the new pack manifest.");
 			return plan;
 		}
 
-		const QString mcDir =
-			instanceRoot + QStringLiteral("/.minecraft");
+		const QString mcDir = instanceRoot + QStringLiteral("/.minecraft");
 
 		/* Build a lookup of currently-installed sidecars keyed by
 		 * (folder, file_name). We walk every mod-like folder so
@@ -579,7 +565,8 @@ namespace pack_updater
 		}
 
 		PU_LOG(ctx, QString("diff: scanned %1 installed files across "
-							"mod folders").arg(installedByPath.size()));
+							"mod folders")
+						.arg(installedByPath.size()));
 
 		/* Walk the new manifest. For each file decide:
 		 *   - same path + same sha1     → noop (drop from diff)
@@ -594,10 +581,8 @@ namespace pack_updater
 				continue; /* overrides or non-mod paths — handled by
 							 the zip extract, not the diff */
 			const QString fileName = QFileInfo(mf.path).fileName();
-			const QString key = QStringLiteral("%1/%2")
-									.arg(QFileInfo(mf.path).path().section(
-											 '/', -1),
-										 fileName);
+			const QString key = QStringLiteral("%1/%2").arg(
+				QFileInfo(mf.path).path().section('/', -1), fileName);
 			manifestPaths.insert(key);
 
 			auto it = installedByPath.find(key);
@@ -658,7 +643,7 @@ namespace pack_updater
 			const int n = ctx->instance_component_count(
 				ctx->module_handle,
 				/*id=*/installed.packId.toUtf8().constData());
-			(void) n;
+			(void)n;
 			/* The S04 enumerate-by-index accessors only resolve a
 			 * version when we walk all components — but we don't
 			 * know which index hosts our uid without walking. The
@@ -666,7 +651,7 @@ namespace pack_updater
 			 * settings using a sibling accessor would be ideal,
 			 * but we don't have one. So we walk. */
 		};
-		(void) considerComponent;
+		(void)considerComponent;
 
 		/* Simpler component diff: ask through instance_setting_get
 		 * for the loader uids we care about. PackProfile doesn't
@@ -689,7 +674,7 @@ namespace pack_updater
 			 * see the friend overload in the header. */
 			return {}; /* placeholder — see below */
 		};
-		(void) currentVersionForUid;
+		(void)currentVersionForUid;
 
 		/* ─── Component diff, proper version ───────────────────────────
 		 * Look up each loader uid through S04 enumerate accessors.
@@ -737,13 +722,12 @@ namespace pack_updater
 					break;
 			}
 		}
-		PU_LOG(ctx,
-			   QString("diff: plan add=%1 replace=%2 remove=%3 "
-					   "components=%4")
-				   .arg(adds)
-				   .arg(replaces)
-				   .arg(removes)
-				   .arg(plan.components.size()));
+		PU_LOG(ctx, QString("diff: plan add=%1 replace=%2 remove=%3 "
+							"components=%4")
+						.arg(adds)
+						.arg(replaces)
+						.arg(removes)
+						.arg(plan.components.size()));
 
 		plan.ok = true;
 		return plan;

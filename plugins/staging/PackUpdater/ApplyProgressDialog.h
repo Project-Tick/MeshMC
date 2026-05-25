@@ -42,8 +42,7 @@ class ApplyProgressDialog : public QDialog
 {
 	Q_OBJECT
   public:
-	ApplyProgressDialog(const QString& instanceId,
-						const QString& instanceRoot,
+	ApplyProgressDialog(const QString& instanceId, const QString& instanceRoot,
 						const pack_updater::PackRecord& installed,
 						const QUrl& newPackUrl, const QString& newVersionId,
 						const QString& newVersionLabel, MMCOContext* ctx,
