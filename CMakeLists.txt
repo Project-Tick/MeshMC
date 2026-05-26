@@ -205,7 +205,7 @@ add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MESHMC
 ######## Secondly, please set version numbers ########
 set(MeshMC_VERSION_MAJOR    7)
 set(MeshMC_VERSION_MINOR    19)
-set(MeshMC_VERSION_HOTFIX   0)
+set(MeshMC_VERSION_HOTFIX   1)
 
 set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
 set(MeshMC_RELEASE_TWO_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}")
@@ -258,7 +258,7 @@ set(MeshMC_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google 
 set(MeshMC_ANALYTICS_SECRET "_EG4lDmVT-S1oGiOIwvzPA" CACHE STRING "API secret for Google Analytics 4 Measurement Protocol")
 
 # Bug tracker URL
-set(MeshMC_BUG_TRACKER_URL "https://git.projecttick.org/project-tick/projects/meshmc/-/issues/" CACHE STRING "URL for the bug tracker.")
+set(MeshMC_BUG_TRACKER_URL "https://git.projecttick.org/project-tick-projects/meshmc/issues/" CACHE STRING "URL for the bug tracker.")
 
 # Discord URL
 set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
@@ -278,7 +278,7 @@ set(MeshMC_Name "${MeshMC_CommonName}")
 set(MeshMC_DisplayName "${MeshMC_CommonName}")
 set(MeshMC_UserAgent "${MeshMC_CommonName}/${MeshMC_RELEASE_TWO_NAME}")
 set(MeshMC_ConfigFile "meshmc.cfg")
-set(MeshMC_Git "https://git.projecttick.org/project-tick/projects/meshmc")
+set(MeshMC_Git "https://git.projecttick.org/project-tick-projects/meshmc")
 set(MeshMC_Authors "Copyright (C) 2026 Project Tick <https://projecttick.org>, All rights reserved. This Project Licensed under GNU GENERAL PUBLIC LICENSE, either version 3 of the License, or any later version. ")
 
 ######## Lastly, configure placeholders
