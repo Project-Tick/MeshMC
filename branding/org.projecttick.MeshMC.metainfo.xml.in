@@ -58,6 +58,22 @@
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="7.19.2" date="2026-05-27">
+      <description>
+        <p><em>Fixed</em></p>
+        <ul>
+          <li>Fixed MeshMC macOS bundle issue.</li>
+        </ul>
+      </description>
+    </release>
+    <release version="7.19.1" date="2026-05-26">
+      <description>
+        <p><em>Fixed</em></p>
+        <ul>
+          <li>Fixed MeshMC Repo and more URL's</li>
+        </ul>
+      </description>
+    </release>
     <release version="7.19.0" date="2026-05-10">
       <description>
         <p><em>Added</em></p>
