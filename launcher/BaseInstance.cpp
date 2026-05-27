@@ -69,6 +69,22 @@ BaseInstance::BaseInstance(SettingsObjectPtr globalSettings,
 	m_settings->registerSetting("totalTimePlayed", 0);
 	m_settings->registerSetting("lastTimePlayed", 0);
 
+	/* Pack-source provenance keys (consumed by the PackUpdater
+	 * plugin via instance_setting_get). All optional — empty string
+	 * means "not a pack-managed instance" or "we couldn't recover
+	 * this field". InstanceImportTask writes these when a pack is
+	 * imported through Modrinth / CurseForge; PackUpdater's attach
+	 * UI can also write them after the fact. */
+	m_settings->registerSetting("PackProvider", "");
+	m_settings->registerSetting("PackId", "");
+	m_settings->registerSetting("PackSlug", "");
+	m_settings->registerSetting("PackVersionId", "");
+	m_settings->registerSetting("PackVersionLabel", "");
+	m_settings->registerSetting("PackIconUrl", "");
+	m_settings->registerSetting("PackSourceUrl", "");
+	m_settings->registerSetting("PackInstalledAt", "");
+	m_settings->registerSetting("PackManifestSha512", "");
+
 	// Custom Commands
 	auto commandSetting = m_settings->registerSetting(
 		{"OverrideCommands", "OverrideLaunchCmd"}, false);

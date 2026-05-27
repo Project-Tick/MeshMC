@@ -54,6 +54,7 @@
 // FIXME: this does not belong here, it's Minecraft/Flame specific
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
+#include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/flame/FileResolvingTask.h"
 #include "modplatform/flame/PackManifest.h"
 #include "modplatform/modrinth/ModrinthPackManifest.h"
@@ -290,6 +291,121 @@ void InstanceImportTask::extractAborted()
 	return;
 }
 
+namespace
+{
+	/* Walk back from a Modrinth CDN download URL to the project /
+	 * version IDs the catalogue uses. The CDN path shape is stable:
+	 *
+	 *   https://cdn.modrinth.com/data/{projectId}/versions/{versionId}/{filename}
+	 *
+	 * (Project ID is the bare alphanumeric id, not the human slug.)
+	 * Returns the pair as {projectId, versionId}; either string is
+	 * empty when parsing fails, which causes the caller to skip
+	 * sidecar generation for that file. */
+	struct ModrinthIds {
+		QString projectId;
+		QString versionId;
+	};
+
+	ModrinthIds parseModrinthCdnUrl(const QUrl& url)
+	{
+		ModrinthIds out;
+		if (!url.host().contains(QLatin1String("modrinth.com")))
+			return out;
+		const QStringList segs = url.path().split('/', Qt::SkipEmptyParts);
+		const int dataIdx = segs.indexOf(QStringLiteral("data"));
+		const int versionsIdx = segs.indexOf(QStringLiteral("versions"));
+		if (dataIdx >= 0 && dataIdx + 1 < segs.size())
+			out.projectId = segs.at(dataIdx + 1);
+		if (versionsIdx >= 0 && versionsIdx + 1 < segs.size())
+			out.versionId = segs.at(versionsIdx + 1);
+		return out;
+	}
+
+	/* Map a pack-relative `path` (e.g. "mods/sodium.jar") to the
+	 * containing folder of the file on disk. Returns empty when the
+	 * path doesn't sit under one of the indexable mod-like folders
+	 * — there's no sidecar story for arbitrary `config/foo.toml`
+	 * files. */
+	QString sidecarFolderForPath(const QString& minecraftDir,
+								 const QString& packRelativePath)
+	{
+		const QString fwd = QString(packRelativePath).replace('\\', '/');
+		const int slash = fwd.indexOf('/');
+		if (slash < 1)
+			return {};
+		const QString top = fwd.left(slash);
+		if (top == QLatin1String("mods") ||
+			top == QLatin1String("resourcepacks") ||
+			top == QLatin1String("shaderpacks") ||
+			top == QLatin1String("texturepacks") ||
+			top == QLatin1String("coremods")) {
+			return FS::PathCombine(minecraftDir, top);
+		}
+		return {};
+	}
+
+	void writeModrinthModSidecars(const QString& minecraftDir,
+								  const QVector<Modrinth::File>& files)
+	{
+		const QDateTime now = QDateTime::currentDateTimeUtc();
+		for (const auto& f : files) {
+			const QString folder = sidecarFolderForPath(minecraftDir, f.path);
+			if (folder.isEmpty())
+				continue;
+			const ModrinthIds ids = parseModrinthCdnUrl(f.downloadUrl);
+			if (ids.projectId.isEmpty() || ids.versionId.isEmpty())
+				continue;
+
+			/* `QDir folderDir(folder)` (instead of the would-be
+			 * vexing-parse `ModMetadataIndex idx(QDir(folder))`).
+			 * Same end result, no ambiguity for the compiler. */
+			QDir folderDir(folder);
+			ModMetadataIndex idx(folderDir);
+			ModMetadataIndex::Entry e;
+			e.fileName = QFileInfo(f.path).fileName();
+			e.platform = QStringLiteral("modrinth");
+			e.projectId = ids.projectId;
+			e.versionId = ids.versionId;
+			/* mrpack manifests don't carry per-file display names;
+			 * the file name is what the user sees in the mod list
+			 * anyway. */
+			e.name = QFileInfo(f.path).completeBaseName();
+			e.downloadUrl = f.downloadUrl.toString();
+			e.sha1 = f.sha1;
+			e.fileSize = f.fileSize;
+			e.installedAt = now;
+			idx.put(e);
+		}
+	}
+
+	void writeFlameModSidecars(const QString& minecraftDir,
+							   const QVector<Flame::File>& files)
+	{
+		const QDateTime now = QDateTime::currentDateTimeUtc();
+		for (const auto& f : files) {
+			if (f.fileName.isEmpty() || f.projectId == 0 || f.fileId == 0)
+				continue;
+			/* `targetFolder` is whatever the manifest declared —
+			 * usually "mods" but resourcepacks/shaderpacks may show
+			 * up too. */
+			const QString folder =
+				FS::PathCombine(minecraftDir, f.targetFolder);
+			QDir folderDir(folder);
+			ModMetadataIndex idx(folderDir);
+			ModMetadataIndex::Entry e;
+			e.fileName = f.fileName;
+			e.platform = QStringLiteral("curseforge");
+			e.projectId = QString::number(f.projectId);
+			e.versionId = QString::number(f.fileId);
+			e.name = QFileInfo(f.fileName).completeBaseName();
+			e.downloadUrl = f.url.toString();
+			e.installedAt = now;
+			idx.put(e);
+		}
+	}
+} // namespace
+
 void InstanceImportTask::processFlame()
 {
 	Flame::Manifest pack;
@@ -441,6 +557,25 @@ void InstanceImportTask::configureFlameInstance(Flame::Manifest& pack)
 		FS::deletePath(jarmodsPath);
 	}
 	instance.setName(m_instName);
+
+	/* Persist the pack-source hint so PackUpdater (and any other
+	 * plugin) can read it back through instance_setting_get without
+	 * sniffing the manifest. Prefer the hint set by the browser UI;
+	 * fall back to whatever we can recover from the manifest. */
+	PackSourceHint hint = m_packHint;
+	if (hint.provider.isEmpty()) {
+		hint.provider = QStringLiteral("curseforge");
+	}
+	if (hint.versionLabel.isEmpty() && !pack.version.isEmpty()) {
+		hint.versionLabel = pack.version;
+	}
+	if (hint.packSlug.isEmpty() && !pack.name.isEmpty()) {
+		/* CurseForge manifests don't carry the URL slug; the pack
+		 * name is the best we have for display until the user
+		 * (re)attaches through the plugin's UI. */
+		hint.packSlug = pack.name;
+	}
+	writePackSourceToInstance(instance, hint);
 }
 
 void InstanceImportTask::onFlameFileResolutionSucceeded()
@@ -542,10 +677,21 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 	}
 
 	m_modIdResolver.reset();
-	connect(m_filesNetJob.get(), &NetJob::succeeded, this, [&]() {
-		emitSucceeded();
-		m_filesNetJob.reset();
-	});
+
+	/* Same rationale as the Modrinth path: stash file metadata so
+	 * the post-download lambda can drop ModMetadataIndex sidecars
+	 * into `mods/.index/` etc. Without these, the launcher's
+	 * "Check for Updates" pass under the Mods tab silently skips
+	 * every CurseForge-installed mod. */
+	const QString sidecarMcPath = FS::PathCombine(m_stagingPath, "minecraft");
+	const QVector<Flame::File> sidecarFiles = results.files;
+
+	connect(m_filesNetJob.get(), &NetJob::succeeded, this,
+			[this, sidecarMcPath, sidecarFiles]() {
+				writeFlameModSidecars(sidecarMcPath, sidecarFiles);
+				emitSucceeded();
+				m_filesNetJob.reset();
+			});
 	connect(m_filesNetJob.get(), &NetJob::failed, [&](QString reason) {
 		emitFailed(reason);
 		m_filesNetJob.reset();
@@ -644,6 +790,27 @@ void InstanceImportTask::processModrinth()
 
 	instance.setName(m_instName);
 
+	/* Persist pack source — same logic as the Flame path. The
+	 * Modrinth manifest carries name + versionId, so even drag-drop
+	 * imports record enough to drive update checks (we use
+	 * `name` as the slug since Modrinth slugs and pack names align
+	 * for most published packs; the attach UI lets the user fix
+	 * mismatches). */
+	PackSourceHint hint = m_packHint;
+	if (hint.provider.isEmpty()) {
+		hint.provider = QStringLiteral("modrinth");
+	}
+	if (hint.versionId.isEmpty() && !pack.versionId.isEmpty()) {
+		hint.versionId = pack.versionId;
+	}
+	if (hint.versionLabel.isEmpty() && !pack.versionId.isEmpty()) {
+		hint.versionLabel = pack.versionId;
+	}
+	if (hint.packSlug.isEmpty() && !pack.name.isEmpty()) {
+		hint.packSlug = pack.name;
+	}
+	writePackSourceToInstance(instance, hint);
+
 	// Download all mod files
 	m_filesNetJob =
 		new NetJob(tr("Modrinth mod download"), APPLICATION->network());
@@ -672,10 +839,22 @@ void InstanceImportTask::processModrinth()
 		m_filesNetJob->addNetAction(dl);
 	}
 
-	connect(m_filesNetJob.get(), &NetJob::succeeded, this, [&]() {
-		emitSucceeded();
-		m_filesNetJob.reset();
-	});
+	/* Stash a copy of pack files + the staging-instance .minecraft
+	 * dir so the post-download lambda can write mod-metadata
+	 * sidecars without dereferencing a stale stack frame. The
+	 * sidecars are what ModUpdateCheckTask uses to ask Modrinth
+	 * "is there a newer version?" later — without them every mod
+	 * looks like a hand-dropped jar and update detection silently
+	 * does nothing. */
+	const QString sidecarMcPath = minecraftDir;
+	const QVector<Modrinth::File> sidecarFiles = pack.files;
+
+	connect(m_filesNetJob.get(), &NetJob::succeeded, this,
+			[this, sidecarMcPath, sidecarFiles]() {
+				writeModrinthModSidecars(sidecarMcPath, sidecarFiles);
+				emitSucceeded();
+				m_filesNetJob.reset();
+			});
 	connect(m_filesNetJob.get(), &NetJob::failed, [&](QString reason) {
 		emitFailed(reason);
 		m_filesNetJob.reset();
@@ -730,4 +909,29 @@ void InstanceImportTask::processMeshMC()
 		}
 	}
 	emitSucceeded();
+}
+
+void InstanceImportTask::writePackSourceToInstance(MinecraftInstance& instance,
+												   const PackSourceHint& hint)
+{
+	if (hint.isEmpty())
+		return;
+
+	/* These keys mirror what PackUpdater reads back. They were
+	 * pre-registered with sensible defaults in BaseInstance so
+	 * `set()` here uses the correct type and survives a round
+	 * trip through INI serialisation. Empty fields are still
+	 * written explicitly — that way an absent value means "we
+	 * never wrote a hint", while a present-but-empty value means
+	 * "we tried and couldn't recover this one". */
+	auto s = instance.settings();
+	s->set("PackProvider", hint.provider);
+	s->set("PackId", hint.packId);
+	s->set("PackSlug", hint.packSlug);
+	s->set("PackVersionId", hint.versionId);
+	s->set("PackVersionLabel", hint.versionLabel);
+	s->set("PackIconUrl", hint.iconUrl);
+	s->set("PackSourceUrl", hint.sourceUrl);
+	s->set("PackInstalledAt",
+		   QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
 }

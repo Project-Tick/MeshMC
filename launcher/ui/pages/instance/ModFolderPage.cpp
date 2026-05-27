@@ -478,7 +478,7 @@ void ModFolderPage::on_actionDownload_triggered()
 			hasLoader = profile->getComponent("net.minecraftforge") ||
 						profile->getComponent("net.fabricmc.fabric-loader") ||
 						profile->getComponent("org.quiltmc.quilt-loader") ||
-						profile->getComponent("net.neoforged.neoforge");
+						profile->getComponent("net.neoforged");
 		}
 		if (!hasLoader) {
 			QMessageBox::warning(
@@ -618,7 +618,7 @@ void ModFolderPage::on_actionUpdate_triggered()
 			loader = QStringLiteral("fabric");
 		} else if (profile->getComponent("org.quiltmc.quilt-loader")) {
 			loader = QStringLiteral("quilt");
-		} else if (profile->getComponent("net.neoforged.neoforge")) {
+		} else if (profile->getComponent("net.neoforged")) {
 			loader = QStringLiteral("neoforge");
 		} else if (profile->getComponent("net.minecraftforge")) {
 			loader = QStringLiteral("forge");

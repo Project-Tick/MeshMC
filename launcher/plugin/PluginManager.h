@@ -196,6 +196,16 @@ class PluginManager : public QObject
 	static int api_instance_can_launch(void* mh, const char* id);
 	static int api_instance_has_crashed(void* mh, const char* id);
 	static int api_instance_has_update(void* mh, const char* id);
+	static int api_instance_set_update_available(void* mh, const char* id,
+												 int value);
+	static int api_instance_component_set_version(void* mh, const char* id,
+												  const char* uid,
+												  const char* version);
+	static int api_http_get_with_headers(void* mh, const char* url,
+										 const char* const* headers,
+										 int header_count,
+										 MMCOHttpCallback callback,
+										 void* user_data);
 	static int64_t api_instance_get_total_play_time(void* mh, const char* id);
 	static int64_t api_instance_get_last_play_time(void* mh, const char* id);
 	static int64_t api_instance_get_last_launch(void* mh, const char* id);

@@ -69,7 +69,13 @@ DownloadContentDialog::DownloadContentDialog(
 			m_loaderType = "fabric";
 		} else if (profile->getComponent("org.quiltmc.quilt-loader")) {
 			m_loaderType = "quilt";
-		} else if (profile->getComponent("net.neoforged.neoforge")) {
+		} else if (profile->getComponent("net.neoforged")) {
+			// NeoForge's component uid is "net.neoforged" (matches what
+			// InstanceImportTask / FTB / ATL / Technic write and what
+			// VersionPage reads). The previous "net.neoforged.neoforge"
+			// string never matched, so mod-download dialogs opened against
+			// a NeoForge instance left m_loaderType empty and showed no
+			// loader filter.
 			m_loaderType = "neoforge";
 		}
 	}
