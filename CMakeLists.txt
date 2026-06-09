@@ -341,7 +341,7 @@ set(MeshMC_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google 
 set(MeshMC_ANALYTICS_SECRET "_EG4lDmVT-S1oGiOIwvzPA" CACHE STRING "API secret for Google Analytics 4 Measurement Protocol")
 
 # Bug tracker URL
-set(MeshMC_BUG_TRACKER_URL "https://git.projecttick.org/project-tick-projects/meshmc/issues/" CACHE STRING "URL for the bug tracker.")
+set(MeshMC_BUG_TRACKER_URL "https://git.projecttick.org/project-tick/projects/meshmc/-/work_items/" CACHE STRING "URL for the bug tracker.")
 
 # Discord URL
 set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
