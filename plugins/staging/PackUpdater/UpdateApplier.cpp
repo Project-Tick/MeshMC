@@ -3,9 +3,7 @@
 
 #include "UpdateApplier.h"
 
-#include "minecraft/mod/ModMetadataIndex.h"
-#include "MMCZip.h"
-#include "BuildConfig.h"
+#include <QTemporaryDir>
 
 #include <QDir>
 #include <QFile>
@@ -39,6 +37,38 @@ namespace pack_updater
 		 * is canonical, others are fallbacks. We pick whichever
 		 * comes first; the dialog can retry from a different mirror
 		 * later if we plumb it. */
+		/* Read a single named file out of a zip without linking
+		 *
+		 * MMCZip. We extract the whole archive into a throwaway
+		 * temp
+		 * dir via the SDK's zip_extract, then slurp the file
+		 * from
+		 * disk. The temp dir self-cleans on scope exit.
+		 *
+		 *
+		 * `relPath` uses '/' separators (mrpack/CF manifests are
+		 *
+		 * always forward-slashed). Returns empty on any failure. */
+		QByteArray readFileFromZipViaSdk(MMCOContext* ctx,
+										 const QString& zipPath,
+										 const QString& relPath)
+		{
+			if (!ctx || !ctx->zip_extract)
+				return {};
+			QTemporaryDir tmp;
+			if (!tmp.isValid())
+				return {};
+			const QByteArray zipUtf8 = zipPath.toUtf8();
+			const QByteArray dirUtf8 = tmp.path().toUtf8();
+			if (ctx->zip_extract(ctx->module_handle, zipUtf8.constData(),
+								 dirUtf8.constData()) != 0)
+				return {};
+			QFile f(tmp.filePath(relPath));
+			if (!f.open(QIODevice::ReadOnly))
+				return {};
+			return f.readAll();
+		}
+
 		QUrl firstDownload(const QJsonObject& fileObj)
 		{
 			const QJsonArray arr =
@@ -318,7 +348,12 @@ namespace pack_updater
 
 		void resolveCfFiles(std::shared_ptr<CfResolveCtx> rctx)
 		{
-			if (BuildConfig.CURSEFORGE_API_KEY.isEmpty()) {
+			const QString apiKey = QString::fromUtf8(
+				rctx->ctx && rctx->ctx->app_setting_get
+					? rctx->ctx->app_setting_get(rctx->ctx->module_handle,
+												 "CurseForgeAPIKey")
+					: nullptr);
+			if (apiKey.isEmpty()) {
 				PU_LOG(rctx->ctx,
 					   "  CF resolve: build has no CURSEFORGE_API_KEY");
 				rctx->failed = true;
@@ -339,9 +374,7 @@ namespace pack_updater
 				return;
 			}
 			const QByteArray headerLine =
-				QStringLiteral("x-api-key: %1")
-					.arg(BuildConfig.CURSEFORGE_API_KEY)
-					.toUtf8();
+				QStringLiteral("x-api-key: %1").arg(apiKey).toUtf8();
 			const char* headers[] = {headerLine.constData()};
 
 			for (int i = 0; i < rctx->base.files.size(); ++i) {
@@ -427,8 +460,8 @@ namespace pack_updater
 			if (self->provider == Provider::CurseForge) {
 				/* CurseForge pack: read `manifest.json`, then
 				 * resolve every (projectID, fileID) through CF API. */
-				const QByteArray manifestBytes = MMCZip::readFileFromZip(
-					zipPath, QStringLiteral("manifest.json"));
+				const QByteArray manifestBytes = readFileFromZipViaSdk(
+					ctx,`r`n zipPath, QStringLiteral("manifest.json"));
 				if (manifestBytes.isEmpty()) {
 					PU_LOG(ctx, "  -> manifest.json not found in CF zip");
 					self->cb(empty);
@@ -455,8 +488,8 @@ namespace pack_updater
 
 			/* Default to Modrinth (also covers MultiMC raw zips
 			 * that happen to ship a modrinth.index.json). */
-			QByteArray indexBytes = MMCZip::readFileFromZip(
-				zipPath, QStringLiteral("modrinth.index.json"));
+			QByteArray indexBytes = readFileFromZipViaSdk(
+				ctx,`r`n zipPath, QStringLiteral("modrinth.index.json"));
 			if (indexBytes.isEmpty()) {
 				PU_LOG(ctx, "  -> modrinth.index.json not found in zip");
 				self->cb(empty);
@@ -528,12 +561,7 @@ namespace pack_updater
 			/* First, prefer sidecar metadata — it carries SHA1s so
 			 * the diff can decide noop-vs-replace without hashing
 			 * the file from disk. */
-			QHash<QString, QString> sidecarSha1; /* fileName → sha1 */
-			ModMetadataIndex idx(folderDir);
-			idx.load();
-			for (const auto& e : idx.all()) {
-				sidecarSha1.insert(e.fileName, e.sha1);
-			}
+			QHash<QString, QString> sidecarSha1; /* fileName -> sha1 */
 
 			/* But the source of truth is the actual jars on disk:
 			 * manually-dropped mods (and anything imported before
