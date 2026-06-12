@@ -3,7 +3,6 @@
 
 #include "AttachDialog.h"
 #include "PackMetadata.h"
-#include "BuildConfig.h"
 
 #include <QComboBox>
 #include <QDateTime>
@@ -41,6 +40,15 @@ void AttachDialog::onHttpRaw(void* user_data, int status,
 	const QByteArray body(static_cast<const char*>(response_body),
 						  static_cast<int>(size));
 	thunk->dlg->handleResponse(thunk->step, thunk->reqId, status, body);
+}
+
+static QString curseForgeApiKey(MMCOContext* ctx)
+{
+	if (!ctx || !ctx->app_setting_get)
+		return {};
+	const char* v =
+		ctx->app_setting_get(ctx->module_handle, "CurseForgeAPIKey");
+	return QString::fromUtf8(v);
 }
 
 AttachDialog::AttachDialog(const QString& instanceId, MMCOContext* ctx,
@@ -203,7 +211,8 @@ void AttachDialog::searchModrinth(const QString& query, int reqId)
 
 void AttachDialog::searchCurseForge(const QString& query, int reqId)
 {
-	if (BuildConfig.CURSEFORGE_API_KEY.isEmpty()) {
+	const QString apiKey = curseForgeApiKey(m_ctx);
+	if (apiKey.isEmpty()) {
 		m_statusLabel->setText(
 			tr("This build has no CurseForge API key configured."));
 		return;
@@ -223,9 +232,8 @@ void AttachDialog::searchCurseForge(const QString& query, int reqId)
 					   "sortOrder=desc&pageSize=20&searchFilter=%1")
 			.arg(QString::fromUtf8(QUrl::toPercentEncoding(query)));
 
-	const QByteArray header = QStringLiteral("x-api-key: %1")
-								  .arg(BuildConfig.CURSEFORGE_API_KEY)
-								  .toUtf8();
+	const QByteArray header =
+		QStringLiteral("x-api-key: %1").arg(apiKey).toUtf8();
 	const char* headers[] = {header.constData()};
 
 	auto* thunk = new HttpThunk{this, Step::SearchCurseForge, reqId};
@@ -286,9 +294,9 @@ void AttachDialog::fetchVersionsCurseForge(const QString& projectId, int reqId)
 		QStringLiteral(
 			"https://api.curseforge.com/v1/mods/%1/files?pageSize=50")
 			.arg(projectId);
-	const QByteArray header = QStringLiteral("x-api-key: %1")
-								  .arg(BuildConfig.CURSEFORGE_API_KEY)
-								  .toUtf8();
+	const QString apiKey = curseForgeApiKey(m_ctx);
+	const QByteArray header =
+		QStringLiteral("x-api-key: %1").arg(apiKey).toUtf8();
 	const char* headers[] = {header.constData()};
 
 	auto* thunk = new HttpThunk{this, Step::VersionsCurseForge, reqId};

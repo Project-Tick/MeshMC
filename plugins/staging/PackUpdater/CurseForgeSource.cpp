@@ -24,7 +24,6 @@
  */
 
 #include "UpdateSource.h"
-#include "BuildConfig.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -124,7 +123,12 @@ namespace pack_updater
 					cb(bad);
 					return;
 				}
-				if (BuildConfig.CURSEFORGE_API_KEY.isEmpty()) {
+				const QString apiKey = QString::fromUtf8(
+					ctx->app_setting_get
+						? ctx->app_setting_get(ctx->module_handle,
+											   "CurseForgeAPIKey")
+						: nullptr);
+				if (apiKey.isEmpty()) {
 					LatestVersion bad;
 					bad.errorMessage = QObject::tr(
 						"This build of MeshMC has no CurseForge API key "
@@ -150,9 +154,7 @@ namespace pack_updater
 				 * mandates for v1. Accept header is JSON by default
 				 * for the v1 endpoint, no need to set it. */
 				const QByteArray headerLine =
-					QStringLiteral("x-api-key: %1")
-						.arg(BuildConfig.CURSEFORGE_API_KEY)
-						.toUtf8();
+					QStringLiteral("x-api-key: %1").arg(apiKey).toUtf8();
 				const char* headers[] = {headerLine.constData()};
 
 				auto* heap = new CurseForgeCtx{std::move(cb)};

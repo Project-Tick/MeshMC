@@ -929,6 +929,14 @@ void Application::initSettings()
 								defaultMaxMem);
 	m_settings->registerSetting("PermGen", 128);
 
+	// CurseForge API key — baked in at compile time via BuildConfig.
+	// Exposed as a read-only app setting so .mmco plugins can read it
+	// through the MMCOContext::app_setting_get channel (ABI 3). Plugins
+	// cannot link BuildConfig directly: the SDK is Qt-only and the
+	// BuildConfig symbol is not part of the plugin ABI.
+	m_settings->registerSetting("CurseForgeAPIKey", "");
+	m_settings->set("CurseForgeAPIKey", BuildConfig.CURSEFORGE_API_KEY);
+
 	// Java Settings
 	m_settings->registerSetting("JavaPath", "");
 	m_settings->registerSetting("JavaTimestamp", 0);
