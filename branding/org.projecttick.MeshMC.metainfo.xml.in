@@ -609,8 +609,9 @@
   <url type="homepage">https://projecttick.org/p/meshmc</url>
   <url type="faq">https://projecttick.org/handbook</url>
   <url type="help">https://projecttick.org/handbook/</url>
+  <url type="bugtracker">https://git.projecttick.org/project-tick/projects/meshmc/-/work_items</url>
   <url type="translate">https://crowdin.com/project/projtlauncher</url>
-  <url type="contact">https://git.projecttick.org/project-tick/projects/meshmc/-/work_items/</url>
+  <url type="contact">mailto:desk+project-tick-projects-meshmc-66-issue-@projecttick.org</url>
   <url type="vcs-browser">https://git.projecttick.org/project-tick/projects/meshmc/</url>
   <url type="contribute">https://git.projecttick.org/Project-Tick/Governance/governancedoc/-/blob/master/GOVERNANCE.md</url>
   <content_rating type="oars-1.1">
