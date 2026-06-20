@@ -1,16 +1,107 @@
 workflow:
   rules:
-    # Skip every merge request pipeline (detached + merged-results + train).
+    # Run for merge requests (so lint runs on every MR, in forks too).
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    # Avoid a duplicate branch pipeline when an MR is already open for the
+    # branch; the merge_request_event pipeline above covers that case.
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
       when: never
-    # Skip any pipeline running in a fork of this project.
-    - if: '$CI_PROJECT_NAMESPACE != "project-tick/projects"'
-      when: never
-    # Run on the default branch and protected branches/tags only.
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_COMMIT_REF_PROTECTED == "true"'
+    # Run on any branch push (default, feature branches, forks).
+    - if: '$CI_COMMIT_BRANCH'
+    # Run on tags.
+    - if: '$CI_COMMIT_TAG'
+    # Run scheduled, manual (web) and API/trigger pipelines.
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_PIPELINE_SOURCE == "api"'
+    - if: '$CI_PIPELINE_SOURCE == "trigger"'
 
 include:
   - template: Jobs/Dependency-Scanning.gitlab-ci.yml
   - template: Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml
+
+stages:
+  - lint
+  - test
+  - maintenance
+
+# ──────────────────────────────────────────────────────────────────────
+# Lightweight lint jobs
+#
+# Heavy build/test/package/release work lives in GitHub Actions (Foreman).
+# GitLab CI only runs cheap, fast checks on the default small hosted
+# runner: no compilation, no dependency cloning.
+# ──────────────────────────────────────────────────────────────────────
+
+# REUSE / SPDX licensing compliance (REUSE.toml at the repo root).
+reuse:
+  stage: lint
+  image:
+    name: fsfe/reuse:latest
+    entrypoint: [""]
+  tags:
+    - saas-linux-small-amd64
+  script:
+    - reuse lint
+
+# clang-format check. Runs the flake's pinned check so the clang-format
+# version (llvmPackages_22 clang-tools) matches local `nix flake check`
+# and scripts/check-clang-format.sh exactly.
+clang-format:
+  stage: lint
+  image: nixos/nix:latest
+  tags:
+    - saas-linux-small-amd64
+  variables:
+    # check-clang-format.sh uses `git ls-files`; submodules are not needed.
+    GIT_SUBMODULE_STRATEGY: none
+  script:
+    - nix --extra-experimental-features 'nix-command flakes' build ".#checks.x86_64-linux.clang-format" -L
+
+# ──────────────────────────────────────────────────────────────────────
+# Weekly flake.lock update
+#
+# Runs only on a scheduled pipeline (set up a weekly schedule in
+# CI/CD > Schedules). It runs `nix flake update`; if flake.lock changed,
+# it pushes a branch and opens an MR. No-op when inputs are already
+# current.
+#
+# Requires a CI/CD variable FLAKE_UPDATE_TOKEN: a Project (or group)
+# Access Token with `write_repository` + `api` scope and at least the
+# Developer role, so it can push and open the MR (CI_JOB_TOKEN cannot
+# create merge requests).
+# ──────────────────────────────────────────────────────────────────────
+flake-update:
+  stage: maintenance
+  image: nixos/nix:latest
+  tags:
+    - saas-linux-small-amd64
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+  variables:
+    GIT_SUBMODULE_STRATEGY: none
+    UPDATE_BRANCH: "chore/flake-update-$CI_PIPELINE_ID"
+  script:
+    - |
+      set -eu
+      NIX="nix --extra-experimental-features nix-command --extra-experimental-features flakes"
+      $NIX flake update
+      if git diff --quiet -- flake.lock; then
+        echo "flake.lock already up to date; nothing to do."
+        exit 0
+      fi
+      $NIX profile install nixpkgs#glab nixpkgs#git
+      git config user.name "MeshMC CI"
+      git config user.email "meshmc-ci@projecttick.org"
+      git checkout -b "$UPDATE_BRANCH"
+      git add flake.lock
+      git commit -m "chore(deps): weekly flake.lock update"
+      git push "https://flake-update:${FLAKE_UPDATE_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$UPDATE_BRANCH"
+      GITLAB_TOKEN="$FLAKE_UPDATE_TOKEN" glab mr create \
+        --source-branch "$UPDATE_BRANCH" \
+        --target-branch "$CI_DEFAULT_BRANCH" \
+        --title "chore(deps): weekly flake.lock update" \
+        --description "Automated weekly nix flake update. Pipeline: ${CI_PIPELINE_URL}" \
+        --remove-source-branch \
+        --yes
