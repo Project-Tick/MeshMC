@@ -69,10 +69,11 @@ WikiNavNode DirectoryBundle::buildNav() const
 	}
 
 	// Map category name -> index into root.children. We must store indices, not
-	// pointers: root.children is a QList and append() may reallocate its buffer,
-	// which would invalidate any previously taken element pointer (dangling ->
-	// UB/crash on the next dereference). Indices stay valid because we only
-	// append to root.children inside this loop (uncategorised is added after).
+	// pointers: root.children is a QList and append() may reallocate its
+	// buffer, which would invalidate any previously taken element pointer
+	// (dangling -> UB/crash on the next dereference). Indices stay valid
+	// because we only append to root.children inside this loop (uncategorised
+	// is added after).
 	QHash<QString, int> categoryIndex;
 	WikiNavNode uncategorised;
 	uncategorised.title = QObject::tr("Uncategorised");

@@ -61,8 +61,7 @@ static QString testNormalizeVersion(const QString& v)
 
 void UpdateCheckerTest::tst_ParseStableFeedItem_StructuredMatch()
 {
-	const QString xml =
-		QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
+	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
 	<channel>
 		<item>
@@ -110,8 +109,7 @@ void UpdateCheckerTest::tst_ParseStableFeedItem_StructuredMatch()
 void UpdateCheckerTest::
 	tst_ParseStableFeedItem_StructuredArchSelectsCorrectAsset()
 {
-	const QString xml =
-		QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
+	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
 	<channel>
 		<item>
@@ -147,8 +145,7 @@ void UpdateCheckerTest::
 
 void UpdateCheckerTest::tst_ParseStableFeedItem_LegacyArtifactFallback()
 {
-	const QString xml =
-		QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
+	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
 	<channel>
 		<item>
@@ -177,8 +174,7 @@ void UpdateCheckerTest::tst_ParseStableFeedItem_LegacyArtifactFallback()
 
 void UpdateCheckerTest::tst_ParseStableFeedItem_NoMatchingAssetForBuild()
 {
-	const QString xml =
-		QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
+	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
 	<channel>
 		<item>
