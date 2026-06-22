@@ -3,17 +3,17 @@
     "classparser": {
       "flake": false,
       "locked": {
-        "lastModified": 1781949651,
-        "narHash": "sha256-nr+fllM6jGdu6uXsSwH410C2CqCtTW9lAlvV9r3RgMo=",
+        "lastModified": 1778239806,
+        "narHash": "sha256-ihjifz1bv7PrOoUdgX1+bgAGZoFgn7y2rXIlkyH9L+Y=",
         "ref": "refs/heads/master",
-        "rev": "7622e3a57e46c579ed2b364b7f7778dfd8abc9c6",
-        "revCount": 5,
+        "rev": "405ae36ddd56a16f38fb04f187e81428278f759e",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/classparser"
+        "url": "https://git.projecttick.org/project-tick/projects/classparser"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/classparser"
+        "url": "https://git.projecttick.org/project-tick/projects/classparser"
       }
     },
     "ganalytics": {
@@ -25,11 +25,11 @@
         "rev": "245eae21e0e78e002100f0d74d0b12912dbcc59a",
         "revCount": 5,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/ganalytics"
+        "url": "https://git.projecttick.org/project-tick/projects/ganalytics"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/ganalytics"
+        "url": "https://git.projecttick.org/project-tick/projects/ganalytics"
       }
     },
     "genqrcode": {
@@ -41,59 +41,59 @@
         "rev": "58c80417cf580a45bd8edeb02ed75f248d506bf6",
         "revCount": 851,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/genqrcode"
+        "url": "https://git.projecttick.org/project-tick/projects/genqrcode"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/genqrcode"
+        "url": "https://git.projecttick.org/project-tick/projects/genqrcode"
       }
     },
     "iconfix": {
       "flake": false,
       "locked": {
-        "lastModified": 1781949721,
-        "narHash": "sha256-fPeUK3RRzsnJwkNAjnvCn2mQOs+BVGyHaO2bILUNSkw=",
+        "lastModified": 1778239775,
+        "narHash": "sha256-FevkxuA5pdI7a3ks6wOOWd6mLXH+gAp/u0lRAqyP/O0=",
         "ref": "refs/heads/master",
-        "rev": "95121bd76941db52db46cf164c9fa374714bdbf3",
-        "revCount": 5,
+        "rev": "d15da049a088aaab833070660de3706d532897b3",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/iconfix"
+        "url": "https://git.projecttick.org/project-tick/projects/iconfix"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/iconfix"
+        "url": "https://git.projecttick.org/project-tick/projects/iconfix"
       }
     },
     "javacheck": {
       "flake": false,
       "locked": {
-        "lastModified": 1781949847,
-        "narHash": "sha256-L9/85AKd50S+Cm0s0WYdZNz1LO5Wpfy7VCvxEQo6M/I=",
+        "lastModified": 1778239781,
+        "narHash": "sha256-rEmaSg67u5dQjHB3m52eHTpZPHLGHSFqh7kz8gQ5yaM=",
         "ref": "refs/heads/master",
-        "rev": "04c1057bf42a60b5afcf1599471306bee5a0179a",
-        "revCount": 5,
+        "rev": "b379b42e9db036bb8e320da7c9101cb84023e1d2",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/javacheck"
+        "url": "https://git.projecttick.org/project-tick/projects/javacheck"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/javacheck"
+        "url": "https://git.projecttick.org/project-tick/projects/javacheck"
       }
     },
     "javalauncher": {
       "flake": false,
       "locked": {
-        "lastModified": 1781949811,
-        "narHash": "sha256-efw921DdGUCBqHBKU0twKNxTyJDtr4mWYbqe12qYrJM=",
+        "lastModified": 1778239785,
+        "narHash": "sha256-gAU2e9yK6PPqrKm/kG7zicEYrTjfKwBT/x6llLGRV8A=",
         "ref": "refs/heads/master",
-        "rev": "f08078490ade7cc4b6f45714ff824db3fff86ba4",
-        "revCount": 5,
+        "rev": "13b46d1fcfe3be985ef92ced5203bd5f5fea9cdc",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/javalauncher"
+        "url": "https://git.projecttick.org/project-tick/projects/javalauncher"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/javalauncher"
+        "url": "https://git.projecttick.org/project-tick/projects/javalauncher"
       }
     },
     "katabasis": {
@@ -105,11 +105,11 @@
         "rev": "03cf92475a9d3f94b06bef20251c3cfcaf051d5c",
         "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/katabasis"
+        "url": "https://git.projecttick.org/project-tick/projects/katabasis"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/katabasis"
+        "url": "https://git.projecttick.org/project-tick/projects/katabasis"
       }
     },
     "libnbtplusplus": {
@@ -121,52 +121,52 @@
         "rev": "a68e933a7389b75835525d0b16663b6f9ddb3115",
         "revCount": 339,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/libnbtplusplus"
+        "url": "https://git.projecttick.org/project-tick/projects/libnbtplusplus"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/libnbtplusplus"
+        "url": "https://git.projecttick.org/project-tick/projects/libnbtplusplus"
       }
     },
     "localpeer": {
       "flake": false,
       "locked": {
-        "lastModified": 1781949871,
-        "narHash": "sha256-2JKwzhjLC5GUMnExAK578cr/JgOvz/J8IkK8qfh7LWs=",
+        "lastModified": 1778239854,
+        "narHash": "sha256-xMkGMhYZvnOQtahqE3nDHBxnwo+xTMzYi3gqzOZUa/w=",
         "ref": "refs/heads/master",
-        "rev": "827a8e7ede5920e4c247b1a9fa3a236a9522bf5c",
-        "revCount": 5,
+        "rev": "300bcf9167ed23be8764aa5cae831b90ab6d5a6c",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/localpeer"
+        "url": "https://git.projecttick.org/project-tick/projects/localpeer"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/localpeer"
+        "url": "https://git.projecttick.org/project-tick/projects/localpeer"
       }
     },
     "neozip": {
       "flake": false,
       "locked": {
-        "lastModified": 1779655087,
-        "narHash": "sha256-N6iAEcLTsRtdA0oJGfkv6hkC1+D6XyGmDaPr0vVSw4g=",
+        "lastModified": 1778093060,
+        "narHash": "sha256-ADYKYtpAPfhcyYtPySB102T+9KA+XombzvhwUcIL7jY=",
         "ref": "refs/heads/master",
-        "rev": "13f7edd9d6c2ef50f3d6d640d27fcc29baa58d7d",
-        "revCount": 3094,
+        "rev": "581e39c195107c803ea3823222522fc609467431",
+        "revCount": 3054,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/neozip"
+        "url": "https://git.projecttick.org/project-tick/projects/neozip"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/neozip"
+        "url": "https://git.projecttick.org/project-tick/projects/neozip"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1781577229,
-        "narHash": "sha256-rcUHdUtJEvMdNEl2Wq+YpHraHKfcer3KsBscpZEF2Yg=",
-        "rev": "567a49d1913ce81ac6e9582e3553dd90a955875f",
+        "lastModified": 1777954456,
+        "narHash": "sha256-qeRNZKcA0igTdRVnBe6hyo49CqxME92s4G8Sr78ARJw=",
+        "rev": "549bd84d6279f9852cae6225e372cc67fb91a4c1",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1017464.567a49d1913c/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.05pre992384.549bd84d6279/nixexprs.tar.xz"
       },
       "original": {
         "type": "tarball",
@@ -176,17 +176,17 @@
     "optional-bare": {
       "flake": false,
       "locked": {
-        "lastModified": 1781950513,
-        "narHash": "sha256-ns112SrTZNwvSrGzEdb1Ju2j67xYPRxEc2Sjvn22j8Y=",
+        "lastModified": 1778239859,
+        "narHash": "sha256-mm5oE+Hp9OJt9OgNkUGDOZMi9CbuHrm0AaxYm1CbpT8=",
         "ref": "refs/heads/master",
-        "rev": "3ab711e92b3b39805b6e2deb6dbf58897a16301c",
-        "revCount": 6,
+        "rev": "f3a3dd3c33feb618d9c70403f4eaf0c1d1abb914",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/optional-bare"
+        "url": "https://git.projecttick.org/project-tick/projects/optional-bare"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/optional-bare"
+        "url": "https://git.projecttick.org/project-tick/projects/optional-bare"
       }
     },
     "project-tick-cmark": {
@@ -198,11 +198,11 @@
         "rev": "7b089f620c5b0885321844a03a21bdbb9beb42e2",
         "revCount": 2655,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/cmark"
+        "url": "https://git.projecttick.org/project-tick/projects/cmark"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/cmark"
+        "url": "https://git.projecttick.org/project-tick/projects/cmark"
       }
     },
     "project-tick-tomlplusplus": {
@@ -214,27 +214,27 @@
         "rev": "b775819c52293afe7e5287781e250884adc82ad1",
         "revCount": 387,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/tomlplusplus"
+        "url": "https://git.projecttick.org/project-tick/projects/tomlplusplus"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/tomlplusplus"
+        "url": "https://git.projecttick.org/project-tick/projects/tomlplusplus"
       }
     },
     "rainbow": {
       "flake": false,
       "locked": {
-        "lastModified": 1781950114,
-        "narHash": "sha256-QYjWZuto7NIueZH0N64/V6EB4/BcHXaLMZsA6sVJWh8=",
+        "lastModified": 1778239862,
+        "narHash": "sha256-58n+QXeiCefG/ucP80oxf3JKJshrlnM7tdoEn7ERad0=",
         "ref": "refs/heads/master",
-        "rev": "69371440200c677eed73aea4ab0d3a832298733a",
-        "revCount": 5,
+        "rev": "e01a1f69e8cc4490641bfd3779170c74a08c12d5",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/rainbow"
+        "url": "https://git.projecttick.org/project-tick/projects/rainbow"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/rainbow"
+        "url": "https://git.projecttick.org/project-tick/projects/rainbow"
       }
     },
     "root": {
@@ -261,33 +261,33 @@
     "systeminfo": {
       "flake": false,
       "locked": {
-        "lastModified": 1781950263,
-        "narHash": "sha256-cGxvZ4HKCvCS1SRUfkf+owzJzr1syWlkn5CPY7rP+ek=",
+        "lastModified": 1778432895,
+        "narHash": "sha256-poR3x3FKZgyx2gQbWL5F2eC5ZUv/5aKA+XU7aCOA9C8=",
         "ref": "refs/heads/master",
-        "rev": "ad68b184734fa0382b8ef769104f630ab4de79ed",
-        "revCount": 5,
+        "rev": "bd740f4fa32f0e3f3570b8b0bff709788a15191d",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/systeminfo"
+        "url": "https://git.projecttick.org/project-tick/projects/systeminfo"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/systeminfo"
+        "url": "https://git.projecttick.org/project-tick/projects/systeminfo"
       }
     },
     "xz-embedded": {
       "flake": false,
       "locked": {
-        "lastModified": 1781950294,
-        "narHash": "sha256-SDeYwCmc/zTrtKy2zKHcTXDBzErEbjrZl4ZBpKsQu3Y=",
+        "lastModified": 1778243347,
+        "narHash": "sha256-qvD9h0gGtBbMxy/blJKJUyMcGv2z0U5LCaauOKZZ5+Y=",
         "ref": "refs/heads/master",
-        "rev": "a820137a4f9861182cefc145dcfde374433bedbc",
-        "revCount": 5,
+        "rev": "7313467a271386f29929b150da4d66e3471b19fe",
+        "revCount": 4,
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/xz-embedded"
+        "url": "https://git.projecttick.org/project-tick/projects/xz-embedded"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/project-tick/projects/xz-embedded"
+        "url": "https://git.projecttick.org/project-tick/projects/xz-embedded"
       }
     }
   },

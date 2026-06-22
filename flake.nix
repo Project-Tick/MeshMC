@@ -12,67 +12,67 @@
     nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
 
     classparser = {
-      url = "git+https://gitlab.com/project-tick/projects/classparser";
+      url = "git+https://git.projecttick.org/project-tick/projects/classparser";
       flake = false;
     };
     project-tick-cmark = {
-      url = "git+https://gitlab.com/project-tick/projects/cmark";
+      url = "git+https://git.projecttick.org/project-tick/projects/cmark";
       flake = false;
     };
     ganalytics = {
-      url = "git+https://gitlab.com/project-tick/projects/ganalytics";
+      url = "git+https://git.projecttick.org/project-tick/projects/ganalytics";
       flake = false;
     };
     genqrcode = {
-      url = "git+https://gitlab.com/project-tick/projects/genqrcode";
+      url = "git+https://git.projecttick.org/project-tick/projects/genqrcode";
       flake = false;
     };
     iconfix = {
-      url = "git+https://gitlab.com/project-tick/projects/iconfix";
+      url = "git+https://git.projecttick.org/project-tick/projects/iconfix";
       flake = false;
     };
     javacheck = {
-      url = "git+https://gitlab.com/project-tick/projects/javacheck";
+      url = "git+https://git.projecttick.org/project-tick/projects/javacheck";
       flake = false;
     };
     javalauncher = {
-      url = "git+https://gitlab.com/project-tick/projects/javalauncher";
+      url = "git+https://git.projecttick.org/project-tick/projects/javalauncher";
       flake = false;
     };
     katabasis = {
-      url = "git+https://gitlab.com/project-tick/projects/katabasis";
+      url = "git+https://git.projecttick.org/project-tick/projects/katabasis";
       flake = false;
     };
     libnbtplusplus = {
-      url = "git+https://gitlab.com/project-tick/projects/libnbtplusplus";
+      url = "git+https://git.projecttick.org/project-tick/projects/libnbtplusplus";
       flake = false;
     };
     localpeer = {
-      url = "git+https://gitlab.com/project-tick/projects/localpeer";
+      url = "git+https://git.projecttick.org/project-tick/projects/localpeer";
       flake = false;
     };
     neozip = {
-      url = "git+https://gitlab.com/project-tick/projects/neozip";
+      url = "git+https://git.projecttick.org/project-tick/projects/neozip";
       flake = false;
     };
     optional-bare = {
-      url = "git+https://gitlab.com/project-tick/projects/optional-bare";
+      url = "git+https://git.projecttick.org/project-tick/projects/optional-bare";
       flake = false;
     };
     rainbow = {
-      url = "git+https://gitlab.com/project-tick/projects/rainbow";
+      url = "git+https://git.projecttick.org/project-tick/projects/rainbow";
       flake = false;
     };
     systeminfo = {
-      url = "git+https://gitlab.com/project-tick/projects/systeminfo";
+      url = "git+https://git.projecttick.org/project-tick/projects/systeminfo";
       flake = false;
     };
     project-tick-tomlplusplus = {
-      url = "git+https://gitlab.com/project-tick/projects/tomlplusplus";
+      url = "git+https://git.projecttick.org/project-tick/projects/tomlplusplus";
       flake = false;
     };
     xz-embedded = {
-      url = "git+https://gitlab.com/project-tick/projects/xz-embedded";
+      url = "git+https://git.projecttick.org/project-tick/projects/xz-embedded";
       flake = false;
     };
   };
