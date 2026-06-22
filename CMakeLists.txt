@@ -361,7 +361,7 @@ set(MeshMC_Name "${MeshMC_CommonName}")
 set(MeshMC_DisplayName "${MeshMC_CommonName}")
 set(MeshMC_UserAgent "${MeshMC_CommonName}/${MeshMC_RELEASE_TWO_NAME}")
 set(MeshMC_ConfigFile "meshmc.cfg")
-set(MeshMC_Git "https://git.projecttick.org/project-tick-projects/meshmc")
+set(MeshMC_Git "https://git.projecttick.org/project-tick/projects/meshmc")
 set(MeshMC_Authors "Copyright (C) 2026 Project Tick <https://projecttick.org>, All rights reserved. This Project Licensed under GNU GENERAL PUBLIC LICENSE, either version 3 of the License, or any later version. ")
 
 ######## Lastly, configure placeholders
