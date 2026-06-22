@@ -16,7 +16,6 @@
 #################################### Register plugins here ####################################
 
 # Cross-platform plugins still in staging.
-add_subdirectory(GitVersioning)
 add_subdirectory(ErrorOracle)
 add_subdirectory(OfflineWiki)
 add_subdirectory(PackUpdater)
