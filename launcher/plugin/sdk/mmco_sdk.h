@@ -850,27 +850,33 @@ struct MMCOContext {
 
 #define MMCO_DEFINE_MODULE_7(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license, mod_code_link, mod_icon_set)         \
-	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+	extern "C" {                                                              \
+	MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                            \
 		MMCO_MAGIC,	   MMCO_ABI_VERSION, mod_name,	  mod_version,             \
 		mod_author,	   mod_desc,		 mod_license, MMCO_FLAG_NONE,          \
 		mod_code_link, mod_icon_set,	 nullptr,	  0u,                      \
-		nullptr}
+		nullptr};                                                             \
+	}
 
 #define MMCO_DEFINE_MODULE_6(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license, mod_code_link)                       \
-	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+	extern "C" {                                                              \
+	MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                            \
 		MMCO_MAGIC,	   MMCO_ABI_VERSION, mod_name,	  mod_version,             \
 		mod_author,	   mod_desc,		 mod_license, MMCO_FLAG_NONE,          \
 		mod_code_link, nullptr,			 nullptr,	  0u,                      \
-		nullptr}
+		nullptr};                                                             \
+	}
 
 #define MMCO_DEFINE_MODULE_5(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license)                                      \
-	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+	extern "C" {                                                              \
+	MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                            \
 		MMCO_MAGIC, MMCO_ABI_VERSION, mod_name,	   mod_version,                \
 		mod_author, mod_desc,		  mod_license, MMCO_FLAG_NONE,             \
 		nullptr,	nullptr,		  nullptr,	   0u,                         \
-		nullptr}
+		nullptr};                                                             \
+	}
 
 /*
  * Full-fledged variant for modules that need to declare an icon set,
@@ -886,11 +892,13 @@ struct MMCOContext {
 #define MMCO_DEFINE_MODULE_EX(mod_name, mod_version, mod_author, mod_desc,     \
 							  mod_license, mod_code_link, mod_icon_set,        \
 							  mod_deps_ptr, mod_deps_count, mod_signing_key)   \
-	extern "C" MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                 \
+	extern "C" {                                                              \
+	MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                            \
 		MMCO_MAGIC,		MMCO_ABI_VERSION, mod_name,		mod_version,           \
 		mod_author,		mod_desc,		  mod_license,	MMCO_FLAG_NONE,        \
 		mod_code_link,	mod_icon_set,	  mod_deps_ptr, mod_deps_count,        \
-		mod_signing_key}
+		mod_signing_key};                                                     \
+	}
 
 #define MMCO_EXPAND(x) x
 #define MMCO_GET_MACRO(_1, _2, _3, _4, _5, _6, _7, NAME, ...) NAME
