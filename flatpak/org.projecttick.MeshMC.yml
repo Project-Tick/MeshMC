@@ -128,7 +128,7 @@ modules:
       - -DTOMLPLUSPLUS_BUILD_EXAMPLES=OFF
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -143,7 +143,7 @@ modules:
       - -DWITH_GTEST=OFF
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -156,7 +156,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -169,7 +169,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -182,7 +182,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -195,7 +195,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -208,7 +208,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -221,7 +221,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -234,7 +234,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -247,7 +247,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -260,7 +260,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -273,7 +273,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -286,7 +286,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -303,7 +303,7 @@ modules:
         JAVA_COMPILER: /usr/lib/sdk/openjdk17/jvm/openjdk-17/bin/javac
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -320,7 +320,7 @@ modules:
         JAVA_COMPILER: /usr/lib/sdk/openjdk17/jvm/openjdk-17/bin/javac
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
@@ -353,7 +353,7 @@ modules:
         PATH: /usr/lib/sdk/openjdk17/jvm/openjdk-17/bin:/app/bin:/usr/bin
     sources:
       - type: git
-        url: https://gitlab.com/Project-Tick/Project-Tick.git
+        url: https://git.projecttick.org/Project-Tick/Project-Tick.git
         branch: master
         disable-submodules: true
         disable-lfs: true
