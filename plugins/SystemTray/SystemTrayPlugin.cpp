@@ -94,6 +94,11 @@ struct LaunchUserData {
 };
 static QVector<LaunchUserData*> g_launchUserData;
 
+static bool is_flatpak()
+{
+	return QFile::exists(QStringLiteral("/.flatpak-info"));
+}
+
 /* ── settings helpers ─────────────────────────────────────────────── */
 
 static bool settingBool(const char* key, bool fallback)
@@ -366,6 +371,12 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 {
 	g_ctx = ctx;
 	MMCO_LOG(ctx, "SystemTray initializing...");
+
+	if (is_flatpak()) {
+		MMCO_LOG(ctx, "SystemTray: Flatpak sandbox detected; disabled "
+					  "(system tray is unreliable inside Flatpak).");
+		return 0;
+	}
 
 	/* Lifetime anchor for our Qt connections (settings-page injection,
 	 * checkbox toggled signal). We intentionally never delete this;
