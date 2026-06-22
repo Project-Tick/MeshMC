@@ -71,7 +71,7 @@
   <url type="help">https://projecttick.org/handbook/</url>
   <url type="bugtracker">https://git.projecttick.org/project-tick/projects/meshmc/-/work_items</url>
   <url type="translate">https://crowdin.com/project/projtlauncher</url>
-  <url type="contact">mailto:meshmc-helpdesk@projecttick.org</url>
+  <url type="contact">https://git.projecttick.org/groups/project-tick/projects/-/work_items</url>
   <url type="vcs-browser">https://git.projecttick.org/project-tick/projects/meshmc/</url>
   <url type="contribute">https://git.projecttick.org/project-tick/governance/governancedoc/-/blob/master/GOVERNANCE.md</url>
   <content_rating type="oars-1.1">
