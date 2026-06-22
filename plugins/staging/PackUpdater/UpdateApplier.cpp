@@ -461,7 +461,7 @@ namespace pack_updater
 				/* CurseForge pack: read `manifest.json`, then
 				 * resolve every (projectID, fileID) through CF API. */
 				const QByteArray manifestBytes = readFileFromZipViaSdk(
-					ctx,`r`n zipPath, QStringLiteral("manifest.json"));
+					ctx, zipPath, QStringLiteral("manifest.json"));
 				if (manifestBytes.isEmpty()) {
 					PU_LOG(ctx, "  -> manifest.json not found in CF zip");
 					self->cb(empty);
@@ -489,7 +489,7 @@ namespace pack_updater
 			/* Default to Modrinth (also covers MultiMC raw zips
 			 * that happen to ship a modrinth.index.json). */
 			QByteArray indexBytes = readFileFromZipViaSdk(
-				ctx,`r`n zipPath, QStringLiteral("modrinth.index.json"));
+				ctx, zipPath, QStringLiteral("modrinth.index.json"));
 			if (indexBytes.isEmpty()) {
 				PU_LOG(ctx, "  -> modrinth.index.json not found in zip");
 				self->cb(empty);
