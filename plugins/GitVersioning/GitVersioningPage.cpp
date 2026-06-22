@@ -20,14 +20,29 @@ namespace
 	}
 } // namespace
 
-GitVersioningPage::GitVersioningPage(const QString& instanceId,
+GitVersioningPage::GitVersioningPage(MMCOContext* ctx,
+									 const QString& instanceId,
 									 const QString& instanceRoot,
 									 QWidget* parent)
-	: QWidget(parent), m_instanceId(instanceId), m_instanceRoot(instanceRoot),
-	  m_repo(instanceId, instanceRoot)
+	: QWidget(parent), m_ctx(ctx), m_instanceId(instanceId),
+	  m_instanceRoot(instanceRoot), m_repo(instanceId, instanceRoot)
 {
 	buildUi();
 	reloadHistory();
+}
+
+bool GitVersioningPage::confirm(const QString& title,
+								const QString& message) const
+{
+	/* Prefer the host's confirm dialog (S-tier UI API). It returns 1
+	 * on confirm, 0 on cancel. The host strips rich-text, so pass a
+	 * plain-text message here. */
+	if (m_ctx && m_ctx->ui_confirm_dialog) {
+		return m_ctx->ui_confirm_dialog(m_ctx->module_handle, title.toUtf8(),
+										message.toUtf8()) != 0;
+	}
+	return QMessageBox::question(const_cast<GitVersioningPage*>(this), title,
+								 message) == QMessageBox::Yes;
 }
 
 QIcon GitVersioningPage::icon() const
@@ -36,7 +51,7 @@ QIcon GitVersioningPage::icon() const
 	 * once Qt has been initialised; the host installs the MeshMC theme
 	 * search paths during Application::init() so plugin code finds the
 	 * same icon set the launcher does. */
-	return QIcon::fromTheme(QStringLiteral("version-control"));
+	return QIcon::fromTheme(QStringLiteral("git-scm"));
 }
 
 void GitVersioningPage::buildUi()
@@ -204,13 +219,12 @@ void GitVersioningPage::onRestoreClicked()
 	auto c = selectedCommit();
 	if (c.fullSha.isEmpty())
 		return;
-	if (QMessageBox::question(
-			this, tr("Restore?"),
-			tr("Restore the instance to commit <b>%1</b> (%2)?<br><br>"
-			   "An auto-snapshot of the current state is taken first, "
-			   "so this can be undone by restoring the previous "
-			   "snapshot.")
-				.arg(c.sha, c.subject)) != QMessageBox::Yes)
+	if (!confirm(tr("Restore?"),
+				 tr("Restore the instance to commit %1 (%2)?\n\n"
+					"An auto-snapshot of the current state is taken first, "
+					"so this can be undone by restoring the previous "
+					"snapshot.")
+					 .arg(c.sha, c.subject)))
 		return;
 	QString err;
 	if (!m_repo.restore(c.fullSha, &err))
@@ -238,11 +252,9 @@ void GitVersioningPage::onTagClicked()
 
 void GitVersioningPage::onDropClicked()
 {
-	if (QMessageBox::question(
-			this, tr("Drop last commit?"),
-			tr("This hard-resets HEAD by one commit. The working "
-			   "tree is reset to the parent commit too. Continue?")) !=
-		QMessageBox::Yes)
+	if (!confirm(tr("Drop last commit?"),
+				 tr("This hard-resets HEAD by one commit. The working "
+					"tree is reset to the parent commit too. Continue?")))
 		return;
 	QString err;
 	if (!m_repo.dropHead(&err))

@@ -6,6 +6,8 @@
         <file>scalable/backup.svg</file>
         <file>scalable/plugins.svg</file>
 
+        <file>scalable/git-scm.svg</file>
+
         <!-- REDDIT logo icon, needs reddit license! -->
         <file>scalable/reddit-alien.svg</file>
 

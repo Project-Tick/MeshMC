@@ -38,6 +38,7 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
     DiscordRPC
     SkinManager
     PackPortal
+    GitVersioning
 )
 
 add_subdirectory(BackupSystem)
@@ -47,6 +48,7 @@ add_subdirectory(DesktopNotifier)
 add_subdirectory(DiscordRPC)
 add_subdirectory(SkinManager)
 add_subdirectory(PackPortal)
+add_subdirectory(GitVersioning)
 
 if(UNIX AND NOT APPLE)
     add_subdirectory(NVIDIAPrime)
