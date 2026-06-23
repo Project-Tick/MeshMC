@@ -85,8 +85,19 @@
 #include <QHeaderView>
 #include <QAction>
 #include <QCloseEvent>
+#include <QCursor>
 #include <QIcon>
 #include <QSystemTrayIcon>
+
+#ifdef Q_OS_WIN
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
 
 PluginManager::PluginManager(Application* app, QObject* parent)
 	: QObject(parent), m_app(app)
@@ -3233,9 +3244,29 @@ int PluginManager::api_tray_set_menu(void* /*mh*/, void* tray_handle,
 {
 	if (!tray_handle)
 		return -1;
-	static_cast<QSystemTrayIcon*>(tray_handle)
-		->setContextMenu(static_cast<QMenu*>(menu_handle));
+	auto* tray = static_cast<QSystemTrayIcon*>(tray_handle);
+	auto* menu = static_cast<QMenu*>(menu_handle);
+
+#ifdef Q_OS_WIN
+	tray->setContextMenu(nullptr);
+	if (menu) {
+		QObject::disconnect(tray, &QSystemTrayIcon::activated, menu, nullptr);
+		QObject::connect(
+			tray, &QSystemTrayIcon::activated, menu,
+			[menu](QSystemTrayIcon::ActivationReason reason) {
+				if (reason != QSystemTrayIcon::Context)
+					return;
+				menu->winId();
+				::SetForegroundWindow(
+					reinterpret_cast<HWND>(menu->winId()));
+				menu->popup(QCursor::pos());
+			});
+	}
 	return 0;
+#else
+	tray->setContextMenu(menu);
+	return 0;
+#endif
 }
 
 int PluginManager::api_tray_set_activation_cb(void* mh, void* tray_handle,

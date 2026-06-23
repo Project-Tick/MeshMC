@@ -417,10 +417,16 @@ typedef void (*MMCODirEntryCallback)(void* user_data, const char* entry_name,
 typedef void (*MMCOButtonCallback)(void* user_data);
 typedef void (*MMCOTreeSelectionCallback)(void* user_data, int row);
 
-/* S19 — System Tray activation reason
- *   0=Unknown, 1=Trigger (single click), 2=DoubleClick,
- *   3=MiddleClick, 4=Context (right click).
- * Mirrors QSystemTrayIcon::ActivationReason 1..4. */
+/* S19 — System Tray activation reason.
+ * Mirrors QSystemTrayIcon::ActivationReason exactly (Qt 6):
+ *   0 = Unknown
+ *   1 = Context      (context menu requested — right click)
+ *   2 = DoubleClick
+ *   3 = Trigger      (single click — left click)
+ *   4 = MiddleClick
+ * WARNING: the enum is { Unknown, Context, DoubleClick, Trigger,
+ * MiddleClick }, so a single left click is 3, NOT 1. Do not assume a
+ * Trigger==1 ordering. */
 typedef void (*MMCOTrayActivationCallback)(void* user_data, int reason);
 
 /* S20 — Main-window close-event filter.
