@@ -27,32 +27,16 @@ endif()
 #
 # OfflineWiki — MeshMC plugin (.mmco)
 #
-# A bundle viewer for offline Minecraft wikis. We don't ship the wiki
-# itself (it's hundreds of megabytes); the plugin instead supports two
-# bundle formats:
-#
-#   • Plain-directory bundle: a directory tree of Markdown files with
-#     an index.json describing the navigation hierarchy. Simple, easy
-#     to author by hand, suitable for small/community wikis.
-#
-#   • ZIM file (Kiwix format): the standard for offline reference
-#     content. Read-only via a minimal in-tree ZIM reader (one source
-#     file, no Kiwix runtime needed).
-#
-# The plugin discovers bundles under <plugin_data>/bundles/ and exposes
-# a global settings page where the user can register, swap, or unload
-# them.
+# An offline, read-only viewer for the official MeshMC wiki. The plugin
+# clones the wiki Git repository into <plugin_data>/ in the background
+# (and fast-forwards it on later starts) and renders its flat Markdown
+# tree with a QTextBrowser. There is no bundle management or ZIM
+# support — the wiki is the only content source.
 
 set(WIKI_SOURCES
     OfflineWikiPlugin.cpp
-    WikiBundle.h
-    WikiBundle.cpp
-    DirectoryBundle.h
-    DirectoryBundle.cpp
-    ZimBundle.h
-    ZimBundle.cpp
-    SearchIndex.h
-    SearchIndex.cpp
+    WikiRepoBundle.h
+    WikiRepoBundle.cpp
     WikiPage.h
     WikiPage.cpp
 )
