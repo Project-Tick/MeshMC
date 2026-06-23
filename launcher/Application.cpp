@@ -1713,6 +1713,47 @@ void Application::controllerFailed(const QString& error)
 	}
 }
 
+namespace
+{
+	/* Wraps the built-in global-settings page provider and appends any
+	 * pages contributed by plugins via MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES.
+	 *
+	 * This mirrors what InstancePageProvider does for instance pages: the
+	 * hook is dispatched every time the dialog is built, so plugin pages
+	 * are created fresh on each open (PageDialog takes ownership) and
+	 * never accumulate. Without this bridge the hook is defined but never
+	 * fired, so plugins such as OfflineWiki that register a global page
+	 * through it stay invisible. */
+	class PluginAugmentedPageProvider : public BasePageProvider
+	{
+	  public:
+		explicit PluginAugmentedPageProvider(BasePageProvider* inner)
+			: m_inner(inner)
+		{
+		}
+
+		QList<BasePage*> getPages() override
+		{
+			QList<BasePage*> pages = m_inner->getPages();
+			if (APPLICATION->pluginManager()) {
+				MMCOGlobalSettingsPagesEvent evt{};
+				evt.page_list_handle = &pages;
+				APPLICATION->pluginManager()->dispatchHook(
+					MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES, &evt);
+			}
+			return pages;
+		}
+
+		QString dialogTitle() override
+		{
+			return m_inner->dialogTitle();
+		}
+
+	  private:
+		BasePageProvider* m_inner;
+	};
+} // namespace
+
 void Application::ShowGlobalSettings(class QWidget* parent, QString open_page)
 {
 	if (!m_globalSettingsProvider) {
@@ -1721,7 +1762,8 @@ void Application::ShowGlobalSettings(class QWidget* parent, QString open_page)
 	emit globalSettingsAboutToOpen();
 	{
 		SettingsObject::Lock lock(APPLICATION->settings());
-		PageDialog dlg(m_globalSettingsProvider.get(), open_page, parent);
+		PluginAugmentedPageProvider provider(m_globalSettingsProvider.get());
+		PageDialog dlg(&provider, open_page, parent);
 		dlg.exec();
 	}
 	emit globalSettingsClosed();

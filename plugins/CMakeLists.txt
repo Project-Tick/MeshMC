@@ -39,6 +39,7 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
     SkinManager
     PackPortal
     GitVersioning
+    OfflineWiki
 )
 
 add_subdirectory(BackupSystem)
@@ -49,6 +50,7 @@ add_subdirectory(DiscordRPC)
 add_subdirectory(SkinManager)
 add_subdirectory(PackPortal)
 add_subdirectory(GitVersioning)
+add_subdirectory(OfflineWiki)
 
 if(UNIX AND NOT APPLE)
     add_subdirectory(NVIDIAPrime)
