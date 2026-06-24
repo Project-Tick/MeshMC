@@ -158,11 +158,35 @@ static void on_launch_entry(void* ud)
 
 static void on_tray_activated(void* /*ud*/, int reason)
 {
-	/* reason: 1=Trigger (single), 2=DoubleClick, 3=MiddleClick, 4=Context.
-	 * On X11 single-click is the natural "show window" gesture; on
-	 * Windows/macOS it is double-click. We respond to both. */
-	if (reason != 1 && reason != 2)
+	/* QSystemTrayIcon::ActivationReason values (per Qt 6 docs):
+	 *   0 = Unknown
+	 *   1 = Context      (right-click / context-menu requested)
+	 *   2 = DoubleClick
+	 *   3 = Trigger      (single click — left click)
+	 *   4 = MiddleClick
+	 *
+	 * NOTE: these are NOT in numeric "Trigger=1" order — the enum is
+	 * { Unknown, Context, DoubleClick, Trigger, MiddleClick }. An earlier
+	 * version assumed Trigger==1, so a right-click (Context==1) was
+	 * toggling the window. We must only toggle on Trigger (3); the
+	 * right-click (Context==1) raises the menu and must never toggle the
+	 * window. */
+	constexpr int kContext = 1;
+	constexpr int kDoubleClick = 2;
+	constexpr int kTrigger = 3;
+
+	if (reason == kContext)
+		return; /* right-click → menu only, never toggle */
+
+#if defined(_WIN32) || defined(_WIN64)
+	/* Windows: single left-click (Trigger) toggles the window. */
+	if (reason != kTrigger)
 		return;
+#else
+	/* X11/macOS: single click or double click toggles. */
+	if (reason != kTrigger && reason != kDoubleClick)
+		return;
+#endif
 	if (!g_ctx)
 		return;
 	if (g_ctx->main_window_is_visible(g_ctx->module_handle))
