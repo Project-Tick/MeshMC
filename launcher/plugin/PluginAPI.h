@@ -771,4 +771,50 @@ struct MMCOContext {
 	int (*http_get_with_headers)(void* mh, const char* url,
 								 const char* const* headers, int header_count,
 								 MMCOHttpCallback callback, void* user_data);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S31 — Subprocess execution (additive; no ABI bump)
+	 *
+	 * Run an external program synchronously and capture its output.
+	 * The host runs it through QProcess, so plugins (including plain-C
+	 * plugins that have no Qt of their own) can shell out to version
+	 * control tools, archivers, or any other CLI without forking or
+	 * exec()ing themselves — the host owns process lifetime, timeout,
+	 * working directory, and stdin/stdout handling.
+	 *
+	 * Arguments:
+	 *   program        — executable name or absolute path. Resolved
+	 *                    against PATH by the host. NOT run through a
+	 *                    shell, so there is no shell-injection surface:
+	 *                    each argv element is passed verbatim.
+	 *   args           — array of `arg_count` NUL-terminated argument
+	 *                    strings (argv[1..]). May be NULL if arg_count
+	 *                    is 0.
+	 *   arg_count      — number of entries in `args`.
+	 *   working_dir    — directory to run in, or NULL for the host's
+	 *                    current working directory.
+	 *   stdin_data     — bytes to feed to the child's stdin, or NULL.
+	 *   stdin_size     — length of stdin_data in bytes (0 if none).
+	 *   out_buf        — caller-owned buffer that receives the child's
+	 *                    captured stdout (NUL-terminated, truncated to
+	 *                    fit). May be NULL to discard stdout.
+	 *   out_buf_size   — size of out_buf in bytes (including the NUL).
+	 *   out_exit_code  — receives the child's exit code, or NULL.
+	 *   timeout_ms     — hard timeout; the child is killed if it
+	 *                    exceeds it. <= 0 means a default (30s).
+	 *
+	 * Returns:
+	 *    0  — the process ran to completion (check out_exit_code for
+	 *         the program's own success/failure).
+	 *   -1  — failed to start (program not found, etc.).
+	 *   -2  — timed out and was killed.
+	 *   -3  — invalid arguments.
+	 *
+	 * Thread: may be called from any thread; the host pumps a local
+	 * event loop internally so it is safe from the GUI thread too.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*process_run)(void* mh, const char* program, const char* const* args,
+					   int arg_count, const char* working_dir,
+					   const char* stdin_data, int stdin_size, char* out_buf,
+					   int out_buf_size, int* out_exit_code, int timeout_ms);
 };

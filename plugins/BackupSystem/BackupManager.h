@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 
 /*
  * BackupManager talks to the host through the MMCO C ABI: every zip

@@ -15,6 +15,34 @@ add_library(MeshMC_sdk INTERFACE)
 add_library(MeshMC::SDK ALIAS MeshMC_sdk)
 set_target_properties(MeshMC_sdk PROPERTIES EXPORT_NAME SDK)
 
+# ---------------------------------------------------------------------------
+# C ABI INTERFACE library — Qt-free, header-only.
+#
+# This target exposes ONLY the language-neutral C ABI (mmco_c_sdk.h plus
+# the PluginAPI.h / PluginHooks.h / MMCOFormat.h definitions it builds on).
+# It deliberately does NOT link Qt, so plugins written in plain C — or in
+# any language that speaks the C ABI (Rust via bindgen, Zig, …) — can build
+# a .mmco against it without dragging in the Qt toolchain.
+#
+# C plugins:    target_link_libraries(MyPlugin PRIVATE MeshMC::SDK_C)
+# C++ plugins:  target_link_libraries(MyPlugin PRIVATE MeshMC::SDK)
+# ---------------------------------------------------------------------------
+add_library(MeshMC_sdk_c INTERFACE)
+add_library(MeshMC::SDK_C ALIAS MeshMC_sdk_c)
+set_target_properties(MeshMC_sdk_c PROPERTIES EXPORT_NAME SDK_C)
+
+target_include_directories(MeshMC_sdk_c INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/launcher>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/launcher/plugin/sdk>
+    $<INSTALL_INTERFACE:include/meshmc-sdk>
+    $<INSTALL_INTERFACE:include/meshmc-sdk/plugin/sdk>
+)
+# Note: no target_link_libraries here — the C ABI surface is Qt-free.
+
+# The C++ SDK builds on top of the C ABI surface, so it inherits the
+# C-ABI include paths and adds Qt on top of them.
+target_link_libraries(MeshMC_sdk INTERFACE MeshMC_sdk_c)
+
 # Resolve include directories from imported targets (these are installed externally)
 get_target_property(_OPTIONAL_BARE_INCLUDE_DIRS optional-bare::optional-bare INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(_KATABASIS_INCLUDE_DIRS Katabasis::Katabasis INTERFACE_INCLUDE_DIRECTORIES)
@@ -43,8 +71,11 @@ target_link_libraries(MeshMC_sdk INTERFACE
 # ---------------------------------------------------------------------------
 
 # SDK's own headers (plugin/sdk/)
+#   mmco_c_sdk.h    — canonical, language-neutral C ABI (Qt-free)
+#   mmco_cxx_sdk.hpp — C++ convenience header (includes the C ABI + Qt)
 set(SDK_OWN_HEADERS
-    mmco_sdk.h
+    mmco_c_sdk.h
+    mmco_cxx_sdk.hpp
 )
 
 # Plugin API headers (plugin/)
@@ -306,7 +337,7 @@ install(FILES
     DESTINATION "lib/cmake/MeshMC_SDK"
 )
 
-install(TARGETS MeshMC_sdk
+install(TARGETS MeshMC_sdk MeshMC_sdk_c
     EXPORT MeshMC_SDKTargets
 )
 

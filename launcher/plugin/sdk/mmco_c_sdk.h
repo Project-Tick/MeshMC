@@ -22,12 +22,28 @@
  *   You should have received a copy of the MeshMC MMCO Module Exception 1.0
  *   along with this program.  If not, see <https://projecttick.org/licenses/>.
  *
- * MeshMC Plugin SDK — Single-include header for .mmco module development.
+ * MeshMC Plugin SDK — C ABI header for .mmco module development.
  *
- * USAGE:
- *   1. #include "mmco_sdk.h" in your plugin source (this is the ONLY
- *      include you need — Qt and MeshMC types are provided automatically)
- *   2. Define mmco_module_info, mmco_init(), and mmco_unload()
+ * This is the CANONICAL, language-neutral definition of the MMCO module
+ * ABI. It is pure C (C99+) and contains NO Qt and NO C++ types, so it can
+ * be consumed from C, C++, Rust (via bindgen), Zig, and any other language
+ * that speaks the C ABI.
+ *
+ * Audiences:
+ *   - C plugins:    #include "mmco_c_sdk.h" directly. You get the full
+ *                   data-plane API (logging, hooks, instances, mods,
+ *                   worlds, accounts, java, fs, zip, http, news, settings,
+ *                   launch modifiers). You do NOT get the Qt-based UI page
+ *                   builder / tray helpers that hand back QWidget / QMenu
+ *                   handles - those are only meaningful from C++.
+ *   - C++ plugins:  #include "mmco_cxx_sdk.hpp" instead. That header
+ *                   includes THIS one for the ABI and adds the Qt includes
+ *                   plus the BasePage interface needed to build UI pages.
+ *
+ * USAGE (C):
+ *   1. #include "mmco_c_sdk.h" in your plugin source
+ *   2. Define the module via MMCO_DEFINE_MODULE(...), and implement
+ *      mmco_init() and mmco_unload()
  *   3. Compile as a shared library with the .mmco extension
  *   4. Place the .mmco file in one of the search paths:
  *        - <app_dir>/mmcmodules/                       (Linux + Windows
@@ -57,118 +73,20 @@
 
 #pragma once
 
-#include <cstdint>
-#include <cstddef>
-#include <QApplication>
-#include <QDateTime>
-#include <QDebug>
-#include <QDir>
-#include <QDirIterator>
-#include <QFile>
-#include <QFileInfo>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QList>
-#include <QRegularExpression>
-#include <QString>
-#include <QStringList>
-#include <QFileDialog>
-#include <QHBoxLayout>
-#include <QHeaderView>
-#include <QIcon>
-#include <QInputDialog>
-#include <QLabel>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QPointer>
-#include <QTimer>
-#include <QLineEdit>
-#include <QMenu>
-#include <QMessageBox>
-#include <QPushButton>
-#include <QToolBar>
-#include <QAction>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QVBoxLayout>
-#include <QWidget>
-#include <QJsonDocument>
-#include <QLocale>
-
 /*
- * NOTE: As of MMCO ABI 3, the SDK header is deliberately Qt-only.
+ * Pure C ABI — no Qt, no C++ types. Safe to include from C and C++.
  *
- * Earlier versions pulled in launcher headers (Application.h,
- * BaseInstance.h, InstanceList.h, MMCZip.h, icons/IconList.h,
- * minecraft/MinecraftInstance.h, ui/pages/BasePage.h) so plugins
- * could call APPLICATION->settings(), subclass BasePage, etc.
- * Every one of those back-doors pulled `meshmc.lib` (Windows) or
- * `MeshMC_logic.a` (Linux/macOS) onto the plugin's link line and
- * made standalone plugin builds impossible.
- *
- * The launcher headers have been removed from this file. Plugins
- * reach launcher state EXCLUSIVELY through the MMCOContext function
- * pointers defined in plugin/PluginAPI.h below. See
- * launcher/plugin/sdk/README.md for the canonical replacement
- * patterns.
- *
- * --- BasePage / BasePageContainer ---
- *
- * BasePage is a pure header-only interface (every method is inline);
- * we copy its declaration here verbatim so plugins can subclass it
- * for MMCO_HOOK_UI_INSTANCE_PAGES / MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES
- * payloads without including launcher/ui/pages/BasePage.h. The vtable
- * layout MUST stay byte-identical to launcher/ui/pages/BasePage.h —
- * the host iterates the QList<BasePage*> handed back by plugins and
- * calls these virtuals through that layout. If you change BasePage on
- * the launcher side you must mirror the change here in lock-step.
+ * C++-only facilities (the Qt includes and the BasePage interface used
+ * to build UI pages) live in the companion header mmco_cxx_sdk.hpp,
+ * which includes THIS file for the ABI definitions.
  */
-class BasePageContainer; // forward-declared, plugin never deref's it
 
-class BasePage
-{
-  public:
-	virtual ~BasePage() {}
-	virtual QString id() const = 0;
-	virtual QString displayName() const = 0;
-	virtual QIcon icon() const = 0;
-	virtual bool apply()
-	{
-		return true;
-	}
-	virtual bool shouldDisplay() const
-	{
-		return true;
-	}
-	virtual QString helpPage() const
-	{
-		return QString();
-	}
-	void opened()
-	{
-		isOpened = true;
-		openedImpl();
-	}
-	void closed()
-	{
-		isOpened = false;
-		closedImpl();
-	}
-	virtual void openedImpl() {}
-	virtual void closedImpl() {}
-	virtual void setParentContainer(BasePageContainer* container)
-	{
-		m_container = container;
-	}
+#include <stdint.h>
+#include <stddef.h>
 
-  public:
-	int stackIndex = -1;
-	int listIndex = -1;
-
-  protected:
-	BasePageContainer* m_container = nullptr;
-	bool isOpened = false;
-};
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define MMCO_MAGIC 0x4D4D434F
 #define MMCO_VERSION "8.0.0"
@@ -196,13 +114,13 @@ class BasePage
 /*
  * Optional dependency on another .mmco module.
  */
-struct MMCODependency {
+typedef struct MMCODependency {
 	const char* name;
-	const char* min_version; /* nullptr or "" = any version */
+	const char* min_version; /* NULL or "" = any version */
 	uint32_t optional;		 /* non-zero = optional dep */
-};
+} MMCODependency;
 
-struct MMCOModuleInfo {
+typedef struct MMCOModuleInfo {
 	uint32_t magic;
 	uint32_t abi_version;
 	const char* name;
@@ -218,9 +136,13 @@ struct MMCOModuleInfo {
 	const MMCODependency* dependencies;
 	uint32_t dependency_count;
 	const char* signing_key_id;
-};
+} MMCOModuleInfo;
 
-enum MMCOHookId : uint32_t {
+/* Hook IDs. The underlying type is fixed at 32 bits across the ABI; we
+ * avoid the C++/C23 "enum : uint32_t" base syntax (not portable to C99)
+ * and instead pin the width with a sentinel value. The hook_id parameter
+ * is passed as uint32_t everywhere it crosses the ABI. */
+enum MMCOHookId {
 	MMCO_HOOK_APP_INITIALIZED = 0x0100,
 	MMCO_HOOK_APP_SHUTDOWN = 0x0101,
 	MMCO_HOOK_INSTANCE_PRE_LAUNCH = 0x0200,
@@ -253,57 +175,61 @@ enum MMCOHookId : uint32_t {
 	/* Plugin-driven authentication providers (ABI 2+ additive) */
 	MMCO_HOOK_AUTH_REQUEST = 0x0800, /* payload: MMCOAuthRequestEvent* */
 	MMCO_HOOK_SESSION_FILL = 0x0801, /* payload: MMCOSessionFillEvent* */
+
+	/* Pin the enum to a 32-bit underlying type for ABI stability across
+	 * C and C++ compilers. Never used as a real hook id. */
+	MMCO_HOOK_FORCE_UINT32 = 0x7FFFFFFF
 };
 
-struct MMCOInstanceInfo {
+typedef struct MMCOInstanceInfo {
 	const char* instance_id;
 	const char* instance_name;
 	const char* instance_path;
 	const char* minecraft_version;
-};
+} MMCOInstanceInfo;
 
-struct MMCOSettingChange {
+typedef struct MMCOSettingChange {
 	const char* key;
 	const char* old_value;
 	const char* new_value;
-};
+} MMCOSettingChange;
 
-struct MMCOContentEvent {
+typedef struct MMCOContentEvent {
 	const char* instance_id;
 	const char* file_name;
 	const char* url;
 	const char* target_path;
-};
+} MMCOContentEvent;
 
-struct MMCONetworkEvent {
+typedef struct MMCONetworkEvent {
 	const char* url;
 	const char* method;
 	int status_code;
-};
+} MMCONetworkEvent;
 
-struct MMCOMenuEvent {
+typedef struct MMCOMenuEvent {
 	const char* context;
 	void* menu_handle;
-};
+} MMCOMenuEvent;
 
-struct MMCOInstancePagesEvent {
+typedef struct MMCOInstancePagesEvent {
 	const char* instance_id;
 	const char* instance_name;
 	const char* instance_path;
 	void* page_list_handle;
 	void* instance_handle;
-};
+} MMCOInstancePagesEvent;
 
 /* ABI 3+ — payload for MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED.
  * page_handle is an opaque QWidget* to the just-built per-instance
  * settings page; instance_handle is an opaque BaseInstance*. Plugins
  * may qobject_cast<QWidget*>(page_handle) but must not cast to any
  * launcher-private type. */
-struct MMCOInstanceSettingsPageEvent {
+typedef struct MMCOInstanceSettingsPageEvent {
 	const char* instance_id;
 	void* page_handle;
 	void* instance_handle;
-};
+} MMCOInstanceSettingsPageEvent;
 
 /* ABI 3+ — callback for MMCOContext::instance_running_register.
  * `running` is 1 when the instance just started, 0 when it just stopped. */
@@ -325,16 +251,16 @@ typedef void (*MMCOInstanceRunningCallback)(void* user_data,
  * All handles are owned by MeshMC and stay valid for the lifetime of the
  * main window. Plugins must NOT delete or take ownership of them.
  */
-struct MMCOUiMainReadyPayload {
+typedef struct MMCOUiMainReadyPayload {
 	void* main_window;
 	void* news_toolbar;
 	void* more_news_action;
 	void* news_label_button;
-};
+} MMCOUiMainReadyPayload;
 
-struct MMCOGlobalSettingsPagesEvent {
+typedef struct MMCOGlobalSettingsPagesEvent {
 	void* page_list_handle;
-};
+} MMCOGlobalSettingsPagesEvent;
 
 /*
  * Payload for MMCO_HOOK_AUTH_REQUEST (ABI 2+).
@@ -352,7 +278,7 @@ struct MMCOGlobalSettingsPagesEvent {
  * Returning non-zero from the hook callback cancels the request:
  * AuthRequest emits a network error and the calling AuthStep fails.
  */
-struct MMCOAuthRequestEvent {
+typedef struct MMCOAuthRequestEvent {
 	const char* url;
 	const char* method;
 	const char* body;
@@ -362,7 +288,7 @@ struct MMCOAuthRequestEvent {
 
 	void* request_handle;
 	int (*add_header)(void* request_handle, const char* key, const char* value);
-};
+} MMCOAuthRequestEvent;
 
 /*
  * Payload for MMCO_HOOK_SESSION_FILL (ABI 2+).
@@ -386,7 +312,7 @@ struct MMCOAuthRequestEvent {
  *   extra_user_properties — appended to AuthSession::user_properties
  *                           verbatim. NULL = nothing to add.
  */
-struct MMCOSessionFillEvent {
+typedef struct MMCOSessionFillEvent {
 	const char* account_id;
 	int account_is_msa;
 	int wants_online;
@@ -403,7 +329,7 @@ struct MMCOSessionFillEvent {
 	const char* overwrite_client_token;
 
 	const char* extra_user_properties;
-};
+} MMCOSessionFillEvent;
 
 typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,
 								void* payload, void* user_data);
@@ -433,7 +359,7 @@ typedef void (*MMCOTrayActivationCallback)(void* user_data, int reason);
  *   Return 0 to let the close proceed, 1 to swallow it (hide-to-tray). */
 typedef int (*MMCOMainWindowCloseCallback)(void* user_data);
 
-struct MMCOContext {
+typedef struct MMCOContext {
 	/* ABI guard */
 	uint32_t struct_size;
 	uint32_t abi_version;
@@ -835,7 +761,60 @@ struct MMCOContext {
 	int (*http_get_with_headers)(void* mh, const char* url,
 								 const char* const* headers, int header_count,
 								 MMCOHttpCallback callback, void* user_data);
-};
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S31 — Subprocess execution (additive; no ABI bump)
+	 *
+	 * Run an external program synchronously and capture its stdout.
+	 * The host runs it through QProcess, so plain-C plugins (which
+	 * have no Qt of their own) can shell out to version-control tools,
+	 * archivers, or any other CLI without forking or exec()ing
+	 * themselves. The host owns process lifetime, timeout, working
+	 * directory and stdin/stdout handling.
+	 *
+	 *   program       — executable name or absolute path (PATH-resolved
+	 *                   by the host). Run WITHOUT a shell, so each argv
+	 *                   element is passed verbatim — no shell-injection.
+	 *   args          — array of `arg_count` NUL-terminated argv[1..]
+	 *                   strings (may be NULL when arg_count is 0).
+	 *   arg_count     — number of entries in `args`.
+	 *   working_dir   — directory to run in, or NULL.
+	 *   stdin_data    — bytes for the child's stdin, or NULL.
+	 *   stdin_size    — length of stdin_data (0 if none).
+	 *   out_buf       — caller buffer for captured stdout, NUL-terminated
+	 *                   and truncated to fit; NULL to discard stdout.
+	 *   out_buf_size  — size of out_buf in bytes (including the NUL).
+	 *   out_exit_code — receives the child's exit code, or NULL.
+	 *   timeout_ms    — hard timeout; child is killed if exceeded.
+	 *                   <= 0 means the host default (30s).
+	 *
+	 * Returns 0 on completion (inspect out_exit_code for the program's
+	 * own result), -1 on failed-to-start, -2 on timeout, -3 on invalid
+	 * arguments.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*process_run)(void* mh, const char* program, const char* const* args,
+					   int arg_count, const char* working_dir,
+					   const char* stdin_data, int stdin_size, char* out_buf,
+					   int out_buf_size, int* out_exit_code, int timeout_ms);
+} MMCOContext;
+
+/*
+ * Linkage helper for the exported module-info / entry-point symbols.
+ * In C++ they must carry C linkage; in C they are already C-linkage.
+ */
+#ifdef __cplusplus
+#define MMCO_EXTERN_C extern "C"
+#else
+#define MMCO_EXTERN_C
+#endif
+
+/* NULL-pointer literal usable from both C and C++ inside the
+ * MMCO_DEFINE_MODULE expansions. */
+#ifdef __cplusplus
+#define MMCO_NULL nullptr
+#else
+#define MMCO_NULL NULL
+#endif
 
 /*
  * MMCO_DEFINE_MODULE — emit the mmco_module_info struct.
@@ -856,33 +835,27 @@ struct MMCOContext {
 
 #define MMCO_DEFINE_MODULE_7(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license, mod_code_link, mod_icon_set)         \
-	extern "C" {                                                              \
-	MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                            \
+	MMCO_EXTERN_C MMCO_EXPORT MMCOModuleInfo mmco_module_info = {              \
 		MMCO_MAGIC,	   MMCO_ABI_VERSION, mod_name,	  mod_version,             \
 		mod_author,	   mod_desc,		 mod_license, MMCO_FLAG_NONE,          \
-		mod_code_link, mod_icon_set,	 nullptr,	  0u,                      \
-		nullptr};                                                             \
-	}
+		mod_code_link, mod_icon_set,	 MMCO_NULL,	  0u,                      \
+		MMCO_NULL}
 
 #define MMCO_DEFINE_MODULE_6(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license, mod_code_link)                       \
-	extern "C" {                                                              \
-	MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                            \
+	MMCO_EXTERN_C MMCO_EXPORT MMCOModuleInfo mmco_module_info = {              \
 		MMCO_MAGIC,	   MMCO_ABI_VERSION, mod_name,	  mod_version,             \
 		mod_author,	   mod_desc,		 mod_license, MMCO_FLAG_NONE,          \
-		mod_code_link, nullptr,			 nullptr,	  0u,                      \
-		nullptr};                                                             \
-	}
+		mod_code_link, MMCO_NULL,		 MMCO_NULL,	  0u,                      \
+		MMCO_NULL}
 
 #define MMCO_DEFINE_MODULE_5(mod_name, mod_version, mod_author, mod_desc,      \
 							 mod_license)                                      \
-	extern "C" {                                                              \
-	MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                            \
+	MMCO_EXTERN_C MMCO_EXPORT MMCOModuleInfo mmco_module_info = {              \
 		MMCO_MAGIC, MMCO_ABI_VERSION, mod_name,	   mod_version,                \
 		mod_author, mod_desc,		  mod_license, MMCO_FLAG_NONE,             \
-		nullptr,	nullptr,		  nullptr,	   0u,                         \
-		nullptr};                                                             \
-	}
+		MMCO_NULL,	MMCO_NULL,		  MMCO_NULL,   0u,                         \
+		MMCO_NULL}
 
 /*
  * Full-fledged variant for modules that need to declare an icon set,
@@ -898,13 +871,11 @@ struct MMCOContext {
 #define MMCO_DEFINE_MODULE_EX(mod_name, mod_version, mod_author, mod_desc,     \
 							  mod_license, mod_code_link, mod_icon_set,        \
 							  mod_deps_ptr, mod_deps_count, mod_signing_key)   \
-	extern "C" {                                                              \
-	MMCO_EXPORT MMCOModuleInfo mmco_module_info = {                            \
+	MMCO_EXTERN_C MMCO_EXPORT MMCOModuleInfo mmco_module_info = {              \
 		MMCO_MAGIC,		MMCO_ABI_VERSION, mod_name,		mod_version,           \
 		mod_author,		mod_desc,		  mod_license,	MMCO_FLAG_NONE,        \
 		mod_code_link,	mod_icon_set,	  mod_deps_ptr, mod_deps_count,        \
-		mod_signing_key};                                                     \
-	}
+		mod_signing_key}
 
 #define MMCO_EXPAND(x) x
 #define MMCO_GET_MACRO(_1, _2, _3, _4, _5, _6, _7, NAME, ...) NAME
@@ -920,3 +891,7 @@ struct MMCOContext {
 
 /* Shorthand to call API functions with module handle */
 #define MMCO_MH (ctx->module_handle)
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

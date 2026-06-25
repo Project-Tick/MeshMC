@@ -31,7 +31,7 @@
  * is what fills it via S04 `instance_set_update_available`.
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "PackMetadata.h"
 #include "PackUpdaterPage.h"
 

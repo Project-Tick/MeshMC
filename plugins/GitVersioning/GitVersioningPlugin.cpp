@@ -24,7 +24,7 @@
  *     host resolves from the override gate + global fallback.
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "GitRepo.h"
 #include "GitVersioningPage.h"
 #include <QHash>

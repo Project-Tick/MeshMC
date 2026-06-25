@@ -206,6 +206,12 @@ class PluginManager : public QObject
 										 int header_count,
 										 MMCOHttpCallback callback,
 										 void* user_data);
+	/* Section 31: Subprocess execution */
+	static int api_process_run(void* mh, const char* program,
+							   const char* const* args, int arg_count,
+							   const char* working_dir, const char* stdin_data,
+							   int stdin_size, char* out_buf, int out_buf_size,
+							   int* out_exit_code, int timeout_ms);
 	static int64_t api_instance_get_total_play_time(void* mh, const char* id);
 	static int64_t api_instance_get_last_play_time(void* mh, const char* id);
 	static int64_t api_instance_get_last_launch(void* mh, const char* id);

@@ -25,7 +25,7 @@
  *    custom_details     — override the "details" line  (default "")
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "discord_ipc/discord_ipc.h"
 
 #include <QDateTime>

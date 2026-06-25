@@ -34,7 +34,7 @@
 
 #pragma once
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 
 class QComboBox;
 class QLabel;

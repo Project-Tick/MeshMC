@@ -25,7 +25,7 @@
  *    timeout_ms          — notification timeout             (default 5000)
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include <cstdlib>
 
 MMCO_DEFINE_MODULE("DesktopNotifier", "1.0.0", "Project Tick",
