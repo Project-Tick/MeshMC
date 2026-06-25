@@ -30,7 +30,7 @@
  * AccountListPage case which Qt rebuilds on every settings open).
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "ExportEngine.h"
 #include "formats/MrPackFormat.h"
 #include "formats/CurseForgeFormat.h"

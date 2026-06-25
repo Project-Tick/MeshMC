@@ -88,6 +88,7 @@
 #include <QCursor>
 #include <QIcon>
 #include <QSystemTrayIcon>
+#include <QProcess>
 
 #ifdef Q_OS_WIN
 #ifndef WIN32_LEAN_AND_MEAN
@@ -601,6 +602,9 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 	ctx.icon_list_get_name = api_icon_list_get_name;
 	ctx.icon_list_get_file_path = api_icon_list_get_file_path;
 	ctx.icon_list_save_png = api_icon_list_save_png;
+
+	// S31 — Subprocess execution
+	ctx.process_run = api_process_run;
 
 	return ctx;
 }
@@ -4003,6 +4007,79 @@ int PluginManager::api_icon_list_save_png(void* mh, const char* icon_key,
 	app->icons()->saveIcon(QString::fromUtf8(icon_key),
 						   QString::fromUtf8(dest_path), "PNG");
 	return QFileInfo::exists(QString::fromUtf8(dest_path)) ? 0 : -1;
+}
+
+/* ── Section 31: Subprocess execution ───────────────────────────────── */
+
+int PluginManager::api_process_run(void* mh, const char* program,
+								   const char* const* args, int arg_count,
+								   const char* working_dir,
+								   const char* stdin_data, int stdin_size,
+								   char* out_buf, int out_buf_size,
+								   int* out_exit_code, int timeout_ms)
+{
+	auto* r = rt(mh);
+	if (!r || !program || program[0] == '\0')
+		return -3;
+	if (arg_count < 0 || (arg_count > 0 && !args))
+		return -3;
+	if (out_buf && out_buf_size > 0)
+		out_buf[0] = '\0';
+
+	QStringList argList;
+	argList.reserve(arg_count);
+	for (int i = 0; i < arg_count; ++i) {
+		// argv element passed verbatim — no shell parsing, so there is
+		// no shell-injection surface even with attacker-controlled args.
+		argList << QString::fromUtf8(args[i] ? args[i] : "");
+	}
+
+	QProcess proc;
+	if (working_dir && working_dir[0] != '\0')
+		proc.setWorkingDirectory(QString::fromUtf8(working_dir));
+	proc.setProgram(QString::fromUtf8(program));
+	proc.setArguments(argList);
+	// Keep stderr separate so it never pollutes the captured stdout the
+	// plugin parses.
+	proc.setProcessChannelMode(QProcess::SeparateChannels);
+
+	proc.start();
+	if (!proc.waitForStarted(5000)) {
+		qWarning() << "[PluginManager] process_run: failed to start"
+				   << QString::fromUtf8(program) << "-" << proc.errorString();
+		return -1;
+	}
+
+	if (stdin_data && stdin_size > 0) {
+		proc.write(stdin_data, stdin_size);
+	}
+	proc.closeWriteChannel();
+
+	const int effectiveTimeout = (timeout_ms > 0) ? timeout_ms : 30000;
+	if (!proc.waitForFinished(effectiveTimeout)) {
+		qWarning() << "[PluginManager] process_run: timed out after"
+				   << effectiveTimeout << "ms:"
+				   << QString::fromUtf8(program);
+		proc.kill();
+		proc.waitForFinished(2000);
+		return -2;
+	}
+
+	const QByteArray outBytes = proc.readAllStandardOutput();
+	if (out_buf && out_buf_size > 0) {
+		const int copyLen =
+			qMin(outBytes.size(), out_buf_size - 1); // leave room for NUL
+		if (copyLen > 0)
+			memcpy(out_buf, outBytes.constData(),
+				   static_cast<size_t>(copyLen));
+		out_buf[copyLen] = '\0';
+	}
+
+	if (out_exit_code)
+		*out_exit_code = (proc.exitStatus() == QProcess::NormalExit)
+							 ? proc.exitCode()
+							 : -1;
+	return 0;
 }
 
 /* PluginPage MOC — required because PluginPage has Q_OBJECT */

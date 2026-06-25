@@ -14,7 +14,7 @@
  * icon, and (optionally) a server to auto-join.
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 
 #include <QComboBox>
 #include <QStandardPaths>

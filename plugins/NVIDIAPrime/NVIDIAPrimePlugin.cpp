@@ -16,7 +16,7 @@
  * at runtime.  The setting is stored as plugin.nvidia_prime.enabled.
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 
 MMCO_DEFINE_MODULE("NVIDIA Prime Module", "1.0.0", "Project Tick",
 				   "Discrete GPU offload via NVIDIA Prime Render Offload",

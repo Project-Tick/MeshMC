@@ -30,7 +30,7 @@
  *  is unsafe.
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "SkinManagerDialog.h"
 
 #include <QAbstractItemView>

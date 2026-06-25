@@ -6,7 +6,7 @@
 # Records where an instance's modpack was sourced from and pulls
 # newer pack releases from Modrinth / CurseForge on demand.
 #
-# All Qt and MeshMC types come through the SDK header (mmco_sdk.h).
+# All Qt and MeshMC types come through the SDK header (mmco_cxx_sdk.hpp).
 # Source files do NOT directly #include Qt or MeshMC headers — Qt
 # pulls in transitively through the SDK target, which is enough.
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)

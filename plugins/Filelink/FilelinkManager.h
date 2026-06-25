@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 
 #ifdef Q_OS_MAC
 #error "Filelink plugin does not support macOS"

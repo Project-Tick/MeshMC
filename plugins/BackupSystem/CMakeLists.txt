@@ -20,7 +20,7 @@ endif()
 # BackupSystem — MeshMC plugin (.mmco)
 # Creates instance backups (snapshots), restores, exports, imports.
 #
-# All Qt/MeshMC types are obtained through the SDK header (mmco_sdk.h).
+# All Qt/MeshMC types are obtained through the SDK header (mmco_cxx_sdk.hpp).
 # Plugin source files do NOT directly #include Qt or MeshMC headers.
 
 set(BACKUP_SOURCES

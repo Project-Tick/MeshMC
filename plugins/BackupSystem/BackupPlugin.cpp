@@ -7,7 +7,7 @@
  * does not directly #include any Qt or MeshMC headers.
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "BackupPage.h"
 #include "BackupManager.h"
 

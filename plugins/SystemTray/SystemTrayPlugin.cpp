@@ -19,7 +19,7 @@
  *    show_notifications — show a transient hint on first hide   (default 1)
  */
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 
 /* ── dependencies ─────────────────────────────────────────────────── *
  *

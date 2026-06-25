@@ -18,3 +18,4 @@
 # Cross-platform plugins still in staging.
 add_subdirectory(ErrorOracle)
 add_subdirectory(PackUpdater)
+add_subdirectory(MercurialVersioning)

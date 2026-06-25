@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "plugin/sdk/mmco_sdk.h"
+#include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "PackMetadata.h"
 #include "UpdateSource.h"
 
