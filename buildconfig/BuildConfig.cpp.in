@@ -107,6 +107,13 @@ Config::Config()
 	BUG_TRACKER_URL = "@MeshMC_BUG_TRACKER_URL@";
 	DISCORD_URL = "@MeshMC_DISCORD_URL@";
 	SUBREDDIT_URL = "@MeshMC_SUBREDDIT_URL@";
+
+	// Feature flags (GitLab Unleash-compatible backend).
+	UNLEASH_URL = "@MeshMC_UNLEASH_URL@";
+	UNLEASH_INSTANCE_ID = "@MeshMC_UNLEASH_INSTANCE_ID@";
+	UNLEASH_APP_NAME = "@MeshMC_UNLEASH_APP_NAME@";
+	FEATURE_FLAGS_ENABLED =
+		!UNLEASH_URL.isEmpty() && !UNLEASH_INSTANCE_ID.isEmpty();
 }
 
 QString Config::printableVersionString() const
