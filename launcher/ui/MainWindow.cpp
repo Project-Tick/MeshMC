@@ -104,6 +104,7 @@
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/dialogs/AboutDialog.h"
 #include "ui/dialogs/MeshMCLogsDialog.h"
+#include "ui/dialogs/FeatureFlagsDialog.h"
 #include "ui/dialogs/PluginsDialog.h"
 #include "ui/dialogs/UpdateProgressDialog.h"
 #include "ui/dialogs/VersionSelectDialog.h"
@@ -266,6 +267,7 @@ class MainWindow::Ui
 	TranslatedAction actionREDDIT;
 	TranslatedAction actionPlugins;
 	TranslatedAction actionMeshMCLogs;
+	TranslatedAction actionFeatureFlags;
 	TranslatedAction actionAbout;
 
 	QVector<TranslatedToolButton*> all_toolbuttons;
@@ -432,6 +434,16 @@ class MainWindow::Ui
 			"MainWindow", "View and manage MeshMC application logs."));
 		all_actions.append(&actionMeshMCLogs);
 		helpMenu->addAction(actionMeshMCLogs);
+
+		actionFeatureFlags = TranslatedAction(MainWindow);
+		actionFeatureFlags->setObjectName(QStringLiteral("actionFeatureFlags"));
+		actionFeatureFlags->setIcon(APPLICATION->getThemedIcon("checkupdate"));
+		actionFeatureFlags.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Feature Flags"));
+		actionFeatureFlags.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "View the runtime feature flags known to %1."));
+		all_actions.append(&actionFeatureFlags);
+		helpMenu->addAction(actionFeatureFlags);
 
 		actionAbout = TranslatedAction(MainWindow);
 		actionAbout->setObjectName(QStringLiteral("actionAbout"));
@@ -1983,6 +1995,12 @@ void MainWindow::on_actionPlugins_triggered()
 void MainWindow::on_actionMeshMCLogs_triggered()
 {
 	MeshMCLogsDialog dialog(this);
+	dialog.exec();
+}
+
+void MainWindow::on_actionFeatureFlags_triggered()
+{
+	FeatureFlagsDialog dialog(this);
 	dialog.exec();
 }
 

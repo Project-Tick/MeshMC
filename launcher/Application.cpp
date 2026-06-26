@@ -85,6 +85,8 @@
 
 #include "updater/UpdateChecker.h"
 
+#include "featureflags/FeatureFlags.h"
+
 #include "tools/JProfiler.h"
 #include "tools/JVisualVM.h"
 #include "tools/MCEditTool.h"
@@ -995,6 +997,10 @@ void Application::initSettings()
 	// paste.ee API key
 	m_settings->registerSetting("PasteEEAPIKey", "meshmc");
 
+	// Stable per-installation id, used (among other things) as the sticky id
+	// for percentage-based feature-flag rollouts. Generated once on first run.
+	m_settings->registerSetting("InstallationID", QString());
+
 	if (!BuildConfig.ANALYTICS_ID.isEmpty()) {
 		// Analytics
 		m_settings->registerSetting("Analytics", true);
@@ -1032,6 +1038,29 @@ void Application::initSubsystems()
 		QString pass = settings()->get("ProxyPass").toString();
 		updateProxySettings(proxyTypeStr, addr, port, user, pass);
 		qDebug() << "<> Network done.";
+	}
+
+	// initialize runtime feature flags (GitLab Unleash-compatible backend).
+	// The decision engine is Rust; this object is the Qt transport over it.
+	{
+		m_featureFlags.reset(new FeatureFlags());
+		FeatureFlags::setInstance(m_featureFlags.get());
+		// Stable per-installation id so percentage rollouts are sticky.
+		// Generate one on first run and persist it.
+		QString installationId = m_settings->get("InstallationID").toString();
+		if (installationId.isEmpty()) {
+			installationId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+			m_settings->set("InstallationID", installationId);
+		}
+		m_featureFlags->setUserId(installationId);
+		if (BuildConfig.FEATURE_FLAGS_ENABLED) {
+			m_featureFlags->refresh();
+			qDebug() << "<> Feature flags initialized (endpoint:"
+					 << BuildConfig.UNLEASH_URL << ").";
+		} else {
+			qDebug() << "<> Feature flags disabled (no instance id configured);"
+					 << "flags fall back to compiled-in defaults.";
+		}
 	}
 
 	// load translations

@@ -54,6 +54,10 @@ set(CORE_SOURCES
     FileSystem.h
     FileSystem.cpp
 
+    # Runtime feature flags (Qt transport over the Rust decision engine)
+    featureflags/FeatureFlags.h
+    featureflags/FeatureFlags.cpp
+
     Exception.h
 
     # RW lock protected map
@@ -848,6 +852,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/ModUpdateDialog.h
     ui/dialogs/MeshMCLogsDialog.cpp
     ui/dialogs/MeshMCLogsDialog.h
+    ui/dialogs/FeatureFlagsDialog.cpp
+    ui/dialogs/FeatureFlagsDialog.h
     ui/dialogs/UpdateProgressDialog.cpp
     ui/dialogs/UpdateProgressDialog.h
 
@@ -1030,6 +1036,25 @@ if(MeshMC_PLUGIN_SIGNATURES)
     target_compile_definitions(MeshMC_logic PRIVATE MESHMC_PLUGIN_SIGNATURES=1)
 else()
     target_compile_definitions(MeshMC_logic PRIVATE MESHMC_PLUGIN_SIGNATURES=0)
+endif()
+
+# Rust subsystem: link the feature-flag engine. The imported target is created
+# in the top-level CMakeLists via Corrosion when MeshMC_RUST is ON. The cxx C++
+# glue is compiled inside this staticlib by the crate's build.rs (cxx-build);
+# the generated headers are copied to a stable directory that we add to the
+# include path below.
+if(MeshMC_RUST)
+    target_link_libraries(MeshMC_logic
+        meshmc_featureflags
+    )
+    # build.rs generates the headers during the cargo build, so MeshMC_logic
+    # must wait for the Rust target before compiling FeatureFlags.cpp.
+    add_dependencies(MeshMC_logic meshmc_featureflags)
+    target_include_directories(MeshMC_logic PRIVATE
+        "${MeshMC_FEATUREFLAGS_GENERATED_INCLUDE}")
+    target_compile_definitions(MeshMC_logic PUBLIC MESHMC_RUST=1)
+else()
+    target_compile_definitions(MeshMC_logic PUBLIC MESHMC_RUST=0)
 endif()
 
 if(APPLE)

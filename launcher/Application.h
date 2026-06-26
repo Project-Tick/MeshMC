@@ -64,6 +64,7 @@ class MCEditTool;
 class GAnalytics;
 class PluginManager;
 class BasePage;
+class FeatureFlags;
 
 namespace Meta
 {
@@ -252,6 +253,8 @@ class Application : public QApplication
 
 	shared_qobject_ptr<UpdateChecker> m_updateChecker;
 	shared_qobject_ptr<AccountList> m_accounts;
+
+	std::unique_ptr<FeatureFlags> m_featureFlags;
 
 	shared_qobject_ptr<HttpMetaCache> m_metacache;
 	shared_qobject_ptr<Meta::Index> m_metadataIndex;
