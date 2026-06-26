@@ -43,3 +43,8 @@ tree.txt
 # MeshMC MMCO Plugins
 
 *.mmco
+
+# Rust / cargo
+/target
+# cxx-generated bridge headers emitted by launcher/featureflags/build.rs
+/launcher/featureflags/generated/
