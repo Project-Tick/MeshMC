@@ -6,6 +6,12 @@ cmake_minimum_required(VERSION 3.20)
 # Required for CMAKE_MSVC_DEBUG_INFORMATION_FORMAT to work (avoids /Zi PDB conflicts with sccache)
 cmake_policy(SET CMP0141 NEW)
 
+# Required so CMAKE_MSVC_RUNTIME_LIBRARY controls the CRT (/MD vs /MDd) instead
+# of it being baked into CMAKE_CXX_FLAGS. We pin the CRT to /MD when the Rust
+# subsystem is enabled (see the MeshMC_RUST block), because the Rust MSVC
+# toolchain only links the release CRT. Must be set before project().
+cmake_policy(SET CMP0091 NEW)
+
 project(MeshMC)
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
@@ -56,12 +62,7 @@ set(CMAKE_JAVA_TARGET_OUTPUT_DIR ${PROJECT_BINARY_DIR}/jars)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_C_STANDARD_REQUIRED true)
 set(CMAKE_CXX_STANDARD 23)
-
-if(MSVC)
-    set(CMAKE_C_STANDARD 11)
-else()
-    set(CMAKE_C_STANDARD 23)
-endif()
+set(CMAKE_C_STANDARD 23)
 
 include(GenerateExportHeader)
 if(MSVC)
@@ -254,6 +255,82 @@ endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+################################ Rust subsystem ################################
+option(MeshMC_RUST "Build and embed the Rust subsystem (always ON for release builds)" ON)
+
+if(MeshMC_RUST AND MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY
+        "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL" CACHE STRING
+        "Per-config dynamic CRT (/MDd in Debug, /MD otherwise) to match meshmc-deps." FORCE)
+endif()
+
+if(MeshMC_RUST)
+    find_program(MeshMC_CARGO_EXECUTABLE NAMES cargo)
+    find_program(MeshMC_RUSTC_EXECUTABLE NAMES rustc)
+    if(NOT MeshMC_CARGO_EXECUTABLE OR NOT MeshMC_RUSTC_EXECUTABLE)
+        message(FATAL_ERROR
+            "MeshMC_RUST is ON but a Rust toolchain was not found.\n"
+            "  cargo: ${MeshMC_CARGO_EXECUTABLE}\n"
+            "  rustc: ${MeshMC_RUSTC_EXECUTABLE}\n"
+            "The Rust subsystem (feature flags, launch) is a hard build "
+            "requirement.\n"
+            "Install Rust via https://rustup.rs and make sure cargo/rustc are "
+            "on PATH (e.g. add %USERPROFILE%\\.cargo\\bin), then reconfigure.\n"
+            "If you really must build without it, pass -DMeshMC_RUST=OFF "
+            "(unsupported).")
+    endif()
+    message(STATUS "Rust toolchain found: ${MeshMC_CARGO_EXECUTABLE}")
+
+    find_package(Corrosion QUIET)
+    if(NOT Corrosion_FOUND)
+        include(FetchContent)
+        FetchContent_Declare(
+            Corrosion
+            GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+            GIT_TAG v0.5.1
+        )
+        FetchContent_MakeAvailable(Corrosion)
+    endif()
+
+    corrosion_import_crate(MANIFEST_PATH "${CMAKE_SOURCE_DIR}/Cargo.toml")
+
+    if(NOT TARGET meshmc_featureflags)
+        message(FATAL_ERROR
+            "Corrosion did not create the expected 'meshmc_featureflags' "
+            "target. Check that crates/meshmc-featureflags is a member of the "
+            "workspace Cargo.toml and that its package name matches.")
+    endif()
+
+    if(MSVC)
+        corrosion_set_env_vars(meshmc_featureflags
+            "CFLAGS=$<IF:$<CONFIG:Debug>,/MDd,/MD>"
+            "CXXFLAGS=$<IF:$<CONFIG:Debug>,/MDd,/MD>")
+    endif()
+
+    # The cxx C++ glue is generated and compiled *inside* the Rust staticlib by
+    # the crate's build.rs (cxx-build), not by Corrosion's cxxbridge helper. The
+    # build script copies the generated headers to a stable location next to the
+    # sources: launcher/featureflags/generated/{meshmc_featureflags/lib.rs.h,
+    # rust/cxx.h}. Expose that directory to the C++ consumers so
+    # `#include "meshmc_featureflags/lib.rs.h"` resolves.
+    set(MeshMC_FEATUREFLAGS_GENERATED_INCLUDE
+        "${CMAKE_SOURCE_DIR}/launcher/featureflags/generated"
+        CACHE INTERNAL "Include dir for cxx-generated feature-flag bridge headers")
+    # Create the directory now so the include path exists at configure time;
+    # build.rs populates it with the real headers during the cargo build.
+    file(MAKE_DIRECTORY "${MeshMC_FEATUREFLAGS_GENERATED_INCLUDE}/meshmc_featureflags")
+    file(MAKE_DIRECTORY "${MeshMC_FEATUREFLAGS_GENERATED_INCLUDE}/rust")
+
+    if(MSVC AND TARGET meshmc_featureflags)
+        # Rust links the release CRT (msvcrt) unconditionally; in Debug the rest
+        # of the binary uses msvcrtd. Drop Rust's release-CRT default in Debug so
+        # the (superset) debug CRT satisfies its symbols. No-op elsewhere.
+        target_link_options(meshmc_featureflags INTERFACE
+            "$<$<CONFIG:Debug>:LINKER:/NODEFAULTLIB:msvcrt>")
+    endif()
+
+endif()
+
 ####################################### Branding #######################################
 
 ######## Firstly, dont touch here, this section calculate Git commit, branch; Timestamp
@@ -348,6 +425,11 @@ set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
 
 # Subreddit URL
 set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
+
+# Feature flags
+set(MeshMC_UNLEASH_URL "https://git.projecttick.org/api/v4/feature_flags/unleash/47" CACHE STRING "GitLab Unleash-compatible feature flags endpoint.")
+set(MeshMC_UNLEASH_INSTANCE_ID "glffct-SxjZxptKF2f91a1SK6kz" CACHE STRING "Unleash instance id. Set this to enable runtime feature flags.")
+set(MeshMC_UNLEASH_APP_NAME "" CACHE STRING "Unleash application name / environment (UNLEASH-APPNAME). Must match the flag's environment spec, e.g. 'production'.")
 
 ######## Fourthly, please define MeshMC attributes ########
 
