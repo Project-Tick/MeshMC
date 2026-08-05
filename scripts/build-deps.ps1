@@ -103,31 +103,44 @@ $TotalLibs = 15
 
 function Install-Lib {
     param(
-        [Parameter(Mandatory)][string]$Dir,
+        [Parameter(Mandatory)][string]$Repo,
         [Parameter(ValueFromRemainingArguments)][string[]]$ExtraArgs
     )
 
     $script:BuiltCount++
-    $Src = Join-Path $MonorepoRoot $Dir
-    $Bld = Join-Path $Src 'build'
 
-    if (-not (Test-Path $Src -PathType Container)) {
-        Write-Err "Directory not found: $Src"
+    $Name = [System.IO.Path]::GetFileNameWithoutExtension($Repo)
+    $Src  = Join-Path $MonorepoRoot $Name
+    $Bld  = Join-Path $Src 'build'
+
+    if (-not (Test-Path $Src)) {
+        Write-Log "Cloning $Repo ..."
+        Invoke-Cmd git clone $Repo $Src
+    }
+    else {
+        Write-Log "Updating $Name ..."
+        Invoke-Cmd git -C $Src pull
     }
 
-    Write-Log "[$script:BuiltCount/$TotalLibs] Building $Dir ..."
+    Write-Log "[$script:BuiltCount/$TotalLibs] Building $Name ..."
 
     if ($Clean -and (Test-Path $Bld)) {
         Remove-Item $Bld -Recurse -Force
     }
 
-    $configArgs = @('-S', $Src, '-B', $Bld) + $CMakeCommon
-    if ($ExtraArgs) { $configArgs += $ExtraArgs }
+    $configArgs = @(
+        '-S', $Src,
+        '-B', $Bld
+    ) + $CMakeCommon
+
+    if ($ExtraArgs) {
+        $configArgs += $ExtraArgs
+    }
+
     $configArgs += @('-G', $Generator)
+
     Invoke-Cmd cmake @configArgs
-
     Invoke-Cmd cmake --build $Bld --parallel $Jobs
-
     Invoke-Cmd cmake --install $Bld
 }
 
@@ -165,29 +178,29 @@ function Build-Deps {
     Write-Host ''
 
     # Level 1: No monorepo dependencies
-    Install-Lib neozip        '-DZLIB_COMPAT=OFF' '-DWITH_GTEST=OFF'
-    Install-Lib cmark
-    Install-Lib tomlplusplus
+    Install-Lib https://projecttick.org/project-tick/projects/neozip        '-DZLIB_COMPAT=OFF' '-DWITH_GTEST=OFF'
+    Install-Lib https://github.com/commonmark/cmark
+    Install-Lib https://github.com/marzer/tomlplusplus
 
     # Level 2: Depends on Level 1
-    Install-Lib libnbtplusplus
+    Install-Lib https://projecttick.org/project-tick/projects/libnbtplusplus
 
     # Level 3: Qt-dependent, no monorepo inter-deps
-    Install-Lib optional-bare
-    Install-Lib xz-embedded
-    Install-Lib systeminfo
-    Install-Lib rainbow
-    Install-Lib iconfix
-    Install-Lib LocalPeer
-    Install-Lib classparser
-    Install-Lib katabasis
+    Install-Lib https://projecttick.org/project-tick/projects/optional-bare
+    Install-Lib https://projecttick.org/project-tick/projects/xz-embedded
+    Install-Lib https://projecttick.org/project-tick/projects/systeminfo
+    Install-Lib https://projecttick.org/project-tick/projects/rainbow
+    Install-Lib https://projecttick.org/project-tick/projects/iconfix
+    Install-Lib https://projecttick.org/project-tick/projects/LocalPeer
+    Install-Lib https://projecttick.org/project-tick/projects/classparser
+    Install-Lib https://projecttick.org/project-tick/projects/katabasis
 
     # Level 4: Depends on Level 3
-    Install-Lib ganalytics
+    Install-Lib https://projecttick.org/project-tick/projects/ganalytics
 
     # Java jars
-    Install-Lib javacheck
-    Install-Lib javalauncher
+    Install-Lib https://projecttick.org/project-tick/projects/javacheck
+    Install-Lib https://projecttick.org/project-tick/projects/javalauncher
 
     Write-Host ''
     Write-Log 'All dependencies built and installed successfully!'
