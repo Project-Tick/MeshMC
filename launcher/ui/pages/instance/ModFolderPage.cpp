@@ -491,9 +491,12 @@ void ModFolderPage::on_actionDownload_triggered()
 		}
 	}
 
-	// Step 1: Open browse dialog
+	// Step 1: Open browse dialog. Hand it the persistent install index so
+	// it can refuse to re-add a mod that is already installed in this
+	// instance (prevents queuing a second copy/version of the same mod).
 	DownloadContentDialog browseDialog(mcInst, m_contentType,
 									   this->parentWidget());
+	browseDialog.setInstalledIndex(m_mods->metadataIndex());
 	if (browseDialog.exec() != QDialog::Accepted) {
 		return;
 	}
