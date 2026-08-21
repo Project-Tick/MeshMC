@@ -256,6 +256,7 @@ void DependencyResolver::onDependencyProjectResolved(const QString& platform,
 		dep.fileName = Json::ensureString(fileObj, "fileName", "");
 		dep.downloadUrl = Json::ensureString(fileObj, "downloadUrl", "");
 		dep.fileSize = Json::ensureInteger(fileObj, "fileLength", 0);
+		dep.sha1 = ModPlatform::curseForgeSha1FromFileObject(fileObj);
 		dep.name = Json::ensureString(fileObj, "displayName", dep.fileName);
 
 		// Handle restricted downloads (downloadUrl is null)

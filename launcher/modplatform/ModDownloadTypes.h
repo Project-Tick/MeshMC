@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QList>
 #include <QMetaType>
 #include <QString>
@@ -94,6 +96,18 @@ namespace ModPlatform
 		QString projectId;
 		QString platform;
 	};
+
+	inline QString curseForgeSha1FromFileObject(const QJsonObject& fileObj)
+	{
+		const auto hashes = fileObj.value("hashes").toArray();
+		for (const auto& hashRaw : hashes) {
+			const auto hashObj = hashRaw.toObject();
+			if (hashObj.value("algo").toInt() == 1) {
+				return hashObj.value("value").toString();
+			}
+		}
+		return QString();
+	}
 
 } // namespace ModPlatform
 
