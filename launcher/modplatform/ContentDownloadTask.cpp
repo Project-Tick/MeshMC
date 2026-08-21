@@ -35,6 +35,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QCryptographicHash>
+#include <QSet>
 
 ContentDownloadTask::ContentDownloadTask(
 	const QList<ModPlatform::DownloadItem>& items, const QString& targetDir,
@@ -66,8 +67,41 @@ void ContentDownloadTask::executeTask()
 	m_netJob = new NetJob("ContentDownload", APPLICATION->network());
 
 	int skipped = 0;
+	// Last-resort safety net: even if an upstream stage (dependency
+	// resolver, conflict analyzer) failed to catch it, never let the same
+	// target file name or the same platform+project be queued twice in one
+	// batch. Without this, two versions of the same mod (e.g. one pulled in
+	// as a dependency, one explicitly selected) could download side by side.
+	QSet<QString> queuedFileNames;
+	QSet<QString> queuedProjectKeys;
 	for (const auto& item : m_items) {
 		QString targetPath = dir.filePath(item.fileName);
+
+		if (!item.fileName.isEmpty() &&
+			queuedFileNames.contains(item.fileName)) {
+			qWarning() << "ContentDownload: skipping duplicate file name in "
+						  "batch:"
+					   << item.fileName;
+			skipped++;
+			continue;
+		}
+		QString projectKey;
+		if (!item.platform.isEmpty() && !item.projectId.isEmpty()) {
+			projectKey = item.platform + ":" + item.projectId;
+			if (queuedProjectKeys.contains(projectKey)) {
+				qWarning() << "ContentDownload: skipping duplicate "
+							  "project in batch:"
+						   << item.name << "(" << projectKey << ")";
+				skipped++;
+				continue;
+			}
+		}
+		if (!item.fileName.isEmpty()) {
+			queuedFileNames.insert(item.fileName);
+		}
+		if (!projectKey.isEmpty()) {
+			queuedProjectKeys.insert(projectKey);
+		}
 
 		// Updates explicitly target a different on-disk file ("foo-1.0.jar"
 		// -> "foo-1.1.jar"). Drop the old file (and its sidecar) before

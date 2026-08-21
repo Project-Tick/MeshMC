@@ -39,6 +39,7 @@
 #include "Application.h"
 #include "Json.h"
 #include "minecraft/PackProfile.h"
+#include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/ContentType.h"
 #include "modplatform/flame/FlameModModel.h"
 #include "modplatform/modrinth/ModrinthModModel.h"
@@ -110,6 +111,39 @@ DownloadContentDialog::DownloadContentDialog(
 }
 
 DownloadContentDialog::~DownloadContentDialog() {}
+
+void DownloadContentDialog::setInstalledIndex(
+	std::shared_ptr<ModMetadataIndex> index)
+{
+	m_installedIndex = std::move(index);
+}
+
+QString DownloadContentDialog::alreadyInstalledReason(
+	const QString& platform, const QString& projectId,
+	const QString& name) const
+{
+	if (!m_installedIndex) {
+		return QString();
+	}
+
+	if (!platform.isEmpty() && !projectId.isEmpty()) {
+		const auto byProject =
+			m_installedIndex->findByPlatformProject(platform, projectId);
+		if (byProject.isValid()) {
+			return tr("Already installed (%1)").arg(byProject.fileName);
+		}
+	}
+
+	const QString normalized = ModMetadataIndex::normalizeName(name);
+	if (!normalized.isEmpty()) {
+		const auto byName = m_installedIndex->findByNormalizedName(normalized);
+		if (byName.isValid()) {
+			return tr("Already installed (%1)").arg(byName.fileName);
+		}
+	}
+
+	return QString();
+}
 
 void DownloadContentDialog::setupUi()
 {
@@ -287,10 +321,17 @@ void DownloadContentDialog::onModSelectionChanged(const QModelIndex& current,
 	if (m_currentPlatform == 0) {
 		// CurseForge
 		auto mod = m_flameModel->modAt(current.row());
-		m_descriptionLabel->setText(QString("<b>%1</b> by %2<br>%3")
-										.arg(mod.name.toHtmlEscaped(),
-											 mod.author.toHtmlEscaped(),
-											 mod.description.toHtmlEscaped()));
+		QString desc = QString("<b>%1</b> by %2<br>%3")
+						   .arg(mod.name.toHtmlEscaped(),
+								mod.author.toHtmlEscaped(),
+								mod.description.toHtmlEscaped());
+		const QString installedReason = alreadyInstalledReason(
+			"curseforge", QString::number(mod.addonId), mod.name);
+		if (!installedReason.isEmpty()) {
+			desc += QString("<br><b style=\"color:#c0392b;\">%1</b>")
+						.arg(installedReason.toHtmlEscaped());
+		}
+		m_descriptionLabel->setText(desc);
 
 		m_currentMod.platform = "curseforge";
 		m_currentMod.projectId = QString::number(mod.addonId);
@@ -301,10 +342,17 @@ void DownloadContentDialog::onModSelectionChanged(const QModelIndex& current,
 	} else {
 		// Modrinth
 		auto mod = m_modrinthModel->modAt(current.row());
-		m_descriptionLabel->setText(QString("<b>%1</b> by %2<br>%3")
-										.arg(mod.name.toHtmlEscaped(),
-											 mod.author.toHtmlEscaped(),
-											 mod.description.toHtmlEscaped()));
+		QString desc = QString("<b>%1</b> by %2<br>%3")
+						   .arg(mod.name.toHtmlEscaped(),
+								mod.author.toHtmlEscaped(),
+								mod.description.toHtmlEscaped());
+		const QString installedReason =
+			alreadyInstalledReason("modrinth", mod.projectId, mod.name);
+		if (!installedReason.isEmpty()) {
+			desc += QString("<br><b style=\"color:#c0392b;\">%1</b>")
+						.arg(installedReason.toHtmlEscaped());
+		}
+		m_descriptionLabel->setText(desc);
 
 		m_currentMod.platform = "modrinth";
 		m_currentMod.projectId = mod.projectId;
@@ -395,8 +443,13 @@ void DownloadContentDialog::loadVersionsForMod(const QModelIndex& index)
 					break;
 				}
 			}
+			const bool alreadyInstalled =
+				!alreadyInstalledReason(m_currentMod.platform,
+									   m_currentMod.projectId,
+									   m_currentMod.name)
+					 .isEmpty();
 			m_addButton->setEnabled(m_versionBox->count() > 0 &&
-									!alreadySelected);
+									!alreadySelected && !alreadyInstalled);
 		});
 		connect(job, &NetJob::failed, this, [response, job](QString) {
 			job->deleteLater();
@@ -486,8 +539,13 @@ void DownloadContentDialog::loadVersionsForMod(const QModelIndex& index)
 					break;
 				}
 			}
+			const bool alreadyInstalled =
+				!alreadyInstalledReason(m_currentMod.platform,
+									   m_currentMod.projectId,
+									   m_currentMod.name)
+					 .isEmpty();
 			m_addButton->setEnabled(m_versionBox->count() > 0 &&
-									!alreadySelected);
+									!alreadySelected && !alreadyInstalled);
 		});
 		connect(job, &NetJob::failed, this, [response, job](QString) {
 			job->deleteLater();
@@ -530,6 +588,14 @@ void DownloadContentDialog::onModDoubleClicked(const QModelIndex& index)
 		}
 	}
 
+	// Never let an already-installed mod be queued again, even if the Add
+	// button was somehow still enabled (e.g. stale state from before the
+	// installed index was set).
+	if (!alreadyInstalledReason(mod.platform, mod.projectId, mod.name)
+			 .isEmpty()) {
+		return;
+	}
+
 	m_selectedMods.append(mod);
 	updateSelectedList();
 	m_addButton->setEnabled(false); // just added this mod, disable Add
@@ -542,7 +608,12 @@ void DownloadContentDialog::removeSelectedMod(int index)
 		m_selectedMods.removeAt(index);
 		updateSelectedList();
 		// Re-enable Add if the removed mod matches the currently viewed mod
-		if (removedName == m_currentMod.name && m_versionBox->count() > 0) {
+		// (and it isn't already installed - removing it from the pending
+		// selection doesn't uninstall it from disk).
+		if (removedName == m_currentMod.name && m_versionBox->count() > 0 &&
+			alreadyInstalledReason(m_currentMod.platform,
+								   m_currentMod.projectId, m_currentMod.name)
+				.isEmpty()) {
 			m_addButton->setEnabled(true);
 		}
 	}

@@ -969,15 +969,32 @@ void DependencyResolver::checkCompletion()
 		}
 
 		// === Pass 4: Also dedup against selected mods by name ===
+		// Also check platform+projectId directly: CurseForge dependency
+		// entries carry the *file's* displayName (e.g. "sodium-fabric-
+		// mc1.20.1-0.5.8.jar") in `name`, not the project's name, so the
+		// normalized-name comparison alone misses the case where the user
+		// explicitly selected the same project that a dependency chain also
+		// pulled in - letting two versions of the same mod slip into the
+		// same download plan.
 		{
 			QList<ModPlatform::DependencyInfo> deduped;
 			for (const auto& dep : m_dependencies) {
 				QString normalized = normalizeName(dep.name);
 				bool isDuplicate = false;
 				for (const auto& selected : m_selectedMods) {
-					if (normalizeName(selected.name) == normalized) {
+					const bool sameProject =
+						!dep.platform.isEmpty() && !dep.projectId.isEmpty() &&
+						selected.platform == dep.platform &&
+						selected.projectId == dep.projectId;
+					const bool sameName =
+						!normalized.isEmpty() &&
+						normalizeName(selected.name) == normalized;
+					if (sameProject || sameName) {
 						qDebug() << "Removing dep that duplicates selected mod:"
-								 << dep.name;
+								 << dep.name << "(" << dep.platform
+								 << dep.projectId << ") vs selected"
+								 << selected.name << "(" << selected.platform
+								 << selected.projectId << ")";
 						isDuplicate = true;
 						break;
 					}

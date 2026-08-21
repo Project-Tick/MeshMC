@@ -35,10 +35,13 @@
 #include <QListWidget>
 #include <QLabel>
 #include <QTimer>
+#include <memory>
 
 #include "minecraft/MinecraftInstance.h"
 #include "modplatform/ContentType.h"
 #include "modplatform/ModDownloadTypes.h"
+
+class ModMetadataIndex;
 
 namespace Flame
 {
@@ -58,6 +61,11 @@ class DownloadContentDialog : public QDialog
 								   ModPlatform::ContentType contentType,
 								   QWidget* parent = nullptr);
 	virtual ~DownloadContentDialog();
+
+	/* When set, the dialog refuses to add (and visually flags) any mod
+	 * that is already installed in the target instance, so the same mod
+	 * cannot be queued for download twice. */
+	void setInstalledIndex(std::shared_ptr<ModMetadataIndex> index);
 
 	QList<ModPlatform::SelectedMod> selectedMods() const
 	{
@@ -88,12 +96,19 @@ class DownloadContentDialog : public QDialog
 	void triggerSearch();
 	void updateSelectedList();
 	void loadVersionsForMod(const QModelIndex& index);
+	/* Returns a human-readable reason string ("Already installed (foo.jar)")
+	 * if `platform`/`projectId` (or, failing that, `name`) matches a mod
+	 * already present in the target instance; otherwise an empty string. */
+	QString alreadyInstalledReason(const QString& platform,
+								   const QString& projectId,
+								   const QString& name) const;
 
   private:
 	MinecraftInstance* m_instance;
 	ModPlatform::ContentType m_contentType;
 	QString m_mcVersion;
 	QString m_loaderType;
+	std::shared_ptr<ModMetadataIndex> m_installedIndex;
 
 	// UI elements
 	QListWidget* m_platformList = nullptr;
