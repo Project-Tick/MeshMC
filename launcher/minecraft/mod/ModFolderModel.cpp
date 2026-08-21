@@ -194,13 +194,21 @@ void ModFolderModel::finishUpdate()
 	{
 		QSet<QString> added = newSet;
 		added.subtract(currentSet);
-		beginInsertRows(QModelIndex(), mods.size(),
-						mods.size() + added.size() - 1);
-		for (auto& addedMod : added) {
-			mods.append(newMods[addedMod]);
-			resolveMod(mods.last());
+		// Qt's QAbstractItemModel::beginInsertRows() asserts "last >= first".
+		// When `added` is empty, `mods.size() + added.size() - 1` is
+		// `mods.size() - 1`, i.e. one less than `first` (`mods.size()`),
+		// which trips that assert. This happened on every directory-watcher
+		// tick that removed mods (or changed none), since this block ran
+		// unconditionally regardless of whether there was anything to add.
+		if (!added.isEmpty()) {
+			beginInsertRows(QModelIndex(), mods.size(),
+							mods.size() + added.size() - 1);
+			for (auto& addedMod : added) {
+				mods.append(newMods[addedMod]);
+				resolveMod(mods.last());
+			}
+			endInsertRows();
 		}
-		endInsertRows();
 	}
 
 	// update index
