@@ -10,7 +10,7 @@ Things aren't as you might think because it's been quite some time since we left
 
 If you're convinced and have come here, our Contribution Rules are very simple.
 
-1) First, you must register at git.projecttick.org [here][3] to be able to log in with LDAP.
+1) First, you must register at projecttick.org [here][3] to be able to log in with LDAP.
 
 2) After registering, you can verify your email and log directly into Project Tick GitLab.
 
@@ -24,7 +24,7 @@ If you're convinced and have come here, our Contribution Rules are very simple.
 
 Thank you for your contribution. If you want to write a plugin, you should use the `plugins/` and `plugins/staging/` folder. Because plugins are collected there. If you really want to bring your plugin, remember that you will be responsible for its maintenance, not us. Don't forget to take this into account.
 
-[1]: https://git.projecttick.org/project-tick/governance/governancedoc/-/blob/master/GOVERNANCE.md
-[2]: https://git.projecttick.org/project-tick/documentation/-/blob/master/manifestos/MeshMC.md
+[1]: https://projecttick.org/project-tick/governance/governancedoc/-/blob/master/GOVERNANCE.md
+[2]: https://projecttick.org/project-tick/documentation/-/blob/master/manifestos/MeshMC.md
 [3]: https://id.projecttick.net/realms/projecttick/account
-[4]: https://git.projecttick.org/project-tick/projects/meshmc
+[4]: https://projecttick.org/project-tick/projects/meshmc
