@@ -77,7 +77,7 @@ void LanguageSelectionWidget::retranslate()
 {
 	QString text = tr("Don't see your language or the quality is poor?<br/><a "
 					  "href=\"%1\">Help us with translations!</a>")
-					   .arg("https://git.projecttick.org/project-tick/projects/meshmc/-/wikis/"
+					   .arg("https://projecttick.org/project-tick/projects/meshmc/-/wikis/"
 							"Translating-MeshMC");
 	helpUsLabel->setText(text);
 }

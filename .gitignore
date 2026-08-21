@@ -50,3 +50,7 @@ tree.txt
 /launcher/featureflags/generated/
 # CMake-generated cargo config (pins the MSVC linker by absolute path)
 /launcher/featureflags/.cargo/
+
+/.vs/
+
+CMakeUserPresets.json

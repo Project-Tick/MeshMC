@@ -39,7 +39,7 @@ namespace
 	 * fast-forwarded on every later start so the local copy tracks
 	 * upstream. */
 	constexpr const char kMeshmcWikiUrl[] =
-		"https://git.projecttick.org/project-tick/projects/meshmc.wiki.git";
+		"https://projecttick.org/project-tick/projects/meshmc.wiki.git";
 	constexpr const char kMeshmcWikiDirName[] = "meshmc-wiki";
 
 	QString pluginDataDir()
