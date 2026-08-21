@@ -367,6 +367,8 @@ void DownloadContentDialog::loadVersionsForMod(const QModelIndex& index)
 				int fileId = Json::ensureInteger(fileObj, "id", 0);
 				QString downloadUrl =
 					Json::ensureString(fileObj, "downloadUrl", "");
+				QString sha1 = ModPlatform::curseForgeSha1FromFileObject(fileObj);
+				int fileLength = Json::ensureInteger(fileObj, "fileLength", 0);
 
 				// Handle restricted downloads (downloadUrl is null)
 				if (downloadUrl.isEmpty() && fileId > 0 &&
@@ -384,6 +386,8 @@ void DownloadContentDialog::loadVersionsForMod(const QModelIndex& index)
 				data["fileId"] = fileId;
 				data["fileName"] = fileName;
 				data["downloadUrl"] = downloadUrl;
+				data["sha1"] = sha1;
+				data["fileSize"] = fileLength;
 				m_versionBox->addItem(displayName, QVariant(data));
 			}
 
@@ -513,15 +517,14 @@ void DownloadContentDialog::onModDoubleClicked(const QModelIndex& index)
 
 	if (m_currentMod.platform == "curseforge") {
 		mod.versionId = QString::number(data["fileId"].toInt());
-		mod.fileName = data["fileName"].toString();
-		mod.downloadUrl = data["downloadUrl"].toString();
 	} else {
 		mod.versionId = data["versionId"].toString();
+	}
+
 		mod.fileName = data["fileName"].toString();
 		mod.downloadUrl = data["downloadUrl"].toString();
 		mod.sha1 = data["sha1"].toString();
 		mod.fileSize = data["fileSize"].toInt();
-	}
 
 	// Don't add duplicates (check by normalized name across platforms)
 	for (const auto& existing : m_selectedMods) {

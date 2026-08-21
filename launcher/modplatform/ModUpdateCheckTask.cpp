@@ -159,6 +159,7 @@ namespace
 		item.fileName = Json::ensureString(fObj, "fileName", "");
 		item.downloadUrl = Json::ensureString(fObj, "downloadUrl", "");
 		item.fileSize = Json::ensureInteger(fObj, "fileLength", 0);
+		item.sha1 = ModPlatform::curseForgeSha1FromFileObject(fObj);
 		item.isDependency = entry.isDependency;
 		item.replaceExisting = true;
 		item.replacesFileName = entry.fileName;
