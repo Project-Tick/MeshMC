@@ -1,0 +1,76 @@
+                     MeshMC MMCO Module Exception
+                      Version 1.0, 15 April 2026
+
+Additional permission under GNU GPL version 3 section 7
+
+Linking or dynamically loading MeshMC with other modules normally makes a
+combined work based on MeshMC. Thus, the terms and conditions of the GNU
+General Public License cover the whole combination.
+
+For the purposes of this Exception, the "published MMCO Module Interface"
+consists exclusively of the MMCO SDK, including all APIs, types, hooks,
+callbacks, data structures, and materials provided directly or transitively
+through it.
+
+As a special exception, the copyright holders of MeshMC give you permission
+to convey a combined work formed by linking or dynamically loading MeshMC
+with one or more Independent MMCO Modules, even when such modules are
+distributed under terms that are not compatible with the GNU General Public
+License, provided that all of the following are true:
+
+1. Each Independent MMCO Module communicates with MeshMC solely through the
+   MMCO SDK as defined above.
+
+2. The module is not derived from MeshMC, does not contain code copied from
+   MeshMC, and does not include MeshMC code except for:
+   (a) material from the MMCO SDK, including any headers, types, or interfaces
+       provided directly or transitively through it, which are expressly
+       designated as part of the MMCO Module Interface under this Exception; or
+   (b) small, incidental snippets that are not protectable by copyright law.
+
+3. The module does not require the use of private, undocumented, or internal
+   MeshMC interfaces outside of the MMCO SDK.
+
+4. When you convey a combined work under this Exception, you must continue to
+   comply with the GNU GPL for MeshMC and for all GPL-covered portions of the
+   combined work.
+
+5. Corresponding Source for a non-source distribution of such a combined work
+   must include the Corresponding Source for MeshMC and any modifications to
+   MeshMC, but need not include source code for any Independent MMCO Module
+   that is not based on MeshMC.
+
+6. You must preserve all copyright notices, license notices, and notices of
+   this Exception in MeshMC.
+
+For the avoidance of doubt, this Exception applies only to the act of
+combining MeshMC with Independent MMCO Modules through the published MMCO
+Module Interface. It does not grant permission to copy, modify, or distribute
+MeshMC itself under terms other than the GNU General Public License. It does
+not apply to any module that is based on MeshMC, incorporates MeshMC code
+other than permitted MMCO SDK material, or uses interfaces other than the
+published MMCO Module Interface.
+
+For the avoidance of doubt, any headers, types, or interfaces that are
+included directly or transitively by the MMCO SDK are considered part of
+the published MMCO Module Interface and are explicitly permitted for use
+by Independent MMCO Modules under this Exception.
+
+The presence of such headers within the SDK or their availability through
+the SDK constitutes an explicit designation by MeshMC for module use.
+
+If you modify the published MMCO Module Interface in your version of MeshMC,
+this Exception applies to that modified interface only if you expressly state
+that it does. Otherwise, this Exception applies only to the published MMCO
+Module Interface as distributed by the MeshMC copyright holders.
+
+If you distribute a modified version of MeshMC, you may extend this Exception
+to your version, but you are not obligated to do so. If you do not wish to do
+so, remove this Exception statement from your version. This Exception is an
+additional permission under section 7 of the GNU General Public License,
+version 3.
+
+For the avoidance of doubt, Independent MMCO Modules may access the
+published MMCO Module Interface either by including the MMCO SDK or by
+directly including headers that are part of the MMCO SDK, provided that
+such headers are included in or made available through the MMCO SDK.

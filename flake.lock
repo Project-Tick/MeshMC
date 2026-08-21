@@ -9,11 +9,11 @@
         "rev": "405ae36ddd56a16f38fb04f187e81428278f759e",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/classparser"
+        "url": "https://projecttick.org/project-tick/projects/classparser"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/classparser"
+        "url": "https://projecttick.org/project-tick/projects/classparser"
       }
     },
     "ganalytics": {
@@ -25,11 +25,11 @@
         "rev": "245eae21e0e78e002100f0d74d0b12912dbcc59a",
         "revCount": 5,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/ganalytics"
+        "url": "https://projecttick.org/project-tick/projects/ganalytics"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/ganalytics"
+        "url": "https://projecttick.org/project-tick/projects/ganalytics"
       }
     },
     "genqrcode": {
@@ -41,11 +41,11 @@
         "rev": "58c80417cf580a45bd8edeb02ed75f248d506bf6",
         "revCount": 851,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/genqrcode"
+        "url": "https://projecttick.org/project-tick/projects/genqrcode"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/genqrcode"
+        "url": "https://projecttick.org/project-tick/projects/genqrcode"
       }
     },
     "iconfix": {
@@ -57,11 +57,11 @@
         "rev": "d15da049a088aaab833070660de3706d532897b3",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/iconfix"
+        "url": "https://projecttick.org/project-tick/projects/iconfix"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/iconfix"
+        "url": "https://projecttick.org/project-tick/projects/iconfix"
       }
     },
     "javacheck": {
@@ -73,11 +73,11 @@
         "rev": "b379b42e9db036bb8e320da7c9101cb84023e1d2",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/javacheck"
+        "url": "https://projecttick.org/project-tick/projects/javacheck"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/javacheck"
+        "url": "https://projecttick.org/project-tick/projects/javacheck"
       }
     },
     "javalauncher": {
@@ -89,11 +89,11 @@
         "rev": "13b46d1fcfe3be985ef92ced5203bd5f5fea9cdc",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/javalauncher"
+        "url": "https://projecttick.org/project-tick/projects/javalauncher"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/javalauncher"
+        "url": "https://projecttick.org/project-tick/projects/javalauncher"
       }
     },
     "katabasis": {
@@ -105,11 +105,11 @@
         "rev": "03cf92475a9d3f94b06bef20251c3cfcaf051d5c",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/katabasis"
+        "url": "https://projecttick.org/project-tick/projects/katabasis"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/katabasis"
+        "url": "https://projecttick.org/project-tick/projects/katabasis"
       }
     },
     "libnbtplusplus": {
@@ -121,11 +121,11 @@
         "rev": "a68e933a7389b75835525d0b16663b6f9ddb3115",
         "revCount": 339,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/libnbtplusplus"
+        "url": "https://projecttick.org/project-tick/projects/libnbtplusplus"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/libnbtplusplus"
+        "url": "https://projecttick.org/project-tick/projects/libnbtplusplus"
       }
     },
     "localpeer": {
@@ -137,11 +137,11 @@
         "rev": "300bcf9167ed23be8764aa5cae831b90ab6d5a6c",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/localpeer"
+        "url": "https://projecttick.org/project-tick/projects/localpeer"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/localpeer"
+        "url": "https://projecttick.org/project-tick/projects/localpeer"
       }
     },
     "neozip": {
@@ -153,11 +153,11 @@
         "rev": "581e39c195107c803ea3823222522fc609467431",
         "revCount": 3054,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/neozip"
+        "url": "https://projecttick.org/project-tick/projects/neozip"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/neozip"
+        "url": "https://projecttick.org/project-tick/projects/neozip"
       }
     },
     "nixpkgs": {
@@ -182,11 +182,11 @@
         "rev": "f3a3dd3c33feb618d9c70403f4eaf0c1d1abb914",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/optional-bare"
+        "url": "https://projecttick.org/project-tick/projects/optional-bare"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/optional-bare"
+        "url": "https://projecttick.org/project-tick/projects/optional-bare"
       }
     },
     "project-tick-cmark": {
@@ -198,11 +198,11 @@
         "rev": "7b089f620c5b0885321844a03a21bdbb9beb42e2",
         "revCount": 2655,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/cmark"
+        "url": "https://projecttick.org/project-tick/projects/cmark"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/cmark"
+        "url": "https://projecttick.org/project-tick/projects/cmark"
       }
     },
     "project-tick-tomlplusplus": {
@@ -214,11 +214,11 @@
         "rev": "b775819c52293afe7e5287781e250884adc82ad1",
         "revCount": 387,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/tomlplusplus"
+        "url": "https://projecttick.org/project-tick/projects/tomlplusplus"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/tomlplusplus"
+        "url": "https://projecttick.org/project-tick/projects/tomlplusplus"
       }
     },
     "rainbow": {
@@ -230,11 +230,11 @@
         "rev": "e01a1f69e8cc4490641bfd3779170c74a08c12d5",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/rainbow"
+        "url": "https://projecttick.org/project-tick/projects/rainbow"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/rainbow"
+        "url": "https://projecttick.org/project-tick/projects/rainbow"
       }
     },
     "root": {
@@ -267,11 +267,11 @@
         "rev": "bd740f4fa32f0e3f3570b8b0bff709788a15191d",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/systeminfo"
+        "url": "https://projecttick.org/project-tick/projects/systeminfo"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/systeminfo"
+        "url": "https://projecttick.org/project-tick/projects/systeminfo"
       }
     },
     "xz-embedded": {
@@ -283,11 +283,11 @@
         "rev": "7313467a271386f29929b150da4d66e3471b19fe",
         "revCount": 4,
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/xz-embedded"
+        "url": "https://projecttick.org/project-tick/projects/xz-embedded"
       },
       "original": {
         "type": "git",
-        "url": "https://git.projecttick.org/project-tick/projects/xz-embedded"
+        "url": "https://projecttick.org/project-tick/projects/xz-embedded"
       }
     }
   },
