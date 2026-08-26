@@ -73,7 +73,6 @@ runs:
         fi
 
         sudo codesign --sign "$APPLE_CODESIGN_ID" --deep --force --entitlements "$ENTITLEMENTS_FILE" --options runtime "MeshMC.app/Contents/MacOS/meshmc"
-        mv "MeshMC.app" "MeshMC.app"
 
     - name: Notarize
       shell: bash
