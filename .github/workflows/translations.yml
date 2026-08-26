@@ -1,0 +1,39 @@
+name: Build Translations and Serve
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install host dependencies
+        shell: bash
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install \
+            gettext qt6-tools-dev \
+
+      - name: Build translations
+        working-directory: locale
+        run: ./release.sh
+
+      - name: Move directory
+        working-directory: locale
+        run: |
+          mv build _site
+          cp .github/CNAME _site/CNAME
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        working-directory: locale
+        with:
+          publish_dir: ./_site
+          github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -25,6 +25,9 @@ build
 install
 /install-*
 
+# Intermediate file written by locale/update.{sh,bat}
+/template.ts
+
 # Ctags File
 tags
 
