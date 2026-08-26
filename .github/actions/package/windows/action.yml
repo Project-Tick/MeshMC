@@ -26,6 +26,9 @@ runs:
   using: composite
 
   steps:
+    - name: Install NSIS
+      uses: negrutiu/nsis-install@v2
+
     - name: Package (MinGW)
       if: ${{ inputs.msystem != '' }}
       shell: msys2 {0}

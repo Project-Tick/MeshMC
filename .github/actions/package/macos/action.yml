@@ -66,10 +66,10 @@ runs:
 
         if [ -n '${{ inputs.apple-codesign-id }}' ]; then
           APPLE_CODESIGN_ID='${{ inputs.apple-codesign-id }}'
-          ENTITLEMENTS_FILE='../program_info/App.entitlements'
+          ENTITLEMENTS_FILE='../branding/App.entitlements'
         else
           APPLE_CODESIGN_ID='-'
-          ENTITLEMENTS_FILE='../program_info/AdhocSignedApp.entitlements'
+          ENTITLEMENTS_FILE='../branding/AdhocSignedApp.entitlements'
         fi
 
         sudo codesign --sign "$APPLE_CODESIGN_ID" --deep --force --entitlements "$ENTITLEMENTS_FILE" --options runtime "MeshMC.app/Contents/MacOS/meshmc"
