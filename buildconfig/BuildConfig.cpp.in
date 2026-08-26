@@ -63,6 +63,7 @@ Config::Config()
 	UPDATER_BASE = "@MeshMC_UPDATER_BASE@";
 	UPDATER_FEED_URL = "@MeshMC_UPDATER_FEED_URL@";
 	UPDATER_LATEST_JSON_URL = "@MeshMC_UPDATER_LATEST_JSON_URL@";
+	UPDATE_CHANNEL = "@MeshMC_UPDATE_CHANNEL_EFFECTIVE@";
 	ANALYTICS_ID = "@MeshMC_ANALYTICS_ID@";
 	ANALYTICS_SECRET = "@MeshMC_ANALYTICS_SECRET@";
 	NOTIFICATION_URL = "@MeshMC_NOTIFICATION_URL@";
@@ -74,9 +75,13 @@ Config::Config()
 	GIT_TAG = "@MeshMC_GIT_TAG@";
 
 	// Updater is enabled when the authoritative product feed URL is
-	// configured and the build can identify itself either through the new
-	// structured attributes (BUILD_PLATFORM_ID + BUILD_ARCH + BUILD_KIND)
-	// or via the legacy BUILD_ARTIFACT substring match.
+	// configured and the build knows which artifact it is.
+	//
+	// The update *check* itself only needs the feed (version + channel), but
+	// the build identity is what separates an official CI build from a local
+	// developer build -- and it is what will pick the right file out of the
+	// GitHub release once the download side lands. A build that cannot say
+	// what it is must not try to replace itself.
 	const bool hasStructuredIdentity = !BUILD_PLATFORM_ID.isEmpty() &&
 									   !BUILD_ARCH.isEmpty() &&
 									   !BUILD_KIND.isEmpty();

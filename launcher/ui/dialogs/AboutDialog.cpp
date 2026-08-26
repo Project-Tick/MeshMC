@@ -115,9 +115,10 @@ AboutDialog::AboutDialog(QWidget* parent)
 	else
 		ui->platformLabel->setVisible(false);
 
-	if (!BuildConfig.GIT_COMMIT.isEmpty())
+	if (!BuildConfig.GIT_COMMIT.isEmpty() &&
+		BuildConfig.GIT_COMMIT != "GITDIR-NOTFOUND") {
 		ui->commitLabel->setText(tr("Commit: %1").arg(BuildConfig.GIT_COMMIT));
-	else
+	} else
 		ui->commitLabel->setVisible(false);
 
 	if (!BuildConfig.BUILD_DATE.isEmpty())
@@ -127,10 +128,16 @@ AboutDialog::AboutDialog(QWidget* parent)
 		ui->buildDateLabel->setVisible(false);
 
 	if (!BuildConfig.VERSION_CHANNEL.isEmpty())
-		ui->channelLabel->setText(tr("Channel") + ": " +
+		ui->versionchannelLabel->setText(tr("Version Channel") + ": " +
 								  BuildConfig.VERSION_CHANNEL);
 	else
-		ui->channelLabel->setVisible(false);
+		ui->versionchannelLabel->setVisible(false);
+
+	if (!BuildConfig.UPDATE_CHANNEL.isEmpty())
+		ui->updatechannelLabel->setText(tr("Update Channel") + ": " +
+								  BuildConfig.UPDATE_CHANNEL);
+	else
+		ui->updatechannelLabel->setVisible(false);
 
 	QString urlText(
 		"<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");

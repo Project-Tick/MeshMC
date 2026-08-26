@@ -775,6 +775,29 @@ set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/product/meshmc/feed.xml" CA
 # Updater: latest.json mirror URL (used as a cross-check; empty disables it).
 set(MeshMC_UPDATER_LATEST_JSON_URL "https://ftp.projecttick.org/Project-Tick/latest.json" CACHE STRING "Project Tick latest.json mirror used as a sanity check against the feed.")
 
+# Updater: the release channel this build subscribes to.
+#
+# A "stable" build is only ever offered <projt:channel>stable</projt:channel>
+# feed entries; a "beta" build is offered beta *and* stable ones, so a beta
+# user never gets stranded on an older version than the stable line.
+#
+# This is deliberately NOT MeshMC_VERSION_CHANNEL / BuildConfig.VERSION_CHANNEL,
+# which is just the git branch name and purely informational.
+set(MeshMC_UPDATE_CHANNEL "stable" CACHE STRING "Release channel this build subscribes to: stable | beta.")
+set_property(CACHE MeshMC_UPDATE_CHANNEL PROPERTY STRINGS stable beta)
+
+string(TOLOWER "${MeshMC_UPDATE_CHANNEL}" MeshMC_UPDATE_CHANNEL_EFFECTIVE)
+if(MeshMC_UPDATE_CHANNEL_EFFECTIVE STREQUAL "")
+    # CMakePresets forwards this from the environment, and an unset environment
+    # variable expands to an empty string. Fall back to the safe channel rather
+    # than shipping a build that accepts everything.
+    set(MeshMC_UPDATE_CHANNEL_EFFECTIVE "stable")
+elseif(NOT MeshMC_UPDATE_CHANNEL_EFFECTIVE MATCHES "^(stable|beta)$")
+    message(FATAL_ERROR
+        "MeshMC_UPDATE_CHANNEL must be 'stable' or 'beta' (got '${MeshMC_UPDATE_CHANNEL}').")
+endif()
+message(STATUS "Update channel: ${MeshMC_UPDATE_CHANNEL_EFFECTIVE}")
+
 # Notification URL
 set(MeshMC_NOTIFICATION_URL "https://projecttick.org/" CACHE STRING "URL for checking for notifications.")
 
@@ -1452,14 +1475,15 @@ endif()
 
 add_subdirectory(buildconfig)
 
-# The standalone meshmc-updater binary is built whenever the updater feed
-# URL is configured AND the build supplies either a structured asset
-# identity (platform/arch/kind) or the legacy substring identifier.
-if(NOT MeshMC_UPDATER_FEED_URL STREQUAL "" AND
-   ((NOT MeshMC_BUILD_PLATFORM_ID STREQUAL "" AND
-     NOT MeshMC_BUILD_ARCH STREQUAL "" AND
-     NOT MeshMC_BUILD_KIND STREQUAL "") OR
-    NOT MeshMC_BUILD_ARTIFACT STREQUAL ""))
+# The standalone meshmc-updater binary is built whenever the updater feed URL
+# is configured. It takes the artifact URL on the command line (--url), so it
+# needs no build identity of its own -- gating it behind one only meant that
+# developer builds silently shipped without an updater and that the binary
+# could rot unnoticed between releases.
+#
+# Whether the *launcher* offers updates is a separate decision, made by
+# BuildConfig.UPDATER_ENABLED (see buildconfig/BuildConfig.cpp.in).
+if(NOT MeshMC_UPDATER_FEED_URL STREQUAL "")
     add_subdirectory(updater)
 endif()
 

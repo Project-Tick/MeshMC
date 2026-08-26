@@ -56,168 +56,327 @@ static QString testNormalizeVersion(const QString& v)
 }
 
 // ---------------------------------------------------------------------------
-// Feed parsing — structured attribute selection
+// Feed parsing — version + channel only
 // ---------------------------------------------------------------------------
 
-void UpdateCheckerTest::tst_ParseStableFeedItem_StructuredMatch()
+/* A trimmed copy of the real product feed: two entries, both carrying the
+ * <projt:asset> list that the updater deliberately ignores. */
+static QByteArray sampleFeed()
 {
-	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
+	return QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
 	<channel>
+		<title>MeshMC News</title>
+		<projt:feedVersion>1</projt:feedVersion>
+		<projt:product>MeshMC</projt:product>
 		<item>
-			<title>MeshMC Update 7.19.0</title>
-			<description><![CDATA[<p>Release notes</p>]]></description>
+			<title>MeshMC Update 7.20.0, now available</title>
+			<description><![CDATA[<h2>Added</h2>]]></description>
+			<projt:version>7.20.0</projt:version>
+			<projt:channel>beta</projt:channel>
+			<projt:release_page>https://example.invalid/7.20.0</projt:release_page>
+			<projt:asset url="https://example.invalid/beta.zip" name="beta.zip"
+			             platform="windows" arch="x86_64" portable="true"
+			             kind="archive" sha256="dead" size="12" />
+		</item>
+		<item>
+			<title>MeshMC Update 7.19.0, now available</title>
+			<description><![CDATA[<h2>Fixed</h2>]]></description>
 			<projt:version>7.19.0</projt:version>
 			<projt:channel>stable</projt:channel>
-			<projt:asset name="MeshMC-Linux-Portable.tar.gz"
-			             url="https://example.invalid/linux-portable.tar.gz"
-			             platform="linux" arch="x86_64" portable="true"
-			             kind="archive" sha256="aaaabbbb" size="100" />
-			<projt:asset name="MeshMC-Linux-aarch64-Portable.tar.gz"
-			             url="https://example.invalid/linux-aarch64.tar.gz"
-			             platform="linux" arch="aarch64" portable="true"
-			             kind="archive" sha256="ccccdddd" size="200" />
-			<projt:asset name="MeshMC-Windows-MSVC-Setup.exe"
-			             url="https://example.invalid/windows.exe"
-			             platform="windows" arch="x86_64" portable="false"
-			             kind="installer" sha256="eeeeffff" size="300" />
+			<projt:release_page>https://example.invalid/7.19.0</projt:release_page>
+			<projt:asset url="https://example.invalid/stable.zip" name="stable.zip"
+			             platform="windows" arch="x86_64" portable="true"
+			             kind="archive" sha256="beef" size="34" />
+			<enclosure url="https://example.invalid/stable.zip" length="34"
+			           type="application/zip" />
 		</item>
 	</channel>
-</rss>)");
+</rss>)")
+		.toUtf8();
+}
 
-	UpdateChecker::BuildIdentity id;
-	id.platform = QStringLiteral("linux");
-	id.arch = QStringLiteral("x86_64");
-	id.portable = QStringLiteral("true");
-	id.kind = QStringLiteral("archive");
+void UpdateCheckerTest::tst_ParseFeedItems_VersionChannelAndNotes()
+{
+	QList<UpdateChecker::FeedItem> items;
+	QString parseError;
 
-	QString version, downloadUrl, releaseNotes, sha256, parseError;
-	qint64 fileSize = 0;
-
-	QVERIFY(UpdateChecker::parseStableFeedItem(
-		xml.toUtf8(), id, &version, &downloadUrl, &releaseNotes, &sha256,
-		&fileSize, &parseError));
-	QCOMPARE(version, QStringLiteral("7.19.0"));
-	QCOMPARE(downloadUrl,
-			 QStringLiteral("https://example.invalid/linux-portable.tar.gz"));
-	QCOMPARE(releaseNotes, QStringLiteral("<p>Release notes</p>"));
-	QCOMPARE(sha256, QStringLiteral("aaaabbbb"));
-	QCOMPARE(fileSize, qint64(100));
+	QVERIFY(UpdateChecker::parseFeedItems(sampleFeed(), &items, &parseError));
 	QVERIFY(parseError.isEmpty());
+	QCOMPARE(items.size(), 2);
+
+	QCOMPARE(items.at(0).version, QStringLiteral("7.20.0"));
+	QCOMPARE(items.at(0).channel, QStringLiteral("beta"));
+	QCOMPARE(items.at(0).releaseNotes, QStringLiteral("<h2>Added</h2>"));
+	QCOMPARE(items.at(0).releasePage,
+			 QStringLiteral("https://example.invalid/7.20.0"));
+
+	QCOMPARE(items.at(1).version, QStringLiteral("7.19.0"));
+	QCOMPARE(items.at(1).channel, QStringLiteral("stable"));
 }
 
-void UpdateCheckerTest::
-	tst_ParseStableFeedItem_StructuredArchSelectsCorrectAsset()
+void UpdateCheckerTest::tst_ParseFeedItems_IgnoresAssets()
+{
+	// The feed's <channel> element must not be mistaken for <projt:channel>,
+	// and no asset attribute may leak into the parsed entry.
+	QList<UpdateChecker::FeedItem> items;
+	QString parseError;
+
+	QVERIFY(UpdateChecker::parseFeedItems(sampleFeed(), &items, &parseError));
+	QCOMPARE(items.size(), 2);
+	for (const auto& item : items) {
+		QVERIFY2(item.channel == QStringLiteral("stable") ||
+					 item.channel == QStringLiteral("beta"),
+				 qPrintable(QStringLiteral("unexpected channel: %1")
+								.arg(item.channel)));
+	}
+}
+
+void UpdateCheckerTest::tst_ParseFeedItems_MissingChannelDefaultsToStable()
 {
 	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
 	<channel>
+		<item>
+			<projt:version>v7.1.0</projt:version>
+		</item>
+	</channel>
+</rss>)");
+
+	QList<UpdateChecker::FeedItem> items;
+	QString parseError;
+
+	QVERIFY(UpdateChecker::parseFeedItems(xml.toUtf8(), &items, &parseError));
+	QCOMPARE(items.size(), 1);
+	// The leading "v" is normalized away at parse time.
+	QCOMPARE(items.at(0).version, QStringLiteral("7.1.0"));
+	QCOMPARE(items.at(0).channel, QStringLiteral("stable"));
+}
+
+void UpdateCheckerTest::tst_ParseFeedItems_SkipsEntryWithoutVersion()
+{
+	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
+	<channel>
+		<item>
+			<title>Plain news post, not a release</title>
+			<projt:channel>stable</projt:channel>
+		</item>
 		<item>
 			<projt:version>7.19.0</projt:version>
 			<projt:channel>stable</projt:channel>
-			<projt:asset name="x86_64.tar.gz"
-			             url="https://example.invalid/x86.tar.gz"
-			             platform="linux" arch="x86_64" portable="true"
-			             kind="archive" />
-			<projt:asset name="aarch64.tar.gz"
-			             url="https://example.invalid/arm64.tar.gz"
-			             platform="linux" arch="aarch64" portable="true"
-			             kind="archive" />
 		</item>
 	</channel>
 </rss>)");
 
-	UpdateChecker::BuildIdentity id;
-	id.platform = QStringLiteral("linux");
-	id.arch = QStringLiteral("aarch64");
-	id.portable = QStringLiteral("true");
-	id.kind = QStringLiteral("archive");
+	QList<UpdateChecker::FeedItem> items;
+	QString parseError;
 
-	QString version, downloadUrl, releaseNotes, sha256, parseError;
-	qint64 fileSize = 0;
-
-	QVERIFY(UpdateChecker::parseStableFeedItem(
-		xml.toUtf8(), id, &version, &downloadUrl, &releaseNotes, &sha256,
-		&fileSize, &parseError));
-	QCOMPARE(downloadUrl,
-			 QStringLiteral("https://example.invalid/arm64.tar.gz"));
+	QVERIFY(UpdateChecker::parseFeedItems(xml.toUtf8(), &items, &parseError));
+	QCOMPARE(items.size(), 1);
+	QCOMPARE(items.at(0).version, QStringLiteral("7.19.0"));
 }
 
-void UpdateCheckerTest::tst_ParseStableFeedItem_LegacyArtifactFallback()
+void UpdateCheckerTest::tst_ParseFeedItems_ReportsMalformedXml()
 {
-	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
-	<channel>
-		<item>
-			<projt:version>7.1.0</projt:version>
-			<projt:channel>stable</projt:channel>
-			<projt:asset name="MeshMC-Linux-Qt6-Portable-v202604141638.tar.gz"
-			             url="https://example.invalid/meshmc.tar.gz" />
-		</item>
-	</channel>
-</rss>)");
+	QList<UpdateChecker::FeedItem> items;
+	QString parseError;
 
-	UpdateChecker::BuildIdentity id;
-	id.legacyArtifact = QStringLiteral("Linux-Qt6-Portable");
-
-	QString version, downloadUrl, releaseNotes, sha256, parseError;
-	qint64 fileSize = 0;
-
-	QVERIFY(UpdateChecker::parseStableFeedItem(
-		xml.toUtf8(), id, &version, &downloadUrl, &releaseNotes, &sha256,
-		&fileSize, &parseError));
-	QCOMPARE(version, QStringLiteral("7.1.0"));
-	QCOMPARE(downloadUrl,
-			 QStringLiteral("https://example.invalid/meshmc.tar.gz"));
-	QVERIFY(parseError.isEmpty());
-}
-
-void UpdateCheckerTest::tst_ParseStableFeedItem_NoMatchingAssetForBuild()
-{
-	const QString xml = QStringLiteral(R"(<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:projt="https://projecttick.org/ns/product-feed" version="2.0">
-	<channel>
-		<item>
-			<projt:version>7.19.0</projt:version>
-			<projt:channel>stable</projt:channel>
-			<projt:asset name="windows.exe" url="https://example.invalid/w.exe"
-			             platform="windows" arch="x86_64" portable="false"
-			             kind="installer" />
-		</item>
-	</channel>
-</rss>)");
-
-	UpdateChecker::BuildIdentity id;
-	id.platform = QStringLiteral("linux");
-	id.arch = QStringLiteral("x86_64");
-	id.portable = QStringLiteral("true");
-	id.kind = QStringLiteral("archive");
-
-	QString version, downloadUrl, releaseNotes, sha256, parseError;
-	qint64 fileSize = 0;
-
-	// The item parses but no asset matches the running build — version is
-	// reported but downloadUrl stays empty.
-	QVERIFY(UpdateChecker::parseStableFeedItem(
-		xml.toUtf8(), id, &version, &downloadUrl, &releaseNotes, &sha256,
-		&fileSize, &parseError));
-	QCOMPARE(version, QStringLiteral("7.19.0"));
-	QVERIFY(downloadUrl.isEmpty());
-}
-
-void UpdateCheckerTest::tst_ParseStableFeedItem_ReportsMalformedXml()
-{
-	UpdateChecker::BuildIdentity id;
-	id.legacyArtifact = QStringLiteral("Linux-Qt6-Portable");
-
-	QString version, downloadUrl, releaseNotes, sha256, parseError;
-	qint64 fileSize = 0;
-
-	QVERIFY(!UpdateChecker::parseStableFeedItem(
-		"<rss><channel><item>", id, &version, &downloadUrl, &releaseNotes,
-		&sha256, &fileSize, &parseError));
+	QVERIFY(!UpdateChecker::parseFeedItems("<rss><channel><item>", &items,
+										   &parseError));
 	QVERIFY2(!parseError.isEmpty(),
 			 "Expected a parse error for malformed XML, got empty string");
+}
+
+// ---------------------------------------------------------------------------
+// Channel policy
+// ---------------------------------------------------------------------------
+
+void UpdateCheckerTest::tst_IsChannelAccepted_data()
+{
+	QTest::addColumn<QString>("itemChannel");
+	QTest::addColumn<QString>("buildChannel");
+	QTest::addColumn<bool>("accepted");
+
+	QTest::newRow("stable build, stable entry") << "stable" << "stable" << true;
+	QTest::newRow("stable build, beta entry") << "beta" << "stable" << false;
+	QTest::newRow("beta build, beta entry") << "beta" << "beta" << true;
+	// A beta user must never be stranded behind the stable line.
+	QTest::newRow("beta build, stable entry") << "stable" << "beta" << true;
+	QTest::newRow("case insensitive") << "Stable" << "STABLE" << true;
+	QTest::newRow("unknown entry channel") << "alpha" << "beta" << false;
+	QTest::newRow("empty entry channel") << "" << "beta" << false;
+	QTest::newRow("unknown build channel takes stable")
+		<< "stable" << "nightly" << true;
+	QTest::newRow("unknown build channel refuses beta")
+		<< "beta" << "nightly" << false;
+}
+
+void UpdateCheckerTest::tst_IsChannelAccepted()
+{
+	QFETCH(QString, itemChannel);
+	QFETCH(QString, buildChannel);
+	QFETCH(bool, accepted);
+
+	QCOMPARE(UpdateChecker::isChannelAccepted(itemChannel, buildChannel),
+			 accepted);
+}
+
+// ---------------------------------------------------------------------------
+// Entry selection
+// ---------------------------------------------------------------------------
+
+// UpdateChecker's parsing helpers are private and only UpdateCheckerTest is a
+// friend, so the feed has to be parsed inside the test methods themselves.
+
+void UpdateCheckerTest::tst_PickBestItemIndex_StableBuildIgnoresBeta()
+{
+	QList<UpdateChecker::FeedItem> items;
+	QString parseError;
+	QVERIFY(UpdateChecker::parseFeedItems(sampleFeed(), &items, &parseError));
+
+	const int index =
+		UpdateChecker::pickBestItemIndex(items, QStringLiteral("stable"));
+	QCOMPARE(index, 1);
+	QCOMPARE(items.at(index).version, QStringLiteral("7.19.0"));
+}
+
+void UpdateCheckerTest::tst_PickBestItemIndex_BetaBuildTakesNewestOfBoth()
+{
+	QList<UpdateChecker::FeedItem> items;
+	QString parseError;
+	QVERIFY(UpdateChecker::parseFeedItems(sampleFeed(), &items, &parseError));
+
+	const int index =
+		UpdateChecker::pickBestItemIndex(items, QStringLiteral("beta"));
+	QCOMPARE(index, 0);
+	QCOMPARE(items.at(index).version, QStringLiteral("7.20.0"));
+}
+
+void UpdateCheckerTest::tst_PickBestItemIndex_IgnoresFeedOrder()
+{
+	// Oldest entry first: the highest version must still win.
+	QList<UpdateChecker::FeedItem> items;
+	items.append({QStringLiteral("7.19.0"), QStringLiteral("stable"), {}, {}});
+	items.append({QStringLiteral("7.21.0"), QStringLiteral("stable"), {}, {}});
+	items.append({QStringLiteral("7.20.0"), QStringLiteral("stable"), {}, {}});
+
+	QCOMPARE(UpdateChecker::pickBestItemIndex(items, QStringLiteral("stable")),
+			 1);
+}
+
+void UpdateCheckerTest::tst_PickBestItemIndex_NoAcceptableEntry()
+{
+	QList<UpdateChecker::FeedItem> items;
+	items.append({QStringLiteral("7.20.0"), QStringLiteral("beta"), {}, {}});
+
+	QCOMPARE(UpdateChecker::pickBestItemIndex(items, QStringLiteral("stable")),
+			 -1);
+}
+
+// ---------------------------------------------------------------------------
+// GitHub release resolution
+//
+// The expected names are taken from .github/workflows/release.yml, where
+// ${VERSION} is the pushed tag. The artifact names are the ones build.yml
+// feeds into ARTIFACT_NAME (matrix.artifact-name + "-Qt6").
+// ---------------------------------------------------------------------------
+
+void UpdateCheckerTest::tst_ReleaseTag()
+{
+	QCOMPARE(UpdateChecker::releaseTag(QStringLiteral("7.19.0")),
+			 QStringLiteral("v7.19.0"));
+	// Already-prefixed and padded input must not produce "vv7.19.0".
+	QCOMPARE(UpdateChecker::releaseTag(QStringLiteral(" v7.19.0 ")),
+			 QStringLiteral("v7.19.0"));
+	QVERIFY(UpdateChecker::releaseTag(QString()).isEmpty());
+}
+
+void UpdateCheckerTest::tst_ReleaseAssetName_data()
+{
+	QTest::addColumn<QString>("artifact");
+	QTest::addColumn<bool>("portable");
+	QTest::addColumn<QString>("expected");
+
+	QTest::newRow("linux x86_64")
+		<< "Linux-Qt6" << true
+		<< "MeshMC-Linux-Qt6-Portable-v7.19.0.tar.gz";
+	QTest::newRow("linux aarch64")
+		<< "Linux-aarch64-Qt6" << true
+		<< "MeshMC-Linux-aarch64-Qt6-Portable-v7.19.0.tar.gz";
+
+	QTest::newRow("windows msvc portable")
+		<< "Windows-MSVC-Qt6" << true
+		<< "MeshMC-Windows-MSVC-Portable-v7.19.0.zip";
+	QTest::newRow("windows msvc installed")
+		<< "Windows-MSVC-Qt6" << false << "MeshMC-Windows-MSVC-v7.19.0.zip";
+	QTest::newRow("windows msvc arm64 portable")
+		<< "Windows-MSVC-arm64-Qt6" << true
+		<< "MeshMC-Windows-MSVC-arm64-Portable-v7.19.0.zip";
+	QTest::newRow("windows mingw w64 installed")
+		<< "Windows-MinGW-w64-Qt6" << false
+		<< "MeshMC-Windows-MinGW-w64-v7.19.0.zip";
+	QTest::newRow("windows mingw arm64 portable")
+		<< "Windows-MinGW-arm64-Qt6" << true
+		<< "MeshMC-Windows-MinGW-arm64-Portable-v7.19.0.zip";
+
+	// Both macOS matrix entries publish the same universal archive, and the
+	// portable flag is meaningless there.
+	QTest::newRow("macos") << "macOS-Qt6" << false << "MeshMC-macOS-v7.19.0.zip";
+	QTest::newRow("macos xcode")
+		<< "macOS-Xcode-27-Qt6" << false << "MeshMC-macOS-v7.19.0.zip";
+
+	// A build that never says what it is must not guess.
+	QTest::newRow("empty artifact") << "" << true << "";
+	QTest::newRow("unknown artifact") << "Haiku-Qt6" << true << "";
+}
+
+void UpdateCheckerTest::tst_ReleaseAssetName()
+{
+	QFETCH(QString, artifact);
+	QFETCH(bool, portable);
+	QFETCH(QString, expected);
+
+	QCOMPARE(UpdateChecker::releaseAssetName(artifact,
+											 QStringLiteral("v7.19.0"),
+											 portable),
+			 expected);
+}
+
+void UpdateCheckerTest::tst_MakeGithubDownloadUrl()
+{
+	QCOMPARE(UpdateChecker::makeGithubDownloadUrl(
+				 QStringLiteral("https://github.com/Project-Tick/MeshMC"),
+				 QStringLiteral("Windows-MSVC-Qt6"), QStringLiteral("7.19.0"),
+				 true),
+			 QStringLiteral("https://github.com/Project-Tick/MeshMC/releases/"
+							"download/v7.19.0/"
+							"MeshMC-Windows-MSVC-Portable-v7.19.0.zip"));
+
+	// A trailing slash or a .git suffix on the repository URL must not leak
+	// into the download URL.
+	QCOMPARE(UpdateChecker::makeGithubDownloadUrl(
+				 QStringLiteral("https://github.com/Project-Tick/MeshMC.git/"),
+				 QStringLiteral("Linux-Qt6"), QStringLiteral("v7.19.0"), true),
+			 QStringLiteral("https://github.com/Project-Tick/MeshMC/releases/"
+							"download/v7.19.0/"
+							"MeshMC-Linux-Qt6-Portable-v7.19.0.tar.gz"));
+}
+
+void UpdateCheckerTest::tst_MakeGithubDownloadUrl_UnknownArtifactYieldsNothing()
+{
+	QVERIFY(UpdateChecker::makeGithubDownloadUrl(
+				QStringLiteral("https://github.com/Project-Tick/MeshMC"),
+				QString(), QStringLiteral("7.19.0"), true)
+				.isEmpty());
+	QVERIFY(UpdateChecker::makeGithubDownloadUrl(
+				QString(), QStringLiteral("Windows-MSVC-Qt6"),
+				QStringLiteral("7.19.0"), true)
+				.isEmpty());
+	QVERIFY(UpdateChecker::makeGithubDownloadUrl(
+				QStringLiteral("https://github.com/Project-Tick/MeshMC"),
+				QStringLiteral("Windows-MSVC-Qt6"), QString(), true)
+				.isEmpty());
 }
 
 // ---------------------------------------------------------------------------

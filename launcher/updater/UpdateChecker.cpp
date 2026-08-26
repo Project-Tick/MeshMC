@@ -42,11 +42,18 @@
 
 bool UpdateChecker::isPortableMode()
 {
-	// On Linux/BSD the binary lives in <prefix>/bin/, so portable.txt is one
-	// level up (at the install prefix root) — matching Application.cpp's check.
+	// Must agree with Application.cpp's portable detection, which is not the
+	// same on every platform: on Windows the binary sits at the install root
+	// and the marker lies next to it, while on Linux/BSD the binary lives in
+	// <prefix>/bin/ and the marker is one level up.
+#if defined(Q_OS_WIN32)
+	return QFile::exists(FS::PathCombine(QCoreApplication::applicationDirPath(),
+										 "portable.txt"));
+#else
 	QDir dir(QCoreApplication::applicationDirPath());
 	dir.cdUp();
 	return QFile::exists(FS::PathCombine(dir.absolutePath(), "portable.txt"));
+#endif
 }
 
 bool UpdateChecker::isAppImage()
@@ -89,103 +96,62 @@ bool UpdateChecker::isSupportedFeedNamespace(QStringView namespaceUri)
 	return namespaceUri == u"https://projecttick.org/ns/product-feed";
 }
 
-UpdateChecker::BuildIdentity UpdateChecker::buildIdentity()
+// ---------------------------------------------------------------------------
+// Channel policy
+// ---------------------------------------------------------------------------
+
+QString UpdateChecker::buildChannel()
 {
-	BuildIdentity id;
-	id.platform = BuildConfig.BUILD_PLATFORM_ID.toLower();
-	id.arch = BuildConfig.BUILD_ARCH.toLower();
-	id.portable = BuildConfig.BUILD_PORTABLE.toLower();
-	id.kind = BuildConfig.BUILD_KIND.toLower();
-	id.legacyArtifact = BuildConfig.BUILD_ARTIFACT;
-	return id;
+	const QString channel = BuildConfig.UPDATE_CHANNEL.trimmed().toLower();
+	return channel.isEmpty() ? QStringLiteral("stable") : channel;
+}
+
+int UpdateChecker::channelRank(const QString& channel)
+{
+	const QString c = channel.trimmed().toLower();
+	if (c == QLatin1String("stable"))
+		return 0;
+	if (c == QLatin1String("beta"))
+		return 1;
+	return -1;
+}
+
+bool UpdateChecker::isChannelAccepted(const QString& itemChannel,
+									  const QString& buildChannel)
+{
+	const int itemRank = channelRank(itemChannel);
+	if (itemRank < 0) {
+		// A channel we have never heard of is never installed: a future
+		// "alpha" line must not land on today's users.
+		return false;
+	}
+
+	const int buildRank = channelRank(buildChannel);
+	if (buildRank < 0) {
+		return itemRank == 0;
+	}
+
+	// A beta build also takes stable releases, so it can never end up
+	// stranded behind the stable line.
+	return itemRank <= buildRank;
 }
 
 // ---------------------------------------------------------------------------
 // Feed parsing
 // ---------------------------------------------------------------------------
 
-namespace
+bool UpdateChecker::parseFeedItems(const QByteArray& feedData,
+								   QList<FeedItem>* items, QString* parseError)
 {
-	struct AssetCandidate {
-		QString name;
-		QString url;
-		QString platform;
-		QString arch;
-		QString portable;
-		QString kind;
-		QString sha256;
-		qint64 size = 0;
-	};
-
-	/* Score a candidate asset against the build identity. Higher is better.
-	 * A negative score (or zero when structured attributes are available but
-	 * mandatory fields mismatch) means the candidate is not usable. */
-	int scoreAsset(const AssetCandidate& a,
-				   const UpdateChecker::BuildIdentity& id)
-	{
-		if (id.hasStructuredAttributes()) {
-			// All structured attributes must agree where the build set
-			// them; missing attributes on the asset side fall through to
-			// the legacy substring check.
-			if (a.platform.isEmpty() || a.arch.isEmpty() || a.kind.isEmpty()) {
-				return 0;
-			}
-			if (a.platform != id.platform)
-				return -1;
-			if (a.arch != id.arch)
-				return -1;
-			if (a.kind != id.kind)
-				return -1;
-			int score = 100;
-			if (!id.portable.isEmpty() && !a.portable.isEmpty()) {
-				if (a.portable == id.portable) {
-					score += 50;
-				} else {
-					score -= 25; // matched platform/arch/kind but wrong
-								 // portable flag — still acceptable, just
-								 // ranked lower than an exact match.
-				}
-			}
-			return score;
-		}
-
-		// Legacy fallback: substring match on the artifact name.
-		if (id.legacyArtifact.isEmpty()) {
-			return 0;
-		}
-		if (a.name.contains(id.legacyArtifact, Qt::CaseInsensitive)) {
-			return 10;
-		}
-		return -1;
-	}
-} // namespace
-
-bool UpdateChecker::parseStableFeedItem(const QByteArray& feedData,
-										const BuildIdentity& identity,
-										QString* version, QString* downloadUrl,
-										QString* releaseNotes, QString* sha256,
-										qint64* fileSize, QString* parseError)
-{
-	Q_ASSERT(version);
-	Q_ASSERT(downloadUrl);
-	Q_ASSERT(releaseNotes);
-	Q_ASSERT(sha256);
-	Q_ASSERT(fileSize);
+	Q_ASSERT(items);
 	Q_ASSERT(parseError);
 
-	version->clear();
-	downloadUrl->clear();
-	releaseNotes->clear();
-	sha256->clear();
-	*fileSize = 0;
+	items->clear();
 	parseError->clear();
 
 	QXmlStreamReader xml(feedData);
 	bool insideItem = false;
-	bool isStable = false;
-	QString itemVersion;
-	QString itemNotes;
-	QList<AssetCandidate> candidates;
+	FeedItem current;
 
 	while (!xml.atEnd() && !xml.hasError()) {
 		xml.readNext();
@@ -195,73 +161,143 @@ bool UpdateChecker::parseStableFeedItem(const QByteArray& feedData,
 
 			if (name == u"item") {
 				insideItem = true;
-				isStable = false;
-				itemVersion.clear();
-				itemNotes.clear();
-				candidates.clear();
+				current = FeedItem();
 			} else if (insideItem) {
 				if (isSupportedFeedNamespace(xml.namespaceUri())) {
+					// <projt:asset> is skipped on purpose: the artifact comes
+					// from the GitHub release, not from the feed.
 					if (name == u"version") {
-						itemVersion = xml.readElementText().trimmed();
+						current.version =
+							normalizeVersion(xml.readElementText());
 					} else if (name == u"channel") {
-						isStable =
-							(xml.readElementText().trimmed() == u"stable");
-					} else if (name == u"asset") {
-						const auto attrs = xml.attributes();
-						AssetCandidate c;
-						c.name = attrs.value("name").toString();
-						c.url = attrs.value("url").toString();
-						c.platform =
-							attrs.value("platform").toString().toLower();
-						c.arch = attrs.value("arch").toString().toLower();
-						c.portable =
-							attrs.value("portable").toString().toLower();
-						c.kind = attrs.value("kind").toString().toLower();
-						c.sha256 = attrs.value("sha256").toString().toLower();
-						c.size = attrs.value("size").toLongLong();
-						if (!c.url.isEmpty()) {
-							candidates.append(c);
-						}
+						current.channel =
+							xml.readElementText().trimmed().toLower();
+					} else if (name == u"release_page") {
+						current.releasePage = xml.readElementText().trimmed();
 					}
 				} else if (name == u"description" &&
 						   xml.namespaceUri().isEmpty()) {
-					itemNotes = xml.readElementText(
-									   QXmlStreamReader::IncludeChildElements)
-									.trimmed();
+					current.releaseNotes =
+						xml.readElementText(
+							   QXmlStreamReader::IncludeChildElements)
+							.trimmed();
 				}
 			}
 		} else if (xml.isEndElement() && xml.name() == u"item" && insideItem) {
 			insideItem = false;
-			if (!isStable || itemVersion.isEmpty()) {
-				continue; // skip non-stable / malformed items, keep scanning
-			}
 
-			// Pick the highest-scoring asset for this build.
-			int bestScore = 0;
-			const AssetCandidate* best = nullptr;
-			for (const auto& c : candidates) {
-				const int s = scoreAsset(c, identity);
-				if (s > bestScore) {
-					bestScore = s;
-					best = &c;
-				}
+			if (current.version.isEmpty()) {
+				// Malformed entry — keep scanning, one bad item must not
+				// blind the updater to the rest of the feed.
+				continue;
 			}
-
-			*version = itemVersion;
-			*releaseNotes = itemNotes;
-			if (best) {
-				*downloadUrl = best->url;
-				*sha256 = best->sha256;
-				*fileSize = best->size;
+			if (current.channel.isEmpty()) {
+				// Feeds that predate the channel element only ever carried
+				// stable releases.
+				current.channel = QStringLiteral("stable");
 			}
-			return true;
+			items->append(current);
 		}
 	}
 
-	if (xml.hasError())
+	if (xml.hasError()) {
 		*parseError = xml.errorString();
+		return false;
+	}
 
-	return false;
+	return true;
+}
+
+int UpdateChecker::pickBestItemIndex(const QList<FeedItem>& items,
+									 const QString& buildChannel)
+{
+	int best = -1;
+	for (int i = 0; i < items.size(); ++i) {
+		if (!isChannelAccepted(items.at(i).channel, buildChannel)) {
+			continue;
+		}
+		// The feed is expected to be newest-first, but nothing enforces it,
+		// so compare instead of trusting the order.
+		if (best < 0 ||
+			compareVersions(items.at(i).version, items.at(best).version) > 0) {
+			best = i;
+		}
+	}
+	return best;
+}
+
+// ---------------------------------------------------------------------------
+// GitHub release resolution
+// ---------------------------------------------------------------------------
+
+QString UpdateChecker::releaseTag(const QString& version)
+{
+	const QString v = normalizeVersion(version);
+	return v.isEmpty() ? QString() : QLatin1String("v") + v;
+}
+
+QString UpdateChecker::releaseAssetName(const QString& artifact,
+										const QString& tag, bool portable)
+{
+	if (artifact.isEmpty() || tag.isEmpty()) {
+		return {};
+	}
+
+	// macOS ships a single universal archive; the .dmg is for manual installs
+	// only, the updater unpacks the .zip. Both macOS matrix entries (plain and
+	// Xcode) publish under the same name.
+	if (artifact.startsWith(QLatin1String("macOS"), Qt::CaseInsensitive)) {
+		return QStringLiteral("MeshMC-macOS-%1.zip").arg(tag);
+	}
+
+	// Linux updates only ever run in portable mode (see isUpdaterSupported),
+	// and the Qt suffix is part of the published name there.
+	if (artifact.startsWith(QLatin1String("Linux"), Qt::CaseInsensitive)) {
+		return QStringLiteral("MeshMC-%1-Portable-%2.tar.gz").arg(artifact, tag);
+	}
+
+	// Windows drops the "-Qt6" suffix and distinguishes the portable archive
+	// from the plain one. The Setup .exe is deliberately not used: the updater
+	// replaces files in place, it does not re-run an installer.
+	if (artifact.startsWith(QLatin1String("Windows"), Qt::CaseInsensitive)) {
+		QString base = artifact;
+		if (base.endsWith(QLatin1String("-Qt6"), Qt::CaseInsensitive)) {
+			base.chop(4);
+		}
+		return QStringLiteral("MeshMC-%1%2-%3.zip")
+			.arg(base, portable ? QStringLiteral("-Portable") : QString(), tag);
+	}
+
+	return {};
+}
+
+QString UpdateChecker::makeGithubDownloadUrl(const QString& repoUrl,
+											 const QString& artifact,
+											 const QString& version,
+											 bool portable)
+{
+	QString base = repoUrl.trimmed();
+	if (base.isEmpty()) {
+		return {};
+	}
+	// Order matters: a clone URL can carry both, as in ".../MeshMC.git/".
+	while (base.endsWith(QLatin1Char('/'))) {
+		base.chop(1);
+	}
+	if (base.endsWith(QLatin1String(".git"), Qt::CaseInsensitive)) {
+		base.chop(4);
+	}
+	while (base.endsWith(QLatin1Char('/'))) {
+		base.chop(1);
+	}
+
+	const QString tag = releaseTag(version);
+	const QString asset = releaseAssetName(artifact, tag, portable);
+	if (base.isEmpty() || tag.isEmpty() || asset.isEmpty()) {
+		return {};
+	}
+
+	return QStringLiteral("%1/releases/download/%2/%3").arg(base, tag, asset);
 }
 
 // ---------------------------------------------------------------------------
@@ -369,46 +405,40 @@ void UpdateChecker::onSourcesDownloaded(bool notifyNoUpdate)
 	m_latestJsonData.clear();
 
 	// ---- Parse the RSS feed (authoritative) -------------------------------
-	const BuildIdentity identity = buildIdentity();
-
-	QString feedVersion;
-	QString downloadUrl;
-	QString releaseNotes;
-	QString sha256;
-	qint64 fileSize = 0;
+	QList<FeedItem> items;
 	QString feedParseError;
-	if (!parseStableFeedItem(feedData, identity, &feedVersion, &downloadUrl,
-							 &releaseNotes, &sha256, &fileSize,
-							 &feedParseError)) {
-		if (!feedParseError.isEmpty()) {
-			qWarning() << "UpdateChecker: failed to parse update feed:"
-					   << feedParseError;
-			emit checkFailed(
-				tr("Failed to parse update feed: %1").arg(feedParseError));
-		} else {
-			qWarning() << "UpdateChecker: no stable release entry found in the "
-						  "update feed.";
-			emit checkFailed(
-				tr("No stable release entry found in the update feed."));
-		}
-		return;
-	}
-
-	feedVersion = normalizeVersion(feedVersion);
-
-	if (downloadUrl.isEmpty()) {
-		qWarning() << "UpdateChecker: feed has version" << feedVersion
-				   << "but no asset matched the running build identity ("
-				   << identity.platform << identity.arch << identity.kind
-				   << "portable=" << identity.portable << ")";
+	if (!parseFeedItems(feedData, &items, &feedParseError)) {
+		qWarning() << "UpdateChecker: failed to parse update feed:"
+				   << feedParseError;
 		emit checkFailed(
-			tr("Update feed has no asset matching this build (%1/%2/%3).")
-				.arg(identity.platform, identity.arch, identity.kind));
+			tr("Failed to parse update feed: %1").arg(feedParseError));
 		return;
 	}
+
+	const QString channel = buildChannel();
+	const int bestIndex = pickBestItemIndex(items, channel);
+	if (bestIndex < 0) {
+		qWarning() << "UpdateChecker: the feed carries" << items.size()
+				   << "entries, none of them on the" << channel << "channel.";
+		emit checkFailed(
+			tr("The update feed has no release for the %1 channel.")
+				.arg(channel));
+		return;
+	}
+
+	const FeedItem& best = items.at(bestIndex);
+	const QString feedVersion = best.version;
+	qDebug() << "UpdateChecker: picked feed entry" << feedVersion << "on the"
+			 << best.channel << "channel (build channel:" << channel << ","
+			 << items.size() << "entries in the feed).";
 
 	// ---- Sanity-check against latest.json (optional) ----------------------
-	if (!latestJsonData.isEmpty()) {
+	// The mirror only publishes the stable line, so it can say nothing about
+	// a beta entry.
+	if (best.channel != QLatin1String("stable")) {
+		qDebug() << "UpdateChecker: skipping the latest.json cross-check for a"
+				 << best.channel << "entry.";
+	} else if (!latestJsonData.isEmpty()) {
 		const QString mirrorVersion = parseLatestJsonVersion(latestJsonData);
 		if (mirrorVersion.isEmpty()) {
 			qWarning()
@@ -442,10 +472,24 @@ void UpdateChecker::onSourcesDownloaded(bool notifyNoUpdate)
 	qDebug() << "UpdateChecker: update available:" << feedVersion;
 	UpdateAvailableStatus status;
 	status.version = feedVersion;
-	status.downloadUrl = downloadUrl;
-	status.releaseNotes = releaseNotes;
-	status.sha256 = sha256;
-	status.fileSize = fileSize;
+	status.channel = best.channel;
+	status.releasePage = best.releasePage;
+	status.releaseNotes = best.releaseNotes;
+
+	// The artifact comes from the GitHub release, not from the feed.
+	status.downloadUrl =
+		makeGithubDownloadUrl(BuildConfig.MESHMC_GIT, BuildConfig.BUILD_ARTIFACT,
+							  feedVersion, isPortableMode());
+	if (status.downloadUrl.isEmpty()) {
+		// Not fatal: MainWindow tells the user to grab the build by hand.
+		qWarning() << "UpdateChecker: no release asset could be derived for "
+					  "build artifact"
+				   << BuildConfig.BUILD_ARTIFACT << "- offering" << feedVersion
+				   << "without a download URL.";
+	} else {
+		qDebug() << "UpdateChecker: download URL =" << status.downloadUrl;
+	}
+
 	emit updateAvailable(status);
 }
 

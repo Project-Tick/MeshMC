@@ -229,7 +229,7 @@ void PageContainer::help()
 		if (pageId.isEmpty())
 			return;
 		DesktopServices::openUrl(QUrl(
-			"https://github.com/Project-Tick/MeshMC/wikis/" + pageId));
+			"https://github.com/Project-Tick/MeshMC/wiki/" + pageId));
 	}
 }
 

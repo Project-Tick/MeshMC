@@ -472,11 +472,15 @@ Section "Uninstall"
   DeleteRegKey HKCU SOFTWARE\@MeshMC_CommonName@
 
   Delete $INSTDIR\@MeshMC_AppBinaryName@.exe
+  Delete $INSTDIR\@MeshMC_AppBinaryName@-updater.exe
+  Delete $INSTDIR\@MeshMC_AppBinaryName@-crashreporter.exe
   Delete $INSTDIR\qt.conf
+  Delete $INSTDIR\qtlogging.ini
   Delete $INSTDIR\*.dll
 
   Delete $INSTDIR\uninstall.exe
 
+  RMDir /r $INSTDIR\mmcmodules
   RMDir /r $INSTDIR\iconengines
   RMDir /r $INSTDIR\imageformats
   RMDir /r $INSTDIR\jars

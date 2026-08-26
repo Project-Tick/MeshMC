@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <QList>
 #include <QObject>
 #include <QString>
 #include <QStringView>
@@ -39,7 +40,13 @@ class UpdateCheckerTest;
 struct UpdateAvailableStatus {
 	/// Normalized version string, e.g. "7.19.0"
 	QString version;
-	/// Direct download URL for this platform's artifact (from the feed).
+	/// Release channel the entry came from, e.g. "stable" or "beta".
+	QString channel;
+	/// Web page for this release (from `<projt:release_page>`), if any.
+	QString releasePage;
+	/// Direct download URL for this platform's artifact.
+	/// TODO(updater): filled in once the GitHub release resolution lands; the
+	/// feed's `<projt:asset>` list is deliberately not used for this.
 	QString downloadUrl;
 	/// HTML release notes extracted from the feed's <description> element.
 	QString releaseNotes;
@@ -58,31 +65,33 @@ Q_DECLARE_METATYPE(UpdateAvailableStatus)
  *
  *   1. RSS feed at `BuildConfig.UPDATER_FEED_URL`
  *      (https://projecttick.org/product/meshmc/feed.xml).
- *      Authoritative: provides the latest stable item, per-platform asset
- *      list with `platform`, `arch`, `portable`, `kind`, `sha256` and
- *      `size` attributes in the `https://projecttick.org/ns/product-feed`
+ *      Authoritative: every `<item>` carries `<projt:version>` and
+ *      `<projt:channel>` in the `https://projecttick.org/ns/product-feed`
  *      namespace.
  *
  *   2. `latest.json` mirror at `BuildConfig.UPDATER_LATEST_JSON_URL`
  *      (https://ftp.projecttick.org/Project-Tick/latest.json).
  *      Cross-check: `products.meshmc.stable.version` must match the feed's
- *      `<projt:version>`. The mirror does not carry SHA-256 checksums today,
- *      so it is treated as a sanity gate only and never used as the primary
- *      source.
+ *      `<projt:version>`. It is a sanity gate only and never the primary
+ *      source. It only applies when the picked entry is a stable one.
+ *
+ * The feed's `<projt:asset>` elements are intentionally ignored. Whether an
+ * update exists is a pure version + channel question; the artifact itself is
+ * fetched from the GitHub release.
  *
  * Algorithm:
  *
  *   1. Download both sources in parallel.
- *   2. Parse the first stable `<item>` from the feed. Pick the asset whose
- *      `platform`/`arch`/`portable`/`kind` attributes best match the running
- *      build's identity (see BuildIdentity below). The legacy substring
- *      match on `BUILD_ARTIFACT` is kept as a last-resort fallback.
- *   3. Parse `latest.json` and read `products.meshmc.stable.version`.
- *   4. If the two versions agree and exceed the running version, emit
- *      `updateAvailable()`. If they disagree, the check is downgraded to a
- *      warning and we still trust the feed (it is the authoritative source)
- *      but log the discrepancy. If the feed itself fails to parse, the
- *      check fails outright.
+ *   2. Parse every `<item>` in the feed into a FeedItem (version, channel,
+ *      notes, release page).
+ *   3. Discard entries whose channel this build does not subscribe to (see
+ *      isChannelAccepted) and keep the highest remaining version. The feed's
+ *      ordering is not trusted.
+ *   4. Parse `latest.json` and read `products.meshmc.stable.version`.
+ *   5. If the picked version exceeds the running version, emit
+ *      `updateAvailable()`. A feed/mirror disagreement is logged as a warning
+ *      and the feed still wins (it is the authoritative source). If the feed
+ *      itself fails to parse, the check fails outright.
  *
  * Platform / mode gating (runtime):
  *   - Linux + APPIMAGE env variable set  -> updater disabled (the AppImage
@@ -114,21 +123,19 @@ class UpdateChecker : public QObject
 	static bool isUpdaterSupported();
 
 	/*!
-	 * Describes the running build's identity used to pick a matching asset
-	 * out of the feed. Populated from BuildConfig at compile time.
+	 * A single `<item>` of the product feed, reduced to what the update
+	 * decision needs. Asset elements are not represented on purpose.
 	 */
-	struct BuildIdentity {
-		QString platform; /* "linux" | "windows" | "macos"          */
-		QString arch;	  /* "x86_64" | "aarch64"                   */
-		QString portable; /* "true" | "false"                       */
-		QString kind;	  /* "archive" | "appimage" | "installer"   */
-		/* Legacy substring fallback (e.g. "MeshMC-Linux-Portable"). */
-		QString legacyArtifact;
-
-		bool hasStructuredAttributes() const
-		{
-			return !platform.isEmpty() && !arch.isEmpty() && !kind.isEmpty();
-		}
+	struct FeedItem {
+		/// Normalized version, e.g. "7.19.0".
+		QString version;
+		/// Lower-cased `<projt:channel>`, e.g. "stable" or "beta".
+		/// An entry without a channel is treated as "stable".
+		QString channel;
+		/// HTML release notes from `<description>`.
+		QString releaseNotes;
+		/// `<projt:release_page>`, if present.
+		QString releasePage;
 	};
 
   signals:
@@ -160,17 +167,55 @@ class UpdateChecker : public QObject
 	/// Accepts the current Project Tick feed namespace.
 	static bool isSupportedFeedNamespace(QStringView namespaceUri);
 
-	/// Build the runtime build identity from BuildConfig.
-	static BuildIdentity buildIdentity();
+	/// The channel this build subscribes to, normalized. Defaults to
+	/// "stable" when BuildConfig leaves it empty.
+	static QString buildChannel();
 
-	/// Extracts the first stable <item> from the feed and reports parse
-	/// errors. Picks the matching asset using the structured attribute set
-	/// from \a identity, falling back to the legacy artifact substring.
-	static bool parseStableFeedItem(const QByteArray& feedData,
-									const BuildIdentity& identity,
-									QString* version, QString* downloadUrl,
-									QString* releaseNotes, QString* sha256,
-									qint64* fileSize, QString* parseError);
+	/// Risk ordering of a channel name: stable = 0, beta = 1.
+	/// Returns -1 for anything we do not know about.
+	static int channelRank(const QString& channel);
+
+	/// True when a build on \a buildChannel may be offered an entry
+	/// published on \a itemChannel. Unknown channels are never accepted, and
+	/// an unknown build channel falls back to stable-only.
+	static bool isChannelAccepted(const QString& itemChannel,
+								  const QString& buildChannel);
+
+	/// Parses every `<item>` of the feed. Returns false only when the XML
+	/// itself is broken; entries without a version are skipped silently.
+	static bool parseFeedItems(const QByteArray& feedData,
+							   QList<FeedItem>* items, QString* parseError);
+
+	/// Index of the highest-versioned entry this build may install, or -1
+	/// when the feed holds nothing for our channel.
+	static int pickBestItemIndex(const QList<FeedItem>& items,
+								 const QString& buildChannel);
+
+	/// Git tag a release is published under: "v" + version, e.g. "v7.19.0".
+	static QString releaseTag(const QString& version);
+
+	/*!
+	 * Name of the release asset this build should install. Mirrors the
+	 * naming produced by .github/workflows/release.yml:
+	 *
+	 *   Linux-Qt6             -> MeshMC-Linux-Qt6-Portable-v7.19.0.tar.gz
+	 *   Linux-aarch64-Qt6     -> MeshMC-Linux-aarch64-Qt6-Portable-v7.19.0.tar.gz
+	 *   Windows-MSVC-Qt6      -> MeshMC-Windows-MSVC[-Portable]-v7.19.0.zip
+	 *   Windows-MinGW-w64-Qt6 -> MeshMC-Windows-MinGW-w64[-Portable]-v7.19.0.zip
+	 *   macOS-Qt6             -> MeshMC-macOS-v7.19.0.zip
+	 *
+	 * \a artifact is BuildConfig.BUILD_ARTIFACT (the CI artifact name).
+	 * Returns an empty string for a build that maps to no published asset.
+	 */
+	static QString releaseAssetName(const QString& artifact, const QString& tag,
+									bool portable);
+
+	/// Composes the GitHub release download URL out of the repository URL
+	/// (BuildConfig.MESHMC_GIT), the artifact name and the version. Empty
+	/// when this build has no asset to download.
+	static QString makeGithubDownloadUrl(const QString& repoUrl,
+										 const QString& artifact,
+										 const QString& version, bool portable);
 
 	/// Parse `latest.json` and return `products.meshmc.stable.version`
 	/// (normalized). Returns an empty string if the mirror is malformed or

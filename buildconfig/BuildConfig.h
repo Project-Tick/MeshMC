@@ -58,6 +58,18 @@ class Config
 	 */
 	QString VERSION_CHANNEL;
 
+	/**
+	 * The release channel this build subscribes to: "stable" or "beta".
+	 *
+	 * The updater only offers a feed entry whose `<projt:channel>` is at most
+	 * as risky as this one: a stable build takes stable entries only, a beta
+	 * build takes beta and stable entries.
+	 *
+	 * Unlike VERSION_CHANNEL (which is just the git branch name), this is set
+	 * deliberately at configure time via MeshMC_UPDATE_CHANNEL.
+	 */
+	QString UPDATE_CHANNEL;
+
 	bool UPDATER_ENABLED = false;
 
 	/// A short string identifying this build's platform. For example, "lin64"
