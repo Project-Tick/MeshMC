@@ -1061,7 +1061,12 @@ if(MeshMC_RUST)
     )
     # build.rs generates the headers during the cargo build, so MeshMC_logic
     # must wait for the Rust target before compiling FeatureFlags.cpp.
-    add_dependencies(MeshMC_logic meshmc_featureflags)
+    #
+    # Which target that is depends on how the staticlib is produced: Corrosion's
+    # own INTERFACE target in the normal case, or the lipo custom target in an
+    # Apple universal build, where cargo has to be run once per architecture.
+    # Set by the top-level CMakeLists next to the crate import.
+    add_dependencies(MeshMC_logic ${MeshMC_FEATUREFLAGS_BUILD_TARGET})
     target_include_directories(MeshMC_logic PRIVATE
         "${MeshMC_FEATUREFLAGS_GENERATED_INCLUDE}")
     target_compile_definitions(MeshMC_logic PUBLIC MESHMC_RUST=1)
