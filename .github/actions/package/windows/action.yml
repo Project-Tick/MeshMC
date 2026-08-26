@@ -30,8 +30,8 @@ runs:
       if: ${{ inputs.msystem != '' }}
       shell: msys2 {0}
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        BUILD_DIR: ${{ github.workspace }}/build
+        INSTALL_DIR: ${{ github.workspace }}/install
       run: |
         build_dir="$(cygpath -u "${BUILD_DIR}")"
         install_dir="$(cygpath -u "${INSTALL_DIR}")"
@@ -43,8 +43,8 @@ runs:
       if: ${{ inputs.msystem == '' }}
       shell: pwsh
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        BUILD_DIR: ${{ github.workspace }}/build
+        INSTALL_DIR: ${{ github.workspace }}/install
       run: |
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
         Get-ChildItem ${{ env.INSTALL_DIR }} -Recurse | ForEach FullName | Resolve-Path -Relative | %{ $_.TrimStart('.\') } | %{ $_.TrimStart('${{ env.INSTALL_DIR }}') } | %{ $_.TrimStart('\') } | Out-File -FilePath ${{ env.INSTALL_DIR }}/manifest.txt
@@ -57,7 +57,7 @@ runs:
     - name: Sign executable
       shell: pwsh
       env:
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        INSTALL_DIR: ${{ github.workspace }}/install
         CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
       run: |
         if (Get-Content $env:CODESIGN_CERT_PATH){
@@ -72,9 +72,9 @@ runs:
       if: ${{ inputs.msystem != '' }}
       shell: msys2 {0}
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
-        INSTALL_PORTABLE_DIR: ${{ format('{0}/install-portable' || github.workspace) }}
+        BUILD_DIR: ${{ github.workspace }}/build
+        INSTALL_DIR: ${{ github.workspace }}/install
+        INSTALL_PORTABLE_DIR: ${{ github.workspace }}/install-portable
       run: |
         build_dir="$(cygpath -u "${BUILD_DIR}")"
         install_dir="$(cygpath -u "${INSTALL_DIR}")"
@@ -87,9 +87,9 @@ runs:
       if: ${{ inputs.msystem == '' }}
       shell: pwsh
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
-        INSTALL_PORTABLE_DIR: ${{ format('{0}/install-portable' || github.workspace) }}
+        BUILD_DIR: ${{ github.workspace }}/build
+        INSTALL_DIR: ${{ github.workspace }}/install
+        INSTALL_PORTABLE_DIR: ${{ github.workspace }}/install-portable
       run: |
         cp -r ${{ env.INSTALL_DIR }} ${{ env.INSTALL_PORTABLE_DIR }}  # cmake install on Windows is slow, let's just copy instead
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }} --component portable
@@ -99,8 +99,8 @@ runs:
     - name: Package (installer)
       shell: pwsh
       env:
-        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
-        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        BUILD_DIR: ${{ github.workspace }}/build
+        INSTALL_DIR: ${{ github.workspace }}/install
 
         NSCURL_VERSION: "v24.9.26.122"
         NSCURL_SHA256: "AEE6C4BE3CB6455858E9C1EE4B3AFE0DB9960FA03FE99CCDEDC28390D57CCBB0"
@@ -122,7 +122,7 @@ runs:
       shell: pwsh
       env:
         CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
-        INSTALLER_PATH: ${{ format('{0}/MeshMC-Setup.exe' || github.workspace) }}
+        INSTALLER_PATH: ${{ github.workspace }}/MeshMC-Setup.exe
       run: |
           if (Get-Content $env:CODESIGN_CERT_PATH){
             SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com $env:INSTALLER_PATH
@@ -134,16 +134,16 @@ runs:
       uses: actions/upload-artifact@v5
       with:
         name: MeshMC-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ format('{0}/install/**' || github.workspace) }}
+        path: ${{ github.workspace }}/install/**
 
     - name: Upload portable zip
       uses: actions/upload-artifact@v5
       with:
         name: MeshMC-${{ inputs.artifact-name }}-Portable-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ format('{0}/install-portable/**' || github.workspace) }}
+        path: ${{ github.workspace }}/install-portable/**
 
     - name: Upload installer
       uses: actions/upload-artifact@v5
       with:
         name: MeshMC-${{ inputs.artifact-name }}-Setup-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ format('{0}/MeshMC-Setup.exe' || github.workspace) }}
+        path: ${{ github.workspace }}/MeshMC-Setup.exe

@@ -970,6 +970,16 @@ set(WITH_BENCHMARKS OFF CACHE BOOL "" FORCE)
 set(WITH_FUZZERS OFF CACHE BOOL "" FORCE)
 set(SKIP_INSTALL_ALL ON CACHE BOOL "" FORCE)
 
+list(LENGTH CMAKE_OSX_ARCHITECTURES _meshmc_osx_arch_count)
+if(_meshmc_osx_arch_count GREATER 1)
+    message(STATUS
+        "zlib-ng: universal build (${CMAKE_OSX_ARCHITECTURES}) — falling back "
+        "to generic C, architecture-specific optimisations cannot be compiled "
+        "for several slices at once")
+    set(WITH_OPTIM OFF)
+endif()
+unset(_meshmc_osx_arch_count)
+
 # zlib-ng's tests (gtest, pigz, fuzzers) are not ours to run. BUILD_TESTING is
 # shadowed with a plain variable rather than set in the cache, because the same
 # entry drives MeshMC's own unit tests, which we very much do want. zlib-ng
@@ -980,6 +990,7 @@ set(BUILD_TESTING OFF)
 add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/zlib-ng zlib-ng)
 set(BUILD_TESTING "${_meshmc_saved_build_testing}")
 unset(_meshmc_saved_build_testing)
+unset(WITH_OPTIM)
 
 # ----------------------------------------------------------------------------
 # Hand the in-tree zlib-ng to libarchive's find_package(ZLIB 1.2.1).

@@ -63,7 +63,6 @@ runs:
           libarchive:p
           gpgme:p
           rust:p
-          cargo:p
 
     - name: List pacman packages (MinGW)
       if: ${{ inputs.msystem != '' }}
