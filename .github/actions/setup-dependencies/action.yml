@@ -80,7 +80,7 @@ runs:
         modules: qtimageformats qtnetworkauth
         cache: ${{ inputs.build-type == 'Debug' }}
 
-   - name: Build GPGME + GPGME++ + QGpgME from source
+    - name: Build GPGME + GPGME++ + QGpgME from source
       if: ${{ runner.os == 'Linux' && inputs.msystem == '' }}
       shell: bash
       env:
