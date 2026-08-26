@@ -66,7 +66,7 @@ runs:
         if (Get-Content $env:CODESIGN_CERT_PATH){
           cd ${{ env.INSTALL_DIR }}
             # We ship the exact same executable for portable and non-portable editions, so signing just once is fine
-            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com meshmc.exe meshmc_updater.exe meshmc_filelink.exe 
+            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com meshmc.exe meshmc_updater.exe
         } else {
           ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
         }
