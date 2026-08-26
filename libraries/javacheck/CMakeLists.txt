@@ -16,9 +16,20 @@ set(SRC
 
 add_jar(JavaCheck ${SRC})
 
+# Built as part of MeshMC, the jar is installed by the top-level CMakeLists.txt
+# instead: the launcher looks it up by exact name under JARS_DEST_DIR, which is
+# not where install_jar() puts it.
+if(NOT PROJECT_IS_TOP_LEVEL)
+    return()
+endif()
+
+# NB: deliberately no second install(FILES "${CMAKE_CURRENT_BINARY_DIR}/JavaCheck.jar").
+# install_jar() already installs the jar, and that hand-rolled duplicate
+# hardcoded an output location UseJava never promised: MeshMC's own
+# cmake/UseJava.cmake writes to ${CMAKE_BINARY_DIR}/jars, so the path did not
+# exist and `cmake --install` failed outright. Use the JAR_FILE target property
+# if you ever need the real path.
 install_jar(JavaCheck "${CMAKE_INSTALL_DATADIR}/JavaCheck")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/JavaCheck.jar"
-    DESTINATION "${CMAKE_INSTALL_DATADIR}/JavaCheck")
 
 configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/JavaCheckConfig.cmake.in"

@@ -1144,18 +1144,13 @@ if(WIN32 OR (UNIX AND APPLE))
 
     # Bundle our linked dependencies
     # Collect bin/ directories from CMAKE_PREFIX_PATH (both CMake variable and
-    # environment variable) so RUNTIME_DEPENDENCY_SET can locate monorepo DLLs
-    # such as rainbow.dll, iconfix.dll, nbt++.dll, etc.
+    # environment variable) so RUNTIME_DEPENDENCY_SET can locate third-party
+    # DLLs that live in a dependency prefix.
     #
-    # Those three are built in this build tree now rather than installed into a
-    # dependency prefix, so their own output directories have to be searched as
-    # well — CMAKE_PREFIX_PATH knows nothing about them. Everything else in
-    # libraries/ links statically and needs no bundling.
-    set(_prefix_path_bins
-        "$<TARGET_FILE_DIR:nbt++>"
-        "$<TARGET_FILE_DIR:iconfix>"
-        "$<TARGET_FILE_DIR:rainbow>"
-    )
+    # nbt++/iconfix/rainbow are NOT handled here: they are our own targets in
+    # this build tree, and the top-level CMakeLists.txt installs them directly
+    # to the right place. Everything else under libraries/ links statically.
+    set(_prefix_path_bins "")
     foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
         list(APPEND _prefix_path_bins "${_prefix}/bin")
     endforeach()
@@ -1260,14 +1255,11 @@ if(WIN32 OR (UNIX AND APPLE))
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}
     )
 elseif(UNIX AND NOT APPLE)
-    # Bundle monorepo shared libraries (libnbt++, rainbow, iconfix) so the
-    # installed binary can find them via its RPATH ($ORIGIN/../lib). They are
-    # built in this build tree, so search their output directories too.
-    set(_prefix_path_libs
-        "$<TARGET_FILE_DIR:nbt++>"
-        "$<TARGET_FILE_DIR:iconfix>"
-        "$<TARGET_FILE_DIR:rainbow>"
-    )
+    # Third-party shared libraries from a dependency prefix. The monorepo ones
+    # (nbt++, iconfix, rainbow) are installed directly by the top-level
+    # CMakeLists.txt into LIBRARY_DEST_DIR, which the binary's RPATH
+    # ($ORIGIN/../lib) already covers.
+    set(_prefix_path_libs "")
     foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
         list(APPEND _prefix_path_libs "${_prefix}/lib" "${_prefix}/lib64")
     endforeach()

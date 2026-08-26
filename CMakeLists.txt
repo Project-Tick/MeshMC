@@ -15,6 +15,21 @@ cmake_policy(SET CMP0141 NEW)
 # toolchain only links the release CRT. Must be set before project().
 cmake_policy(SET CMP0091 NEW)
 
+# Never search our own install prefix when resolving find_package().
+#
+# The presets install into <source>/install, and project() would otherwise add
+# CMAKE_INSTALL_PREFIX to CMAKE_SYSTEM_PREFIX_PATH — so after one
+# `cmake --install`, the next configure starts finding our own installed
+# artifacts as if they were system packages. That is how a half-installed ECM
+# (only ECMConfig.cmake landed under install/share/ECM, none of the modules)
+# made find_package(ECM) succeed against a broken prefix and took the whole
+# configure down with "could not find ECMUseFindModules.cmake".
+#
+# Nothing we legitimately depend on lives in our own install tree, so refusing
+# to look there removes that entire class of self-poisoning. Must be set before
+# project(), which is when CMAKE_SYSTEM_PREFIX_PATH is built.
+set(CMAKE_FIND_NO_INSTALL_PREFIX TRUE)
+
 project(MeshMC)
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
@@ -27,11 +42,57 @@ if(NOT ECM_FOUND)
     FetchContent_Declare(
         ECM
         GIT_REPOSITORY https://invent.kde.org/frameworks/extra-cmake-modules.git
-        GIT_TAG v6.29.0
+        GIT_TAG        v6.29.0
+        GIT_SHALLOW    TRUE
+        # ECM is nothing but a pile of .cmake modules — there is no library to
+        # build. SOURCE_SUBDIR points at a directory with no CMakeLists.txt,
+        # which is the documented way to tell FetchContent_MakeAvailable() to
+        # download the sources but skip add_subdirectory().
+        #
+        # That matters: adding ECM as a subproject pulled its own install()
+        # rules and its whole test suite into our build. The install rules
+        # dropped a partial ECM into our install prefix, which the *next*
+        # configure then found via find_package() and choked on.
+        SOURCE_SUBDIR  cmake-modules-only-no-build
     )
+
+    # Belt and braces on top of SOURCE_SUBDIR: keep ECM's own test suite out
+    # of our ctest run. It gates on nothing but BUILD_TESTING
+    #   option(BUILD_TESTING "Build automated tests." ON)
+    #   if(BUILD_TESTING) enable_testing() add_subdirectory(tests) endif()
+    # and it is not small — it used to register ~530 tests into our suite,
+    # drowning MeshMC's 14. SOURCE_SUBDIR already prevents ECM's CMakeLists
+    # from being processed at all, so this changes nothing today; it is here so
+    # that building ECM properly can never silently drag its tests back in.
+    #
+    # The restore is deliberately asymmetric: when BUILD_TESTING was not
+    # defined beforehand it is unset again rather than set to "". include(CTest)
+    # below does option(BUILD_TESTING "..." ON), and under CMP0077 an
+    # already-defined-but-empty normal variable wins over the option default —
+    # which would silently switch off MeshMC's own tests. Do not "simplify"
+    # this into a plain save/restore.
+    set(_meshmc_had_build_testing FALSE)
+    if(DEFINED BUILD_TESTING)
+        set(_meshmc_had_build_testing TRUE)
+        set(_meshmc_saved_build_testing "${BUILD_TESTING}")
+    endif()
+    set(BUILD_TESTING OFF)
+
     FetchContent_MakeAvailable(ECM)
 
-    list(APPEND CMAKE_MODULE_PATH "${ecm_SOURCE_DIR}/modules")
+    if(_meshmc_had_build_testing)
+        set(BUILD_TESTING "${_meshmc_saved_build_testing}")
+    else()
+        unset(BUILD_TESTING)
+    endif()
+    unset(_meshmc_had_build_testing)
+    unset(_meshmc_saved_build_testing)
+
+    # Mirrors what ECMConfig.cmake would set up (ECM_MODULE_PATH plus the
+    # find-modules directory).
+    list(APPEND CMAKE_MODULE_PATH
+         "${ecm_SOURCE_DIR}/modules"
+         "${ecm_SOURCE_DIR}/find-modules")
 endif()
 set(CMAKE_MODULE_PATH "${ECM_MODULE_PATH};${CMAKE_MODULE_PATH}")
 
@@ -1126,6 +1187,22 @@ add_subdirectory(libraries/localpeer) # fork of a library from Qt solutions
 add_subdirectory(libraries/classparser) # Java class file parser
 add_subdirectory(libraries/optional-bare)
 add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too much
+
+# Three libraries under libraries/ build as shared objects (iconfix and rainbow
+# hardcode SHARED, nbt++ opts in via NBT_BUILD_SHARED), so they have to be
+# deployed where the launcher can load them: alongside the binary on Windows,
+# LIBRARY_DEST_DIR elsewhere (covered by the RPATH, $ORIGIN/../lib).
+#
+# Installed explicitly rather than left to install(RUNTIME_DEPENDENCY_SET),
+# which scans the built binary and searches a directory list — it did not pick
+# these three up. Their own subprojects do install them, but to
+# ${CMAKE_INSTALL_BINDIR} (install/bin/) while meshmc.exe sits at the install
+# root, so the launcher died on startup with "nbt++.dll not found". These are
+# our own targets and we know exactly where they belong; no point rediscovering
+# it by scanning a binary.
+install(TARGETS nbt++ iconfix rainbow
+    RUNTIME DESTINATION "${BINARY_DEST_DIR}"
+    LIBRARY DESTINATION "${LIBRARY_DEST_DIR}")
 
 # The Java helpers are built in-tree now, so their jars come out of the build
 # directory. The launcher looks for them by exact name under JARS_DEST_DIR

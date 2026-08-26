@@ -382,20 +382,24 @@ bool MMCZip::createModdedJar(QString sourceJarPath, QString targetJarPath,
 			addedFiles.insert(filename.fileName());
 		} else if (mod.type() == Mod::MOD_FOLDER) {
 			auto filename = mod.filename();
-			QString what_to_zip = filename.absoluteFilePath();
-			QDir dir(what_to_zip);
-			dir.cdUp();
-			QString parent_dir = dir.absolutePath();
-			QDirIterator it(what_to_zip, QDir::Files | QDir::Hidden,
+			QDir modRoot(filename.absoluteFilePath());
+			QDirIterator it(modRoot.absolutePath(), QDir::Files | QDir::Hidden,
 							QDirIterator::Subdirectories);
 			while (it.hasNext()) {
 				it.next();
-				QString relPath =
-					QDir(parent_dir).relativeFilePath(it.filePath());
-				QFile f(it.filePath());
-				if (f.open(QIODevice::ReadOnly)) {
-					allEntries.append({relPath, f.readAll()});
+				QString relPath = modRoot.relativeFilePath(it.filePath());
+				if (addedFiles.contains(relPath)) {
+					continue;
 				}
+				QFile f(it.filePath());
+				if (!f.open(QIODevice::ReadOnly)) {
+					QFile::remove(targetJarPath);
+					qCritical() << "Failed to add" << relPath << "of folder mod"
+								<< filename.fileName() << "to the jar.";
+					return false;
+				}
+				addedFiles.insert(relPath);
+				allEntries.append({relPath, f.readAll()});
 			}
 			qDebug() << "Adding folder " << filename.fileName() << " from "
 					 << filename.absoluteFilePath();
