@@ -5,3 +5,7 @@
 	path = libraries/zlib-ng
 	url = https://github.com/zlib-ng/zlib-ng.git
 	branch = stable
+[submodule "libraries/libarchive"]
+	path = libraries/libarchive
+	url = https://github.com/libarchive/libarchive.git
+	branch = release
