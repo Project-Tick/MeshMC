@@ -432,7 +432,7 @@ if(MeshMC_RUST)
         FetchContent_Declare(
             Corrosion
             GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
-            GIT_TAG v0.5.1
+            GIT_TAG v0.6.1
         )
         FetchContent_MakeAvailable(Corrosion)
     endif()
@@ -978,7 +978,6 @@ if(_meshmc_osx_arch_count GREATER 1)
         "for several slices at once")
     set(WITH_OPTIM OFF)
 endif()
-unset(_meshmc_osx_arch_count)
 
 # zlib-ng's tests (gtest, pigz, fuzzers) are not ours to run. BUILD_TESTING is
 # shadowed with a plain variable rather than set in the cache, because the same
@@ -1041,6 +1040,16 @@ set(ENABLE_TAR OFF CACHE BOOL "" FORCE)
 set(ENABLE_CPIO OFF CACHE BOOL "" FORCE)
 set(ENABLE_CAT OFF CACHE BOOL "" FORCE)
 set(ENABLE_UNZIP OFF CACHE BOOL "" FORCE)
+
+if(_meshmc_osx_arch_count GREATER 1)
+    set(_meshmc_brew_codecs OFF)
+else()
+    set(_meshmc_brew_codecs ON)
+endif()
+set(ENABLE_LZ4 ${_meshmc_brew_codecs} CACHE BOOL "" FORCE)
+set(ENABLE_ZSTD ${_meshmc_brew_codecs} CACHE BOOL "" FORCE)
+unset(_meshmc_brew_codecs)
+unset(_meshmc_osx_arch_count)
 
 # Tell libarchive that the MSVC CRT has the intrinsic-named functions, because
 # it cannot work that out for itself.
