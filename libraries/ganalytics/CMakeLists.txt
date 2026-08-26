@@ -7,7 +7,11 @@ include(CMakePackageConfigHelpers)
 set(CMAKE_AUTOMOC ON)
 
 find_package(Qt6 COMPONENTS Core Gui Network REQUIRED)
-find_package(systeminfo REQUIRED)
+
+# In the MeshMC tree systeminfo is a sibling subproject, not an installed package.
+if(NOT TARGET systeminfo::systeminfo)
+    find_package(systeminfo REQUIRED)
+endif()
 
 set(ganalytics_SOURCES
 src/ganalytics.cpp

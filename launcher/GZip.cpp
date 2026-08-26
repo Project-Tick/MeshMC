@@ -24,7 +24,7 @@
  */
 
 #include "GZip.h"
-#include <neozip.h>
+#include <zlib.h>
 #include <QByteArray>
 
 bool GZip::unzip(const QByteArray& compressedBytes,
@@ -39,14 +39,14 @@ bool GZip::unzip(const QByteArray& compressedBytes,
 	uncompressedBytes.clear();
 	uncompressedBytes.resize(uncompLength);
 
-	zng_stream strm;
+	z_stream strm;
 	memset(&strm, 0, sizeof(strm));
 	strm.next_in = (const uint8_t*)compressedBytes.data();
 	strm.avail_in = compressedBytes.size();
 
 	bool done = false;
 
-	if (zng_inflateInit2(&strm, (16 + MAX_WBITS)) != Z_OK) {
+	if (inflateInit2(&strm, (16 + MAX_WBITS)) != Z_OK) {
 		return false;
 	}
 
@@ -63,7 +63,7 @@ bool GZip::unzip(const QByteArray& compressedBytes,
 		strm.avail_out = uncompLength - strm.total_out;
 
 		// Inflate another chunk.
-		err = zng_inflate(&strm, Z_SYNC_FLUSH);
+		err = inflate(&strm, Z_SYNC_FLUSH);
 		if (err == Z_STREAM_END)
 			done = true;
 		else if (err != Z_OK) {
@@ -71,7 +71,7 @@ bool GZip::unzip(const QByteArray& compressedBytes,
 		}
 	}
 
-	if (zng_inflateEnd(&strm) != Z_OK || !done) {
+	if (inflateEnd(&strm) != Z_OK || !done) {
 		return false;
 	}
 
@@ -91,11 +91,11 @@ bool GZip::zip(const QByteArray& uncompressedBytes, QByteArray& compressedBytes)
 	compressedBytes.clear();
 	compressedBytes.resize(compLength);
 
-	zng_stream zs;
+	z_stream zs;
 	memset(&zs, 0, sizeof(zs));
 
-	if (zng_deflateInit2(&zs, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
-						 (16 + MAX_WBITS), 8, Z_DEFAULT_STRATEGY) != Z_OK) {
+	if (deflateInit2(&zs, Z_DEFAULT_COMPRESSION, Z_DEFLATED, (16 + MAX_WBITS), 8,
+					 Z_DEFAULT_STRATEGY) != Z_OK) {
 		return false;
 	}
 
@@ -114,13 +114,13 @@ bool GZip::zip(const QByteArray& uncompressedBytes, QByteArray& compressedBytes)
 		}
 		zs.next_out = (uint8_t*)(compressedBytes.data() + offset);
 		temp = zs.avail_out = compressedBytes.size() - offset;
-		ret = zng_deflate(&zs, Z_FINISH);
+		ret = deflate(&zs, Z_FINISH);
 		offset += temp - zs.avail_out;
 	} while (ret == Z_OK);
 
 	compressedBytes.resize(offset);
 
-	if (zng_deflateEnd(&zs) != Z_OK) {
+	if (deflateEnd(&zs) != Z_OK) {
 		return false;
 	}
 

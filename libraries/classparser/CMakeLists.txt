@@ -14,7 +14,12 @@ if(${BIGENDIAN})
 endif(${BIGENDIAN})
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
-find_package(LibArchive REQUIRED)
+
+# When built as part of the MeshMC tree, libarchive is a sibling subproject and
+# there is nothing installed to find.
+if(NOT TARGET LibArchive::LibArchive)
+    find_package(LibArchive REQUIRED)
+endif()
 
 set(CLASSPARSER_HEADERS
 include/classparser_config.h
@@ -41,6 +46,13 @@ target_include_directories(classparser
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/classparser>)
 target_link_libraries(classparser PRIVATE LibArchive::LibArchive Qt6::Core)
+
+# Only publish a consumable package when this is the project being built.
+# In-tree, classparser links the sibling archive_static target, which is not
+# part of any export set, and install(EXPORT) rejects that with a hard error.
+if(NOT PROJECT_IS_TOP_LEVEL)
+    return()
+endif()
 
 install(TARGETS classparser
     EXPORT classparser-targets

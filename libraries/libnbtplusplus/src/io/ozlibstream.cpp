@@ -32,8 +32,8 @@ namespace zlib
 										 int mem_level, int strategy)
 		: zlib_streambuf(bufsize), os(output)
 	{
-		int ret = zng_deflateInit2(&zstr, level, Z_DEFLATED, window_bits, mem_level,
-							   strategy);
+		int ret = deflateInit2(&zstr, level, Z_DEFLATED, window_bits,
+							   mem_level, strategy);
 		if (ret != Z_OK)
 			throw zlib_error(zstr.msg, ret);
 
@@ -47,7 +47,7 @@ namespace zlib
 		} catch (...) {
 			// ignore as we can't do anything about it
 		}
-		zng_deflateEnd(&zstr);
+		deflateEnd(&zstr);
 	}
 
 	void deflate_streambuf::close()
@@ -62,7 +62,7 @@ namespace zlib
 		do {
 			zstr.next_out = reinterpret_cast<uint8_t*>(out.data());
 			zstr.avail_out = out.size();
-			int ret = zng_deflate(&zstr, flush);
+			int ret = deflate(&zstr, flush);
 			if (ret != Z_OK && ret != Z_STREAM_END) {
 				os.setstate(std::ios_base::failbit);
 				throw zlib_error(zstr.msg, ret);

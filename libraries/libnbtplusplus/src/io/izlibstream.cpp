@@ -33,7 +33,7 @@ namespace zlib
 	{
 		zstr.next_in = Z_NULL;
 		zstr.avail_in = 0;
-		int ret = zng_inflateInit2(&zstr, window_bits);
+		int ret = inflateInit2(&zstr, window_bits);
 		if (ret != Z_OK)
 			throw zlib_error(zstr.msg, ret);
 
@@ -43,7 +43,7 @@ namespace zlib
 
 	inflate_streambuf::~inflate_streambuf() noexcept
 	{
-		zng_inflateEnd(&zstr);
+		inflateEnd(&zstr);
 	}
 
 	inflate_streambuf::int_type inflate_streambuf::underflow()
@@ -69,7 +69,7 @@ namespace zlib
 			zstr.next_out = reinterpret_cast<uint8_t*>(out.data());
 			zstr.avail_out = out.size();
 
-			int ret = zng_inflate(&zstr, Z_NO_FLUSH);
+			int ret = inflate(&zstr, Z_NO_FLUSH);
 			have = out.size() - zstr.avail_out;
 			switch (ret) {
 				case Z_NEED_DICT:

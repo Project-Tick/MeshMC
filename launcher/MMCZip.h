@@ -102,9 +102,15 @@ namespace MMCZip
 
 	/**
 	 * Extract a single file relative to the zip root.
+	 *
+	 * \param error If non-null, receives a human readable reason on failure.
+	 * Worth passing: the underlying libarchive diagnostics ("Unsupported ZIP
+	 * compression method (8: deflation)" and friends) are otherwise only
+	 * visible in qWarning output, which turns a build/packaging mistake into
+	 * an unexplained "extraction failed".
 	 */
 	bool extractRelFile(const QString& zipPath, const QString& file,
-						const QString& target);
+						const QString& target, QString* error = nullptr);
 
 	/**
 	 * Extract a whole archive.

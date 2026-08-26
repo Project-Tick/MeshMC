@@ -121,7 +121,8 @@ static bool writeFileToArchive(
 	return true;
 }
 
-static bool writeDiskEntry(struct archive* ar, const QString& absFilePath)
+static bool writeDiskEntry(struct archive* ar, const QString& absFilePath,
+						   QString* error = nullptr)
 {
 	// Ensure parent directory exists
 	QFileInfo fi(absFilePath);
@@ -136,8 +137,28 @@ static bool writeDiskEntry(struct archive* ar, const QString& absFilePath)
 	QFile outFile(absFilePath);
 	if (!outFile.open(QIODevice::WriteOnly)) {
 		qWarning() << "Failed to open for writing:" << absFilePath;
+		if (error) {
+			*error = QStringLiteral("could not open '%1' for writing: %2")
+						 .arg(absFilePath, outFile.errorString());
+		}
 		return false;
 	}
+
+	// Every bail-out below leaves a truncated file behind. A zero-byte native
+	// library or mod jar is worse than none at all: the caller sees a failure,
+	// but the file stays on disk and the next launch happily loads the corpse.
+	// So clean up on every failure path.
+	const auto fail = [&outFile, &absFilePath](QString* out,
+											   const QString& why) {
+		outFile.close();
+		if (!QFile::remove(absFilePath)) {
+			qWarning() << "Could not remove partial file" << absFilePath;
+		}
+		if (out) {
+			*out = why;
+		}
+		return false;
+	};
 
 	const void* buff;
 	size_t size;
@@ -149,17 +170,22 @@ static bool writeDiskEntry(struct archive* ar, const QString& absFilePath)
 		if (written != static_cast<qint64>(size)) {
 			qWarning() << "Write error for" << absFilePath << ": wrote"
 					   << written << "of" << size << "bytes";
-			outFile.close();
-			return false;
+			return fail(error,
+						QStringLiteral("write error for '%1': %2")
+							.arg(absFilePath, outFile.errorString()));
 		}
 	}
-	outFile.close();
 
 	if (readRet != ARCHIVE_EOF) {
+		const char* archiveError = archive_error_string(ar);
 		qWarning() << "Archive read error while extracting" << absFilePath
-				   << ":" << archive_error_string(ar);
-		return false;
+				   << ":" << archiveError;
+		return fail(error, QString::fromUtf8(archiveError
+												 ? archiveError
+												 : "unknown archive error"));
 	}
+
+	outFile.close();
 	return true;
 }
 
@@ -526,19 +552,27 @@ nonstd::optional<QStringList> MMCZip::extractSubDir(const QString& zipPath,
 }
 
 bool MMCZip::extractRelFile(const QString& zipPath, const QString& file,
-							const QString& target)
+							const QString& target, QString* error)
 {
 	auto ar = openZipForReading(zipPath);
-	if (!ar)
+	if (!ar) {
+		if (error) {
+			*error = QStringLiteral("could not open archive '%1'").arg(zipPath);
+		}
 		return false;
+	}
 
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
 		QString name = QString::fromUtf8(archive_entry_pathname(entry));
 		if (name == file) {
-			return writeDiskEntry(ar.get(), target);
+			return writeDiskEntry(ar.get(), target, error);
 		}
 		archive_read_data_skip(ar.get());
+	}
+	if (error) {
+		*error = QStringLiteral("'%1' not found in archive '%2'")
+					 .arg(file, zipPath);
 	}
 	return false;
 }

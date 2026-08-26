@@ -101,6 +101,11 @@ add_unit_test(GZip
     LIBS MeshMC_logic
     )
 
+add_unit_test(MMCZip
+    SOURCES MMCZip_test.cpp
+    LIBS MeshMC_logic
+    )
+
 set(PATHMATCHER_SOURCES
     # Path matchers
     pathmatcher/FSTreeMatcher.h
@@ -383,6 +388,11 @@ add_unit_test(ParseUtils
     LIBS MeshMC_logic
     )
 
+add_unit_test(World
+    SOURCES minecraft/World_test.cpp
+    LIBS MeshMC_logic
+    )
+
 # the screenshots feature
 set(SCREENSHOTS_SOURCES
     screenshots/Screenshot.h
@@ -577,7 +587,9 @@ add_unit_test(Index
 
 ################################ COMPILE ################################
 
-# neozip, cmark, toml++, and nbt++ are found at the top-level CMakeLists.txt via find_package
+# zlib-ng, libarchive, cmark, toml++ and nbt++ all come from the top-level
+# CMakeLists.txt: the first two as submodules under libraries/, the next two
+# via FetchContent, nbt++ as a subtree.
 
 set(LOGIC_SOURCES
     ${CORE_SOURCES}
@@ -994,7 +1006,7 @@ target_link_libraries(MeshMC_logic
     systeminfo::systeminfo
     classparser
     nbt++::nbt++
-    neozip::zlib
+    ZLIB::ZLIB
     optional-bare::optional-bare
     tomlplusplus::tomlplusplus
     BuildConfig
@@ -1134,7 +1146,16 @@ if(WIN32 OR (UNIX AND APPLE))
     # Collect bin/ directories from CMAKE_PREFIX_PATH (both CMake variable and
     # environment variable) so RUNTIME_DEPENDENCY_SET can locate monorepo DLLs
     # such as rainbow.dll, iconfix.dll, nbt++.dll, etc.
-    set(_prefix_path_bins "")
+    #
+    # Those three are built in this build tree now rather than installed into a
+    # dependency prefix, so their own output directories have to be searched as
+    # well — CMAKE_PREFIX_PATH knows nothing about them. Everything else in
+    # libraries/ links statically and needs no bundling.
+    set(_prefix_path_bins
+        "$<TARGET_FILE_DIR:nbt++>"
+        "$<TARGET_FILE_DIR:iconfix>"
+        "$<TARGET_FILE_DIR:rainbow>"
+    )
     foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
         list(APPEND _prefix_path_bins "${_prefix}/bin")
     endforeach()
@@ -1239,9 +1260,14 @@ if(WIN32 OR (UNIX AND APPLE))
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}
     )
 elseif(UNIX AND NOT APPLE)
-    # Bundle monorepo shared libraries (libnbt++, neozip, rainbow, iconfix, etc.)
-    # so the installed binary can find them via its RPATH ($ORIGIN/../lib).
-    set(_prefix_path_libs "")
+    # Bundle monorepo shared libraries (libnbt++, rainbow, iconfix) so the
+    # installed binary can find them via its RPATH ($ORIGIN/../lib). They are
+    # built in this build tree, so search their output directories too.
+    set(_prefix_path_libs
+        "$<TARGET_FILE_DIR:nbt++>"
+        "$<TARGET_FILE_DIR:iconfix>"
+        "$<TARGET_FILE_DIR:rainbow>"
+    )
     foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
         list(APPEND _prefix_path_libs "${_prefix}/lib" "${_prefix}/lib64")
     endforeach()

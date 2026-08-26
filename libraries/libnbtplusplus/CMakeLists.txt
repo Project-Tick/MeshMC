@@ -37,7 +37,11 @@ set(NBT_SOURCES_Z
     src/io/ozlibstream.cpp)
 
 if(NBT_USE_ZLIB)
-    find_package(neozip REQUIRED)
+    # Plain zlib API. In the MeshMC tree this resolves to the bundled zlib-ng
+    # built with ZLIB_COMPAT=ON; standalone it resolves to the system zlib.
+    if(NOT TARGET ZLIB::ZLIB)
+        find_package(ZLIB REQUIRED)
+    endif()
     list(APPEND NBT_SOURCES ${NBT_SOURCES_Z})
     add_definitions("-DNBT_HAVE_ZLIB")
 endif()
@@ -53,7 +57,7 @@ target_include_directories(nbt++
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/nbt++>)
 
 if(NBT_USE_ZLIB)
-    target_link_libraries(nbt++ PUBLIC neozip::zlib)
+    target_link_libraries(nbt++ PUBLIC ZLIB::ZLIB)
 endif()
 set_property(TARGET nbt++ PROPERTY CXX_STANDARD 11)
 generate_export_header(nbt++ BASE_NAME nbt)

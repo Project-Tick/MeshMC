@@ -12,7 +12,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Network)
-find_package(LibArchive REQUIRED)
+
+# Provided by the top-level build as the in-tree libraries/libarchive subproject.
+if(NOT TARGET LibArchive::LibArchive)
+    find_package(LibArchive REQUIRED)
+endif()
 
 # On Windows: use Win32 subsystem so no console window appears.
 if(WIN32)

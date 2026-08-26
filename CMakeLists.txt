@@ -1,4 +1,7 @@
-cmake_minimum_required(VERSION 3.20)
+# 3.24 is a hard floor, not a preference: FetchContent_Declare(FIND_PACKAGE_ARGS)
+# below is a 3.24 feature, and CMake errors on the unknown keyword rather than
+# ignoring it. PROJECT_IS_TOP_LEVEL (3.21) is relied on in libraries/ as well.
+cmake_minimum_required(VERSION 3.24)
 # SPDX-FileCopyrightText: 2026 Project Tick
 # SPDX-FileContributor: Project Tick
 # SPDX-License-Identifier: GPL-3.0-or-later WITH LicenseRef-MeshMC-MMCO-Module-Exception-1.0
@@ -17,7 +20,19 @@ project(MeshMC)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(ECM NO_MODULE REQUIRED)
+
+find_package(ECM NO_MODULE QUIET)
+if(NOT ECM_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+        ECM
+        GIT_REPOSITORY https://invent.kde.org/frameworks/extra-cmake-modules.git
+        GIT_TAG v6.29.0
+    )
+    FetchContent_MakeAvailable(ECM)
+
+    list(APPEND CMAKE_MODULE_PATH "${ecm_SOURCE_DIR}/modules")
+endif()
 set(CMAKE_MODULE_PATH "${ECM_MODULE_PATH};${CMAKE_MODULE_PATH}")
 
 include(CTest)
@@ -168,20 +183,89 @@ QUERY_QMAKE(QT_INSTALL_LIBEXECS QT_LIBEXECS_DIR)
 set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RelWithDebInfo Release Debug "")
 set(CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL MinSizeRel Release Debug "")
 
-find_package(LibArchive REQUIRED)
-find_package(neozip REQUIRED)
-find_package(cmark REQUIRED)
-find_package(tomlplusplus REQUIRED)
-find_package(nbt++ REQUIRED)
-find_package(systeminfo REQUIRED)
-find_package(ganalytics REQUIRED)
-find_package(rainbow REQUIRED)
-find_package(iconfix REQUIRED)
-find_package(LocalPeer REQUIRED)
-find_package(classparser REQUIRED)
-find_package(optional-bare REQUIRED)
-find_package(xz-embedded REQUIRED)
-find_package(Katabasis REQUIRED)
+# cmark and toml++ are plain, self-contained upstream libraries with no
+# monorepo ties, so they no longer need a pre-built dependency prefix.
+#
+# FIND_PACKAGE_ARGS makes FetchContent_MakeAvailable() try find_package()
+# first and only clone when nothing is installed. That ordering matters:
+# distro packaging, Nix and CI build in sandboxes with no network, and they do
+# have cmark/toml++ available as system packages. Fetching unconditionally
+# would break all three.
+#
+# Tags are pinned exactly — a floating branch makes builds non-reproducible.
+include(FetchContent)
+
+# Deliberately NOT setting CMARK_SHARED / CMARK_STATIC / CMARK_TESTS: cmark
+# 0.31.1 removed all three. The library type follows BUILD_SHARED_LIBS (which
+# defaults to static there, exactly what we want) and the tests follow
+# BUILD_TESTING. Defining the retired options only earns deprecation warnings.
+set(CMARK_LIB_FUZZER OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(cmark
+    GIT_REPOSITORY https://github.com/commonmark/cmark.git
+    GIT_TAG        0.31.1
+    GIT_SHALLOW    TRUE
+    FIND_PACKAGE_ARGS NAMES cmark
+)
+
+FetchContent_Declare(tomlplusplus
+    GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
+    GIT_TAG        v3.4.0
+    GIT_SHALLOW    TRUE
+    FIND_PACKAGE_ARGS NAMES tomlplusplus
+)
+
+# Three MeshMC-wide settings are held back while these are configured:
+#
+#   BUILD_TESTING   cmark's api_test/test dirs need Python and would register
+#                   their tests in our CTest suite. It is read with a bare
+#                   if(), so a plain variable is enough and MeshMC's own tests
+#                   (which need BUILD_TESTING ON) are unaffected.
+#   CMAKE_C_STANDARD  cmark explicitly does `if(NOT MSVC) set(CMAKE_C_STANDARD 99)`
+#                   — on MSVC it wants the compiler default. Forcing C23 on a
+#                   vendored C library overrides upstream's deliberate choice
+#                   and invalidates the configuration they test against. See
+#                   the longer note on this in the zlib-ng/libarchive block.
+#   CMAKE_AUTOMOC   moc has no business running over C sources.
+set(_meshmc_saved_build_testing "${BUILD_TESTING}")
+set(_meshmc_saved_c_standard "${CMAKE_C_STANDARD}")
+set(_meshmc_saved_c_standard_required "${CMAKE_C_STANDARD_REQUIRED}")
+set(_meshmc_saved_automoc "${CMAKE_AUTOMOC}")
+set(BUILD_TESTING OFF)
+unset(CMAKE_C_STANDARD)
+unset(CMAKE_C_STANDARD_REQUIRED)
+set(CMAKE_AUTOMOC OFF)
+
+FetchContent_MakeAvailable(cmark tomlplusplus)
+
+set(BUILD_TESTING "${_meshmc_saved_build_testing}")
+set(CMAKE_C_STANDARD "${_meshmc_saved_c_standard}")
+set(CMAKE_C_STANDARD_REQUIRED "${_meshmc_saved_c_standard_required}")
+set(CMAKE_AUTOMOC "${_meshmc_saved_automoc}")
+unset(_meshmc_saved_build_testing)
+unset(_meshmc_saved_c_standard)
+unset(_meshmc_saved_c_standard_required)
+unset(_meshmc_saved_automoc)
+
+# Normalise the cmark target name so the rest of the build can just link
+# cmark::cmark, whether it came from find_package() or from the clone above.
+#
+# The in-tree library target is plain `cmark`; the namespaced name only exists
+# in cmark's install(EXPORT). Do NOT reach for `cmark_static`: in 0.31.1 that
+# name is an add_custom_target() shim kept for OSS-Fuzz, so aliasing it fails
+# with "target cmark_static is not a library". Hence checking the target TYPE
+# instead of merely whether the name exists.
+if(NOT TARGET cmark::cmark)
+    if(NOT TARGET cmark)
+        message(FATAL_ERROR "cmark is available but exposes no 'cmark' target")
+    endif()
+    get_target_property(_meshmc_cmark_type cmark TYPE)
+    if(NOT _meshmc_cmark_type MATCHES "_LIBRARY$")
+        message(FATAL_ERROR
+            "cmark target 'cmark' is a ${_meshmc_cmark_type}, not a library")
+    endif()
+    add_library(cmark::cmark ALIAS cmark)
+    unset(_meshmc_cmark_type)
+endif()
 
 # GpgME (C++ bindings) — used by the MMCO plugin signature verifier.
 # KDE's gpgmepp distribution exports the bare target name "Gpgmepp".
@@ -766,10 +850,302 @@ endif()
 include(ExternalProject)
 set_directory_properties(PROPERTIES EP_BASE External)
 
-find_package(JavaCheck REQUIRED)
-find_package(NewLaunch REQUIRED)
+# Everything under libraries/ is built as part of this build tree, statically,
+# unless the library hardcodes SHARED (iconfix, rainbow) or opts out itself
+# (nbt++, via NBT_BUILD_SHARED). This matches what the old pre-built
+# dependency prefix shipped, so linkage does not change — only where the
+# objects come from.
+#
+# This is a cache entry rather than a plain variable on purpose: libarchive
+# declares cmake_minimum_required(VERSION 2.8.12), which puts CMP0077 in OLD
+# mode for its scope, and there option() ignores normal variables.
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build monorepo libraries as shared libraries" FORCE)
+
+# libarchive's cmake_minimum_required is older than CMake 4 accepts.
+set(CMAKE_POLICY_VERSION_MINIMUM "3.5")
+
+# ----------------------------------------------------------------------------
+# Vendored C libraries are built the way upstream tests them, not the way
+# MeshMC builds its own code. Two settings are held back:
+#
+# CMAKE_C_STANDARD 23 — neither library asks for C23, and forcing it overrides
+#   a deliberate upstream decision: zlib-ng does
+#   `if(NOT DEFINED CMAKE_C_STANDARD) set(CMAKE_C_STANDARD 11)` and cmark does
+#   `if(NOT MSVC) set(CMAKE_C_STANDARD 99)` — i.e. on MSVC it specifically
+#   wants the compiler default. Feature detection results depend on the C
+#   dialect, so building vendored code in a dialect upstream never tested it
+#   in is asking for subtly wrong probe results.
+#
+# CMAKE_AUTOMOC — Qt's moc has no business running over C sources. Left on, it
+#   generates a mocs_compilation.cpp for every vendored target and drags a C++
+#   compile into otherwise C-only libraries.
+#
+# NOTE: feature-detection results are cached, so when changing anything here,
+# delete CMakeCache.txt or the probes will not re-run.
+set(_meshmc_saved_c_standard "${CMAKE_C_STANDARD}")
+set(_meshmc_saved_c_standard_required "${CMAKE_C_STANDARD_REQUIRED}")
+set(_meshmc_saved_automoc "${CMAKE_AUTOMOC}")
+set(_meshmc_saved_autouic "${CMAKE_AUTOUIC}")
+set(_meshmc_saved_autorcc "${CMAKE_AUTORCC}")
+unset(CMAKE_C_STANDARD)
+unset(CMAKE_C_STANDARD_REQUIRED)
+set(CMAKE_AUTOMOC OFF)
+set(CMAKE_AUTOUIC OFF)
+set(CMAKE_AUTORCC OFF)
+
+############################ zlib-ng (must be first) ##########################
+# ORDER MATTERS. zlib-ng must be configured before libarchive: the cache
+# entries seeded below only work once zlib-ng has generated its zlib.h, and
+# libarchive's find_package(ZLIB) happens while it is being added. Configure
+# libarchive first and it silently builds without DEFLATE support — precisely
+# the bug that made every .jar unreadable in 8.2.0. Do not reorder these two.
+#
+# ZLIB_COMPAT=ON is required, not cosmetic: libarchive consumes the standard
+# zlib API (zlib.h, inflate(), z_stream). In zlib-ng's native mode the symbols
+# are zng_-prefixed and libarchive cannot use them at all.
+set(ZLIB_COMPAT ON CACHE BOOL "" FORCE)
+set(WITH_GTEST OFF CACHE BOOL "" FORCE)
+set(WITH_BENCHMARKS OFF CACHE BOOL "" FORCE)
+set(WITH_FUZZERS OFF CACHE BOOL "" FORCE)
+set(SKIP_INSTALL_ALL ON CACHE BOOL "" FORCE)
+
+# zlib-ng's tests (gtest, pigz, fuzzers) are not ours to run. BUILD_TESTING is
+# shadowed with a plain variable rather than set in the cache, because the same
+# entry drives MeshMC's own unit tests, which we very much do want. zlib-ng
+# declares cmake_minimum_required(3.14...3.31), so CMP0077 is NEW there and its
+# option() honours this.
+set(_meshmc_saved_build_testing "${BUILD_TESTING}")
+set(BUILD_TESTING OFF)
+add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/zlib-ng zlib-ng)
+set(BUILD_TESTING "${_meshmc_saved_build_testing}")
+unset(_meshmc_saved_build_testing)
+
+# ----------------------------------------------------------------------------
+# Hand the in-tree zlib-ng to libarchive's find_package(ZLIB 1.2.1).
+#
+# libarchive does `SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake")`
+# — a plain overwrite, not an append — so dropping a FindZLIB.cmake into our
+# own cmake/ directory does NOT work: libarchive cannot see it and falls
+# through to CMake's stock FindZLIB. Since we do not patch submodules, we make
+# the stock module succeed instead.
+#
+# find_path()/find_library() skip searching when their cache variable is
+# already set, and stock FindZLIB only creates ZLIB::ZLIB `if(NOT TARGET
+# ZLIB::ZLIB)`. So: pre-seed both cache entries and pre-create the alias.
+# FindZLIB then reports found, reads the version out of the generated zlib.h,
+# and leaves our alias alone.
+#
+# ZLIB_LIBRARY_RELEASE is deliberately the *target name*, not a file path: it
+# ends up in libarchive's ADDITIONAL_LIBS and therefore in
+# target_link_libraries(), which keeps real build ordering and works across
+# every configuration of a multi-config generator.
+#
+# ZLIB_INCLUDE_DIR must stay a single directory — FindZLIB does
+# file(STRINGS "${ZLIB_INCLUDE_DIR}/zlib.h" ...) to parse the version, which
+# breaks on a list. The binary dir is the right one: that is where zlib-ng
+# generates zlib.h and zconf.h.
+get_target_property(_meshmc_zlibng_bindir zlib-ng BINARY_DIR)
+set(ZLIB_INCLUDE_DIR "${_meshmc_zlibng_bindir}" CACHE PATH "" FORCE)
+set(ZLIB_LIBRARY_RELEASE "zlib-ng" CACHE STRING "" FORCE)
+unset(_meshmc_zlibng_bindir)
+
+if(NOT TARGET ZLIB::ZLIB)
+    add_library(ZLIB::ZLIB ALIAS zlib-ng)
+endif()
+# ----------------------------------------------------------------------------
+
+################################## libarchive #################################
+# Only the library itself: no bsdtar/bsdcpio/bsdcat, no test suite, and no
+# install rules (we link archive_static into the launcher).
+#
+# Compression/format backend detection is left at upstream defaults so the
+# resulting feature set matches what previous releases shipped. ENABLE_ZLIB is
+# forced ON and asserted below, because that one is load-bearing.
+set(ENABLE_ZLIB ON CACHE BOOL "" FORCE)
+set(ENABLE_OPENSSL OFF CACHE BOOL "" FORCE)
+set(ENABLE_TEST OFF CACHE BOOL "" FORCE)
+set(ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+set(ENABLE_TAR OFF CACHE BOOL "" FORCE)
+set(ENABLE_CPIO OFF CACHE BOOL "" FORCE)
+set(ENABLE_CAT OFF CACHE BOOL "" FORCE)
+set(ENABLE_UNZIP OFF CACHE BOOL "" FORCE)
+
+# Tell libarchive that the MSVC CRT has the intrinsic-named functions, because
+# it cannot work that out for itself.
+#
+# libarchive appends /Oi ("enable intrinsic functions") to CMAKE_C_FLAGS_DEBUG
+# and CMAKE_C_FLAGS_RELEASE inside its own IF(MSVC) block, and its probes then
+# run with that flag. CMake's check_function_exists() declares the candidate
+# as `char wcscpy(void);` and calls it with no arguments — which recent MSVC
+# rejects outright once /Oi makes wcscpy an intrinsic:
+#
+#   warning C4392: 'char wcscpy(void)': incorrect number of arguments for
+#                  intrinsic; '2' expected
+#   error   C2168: 'wcscpy': too few actual parameters for intrinsic
+#
+# The probe therefore "fails", libarchive concludes the CRT has no wcscpy, and
+# archive_entry.c compiles its own fallback — which MSVC refuses with
+# "error C2169: 'wcscpy': intrinsic function, cannot be defined".
+#
+# Exactly the intrinsic-named probes are affected: everything below came out
+# as "missing" while e.g. strftime (same probe mechanism, not an intrinsic)
+# was found. All seven are unconditionally present in the MSVC CRT — that is
+# *why* they are intrinsics — so stating so is a statement of fact, not a
+# workaround for a real absence.
+#
+# check_function_exists() and libarchive's CHECK_FUNCTION_EXISTS_GLIBC both
+# begin with `if(NOT DEFINED <var>)`, so a pre-seeded cache entry skips the
+# broken probe entirely. CACHE INTERNAL implies FORCE, which also cleans up
+# empty entries left by an earlier failed configure.
+#
+# Note the deliberate choice NOT to fix this by steering
+# CMAKE_TRY_COMPILE_CONFIGURATION at a config without /Oi: /O2 already implies
+# /Oi, so RelWithDebInfo and Release are both out, and that would make the fix
+# depend on MSVC's optimisation-flag implications rather than on a fact.
+if(MSVC)
+    foreach(_meshmc_crt_fn IN ITEMS
+            HAVE_MEMMOVE HAVE_WCSCMP HAVE_WCSCPY HAVE_WCSLEN
+            HAVE_WMEMCMP HAVE_WMEMCPY HAVE_WMEMMOVE)
+        set(${_meshmc_crt_fn} 1 CACHE INTERNAL
+            "Present in the MSVC CRT; libarchive's /Oi probe cannot detect it")
+    endforeach()
+    unset(_meshmc_crt_fn)
+endif()
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/libarchive libarchive)
+
+# Fail the build instead of shipping an archive library that cannot inflate.
+#
+# This asserts the actual outcome, not our intent: HAVE_ZLIB_H in the config.h
+# libarchive just generated is the exact switch that compiles its DEFLATE
+# support in or out. Getting it wrong is not a loud failure — you get a
+# library that opens .jar files happily and then refuses every entry inside
+# them — so it is worth re-checking on every configure.
+#
+# (ZLIB_FOUND is set inside libarchive's own directory scope and is not
+# visible from here, hence reading config.h instead.)
+set(_meshmc_libarchive_config "${CMAKE_CURRENT_BINARY_DIR}/libarchive/config.h")
+set(_meshmc_libarchive_has_zlib "")
+if(EXISTS "${_meshmc_libarchive_config}")
+    file(STRINGS "${_meshmc_libarchive_config}" _meshmc_libarchive_has_zlib
+         REGEX "^#define[ \t]+HAVE_ZLIB_H[ \t]+1")
+endif()
+if(NOT _meshmc_libarchive_has_zlib)
+    message(FATAL_ERROR
+        "libarchive was configured WITHOUT zlib support.\n"
+        "It would be unable to read any ordinary .jar/.zip file, failing with "
+        "\"Unsupported ZIP compression method (8: deflation)\" on every "
+        "DEFLATE entry.\n"
+        "The bundled zlib-ng is most likely not checked out. Run:\n"
+        "    git submodule update --init --recursive")
+endif()
+
+# Verify the pre-seeding above actually reached config.h, so this fails at
+# configure time instead of 60 objects into the build with an opaque C2169.
+# Guards against the HAVE_* names drifting upstream, and against libarchive
+# growing a new intrinsic-named probe we have not seeded yet.
+if(MSVC)
+    set(_meshmc_libarchive_crt_missing "")
+    foreach(_meshmc_fn IN ITEMS
+            HAVE_MEMMOVE HAVE_WCSCMP HAVE_WCSCPY HAVE_WCSLEN
+            HAVE_WMEMCMP HAVE_WMEMCPY HAVE_WMEMMOVE)
+        set(_meshmc_fn_hit "")
+        if(EXISTS "${_meshmc_libarchive_config}")
+            file(STRINGS "${_meshmc_libarchive_config}" _meshmc_fn_hit
+                 REGEX "^#define[ \t]+${_meshmc_fn}[ \t]+1")
+        endif()
+        if(NOT _meshmc_fn_hit)
+            list(APPEND _meshmc_libarchive_crt_missing "${_meshmc_fn}")
+        endif()
+    endforeach()
+    if(_meshmc_libarchive_crt_missing)
+        message(FATAL_ERROR
+            "libarchive thinks the MSVC CRT is missing: "
+            "${_meshmc_libarchive_crt_missing}\n"
+            "It is not. Its /Oi-enabled check_function_exists() probes cannot "
+            "detect intrinsic-named functions (see the note above), so these "
+            "are pre-seeded into the cache — and that seeding did not reach "
+            "config.h. Either a HAVE_* name changed upstream, or there is a "
+            "newly probed intrinsic to add to the list.\n"
+            "Left alone, libarchive compiles its own fallback definitions and "
+            "the build dies with \"C2169: intrinsic function, cannot be "
+            "defined\".\n"
+            "The failing probe is logged in "
+            "build/CMakeFiles/CMakeConfigureLog.yaml.")
+    endif()
+    unset(_meshmc_libarchive_crt_missing)
+    unset(_meshmc_fn)
+    unset(_meshmc_fn_hit)
+endif()
+
+unset(_meshmc_libarchive_config)
+unset(_meshmc_libarchive_has_zlib)
+
+# libarchive sets LIBARCHIVE_STATIC on archive_static as a *private* compile
+# definition, so consumers would still see __declspec(dllimport) in archive.h
+# and fail to link on Windows. Propagate it through the interface.
+# set_property() rather than target_compile_definitions(): the target is
+# created in a nested directory scope.
+set_property(TARGET archive_static APPEND
+             PROPERTY INTERFACE_COMPILE_DEFINITIONS LIBARCHIVE_STATIC)
+
+# Sibling libraries and the updater look for LibArchive::LibArchive (the name
+# CMake's FindLibArchive exports). Provide it so they need no special casing.
+if(NOT TARGET LibArchive::LibArchive)
+    add_library(LibArchive::LibArchive ALIAS archive_static)
+endif()
+
+# Vendored C libraries are done; MeshMC's own settings apply again from here.
+set(CMAKE_C_STANDARD "${_meshmc_saved_c_standard}")
+set(CMAKE_C_STANDARD_REQUIRED "${_meshmc_saved_c_standard_required}")
+set(CMAKE_AUTOMOC "${_meshmc_saved_automoc}")
+set(CMAKE_AUTOUIC "${_meshmc_saved_autouic}")
+set(CMAKE_AUTORCC "${_meshmc_saved_autorcc}")
+unset(_meshmc_saved_c_standard)
+unset(_meshmc_saved_c_standard_required)
+unset(_meshmc_saved_automoc)
+unset(_meshmc_saved_autouic)
+unset(_meshmc_saved_autorcc)
+
+############################### monorepo libraries ############################
+option(NBT_BUILD_SHARED "Build NBT shared library" ON)
+option(NBT_USE_ZLIB "Build NBT library with zlib support" OFF)
+option(NBT_BUILD_TESTS "Build NBT library tests" OFF) #FIXME: fix unit tests.
+set(NBT_DEST_DIR ${LIBRARY_DEST_DIR})
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/libnbtplusplus libnbtplusplus)
+
+add_subdirectory(libraries/systeminfo) # system information library
+add_subdirectory(libraries/ganalytics) # google analytics library
+add_subdirectory(libraries/launcher) # java based launcher part for Minecraft
+add_subdirectory(libraries/javacheck) # java compatibility checker
+add_subdirectory(libraries/xz-embedded) # xz compression
+add_subdirectory(libraries/rainbow) # Qt extension for colors
+add_subdirectory(libraries/iconfix) # fork of Qt's QIcon loader
+add_subdirectory(libraries/localpeer) # fork of a library from Qt solutions
+add_subdirectory(libraries/classparser) # Java class file parser
+add_subdirectory(libraries/optional-bare)
+add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too much
+
+# The Java helpers are built in-tree now, so their jars come out of the build
+# directory. The launcher looks for them by exact name under JARS_DEST_DIR
+# (see Application::getJarsPath()), which is not where install_jar() puts them.
+get_target_property(JAVACHECK_JAR JavaCheck JAR_FILE)
+get_target_property(NEWLAUNCH_JAR NewLaunch JAR_FILE)
 install(FILES "${JAVACHECK_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "JavaCheck.jar")
 install(FILES "${NEWLAUNCH_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "NewLaunch.jar")
+
+# cmark, zlib-ng and libarchive each do
+#   if(NOT CMAKE_BUILD_TYPE) set(CMAKE_BUILD_TYPE Release CACHE ... FORCE)
+# which, under a multi-config generator where CMAKE_BUILD_TYPE is empty by
+# design, plants a bogus "Release" in our cache. It is ignored at build time,
+# but it makes a re-configure of the same build tree behave differently from
+# the first one (see the ENABLE_LTO block near the top) and is thoroughly
+# confusing to read. Drop it again — but only for multi-config, where the
+# variable is meaningless anyway, never when the user set it deliberately.
+if(CMAKE_CONFIGURATION_TYPES AND DEFINED CACHE{CMAKE_BUILD_TYPE})
+    unset(CMAKE_BUILD_TYPE CACHE)
+endif()
 
 ############################### Built Artifacts ###############################
 

@@ -1,0 +1,149 @@
+name: Package for Windows
+description: Create a Windows package for MeshMC
+
+inputs:
+  version:
+    description: Launcher version
+    required: true
+  build-type:
+    description: Type for the build
+    required: true
+    default: Debug
+  artifact-name:
+    description: Name of the uploaded artifact
+    required: true
+  msystem:
+    description: MSYS2 subsystem to use
+    required: false
+  windows-codesign-cert:
+    description: Certificate for signing Windows builds
+    required: false
+  windows-codesign-password:
+    description: Password for signing Windows builds
+    required: false
+
+runs:
+  using: composite
+
+  steps:
+    - name: Package (MinGW)
+      if: ${{ inputs.msystem != '' }}
+      shell: msys2 {0}
+      env:
+        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
+        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+      run: |
+        build_dir="$(cygpath -u "${BUILD_DIR}")"
+        install_dir="$(cygpath -u "${INSTALL_DIR}")"
+        cmake --install "$build_dir" --config ${{ inputs.build-type }}
+        touch "$install_dir/manifest.txt"
+        for l in $(find "$install_dir" -type f); do l=$(cygpath -u "$l"); l=${l#${install_dir}/}; echo $l; done >> "$install_dir/manifest.txt"
+
+    - name: Package (MSVC)
+      if: ${{ inputs.msystem == '' }}
+      shell: pwsh
+      env:
+        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
+        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+      run: |
+        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
+        Get-ChildItem ${{ env.INSTALL_DIR }} -Recurse | ForEach FullName | Resolve-Path -Relative | %{ $_.TrimStart('.\') } | %{ $_.TrimStart('${{ env.INSTALL_DIR }}') } | %{ $_.TrimStart('\') } | Out-File -FilePath ${{ env.INSTALL_DIR }}/manifest.txt
+
+    - name: Fetch codesign certificate
+      shell: bash # yes, we are not using MSYS2 or PowerShell here
+      run: |
+        echo '${{ inputs.windows-codesign-cert }}' | base64 --decode > codesign.pfx
+
+    - name: Sign executable
+      shell: pwsh
+      env:
+        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
+      run: |
+        if (Get-Content $env:CODESIGN_CERT_PATH){
+          cd ${{ env.INSTALL_DIR }}
+            # We ship the exact same executable for portable and non-portable editions, so signing just once is fine
+            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com meshmc.exe meshmc_updater.exe meshmc_filelink.exe 
+        } else {
+          ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
+        }
+
+    - name: Package (MinGW, portable)
+      if: ${{ inputs.msystem != '' }}
+      shell: msys2 {0}
+      env:
+        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
+        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        INSTALL_PORTABLE_DIR: ${{ format('{0}/install-portable' || github.workspace) }}
+      run: |
+        build_dir="$(cygpath -u "${BUILD_DIR}")"
+        install_dir="$(cygpath -u "${INSTALL_DIR}")"
+        install_portable_dir="$(cygpath -u "${INSTALL_PORTABLE_DIR}")"
+        cp -r "$install_dir" "$install_portable_dir"  # cmake install on Windows is slow, let's just copy instead
+        cmake --install "$build_dir" --config ${{ inputs.build-type }} --prefix "$install_portable_dir" --component portable
+        for l in $(find "$install_portable_dir" -type f); do l=$(cygpath -u "$l"); l=${l#${install_portable_dir}/}; echo $l; done >> "$install_portable_dir/manifest.txt"
+
+    - name: Package (MSVC, portable)
+      if: ${{ inputs.msystem == '' }}
+      shell: pwsh
+      env:
+        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
+        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+        INSTALL_PORTABLE_DIR: ${{ format('{0}/install-portable' || github.workspace) }}
+      run: |
+        cp -r ${{ env.INSTALL_DIR }} ${{ env.INSTALL_PORTABLE_DIR }}  # cmake install on Windows is slow, let's just copy instead
+        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }} --component portable
+
+        Get-ChildItem ${{ env.INSTALL_PORTABLE_DIR }} -Recurse | ForEach FullName | Resolve-Path -Relative | %{ $_.TrimStart('.\') } | %{ $_.TrimStart('${{ env.INSTALL_PORTABLE_DIR }}') } | %{ $_.TrimStart('\') } | Out-File -FilePath ${{ env.INSTALL_DIR }}/manifest.txt
+
+    - name: Package (installer)
+      shell: pwsh
+      env:
+        BUILD_DIR: ${{ format('{0}/build' || github.workspace) }}
+        INSTALL_DIR: ${{ format('{0}/install' || github.workspace) }}
+
+        NSCURL_VERSION: "v24.9.26.122"
+        NSCURL_SHA256: "AEE6C4BE3CB6455858E9C1EE4B3AFE0DB9960FA03FE99CCDEDC28390D57CCBB0"
+      run: |
+        New-Item -Name NSISPlugins -ItemType Directory
+        Invoke-Webrequest https://github.com/negrutiu/nsis-nscurl/releases/download/"${{ env.NSCURL_VERSION }}"/NScurl.zip -OutFile NSISPlugins\NScurl.zip
+        $nscurl_hash = Get-FileHash NSISPlugins\NScurl.zip -Algorithm Sha256 | Select-Object -ExpandProperty Hash
+        if ( $nscurl_hash -ne "${{ env.nscurl_sha256 }}") {
+          echo "::error:: NSCurl.zip sha256 mismatch"
+          exit 1
+        }
+        Expand-Archive -Path NSISPlugins\NScurl.zip -DestinationPath NSISPlugins\NScurl
+
+        $nsisScript = Resolve-Path (Join-Path "${{ env.BUILD_DIR }}" "program_info/win_install.nsi")
+        cd ${{ env.INSTALL_DIR }}
+        makensis -NOCD "$nsisScript"
+
+    - name: Sign installer
+      shell: pwsh
+      env:
+        CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
+        INSTALLER_PATH: ${{ format('{0}/MeshMC-Setup.exe' || github.workspace) }}
+      run: |
+          if (Get-Content $env:CODESIGN_CERT_PATH){
+            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com $env:INSTALLER_PATH
+          } else {
+            ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
+          }
+
+    - name: Upload binary zip
+      uses: actions/upload-artifact@v5
+      with:
+        name: MeshMC-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
+        path: ${{ format('{0}/install/**' || github.workspace) }}
+
+    - name: Upload portable zip
+      uses: actions/upload-artifact@v5
+      with:
+        name: MeshMC-${{ inputs.artifact-name }}-Portable-${{ inputs.version }}-${{ inputs.build-type }}
+        path: ${{ format('{0}/install-portable/**' || github.workspace) }}
+
+    - name: Upload installer
+      uses: actions/upload-artifact@v5
+      with:
+        name: MeshMC-${{ inputs.artifact-name }}-Setup-${{ inputs.version }}-${{ inputs.build-type }}
+        path: ${{ format('{0}/MeshMC-Setup.exe' || github.workspace) }}

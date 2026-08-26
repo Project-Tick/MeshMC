@@ -117,74 +117,24 @@ echo   ^> cmake install ecm
 cmake --install "%_ECM_DIR%\build"
 if errorlevel 1 goto die
 
-:: ---- libarchive ---------------------------------------------------------
-echo [build-deps] Building libarchive...
-set "_LIBARCHIVE_DIR=%TEMP%\libarchive"
-
-if not exist "%_LIBARCHIVE_DIR%" (
-    echo   ^> git clone libarchive
-    git clone --depth 1 --branch v3.7.9 https://github.com/libarchive/libarchive.git "%_LIBARCHIVE_DIR%"
-    if errorlevel 1 goto die
-)
-
-echo   ^> cmake configure libarchive
-cmake -S "%_LIBARCHIVE_DIR%" -B "%_LIBARCHIVE_DIR%\build" ^
-    "-DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%" ^
-    "-DCMAKE_BUILD_TYPE=%BUILD_TYPE%" ^
-    -DENABLE_TEST=OFF ^
-    -DENABLE_OPENSSL=OFF ^
-    -G "%CMAKE_GENERATOR%"
-if errorlevel 1 goto die
-
-echo   ^> cmake build libarchive
-cmake --build "%_LIBARCHIVE_DIR%\build" --parallel %_JOBS%
-if errorlevel 1 goto die
-
-echo   ^> cmake install libarchive
-cmake --install "%_LIBARCHIVE_DIR%\build"
-if errorlevel 1 goto die
-
-echo.
-
-:: ---- Level 1: No monorepo dependencies ----------------------------------
-call :install_lib "https://projecttick.org/project-tick/projects/neozip" "-DZLIB_COMPAT=OFF" "-DWITH_GTEST=OFF"
-if errorlevel 1 goto die
-call :install_lib "https://github.com/commonmark/cmark"
-if errorlevel 1 goto die
-call :install_lib "https://github.com/marzer/tomlplusplus"
-if errorlevel 1 goto die
-
-:: ---- Level 2 ------------------------------------------------------------
-call :install_lib "https://projecttick.org/project-tick/projects/libnbtplusplus"
-if errorlevel 1 goto die
-
-:: ---- Level 3 ------------------------------------------------------------
-call :install_lib "https://projecttick.org/project-tick/projects/optional-bare"
-if errorlevel 1 goto die
-call :install_lib "https://projecttick.org/project-tick/projects/xz-embedded"
-if errorlevel 1 goto die
-call :install_lib "https://projecttick.org/project-tick/projects/systeminfo"
-if errorlevel 1 goto die
-call :install_lib "https://projecttick.org/project-tick/projects/rainbow"
-if errorlevel 1 goto die
-call :install_lib "https://projecttick.org/project-tick/projects/iconfix"
-if errorlevel 1 goto die
-call :install_lib "https://projecttick.org/project-tick/projects/LocalPeer"
-if errorlevel 1 goto die
-call :install_lib "https://projecttick.org/project-tick/projects/classparser"
-if errorlevel 1 goto die
-call :install_lib "https://projecttick.org/project-tick/projects/katabasis"
-if errorlevel 1 goto die
-
-:: ---- Level 4 ------------------------------------------------------------
-call :install_lib "https://projecttick.org/project-tick/projects/ganalytics"
-if errorlevel 1 goto die
-
-:: ---- Java jars ----------------------------------------------------------
-call :install_lib "https://projecttick.org/project-tick/projects/javacheck"
-if errorlevel 1 goto die
-call :install_lib "https://projecttick.org/project-tick/projects/javalauncher"
-if errorlevel 1 goto die
+:: ---- in-tree dependencies ----------------------------------------------
+:: Everything that used to be cloned and installed here is now part of the
+:: MeshMC tree and configured by the main build:
+::
+::   libraries/zlib-ng, libraries/libarchive    git submodules
+::   libraries/* (nbt++, systeminfo, ...)       git subtrees
+::   cmark, toml++                              FetchContent (top-level CMake)
+::
+:: zlib-ng replaces neozip specifically so libarchive can link against a
+:: standard zlib API and keep its DEFLATE support. Building libarchive from a
+:: separate prefix like this used to do is exactly how it ended up compiled
+:: without zlib -- unable to read a single .jar -- so please do not
+:: reintroduce it here.
+::
+:: extra-cmake-modules above is the only external dependency left.
+echo [build-deps] Remaining dependencies are in-tree; nothing else to install.
+echo [build-deps] Ensure the submodules are checked out:
+echo [build-deps]     git submodule update --init --recursive
 
 echo.
 echo [build-deps] All dependencies built and installed successfully!

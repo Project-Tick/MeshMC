@@ -67,11 +67,14 @@ static QString replaceSuffix(QString target, const QString& suffix,
 
 static bool unzipNatives(QString source, QString targetFolder,
 						 bool applyJnilibHack, bool nativeOpenAL,
-						 bool nativeGLFW)
+						 bool nativeGLFW, QString* error)
 {
 	QDir directory(targetFolder);
 	QStringList entries = MMCZip::listEntries(source);
 	if (entries.isEmpty()) {
+		if (error) {
+			*error = QStringLiteral("archive is empty or unreadable");
+		}
 		return false;
 	}
 	for (const auto& name : entries) {
@@ -91,7 +94,7 @@ static bool unzipNatives(QString source, QString targetFolder,
 			outName = replaceSuffix(outName, ".jnilib", ".dylib");
 		}
 		QString absFilePath = directory.absoluteFilePath(outName);
-		if (!MMCZip::extractRelFile(source, name, absFilePath)) {
+		if (!MMCZip::extractRelFile(source, name, absFilePath, error)) {
 			return false;
 		}
 	}
@@ -116,13 +119,19 @@ void ExtractNatives::executeTask()
 	auto javaVersion = minecraftInstance->getJavaVersion();
 	bool jniHackEnabled = javaVersion.major() >= 8;
 	for (const auto& source : toExtract) {
+		QString error;
 		if (!unzipNatives(source, outputPath, jniHackEnabled, nativeOpenAL,
-						  nativeGLFW)) {
+						  nativeGLFW, &error)) {
 			const char* reason = QT_TR_NOOP(
-				"Couldn't extract native jar '%1' to destination '%2'");
-			emit logLine(QString(reason).arg(source, outputPath),
+				"Couldn't extract native jar '%1' to destination '%2': %3");
+			emit logLine(QString(reason).arg(source, outputPath, error),
 						 MessageLevel::Fatal);
-			emitFailed(tr(reason).arg(source, outputPath));
+			// Must not fall through: continuing the loop and reaching
+			// emitSucceeded() below made this task report both failed and
+			// succeeded, so a launch with zero usable natives looked fine to
+			// everything downstream.
+			emitFailed(tr(reason).arg(source, outputPath, error));
+			return;
 		}
 	}
 	emitSucceeded();

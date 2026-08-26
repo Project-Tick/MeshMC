@@ -57,14 +57,41 @@ Uses [Scoop](https://scoop.sh) for CLI tools and system libraries.
 |------------------------|---------------------------------|--------------------|
 | Qt 6 (Base)            | GUI framework                   | `Qt6Core`          |
 | Qt 6 NetworkAuth       | OAuth2 authentication           | —                  |
-| QuaZip (Qt6)           | ZIP archive support             | `quazip1-qt6`      |
-| zlib                   | Compression                     | `zlib`             |
 | Extra CMake Modules    | KDE CMake utilities             | `ECM`              |
-| cmark                  | Markdown rendering              | —                  |
-| tomlplusplus           | TOML parsing                    | —                  |
-| libarchive             | Archive extraction              | —                  |
 | libqrencode            | QR code generation              | —                  |
 | scdoc                  | Man page generation (optional)  | —                  |
+
+### In-Tree Dependencies
+
+These are **not** system packages — do not install distro versions of them and
+do not expect `CMAKE_PREFIX_PATH` to supply them:
+
+| Dependency                        | How it is obtained                |
+|-----------------------------------|-----------------------------------|
+| zlib-ng (`libraries/zlib-ng`)     | git submodule, `ZLIB_COMPAT=ON`   |
+| libarchive (`libraries/libarchive`)| git submodule                    |
+| cmark                             | FetchContent, pinned to `0.31.1`  |
+| tomlplusplus                      | FetchContent, pinned to `v3.4.0`  |
+| nbt++, systeminfo, iconfix, …      | git subtrees under `libraries/`   |
+
+libarchive is deliberately built against the bundled zlib-ng (in `ZLIB_COMPAT`
+mode) rather than a system zlib, and is linked statically. The top-level
+`CMakeLists.txt` seeds the `ZLIB_INCLUDE_DIR` / `ZLIB_LIBRARY_RELEASE` cache
+entries so that libarchive's own `find_package(ZLIB)` resolves to it; if that
+handoff breaks, libarchive configures itself *without* DEFLATE support and the
+launcher can no longer read any `.jar`. Configure fails loudly in that case —
+read the comments there before changing any of it.
+
+Because two dependencies are submodules, a plain `git clone` is not enough:
+
+```bash
+git submodule update --init --recursive
+```
+
+The first configure of a fresh build directory also needs network access for
+the two FetchContent dependencies. To build offline, point
+`FETCHCONTENT_SOURCE_DIR_CMARK` / `FETCHCONTENT_SOURCE_DIR_TOMLPLUSPLUS` at
+local checkouts.
 
 ### Distro-Specific Package Names
 
@@ -74,8 +101,7 @@ Uses [Scoop](https://scoop.sh) for CLI tools and system libraries.
 ```bash
 sudo apt-get install \
     cmake ninja-build extra-cmake-modules pkg-config \
-    qt6-base-dev libquazip1-qt6-dev zlib1g-dev \
-    libcmark-dev libarchive-dev libqrencode-dev libtomlplusplus-dev \
+    qt6-base-dev libqrencode-dev \
     scdoc
 ```
 
@@ -87,8 +113,7 @@ sudo apt-get install \
 ```bash
 sudo dnf install \
     cmake ninja-build extra-cmake-modules pkgconf \
-    qt6-qtbase-devel quazip-qt6-devel zlib-devel \
-    cmark-devel libarchive-devel qrencode-devel tomlplusplus-devel \
+    qt6-qtbase-devel qrencode-devel \
     scdoc
 ```
 
@@ -100,8 +125,7 @@ sudo dnf install \
 ```bash
 sudo pacman -S --needed \
     cmake ninja extra-cmake-modules pkgconf \
-    qt6-base quazip-qt6 zlib \
-    cmark libarchive qrencode tomlplusplus \
+    qt6-base qrencode \
     scdoc
 ```
 
@@ -113,8 +137,7 @@ sudo pacman -S --needed \
 ```bash
 sudo zypper install \
     cmake ninja extra-cmake-modules pkg-config \
-    qt6-base-devel quazip-qt6-devel zlib-devel \
-    cmark-devel libarchive-devel qrencode-devel tomlplusplus-devel \
+    qt6-base-devel qrencode-devel \
     scdoc
 ```
 
@@ -126,8 +149,7 @@ sudo zypper install \
 ```bash
 brew install \
     cmake ninja extra-cmake-modules \
-    qt@6 quazip zlib \
-    cmark libarchive qrencode tomlplusplus \
+    qt@6 qrencode \
     scdoc
 ```
 
@@ -272,16 +294,16 @@ cmake --preset linux && cmake --build --preset linux --config Release
 Install dependencies via Homebrew:
 
 ```bash
-brew install cmake ninja extra-cmake-modules qt@6 libarchive qrencode pkg-config
+brew install cmake ninja extra-cmake-modules qt@6 qrencode pkg-config
 ```
 
-Homebrew's `libarchive` is keg-only, so set `CMAKE_PREFIX_PATH` before configuring:
+libarchive is **not** installed from Homebrew: it is built in-tree from
+`libraries/libarchive` against the bundled zlib-ng, so no `CMAKE_PREFIX_PATH`
+juggling for a keg-only formula is needed. Do check out the submodules first:
 
 ```bash
-export CMAKE_PREFIX_PATH="$(brew --prefix libarchive)"
+git submodule update --init --recursive
 ```
-
-Alternatively, `build-deps.sh --configure` handles this automatically.
 
 ### Standard Build (Native Architecture)
 
@@ -311,9 +333,15 @@ cmake --install build --config Release
 
 Requires Visual Studio with C++ workload.
 
-The `build-deps.ps1` script automatically fetches and builds `extra-cmake-modules`
-and `libarchive` alongside the monorepo libraries. No separate package manager
-installation is required for these.
+The only external dependency the `build-deps.ps1` script still fetches is
+`extra-cmake-modules`. zlib-ng, libarchive, cmark, toml++ and the monorepo
+libraries are all part of this repository (submodules, subtrees and
+FetchContent), so no package manager installation is required for them —
+just make sure the submodules are checked out:
+
+```cmd
+git submodule update --init --recursive
+```
 
 Optionally install `pkg-config` via Chocolatey:
 

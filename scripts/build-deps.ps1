@@ -161,46 +161,23 @@ function Build-Deps {
     Invoke-Cmd cmake -S $EcmDir -B "$EcmDir\build" "-DCMAKE_INSTALL_PREFIX=$InstallPrefix" -G $Generator
     Invoke-Cmd cmake --install "$EcmDir\build"
 
-    Write-Log 'Building libarchive...'
-    $LibarchiveDir = Join-Path $env:TEMP 'libarchive'
-    if (-not (Test-Path $LibarchiveDir)) {
-        Invoke-Cmd git clone --depth 1 --branch v3.7.9 https://github.com/libarchive/libarchive.git $LibarchiveDir
-    }
-    Invoke-Cmd cmake -S $LibarchiveDir -B "$LibarchiveDir\build" `
-        "-DCMAKE_INSTALL_PREFIX=$InstallPrefix" `
-        "-DCMAKE_BUILD_TYPE=$BuildType" `
-        '-DENABLE_TEST=OFF' `
-        '-DENABLE_OPENSSL=OFF' `
-        -G $Generator
-    Invoke-Cmd cmake --build "$LibarchiveDir\build" --parallel $Jobs
-    Invoke-Cmd cmake --install "$LibarchiveDir\build"
-
-    Write-Host ''
-
-    # Level 1: No monorepo dependencies
-    Install-Lib https://projecttick.org/project-tick/projects/neozip        '-DZLIB_COMPAT=OFF' '-DWITH_GTEST=OFF'
-    Install-Lib https://github.com/commonmark/cmark
-    Install-Lib https://github.com/marzer/tomlplusplus
-
-    # Level 2: Depends on Level 1
-    Install-Lib https://projecttick.org/project-tick/projects/libnbtplusplus
-
-    # Level 3: Qt-dependent, no monorepo inter-deps
-    Install-Lib https://projecttick.org/project-tick/projects/optional-bare
-    Install-Lib https://projecttick.org/project-tick/projects/xz-embedded
-    Install-Lib https://projecttick.org/project-tick/projects/systeminfo
-    Install-Lib https://projecttick.org/project-tick/projects/rainbow
-    Install-Lib https://projecttick.org/project-tick/projects/iconfix
-    Install-Lib https://projecttick.org/project-tick/projects/LocalPeer
-    Install-Lib https://projecttick.org/project-tick/projects/classparser
-    Install-Lib https://projecttick.org/project-tick/projects/katabasis
-
-    # Level 4: Depends on Level 3
-    Install-Lib https://projecttick.org/project-tick/projects/ganalytics
-
-    # Java jars
-    Install-Lib https://projecttick.org/project-tick/projects/javacheck
-    Install-Lib https://projecttick.org/project-tick/projects/javalauncher
+    # Everything that used to be built and installed here is now part of the
+    # MeshMC tree and configured by the main build:
+    #
+    #   libraries/zlib-ng, libraries/libarchive    git submodules
+    #   libraries/* (nbt++, systeminfo, ...)       git subtrees
+    #   cmark, toml++                              FetchContent (top-level CMake)
+    #
+    # zlib-ng replaces neozip specifically so libarchive can link against a
+    # standard zlib API and keep its DEFLATE support. Building libarchive from
+    # a separate prefix like this used to do is exactly how it ended up
+    # compiled without zlib — unable to read a single .jar — so please do not
+    # reintroduce it here.
+    #
+    # extra-cmake-modules above is the only external dependency left.
+    Write-Log 'Remaining dependencies are in-tree; nothing else to install.'
+    Write-Log 'Ensure the submodules are checked out:'
+    Write-Log '    git submodule update --init --recursive'
 
     Write-Host ''
     Write-Log 'All dependencies built and installed successfully!'

@@ -191,55 +191,21 @@ build_deps() {
     log "Building all MeshMC dependencies..."
     echo
 
-    # Build libarchive from source on macOS (universal binary, SDK lacks headers)
-    if [[ "$PLATFORM" == "macos" ]]; then
-        local libarchive_src="$MONOREPO_ROOT/.deps-src/libarchive"
-        log "Building ${BLUE}libarchive${NC} from source (universal)..."
-        if [[ ! -d "$libarchive_src" ]]; then
-            git clone --depth 1 --branch v3.7.9 https://github.com/libarchive/libarchive.git "$libarchive_src"
-        fi
-        cmake -S "$libarchive_src" -B "$libarchive_src/build" \
-            -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
-            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-            -DENABLE_TEST=OFF \
-            -DENABLE_OPENSSL=OFF \
-            -DENABLE_LZ4=OFF \
-            -DENABLE_ZSTD=OFF \
-            -G "$GENERATOR"
-        cmake --build "$libarchive_src/build" --parallel "$JOBS"
-        if [[ "$NEED_SUDO" == true ]]; then
-            sudo cmake --install "$libarchive_src/build"
-        else
-            cmake --install "$libarchive_src/build"
-        fi
-        echo
-    fi
-
-    # Level 1: No monorepo dependencies
-    install_lib neozip        -DZLIB_COMPAT=OFF -DWITH_GTEST=OFF
-    install_lib cmark
-    install_lib tomlplusplus
-
-    # Level 2: Depends on Level 1
-    install_lib libnbtplusplus
-
-    # Level 3: Qt-dependent, no monorepo inter-deps
-    install_lib optional-bare
-    install_lib xz-embedded
-    install_lib systeminfo
-    install_lib rainbow
-    install_lib iconfix
-    install_lib LocalPeer
-    install_lib classparser
-    install_lib katabasis
-
-    # Level 4: Depends on Level 3
-    install_lib ganalytics
-
-    # Java jars
-    install_lib javacheck
-    install_lib javalauncher
+    # Everything that used to be built and installed here is now part of the
+    # MeshMC tree and configured by the main build:
+    #
+    #   libraries/zlib-ng, libraries/libarchive    git submodules
+    #   libraries/* (nbt++, systeminfo, ...)       git subtrees
+    #   cmark, toml++                              FetchContent (top-level CMake)
+    #
+    # zlib-ng replaces neozip specifically so libarchive can link against a
+    # standard zlib API and keep its DEFLATE support. Building libarchive into
+    # a separate prefix like this used to do is exactly how it ended up
+    # compiled without zlib -- unable to read a single .jar -- so please do not
+    # reintroduce it here.
+    log "Remaining dependencies are in-tree; nothing else to install."
+    log "Ensure the submodules are checked out:"
+    log "    git submodule update --init --recursive"
 
     # Refresh linker cache on Linux
     if [[ "$PLATFORM" == "linux" ]]; then
