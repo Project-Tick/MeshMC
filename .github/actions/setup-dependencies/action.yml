@@ -78,6 +78,7 @@ runs:
         aqtversion: "==3.1.*"
         version: ${{ inputs.qt-version }}
         modules: qtimageformats qtnetworkauth
+        tools: tools_qttools
         cache: ${{ inputs.build-type == 'Debug' }}
 
     - name: Build GPGME + GPGME++ + QGpgME from source

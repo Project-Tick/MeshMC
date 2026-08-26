@@ -16,12 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install host dependencies
-        shell: bash
-        run: |
-          sudo apt-get -y update
-          sudo apt-get -y install \
-            gettext qt6-tools-dev \
+      - name: Setup dependencies
+        id: setup-dependencies
+        uses: ./.github/actions/setup-dependencies
+        with:
+          build-type: "Release"
+          artifact-name: "Linux"
+          qt-version: "6.10.2"
 
       - name: Build translations
         working-directory: locale
