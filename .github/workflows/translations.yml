@@ -16,13 +16,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup dependencies
-        id: setup-dependencies
-        uses: ./.github/actions/setup-dependencies
+      - name: Install host dependencies
+        shell: bash
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install \
+            gettext
+
+      - name: Install Qt
+        if: ${{ inputs.msystem == '' }}
+        uses: jurplel/install-qt-action@v4
         with:
-          build-type: "Release"
-          artifact-name: "Linux"
-          qt-version: "6.10.2"
+          aqtversion: "==3.1.*"
+          version: 6.10.2
+          modules: qtimageformats qtnetworkauth
+          archive: qtbase qttools
+          cache: Release
 
       - name: Build translations
         working-directory: locale
