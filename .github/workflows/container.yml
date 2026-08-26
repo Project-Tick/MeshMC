@@ -63,7 +63,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=latest,enable=${{ github.event.merge_group.base_ref == 'refs/heads/develop' }}
+            type=raw,value=latest,enable=${{ github.event.merge_group.base_ref == 'refs/heads/master' }}
 
             type=sha
             type=sha,format=long
@@ -149,7 +149,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=latest,enable=${{ github.event.merge_group.base_ref == 'refs/heads/develop' }}
+            type=raw,value=latest,enable=${{ github.event.merge_group.base_ref == 'refs/heads/master' }}
 
             type=sha
             type=sha,format=long
