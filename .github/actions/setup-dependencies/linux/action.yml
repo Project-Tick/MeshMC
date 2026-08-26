@@ -12,8 +12,10 @@ runs:
         sudo apt-get -y install \
           dpkg-dev \
           ninja-build extra-cmake-modules pkg-config scdoc \
-          cmark gamemode-dev libarchive-dev libcmark-dev libqrencode-dev zlib1g-dev \
-          libxcb-cursor-dev libtomlplusplus-dev libvulkan-dev
+          gamemode-dev libarchive-dev libqrencode-dev \
+          libxcb-cursor-dev libtomlplusplus-dev libvulkan-dev \
+          libgpg-error-dev libassuan-dev libksba-dev \
+          libnpth0-dev libbotan-2-dev autoconf automake libtool gettext
 
     - name: Setup AppImage tooling
       shell: bash

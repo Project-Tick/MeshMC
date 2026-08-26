@@ -41,7 +41,7 @@ bool GZip::unzip(const QByteArray& compressedBytes,
 
 	z_stream strm;
 	memset(&strm, 0, sizeof(strm));
-	strm.next_in = (const uint8_t*)compressedBytes.data();
+	strm.next_in = (uint8_t*)compressedBytes.data();
 	strm.avail_in = compressedBytes.size();
 
 	bool done = false;
@@ -99,7 +99,8 @@ bool GZip::zip(const QByteArray& uncompressedBytes, QByteArray& compressedBytes)
 		return false;
 	}
 
-	zs.next_in = (const uint8_t*)uncompressedBytes.data();
+	// See the note on next_in in unzip() above.
+	zs.next_in = (uint8_t*)uncompressedBytes.data();
 	zs.avail_in = uncompressedBytes.size();
 
 	int ret;

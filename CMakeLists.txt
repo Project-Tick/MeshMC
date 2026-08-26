@@ -533,7 +533,7 @@ set(MeshMC_ANALYTICS_ID "G-91XWT2Q4LY" CACHE STRING "ID you can get from Google 
 set(MeshMC_ANALYTICS_SECRET "_EG4lDmVT-S1oGiOIwvzPA" CACHE STRING "API secret for Google Analytics 4 Measurement Protocol")
 
 # Bug tracker URL
-set(MeshMC_BUG_TRACKER_URL "https://projecttick.org/project-tick/projects/meshmc/-/work_items/" CACHE STRING "URL for the bug tracker.")
+set(MeshMC_BUG_TRACKER_URL "https://github.com/Project-Tick/MeshMC/issues" CACHE STRING "URL for the bug tracker.")
 
 # Discord URL
 set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
@@ -542,8 +542,8 @@ set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
 set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
 
 # Feature flags
-set(MeshMC_UNLEASH_URL "https://projecttick.org/api/v4/feature_flags/unleash/47" CACHE STRING "GitLab Unleash-compatible feature flags endpoint.")
-set(MeshMC_UNLEASH_INSTANCE_ID "glffct-SxjZxptKF2f91a1SK6kz" CACHE STRING "Unleash instance id. Set this to enable runtime feature flags.")
+set(MeshMC_UNLEASH_URL "" CACHE STRING "GitLab Unleash-compatible feature flags endpoint.")
+set(MeshMC_UNLEASH_INSTANCE_ID "" CACHE STRING "Unleash instance id. Set this to enable runtime feature flags.")
 set(MeshMC_UNLEASH_APP_NAME "" CACHE STRING "Unleash application name / environment (UNLEASH-APPNAME). Must match the flag's environment spec, e.g. 'production'.")
 
 ######## Fourthly, please define MeshMC attributes ########
@@ -558,7 +558,7 @@ set(MeshMC_Name "${MeshMC_CommonName}")
 set(MeshMC_DisplayName "${MeshMC_CommonName}")
 set(MeshMC_UserAgent "${MeshMC_CommonName}/${MeshMC_RELEASE_TWO_NAME}")
 set(MeshMC_ConfigFile "meshmc.cfg")
-set(MeshMC_Git "https://projecttick.org/project-tick/projects/meshmc")
+set(MeshMC_Git "https://github.com/Project-Tick/MeshMC")
 set(MeshMC_Authors "Copyright (C) 2026 Project Tick <https://projecttick.org>, All rights reserved. This Project Licensed under GNU GENERAL PUBLIC LICENSE, either version 3 of the License, or any later version. ")
 
 ######## Lastly, configure placeholders

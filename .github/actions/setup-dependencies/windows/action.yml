@@ -24,7 +24,6 @@ runs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: ${{ inputs.vcvars-arch }}
-        vsversion: 2022
 
     - name: Setup Java (MSVC)
       uses: actions/setup-java@v5
@@ -34,31 +33,11 @@ runs:
         distribution: zulu
         java-version: 17
 
-    - name: Setup vcpkg cache (MSVC)
-      if: ${{ inputs.msystem == '' && inputs.build-type == 'Debug' }}
-      shell: pwsh
-      env:
-        USERNAME: ${{ github.repository_owner }}
-        GITHUB_TOKEN: ${{ github.token }}
-        FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      run: |
-        .$(vcpkg fetch nuget) `
-          sources add `
-          -Source "$env:FEED_URL" `
-          -StorePasswordInClearText `
-          -Name GitHubPackages `
-          -UserName "$env:USERNAME" `
-          -Password "$env:GITHUB_TOKEN"
-        .$(vcpkg fetch nuget) `
-          setapikey "$env:GITHUB_TOKEN" `
-          -Source "$env:FEED_URL"
-        "VCPKG_BINARY_SOURCES=clear;nuget,$env:FEED_URL,readwrite" | Out-File -Append $env:GITHUB_ENV
-
-    - name: Setup vcpkg environment (MSVC)
+    - name: Install system dependencies (MSVC)
       if: ${{ inputs.msystem == '' }}
-      shell: bash
+      shell: pwsh
       run: |
-        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> "$GITHUB_ENV"
+        choco install pkgconfiglite -y --allow-empty-checksums
 
     - name: Setup MSYS2 (MinGW)
       if: ${{ inputs.msystem != '' }}
@@ -82,6 +61,7 @@ runs:
           qrencode:p
           tomlplusplus:p
           libarchive:p
+          gpgme:p
 
     - name: List pacman packages (MinGW)
       if: ${{ inputs.msystem != '' }}

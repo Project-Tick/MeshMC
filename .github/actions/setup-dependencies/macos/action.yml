@@ -14,7 +14,8 @@ runs:
       shell: bash
       run: |
         brew update
-        brew install ninja extra-cmake-modules temurin@17 mono
+        brew install ninja extra-cmake-modules temurin@17 autoconf pkg-config \
+        gpgme gpgmepp
 
     - name: Set JAVA_HOME
       shell: bash

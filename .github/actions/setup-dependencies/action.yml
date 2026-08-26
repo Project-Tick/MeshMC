@@ -79,3 +79,91 @@ runs:
         version: ${{ inputs.qt-version }}
         modules: qtimageformats qtnetworkauth
         cache: ${{ inputs.build-type == 'Debug' }}
+
+   - name: Build GPGME + GPGME++ + QGpgME from source
+      if: ${{ runner.os == 'Linux' && inputs.msystem == '' }}
+      shell: bash
+      env:
+        GPGME_VERSION:   "2.0.0"
+        GPGMEPP_VERSION: "2.0.0"
+        QGPGME_VERSION:  "2.0.0"
+      run: |
+        set -euo pipefail
+
+        qt_root_dir="${QT_ROOT_DIR:-}"
+        qt6_dir="${Qt6_DIR:-}"
+        qmake6_bin=""
+        for candidate in \
+          "${qt_root_dir:+$qt_root_dir/bin/qmake6}" \
+          "${qt6_dir:+$qt6_dir/../../../bin/qmake6}"; do
+          if [[ -n "$candidate" && -x "$candidate" ]]; then
+            qmake6_bin="$candidate"
+            break
+          fi
+        done
+        if [[ -z "$qmake6_bin" ]]; then
+          qmake6_bin="$(command -v qmake6 || true)"
+        fi
+        if [[ -z "$qmake6_bin" ]]; then
+          echo "::error::Could not locate qmake6 from the aqt-installed Qt."
+          echo "QT_ROOT_DIR=$qt_root_dir Qt6_DIR=$qt6_dir PATH=$PATH"
+          exit 1
+        fi
+        echo "Using qmake6 at: $qmake6_bin"
+        export PATH="$(dirname "$qmake6_bin"):$PATH"
+
+        qt6_cmake_dir="${qt_root_dir:-${qt6_dir:+$(dirname "$qt6_dir")/Qt6}}"
+        echo "Qt6 CMake dir hint: $qt6_cmake_dir"
+
+        build_root="$(mktemp -d)"
+
+        cd "$build_root"
+        curl -fsSLO \
+          "https://www.gnupg.org/ftp/gcrypt/gpgme/gpgme-${GPGME_VERSION}.tar.bz2"
+        tar xjf "gpgme-${GPGME_VERSION}.tar.bz2"
+        pushd "gpgme-${GPGME_VERSION}"
+          ./configure \
+            --prefix=/usr/local \
+            --disable-gpg-test \
+            --disable-gpgsm-test \
+            --disable-g13-test
+          make -j"$(nproc)"
+          sudo make install
+        popd
+        sudo ldconfig
+
+        export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+        export CMAKE_PREFIX_PATH="/usr/local${qt6_cmake_dir:+:$qt6_cmake_dir}${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+
+        cd "$build_root"
+        curl -fsSLO \
+          "https://www.gnupg.org/ftp/gcrypt/gpgmepp/gpgmepp-${GPGMEPP_VERSION}.tar.xz"
+        tar xJf "gpgmepp-${GPGMEPP_VERSION}.tar.xz"
+        pushd "gpgmepp-${GPGMEPP_VERSION}"
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr/local \
+            -DBUILD_TESTING=OFF
+          cmake --build build --parallel "$(nproc)"
+          sudo cmake --install build
+        popd
+        sudo ldconfig
+
+        cd "$build_root"
+        curl -fsSLO \
+          "https://www.gnupg.org/ftp/gcrypt/qgpgme/qgpgme-${QGPGME_VERSION}.tar.xz"
+        tar xJf "qgpgme-${QGPGME_VERSION}.tar.xz"
+        pushd "qgpgme-${QGPGME_VERSION}"
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr/local \
+            -DBUILD_WITH_QT5=OFF \
+            -DBUILD_WITH_QT6=ON \
+            -DBUILD_TESTING=OFF
+          cmake --build build --parallel "$(nproc)"
+          sudo cmake --install build
+        popd
+        sudo ldconfig
+
+        echo "CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH" >> "$GITHUB_ENV"
+        echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"    >> "$GITHUB_ENV"
