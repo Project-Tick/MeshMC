@@ -38,13 +38,12 @@ jobs:
         run: ./release.sh
 
       - name: Move directory
-        working-directory: locale
         run: |
-          mv build _site
+          mv locale/build _site
           cp .github/CNAME _site/CNAME
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
-          publish_dir: ./locale/_site
+          publish_dir: ./_site
           github_token: ${{ secrets.GITHUB_TOKEN }}
