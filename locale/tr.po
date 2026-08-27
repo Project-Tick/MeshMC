@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2026-08-26 20:38\n"
+"PO-Revision-Date: 2026-08-27 13:44\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:127
 msgctxt "ATLauncher::PackInstallTask|"
@@ -141,7 +141,7 @@ msgstr "<html><head/><body><p>Tek seferde Minecraft'ın birden fazla profiline s
 #: launcher/ui/dialogs/AboutDialog.ui:173
 msgctxt "AboutDialog|"
 msgid "Platform:"
-msgstr ""
+msgstr "Platform:"
 
 #: launcher/ui/dialogs/AboutDialog.ui:189
 msgctxt "AboutDialog|"
@@ -151,7 +151,7 @@ msgstr "Derleme tarihi:"
 #: launcher/ui/dialogs/AboutDialog.ui:205
 msgctxt "AboutDialog|"
 msgid "Commit:"
-msgstr ""
+msgstr "Revizyon:"
 
 #: launcher/ui/dialogs/AboutDialog.ui:221
 msgctxt "AboutDialog|"
@@ -187,13 +187,13 @@ msgstr "%1 Hakkında"
 #: launcher/ui/dialogs/AboutDialog.cpp:113
 msgctxt "AboutDialog|"
 msgid "Platform"
-msgstr ""
+msgstr "Platform"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:119
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Commit: %1"
-msgstr ""
+msgstr "Revizyon: %1"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:125
 #, qt-format
@@ -468,7 +468,7 @@ msgstr "Kimlik doğrulama başarısız. Hesap artık yok."
 #: launcher/minecraft/auth/AccountTask.cpp:79
 msgctxt "AccountTask|"
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #: launcher/minecraft/auth/AccountTask.cpp:127
 #, qt-format
@@ -637,7 +637,7 @@ msgstr "Sürüm listesi yüklenemedi veya indirilemedi!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:73
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr ""
+msgstr "ATLauncher"
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:45
 msgctxt "AuthFlow|"
@@ -877,7 +877,7 @@ msgstr "Profilleyici iptal edildi"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:64
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr ""
+msgstr "<b>Mod</b>"
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:65
 msgctxt "BlockedModsDialog|"
@@ -1013,13 +1013,13 @@ msgstr "Tam loglar"
 #: crashreporter/CrashReportDialog.cpp:100
 msgctxt "CrashReportDialog|"
 msgid "Paste.ee Log"
-msgstr ""
+msgstr "Paste.ee Log'u"
 
 #: crashreporter/CrashReportDialog.cpp:111
 #, qt-format
 msgctxt "CrashReportDialog|"
 msgid "Paste.ee link: <a href=\"%1\">%1</a>"
-msgstr ""
+msgstr "Paste.ee link'i: <a href=\"%1\">%1</a>"
 
 #: crashreporter/CrashReportDialog.cpp:121
 msgctxt "CrashReportDialog|"
@@ -1099,7 +1099,7 @@ msgstr "Oyun çöktü."
 #, qt-format
 msgctxt "DownloadContentDialog|"
 msgid "Already installed (%1)"
-msgstr ""
+msgstr "Zaten yüklü (%1)"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:151
 #, qt-format
@@ -1110,12 +1110,12 @@ msgstr "%1 İndiriliyor"
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:161
 msgctxt "DownloadContentDialog|"
 msgid "CurseForge"
-msgstr ""
+msgstr "CurseForge"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:162
 msgctxt "DownloadContentDialog|"
 msgid "Modrinth"
-msgstr ""
+msgstr "Modrinth"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:170
 msgctxt "DownloadContentDialog|"
@@ -1216,13 +1216,13 @@ msgstr "Seçilen"
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:129
 msgctxt "DownloadSummaryDialog|"
 msgid "CurseForge"
-msgstr ""
+msgstr "CurseForge"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:120
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:130
 msgctxt "DownloadSummaryDialog|"
 msgid "Modrinth"
-msgstr ""
+msgstr "Modrinth"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:128
 msgctxt "DownloadSummaryDialog|"
