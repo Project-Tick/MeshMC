@@ -858,22 +858,7 @@ set(MeshMC_Branding_WindowsRC "branding/${MeshMC_AppBinaryName}.rc")
 set(MeshMC_Branding_LogoQRC "branding/${MeshMC_AppBinaryName}.qrc")
 
 configure_file(branding/${MeshMC_AppID}.desktop.in ${MeshMC_AppID}.desktop)
-
-# The AppStream <releases> block in the metainfo file is generated from
-# CHANGELOG.md (the single source of truth) at configure time, so the release
-# history is never maintained by hand in two places. This is done in pure CMake
-# (no Python or shell dependency) so it behaves identically across GitLab CI,
-# the Flatpak/KDE SDK sandbox, the Nix sandbox, vcpkg/Windows and macOS.
-# Re-run configure whenever the changelog changes.
-set(MeshMC_Changelog "${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG.md")
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${MeshMC_Changelog}")
-
-include(GenerateMetainfoReleases)
-meshmc_generate_metainfo_releases(
-    CHANGELOG "${MeshMC_Changelog}"
-    OUTPUT_VARIABLE MeshMC_METAINFO_RELEASES)
-
-configure_file(branding/${MeshMC_AppID}.metainfo.xml.in ${MeshMC_AppID}.metainfo.xml @ONLY)
+configure_file(branding/${MeshMC_AppID}.metainfo.xml.in ${MeshMC_AppID}.metainfo.xml)
 configure_file(branding/${MeshMC_AppBinaryName}.rc.in ${MeshMC_AppBinaryName}.rc @ONLY)
 configure_file(branding/${MeshMC_AppBinaryName}.qrc.in ${MeshMC_AppBinaryName}.qrc @ONLY)
 configure_file(branding/${MeshMC_CommonName}.manifest.in ${MeshMC_AppBinaryName}.manifest @ONLY)
