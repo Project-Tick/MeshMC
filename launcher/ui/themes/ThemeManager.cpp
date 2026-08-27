@@ -108,6 +108,7 @@ void ThemeManager::setApplicationTheme(const QString& id, bool initial)
 void ThemeManager::setIconTheme(const QString& name)
 {
 	XdgIcon::setThemeName(name);
+	QIcon::setFallbackThemeName(name);
 }
 
 void ThemeManager::applyCurrentlySelectedTheme(bool initial)

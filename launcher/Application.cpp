@@ -1105,6 +1105,7 @@ void Application::initSubsystems()
 		// TODO: icon themes and instance icons do not mesh well together.
 		// Rearrange and fix discrepancies! set icon theme search path!
 		auto searchPaths = QIcon::themeSearchPaths();
+		searchPaths.prepend(QStringLiteral(":/icons"));
 		searchPaths.append("iconthemes");
 		QIcon::setThemeSearchPaths(searchPaths);
 		qDebug() << "<> Icon themes initialized.";
