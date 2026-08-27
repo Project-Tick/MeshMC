@@ -1811,6 +1811,9 @@ MainWindow* Application::showMainWindow(bool minimized)
 	if (m_mainWindow) {
 		m_mainWindow->setWindowState(m_mainWindow->windowState() &
 									 ~Qt::WindowMinimized);
+		if (!m_mainWindow->isVisible()) {
+			m_mainWindow->show();
+		}
 		m_mainWindow->raise();
 		m_mainWindow->activateWindow();
 	} else {
