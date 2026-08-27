@@ -17,9 +17,11 @@
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
 
 #include <QComboBox>
+#include <QImage>
+#include <QImageWriter>
 #include <QStandardPaths>
 
-MMCO_DEFINE_MODULE("Filelink", "2.1.0", "Project Tick",
+MMCO_DEFINE_MODULE("Filelink", "3.0.0", "Project Tick",
 				   "Create desktop shortcuts for instances",
 				   "GPL-3.0-or-later");
 
@@ -81,6 +83,113 @@ static QString currentSelectedInstanceId()
 	return selected ? QString::fromUtf8(selected) : QString();
 }
 
+/* A Qt resource path exists as far as QFileInfo is concerned, which is why
+ * merely checking for existence used to let ":/icons/..." through to the
+ * Windows shell, where it renders nothing. */
+static bool isUsableIconFile(const QString& path)
+{
+	if (path.isEmpty() || path.startsWith(QLatin1Char(':')) ||
+		path.startsWith(QLatin1String("qrc:")))
+		return false;
+	return QFileInfo(path).isFile();
+}
+
+#ifdef Q_OS_WIN
+/* IShellLink::SetIconLocation only understands .ico files (or an
+ * exe/dll/icl icon resource). Handing it a .png makes Explorer silently
+ * fall back to the target's own icon, which is exactly what "the icon
+ * does not show" looked like. Qt's ICO plugin can write one, so convert. */
+static bool writeIcoFromImageFile(const QString& sourcePath,
+								  const QString& icoPath)
+{
+	const QImage image(sourcePath);
+	if (image.isNull())
+		return false;
+
+	QImageWriter writer(icoPath, "ico");
+	if (!writer.canWrite())
+		return false;
+
+	return writer.write(image.convertToFormat(QImage::Format_ARGB32));
+}
+#endif
+
+/* Where we materialise icons the launcher only knows as theme entries. */
+static QString iconCacheDir()
+{
+	QString dataRoot =
+		QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+	if (dataRoot.isEmpty())
+		dataRoot = QDir::tempPath();
+	const QString dir =
+		QDir(dataRoot).filePath(QStringLiteral("filelink-shortcut-icons"));
+	return QDir().mkpath(dir) ? dir : QString();
+}
+
+static QString sanitizeIconKey(const QString& key)
+{
+	QString safeKey = key;
+	safeKey.replace(QRegularExpression(R"([^A-Za-z0-9_.-])"), "_");
+	return safeKey.isEmpty() ? QStringLiteral("default") : safeKey;
+}
+
+/* Ask the launcher to render its icon for `key` into our cache as a PNG.
+ * This is the only way to get at a built-in icon: those have no file on
+ * disk, the launcher resolves them through its own icon theme. */
+static QString materialiseIconPng(const QString& key)
+{
+	if (!g_ctx || key.isEmpty())
+		return {};
+
+	const QString dir = iconCacheDir();
+	if (dir.isEmpty())
+		return {};
+
+	const QString pngPath =
+		QDir(dir).filePath(sanitizeIconKey(key) + QStringLiteral(".png"));
+	const QByteArray keyUtf8 = key.toUtf8();
+	const QByteArray destUtf8 = pngPath.toUtf8();
+	if (g_ctx->icon_list_save_png(g_ctx->module_handle, keyUtf8.constData(),
+								  destUtf8.constData()) != 0)
+		return {};
+	return QFileInfo::exists(pngPath) ? pngPath : QString();
+}
+
+/* Icon for a launcher icon key, for use inside our own dialog.
+ *
+ * QIcon::fromTheme() cannot be trusted here: the launcher draws built-in
+ * icons through XdgIcon and only ever calls XdgIcon::setThemeName(), so Qt's
+ * own theme name is never set. On Windows, where no platform theme fills it
+ * in, QIcon::fromTheme() returns a null icon and every built-in entry
+ * rendered as a blank row. Go through the host instead, and keep fromTheme()
+ * only as a last resort for Linux desktops. */
+static QIcon iconForKey(const QString& key)
+{
+	if (!g_ctx || key.isEmpty())
+		return {};
+
+	const char* pathC = g_ctx->icon_list_get_file_path(
+		g_ctx->module_handle, key.toUtf8().constData());
+	/* Copy immediately: the host hands out a pointer into a single scratch
+	 * buffer that the next ABI call overwrites. */
+	const QString filePath = pathC ? QString::fromUtf8(pathC) : QString();
+	if (!filePath.isEmpty()) {
+		/* QIcon copes with real files and ":/..." resources alike. */
+		QIcon icon(filePath);
+		if (!icon.isNull())
+			return icon;
+	}
+
+	const QString pngPath = materialiseIconPng(key);
+	if (!pngPath.isEmpty()) {
+		QIcon icon(pngPath);
+		if (!icon.isNull())
+			return icon;
+	}
+
+	return QIcon::fromTheme(key);
+}
+
 static QString resolveShortcutIconPath(const QString& iconKey)
 {
 	if (!g_ctx)
@@ -88,36 +197,55 @@ static QString resolveShortcutIconPath(const QString& iconKey)
 
 	const QString effectiveKey =
 		iconKey.isEmpty() ? QStringLiteral("default") : iconKey;
-	const QByteArray keyUtf8 = effectiveKey.toUtf8();
 
-	/* Prefer the on-disk path the launcher already keeps for the
-	 * icon (custom user icons live as files; built-ins resolve to a
-	 * Qt resource path which Windows .lnk can't reference). */
-	const char* existing = g_ctx->icon_list_get_file_path(g_ctx->module_handle,
-														  keyUtf8.constData());
-	if (existing && *existing && QFileInfo::exists(QString::fromUtf8(existing)))
-		return QString::fromUtf8(existing);
+	/* Prefer the on-disk path the launcher already keeps for the icon.
+	 * Custom user icons live as files; built-in ones have no file at all
+	 * (they are resolved through the icon theme), so this is empty for them. */
+	const char* existing = g_ctx->icon_list_get_file_path(
+		g_ctx->module_handle, effectiveKey.toUtf8().constData());
+	const QString existingPath =
+		existing ? QString::fromUtf8(existing) : QString();
+#ifdef Q_OS_WIN
+	/* A user icon is typically a .png, which the shell cannot use, so only
+	 * an actual .ico may be referenced directly. */
+	if (isUsableIconFile(existingPath) &&
+		existingPath.endsWith(QLatin1String(".ico"), Qt::CaseInsensitive))
+		return existingPath;
+#else
+	if (isUsableIconFile(existingPath))
+		return existingPath;
+#endif
 
-	/* Fall back to materialising the icon as a PNG under our own
-	 * data dir so the shortcut has a real file to reference. */
-	QString dataRoot =
-		QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-	if (dataRoot.isEmpty())
-		dataRoot = QDir::tempPath();
-	QString iconDir =
-		QDir(dataRoot).filePath(QStringLiteral("filelink-shortcut-icons"));
-	if (!QDir().mkpath(iconDir))
+	/* Otherwise have the launcher render it into our cache so the shortcut
+	 * has a real file to reference. */
+	const QString exportedPath = materialiseIconPng(effectiveKey);
+	if (exportedPath.isEmpty()) {
+		const QByteArray msg =
+			QStringLiteral("Could not materialise icon '%1'; the shortcut will "
+						   "have no icon.")
+				.arg(effectiveKey)
+				.toUtf8();
+		MMCO_LOG(g_ctx, msg.constData());
 		return {};
-	QString safeKey = effectiveKey;
-	safeKey.replace(QRegularExpression(R"([^A-Za-z0-9_.-])"), "_");
-	if (safeKey.isEmpty())
-		safeKey = QStringLiteral("default");
-	QString exportedPath =
-		QDir(iconDir).filePath(safeKey + QStringLiteral(".png"));
-	const QByteArray destUtf8 = exportedPath.toUtf8();
-	g_ctx->icon_list_save_png(g_ctx->module_handle, keyUtf8.constData(),
-							  destUtf8.constData());
-	return QFileInfo::exists(exportedPath) ? exportedPath : QString();
+	}
+
+#ifdef Q_OS_WIN
+	const QString icoPath =
+		QDir(iconCacheDir())
+			.filePath(sanitizeIconKey(effectiveKey) + QStringLiteral(".ico"));
+	if (!writeIcoFromImageFile(exportedPath, icoPath)) {
+		const QByteArray msg =
+			QStringLiteral("Could not convert icon '%1' to .ico; the shortcut "
+						   "will have no icon.")
+				.arg(effectiveKey)
+				.toUtf8();
+		MMCO_LOG(g_ctx, msg.constData());
+		return {};
+	}
+	return icoPath;
+#else
+	return exportedPath;
+#endif
 }
 
 static QString desktopExecQuote(QString argument)
@@ -208,7 +336,10 @@ static bool createShortcut(const QString& instanceId,
 
 	psl->SetDescription(reinterpret_cast<LPCWSTR>(description.utf16()));
 	if (!iconPath.isEmpty()) {
-		psl->SetIconLocation(reinterpret_cast<LPCWSTR>(iconPath.utf16()), 0);
+		/* The shell expects a native path; Qt hands out '/' separators. */
+		const QString nativeIconPath = QDir::toNativeSeparators(iconPath);
+		psl->SetIconLocation(reinterpret_cast<LPCWSTR>(nativeIconPath.utf16()),
+							 0);
 	}
 
 	IPersistFile* ppf = nullptr;
@@ -355,14 +486,8 @@ static void showFilelinkDialog(const QString& preselectedId = {})
 		// glyph.
 		QString iconKey = g_ctx->instance_get_icon_key(g_ctx->module_handle,
 													   qPrintable(instIds[i]));
-		if (!iconKey.isEmpty()) {
-			const char* path = g_ctx->icon_list_get_file_path(
-				g_ctx->module_handle, iconKey.toUtf8().constData());
-			if (path && *path)
-				item->setIcon(0, QIcon(QString::fromUtf8(path)));
-			else
-				item->setIcon(0, QIcon::fromTheme(iconKey));
-		}
+		if (!iconKey.isEmpty())
+			item->setIcon(0, iconForKey(iconKey));
 	}
 	if (instTree->topLevelItemCount() > 0) {
 		// Pre-select the requested instance, or fall back to the first
@@ -445,31 +570,24 @@ static void showFilelinkDialog(const QString& preselectedId = {})
 	iconTree->setIconSize(QSize(32, 32));
 	iconTree->setMaximumHeight(180);
 
-	// Populate the icon picker via the icon list C ABI. We can't
-	// reach IconList's QIcon directly any more (would need a QIcon
-	// handle through the ABI), so we resolve each entry's on-disk
-	// path and build a QIcon from that. For built-in icons whose
-	// path is a Qt resource (":/..."), QIcon(QString) DTRT.
-	QString selectedIconKey;
+	// Populate the icon picker via the icon list C ABI. We cannot reach
+	// IconList's QIcon directly (that would need an icon handle through the
+	// ABI), so iconForKey() resolves each entry through the host.
 	const int iconTotal = g_ctx->icon_list_count(g_ctx->module_handle);
 	for (int i = 0; i < iconTotal; i++) {
+		// Each of these returns a pointer into one shared scratch buffer in
+		// the host, so the value has to be copied out before the next call —
+		// holding both pointers at once would read the same string twice.
 		const char* keyC = g_ctx->icon_list_get_key(g_ctx->module_handle, i);
-		const char* nameC = g_ctx->icon_list_get_name(g_ctx->module_handle, i);
 		const QString key = keyC ? QString::fromUtf8(keyC) : QString();
+		const char* nameC = g_ctx->icon_list_get_name(g_ctx->module_handle, i);
 		const QString name = nameC ? QString::fromUtf8(nameC) : QString();
-		QIcon ico;
-		if (!key.isEmpty()) {
-			const char* pathC = g_ctx->icon_list_get_file_path(
-				g_ctx->module_handle, key.toUtf8().constData());
-			if (pathC && *pathC)
-				ico = QIcon(QString::fromUtf8(pathC));
-			if (ico.isNull())
-				ico = QIcon::fromTheme(key);
-		}
+		if (key.isEmpty())
+			continue;
 
 		auto* item = new QTreeWidgetItem(iconTree);
 		item->setText(0, name.isEmpty() ? key : name);
-		item->setIcon(0, ico);
+		item->setIcon(0, iconForKey(key));
 		item->setData(0, Qt::UserRole, key);
 	}
 	iconLayout->addWidget(iconTree);
