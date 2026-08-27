@@ -8,12 +8,12 @@ msgstr ""
 "X-Crowdin-Project: projtlauncher\n"
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: lv\n"
-"X-Crowdin-File: /[Project-Tick.MeshMC-Translations] master/template.pot\n"
-"X-Crowdin-File-ID: 80\n"
+"X-Crowdin-File: /[Project-Tick.MeshMC] master/locale/template.pot\n"
+"X-Crowdin-File-ID: 87\n"
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Latvian\n"
 "Language: lv_LV\n"
-"PO-Revision-Date: 2026-07-17 20:40\n"
+"PO-Revision-Date: 2026-08-26 20:39\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:127
 msgctxt "ATLauncher::PackInstallTask|"
@@ -473,143 +473,6 @@ msgctxt "AccountTask|"
 msgid "Unknown account task state: %1"
 msgstr "Nezināms konta stāvoklis: %1"
 
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:49
-msgctxt "AnalysisPage|"
-msgid "Severity"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:49
-msgctxt "AnalysisPage|"
-msgid "Title"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:49
-msgctxt "AnalysisPage|"
-msgid "Line"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:49
-msgctxt "AnalysisPage|"
-msgid "Score"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:66
-msgctxt "AnalysisPage|"
-msgid "Re-analyse"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:72
-msgctxt "AnalysisPage|"
-msgid "✓ This fixed it"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:77
-msgctxt "AnalysisPage|"
-msgid "✗ Didn't help"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:83
-msgctxt "AnalysisPage|"
-msgid "Promote unknown error → rule…"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:86
-msgctxt "AnalysisPage|"
-msgid "If no rule matched but the same crash signature has appeared more than once, you can teach ErrorOracle about it by writing a custom title + advice."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:151
-msgctxt "AnalysisPage|"
-msgid "(no logs found)"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:154
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Analysed: <b>%1</b>. %2 rule match(es). Crash signature: <code>%3</code>"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:158
-msgctxt "AnalysisPage|"
-msgid "(no stack trace)"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:163
-msgctxt "AnalysisPage|"
-msgid "### No matching rules\n\n"
-"Either the instance ran cleanly or the crash isn't in ErrorOracle's rule pack yet. If the same signature shows up more than once you can promote it into a rule using the button below.\n"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:210
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Recorded: rule <b>%1</b> helped on this instance."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:223
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Recorded: rule <b>%1</b> did not help."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:232
-msgctxt "AnalysisPage|"
-msgid "Promote crash signature to a user rule"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:235
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Signature: <code>%1</code>"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:236
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Sample: <code>%1</code>"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:240
-msgctxt "AnalysisPage|"
-msgid "Short title (one sentence)"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:245
-msgctxt "AnalysisPage|"
-msgid "Regex pattern (leave blank to derive from the sample line)"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:249
-msgctxt "AnalysisPage|"
-msgid "Remediation advice in Markdown"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:254
-msgctxt "AnalysisPage|"
-msgid "Save"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:255
-msgctxt "AnalysisPage|"
-msgid "Cancel"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:291
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:319
-msgctxt "AnalysisPage|"
-msgid "ErrorOracle"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:292
-msgctxt "AnalysisPage|"
-msgid "Could not write user rule file."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:320
-msgctxt "AnalysisPage|"
-msgid "Saved user rule. Click <b>Re-analyse</b> to load it."
-msgstr ""
-
 #: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:69
 msgctxt "AnalyticsWizardPage|"
 msgid "Analytics"
@@ -659,220 +522,6 @@ msgstr ""
 msgctxt "Application|"
 msgid "Settings"
 msgstr "Iestatījumi"
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:31
-msgctxt "ApplyProgressDialog|"
-msgid "Apply Pack Update"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:62
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "Updating %1 → %2"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:69
-msgctxt "ApplyProgressDialog|"
-msgid "Preparing…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:85
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:214
-msgctxt "ApplyProgressDialog|"
-msgid "Apply"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:87
-msgctxt "ApplyProgressDialog|"
-msgid "Cancel"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:127
-msgctxt "ApplyProgressDialog|"
-msgid "Downloading new pack manifest…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:137
-msgctxt "ApplyProgressDialog|"
-msgid "Could not download or parse the new pack."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:149
-msgctxt "ApplyProgressDialog|"
-msgid "Comparing installed mods against the new pack…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:153
-msgctxt "ApplyProgressDialog|"
-msgid "Could not build update plan."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:185
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "Files:  %1 added, %2 replaced, %3 removed\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:190
-msgctxt "ApplyProgressDialog|"
-msgid "\n"
-"Loader / Minecraft version changes:\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:194
-msgctxt "ApplyProgressDialog|"
-msgid "\n"
-"You'll be asked once more before these are written.\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:197
-msgctxt "ApplyProgressDialog|"
-msgid "\n"
-"A full backup will be taken before any changes.\n\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:198
-msgctxt "ApplyProgressDialog|"
-msgid "Per-file detail:\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:205
-msgctxt "ApplyProgressDialog|"
-msgid "Nothing to apply — the instance already matches the new pack."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:207
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:621
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:635
-msgctxt "ApplyProgressDialog|"
-msgid "Close"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:213
-msgctxt "ApplyProgressDialog|"
-msgid "Review the plan, then click Apply to proceed."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:221
-msgctxt "ApplyProgressDialog|"
-msgid "Backing up instance…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:233
-msgctxt "ApplyProgressDialog|"
-msgid "This launcher build is missing zip compress support."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:240
-msgctxt "ApplyProgressDialog|"
-msgid "Backup failed (zip_compress_dir returned an error)."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:296
-msgctxt "ApplyProgressDialog|"
-msgid "Applying mod / pack file changes…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:301
-msgctxt "ApplyProgressDialog|"
-msgid "Mod-management API unavailable on this launcher."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:483
-msgctxt "ApplyProgressDialog|"
-msgid "Could not queue downloads."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:509
-msgctxt "ApplyProgressDialog|"
-msgid "Extracting overrides (configs, scripts)…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:578
-msgctxt "ApplyProgressDialog|"
-msgid "Confirm loader / Minecraft changes"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:579
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "The new pack wants these component versions:\n\n"
-"%1\n"
-"Apply now? You already have a backup."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:602
-msgctxt "ApplyProgressDialog|"
-msgid "Saving pack metadata…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:618
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "<b style='color:#66aa66'>Update applied.</b> Backup kept at <code>%1</code>."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:631
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "<b style='color:#cc6666'>Failed:</b> %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:632
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:646
-msgctxt "ApplyProgressDialog|"
-msgid "Restore from backup"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:641
-msgctxt "ApplyProgressDialog|"
-msgid "No backup"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:642
-msgctxt "ApplyProgressDialog|"
-msgid "There's no backup to restore from."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:647
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "Replace the current instance contents with the pre-update backup at:\n\n"
-"%1\n\n"
-"This cannot be undone."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:655
-msgctxt "ApplyProgressDialog|"
-msgid "No extractor"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:656
-msgctxt "ApplyProgressDialog|"
-msgid "zip_extract API unavailable."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:669
-msgctxt "ApplyProgressDialog|"
-msgid "Restore failed"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:670
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "zip_extract returned an error. The backup zip is at:\n"
-"%1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:675
-msgctxt "ApplyProgressDialog|"
-msgid "Restored"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:676
-msgctxt "ApplyProgressDialog|"
-msgid "Instance restored from backup."
-msgstr ""
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:44
 msgctxt "AssetUpdateTask|"
@@ -985,123 +634,6 @@ msgstr "Neizdevās ielādēt vai lejupielādēt versijas sarakstu!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:73
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:58
-msgctxt "AttachDialog|"
-msgid "Attach to Modpack"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:78
-msgctxt "AttachDialog|"
-msgid "Modrinth"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:79
-msgctxt "AttachDialog|"
-msgid "CurseForge"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:81
-msgctxt "AttachDialog|"
-msgid "Source:"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:91
-msgctxt "AttachDialog|"
-msgid "Type pack name or slug…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:105
-msgctxt "AttachDialog|"
-msgid "Version installed in this instance:"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:119
-msgctxt "AttachDialog|"
-msgid "Attach"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:184
-msgctxt "AttachDialog|"
-msgid "Searching…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:208
-msgctxt "AttachDialog|"
-msgid "Could not queue Modrinth request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:217
-msgctxt "AttachDialog|"
-msgid "This build has no CurseForge API key configured."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:222
-msgctxt "AttachDialog|"
-msgid "Host launcher too old: http_get_with_headers is required."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:244
-msgctxt "AttachDialog|"
-msgid "Could not queue CurseForge request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:269
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "Loading versions for %1…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:287
-msgctxt "AttachDialog|"
-msgid "Could not queue Modrinth versions request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:307
-msgctxt "AttachDialog|"
-msgid "Could not queue CurseForge files request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:324
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "HTTP %1 from upstream"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:332
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "Could not parse response: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:365
-#: plugins/staging/PackUpdater/AttachDialog.cpp:397
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "%1 result(s)."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:420
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "%1 version(s) — pick the one matching this instance."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:439
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "%1 file(s) — pick the one matching this instance."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:478
-msgctxt "AttachDialog|"
-msgid "Attach failed"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:479
-msgctxt "AttachDialog|"
-msgid "Could not write the pack source into this instance's settings. The keys may not be registered on this launcher build."
 msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:45
@@ -1404,7 +936,7 @@ msgid "Component metadata update task failed while downloading from remote serve
 msgstr "Komponentes metadatu atjauninājuma darbs neizdevās, lejuplādējot no attāla servera:\n"
 "%1"
 
-#: launcher/modplatform/ContentDownloadTask.cpp:64
+#: launcher/modplatform/ContentDownloadTask.cpp:65
 #, qt-format
 msgctxt "ContentDownloadTask|"
 msgid "Downloading %1 file(s)..."
@@ -1555,69 +1087,76 @@ msgctxt "DirectJavaLaunch|"
 msgid "Game crashed."
 msgstr "Spēle uzkārās."
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:117
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:133
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:141
+#, qt-format
+msgctxt "DownloadContentDialog|"
+msgid "Already installed (%1)"
+msgstr ""
+
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:151
 #, qt-format
 msgctxt "DownloadContentDialog|"
 msgid "Download %1"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:127
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:161
 msgctxt "DownloadContentDialog|"
 msgid "CurseForge"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:128
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:162
 msgctxt "DownloadContentDialog|"
 msgid "Modrinth"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:136
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:170
 msgctxt "DownloadContentDialog|"
 msgid "Selected"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:155
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:189
 #, qt-format
 msgctxt "DownloadContentDialog|"
 msgid "Search %1..."
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:160
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:194
 msgctxt "DownloadContentDialog|"
 msgid "Sort by relevance"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:161
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:195
 msgctxt "DownloadContentDialog|"
 msgid "Sort by downloads"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:162
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:196
 msgctxt "DownloadContentDialog|"
 msgid "Sort by updated"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:163
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:197
 msgctxt "DownloadContentDialog|"
 msgid "Sort by newest"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:164
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:198
 msgctxt "DownloadContentDialog|"
 msgid "Sort by follows"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:204
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:238
 msgctxt "DownloadContentDialog|"
 msgid "Add"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:222
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:256
 msgctxt "DownloadContentDialog|"
 msgid "Cancel"
 msgstr ""
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:223
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:257
 msgctxt "DownloadContentDialog|"
 msgid "Continue"
 msgstr ""
@@ -1879,11 +1418,11 @@ msgctxt "ExternalToolsPage|"
 msgid "External Tools"
 msgstr "Ārējie Rīki"
 
-#: launcher/minecraft/launch/ExtractNatives.cpp:121
+#: launcher/minecraft/launch/ExtractNatives.cpp:125
 #, qt-format
 msgctxt "ExtractNatives|"
-msgid "Couldn't extract native jar '%1' to destination '%2'"
-msgstr "Nevarēja izvilkt vietējo jar '%1' uz mērķi '%2'"
+msgid "Couldn't extract native jar '%1' to destination '%2': %3"
+msgstr ""
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:62
 msgctxt "FMLLibrariesTask|"
@@ -2049,12 +1588,9 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: plugins/Filelink/FilelinkPage.cpp:80
-#: plugins/Filelink/FilelinkPage.cpp:119
-#: plugins/Filelink/FilelinkPage.cpp:124
-#: plugins/Filelink/FilelinkPage.cpp:157
-#: plugins/Filelink/FilelinkPage.cpp:161
-#: plugins/Filelink/FilelinkPage.h:22
+#: plugins/Filelink/FilelinkPage.cpp:80 plugins/Filelink/FilelinkPage.cpp:119
+#: plugins/Filelink/FilelinkPage.cpp:124 plugins/Filelink/FilelinkPage.cpp:157
+#: plugins/Filelink/FilelinkPage.cpp:161 plugins/Filelink/FilelinkPage.h:22
 msgctxt "FilelinkPage|"
 msgid "Filelink"
 msgstr ""
@@ -2672,8 +2208,7 @@ msgid "Modpack archive is missing or empty:\n"
 "%1"
 msgstr ""
 
-#: launcher/InstanceImportTask.cpp:214
-#: launcher/InstanceImportTask.cpp:283
+#: launcher/InstanceImportTask.cpp:214 launcher/InstanceImportTask.cpp:283
 msgctxt "InstanceImportTask|"
 msgid "Archive does not contain a recognized modpack type."
 msgstr "Arhīvā nav atpazīstams modpakas tips."
@@ -2790,8 +2325,7 @@ msgctxt "InstanceImportTask|"
 msgid "User cancelled restricted mod downloads - %1 mod(s) will be missing"
 msgstr ""
 
-#: launcher/InstanceImportTask.cpp:701
-#: launcher/InstanceImportTask.cpp:865
+#: launcher/InstanceImportTask.cpp:701 launcher/InstanceImportTask.cpp:865
 msgctxt "InstanceImportTask|"
 msgid "Downloading mods..."
 msgstr "Lejuplādē modifikācijas..."
@@ -5305,47 +4839,47 @@ msgctxt "MinecraftUpdate|"
 msgid "Aborted by user."
 msgstr "Lietotājs beidza procesu."
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:451
+#: launcher/minecraft/mod/ModFolderModel.cpp:459
 msgctxt "ModFolderModel|"
 msgid "Folder"
 msgstr "Mape"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:453
+#: launcher/minecraft/mod/ModFolderModel.cpp:461
 msgctxt "ModFolderModel|"
 msgid "File"
 msgstr "Fails"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:552
+#: launcher/minecraft/mod/ModFolderModel.cpp:560
 msgctxt "ModFolderModel|"
 msgid "Name"
 msgstr "Vārds"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:554
+#: launcher/minecraft/mod/ModFolderModel.cpp:562
 msgctxt "ModFolderModel|"
 msgid "Version"
 msgstr "Versija"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:556
+#: launcher/minecraft/mod/ModFolderModel.cpp:564
 msgctxt "ModFolderModel|"
 msgid "Last changed"
 msgstr "Pēdējoreiz mainīts"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:564
+#: launcher/minecraft/mod/ModFolderModel.cpp:572
 msgctxt "ModFolderModel|"
 msgid "Is the mod enabled?"
 msgstr "Vai mods ir iespējots?"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:566
+#: launcher/minecraft/mod/ModFolderModel.cpp:574
 msgctxt "ModFolderModel|"
 msgid "The name of the mod."
 msgstr "Moda vārds."
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:568
+#: launcher/minecraft/mod/ModFolderModel.cpp:576
 msgctxt "ModFolderModel|"
 msgid "The version of the mod."
 msgstr "Moda versija."
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:570
+#: launcher/minecraft/mod/ModFolderModel.cpp:578
 msgctxt "ModFolderModel|"
 msgid "The date and time this mod was last changed (or added)."
 msgstr "Datums un Laiks kad šī modifikācija tika pēdējo reizi rediģēta(vai pievienota)."
@@ -5456,49 +4990,49 @@ msgctxt "ModFolderPage|"
 msgid "No mod loader (Forge, Fabric, Quilt, or NeoForge) is installed in this instance. Please install a mod loader first before downloading mods."
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:517
-#: launcher/ui/pages/instance/ModFolderPage.cpp:637
+#: launcher/ui/pages/instance/ModFolderPage.cpp:520
+#: launcher/ui/pages/instance/ModFolderPage.cpp:640
 msgctxt "ModFolderPage|"
 msgid "Skip"
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:568
+#: launcher/ui/pages/instance/ModFolderPage.cpp:571
 msgctxt "ModFolderPage|"
 msgid "Nothing to do"
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:569
+#: launcher/ui/pages/instance/ModFolderPage.cpp:572
 msgctxt "ModFolderPage|"
 msgid "Every selected mod (and its dependencies) is already installed at the requested version."
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:585
+#: launcher/ui/pages/instance/ModFolderPage.cpp:588
 msgctxt "ModFolderPage|"
 msgid "Download Failed"
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:586
+#: launcher/ui/pages/instance/ModFolderPage.cpp:589
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "Some files failed to download: %1"
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:630
+#: launcher/ui/pages/instance/ModFolderPage.cpp:633
 msgctxt "ModFolderPage|"
 msgid "Cannot Check Updates"
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:631
+#: launcher/ui/pages/instance/ModFolderPage.cpp:634
 msgctxt "ModFolderPage|"
 msgid "This instance has no Minecraft version configured."
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:661
+#: launcher/ui/pages/instance/ModFolderPage.cpp:664
 msgctxt "ModFolderPage|"
 msgid "Update Failed"
 msgstr ""
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:662
+#: launcher/ui/pages/instance/ModFolderPage.cpp:665
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "Some updates failed to download: %1"
@@ -5509,23 +5043,28 @@ msgctxt "ModMinecraftJar|"
 msgid "Couldn't create the bin folder for Minecraft.jar"
 msgstr "Nevarēja izveidot bin mapi priekš Minecraft.jar"
 
-#: launcher/minecraft/launch/ModMinecraftJar.cpp:68
+#: launcher/minecraft/launch/ModMinecraftJar.cpp:69
 #, qt-format
 msgctxt "ModMinecraftJar|"
 msgid "Couldn't remove stale jar file: %1"
 msgstr "Nevarēja noņemt novecojušu jar failu: %1"
 
-#: launcher/minecraft/launch/ModMinecraftJar.cpp:82
+#: launcher/minecraft/launch/ModMinecraftJar.cpp:85
+msgctxt "ModMinecraftJar|"
+msgid "Couldn't determine the Minecraft jar to add the jar mods to."
+msgstr ""
+
+#: launcher/minecraft/launch/ModMinecraftJar.cpp:91
 msgctxt "ModMinecraftJar|"
 msgid "Failed to create the custom Minecraft jar file."
 msgstr "Nevarēja izveidot personalizēto Minecraft jar failu."
 
-#: launcher/modplatform/ModUpdateCheckTask.cpp:210
+#: launcher/modplatform/ModUpdateCheckTask.cpp:211
 msgctxt "ModUpdateCheckTask|"
 msgid "No tracked mods to check."
 msgstr ""
 
-#: launcher/modplatform/ModUpdateCheckTask.cpp:215
+#: launcher/modplatform/ModUpdateCheckTask.cpp:216
 #, qt-format
 msgctxt "ModUpdateCheckTask|"
 msgid "Checking %1 mod(s) for updates..."
@@ -5964,125 +5503,6 @@ msgctxt "PackProfile|"
 msgid "Version"
 msgstr "Versija"
 
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:123
-msgctxt "PackUpdaterPage|"
-msgid "(logo)"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:148
-msgctxt "PackUpdaterPage|"
-msgid "Check for Updates"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:153
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:468
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:474
-msgctxt "PackUpdaterPage|"
-msgid "Apply Update"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:160
-msgctxt "PackUpdaterPage|"
-msgid "Detach"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:162
-msgctxt "PackUpdaterPage|"
-msgid "Forget the modpack source for this instance. Useful if you moved away from the upstream pack and want to manage mods by hand from now on."
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:181
-msgctxt "PackUpdaterPage|"
-msgid "<p>This instance isn't linked to a modpack source yet.</p><p>Linking lets PackUpdater check the upstream catalogue for new releases of the pack and apply them in one go (mods, overrides, loader version, all in lockstep).</p><p>If this instance was created from a Modrinth (.mrpack) or CurseForge (.zip) pack, the link should have happened automatically during import. If you're seeing this anyway, the manifest probably wasn't preserved — you can attach it manually below.</p>"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:195
-msgctxt "PackUpdaterPage|"
-msgid "Attach to pack…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:221
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "Provider: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:222
-msgctxt "PackUpdaterPage|"
-msgid "(unnamed pack)"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:224
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "Version: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:229
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "Installed: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:337
-msgctxt "PackUpdaterPage|"
-msgid "<i>This instance isn't linked to a pack source.</i>"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:344
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "<i>%1 has no upstream catalogue to check against.</i>"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:351
-msgctxt "PackUpdaterPage|"
-msgid "Checking…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:376
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "<b style='color:#cc6666'>Check failed:</b> %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:390
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "<b style='color:#66aa66'>Up to date.</b> Installed version: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:406
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "<b style='color:#dd9933'>Update available:</b> %1 → %2"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:453
-msgctxt "PackUpdaterPage|"
-msgid "Detach modpack source"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:454
-msgctxt "PackUpdaterPage|"
-msgid "Forget the modpack source for this instance? You can re-attach it later, but PackUpdater won't show update notifications until you do."
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:469
-msgctxt "PackUpdaterPage|"
-msgid "Run \"Check for Updates\" first."
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:475
-msgctxt "PackUpdaterPage|"
-msgid "Instance is no longer pack-managed."
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.h:56
-msgctxt "PackUpdaterPage|"
-msgid "Modpack"
-msgstr ""
-
 #: launcher/ui/pagedialog/PageDialog.cpp:72
 msgctxt "PageDialog|"
 msgid "Close"
@@ -6399,8 +5819,7 @@ msgctxt "QObject|"
 msgid "<br />Warnings:<br /><font color=\"orange\">%1</font>"
 msgstr "<br />Brīdinājumi:<br /><font color=\"orange\">%1</font>"
 
-#: launcher/JavaCommon.cpp:71
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:342
+#: launcher/JavaCommon.cpp:71 launcher/ui/widgets/JavaSettingsWidget.cpp:342
 msgctxt "QObject|"
 msgid "Java test success"
 msgstr "Java tests izdevās"
@@ -6764,15 +6183,13 @@ msgctxt "QObject|"
 msgid "A bright Fusion-based theme with blue accents"
 msgstr ""
 
-#: launcher/ui/themes/DarkTheme.cpp:37
-#: launcher/ui/themes/ThemeManager.cpp:276
+#: launcher/ui/themes/DarkTheme.cpp:37 launcher/ui/themes/ThemeManager.cpp:276
 #: launcher/ui/themes/ThemeManager.cpp:278
 msgctxt "QObject|"
 msgid "Dark"
 msgstr "Tumšs"
 
-#: launcher/ui/themes/DarkTheme.cpp:42
-#: launcher/ui/themes/GreenDarkTheme.cpp:42
+#: launcher/ui/themes/DarkTheme.cpp:42 launcher/ui/themes/GreenDarkTheme.cpp:42
 msgctxt "QObject|"
 msgid "A dark Fusion-based theme with green accents"
 msgstr ""
@@ -7399,89 +6816,6 @@ msgstr ""
 msgctxt "QObject|"
 msgid "When on, MeshMC keeps a persistent tray icon with quick-launch shortcuts and an optional minimise-to-tray close handler.\n\n"
 "Toggle takes effect after restarting MeshMC."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.h:31
-msgctxt "QObject|"
-msgid "Error Analysis"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:464
-#, qt-format
-msgctxt "QObject|"
-msgid "%1 file(s) failed to install."
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:51
-#, qt-format
-msgctxt "QObject|"
-msgid "CurseForge API returned HTTP %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:62
-msgctxt "QObject|"
-msgid "CurseForge response was not a JSON object"
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:71
-msgctxt "QObject|"
-msgid "CurseForge lists no files for this pack"
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:113
-msgctxt "QObject|"
-msgid "Plugin context unavailable"
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:119
-msgctxt "QObject|"
-msgid "This CurseForge record has no project id — the original `manifest.json` didn't carry one. Use Detach + re-attach once we wire the attach UI."
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:133
-msgctxt "QObject|"
-msgid "This build of MeshMC has no CurseForge API key configured (CURSEFORGE_API_KEY is empty)."
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:141
-msgctxt "QObject|"
-msgid "Host launcher is too old: http_get_with_headers (ABI 3) is required for CurseForge support."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:49
-#, qt-format
-msgctxt "QObject|"
-msgid "Modrinth API returned HTTP %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:60
-msgctxt "QObject|"
-msgid "Modrinth response was not a JSON array"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:68
-msgctxt "QObject|"
-msgid "Modrinth lists no versions for this pack"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:125
-msgctxt "QObject|"
-msgid "This Modrinth record is missing a pack slug — the manifest may not have been preserved at import time."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:148
-msgctxt "QObject|"
-msgid "Could not queue Modrinth request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:53
-msgctxt "QObject|"
-msgid "Unknown"
-msgstr ""
-
-#: plugins/staging/PackUpdater/UpdateApplier.cpp:538
-msgctxt "QObject|"
-msgid "Could not parse the new pack manifest."
 msgstr ""
 
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:40

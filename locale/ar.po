@@ -8,12 +8,12 @@ msgstr ""
 "X-Crowdin-Project: projtlauncher\n"
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: ar\n"
-"X-Crowdin-File: /[Project-Tick.MeshMC-Translations] master/template.pot\n"
-"X-Crowdin-File-ID: 80\n"
+"X-Crowdin-File: /[Project-Tick.MeshMC] master/locale/template.pot\n"
+"X-Crowdin-File-ID: 87\n"
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
-"PO-Revision-Date: 2026-07-17 20:39\n"
+"PO-Revision-Date: 2026-08-26 20:37\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:127
 msgctxt "ATLauncher::PackInstallTask|"
@@ -146,12 +146,12 @@ msgstr "المنصة:"
 #: launcher/ui/dialogs/AboutDialog.ui:189
 msgctxt "AboutDialog|"
 msgid "Build Date:"
-msgstr ""
+msgstr "تاريخ البناء:"
 
 #: launcher/ui/dialogs/AboutDialog.ui:205
 msgctxt "AboutDialog|"
 msgid "Commit:"
-msgstr ""
+msgstr "التزام:"
 
 #: launcher/ui/dialogs/AboutDialog.ui:221
 msgctxt "AboutDialog|"
@@ -193,13 +193,13 @@ msgstr "المنصة"
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Commit: %1"
-msgstr ""
+msgstr "التزام: %1"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:125
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Build date: %1"
-msgstr ""
+msgstr "تاريخ البناء: %1"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:130
 msgctxt "AboutDialog|"
@@ -209,133 +209,133 @@ msgstr "القناة"
 #: launcher/minecraft/auth/AccountList.cpp:355
 msgctxt "AccountList|Account status"
 msgid "Unchecked"
-msgstr ""
+msgstr "غير محدد"
 
 #: launcher/minecraft/auth/AccountList.cpp:358
 msgctxt "AccountList|Account status"
 msgid "Offline"
-msgstr ""
+msgstr "غير متصل"
 
 #: launcher/minecraft/auth/AccountList.cpp:361
 msgctxt "AccountList|Account status"
 msgid "Online"
-msgstr ""
+msgstr "متصل"
 
 #: launcher/minecraft/auth/AccountList.cpp:364
 msgctxt "AccountList|Account status"
 msgid "Working"
-msgstr ""
+msgstr "العمل"
 
 #: launcher/minecraft/auth/AccountList.cpp:367
 msgctxt "AccountList|Account status"
 msgid "Errored"
-msgstr ""
+msgstr "خطأ"
 
 #: launcher/minecraft/auth/AccountList.cpp:370
 msgctxt "AccountList|Account status"
 msgid "Expired"
-msgstr ""
+msgstr "منتهية"
 
 #: launcher/minecraft/auth/AccountList.cpp:373
 msgctxt "AccountList|Account status"
 msgid "Gone"
-msgstr ""
+msgstr "ذهبت"
 
 #: launcher/minecraft/auth/AccountList.cpp:410
 msgctxt "AccountList|"
 msgid "Account"
-msgstr ""
+msgstr "حساب"
 
 #: launcher/minecraft/auth/AccountList.cpp:412
 msgctxt "AccountList|"
 msgid "Type"
-msgstr ""
+msgstr "نوع"
 
 #: launcher/minecraft/auth/AccountList.cpp:414
 msgctxt "AccountList|"
 msgid "Status"
-msgstr ""
+msgstr "الحالة"
 
 #: launcher/minecraft/auth/AccountList.cpp:416
 msgctxt "AccountList|"
 msgid "Profile"
-msgstr ""
+msgstr "الملف الشخصي"
 
 #: launcher/minecraft/auth/AccountList.cpp:424
 msgctxt "AccountList|"
 msgid "User name of the account."
-msgstr ""
+msgstr "اسم المستخدم للحساب."
 
 #: launcher/minecraft/auth/AccountList.cpp:426
 msgctxt "AccountList|"
 msgid "Type of the account."
-msgstr ""
+msgstr "نوع الحساب."
 
 #: launcher/minecraft/auth/AccountList.cpp:428
 msgctxt "AccountList|"
 msgid "Current status of the account."
-msgstr ""
+msgstr "الحالة الراهنة للحساب."
 
 #: launcher/minecraft/auth/AccountList.cpp:430
 msgctxt "AccountList|"
 msgid "Name of the Minecraft profile associated with the account."
-msgstr ""
+msgstr "اسم الملف الشخصي لـ Minecraft المرتبط بالحساب."
 
 #: launcher/ui/pages/global/AccountListPage.ui:67
 msgctxt "AccountListPage|"
 msgid "Remove"
-msgstr ""
+msgstr "إزالة"
 
 #: launcher/ui/pages/global/AccountListPage.ui:72
 msgctxt "AccountListPage|"
 msgid "Set Default"
-msgstr ""
+msgstr "تعيين الافتراضي"
 
 #: launcher/ui/pages/global/AccountListPage.ui:80
 msgctxt "AccountListPage|"
 msgid "No Default"
-msgstr ""
+msgstr "لا يوجد إفتراضي"
 
 #: launcher/ui/pages/global/AccountListPage.ui:85
 msgctxt "AccountListPage|"
 msgid "Upload Skin"
-msgstr ""
+msgstr "تحميل مظهر"
 
 #: launcher/ui/pages/global/AccountListPage.ui:90
 #: launcher/ui/pages/global/AccountListPage.cpp:338
 msgctxt "AccountListPage|"
 msgid "Delete Skin"
-msgstr ""
+msgstr "حذف المظهر"
 
 #: launcher/ui/pages/global/AccountListPage.ui:93
 msgctxt "AccountListPage|"
 msgid "Delete the currently active skin and go back to the default one"
-msgstr ""
+msgstr "حذف الشكل النشط حاليا والعودة إلى الشكل الافتراضي"
 
 #: launcher/ui/pages/global/AccountListPage.ui:98
 msgctxt "AccountListPage|"
 msgid "Add Microsoft"
-msgstr ""
+msgstr "إضافة مايكروسوفت"
 
 #: launcher/ui/pages/global/AccountListPage.ui:103
 msgctxt "AccountListPage|"
 msgid "Add Offline"
-msgstr ""
+msgstr "إضافة غير متصل"
 
 #: launcher/ui/pages/global/AccountListPage.ui:106
 msgctxt "AccountListPage|"
 msgid "Add an offline account (requires at least one Microsoft account)"
-msgstr ""
+msgstr "إضافة حساب دون اتصال (يتطلب حساب مايكروسوفت واحد على الأقل)"
 
 #: launcher/ui/pages/global/AccountListPage.ui:111
 msgctxt "AccountListPage|"
 msgid "Refresh"
-msgstr ""
+msgstr "تحديث"
 
 #: launcher/ui/pages/global/AccountListPage.ui:114
 msgctxt "AccountListPage|"
 msgid "Refresh the account tokens"
-msgstr ""
+msgstr "تحديث رموز الحساب"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:73
 msgctxt "AccountListPage|"
@@ -346,91 +346,93 @@ msgstr ""
 #: launcher/ui/pages/global/AccountListPage.cpp:118
 msgctxt "AccountListPage|"
 msgid "Context menu"
-msgstr ""
+msgstr "قائمة السياق"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:147
 msgctxt "AccountListPage|"
 msgid "Microsoft Accounts not available"
-msgstr ""
+msgstr "حسابات مايكروسوفت غير متوفرة"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:148
 msgctxt "AccountListPage|"
 msgid "Microsoft accounts are only usable on macOS 10.13 or newer, with fully updated MeshMC.\n\n"
 "Please update both your operating system and MeshMC."
-msgstr ""
+msgstr "حسابات مايكروسوفت قابلة للاستخدام فقط على macOS 10.13 أو أحدث مع MeshMC.\n\n"
+"يرجى تحديث كل من نظام التشغيل الخاص بك و MeshMC."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:156
 msgctxt "AccountListPage|"
 msgid "Log in with your Microsoft account to add it."
-msgstr ""
+msgstr "قم بتسجيل الدخول باستخدام حساب Microsoft الخاص بك لإضافته."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:178
 msgctxt "AccountListPage|"
 msgid "Microsoft Account Required"
-msgstr ""
+msgstr "حساب مايكروسوفت مطلوب"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:179
 msgctxt "AccountListPage|"
 msgid "Adding an offline account requires at least one Microsoft account to be logged in. Please add a Microsoft account first."
-msgstr ""
+msgstr "يتطلب إضافة حساب غير متصل على الأقل حساب مايكروسوفت لتسجيل الدخول. الرجاء إضافة حساب مايكروسوفت أولاً."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:194
 msgctxt "AccountListPage|"
 msgid "User"
-msgstr ""
+msgstr "المستخدم"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:198
 msgctxt "AccountListPage|"
 msgid "Add Offline Account"
-msgstr ""
+msgstr "إضافة حساب غير متصل"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:199
 msgctxt "AccountListPage|"
 msgid "Enter a username for the offline account:"
-msgstr ""
+msgstr "أدخل اسم المستخدم للحساب دون اتصال:"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:207
 msgctxt "AccountListPage|"
 msgid "Invalid username"
-msgstr ""
+msgstr "اسم المستخدم غير صالح"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:208
 msgctxt "AccountListPage|"
 msgid "The username cannot be empty or whitespace-only."
-msgstr ""
+msgstr "اسم المستخدم لا يمكن أن يكون فارغاً أو مسافة بيضاء فقط."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:217
 msgctxt "AccountListPage|"
 msgid "Duplicate offline account"
-msgstr ""
+msgstr "تكرار حساب غير متصل"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:218
 #, qt-format
 msgctxt "AccountListPage|"
 msgid "An offline account named \"%1\" already exists. Offline account names must be unique — please pick a different one."
-msgstr ""
+msgstr "حساب غير متصل باسم \"%1\" موجود بالفعل. يجب أن تكون أسماء الحساب غير متصل فريدة من نوعها – الرجاء اختيار حساب مختلف."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:339
 #, qt-format
 msgctxt "AccountListPage|"
 msgid "Are you sure you want to delete the skin for account \"%1\"?\n"
 "This action cannot be undone."
-msgstr ""
+msgstr "هل أنت متأكد من أنك تريد حذف الجلد للحساب\"%1\"؟\n"
+"لا يمكن التراجع عن هذا الإجراء."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:350
 msgctxt "AccountListPage|"
 msgid "Skin Delete"
-msgstr ""
+msgstr "حذف الجلد"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:351
 msgctxt "AccountListPage|"
 msgid "Failed to delete current skin!"
-msgstr ""
+msgstr "فشل في حذف القالب الحالي!"
 
 #: launcher/ui/pages/global/AccountListPage.h:69
 msgctxt "AccountListPage|"
 msgid "Accounts"
-msgstr ""
+msgstr "الحسابات"
 
 #: launcher/minecraft/auth/AccountTask.cpp:67
 msgctxt "AccountTask|"
@@ -465,7 +467,7 @@ msgstr "فشل في المصادقة. لم يعد الحساب موجودًا."
 #: launcher/minecraft/auth/AccountTask.cpp:79
 msgctxt "AccountTask|"
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #: launcher/minecraft/auth/AccountTask.cpp:127
 #, qt-format
@@ -473,406 +475,55 @@ msgctxt "AccountTask|"
 msgid "Unknown account task state: %1"
 msgstr "حالة مهمة حساب غير معلومة: %1"
 
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:49
-msgctxt "AnalysisPage|"
-msgid "Severity"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:49
-msgctxt "AnalysisPage|"
-msgid "Title"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:49
-msgctxt "AnalysisPage|"
-msgid "Line"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:49
-msgctxt "AnalysisPage|"
-msgid "Score"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:66
-msgctxt "AnalysisPage|"
-msgid "Re-analyse"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:72
-msgctxt "AnalysisPage|"
-msgid "✓ This fixed it"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:77
-msgctxt "AnalysisPage|"
-msgid "✗ Didn't help"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:83
-msgctxt "AnalysisPage|"
-msgid "Promote unknown error → rule…"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:86
-msgctxt "AnalysisPage|"
-msgid "If no rule matched but the same crash signature has appeared more than once, you can teach ErrorOracle about it by writing a custom title + advice."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:151
-msgctxt "AnalysisPage|"
-msgid "(no logs found)"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:154
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Analysed: <b>%1</b>. %2 rule match(es). Crash signature: <code>%3</code>"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:158
-msgctxt "AnalysisPage|"
-msgid "(no stack trace)"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:163
-msgctxt "AnalysisPage|"
-msgid "### No matching rules\n\n"
-"Either the instance ran cleanly or the crash isn't in ErrorOracle's rule pack yet. If the same signature shows up more than once you can promote it into a rule using the button below.\n"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:210
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Recorded: rule <b>%1</b> helped on this instance."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:223
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Recorded: rule <b>%1</b> did not help."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:232
-msgctxt "AnalysisPage|"
-msgid "Promote crash signature to a user rule"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:235
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Signature: <code>%1</code>"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:236
-#, qt-format
-msgctxt "AnalysisPage|"
-msgid "Sample: <code>%1</code>"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:240
-msgctxt "AnalysisPage|"
-msgid "Short title (one sentence)"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:245
-msgctxt "AnalysisPage|"
-msgid "Regex pattern (leave blank to derive from the sample line)"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:249
-msgctxt "AnalysisPage|"
-msgid "Remediation advice in Markdown"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:254
-msgctxt "AnalysisPage|"
-msgid "Save"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:255
-msgctxt "AnalysisPage|"
-msgid "Cancel"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:291
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:319
-msgctxt "AnalysisPage|"
-msgid "ErrorOracle"
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:292
-msgctxt "AnalysisPage|"
-msgid "Could not write user rule file."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.cpp:320
-msgctxt "AnalysisPage|"
-msgid "Saved user rule. Click <b>Re-analyse</b> to load it."
-msgstr ""
-
 #: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:69
 msgctxt "AnalyticsWizardPage|"
 msgid "Analytics"
-msgstr ""
+msgstr "التحليلات"
 
 #: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:70
 msgctxt "AnalyticsWizardPage|"
 msgid "We track some anonymous statistics about users."
-msgstr ""
+msgstr "نحن نتتبع بعض الإحصائيات المجهولة عن المستخدمين."
 
 #: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:72
 msgctxt "AnalyticsWizardPage|"
 msgid "<html><body><p>MeshMC sends anonymous usage statistics on every start of the application. This helps us decide what platforms and issues to focus on.</p><p>The data is processed by Google Analytics, see their <a href=\"https://support.google.com/analytics/answer/6004245?hl=en\">article on the matter</a>.</p><p>The following data is collected:</p><ul><li>A random unique ID of the installation.<br />It is stored in the application settings file.</li><li>Anonymized (partial) IP address.</li><li>MeshMC version.</li><li>Operating system name, version and architecture.</li><li>CPU architecture (kernel architecture on linux).</li><li>Size of system memory.</li><li>Java version, architecture and memory settings.</li></ul><p>If we change the tracked information, you will see this page again.</p></body></html>"
-msgstr ""
+msgstr "<html><body><p>MeshMC ترسل إحصائيات الاستخدام المجهول في كل بداية من بداية التطبيق. وهذا يساعدنا على تحديد المنصات والقضايا التي ينبغي التركيز عليها.</p><p>تتم معالجة البيانات بواسطة Google Analytics، انظر مقالها <a href=\"https://support.google.com/analytics/answer/6004245?hl=en\">بشأن المسألة</a>.</p><p>يتم جمع البيانات التالية:</p><ul><li>معرف فريد عشوائي للتثبيت.<br />يتم تخزينها في ملف إعدادات التطبيق.</li><li>عنوان IP (جزئيا) مجهول.</li><li>MeshMC.</li><li>اسم نظام التشغيل والإصدار والهندسة المعمارية.</li><li>معماري وحدة المعالجة المركزية (بنية النواة على لينوكس).</li><li>حجم ذاكرة النظام.</li><li>إصدار الجافا والهندسة المعمارية وإعدادات الذاكرة.</li></ul><p>إذا غيرنا المعلومات المتتبعة، سترى هذه الصفحة مرة أخرى.</p></body></html>"
 
 #: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:91
 msgctxt "AnalyticsWizardPage|"
 msgid "Enable Analytics"
-msgstr ""
+msgstr "تمكين التحليلات"
 
 #: launcher/ui/pages/global/AppearancePage.ui:44
 msgctxt "AppearancePage|"
 msgid "&Theme:"
-msgstr ""
+msgstr "&السمة:"
 
 #: launcher/ui/pages/global/AppearancePage.ui:67
 msgctxt "AppearancePage|"
 msgid "&Icons:"
-msgstr ""
+msgstr "&أيقونة"
 
 #: launcher/ui/pages/global/AppearancePage.ui:90
 msgctxt "AppearancePage|"
 msgid "&Cat:"
-msgstr ""
+msgstr "&قط:"
 
 #: launcher/ui/pages/global/AppearancePage.ui:115
 msgctxt "AppearancePage|"
 msgid "Preview"
-msgstr ""
+msgstr "معاينة"
 
 #: launcher/ui/pages/global/AppearancePage.h:47
 msgctxt "AppearancePage|"
 msgid "Appearance"
-msgstr ""
+msgstr "المظهر"
 
 #: launcher/Application.cpp:1014
 msgctxt "Application|"
 msgid "Settings"
 msgstr "إعدادات"
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:31
-msgctxt "ApplyProgressDialog|"
-msgid "Apply Pack Update"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:62
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "Updating %1 → %2"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:69
-msgctxt "ApplyProgressDialog|"
-msgid "Preparing…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:85
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:214
-msgctxt "ApplyProgressDialog|"
-msgid "Apply"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:87
-msgctxt "ApplyProgressDialog|"
-msgid "Cancel"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:127
-msgctxt "ApplyProgressDialog|"
-msgid "Downloading new pack manifest…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:137
-msgctxt "ApplyProgressDialog|"
-msgid "Could not download or parse the new pack."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:149
-msgctxt "ApplyProgressDialog|"
-msgid "Comparing installed mods against the new pack…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:153
-msgctxt "ApplyProgressDialog|"
-msgid "Could not build update plan."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:185
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "Files:  %1 added, %2 replaced, %3 removed\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:190
-msgctxt "ApplyProgressDialog|"
-msgid "\n"
-"Loader / Minecraft version changes:\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:194
-msgctxt "ApplyProgressDialog|"
-msgid "\n"
-"You'll be asked once more before these are written.\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:197
-msgctxt "ApplyProgressDialog|"
-msgid "\n"
-"A full backup will be taken before any changes.\n\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:198
-msgctxt "ApplyProgressDialog|"
-msgid "Per-file detail:\n"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:205
-msgctxt "ApplyProgressDialog|"
-msgid "Nothing to apply — the instance already matches the new pack."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:207
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:621
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:635
-msgctxt "ApplyProgressDialog|"
-msgid "Close"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:213
-msgctxt "ApplyProgressDialog|"
-msgid "Review the plan, then click Apply to proceed."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:221
-msgctxt "ApplyProgressDialog|"
-msgid "Backing up instance…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:233
-msgctxt "ApplyProgressDialog|"
-msgid "This launcher build is missing zip compress support."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:240
-msgctxt "ApplyProgressDialog|"
-msgid "Backup failed (zip_compress_dir returned an error)."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:296
-msgctxt "ApplyProgressDialog|"
-msgid "Applying mod / pack file changes…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:301
-msgctxt "ApplyProgressDialog|"
-msgid "Mod-management API unavailable on this launcher."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:483
-msgctxt "ApplyProgressDialog|"
-msgid "Could not queue downloads."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:509
-msgctxt "ApplyProgressDialog|"
-msgid "Extracting overrides (configs, scripts)…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:578
-msgctxt "ApplyProgressDialog|"
-msgid "Confirm loader / Minecraft changes"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:579
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "The new pack wants these component versions:\n\n"
-"%1\n"
-"Apply now? You already have a backup."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:602
-msgctxt "ApplyProgressDialog|"
-msgid "Saving pack metadata…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:618
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "<b style='color:#66aa66'>Update applied.</b> Backup kept at <code>%1</code>."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:631
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "<b style='color:#cc6666'>Failed:</b> %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:632
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:646
-msgctxt "ApplyProgressDialog|"
-msgid "Restore from backup"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:641
-msgctxt "ApplyProgressDialog|"
-msgid "No backup"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:642
-msgctxt "ApplyProgressDialog|"
-msgid "There's no backup to restore from."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:647
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "Replace the current instance contents with the pre-update backup at:\n\n"
-"%1\n\n"
-"This cannot be undone."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:655
-msgctxt "ApplyProgressDialog|"
-msgid "No extractor"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:656
-msgctxt "ApplyProgressDialog|"
-msgid "zip_extract API unavailable."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:669
-msgctxt "ApplyProgressDialog|"
-msgid "Restore failed"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:670
-#, qt-format
-msgctxt "ApplyProgressDialog|"
-msgid "zip_extract returned an error. The backup zip is at:\n"
-"%1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:675
-msgctxt "ApplyProgressDialog|"
-msgid "Restored"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:676
-msgctxt "ApplyProgressDialog|"
-msgid "Instance restored from backup."
-msgstr ""
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:44
 msgctxt "AssetUpdateTask|"
@@ -985,124 +636,7 @@ msgstr "لم يستطع تحميل أو تنزيل قوائم الإصدارات
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:73
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:58
-msgctxt "AttachDialog|"
-msgid "Attach to Modpack"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:78
-msgctxt "AttachDialog|"
-msgid "Modrinth"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:79
-msgctxt "AttachDialog|"
-msgid "CurseForge"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:81
-msgctxt "AttachDialog|"
-msgid "Source:"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:91
-msgctxt "AttachDialog|"
-msgid "Type pack name or slug…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:105
-msgctxt "AttachDialog|"
-msgid "Version installed in this instance:"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:119
-msgctxt "AttachDialog|"
-msgid "Attach"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:184
-msgctxt "AttachDialog|"
-msgid "Searching…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:208
-msgctxt "AttachDialog|"
-msgid "Could not queue Modrinth request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:217
-msgctxt "AttachDialog|"
-msgid "This build has no CurseForge API key configured."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:222
-msgctxt "AttachDialog|"
-msgid "Host launcher too old: http_get_with_headers is required."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:244
-msgctxt "AttachDialog|"
-msgid "Could not queue CurseForge request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:269
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "Loading versions for %1…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:287
-msgctxt "AttachDialog|"
-msgid "Could not queue Modrinth versions request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:307
-msgctxt "AttachDialog|"
-msgid "Could not queue CurseForge files request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:324
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "HTTP %1 from upstream"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:332
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "Could not parse response: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:365
-#: plugins/staging/PackUpdater/AttachDialog.cpp:397
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "%1 result(s)."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:420
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "%1 version(s) — pick the one matching this instance."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:439
-#, qt-format
-msgctxt "AttachDialog|"
-msgid "%1 file(s) — pick the one matching this instance."
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:478
-msgctxt "AttachDialog|"
-msgid "Attach failed"
-msgstr ""
-
-#: plugins/staging/PackUpdater/AttachDialog.cpp:479
-msgctxt "AttachDialog|"
-msgid "Could not write the pack source into this instance's settings. The keys may not be registered on this launcher build."
-msgstr ""
+msgstr "ATLauncher"
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:45
 msgctxt "AuthFlow|"
@@ -1122,101 +656,102 @@ msgstr "جار العمل..."
 #: plugins/BackupSystem/BackupPage.ui:27
 msgctxt "BackupPage|"
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #: plugins/BackupSystem/BackupPage.ui:32
 msgctxt "BackupPage|"
 msgid "Date"
-msgstr ""
+msgstr "التاريخ"
 
 #: plugins/BackupSystem/BackupPage.ui:37
 msgctxt "BackupPage|"
 msgid "Size"
-msgstr ""
+msgstr "الحجم"
 
 #: plugins/BackupSystem/BackupPage.ui:47
 msgctxt "BackupPage|"
 msgid "Create"
-msgstr ""
+msgstr "إنشاء"
 
 #: plugins/BackupSystem/BackupPage.ui:57
 msgctxt "BackupPage|"
 msgid "Restore"
-msgstr ""
+msgstr "إستعادة"
 
 #: plugins/BackupSystem/BackupPage.ui:70
 msgctxt "BackupPage|"
 msgid "Export"
-msgstr ""
+msgstr "تصدير"
 
 #: plugins/BackupSystem/BackupPage.ui:83
 msgctxt "BackupPage|"
 msgid "Import"
-msgstr ""
+msgstr "استيراد"
 
 #: plugins/BackupSystem/BackupPage.ui:93
 msgctxt "BackupPage|"
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: plugins/BackupSystem/BackupPage.ui:115
 msgctxt "BackupPage|"
 msgid "No backups"
-msgstr ""
+msgstr "لا توجد نسخ احتياطية"
 
 #: plugins/BackupSystem/BackupPage.cpp:60
 #, qt-format
 msgctxt "BackupPage|"
 msgid "%n backup(s)"
 msgid_plural "%n backup(s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "%n نسخة احتياطية"
+msgstr[1] "%n نسخة احتياطية"
+msgstr[2] "%n نسخة احتياطية"
+msgstr[3] "%n نسخة احتياطية"
+msgstr[4] "%n نسخة احتياطية"
+msgstr[5] "%n نسخة احتياطية"
 
 #: plugins/BackupSystem/BackupPage.cpp:94
 msgctxt "BackupPage|"
 msgid "Create Backup"
-msgstr ""
+msgstr "إنشاء نسخة احتياطية"
 
 #: plugins/BackupSystem/BackupPage.cpp:95
 msgctxt "BackupPage|"
 msgid "Backup label (optional):"
-msgstr ""
+msgstr "تسمية النسخ الاحتياطي (اختياري):"
 
 #: plugins/BackupSystem/BackupPage.cpp:101
 msgctxt "BackupPage|"
 msgid "Creating backup..."
-msgstr ""
+msgstr "إنشاء نسخة احتياطية..."
 
 #: plugins/BackupSystem/BackupPage.cpp:107
 msgctxt "BackupPage|"
 msgid "Backup Failed"
-msgstr ""
+msgstr "فشل النسخ الاحتياطي"
 
 #: plugins/BackupSystem/BackupPage.cpp:108
 msgctxt "BackupPage|"
 msgid "Failed to create backup. Check the logs for details."
-msgstr ""
+msgstr "فشل إنشاء نسخة احتياطية. تحقق من السجلات للحصول على التفاصيل."
 
 #: plugins/BackupSystem/BackupPage.cpp:111
 msgctxt "BackupPage|"
 msgid "Backup Created"
-msgstr ""
+msgstr "تم إنشاء نسخة احتياطية"
 
 #: plugins/BackupSystem/BackupPage.cpp:112
 #, qt-format
 msgctxt "BackupPage|"
 msgid "Backup created successfully:\n"
 "%1"
-msgstr ""
+msgstr "تم إنشاء النسخ الاحتياطي بنجاح:\n"
+"%1"
 
 #: plugins/BackupSystem/BackupPage.cpp:125
 msgctxt "BackupPage|"
 msgid "Restore Backup"
-msgstr ""
+msgstr "استعادة النسخ الاحتياطي"
 
 #: plugins/BackupSystem/BackupPage.cpp:126
 #, qt-format
@@ -1224,101 +759,104 @@ msgctxt "BackupPage|"
 msgid "This will replace the current instance contents with the backup:\n\n"
 "%1\n\n"
 "This action cannot be undone. Continue?"
-msgstr ""
+msgstr "سيؤدي هذا إلى استبدال محتويات حالة الطوارئ الحالية بالنسخ الاحتياطي:\n\n"
+"%1\n\n"
+"لا يمكن التراجع عن هذا الإجراء. هل تريد المتابعة؟"
 
 #: plugins/BackupSystem/BackupPage.cpp:136
 msgctxt "BackupPage|"
 msgid "Restoring backup..."
-msgstr ""
+msgstr "استعادة النسخ الاحتياطي..."
 
 #: plugins/BackupSystem/BackupPage.cpp:140
 msgctxt "BackupPage|"
 msgid "Restore Complete"
-msgstr ""
+msgstr "Restore Complete"
 
 #: plugins/BackupSystem/BackupPage.cpp:141
 msgctxt "BackupPage|"
 msgid "Backup restored successfully."
-msgstr ""
+msgstr "تمت استعادة النسخ الاحتياطي بنجاح."
 
 #: plugins/BackupSystem/BackupPage.cpp:144
 msgctxt "BackupPage|"
 msgid "Restore Failed"
-msgstr ""
+msgstr "فشل الاستعادة"
 
 #: plugins/BackupSystem/BackupPage.cpp:145
 msgctxt "BackupPage|"
 msgid "Failed to restore backup. Check the logs for details."
-msgstr ""
+msgstr "فشل في استعادة النسخ الاحتياطي. تحقق من السجلات للحصول على التفاصيل."
 
 #: plugins/BackupSystem/BackupPage.cpp:158
 msgctxt "BackupPage|"
 msgid "Export Backup"
-msgstr ""
+msgstr "تصدير النسخ الاحتياطي"
 
 #: plugins/BackupSystem/BackupPage.cpp:158
 #: plugins/BackupSystem/BackupPage.cpp:175
 msgctxt "BackupPage|"
 msgid "Zip Files (*.zip)"
-msgstr ""
+msgstr "ملفات مضغوطة (*.zip)"
 
 #: plugins/BackupSystem/BackupPage.cpp:164
 msgctxt "BackupPage|"
 msgid "Export Complete"
-msgstr ""
+msgstr "اكتمل التصدير"
 
 #: plugins/BackupSystem/BackupPage.cpp:165
 #, qt-format
 msgctxt "BackupPage|"
 msgid "Backup exported to:\n"
 "%1"
-msgstr ""
+msgstr "تم تصدير النسخ الاحتياطي إلى:\n"
+"%1"
 
 #: plugins/BackupSystem/BackupPage.cpp:167
 msgctxt "BackupPage|"
 msgid "Export Failed"
-msgstr ""
+msgstr "فشل التصدير"
 
 #: plugins/BackupSystem/BackupPage.cpp:168
 msgctxt "BackupPage|"
 msgid "Failed to export backup."
-msgstr ""
+msgstr "فشل تصدير النسخ الاحتياطي."
 
 #: plugins/BackupSystem/BackupPage.cpp:174
 #: plugins/BackupSystem/BackupPage.cpp:182
 msgctxt "BackupPage|"
 msgid "Import Backup"
-msgstr ""
+msgstr "استيراد النسخ الاحتياطي"
 
 #: plugins/BackupSystem/BackupPage.cpp:182
 msgctxt "BackupPage|"
 msgid "Label for imported backup (optional):"
-msgstr ""
+msgstr "تسمية للنسخ الاحتياطي المستورد (اختياري):"
 
 #: plugins/BackupSystem/BackupPage.cpp:190
 msgctxt "BackupPage|"
 msgid "Import Failed"
-msgstr ""
+msgstr "فشل الاستيراد"
 
 #: plugins/BackupSystem/BackupPage.cpp:191
 msgctxt "BackupPage|"
 msgid "Failed to import backup."
-msgstr ""
+msgstr "فشل استيراد النسخ الاحتياطي."
 
 #: plugins/BackupSystem/BackupPage.cpp:193
 msgctxt "BackupPage|"
 msgid "Import Complete"
-msgstr ""
+msgstr "اكتمل الاستيراد"
 
 #: plugins/BackupSystem/BackupPage.cpp:194
 msgctxt "BackupPage|"
 msgid "Backup imported successfully."
-msgstr ""
+msgstr "تم استيراد النسخ الاحتياطي بنجاح."
 
 #: plugins/BackupSystem/BackupPage.cpp:207
 msgctxt "BackupPage|"
 msgid "Delete Backup"
-msgstr ""
+msgstr "حذف النسخ الاحتياطي"
 
 #: plugins/BackupSystem/BackupPage.cpp:208
 #, qt-format
@@ -1326,12 +864,14 @@ msgctxt "BackupPage|"
 msgid "Delete the selected backup?\n\n"
 "%1\n\n"
 "This cannot be undone."
-msgstr ""
+msgstr "حذف النسخة الاحتياطية المحددة؟\n\n"
+"%1\n\n"
+"لا يمكن التراجع عنها."
 
 #: plugins/BackupSystem/BackupPage.h:33
 msgctxt "BackupPage|"
 msgid "Backups"
-msgstr ""
+msgstr "النسخ الاحتياطية"
 
 #: launcher/tools/BaseProfiler.cpp:55
 msgctxt "BaseProfiler|"
@@ -1341,43 +881,43 @@ msgstr "تم إنهاء المحلل"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:64
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr ""
+msgstr "<b>Mod</b>"
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:65
 msgctxt "BlockedModsDialog|"
 msgid "<b>Status</b>"
-msgstr ""
+msgstr "<b>الحالة</b>"
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:75
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:160
 msgctxt "BlockedModsDialog|"
 msgid "Missing"
-msgstr ""
+msgstr "مفقود"
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:78
 msgctxt "BlockedModsDialog|"
 msgid "Download"
-msgstr ""
+msgstr "تنزيل"
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:99
 msgctxt "BlockedModsDialog|"
 msgid "Continue"
-msgstr ""
+msgstr "متابعة"
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:155
 msgctxt "BlockedModsDialog|"
 msgid "Found"
-msgstr ""
+msgstr "موجود"
 
 #: launcher/minecraft/services/CapeChange.cpp:48
 msgctxt "CapeChange|"
 msgid "Equipping cape"
-msgstr ""
+msgstr "قبعة التجهيز"
 
 #: launcher/minecraft/services/CapeChange.cpp:66
 msgctxt "CapeChange|"
 msgid "Removing cape"
-msgstr ""
+msgstr "إزالة الذاكرة"
 
 #: launcher/minecraft/ComponentUpdateTask.cpp:277
 msgctxt "ComponentUpdateTask|"
@@ -1407,11 +947,11 @@ msgid "Component metadata update task failed while downloading from remote serve
 msgstr "عملية تحديث معلومات العنصر الوصفية فشلت أثناء التنزيل من الخادوم المتحكم:\n"
 "%1"
 
-#: launcher/modplatform/ContentDownloadTask.cpp:64
+#: launcher/modplatform/ContentDownloadTask.cpp:65
 #, qt-format
 msgctxt "ContentDownloadTask|"
 msgid "Downloading %1 file(s)..."
-msgstr ""
+msgstr "جاري تحميل ملف %1..."
 
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:17
 msgctxt "CopyInstanceDialog|"
@@ -1446,59 +986,59 @@ msgstr "بدون مجموعة"
 #: crashreporter/CrashReportDialog.cpp:45
 msgctxt "CrashReportDialog|"
 msgid "MeshMC Crash Report"
-msgstr ""
+msgstr "تقرير تحطم MC"
 
 #: crashreporter/CrashReportDialog.cpp:53
 msgctxt "CrashReportDialog|"
 msgid "<h2 style='color: #cc0000;'>MeshMC has failed</h2><p>An unexpected error occurred and MeshMC had to close.</p><p>Your logs have been uploaded to paste.ee for troubleshooting.</p>"
-msgstr ""
+msgstr "<h2 style='color: #cc0000;'>MeshMC فشلت</h2><p>حدث خطأ غير متوقع واضطر MeshMC إلى الإغلاق.</p><p>تم تحميل سجلاتك إلى اللصق لاستكشاف الأخطاء وإصلاحها.</p>"
 
 #: crashreporter/CrashReportDialog.cpp:62
 msgctxt "CrashReportDialog|"
 msgid "QR Codes"
-msgstr ""
+msgstr "QR Codes"
 
 #: crashreporter/CrashReportDialog.cpp:70
 msgctxt "CrashReportDialog|"
 msgid "[...truncated...]\n"
-msgstr ""
+msgstr "[...truncated...]\n"
 
 #: crashreporter/CrashReportDialog.cpp:81
 #: crashreporter/CrashReportDialog.cpp:98
 msgctxt "CrashReportDialog|"
 msgid "[QR Code - requires libqrencode]"
-msgstr ""
+msgstr "[QR Code - يتطلب libqrencode]"
 
 #: crashreporter/CrashReportDialog.cpp:83
 msgctxt "CrashReportDialog|"
 msgid "Full Log"
-msgstr ""
+msgstr "سجل كامل"
 
 #: crashreporter/CrashReportDialog.cpp:100
 msgctxt "CrashReportDialog|"
 msgid "Paste.ee Log"
-msgstr ""
+msgstr "سجل الصق"
 
 #: crashreporter/CrashReportDialog.cpp:111
 #, qt-format
 msgctxt "CrashReportDialog|"
 msgid "Paste.ee link: <a href=\"%1\">%1</a>"
-msgstr ""
+msgstr "رابط الصق هو: <a href=\"%1\">%1</a>"
 
 #: crashreporter/CrashReportDialog.cpp:121
 msgctxt "CrashReportDialog|"
 msgid "Copy Link"
-msgstr ""
+msgstr "نسخ الرابط"
 
 #: crashreporter/CrashReportDialog.cpp:126
 msgctxt "CrashReportDialog|"
 msgid "Open in Browser"
-msgstr ""
+msgstr "فتح في المتصفح"
 
 #: crashreporter/CrashReportDialog.cpp:131
 msgctxt "CrashReportDialog|"
 msgid "Close"
-msgstr ""
+msgstr "أغلق"
 
 #: launcher/minecraft/launch/CreateGameFolders.cpp:42
 msgctxt "CreateGameFolders|"
@@ -1538,7 +1078,7 @@ msgstr "أوامر مخصصة"
 #: launcher/modplatform/DependencyResolver.cpp:94
 msgctxt "DependencyResolver|"
 msgid "Resolving dependencies..."
-msgstr ""
+msgstr "حل التبعية..."
 
 #: launcher/minecraft/launch/DirectJavaLaunch.cpp:103
 #, qt-format
@@ -1558,172 +1098,180 @@ msgctxt "DirectJavaLaunch|"
 msgid "Game crashed."
 msgstr "تعطلت اللعبة."
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:117
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:133
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:141
+#, qt-format
+msgctxt "DownloadContentDialog|"
+msgid "Already installed (%1)"
+msgstr "مثبت بالفعل (%1)"
+
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:151
 #, qt-format
 msgctxt "DownloadContentDialog|"
 msgid "Download %1"
-msgstr ""
-
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:127
-msgctxt "DownloadContentDialog|"
-msgid "CurseForge"
-msgstr ""
-
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:128
-msgctxt "DownloadContentDialog|"
-msgid "Modrinth"
-msgstr ""
-
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:136
-msgctxt "DownloadContentDialog|"
-msgid "Selected"
-msgstr ""
-
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:155
-#, qt-format
-msgctxt "DownloadContentDialog|"
-msgid "Search %1..."
-msgstr ""
-
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:160
-msgctxt "DownloadContentDialog|"
-msgid "Sort by relevance"
-msgstr ""
+msgstr "تحميل %1"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:161
 msgctxt "DownloadContentDialog|"
-msgid "Sort by downloads"
-msgstr ""
+msgid "CurseForge"
+msgstr "لعنة التصنيع"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:162
 msgctxt "DownloadContentDialog|"
-msgid "Sort by updated"
-msgstr ""
+msgid "Modrinth"
+msgstr "المعضلة"
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:163
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:170
+msgctxt "DownloadContentDialog|"
+msgid "Selected"
+msgstr "محدد"
+
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:189
+#, qt-format
+msgctxt "DownloadContentDialog|"
+msgid "Search %1..."
+msgstr "البحث في %1..."
+
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:194
+msgctxt "DownloadContentDialog|"
+msgid "Sort by relevance"
+msgstr "الترتيب حسب الأهمية"
+
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:195
+msgctxt "DownloadContentDialog|"
+msgid "Sort by downloads"
+msgstr "الترتيب حسب التنزيلات"
+
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:196
+msgctxt "DownloadContentDialog|"
+msgid "Sort by updated"
+msgstr "الترتيب حسب التحديث"
+
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:197
 msgctxt "DownloadContentDialog|"
 msgid "Sort by newest"
-msgstr ""
+msgstr "الترتيب حسب الأحدث"
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:164
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:198
 msgctxt "DownloadContentDialog|"
 msgid "Sort by follows"
-msgstr ""
+msgstr "الترتيب حسب التتبع"
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:204
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:238
 msgctxt "DownloadContentDialog|"
 msgid "Add"
-msgstr ""
+msgstr "إضافة"
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:222
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:256
 msgctxt "DownloadContentDialog|"
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
-#: launcher/ui/dialogs/DownloadContentDialog.cpp:223
+#: launcher/ui/dialogs/DownloadContentDialog.cpp:257
 msgctxt "DownloadContentDialog|"
 msgid "Continue"
-msgstr ""
+msgstr "متابعة"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:77
 msgctxt "DownloadSummaryDialog|"
 msgid "Download Summary"
-msgstr ""
+msgstr "ملخص التحميل"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:88
 #, qt-format
 msgctxt "DownloadSummaryDialog|"
 msgid "Ready to download %1 file(s): %2 selected + %3 dependency(ies)"
-msgstr ""
+msgstr "مستعد لتنزيل ملف %1 : %2 المحدد + %3 التبعية"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:93
 #, qt-format
 msgctxt "DownloadSummaryDialog|"
 msgid "Ready to download %1 file(s): %2 selected + %3 dependency(ies)\n"
 "⚠ %4 dependency(ies) could NOT be resolved (see warnings below)"
-msgstr ""
+msgstr "مستعد لتنزيل ملف %1 : %2 المحدد + %3 تبعية (تبعيات)\n"
+"⚠️ %4 dependencency(تبعية) لا يمكن حلها (انظر التحذيرات أدناه)"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:108
 msgctxt "DownloadSummaryDialog|"
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:108
 msgctxt "DownloadSummaryDialog|"
 msgid "File"
-msgstr ""
+msgstr "ملف"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:108
 msgctxt "DownloadSummaryDialog|"
 msgid "Type"
-msgstr ""
+msgstr "نوع"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:108
 msgctxt "DownloadSummaryDialog|"
 msgid "Source"
-msgstr ""
+msgstr "المصدر"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:118
 msgctxt "DownloadSummaryDialog|"
 msgid "Selected"
-msgstr ""
+msgstr "محدد"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:119
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:129
 msgctxt "DownloadSummaryDialog|"
 msgid "CurseForge"
-msgstr ""
+msgstr "لعنة التصنيع"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:120
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:130
 msgctxt "DownloadSummaryDialog|"
 msgid "Modrinth"
-msgstr ""
+msgstr "المعضلة"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:128
 msgctxt "DownloadSummaryDialog|"
 msgid "Dependency"
-msgstr ""
+msgstr "التبعية"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:139
 msgctxt "DownloadSummaryDialog|"
 msgid "NOT FOUND"
-msgstr ""
+msgstr "غير متوفر"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:140
 msgctxt "DownloadSummaryDialog|"
 msgid "⚠ Unresolved"
-msgstr ""
+msgstr "⚠️ بدون حل"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:141
 msgctxt "DownloadSummaryDialog|"
 msgid "No compatible version"
-msgstr ""
+msgstr "لا يوجد نسخة متوافقة"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:157
 msgctxt "DownloadSummaryDialog|"
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:158
 msgctxt "DownloadSummaryDialog|"
 msgid "Continue"
-msgstr ""
+msgstr "متابعة"
 
 #: launcher/ui/dialogs/EditAccountDialog.ui:14
 msgctxt "EditAccountDialog|"
 msgid "Login"
-msgstr ""
+msgstr "تسجيل الدخول"
 
 #: launcher/ui/dialogs/EditAccountDialog.ui:33
 msgctxt "EditAccountDialog|"
 msgid "Email"
-msgstr ""
+msgstr "البريد الإلكتروني"
 
 #: launcher/ui/dialogs/EditAccountDialog.ui:43
 msgctxt "EditAccountDialog|"
 msgid "Password"
-msgstr ""
+msgstr "كلمة المرور"
 
 #: launcher/minecraft/auth/steps/EntitlementsStep.cpp:40
 msgctxt "EntitlementsStep|"
@@ -1882,11 +1430,11 @@ msgctxt "ExternalToolsPage|"
 msgid "External Tools"
 msgstr "أدوات خارجية"
 
-#: launcher/minecraft/launch/ExtractNatives.cpp:121
+#: launcher/minecraft/launch/ExtractNatives.cpp:125
 #, qt-format
 msgctxt "ExtractNatives|"
-msgid "Couldn't extract native jar '%1' to destination '%2'"
-msgstr "تعذر استخراج ملف jar المحلي '%1' إلى الوجهة '%2'"
+msgid "Couldn't extract native jar '%1' to destination '%2': %3"
+msgstr "تعذر استخراج الجار الأصلي '%1' إلى الوجهة '%2': %3"
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:62
 msgctxt "FMLLibrariesTask|"
@@ -1929,203 +1477,201 @@ msgstr "فشل في تنزيل الملفات الآتية:\n"
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:34
 msgctxt "FeatureFlagsDialog|"
 msgid "Feature Flags"
-msgstr ""
+msgstr "علامات الميزة"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:52
 msgctxt "FeatureFlagsDialog|"
 msgid "Flag"
-msgstr ""
+msgstr "العلم"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:52
 msgctxt "FeatureFlagsDialog|"
 msgid "Toggle"
-msgstr ""
+msgstr "تبديل"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:52
 msgctxt "FeatureFlagsDialog|"
 msgid "Effective"
-msgstr ""
+msgstr "فعال"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:52
 msgctxt "FeatureFlagsDialog|"
 msgid "Strategies"
-msgstr ""
+msgstr "الاستراتيجيات"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:53
 msgctxt "FeatureFlagsDialog|"
 msgid "Override"
-msgstr ""
+msgstr "تجاوز"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:66
 msgctxt "FeatureFlagsDialog|"
 msgid "Refresh"
-msgstr ""
+msgstr "تحديث"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:101
 msgctxt "FeatureFlagsDialog|"
 msgid "Feature flags are <b>not configured</b> for this build (no Unleash instance id). All flags fall back to their compiled-in defaults."
-msgstr ""
+msgstr "أعلام الميزات <b>لم يتم تكوينها</b> لهذا البناء (لا يوجد مثيل مثالي. جميع الأعلام تعود إلى الإعدادات الافتراضية المجمعة الخاصة بها."
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:114
 #, qt-format
 msgctxt "FeatureFlagsDialog|"
 msgid "Endpoint: <a href=\"%1\">%1</a><br>Application: <b>%2</b>"
-msgstr ""
+msgstr "النقطة النهائية: <a href=\"%1\">%1</a><br>التطبيق: <b>%2</b>"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:121
 msgctxt "FeatureFlagsDialog|"
 msgid "No feature document loaded yet (offline, or not fetched). Flags use their compiled-in defaults. Press Refresh to try fetching."
-msgstr ""
+msgstr "لا توجد ميزة تم تحميلها حتى الآن (دون اتصال، أو لم تجلب إليها). العلامات تستخدم الإفتراضيات المجمعة الخاصة بها. اضغط على التحديث لمحاولة جلبها."
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:127
 #, qt-format
 msgctxt "FeatureFlagsDialog|"
 msgid "%n flag(s) loaded. Last updated: %1"
 msgid_plural "%n flag(s) loaded. Last updated: %1"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "%n علم تم تحميله. آخر تحديث: %1"
+msgstr[1] "%n علم تم تحميله. آخر تحديث: %1"
+msgstr[2] "%n علم تم تحميله. آخر تحديث: %1"
+msgstr[3] "%n علم تم تحميله. آخر تحديث: %1"
+msgstr[4] "%n علم تم تحميله. آخر تحديث: %1"
+msgstr[5] "%n علم تم تحميله. آخر تحديث: %1"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:130
 msgctxt "FeatureFlagsDialog|"
 msgid "unknown"
-msgstr ""
+msgstr "غير معروف"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:139
 msgctxt "FeatureFlagsDialog|"
 msgid "enabled"
-msgstr ""
+msgstr "مفعّل"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:139
 msgctxt "FeatureFlagsDialog|"
 msgid "disabled"
-msgstr ""
+msgstr "معطل"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:141
 msgctxt "FeatureFlagsDialog|"
 msgid "ON"
-msgstr ""
+msgstr "تشغيل"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:141
 msgctxt "FeatureFlagsDialog|"
 msgid "OFF"
-msgstr ""
+msgstr "متوقف"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:153
 msgctxt "FeatureFlagsDialog|"
 msgid "Forced by a local override."
-msgstr ""
+msgstr "إجباري من قبل تجاوز محلي."
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:163
 msgctxt "FeatureFlagsDialog|"
 msgid "Auto"
-msgstr ""
+msgstr "تلقائي"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:164
 msgctxt "FeatureFlagsDialog|"
 msgid "Force ON"
-msgstr ""
+msgstr "تشغيل إجباري"
 
 #: launcher/ui/dialogs/FeatureFlagsDialog.cpp:165
 msgctxt "FeatureFlagsDialog|"
 msgid "Force OFF"
-msgstr ""
+msgstr "إيقاف القوة"
 
 #: plugins/Filelink/FilelinkPage.cpp:45
 #, qt-format
 msgctxt "FilelinkPage|"
 msgid "From: %1"
-msgstr ""
+msgstr "من: %1"
 
 #: plugins/Filelink/FilelinkPage.cpp:47
 #, qt-format
 msgctxt "FilelinkPage|"
 msgid "To: %1"
-msgstr ""
+msgstr "إلى: %1"
 
 #: plugins/Filelink/FilelinkPage.cpp:54
 #, qt-format
 msgctxt "FilelinkPage|"
 msgid "%n linked file(s)"
 msgid_plural "%n linked file(s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "ملف (ملفات) مرتبط بـ %n"
+msgstr[1] "ملف (ملفات) مرتبط بـ %n"
+msgstr[2] "ملف (ملفات) مرتبط بـ %n"
+msgstr[3] "ملف (ملفات) مرتبط بـ %n"
+msgstr[4] "ملف (ملفات) مرتبط بـ %n"
+msgstr[5] "ملف (ملفات) مرتبط بـ %n"
 
-#: plugins/Filelink/FilelinkPage.cpp:80
-#: plugins/Filelink/FilelinkPage.cpp:119
-#: plugins/Filelink/FilelinkPage.cpp:124
-#: plugins/Filelink/FilelinkPage.cpp:157
-#: plugins/Filelink/FilelinkPage.cpp:161
-#: plugins/Filelink/FilelinkPage.h:22
+#: plugins/Filelink/FilelinkPage.cpp:80 plugins/Filelink/FilelinkPage.cpp:119
+#: plugins/Filelink/FilelinkPage.cpp:124 plugins/Filelink/FilelinkPage.cpp:157
+#: plugins/Filelink/FilelinkPage.cpp:161 plugins/Filelink/FilelinkPage.h:22
 msgctxt "FilelinkPage|"
 msgid "Filelink"
-msgstr ""
+msgstr "رابط الفيلور"
 
 #: plugins/Filelink/FilelinkPage.cpp:81
 msgctxt "FilelinkPage|"
 msgid "No other instances available to link from."
-msgstr ""
+msgstr "لا توجد حالات أخرى متاحة للربط منها."
 
 #: plugins/Filelink/FilelinkPage.cpp:86
 msgctxt "FilelinkPage|"
 msgid "Link from instance"
-msgstr ""
+msgstr "رابط من مثيل مثيل"
 
 #: plugins/Filelink/FilelinkPage.cpp:87
 msgctxt "FilelinkPage|"
 msgid "Select the source instance:"
-msgstr ""
+msgstr "حدد مثيل المصدر:"
 
 #: plugins/Filelink/FilelinkPage.cpp:106
 msgctxt "FilelinkPage|"
 msgid "Select folder to link"
-msgstr ""
+msgstr "حدد مجلد للربط"
 
 #: plugins/Filelink/FilelinkPage.cpp:107
 msgctxt "FilelinkPage|"
 msgid "Which folder should be linked?"
-msgstr ""
+msgstr "أي مجلد يجب ربطه؟"
 
 #: plugins/Filelink/FilelinkPage.cpp:120
 msgctxt "FilelinkPage|"
 msgid "Failed to link files. The source folder may not exist."
-msgstr ""
+msgstr "فشل في ربط الملفات. قد لا يكون المجلد المصدر موجود."
 
 #: plugins/Filelink/FilelinkPage.cpp:125
 #, qt-format
 msgctxt "FilelinkPage|"
 msgid "Successfully linked %n file(s)."
 msgid_plural "Successfully linked %n file(s)."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "تم ربط ملف %n بنجاح."
+msgstr[1] "تم ربط ملف %n بنجاح."
+msgstr[2] "تم ربط ملف %n بنجاح."
+msgstr[3] "تم ربط ملف %n بنجاح."
+msgstr[4] "تم ربط ملف %n بنجاح."
+msgstr[5] "تم ربط ملف %n بنجاح."
 
 #: plugins/Filelink/FilelinkPage.cpp:142
 msgctxt "FilelinkPage|"
 msgid "Unlink file"
-msgstr ""
+msgstr "إلغاء ربط الملف"
 
 #: plugins/Filelink/FilelinkPage.cpp:143
 #, qt-format
 msgctxt "FilelinkPage|"
 msgid "Remove the link for '%1'?\n\n"
 "The linked file will be deleted."
-msgstr ""
+msgstr "إزالة الرابط لـ '%1'؟\n\n"
+"سيتم حذف الملف المرتبط."
 
 #: plugins/Filelink/FilelinkPage.cpp:158
 msgctxt "FilelinkPage|"
 msgid "All links are intact."
-msgstr ""
+msgstr "جميع الروابط سليمة."
 
 #: plugins/Filelink/FilelinkPage.cpp:162
 #, qt-format
@@ -2144,62 +1690,62 @@ msgstr[5] ""
 #: launcher/modplatform/flame/FileResolvingTask.cpp:38
 msgctxt "Flame::FileResolvingTask|"
 msgid "Resolving mod IDs..."
-msgstr ""
+msgstr "حل معرفات المود..."
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.ui:52
 msgctxt "FlamePage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "الإصدار المحدد:"
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.ui:67
 msgctxt "FlamePage|"
 msgid "Search"
-msgstr ""
+msgstr "البحث"
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.ui:74
 msgctxt "FlamePage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "البحث والتصفية ..."
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.cpp:52
 msgctxt "FlamePage|"
 msgid "Sort by featured"
-msgstr ""
+msgstr "الترتيب حسب الميزة"
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.cpp:53
 msgctxt "FlamePage|"
 msgid "Sort by popularity"
-msgstr ""
+msgstr "الترتيب حسب الشعبية"
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.cpp:54
 msgctxt "FlamePage|"
 msgid "Sort by last updated"
-msgstr ""
+msgstr "الترتيب حسب آخر تحديث"
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.cpp:55
 msgctxt "FlamePage|"
 msgid "Sort by name"
-msgstr ""
+msgstr "فرز حسب الاسم"
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.cpp:56
 msgctxt "FlamePage|"
 msgid "Sort by author"
-msgstr ""
+msgstr "الترتيب حسب المؤلف"
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.cpp:57
 msgctxt "FlamePage|"
 msgid "Sort by total downloads"
-msgstr ""
+msgstr "الترتيب حسب إجمالي التنزيلات"
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.cpp:134
 msgctxt "FlamePage|"
 msgid " by "
-msgstr ""
+msgstr " بواسطة "
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.h:73
 msgctxt "FlamePage|"
 msgid "CurseForge"
-msgstr ""
+msgstr "لعنة التصنيع"
 
 #: launcher/minecraft/update/FoldersTask.cpp:40
 msgctxt "FoldersTask|"
@@ -2209,32 +1755,32 @@ msgstr "فشل في إنشاء مجلد لملفات ماينكرافت الثن
 #: launcher/ui/pages/modplatform/ftb/FtbFilterModel.cpp:56
 msgctxt "Ftb::FilterModel|"
 msgid "Sort by plays"
-msgstr ""
+msgstr "فرز حسب المشغلات"
 
 #: launcher/ui/pages/modplatform/ftb/FtbFilterModel.cpp:57
 msgctxt "Ftb::FilterModel|"
 msgid "Sort by installs"
-msgstr ""
+msgstr "الترتيب حسب التثبيت"
 
 #: launcher/ui/pages/modplatform/ftb/FtbFilterModel.cpp:58
 msgctxt "Ftb::FilterModel|"
 msgid "Sort by name"
-msgstr ""
+msgstr "فرز حسب الاسم"
 
 #: launcher/ui/pages/modplatform/ftb/FtbPage.ui:22
 msgctxt "FtbPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "الإصدار المحدد:"
 
 #: launcher/ui/pages/modplatform/ftb/FtbPage.ui:37
 msgctxt "FtbPage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "البحث والتصفية ..."
 
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:70
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr ""
+msgstr "FTB"
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:101
 msgctxt "GameOptions|"
@@ -2295,77 +1841,77 @@ msgstr "حصلت على skin"
 #: plugins/GitVersioning/GitVersioningPage.cpp:66
 msgctxt "GitVersioningPage|"
 msgid "When"
-msgstr ""
+msgstr "عندما"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:66
 msgctxt "GitVersioningPage|"
 msgid "Commit"
-msgstr ""
+msgstr "التزم"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:66
 msgctxt "GitVersioningPage|"
 msgid "Subject"
-msgstr ""
+msgstr "الموضوع"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "Files"
-msgstr ""
+msgstr "الملفات"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr ""
+msgstr "+"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
 msgid "Snapshot now"
-msgstr ""
+msgstr "لقطة الآن"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:80
 msgctxt "GitVersioningPage|"
 msgid "Commit the current state of the instance"
-msgstr ""
+msgstr "قم بتنفيذ الحالة الحالية للمثيل"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:85
 msgctxt "GitVersioningPage|"
 msgid "Restore selected"
-msgstr ""
+msgstr "استعادة المحدد"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:91
 msgctxt "GitVersioningPage|"
 msgid "Tag…"
-msgstr ""
+msgstr "العلامة…"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:97
 msgctxt "GitVersioningPage|"
 msgid "Drop last commit"
-msgstr ""
+msgstr "إسقاط الالتزام الأخير"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:98
 msgctxt "GitVersioningPage|"
 msgid "Hard-reset HEAD by one commit. The dropped commit is unreachable but reachable again via the reflog for ~30 days."
-msgstr ""
+msgstr "إعادة تعيين HEAD بقوة بالتزام واحد. الالتزام المسقط لا يمكن الوصول إليه ولكن يمكن الوصول إليه مرة أخرى عن طريق إعادة التسجيل لمدة 30 يوم."
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:107
 msgctxt "GitVersioningPage|"
 msgid "Refresh"
-msgstr ""
+msgstr "تحديث"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:119
 msgctxt "GitVersioningPage|"
 msgid "<b>git</b> is not installed on your system. Install Git and reopen this page."
-msgstr ""
+msgstr "لم يتم تثبيت <b>git</b> على النظام الخاص بك. قم بتثبيت Git وأعد فتح هذه الصفحة."
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:130
 msgctxt "GitVersioningPage|"
 msgid "No version history yet. Snapshot now to start tracking changes to this instance."
-msgstr ""
+msgstr "لا يوجد سجل إصدار بعد. لقطة الآن لبدء تتبع التغييرات على هذا النموذج."
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:134
 #, qt-format
@@ -2377,92 +1923,93 @@ msgstr ""
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "Modified: %1, Deleted: %2, Untracked: %3"
-msgstr ""
+msgstr "تعديل: %1، حذف: %2، غير متتبع: %3"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:141
 msgctxt "GitVersioningPage|"
 msgid "Clean working tree"
-msgstr ""
+msgstr "شجرة عمل نظيفة"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:143
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr ""
+msgstr "git %1"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:195
 #: plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr ""
+msgstr "Snapshot"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
 msgid "Describe the changes you're snapshotting (leave blank for an auto-generated message):"
-msgstr ""
+msgstr "وصف التغييرات التي تلتقطها (اتركها فارغة لرسالة تم إنشاؤها تلقائياً):"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:199
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "Manual snapshot %1"
-msgstr ""
+msgstr "لقطة يدوية %1"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:208
 msgctxt "GitVersioningPage|"
 msgid "Snapshot failed"
-msgstr ""
+msgstr "فشل اللقطة"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:212
 msgctxt "GitVersioningPage|"
 msgid "Nothing to commit — the working tree was clean."
-msgstr ""
+msgstr "لا شيء يمكن أن يرتكب - كانت شجرة العمل نظيفة."
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:222
 msgctxt "GitVersioningPage|"
 msgid "Restore?"
-msgstr ""
+msgstr "إستعادة؟"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:223
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "Restore the instance to commit %1 (%2)?\n\n"
 "An auto-snapshot of the current state is taken first, so this can be undone by restoring the previous snapshot."
-msgstr ""
+msgstr "استعادة المثيل لارتكاب %1 (%2)؟\n\n"
+"يتم أخذ لقطة تلقائية للحالة الحالية أولا، بحيث يمكن التراجع عن ذلك باستعادة اللقطة السابقة."
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:231
 msgctxt "GitVersioningPage|"
 msgid "Restore failed"
-msgstr ""
+msgstr "فشل الاستعادة"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:242
 msgctxt "GitVersioningPage|"
 msgid "Tag commit"
-msgstr ""
+msgstr "وسم الالتزام"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:242
 msgctxt "GitVersioningPage|"
 msgid "Tag name:"
-msgstr ""
+msgstr "اسم العلامة:"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:250
 msgctxt "GitVersioningPage|"
 msgid "Tag failed"
-msgstr ""
+msgstr "فشل الوسم"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:255
 msgctxt "GitVersioningPage|"
 msgid "Drop last commit?"
-msgstr ""
+msgstr "إسقاط الالتزام الأخير؟"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:256
 msgctxt "GitVersioningPage|"
 msgid "This hard-resets HEAD by one commit. The working tree is reset to the parent commit too. Continue?"
-msgstr ""
+msgstr "إعادة تعيين HEAD بصعوبة بالتزام واحد. يتم إعادة تعيين شجرة العمل إلى الالتزام الأصلي أيضًا. هل تريد المتابعة؟"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:261
 msgctxt "GitVersioningPage|"
 msgid "Drop failed"
-msgstr ""
+msgstr "فشل الإسقاط"
 
 #: launcher/ui/dialogs/IconPickerDialog.ui:14
 msgctxt "IconPickerDialog|"
@@ -2509,7 +2056,7 @@ msgstr "ملف محلي أو رابط لتنزيل المباشر:"
 #: launcher/ui/pages/modplatform/ImportPage.cpp:131
 msgctxt "ImportPage|"
 msgid "Modpack archives (*.zip *.mrpack);;Modrinth packs (*.mrpack);;Zip archives (*.zip);;All files (*)"
-msgstr ""
+msgstr "أرشيف حزمة المودب (*.zip *.mrpack);Modrinth pack(*.mrpack);;أرشيف Zip (*.zip);;جميع الملفات (*)"
 
 #: launcher/ui/pages/modplatform/ImportPage.cpp:135
 msgctxt "ImportPage|"
@@ -2525,110 +2072,110 @@ msgstr "الاستيراد من ملف مضغوط (zip)‫"
 #, qt-format
 msgctxt "Installer|"
 msgid "Downloading update from %1 …"
-msgstr ""
+msgstr "تحميل التحديث من %1 …"
 
 #: updater/Installer.cpp:86
 #, qt-format
 msgctxt "Installer|"
 msgid "Downloading … %1%"
-msgstr ""
+msgstr "تحميل … %1%"
 
 #: updater/Installer.cpp:99
 #, qt-format
 msgctxt "Installer|"
 msgid "Download failed: %1"
-msgstr ""
+msgstr "فشل التنزيل: %1"
 
 #: updater/Installer.cpp:107
 #, qt-format
 msgctxt "Installer|"
 msgid "Cannot write temp file: %1"
-msgstr ""
+msgstr "لا يمكن كتابة ملف درجة الحرارة: %1"
 
 #: updater/Installer.cpp:113
 #, qt-format
 msgctxt "Installer|"
 msgid "Cannot commit temp file: %1"
-msgstr ""
+msgstr "لا يمكن تخصيص ملف درجة الحرارة: %1"
 
 #: updater/Installer.cpp:117
 msgctxt "Installer|"
 msgid "Download complete. Installing …"
-msgstr ""
+msgstr "اكتمل التنزيل. تثبيت …"
 
 #: updater/Installer.cpp:151
 msgctxt "Installer|"
 msgid "Cannot create temporary directory for extraction."
-msgstr ""
+msgstr "لا يمكن إنشاء دليل مؤقت للاستخراج."
 
 #: updater/Installer.cpp:155
 msgctxt "Installer|"
 msgid "Extracting archive …"
-msgstr ""
+msgstr "استخراج الأرشيف …"
 
 #: updater/Installer.cpp:170
 msgctxt "Installer|"
 msgid "Installing files …"
-msgstr ""
+msgstr "تثبيت الملفات …"
 
 #: updater/Installer.cpp:207 updater/Installer.cpp:310
 #: updater/Installer.cpp:395
 #, qt-format
 msgctxt "Installer|"
 msgid "Cannot create directory: %1"
-msgstr ""
+msgstr "لا يمكن إنشاء الدليل: %1"
 
 #: updater/Installer.cpp:231
 #, qt-format
 msgctxt "Installer|"
 msgid "Cannot copy %1 to %2."
-msgstr ""
+msgstr "لا يمكن نسخ %1 إلى %2."
 
 #: updater/Installer.cpp:251
 #, qt-format
 msgctxt "Installer|"
 msgid "Unknown archive format: %1"
-msgstr ""
+msgstr "تنسيق الأرشيف غير معروف: %1"
 
 #: updater/Installer.cpp:260
 msgctxt "Installer|"
 msgid "Launching installer …"
-msgstr ""
+msgstr "تشغيل المثبت …"
 
 #: updater/Installer.cpp:264
 #, qt-format
 msgctxt "Installer|"
 msgid "Failed to launch installer: %1"
-msgstr ""
+msgstr "فشل تشغيل المثبت: %1"
 
 #: updater/Installer.cpp:272
 msgctxt "Installer|"
 msgid ".exe installers are only supported on Windows."
-msgstr ""
+msgstr "مثبتات .exe مدعومة فقط على Windows."
 
 #: updater/Installer.cpp:287
 #, qt-format
 msgctxt "Installer|"
 msgid "Cannot open zip archive: %1"
-msgstr ""
+msgstr "لا يمكن فتح أرشيف مضغوط: %1"
 
 #: updater/Installer.cpp:353
 #, qt-format
 msgctxt "Installer|"
 msgid "Failed to extract zip archive: %1"
-msgstr ""
+msgstr "فشل في استخراج أرشيف مضغوط: %1"
 
 #: updater/Installer.cpp:372
 #, qt-format
 msgctxt "Installer|"
 msgid "Cannot open tar archive: %1"
-msgstr ""
+msgstr "لا يمكن فتح أرشيف القطار: %1"
 
 #: updater/Installer.cpp:438
 #, qt-format
 msgctxt "Installer|"
 msgid "Failed to extract tar archive: %1"
-msgstr ""
+msgstr "فشل في استخراج أرشيف القطار: %1"
 
 #: launcher/ui/widgets/InstanceCardWidget.ui:27
 msgctxt "InstanceCardWidget|"
@@ -2678,17 +2225,17 @@ msgstr "تنزيل حزمة إضافات"
 #: launcher/InstanceImportTask.cpp:123
 msgctxt "InstanceImportTask|"
 msgid "Inspecting modpack archive"
-msgstr ""
+msgstr "فحص أرشيف modpack"
 
 #: launcher/InstanceImportTask.cpp:210
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Modpack archive is missing or empty:\n"
 "%1"
-msgstr ""
+msgstr "أرشيف حزمة المودب مفقود أو فارغ:\n"
+"%1"
 
-#: launcher/InstanceImportTask.cpp:214
-#: launcher/InstanceImportTask.cpp:283
+#: launcher/InstanceImportTask.cpp:214 launcher/InstanceImportTask.cpp:283
 msgctxt "InstanceImportTask|"
 msgid "Archive does not contain a recognized modpack type."
 msgstr "الأرشيف لا يحتوي على أي نوع من حزم الإضافات المدعومة."
@@ -2717,7 +2264,7 @@ msgstr "تم الانتهاء من استيراد النموذج."
 #: launcher/InstanceImportTask.cpp:419
 msgctxt "InstanceImportTask|"
 msgid "Could not understand pack manifest:\n"
-msgstr ""
+msgstr "تعذر فهم حزمة الظاهرة:\n"
 
 #: launcher/InstanceImportTask.cpp:427
 msgctxt "InstanceImportTask|"
@@ -2728,29 +2275,29 @@ msgstr "تعذرت إعادة تسمية مجلد \"overrides\":\n"
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "The specified overrides folder (%1) is missing. Maybe the modpack was already used before?"
-msgstr ""
+msgstr "مجلد التجاوزات المحدد (%1) مفقود. ربما تم استخدام مودباك من قبل؟"
 
 #: launcher/InstanceImportTask.cpp:447
 msgctxt "InstanceImportTask|"
 msgid "Unable to resolve mod IDs:\n"
-msgstr ""
+msgstr "غير قادر على حل معرفات المود:\n"
 
 #: launcher/InstanceImportTask.cpp:499
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Unknown mod loader in manifest: %1"
-msgstr ""
+msgstr "محمل موديل غير معروف في الظاهرة: %1"
 
 #: launcher/InstanceImportTask.cpp:513
 msgctxt "InstanceImportTask|"
 msgid "Mysterious trailing dots removed from Minecraft version while importing pack."
-msgstr ""
+msgstr "تم إزالة نقاط التتبع الغامضة من إصدار Minecraft أثناء استيراد الحزمة."
 
 #: launcher/InstanceImportTask.cpp:527
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Could not map recommended forge version for Minecraft %1"
-msgstr ""
+msgstr "تعذر تعيين إصدار التصنيع الموصى به لـ Minecraft %1"
 
 #: launcher/InstanceImportTask.cpp:584
 msgctxt "InstanceImportTask|"
@@ -2761,30 +2308,30 @@ msgstr "تنزيل إضافة"
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "This 'Folder' may need extracting: %1"
-msgstr ""
+msgstr "هذا 'المجلد' قد يحتاج إلى استخراج: %1"
 
 #: launcher/InstanceImportTask.cpp:616
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Skipping mod %1 (project %2) - no download URL and no filename available"
-msgstr ""
+msgstr "تخطي Mod %1 (المشروع %2) - لا يوجد رابط تحميل ولا اسم ملف متاح"
 
 #: launcher/InstanceImportTask.cpp:628
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Nesting modpacks in modpacks is not implemented, nothing was downloaded: %1"
-msgstr ""
+msgstr "لم يتم تنفيذ تعتيم المودباك في المودباك، لم يتم تنزيل أي شيء: %1"
 
 #: launcher/InstanceImportTask.cpp:637
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Unrecognized/unhandled PackageType for: %1"
-msgstr ""
+msgstr "نوع الحزمة غير معرف/غير معالج لـ: %1"
 
 #: launcher/InstanceImportTask.cpp:645
 msgctxt "InstanceImportTask|"
 msgid "Restricted Mods"
-msgstr ""
+msgstr "مودات مقيدة"
 
 #: launcher/InstanceImportTask.cpp:646
 msgctxt "InstanceImportTask|"
@@ -2797,16 +2344,15 @@ msgstr ""
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Failed to copy %1 from downloads folder"
-msgstr ""
+msgstr "فشل نسخ %1 من مجلد التنزيلات"
 
 #: launcher/InstanceImportTask.cpp:673
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "User cancelled restricted mod downloads - %1 mod(s) will be missing"
-msgstr ""
+msgstr "المستخدم الملغى التنزيلات المقيدة - سيفتقد وضع %1"
 
-#: launcher/InstanceImportTask.cpp:701
-#: launcher/InstanceImportTask.cpp:865
+#: launcher/InstanceImportTask.cpp:701 launcher/InstanceImportTask.cpp:865
 msgctxt "InstanceImportTask|"
 msgid "Downloading mods..."
 msgstr "جار تنزيل الإضافات..."
@@ -2814,18 +2360,18 @@ msgstr "جار تنزيل الإضافات..."
 #: launcher/InstanceImportTask.cpp:738
 msgctxt "InstanceImportTask|"
 msgid "Could not understand Modrinth modpack manifest:\n"
-msgstr ""
+msgstr "تعذر فهم MModrinth modpack:\n"
 
 #: launcher/InstanceImportTask.cpp:816
 msgctxt "InstanceImportTask|"
 msgid "Modrinth mod download"
-msgstr ""
+msgstr "تنزيل Mod Mrinth"
 
 #: launcher/InstanceImportTask.cpp:834
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Skipping file with no download URL: %1"
-msgstr ""
+msgstr "تخطي الملف بدون رابط تحميل: %1"
 
 #: launcher/InstanceList.cpp:174
 #, qt-format
@@ -2922,12 +2468,12 @@ msgstr "مدخلا&ت‫ الجافا"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:230
 msgctxt "InstanceSettingsPage|"
 msgid "Java auto-download &vendor"
-msgstr ""
+msgstr "تحميل Java تلقائي &vendor"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:242
 msgctxt "InstanceSettingsPage|"
 msgid "Download Java from:"
-msgstr ""
+msgstr "تحميل جافا من:"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:256
 msgctxt "InstanceSettingsPage|"
@@ -3022,7 +2568,7 @@ msgstr "سجل الوقت المنقضي في تشغيل هذه النسخة"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:487
 msgctxt "InstanceSettingsPage|"
 msgid "Set a server to join on launch"
-msgstr ""
+msgstr "تعيين خادم للانضمام عند التشغيل"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:507
 msgctxt "InstanceSettingsPage|"
@@ -3113,49 +2659,49 @@ msgstr "تم إنهاء المحلل"
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:49
 msgctxt "JavaDownloadDialog|"
 msgid "Download Java"
-msgstr ""
+msgstr "تحميل جافا"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:64
 msgctxt "JavaDownloadDialog|"
 msgid "Provider"
-msgstr ""
+msgstr "موفر"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:77
 msgctxt "JavaDownloadDialog|"
 msgid "Version"
-msgstr ""
+msgstr "الإصدار"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:84
 msgctxt "JavaDownloadDialog|"
 msgid "Build"
-msgstr ""
+msgstr "بناء"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:96
 msgctxt "JavaDownloadDialog|"
 msgid "Select a Java provider, version, and build to download."
-msgstr ""
+msgstr "حدد موفر جافا ، الإصدار ، والبناء للتنزيل."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:114
 msgctxt "JavaDownloadDialog|"
 msgid "Download"
-msgstr ""
+msgstr "تنزيل"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:118
 msgctxt "JavaDownloadDialog|"
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:153
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Loading versions for %1..."
-msgstr ""
+msgstr "جاري تحميل الإصدارات ل %1..."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:168
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Loading builds for %1..."
-msgstr ""
+msgstr "جاري تحميل الإصدارات لـ %1..."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:181
 #, qt-format
@@ -3164,88 +2710,91 @@ msgid "Ready to download: %1\n"
 "Version: %2\n"
 "Platform: %3\n"
 "Checksum: %4"
-msgstr ""
+msgstr "جاهز للتنزيل: %1\n"
+"الإصدار: %2\n"
+"المنصة: %3\n"
+"اختبار %4"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:187
 msgctxt "JavaDownloadDialog|"
 msgid "None"
-msgstr ""
+msgstr "لا"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:188
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Yes (%1)"
-msgstr ""
+msgstr "نعم (%1)"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:198
 msgctxt "JavaDownloadDialog|"
 msgid "Fetch Java versions"
-msgstr ""
+msgstr "إحضار إصدارات جافا"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:210
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to parse version list: %1"
-msgstr ""
+msgstr "فشل تحليل قائمة الإصدار: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:214
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to parse version list."
-msgstr ""
+msgstr "فشل في تحليل قائمة الإصدار."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:230
 msgctxt "JavaDownloadDialog|"
 msgid "Select a version."
-msgstr ""
+msgstr "حدد إصدار."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:233
 msgctxt "JavaDownloadDialog|"
 msgid "No versions available for this provider."
-msgstr ""
+msgstr "لا توجد إصدارات متاحة لهذا المورد."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:239
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to load versions: %1"
-msgstr ""
+msgstr "فشل تحميل الإصدار: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:254
 msgctxt "JavaDownloadDialog|"
 msgid "Fetch Java runtime details"
-msgstr ""
+msgstr "إحضار تفاصيل وقت تشغيل جافا"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:266
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to parse runtime details: %1"
-msgstr ""
+msgstr "فشل تحليل تفاصيل وقت التشغيل: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:270
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to parse runtime details."
-msgstr ""
+msgstr "فشل تحليل تفاصيل وقت التشغيل."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:288
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "No builds available for your platform (%1)."
-msgstr ""
+msgstr "لا توجد إصدارات متاحة للمنصة الخاصة بك (%1."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:291
 msgctxt "JavaDownloadDialog|"
 msgid "Select a build to download."
-msgstr ""
+msgstr "حدد بناء للتنزيل."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:299
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to load runtime details: %1"
-msgstr ""
+msgstr "فشل تحميل تفاصيل وقت التشغيل: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:327
 msgctxt "JavaDownloadDialog|"
 msgid "Already Installed"
-msgstr ""
+msgstr "مثبت بالفعل"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:328
 #, qt-format
@@ -3253,126 +2802,130 @@ msgctxt "JavaDownloadDialog|"
 msgid "This Java version appears to be already installed at:\n"
 "%1\n\n"
 "Do you want to reinstall it?"
-msgstr ""
+msgstr "يبدو أن إصدار جافا هذا مثبت بالفعل في:\n"
+"%1\n\n"
+"هل تريد إعادة تثبيته؟"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:364
 msgctxt "JavaDownloadDialog|"
 msgid "Java installed successfully!"
-msgstr ""
+msgstr "تم تثبيت جافا بنجاح!"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:367
 msgctxt "JavaDownloadDialog|"
 msgid "Download Complete"
-msgstr ""
+msgstr "اكتمل التحميل"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:368
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Java has been downloaded and installed successfully.\n\n"
 "Java binary: %1"
-msgstr ""
+msgstr "تم تنزيل Java وتثبيته بنجاح.\n\n"
+"Java binary: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:378
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Download failed: %1"
-msgstr ""
+msgstr "فشل التنزيل: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:385
 msgctxt "JavaDownloadDialog|"
 msgid "Download Failed"
-msgstr ""
+msgstr "فشل التحميل"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:386
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to download Java:\n"
 "%1"
-msgstr ""
+msgstr "فشل تحميل Java:\n"
+"%1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:58
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading %1..."
-msgstr ""
+msgstr "جاري تحميل %1..."
 
 #: launcher/java/download/JavaDownloadTask.cpp:68
 #: launcher/java/download/JavaDownloadTask.cpp:189
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to create target directory: %1"
-msgstr ""
+msgstr "فشل في إنشاء الدليل الهدف: %1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:72
 msgctxt "JavaDownloadTask|"
 msgid "Java download"
-msgstr ""
+msgstr "تحميل جافا"
 
 #: launcher/java/download/JavaDownloadTask.cpp:109
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to download Java: %1"
-msgstr ""
+msgstr "فشل تحميل جافا: %1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:114
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Extracting %1..."
-msgstr ""
+msgstr "استخراج %1..."
 
 #: launcher/java/download/JavaDownloadTask.cpp:138
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Unsupported archive format: %1"
-msgstr ""
+msgstr "تنسيق الأرشيف غير مدعوم: %1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:147
 msgctxt "JavaDownloadTask|"
 msgid "Failed to extract Java archive."
-msgstr ""
+msgstr "فشل في استخراج أرشيف جافا."
 
 #: launcher/java/download/JavaDownloadTask.cpp:169
 msgctxt "JavaDownloadTask|"
 msgid "Could not find java binary in extracted archive."
-msgstr ""
+msgstr "تعذر العثور على الجافا ثنائي في الأرشيف المستخرج."
 
 #: launcher/java/download/JavaDownloadTask.cpp:185
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading manifest for %1..."
-msgstr ""
+msgstr "تحميل البيان ل %1..."
 
 #: launcher/java/download/JavaDownloadTask.cpp:194
 msgctxt "JavaDownloadTask|"
 msgid "Java manifest download"
-msgstr ""
+msgstr "تحميل بيان جافا"
 
 #: launcher/java/download/JavaDownloadTask.cpp:223
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to parse Java manifest: %1"
-msgstr ""
+msgstr "فشل تحليل مظهر الجافا: %1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:229
 msgctxt "JavaDownloadTask|"
 msgid "Failed to parse Java manifest."
-msgstr ""
+msgstr "فشل تحليل بيان جافا."
 
 #: launcher/java/download/JavaDownloadTask.cpp:246
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading %1 files..."
-msgstr ""
+msgstr "جاري تحميل ملفات %1..."
 
 #: launcher/java/download/JavaDownloadTask.cpp:248
 msgctxt "JavaDownloadTask|"
 msgid "Java runtime files"
-msgstr ""
+msgstr "ملفات تشغيل جافا"
 
 #: launcher/java/download/JavaDownloadTask.cpp:312
 msgctxt "JavaDownloadTask|"
 msgid "Could not find java binary in downloaded runtime."
-msgstr ""
+msgstr "تعذر العثور على ثنائي جافا في وقت التشغيل الذي تم تنزيله."
 
 #: launcher/java/JavaInstallList.cpp:165
 msgctxt "JavaListLoadTask|"
@@ -3382,7 +2935,7 @@ msgstr "جار التحقق من تثبيتات للجافا..."
 #: launcher/ui/pages/global/JavaPage.ui:39
 msgctxt "JavaPage|"
 msgid "Settings"
-msgstr ""
+msgstr "الإعدادات"
 
 #: launcher/ui/pages/global/JavaPage.ui:45
 msgctxt "JavaPage|"
@@ -3417,7 +2970,7 @@ msgstr "الذاكرة المتوفرة لتخزين كائنات جافا ال�
 #: launcher/ui/pages/global/JavaPage.ui:141
 msgctxt "JavaPage|"
 msgid "Java Runtime"
-msgstr ""
+msgstr "وقت تشغيل جافا"
 
 #: launcher/ui/pages/global/JavaPage.ui:153
 msgctxt "JavaPage|"
@@ -3432,12 +2985,12 @@ msgstr "مدخلات JVM:"
 #: launcher/ui/pages/global/JavaPage.ui:202
 msgctxt "JavaPage|"
 msgid "Auto-download Java"
-msgstr ""
+msgstr "تنزيل تلقائي لـ Java"
 
 #: launcher/ui/pages/global/JavaPage.ui:215
 msgctxt "JavaPage|"
 msgid "Auto-download from:"
-msgstr ""
+msgstr "التحميل التلقائي من:"
 
 #: launcher/ui/pages/global/JavaPage.ui:231
 msgctxt "JavaPage|"
@@ -3452,47 +3005,47 @@ msgstr "اختبار"
 #: launcher/ui/pages/global/JavaPage.ui:268
 msgctxt "JavaPage|"
 msgid "Installations"
-msgstr ""
+msgstr "التثبيت"
 
 #: launcher/ui/pages/global/JavaPage.ui:274
 msgctxt "JavaPage|"
 msgid "Installed Java Runtimes"
-msgstr ""
+msgstr "جوا مرات مثبتة"
 
 #: launcher/ui/pages/global/JavaPage.ui:287
 msgctxt "JavaPage|"
 msgid "Version"
-msgstr ""
+msgstr "الإصدار"
 
 #: launcher/ui/pages/global/JavaPage.ui:292
 msgctxt "JavaPage|"
 msgid "Vendor"
-msgstr ""
+msgstr "البائع"
 
 #: launcher/ui/pages/global/JavaPage.ui:297
 msgctxt "JavaPage|"
 msgid "Path"
-msgstr ""
+msgstr "المسار"
 
 #: launcher/ui/pages/global/JavaPage.ui:307
 msgctxt "JavaPage|"
 msgid "Download Java..."
-msgstr ""
+msgstr "تحميل جافا..."
 
 #: launcher/ui/pages/global/JavaPage.ui:314
 msgctxt "JavaPage|"
 msgid "Refresh"
-msgstr ""
+msgstr "تحديث"
 
 #: launcher/ui/pages/global/JavaPage.ui:321
 msgctxt "JavaPage|"
 msgid "Remove"
-msgstr ""
+msgstr "إزالة"
 
 #: launcher/ui/pages/global/JavaPage.ui:341
 msgctxt "JavaPage|"
 msgid "Use Selected"
-msgstr ""
+msgstr "استخدام المحدد"
 
 #: launcher/ui/pages/global/JavaPage.cpp:167
 msgctxt "JavaPage|"
@@ -3507,14 +3060,15 @@ msgstr "اعثر على ملف الجافا التنفيذي"
 #: launcher/ui/pages/global/JavaPage.cpp:247
 msgctxt "JavaPage|"
 msgid "Remove Java Installation"
-msgstr ""
+msgstr "إزالة تثبيت جافا"
 
 #: launcher/ui/pages/global/JavaPage.cpp:248
 #, qt-format
 msgctxt "JavaPage|"
 msgid "Are you sure you want to remove this Java installation?\n\n"
 "%1"
-msgstr ""
+msgstr "هل أنت متأكد من أنك تريد إزالة تثبيت جافا هذا؟\n\n"
+"%1"
 
 #: launcher/ui/pages/global/JavaPage.h:69
 msgctxt "JavaPage|"
@@ -3588,12 +3142,14 @@ msgctxt "JavaWizardPage|"
 msgid "You do not have a working Java set up yet or it went missing.\n"
 "Please select one of the following or browse for a java executable.\n"
 "You can also choose which vendor to use for automatic Java downloads."
-msgstr ""
+msgstr "ليس لديك جاهز جافا للعمل بعد أو اختفت.\n"
+"الرجاء تحديد واحد مما يلي أو تصفح للحصول على جافا قابل للتنفيذ.\n"
+"يمكنك أيضًا اختيار المورد الذي ستستخدمه لتنزيلات جافا التلقائية."
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:149
 msgctxt "JavaWizardPage|"
 msgid "Auto-download Java from:"
-msgstr ""
+msgstr "تحميل تلقائي لـ Java من:"
 
 #: launcher/ui/pages/global/LanguagePage.h:62
 msgctxt "LanguagePage|"
@@ -3630,17 +3186,17 @@ msgstr "لا حسابات متوفرة"
 #: launcher/LaunchController.cpp:83
 msgctxt "LaunchController|"
 msgid "In order to play Minecraft, you must have at least one Microsoft account logged in.Would you like to open the account manager to add an account now?"
-msgstr ""
+msgstr "للعب Minecraft، يجب أن يكون لديك حساب مايكروسوفت واحد على الأقل لتسجيل الدخول. هل ترغب في فتح مدير الحساب لإضافة حساب الآن؟"
 
 #: launcher/LaunchController.cpp:97
 msgctxt "LaunchController|"
 msgid "No Account — Play Demo?"
-msgstr ""
+msgstr "لا يوجد حساب – لعب تجريبي؟"
 
 #: launcher/LaunchController.cpp:100
 msgctxt "LaunchController|"
 msgid "<b>No Microsoft account is linked.</b><br><br>Without a Microsoft account you cannot play the full version of Minecraft.<br><br><b>Demo Mode</b> lets you try Minecraft with the following limitations:<br>&nbsp;&bull;&nbsp;Only a small area of the world is accessible<br>&nbsp;&bull;&nbsp;Progress is not saved after the demo ends<br>&nbsp;&bull;&nbsp;Multiplayer is not available<br><br>Would you like to launch Minecraft in Demo Mode?"
-msgstr ""
+msgstr "<b>لا يوجد حساب مايكروسوفت مربوط.</b><br><br>بدون حساب مايكروسوفت لا يمكنك تشغيل النسخة الكاملة من ماينكرافت.<br><br><b>الوضع التجريبي</b> يتيح لك تجربة Minecraft مع القيود التالية:<br>&nbsp;&bull;&nbsp;منطقة صغيرة فقط من العالم يمكن الوصول إليها<br>&nbsp;&bull;&nbsp;لم يتم حفظ التقدم بعد انتهاء العرض التجريبي<br>&nbsp;&bull;&nbsp;Multiplayer غير متوفرة<br><br>هل ترغب في إطلاق Minecraft في الوضع التجريبي؟"
 
 #: launcher/LaunchController.cpp:112 launcher/LaunchController.cpp:310
 msgctxt "LaunchController|"
@@ -3655,17 +3211,17 @@ msgstr "إلغاء"
 #: launcher/LaunchController.cpp:121
 msgctxt "LaunchController|"
 msgid "Demo Mode — Choose Username"
-msgstr ""
+msgstr "الوضع التجريبي — اختر اسم المستخدم"
 
 #: launcher/LaunchController.cpp:122
 msgctxt "LaunchController|"
 msgid "Enter a username to use in Demo Mode:"
-msgstr ""
+msgstr "أدخل اسم المستخدم لاستخدامه في الوضع التجريبي:"
 
 #: launcher/LaunchController.cpp:123 launcher/LaunchController.cpp:131
 msgctxt "LaunchController|"
 msgid "User"
-msgstr ""
+msgstr "المستخدم"
 
 #: launcher/LaunchController.cpp:155
 msgctxt "LaunchController|"
@@ -3685,17 +3241,17 @@ msgstr ""
 #: launcher/LaunchController.cpp:265
 msgctxt "LaunchController|"
 msgid "Player name"
-msgstr ""
+msgstr "اسم اللاعب"
 
 #: launcher/LaunchController.cpp:266
 msgctxt "LaunchController|"
 msgid "Choose your offline mode player name."
-msgstr ""
+msgstr "اختر اسم مشغل الوضع دون اتصال."
 
 #: launcher/LaunchController.cpp:292
 msgctxt "LaunchController|"
 msgid "Received undetermined session status during login."
-msgstr ""
+msgstr "تم تلقي حالة جلسة غير محددة أثناء تسجيل الدخول."
 
 #: launcher/LaunchController.cpp:304
 msgctxt "LaunchController|"
@@ -3724,7 +3280,7 @@ msgstr "اللعب دون اتصال"
 #: launcher/LaunchController.cpp:353
 msgctxt "LaunchController|"
 msgid "The account has expired and needs to be logged into manually again."
-msgstr ""
+msgstr "انتهت مدة صلاحية الحساب ويحتاج إلى تسجيل الدخول يدويا مرة أخرى."
 
 #: launcher/LaunchController.cpp:356
 msgctxt "LaunchController|"
@@ -3816,7 +3372,8 @@ msgstr "قد تؤدي هذه العملية إلى عطب في النموذج ل
 msgctxt "LaunchTask|"
 msgid "MeshMC stopped watching the game log because the log length surpassed %1 lines.\n"
 "You may have to fix your mods because the game is still logging to files and likely wasting harddrive space at an alarming rate!"
-msgstr ""
+msgstr "توقفت MeshMC عن مشاهدة سجل اللعبة لأن طول السجل تجاوز الخطوط %1 .\n"
+"قد تضطر إلى إصلاح المودات الخاصة بك لأن اللعبة لا تزال تسجل الدخول إلى الملفات واحتمال إهدار مساحة القيادة الصلبة بمعدل مزعج!"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:45
 msgctxt "LegacyFTB::FilterModel|"
@@ -3889,7 +3446,7 @@ msgstr "فشل في تحريك الملفات بعد فك ضغطها!"
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:179
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Failed to open pack.json!"
-msgstr ""
+msgstr "فشل في فتح pack.json!"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:225
 msgctxt "LegacyFTB::PackInstallTask|"
@@ -3963,7 +3520,7 @@ msgstr "هل أن متأكد أنك تريد إزالة الحزمة %1؟"
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.h:81
 msgctxt "LegacyFTB::Page|"
 msgid "FTB Legacy"
-msgstr ""
+msgstr "FTB Legacy"
 
 #: launcher/minecraft/legacy/LegacyInstance.cpp:240
 msgctxt "LegacyInstance|"
@@ -3978,7 +3535,7 @@ msgstr "نموذج من الإصدارات السابقة."
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:29
 msgctxt "LegacyUpgradePage|"
 msgid "<html><body><h1>Upgrade is required</h1><p>MeshMC now supports old Minecraft versions and all the required features in the new (OneSix) instance format. As a consequence, the old (Legacy) format has been entirely disabled and old instances need to be upgraded.</p><p>The upgrade will create a new instance with the same contents as the current one, in the new format. The original instance will remain untouched, in case anything goes wrong in the process.</p><p>Please report any issues on our <a href=\"https://github.com/Project-Tick/MeshMC/issues\">GitHub page</a>.</p><p>There is also a <a href=\"https://discord.gg/GtPmv93\">discord channel for testing here</a>.</p></body></html>"
-msgstr ""
+msgstr "<html><body><h1>الترقية مطلوبة</h1><p>MeshMC الآن يدعم إصدارات Minecraft القديمة وجميع الميزات المطلوبة في تنسيق مثيل (Onesix) الجديد. ونتيجة لذلك، تعطل تماما الشكل القديم (التراث) ويلزم رفع مستوى الحالات القديمة.</p><p>ستنشئ الترقية مثيل جديد بنفس المحتويات الحالية في الصيغة الجديدة. وستبقى الحالة الأصلية على ما هي عليه، في حالة حدوث أي خطأ في العملية.</p><p>يرجى الإبلاغ عن أي مشاكل في صفحتنا <a href=\"https://github.com/Project-Tick/MeshMC/issues\">GitHub</a>.</p><p>توجد أيضًا قناة الخلاف <a href=\"https://discord.gg/GtPmv93\">لاختبارها هنا</a>.</p></body></html>"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:39
 msgctxt "LegacyUpgradePage|"
@@ -4135,7 +3692,7 @@ msgstr "تقرير ماينكرافت"
 #, qt-format
 msgctxt "LoggedProcess|"
 msgid "Process exited with code %1."
-msgstr ""
+msgstr "تم الخروج من العملية مع الرمز %1."
 
 #. Message displayed on instance crashed
 #: launcher/LoggedProcess.cpp:107
@@ -4147,7 +3704,7 @@ msgstr "فشلت العملية."
 #, qt-format
 msgctxt "LoggedProcess|"
 msgid "Process crashed with exitcode %1."
-msgstr ""
+msgstr "تعطلت العملية مع exitcode %1."
 
 #. Message displayed after the instance exits due to kill request
 #: launcher/LoggedProcess.cpp:116
@@ -4163,17 +3720,17 @@ msgstr "فشلت العملية بالبدء."
 #: launcher/ui/dialogs/MSALoginDialog.ui:20
 msgctxt "MSALoginDialog|"
 msgid "Add Microsoft Account"
-msgstr ""
+msgstr "إضافة حساب مايكروسوفت"
 
 #: launcher/ui/dialogs/MSALoginDialog.cpp:66
 msgctxt "MSALoginDialog|"
 msgid "Opening your browser for Microsoft login..."
-msgstr ""
+msgstr "فتح متصفحك لتسجيل الدخول لمايكروسوفت..."
 
 #: launcher/ui/dialogs/MSALoginDialog.cpp:95
 msgctxt "MSALoginDialog|"
 msgid "here"
-msgstr ""
+msgstr "هنا"
 
 #: launcher/ui/dialogs/MSALoginDialog.cpp:97
 #, qt-format
@@ -4184,7 +3741,7 @@ msgstr ""
 #: launcher/minecraft/auth/steps/MSAStep.cpp:41
 msgctxt "MSAStep|"
 msgid "Login successful! You can close this page and return to MeshMC."
-msgstr ""
+msgstr "تم تسجيل الدخول بنجاح! يمكنك إغلاق هذه الصفحة والعودة إلى MeshMC."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:65
 msgctxt "MSAStep|"
@@ -4194,62 +3751,62 @@ msgstr "تسجيل الدخول باستخدام حساب مايكروسوفت."
 #: launcher/minecraft/auth/steps/MSAStep.cpp:96
 msgctxt "MSAStep|"
 msgid "Failed to start local HTTP server for OAuth2 callback."
-msgstr ""
+msgstr "فشل في بدء خادم HTTP المحلي لرد اتصال OAuth2."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:135
 msgctxt "MSAStep|"
 msgid "Got MSA token."
-msgstr ""
+msgstr "حصلت على الرمز المميز لبدل الإقامة اليومي"
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:146
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed due to a network error."
-msgstr ""
+msgstr "فشلت مصادقة مايكروسوفت بسبب خطأ في الشبكة."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:153
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed."
-msgstr ""
+msgstr "فشلت عملية مصادقة ميكروسوفت."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:157
 msgctxt "MSAStep|"
 msgid "Microsoft authentication token expired."
-msgstr ""
+msgstr "انتهت صلاحية رمز مصادقة مايكروسوفت."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:161
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed with an unrecognized error."
-msgstr ""
+msgstr "فشلت مصادقة مايكروسوفت مع خطأ غير معروف."
 
 #: launcher/ui/MacOSMenuBar.cpp:83
 msgctxt "MacOSMenuBar|"
 msgid "&File"
-msgstr ""
+msgstr "&ملف"
 
 #: launcher/ui/MacOSMenuBar.cpp:107
 msgctxt "MacOSMenuBar|"
 msgid "&Instance"
-msgstr ""
+msgstr "&مثيل"
 
 #: launcher/ui/MacOSMenuBar.cpp:126
 msgctxt "MacOSMenuBar|"
 msgid "F&olders"
-msgstr ""
+msgstr "ا&قدم"
 
 #: launcher/ui/MacOSMenuBar.cpp:141
 msgctxt "MacOSMenuBar|"
 msgid "&View"
-msgstr ""
+msgstr "&عرض"
 
 #: launcher/ui/MacOSMenuBar.cpp:147
 msgctxt "MacOSMenuBar|"
 msgid "&Accounts"
-msgstr ""
+msgstr "&الحسابات"
 
 #: launcher/ui/MacOSMenuBar.cpp:165
 msgctxt "MacOSMenuBar|"
 msgid "&Help"
-msgstr ""
+msgstr "&مساعدة"
 
 #: launcher/ui/MainWindow.cpp:289
 msgctxt "MainWindow|"
@@ -4362,33 +3919,33 @@ msgstr "افتح %1 subreddit."
 #: launcher/ui/MainWindow.cpp:421
 msgctxt "MainWindow|"
 msgid "Plugins"
-msgstr ""
+msgstr "الإضافات"
 
 #: launcher/ui/MainWindow.cpp:422
 msgctxt "MainWindow|"
 msgid "View and manage MMCO Plugins."
-msgstr ""
+msgstr "عرض وإدارة إضافات MMCo."
 
 #: launcher/ui/MainWindow.cpp:432
 msgctxt "MainWindow|"
 msgid "MeshMC Logs"
-msgstr ""
+msgstr "سجلات MC"
 
 #: launcher/ui/MainWindow.cpp:433
 msgctxt "MainWindow|"
 msgid "View and manage MeshMC application logs."
-msgstr ""
+msgstr "عرض وإدارة سجلات تطبيقات MeshMC."
 
 #: launcher/ui/MainWindow.cpp:442
 msgctxt "MainWindow|"
 msgid "Feature Flags"
-msgstr ""
+msgstr "علامات الميزة"
 
 #: launcher/ui/MainWindow.cpp:443
 #, qt-format
 msgctxt "MainWindow|"
 msgid "View the runtime feature flags known to %1."
-msgstr ""
+msgstr "عرض أعلام ميزة التشغيل المعروفة ل %1."
 
 #: launcher/ui/MainWindow.cpp:452
 #, qt-format
@@ -4492,12 +4049,12 @@ msgstr "تغيير إعدادات النموذج، إضافاته وإصدارا
 #: launcher/ui/MainWindow.cpp:626
 msgctxt "MainWindow|"
 msgid "Instance Settings"
-msgstr ""
+msgstr "إعدادات المثيل"
 
 #: launcher/ui/MainWindow.cpp:627
 msgctxt "MainWindow|"
 msgid "Open the settings for the selected instance."
-msgstr ""
+msgstr "فتح الإعدادات للنموذج المحدد."
 
 #: launcher/ui/MainWindow.cpp:636
 msgctxt "MainWindow|"
@@ -4562,12 +4119,12 @@ msgstr "افتح مجلد ماينكرافت للنموذج المحدد بمت�
 #: launcher/ui/MainWindow.cpp:694
 msgctxt "MainWindow|"
 msgid "Mods Folder"
-msgstr ""
+msgstr "مجلد المودات"
 
 #: launcher/ui/MainWindow.cpp:695
 msgctxt "MainWindow|"
 msgid "Open the selected instance's mods folder in a file browser."
-msgstr ""
+msgstr "افتح مجلد تعديلات مثيل المحدد في متصفح الملفات."
 
 #: launcher/ui/MainWindow.cpp:705
 msgctxt "MainWindow|"
@@ -4618,7 +4175,7 @@ msgstr "انسخ النموذج المحدد."
 #, qt-format
 msgctxt "MainWindow|MeshMC - Version X"
 msgid "%1 - Version %2"
-msgstr ""
+msgstr "%1 - الإصدار %2"
 
 #: launcher/ui/MainWindow.cpp:809
 #, qt-format
@@ -4639,7 +4196,7 @@ msgstr "إجمالي وقت اللعب: 0 ثانية"
 #: launcher/ui/MainWindow.cpp:1155 launcher/ui/MainWindow.cpp:1438
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr ""
+msgstr "Profiles"
 
 #: launcher/ui/MainWindow.cpp:1210
 msgctxt "MainWindow|"
@@ -4686,40 +4243,41 @@ msgstr "لا يوجد أخبار متوفرة."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Preparing update to version %1..."
-msgstr ""
+msgstr "إعداد التحديث إلى الإصدار %1..."
 
 #: launcher/ui/MainWindow.cpp:1507
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Download URL: %1"
-msgstr ""
+msgstr "رابط التنزيل: %1"
 
 #: launcher/ui/MainWindow.cpp:1511
 msgctxt "MainWindow|"
 msgid "Launching updater..."
-msgstr ""
+msgstr "تشغيل التحديث..."
 
 #: launcher/ui/MainWindow.cpp:1517
 msgctxt "MainWindow|"
 msgid "Updater launched. MeshMC will now close."
-msgstr ""
+msgstr "تم تشغيل التحديث. سيغلق MC الآن."
 
 #: launcher/ui/MainWindow.cpp:1524
 msgctxt "MainWindow|"
 msgid "Failed to launch the updater."
-msgstr ""
+msgstr "فشل في تشغيل التحديث."
 
 #: launcher/ui/MainWindow.cpp:1529
 msgctxt "MainWindow|"
 msgid "No Download URL"
-msgstr ""
+msgstr "لا يوجد رابط تنزيل"
 
 #: launcher/ui/MainWindow.cpp:1530
 #, qt-format
 msgctxt "MainWindow|"
 msgid "An update to version %1 is available, but no download URL was found for your platform (%2).\n"
 "Please visit the project website to download it manually."
-msgstr ""
+msgstr "يتوفر تحديث إلى الإصدار %1 . ولكن لم يتم العثور على رابط تحميل للمنصة الخاصة بك (%2).\n"
+"يرجى زيارة موقع المشروع لتنزيله يدويا."
 
 #: launcher/ui/MainWindow.cpp:1621 launcher/ui/MainWindow.cpp:1674
 #: launcher/ui/MainWindow.cpp:1684
@@ -4730,12 +4288,12 @@ msgstr "خطأ"
 #: launcher/ui/MainWindow.cpp:1629
 msgctxt "MainWindow|"
 msgid "Warnings"
-msgstr ""
+msgstr "التحذيرات"
 
 #: launcher/ui/MainWindow.cpp:1634 launcher/ui/MainWindow.cpp:1679
 msgctxt "MainWindow|"
 msgid "Abort"
-msgstr ""
+msgstr "الغاء"
 
 #: launcher/ui/MainWindow.cpp:1685
 msgctxt "MainWindow|"
@@ -4746,33 +4304,33 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:1816
 msgctxt "MainWindow|"
 msgid "Group name"
-msgstr ""
+msgstr "اسم المجموعة"
 
 #: launcher/ui/MainWindow.cpp:1817
 msgctxt "MainWindow|"
 msgid "Enter a new group name."
-msgstr ""
+msgstr "أدخل اسم مجموعة جديد."
 
 #: launcher/ui/MainWindow.cpp:1839
 msgctxt "MainWindow|"
 msgid "Delete group"
-msgstr ""
+msgstr "حذف المجموعة"
 
 #: launcher/ui/MainWindow.cpp:1840
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Are you sure you want to delete the group %1"
-msgstr ""
+msgstr "هل أنت متأكد من أنك تريد حذف المجموعة %1"
 
 #: launcher/ui/MainWindow.cpp:1880
 msgctxt "MainWindow|"
 msgid "Checking for updates..."
-msgstr ""
+msgstr "البحث عن تحديثات..."
 
 #: launcher/ui/MainWindow.cpp:2014
 msgctxt "MainWindow|"
 msgid "CAREFUL!"
-msgstr ""
+msgstr "جميل!"
 
 #: launcher/ui/MainWindow.cpp:2015
 #, qt-format
@@ -4780,61 +4338,63 @@ msgctxt "MainWindow|"
 msgid "About to delete: %1\n"
 "This is permanent and will completely delete the instance.\n\n"
 "Are you sure?"
-msgstr ""
+msgstr "على وشك الحذف: %1\n"
+"هذا دائم وسوف يحذف مثيل كاملا.\n\n"
+"هل أنت متأكد؟"
 
 #: launcher/ui/MainWindow.cpp:2205
 msgctxt "MainWindow|"
 msgid "Rename Instance"
-msgstr ""
+msgstr "إعادة تسمية المثيل"
 
 #: launcher/ui/MainWindow.cpp:2219
 msgctxt "MainWindow|"
 msgid "Your instance folder contains '!' and this is known to cause Java problems!"
-msgstr ""
+msgstr "المجلد المثيل الخاص بك يحتوي على '!' ومن المعروف أن هذا يسبب مشاكل في جافا!"
 
 #: launcher/ui/MainWindow.cpp:2222
 #, qt-format
 msgctxt "MainWindow|"
 msgid "You have now two options: <br/> - change the instance folder in the settings <br/> - move this installation of %1 to a different folder"
-msgstr ""
+msgstr "لديك الآن خياران: <br/> - تغيير مجلد مثيل في الإعدادات <br/> - نقل هذا التثبيت %1 إلى مجلد مختلف"
 
 #: launcher/ui/MainWindow.cpp:2229
 msgctxt "MainWindow|"
 msgid "This is a problem: <br/> - MeshMC will likely be deleted without warning by the operating system <br/> - close MeshMC now and extract it to a real location, not a temporary folder"
-msgstr ""
+msgstr "هذه مشكلة: <br/> - MeshMC سوف يتم حذفها على الأرجح بدون تحذير من قبل نظام التشغيل <br/> - إغلاق MeshMC الآن واستخراجها إلى موقع حقيقي، ليس مجلد مؤقت"
 
 #: launcher/ui/MainWindow.cpp:2237
 msgctxt "MainWindow|"
 msgid "Your instance folder contains 'Rar$' - that means you haven't extracted MeshMC archive!"
-msgstr ""
+msgstr "يحتوي مجلد المثيل الخاص بك على 'Rar$' - وهذا يعني أنك لم تستخرج أرشيف MeshMC!"
 
 #: launcher/ui/MainWindow.cpp:2246
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder is in a temporary folder: '%1'!"
-msgstr ""
+msgstr "مجلد مثيل في مجلد مؤقت: '%1'!"
 
 #: launcher/ui/MainWindow.cpp:2262
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Total playtime: %1"
-msgstr ""
+msgstr "إجمالي وقت اللعب: %1"
 
 #: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:40
 msgctxt "MeshMCLoginStep|"
 msgid "Accessing Mojang services."
-msgstr ""
+msgstr "الوصول إلى خدمات Mojang."
 
 #: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:86
 #, qt-format
 msgctxt "MeshMCLoginStep|"
 msgid "Failed to get Minecraft access token: %1"
-msgstr ""
+msgstr "فشل الحصول على الرمز المميز للوصول إلى ماين كرافت: %1"
 
 #: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:98
 msgctxt "MeshMCLoginStep|"
 msgid "Failed to parse the Minecraft access token response."
-msgstr ""
+msgstr "فشل تحليل استجابة الرمز المميز للوصول إلى Minecraft."
 
 #: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:101
 msgctxt "MeshMCLoginStep|"
@@ -4845,253 +4405,255 @@ msgstr ""
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:45
 msgctxt "MeshMCLogsDialog|"
 msgid "MeshMC Logs"
-msgstr ""
+msgstr "سجلات MC"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr ""
+msgstr "Reload"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
 msgid "Copy the whole log into the clipboard"
-msgstr ""
+msgstr "نسخ كامل السجل إلى الحافظة"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:46
 msgctxt "MeshMCLogsDialog|"
 msgid "&Copy"
-msgstr ""
+msgstr "&نسخ"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:53
 msgctxt "MeshMCLogsDialog|"
 msgid "Upload the log to paste.ee"
-msgstr ""
+msgstr "تحميل السجل إلى لصق"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:56
 msgctxt "MeshMCLogsDialog|"
 msgid "Upload"
-msgstr ""
+msgstr "تحميل"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:63
 msgctxt "MeshMCLogsDialog|"
 msgid "Delete the selected log file"
-msgstr ""
+msgstr "حذف ملف السجل المحدد"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:66
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:216
 msgctxt "MeshMCLogsDialog|"
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:73
 msgctxt "MeshMCLogsDialog|"
 msgid "Delete all MeshMC log files"
-msgstr ""
+msgstr "حذف جميع ملفات سجل MC"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:76
 msgctxt "MeshMCLogsDialog|"
 msgid "Clean"
-msgstr ""
+msgstr "تنظيف"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:100
 msgctxt "MeshMCLogsDialog|"
 msgid "Search:"
-msgstr ""
+msgstr "البحث:"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:110
 msgctxt "MeshMCLogsDialog|"
 msgid "Find"
-msgstr ""
+msgstr "البحث"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:158
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:223
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:269
 msgctxt "MeshMCLogsDialog|"
 msgid "Error"
-msgstr ""
+msgstr "خطأ"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:159
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Unable to open %1 for reading: %2"
-msgstr ""
+msgstr "غير قادر على فتح %1 للقراء: %2"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:167
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "The file (%1) is too big. You may want to open it in a viewer optimized for large files."
-msgstr ""
+msgstr "الملف (%1) كبير جداً. قد ترغب في فتحه في عارض محسَّن للملفات الكبيرة."
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:217
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Do you really want to delete %1?"
-msgstr ""
+msgstr "هل تريد حقاً حذف %1؟"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:224
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Unable to delete %1: %2"
-msgstr ""
+msgstr "غير قادر على حذف %1: %2"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:248
 msgctxt "MeshMCLogsDialog|"
 msgid "Clean up"
-msgstr ""
+msgstr "تنظيف"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:249
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Do you really want to delete all log files?\n"
 "%1"
-msgstr ""
+msgstr "هل تريد حقاً حذف جميع ملفات السجلات؟\n"
+"%1"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:270
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Couldn't delete some files:\n"
 "%1"
-msgstr ""
+msgstr "تعذر حذف بعض الملفات:\n"
+"%1"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:45
 msgctxt "MeshMCPage|"
 msgid "Features"
-msgstr ""
+msgstr "الميزات"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:51
 msgctxt "MeshMCPage|"
 msgid "Update Settings"
-msgstr ""
+msgstr "تحديث الإعدادات"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:57
 msgctxt "MeshMCPage|"
 msgid "Check for updates on start?"
-msgstr ""
+msgstr "التحقق من وجود تحديثات عند البدء؟"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:64
 msgctxt "MeshMCPage|"
 msgid "Up&date Channel:"
-msgstr ""
+msgstr "تاريخ التحديث:"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:81
 msgctxt "MeshMCPage|"
 msgid "No channel selected."
-msgstr ""
+msgstr "لم يتم تحديد أي قناة."
 
 #: launcher/ui/pages/global/MeshMCPage.ui:94
 msgctxt "MeshMCPage|"
 msgid "Folders"
-msgstr ""
+msgstr "مجلدات"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:100
 msgctxt "MeshMCPage|"
 msgid "I&nstances:"
-msgstr ""
+msgstr "ا&مكان:"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:120
 msgctxt "MeshMCPage|"
 msgid "&Mods:"
-msgstr ""
+msgstr "&المواليد:"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:143
 msgctxt "MeshMCPage|"
 msgid "&Icons:"
-msgstr ""
+msgstr "&أيقونة"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:163
 msgctxt "MeshMCPage|"
 msgid "Move the data to new location (will restart MeshMC)"
-msgstr ""
+msgstr "نقل البيانات إلى موقع جديد (سيتم إعادة تشغيل MeshMC)"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:184
 msgctxt "MeshMCPage|"
 msgid "User Interface"
-msgstr ""
+msgstr "واجهة المستخدم"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:190
 msgctxt "MeshMCPage|"
 msgid "MeshMC notifications"
-msgstr ""
+msgstr "إشعارات MeshMC"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:196
 msgctxt "MeshMCPage|"
 msgid "Reset hidden notifications"
-msgstr ""
+msgstr "إعادة تعيين الإشعارات المخفية"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:212
 msgctxt "MeshMCPage|"
 msgid "Instance view sorting mode"
-msgstr ""
+msgstr "نموذج عرض وضع الفرز"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:218
 msgctxt "MeshMCPage|"
 msgid "By &last launched"
-msgstr ""
+msgstr "قبل اطلاق &الأخير"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:228
 msgctxt "MeshMCPage|"
 msgid "By &name"
-msgstr ""
+msgstr "حسب &اسم"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:255
 msgctxt "MeshMCPage|"
 msgid "Console"
-msgstr ""
+msgstr "وحدة"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:261
 msgctxt "MeshMCPage|"
 msgid "Console Settings"
-msgstr ""
+msgstr "إعدادات وحدة التحكم"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:267
 msgctxt "MeshMCPage|"
 msgid "Show console while the game is running?"
-msgstr ""
+msgstr "إظهار وحدة التحكم أثناء تشغيل اللعبة؟"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:274
 msgctxt "MeshMCPage|"
 msgid "Automatically close console when the game quits?"
-msgstr ""
+msgstr "إغلاق وحدة التحكم تلقائياً عند الإقلاع عن اللعبة؟"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:281
 msgctxt "MeshMCPage|"
 msgid "Show console when the game crashes?"
-msgstr ""
+msgstr "إظهار وحدة التحكم عندما تتصطدم اللعبة؟"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:291
 msgctxt "MeshMCPage|"
 msgid "History limit"
-msgstr ""
+msgstr "حد التاريخ"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:297
 msgctxt "MeshMCPage|"
 msgid "Stop logging when log overflows"
-msgstr ""
+msgstr "إيقاف التسجيل عند تسجيل التدفقات الزائدة"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:310
 msgctxt "MeshMCPage|"
 msgid " lines"
-msgstr ""
+msgstr " خطوط"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:338
 msgctxt "MeshMCPage|"
 msgid "Console font"
-msgstr ""
+msgstr "خط التحكم"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:390
 msgctxt "MeshMCPage|"
 msgid "Analytics"
-msgstr ""
+msgstr "التحليلات"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:396
 msgctxt "MeshMCPage|"
 msgid "Analytics Settings"
-msgstr ""
+msgstr "إعدادات التحليلات"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:402
 msgctxt "MeshMCPage|"
 msgid "Send anonymous usage statistics?"
-msgstr ""
+msgstr "إرسال إحصائيات استخدام مجهولة الهوية؟"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:416
 msgctxt "MeshMCPage|"
@@ -5106,37 +4668,47 @@ msgid "<html><head/>\n"
 "<li>Java version, architecture and memory settings.</li>\n"
 "</ul>\n"
 "</body></html>"
-msgstr ""
+msgstr "<html><head/>\n"
+"<body>\n"
+"<p>MeshMC يرسل إحصائيات الاستخدام المجهول في كل بداية من بداية التطبيق.</p><p>يتم جمع البيانات التالية:</p>\n"
+"<ul>\n"
+"<li>MeshMC.</li>\n"
+"<li>اسم نظام التشغيل والإصدار والهندسة المعمارية.</li>\n"
+"<li>معماري المعالج (معماري النواة على لينوكس).</li>\n"
+"<li>حجم ذاكرة النظام.</li>\n"
+"<li>إصدار الجافا والهندسة المعمارية وإعدادات الذاكرة.</li>\n"
+"</ul>\n"
+"</body></html>"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:123
 msgctxt "MeshMCPage|"
 msgid "Instance Folder"
-msgstr ""
+msgstr "مجلد مثيل"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:131
 msgctxt "MeshMCPage|"
 msgid "You're trying to specify an instance folder which's path contains at least one '!'. Java is known to cause problems if that is the case, your instances (probably) won't start!"
-msgstr ""
+msgstr "أنت تحاول تحديد مجلد مثيل يحتوي على مسار واحد على الأقل '!'. من المعروف أن جافا تسبب مشاكل إذا كان الأمر كذلك، فإن مثيلاتك (على الأرجح) لن تبدأ!"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:136
 msgctxt "MeshMCPage|"
 msgid "Do you really want to use this path? Selecting \"No\" will close this and not alter your instance path."
-msgstr ""
+msgstr "هل تريد حقاً استخدام هذا المسار؟ اختيار \"لا\" سوف يغلق هذا ولن يغير مسار مثيل السيرة الخاصة بك."
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:153
 msgctxt "MeshMCPage|"
 msgid "Icons Folder"
-msgstr ""
+msgstr "مجلد الأيقونات"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:164
 msgctxt "MeshMCPage|"
 msgid "Mods Folder"
-msgstr ""
+msgstr "مجلد المودات"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:175
 msgctxt "MeshMCPage|"
 msgid "Automatic macOS Migration"
-msgstr ""
+msgstr "هجرة macOS التلقائية"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:176
 #, qt-format
@@ -5147,40 +4719,40 @@ msgstr ""
 #: launcher/ui/pages/global/MeshMCPage.cpp:300
 msgctxt "MeshMCPage|"
 msgid "[Something/ERROR] A spooky error!"
-msgstr ""
+msgstr "[شيء/خطأ] خطأ مخيف!"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:309
 msgctxt "MeshMCPage|"
 msgid "[Test/INFO] A harmless message..."
-msgstr ""
+msgstr "[اختبار/INFO] رسالة غير ضارة..."
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:318
 msgctxt "MeshMCPage|"
 msgid "[Something/WARN] A not so spooky warning."
-msgstr ""
+msgstr "[شيء/ARN] تحذير غير مخيف."
 
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:151
 #, qt-format
 msgctxt "MeshMCPartLaunch|"
 msgid "The wrapper command \"%1\" couldn't be found."
-msgstr ""
+msgstr "لم يتم العثور على أمر التغليف \"%1\"."
 
 #. Error message displayed if instace can't start
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:171
 msgctxt "MeshMCPartLaunch|"
 msgid "Could not launch minecraft!"
-msgstr ""
+msgstr "تعذر تشغيل Minecraft!"
 
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:179
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:187
 msgctxt "MeshMCPartLaunch|"
 msgid "Game crashed."
-msgstr ""
+msgstr "تحطمت اللعبة."
 
 #: launcher/meta/Index.cpp:98
 msgctxt "Meta::Index|"
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #: launcher/minecraft/MinecraftInstance.cpp:768
 msgctxt "MinecraftInstance|"
@@ -5320,47 +4892,47 @@ msgctxt "MinecraftUpdate|"
 msgid "Aborted by user."
 msgstr "تم الإيقاف من قبل المستخدم."
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:451
+#: launcher/minecraft/mod/ModFolderModel.cpp:459
 msgctxt "ModFolderModel|"
 msgid "Folder"
 msgstr "المجلد"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:453
+#: launcher/minecraft/mod/ModFolderModel.cpp:461
 msgctxt "ModFolderModel|"
 msgid "File"
 msgstr "الملف"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:552
+#: launcher/minecraft/mod/ModFolderModel.cpp:560
 msgctxt "ModFolderModel|"
 msgid "Name"
 msgstr "الاسم"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:554
+#: launcher/minecraft/mod/ModFolderModel.cpp:562
 msgctxt "ModFolderModel|"
 msgid "Version"
 msgstr "الإصدار"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:556
+#: launcher/minecraft/mod/ModFolderModel.cpp:564
 msgctxt "ModFolderModel|"
 msgid "Last changed"
 msgstr "آخر تعديل"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:564
+#: launcher/minecraft/mod/ModFolderModel.cpp:572
 msgctxt "ModFolderModel|"
 msgid "Is the mod enabled?"
 msgstr "هل الإضافة مفعّلة؟"
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:566
+#: launcher/minecraft/mod/ModFolderModel.cpp:574
 msgctxt "ModFolderModel|"
 msgid "The name of the mod."
 msgstr "اسم الإضافة."
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:568
+#: launcher/minecraft/mod/ModFolderModel.cpp:576
 msgctxt "ModFolderModel|"
 msgid "The version of the mod."
 msgstr "إصدار الإضافة."
 
-#: launcher/minecraft/mod/ModFolderModel.cpp:570
+#: launcher/minecraft/mod/ModFolderModel.cpp:578
 msgctxt "ModFolderModel|"
 msgid "The date and time this mod was last changed (or added)."
 msgstr "التأريخ والوقت منذ آخر تغيير على هذه الإضافة (أو تأريخ الإضافة)"
@@ -5433,22 +5005,22 @@ msgstr "عر&ض المجلد"
 #: launcher/ui/pages/instance/ModFolderPage.ui:143
 msgctxt "ModFolderPage|"
 msgid "&Download"
-msgstr ""
+msgstr "&تحميل"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:146
 msgctxt "ModFolderPage|"
 msgid "Download content from CurseForge and Modrinth"
-msgstr ""
+msgstr "تنزيل المحتوى من لعنة التصنيع و الموديل"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:151
 msgctxt "ModFolderPage|"
 msgid "&Update"
-msgstr ""
+msgstr "&تحديث"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:154
 msgctxt "ModFolderPage|"
 msgid "Check tracked mods for newer compatible versions and update them."
-msgstr ""
+msgstr "تحقق من المودات التي تم تعقبها للإصدارات الأحدث المتوافقة وتحديثها."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:246
 msgctxt "ModFolderPage|"
@@ -5464,231 +5036,237 @@ msgstr "اختر %1"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:485
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr ""
+msgstr "No Mod Loader"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:486
 msgctxt "ModFolderPage|"
 msgid "No mod loader (Forge, Fabric, Quilt, or NeoForge) is installed in this instance. Please install a mod loader first before downloading mods."
-msgstr ""
+msgstr "لا يوجد محمل مورد (Forge, Fabric, Quilt, أو NeoForge) مثبت في هذا المثال. الرجاء تثبيت محمل مورد أولاً قبل تحميل المودع."
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:517
-#: launcher/ui/pages/instance/ModFolderPage.cpp:637
+#: launcher/ui/pages/instance/ModFolderPage.cpp:520
+#: launcher/ui/pages/instance/ModFolderPage.cpp:640
 msgctxt "ModFolderPage|"
 msgid "Skip"
-msgstr ""
+msgstr "تخطي"
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:568
+#: launcher/ui/pages/instance/ModFolderPage.cpp:571
 msgctxt "ModFolderPage|"
 msgid "Nothing to do"
-msgstr ""
+msgstr "لا شيء لفعله"
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:569
+#: launcher/ui/pages/instance/ModFolderPage.cpp:572
 msgctxt "ModFolderPage|"
 msgid "Every selected mod (and its dependencies) is already installed at the requested version."
-msgstr ""
+msgstr "تم بالفعل تثبيت كل الموديل المحدد (وتبعيها) في الإصدار المطلوب."
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:585
+#: launcher/ui/pages/instance/ModFolderPage.cpp:588
 msgctxt "ModFolderPage|"
 msgid "Download Failed"
-msgstr ""
+msgstr "فشل التحميل"
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:586
+#: launcher/ui/pages/instance/ModFolderPage.cpp:589
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "Some files failed to download: %1"
-msgstr ""
+msgstr "فشل تنزيل بعض الملفات: %1"
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:630
+#: launcher/ui/pages/instance/ModFolderPage.cpp:633
 msgctxt "ModFolderPage|"
 msgid "Cannot Check Updates"
-msgstr ""
+msgstr "لا يمكن التحقق من التحديثات"
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:631
+#: launcher/ui/pages/instance/ModFolderPage.cpp:634
 msgctxt "ModFolderPage|"
 msgid "This instance has no Minecraft version configured."
-msgstr ""
+msgstr "هذا المظهر لا يحتوي على نسخة Minecraft مكونة"
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:661
+#: launcher/ui/pages/instance/ModFolderPage.cpp:664
 msgctxt "ModFolderPage|"
 msgid "Update Failed"
-msgstr ""
+msgstr "فشل التحديث"
 
-#: launcher/ui/pages/instance/ModFolderPage.cpp:662
+#: launcher/ui/pages/instance/ModFolderPage.cpp:665
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "Some updates failed to download: %1"
-msgstr ""
+msgstr "فشل تنزيل بعض التحديثات: %1"
 
 #: launcher/minecraft/launch/ModMinecraftJar.cpp:62
 msgctxt "ModMinecraftJar|"
 msgid "Couldn't create the bin folder for Minecraft.jar"
 msgstr "تعذر إنشاء مجلد bin لملف Minecraft.jar"
 
-#: launcher/minecraft/launch/ModMinecraftJar.cpp:68
+#: launcher/minecraft/launch/ModMinecraftJar.cpp:69
 #, qt-format
 msgctxt "ModMinecraftJar|"
 msgid "Couldn't remove stale jar file: %1"
 msgstr "تعذر إزالة ملف jar فاسد: %1"
 
-#: launcher/minecraft/launch/ModMinecraftJar.cpp:82
+#: launcher/minecraft/launch/ModMinecraftJar.cpp:85
+msgctxt "ModMinecraftJar|"
+msgid "Couldn't determine the Minecraft jar to add the jar mods to."
+msgstr "تعذر تحديد جرة ماين كرافت لإضافة موديلات الجار إليها."
+
+#: launcher/minecraft/launch/ModMinecraftJar.cpp:91
 msgctxt "ModMinecraftJar|"
 msgid "Failed to create the custom Minecraft jar file."
 msgstr "فشل في إنشاء ملف Minecraft jar مخصص."
 
-#: launcher/modplatform/ModUpdateCheckTask.cpp:210
+#: launcher/modplatform/ModUpdateCheckTask.cpp:211
 msgctxt "ModUpdateCheckTask|"
 msgid "No tracked mods to check."
-msgstr ""
+msgstr "لا توجد موجات متتالية للتحقق."
 
-#: launcher/modplatform/ModUpdateCheckTask.cpp:215
+#: launcher/modplatform/ModUpdateCheckTask.cpp:216
 #, qt-format
 msgctxt "ModUpdateCheckTask|"
 msgid "Checking %1 mod(s) for updates..."
-msgstr ""
+msgstr "التحقق من وضع %1 للحصول على تحديثات..."
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:46
 msgctxt "ModUpdateDialog|"
 msgid "Available Mod Updates"
-msgstr ""
+msgstr "تحديثات المودة المتاحة"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:53
 msgctxt "ModUpdateDialog|"
 msgid "All mods are up to date."
-msgstr ""
+msgstr "تم تحديث جميع الموديات."
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:55
 #, qt-format
 msgctxt "ModUpdateDialog|"
 msgid "%1 mod(s) have newer compatible versions. Tick the ones you want to update."
-msgstr ""
+msgstr "وضع %1 لديه إصدارات أحدث متوافقة. ضع علامة على تلك التي تريد تحديثها."
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:65
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr ""
+msgstr "Mod"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:65
 msgctxt "ModUpdateDialog|"
 msgid "Source"
-msgstr ""
+msgstr "المصدر"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:65
 msgctxt "ModUpdateDialog|"
 msgid "Current"
-msgstr ""
+msgstr "الحالي"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:65
 msgctxt "ModUpdateDialog|"
 msgid "New"
-msgstr ""
+msgstr "جديد"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:80
 #, qt-format
 msgctxt "ModUpdateDialog|"
 msgid "%1 → %2\n"
 "File: %3 → %4"
-msgstr ""
+msgstr "%1 → %2\n"
+"ملف: %3 → %4"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:90
 msgctxt "ModUpdateDialog|"
 msgid "Select all"
-msgstr ""
+msgstr "حدد الكل"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:91
 msgctxt "ModUpdateDialog|"
 msgid "Select none"
-msgstr ""
+msgstr "لا اختيار"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:108
 msgctxt "ModUpdateDialog|"
 msgid "Update"
-msgstr ""
+msgstr "تحديث"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:89
 #, qt-format
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Failed to find pack version %1"
-msgstr ""
+msgstr "فشل في العثور على إصدار الحزمة %1"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:128
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Could not understand pack manifest:\n"
-msgstr ""
+msgstr "تعذر فهم حزمة الظاهرة:\n"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:145
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Downloading mods..."
-msgstr ""
+msgstr "جاري تنزيل الموقوف..."
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:147
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Mod download"
-msgstr ""
+msgstr "تحميل مودي"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:206
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Copying modpack files"
-msgstr ""
+msgstr "نسخ ملفات modpack"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:215
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Failed to copy files"
-msgstr ""
+msgstr "فشل في نسخ الملفات"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:220
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr ""
+msgstr "Installing modpack"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "الإصدار المحدد:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr ""
+msgstr "البحث"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "البحث والتصفية ..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:51
 msgctxt "ModrinthPage|"
 msgid "Sort by relevance"
-msgstr ""
+msgstr "الترتيب حسب الأهمية"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:52
 msgctxt "ModrinthPage|"
 msgid "Sort by downloads"
-msgstr ""
+msgstr "الترتيب حسب التنزيلات"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:53
 msgctxt "ModrinthPage|"
 msgid "Sort by last updated"
-msgstr ""
+msgstr "الترتيب حسب آخر تحديث"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:54
 msgctxt "ModrinthPage|"
 msgid "Sort by newest"
-msgstr ""
+msgstr "الترتيب حسب الأحدث"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:55
 msgctxt "ModrinthPage|"
 msgid "Sort by follows"
-msgstr ""
+msgstr "الترتيب حسب التتبع"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:125
 msgctxt "ModrinthPage|"
 msgid " by "
-msgstr ""
+msgstr " بواسطة "
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.h:56
 msgctxt "ModrinthPage|"
 msgid "Modrinth"
-msgstr ""
+msgstr "المعضلة"
 
 #: launcher/net/NetJob.cpp:144
 #, qt-format
@@ -5760,65 +5338,65 @@ msgstr "كاتب مجهول"
 #: plugins/NewsViewer/NewsViewerDialog.cpp:27
 msgctxt "NewsViewerDialog|"
 msgid "News"
-msgstr ""
+msgstr "الأخبار"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:33
 msgctxt "NewsViewerDialog|"
 msgid "Toggle the news list sidebar"
-msgstr ""
+msgstr "تبديل الشريط الجانبي لقائمة الأخبار"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:35
 msgctxt "NewsViewerDialog|"
 msgid "Refresh"
-msgstr ""
+msgstr "تحديث"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:36
 msgctxt "NewsViewerDialog|"
 msgid "Reload all news feeds"
-msgstr ""
+msgstr "إعادة تحميل جميع الأخبار"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:60
 msgctxt "NewsViewerDialog|"
 msgid "Select a news item"
-msgstr ""
+msgstr "حدد عنصر أخبار"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:84
 msgctxt "NewsViewerDialog|"
 msgid "Open in browser"
-msgstr ""
+msgstr "فتح في المتصفح"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:87
 msgctxt "NewsViewerDialog|"
 msgid "Close"
-msgstr ""
+msgstr "أغلق"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:135
 msgctxt "NewsViewerDialog|"
 msgid "◀ Hide sidebar"
-msgstr ""
+msgstr "◀ Hide sidebar"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:136
 msgctxt "NewsViewerDialog|"
 msgid "▶ Show sidebar"
-msgstr ""
+msgstr "▶ Show sidebar"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:175
 msgctxt "NewsViewerDialog|"
 msgid "Official"
-msgstr ""
+msgstr "رسمي"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:180
 #: plugins/NewsViewer/NewsViewerDialog.cpp:220
 #, qt-format
 msgctxt "NewsViewerDialog|"
 msgid "Feed %1"
-msgstr ""
+msgstr "تغذية %1"
 
 #: plugins/NewsViewer/NewsViewerDialog.cpp:184
 #: plugins/NewsViewer/NewsViewerDialog.cpp:206
 msgctxt "NewsViewerDialog|"
 msgid "(no title)"
-msgstr ""
+msgstr "(بدون عنوان)"
 
 #: launcher/ui/pages/instance/NotesPage.h:65
 msgctxt "NotesPage|"
@@ -5981,134 +5559,15 @@ msgctxt "PackProfile|"
 msgid "Version"
 msgstr "الإصدار"
 
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:123
-msgctxt "PackUpdaterPage|"
-msgid "(logo)"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:148
-msgctxt "PackUpdaterPage|"
-msgid "Check for Updates"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:153
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:468
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:474
-msgctxt "PackUpdaterPage|"
-msgid "Apply Update"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:160
-msgctxt "PackUpdaterPage|"
-msgid "Detach"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:162
-msgctxt "PackUpdaterPage|"
-msgid "Forget the modpack source for this instance. Useful if you moved away from the upstream pack and want to manage mods by hand from now on."
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:181
-msgctxt "PackUpdaterPage|"
-msgid "<p>This instance isn't linked to a modpack source yet.</p><p>Linking lets PackUpdater check the upstream catalogue for new releases of the pack and apply them in one go (mods, overrides, loader version, all in lockstep).</p><p>If this instance was created from a Modrinth (.mrpack) or CurseForge (.zip) pack, the link should have happened automatically during import. If you're seeing this anyway, the manifest probably wasn't preserved — you can attach it manually below.</p>"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:195
-msgctxt "PackUpdaterPage|"
-msgid "Attach to pack…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:221
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "Provider: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:222
-msgctxt "PackUpdaterPage|"
-msgid "(unnamed pack)"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:224
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "Version: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:229
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "Installed: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:337
-msgctxt "PackUpdaterPage|"
-msgid "<i>This instance isn't linked to a pack source.</i>"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:344
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "<i>%1 has no upstream catalogue to check against.</i>"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:351
-msgctxt "PackUpdaterPage|"
-msgid "Checking…"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:376
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "<b style='color:#cc6666'>Check failed:</b> %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:390
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "<b style='color:#66aa66'>Up to date.</b> Installed version: %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:406
-#, qt-format
-msgctxt "PackUpdaterPage|"
-msgid "<b style='color:#dd9933'>Update available:</b> %1 → %2"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:453
-msgctxt "PackUpdaterPage|"
-msgid "Detach modpack source"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:454
-msgctxt "PackUpdaterPage|"
-msgid "Forget the modpack source for this instance? You can re-attach it later, but PackUpdater won't show update notifications until you do."
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:469
-msgctxt "PackUpdaterPage|"
-msgid "Run \"Check for Updates\" first."
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:475
-msgctxt "PackUpdaterPage|"
-msgid "Instance is no longer pack-managed."
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.h:56
-msgctxt "PackUpdaterPage|"
-msgid "Modpack"
-msgstr ""
-
 #: launcher/ui/pagedialog/PageDialog.cpp:72
 msgctxt "PageDialog|"
 msgid "Close"
-msgstr ""
+msgstr "أغلق"
 
 #: launcher/ui/pagedialog/PageDialog.cpp:73
 msgctxt "PageDialog|"
 msgid "Help"
-msgstr ""
+msgstr "مساعدة"
 
 #: launcher/ui/pages/global/PasteEEPage.ui:39
 msgctxt "PasteEEPage|"
@@ -6118,7 +5577,7 @@ msgstr "مفتاح‫ الواجهة البرمجية لخدمة paste.ee"
 #: launcher/ui/pages/global/PasteEEPage.ui:45
 msgctxt "PasteEEPage|"
 msgid "MeshMC key - 12MB &upload limit"
-msgstr ""
+msgstr "مفتاح MeshMC - حد التحميل 12MB"
 
 #: launcher/ui/pages/global/PasteEEPage.ui:55
 msgctxt "PasteEEPage|"
@@ -6133,7 +5592,7 @@ msgstr "ألصق مفتاح الواجهة البرمجية هنا!"
 #: launcher/ui/pages/global/PasteEEPage.ui:82
 msgctxt "PasteEEPage|"
 msgid "<html><head/><body><p><a href=\"https://paste.ee\">paste.ee</a> is used by MeshMC for log uploads. If you have a <a href=\"https://paste.ee\">paste.ee</a> account, you can add your API key here and have your uploaded logs paired with your account.</p></body></html>"
-msgstr ""
+msgstr "<html><head/><body><p><a href=\"https://paste.ee\">لصق اللصق. (هـ)</a> يستخدم بواسطة MeshMC لتحميل السجل. إذا كان لديك لصق <a href=\"https://paste.ee\">. (هـ) حساب</a> ، يمكنك إضافة مفتاح API الخاص بك هنا وجعل السجلات التي تم تحميلها مقترنة بحسابك.</p></body></html>"
 
 #: launcher/ui/pages/global/PasteEEPage.h:65
 msgctxt "PasteEEPage|"
@@ -6153,52 +5612,52 @@ msgstr "paste.ee استجاب برسالة خطأ. للمزيد من المعل�
 #: launcher/ui/dialogs/PluginsDialog.ui:23
 msgctxt "PluginsDialog|"
 msgid "MMCO Plugins"
-msgstr ""
+msgstr "إضافات MMCO"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:29
 msgctxt "PluginsDialog|"
 msgid "Enabling or disabling a plugin takes effect after restarting MeshMC."
-msgstr ""
+msgstr "تمكين أو تعطيل البرنامج المساعد يصبح ساري المفعول بعد إعادة تشغيل MeshMC."
 
 #: launcher/ui/dialogs/PluginsDialog.ui:58
 msgctxt "PluginsDialog|"
 msgid "MeshMC MMCO Plugins List:"
-msgstr ""
+msgstr "قائمة إضافات MMC:"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:78
 msgctxt "PluginsDialog|"
 msgid "Close"
-msgstr ""
+msgstr "أغلق"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:96
 msgctxt "PluginsDialog|"
 msgid "Enabled"
-msgstr ""
+msgstr "تمكين"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:101
 msgctxt "PluginsDialog|"
 msgid "Module"
-msgstr ""
+msgstr "الوحدة"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:106
 msgctxt "PluginsDialog|"
 msgid "Signature"
-msgstr ""
+msgstr "التوقيع"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:111
 msgctxt "PluginsDialog|"
 msgid "Status"
-msgstr ""
+msgstr "الحالة"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:205
 msgctxt "PluginsDialog|"
 msgid "Loaded"
-msgstr ""
+msgstr "تحميل"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:207
 msgctxt "PluginsDialog|"
 msgid "Discovered"
-msgstr ""
+msgstr "اكتشف"
 
 #: launcher/launch/steps/PostLaunchCommand.cpp:60
 #, qt-format
@@ -6269,7 +5728,7 @@ msgstr "%1 (قيد الاستخدام)"
 #: launcher/ui/dialogs/ProfileSetupDialog.ui:14
 msgctxt "ProfileSetupDialog|"
 msgid "Choose Minecraft name"
-msgstr ""
+msgstr "اختر اسم Minecraft"
 
 #: launcher/ui/dialogs/ProfileSetupDialog.ui:26
 msgctxt "ProfileSetupDialog|"
@@ -6280,35 +5739,35 @@ msgstr ""
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:134
 msgctxt "ProfileSetupDialog|"
 msgid "Name is too short - must be between 3 and 16 characters long."
-msgstr ""
+msgstr "الاسم قصير جداً - يجب أن يكون بين 3 و 16 حرفاً."
 
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:200
 #, qt-format
 msgctxt "ProfileSetupDialog|"
 msgid "Minecraft profile with name %1 already exists."
-msgstr ""
+msgstr "ملف Minecraft بالاسم %1 موجود بالفعل."
 
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:204
 #, qt-format
 msgctxt "ProfileSetupDialog|"
 msgid "The name %1 is not allowed."
-msgstr ""
+msgstr "الاسم %1 غير مسموح به."
 
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:208
 #, qt-format
 msgctxt "ProfileSetupDialog|"
 msgid "Unhandled profile name status: %1"
-msgstr ""
+msgstr "حالة اسم الملف الشخصي الغير معالجة: %1"
 
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:212
 msgctxt "ProfileSetupDialog|"
 msgid "Failed to check name availability."
-msgstr ""
+msgstr "فشل التحقق من توفر الاسم."
 
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:296
 msgctxt "ProfileSetupDialog|"
 msgid "The server returned the following error:"
-msgstr ""
+msgstr "أعاد الخادم الخطأ التالي:"
 
 #: launcher/ui/dialogs/ProgressDialog.ui:26
 msgctxt "ProgressDialog|"
@@ -6328,7 +5787,7 @@ msgstr "تخطي"
 #: launcher/ui/pages/global/ProxyPage.ui:42
 msgctxt "ProxyPage|"
 msgid "This only applies to MeshMC. Minecraft does not accept proxy settings."
-msgstr ""
+msgstr "ينطبق هذا فقط على MeshMC. Minecraft لا يقبل إعدادات البروكسي."
 
 #: launcher/ui/pages/global/ProxyPage.ui:55
 msgctxt "ProxyPage|"
@@ -6353,12 +5812,12 @@ msgstr "&دون"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 msgctxt "ProxyPage|"
 msgid "SOC&KS5"
-msgstr ""
+msgstr "SOC&KS5"
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 msgctxt "ProxyPage|"
 msgid "H&TTP"
-msgstr ""
+msgstr "H&TTP"
 
 #: launcher/ui/pages/global/ProxyPage.ui:107
 msgctxt "ProxyPage|"
@@ -6383,7 +5842,7 @@ msgstr "كلمة المرور:"
 #: launcher/ui/pages/global/ProxyPage.ui:169
 msgctxt "ProxyPage|"
 msgid "Note: Proxy username and password are stored in plain text inside MeshMC's configuration file!"
-msgstr ""
+msgstr "ملاحظة: يتم تخزين اسم المستخدم وكلمة المرور في نص عادي داخل ملف تهيئة MeshMC!"
 
 #: launcher/ui/pages/global/ProxyPage.h:66
 msgctxt "ProxyPage|"
@@ -6416,8 +5875,7 @@ msgctxt "QObject|"
 msgid "<br />Warnings:<br /><font color=\"orange\">%1</font>"
 msgstr "<br />تحذير:<br /><font color=\"orange\">%1</font>"
 
-#: launcher/JavaCommon.cpp:71
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:342
+#: launcher/JavaCommon.cpp:71 launcher/ui/widgets/JavaSettingsWidget.cpp:342
 msgctxt "QObject|"
 msgid "Java test success"
 msgstr "نجاح اختبار الجافا"
@@ -6489,7 +5947,7 @@ msgstr "لقد تم إعطاء processArguments قيمة مجهولة '%1'"
 #, qt-format
 msgctxt "QObject|"
 msgid "The 'minimumMeshMCVersion' value of this version (%1) is higher than supported by %3 (%2). It might not work properly!"
-msgstr ""
+msgstr "قيمة 'الحد الأدنى من MCVersion' لهذا الإصدار (%1) أعلى مما تدعمه %3 (%2). قد لا يعمل بشكل صحيح!"
 
 #: launcher/minecraft/MojangVersionFormat.cpp:318
 #, qt-format
@@ -6572,7 +6030,7 @@ msgstr "لا يوجد ملف شخصي (%1)"
 #: launcher/plugin/PluginManager.cpp:2638
 msgctxt "QObject|"
 msgid "Untitled"
-msgstr ""
+msgstr "بدون عنوان"
 
 #: launcher/tools/JProfiler.cpp:120 launcher/tools/JVisualVM.cpp:112
 msgctxt "QObject|"
@@ -6635,136 +6093,136 @@ msgstr "%1 (قيد الاستخدام)"
 #, qt-format
 msgctxt "QObject|"
 msgid "Update check failed: %1"
-msgstr ""
+msgstr "فشل التحقق من التحديث: %1"
 
 #: launcher/ui/MainWindow.cpp:1895
 #, qt-format
 msgctxt "QObject|"
 msgid "Update available: version %1"
-msgstr ""
+msgstr "تحديث متوفر: الإصدار %1"
 
 #: launcher/ui/MainWindow.cpp:1904
 msgctxt "QObject|"
 msgid "You are running the latest version."
-msgstr ""
+msgstr "أنت تقوم بتشغيل أحدث إصدار."
 
 #: launcher/ui/dialogs/AboutDialog.cpp:69
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 Developers"
-msgstr ""
+msgstr "مطوري %1"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:70
 msgctxt "QObject|"
 msgid "MultiMC Developers"
-msgstr ""
+msgstr "مطوري MultiMC"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:51
 msgctxt "QObject|"
 msgid "OK"
-msgstr ""
+msgstr "حسناً"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:53
 msgctxt "QObject|"
 msgid "Disabled by user"
-msgstr ""
+msgstr "معطل من قبل المستخدم"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:55
 msgctxt "QObject|"
 msgid "Signature required"
-msgstr ""
+msgstr "التوقيع مطلوب"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:57
 msgctxt "QObject|"
 msgid "Invalid signature"
-msgstr ""
+msgstr "توقيع غير صالح"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:59
 msgctxt "QObject|"
 msgid "Missing dependency"
-msgstr ""
+msgstr "عدم التبعية"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:61
 msgctxt "QObject|"
 msgid "Dependency cycle"
-msgstr ""
+msgstr "دورة التبعية"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:86
 #: plugins/Filelink/FilelinkPlugin.cpp:389
 #: plugins/PackPortal/PackPortalPlugin.cpp:119
 msgctxt "QObject|"
 msgid "Name:"
-msgstr ""
+msgstr "الاسم:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:87
 #: plugins/PackPortal/PackPortalPlugin.cpp:120
 msgctxt "QObject|"
 msgid "Version:"
-msgstr ""
+msgstr "الإصدار:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:88
 #: plugins/PackPortal/PackPortalPlugin.cpp:121
 msgctxt "QObject|"
 msgid "Author:"
-msgstr ""
+msgstr "المؤلف:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:89
 msgctxt "QObject|"
 msgid "License:"
-msgstr ""
+msgstr "الترخيص:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:90
 #: plugins/Filelink/FilelinkPlugin.cpp:395
 msgctxt "QObject|"
 msgid "Description:"
-msgstr ""
+msgstr "وصف:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:103
 msgctxt "QObject|"
 msgid "Source Code:"
-msgstr ""
+msgstr "الرمز المصدري:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:107
 msgctxt "QObject|"
 msgid "Signature:"
-msgstr ""
+msgstr "توقيع:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:109
 msgctxt "QObject|"
 msgid "Signing Key:"
-msgstr ""
+msgstr "مفتاح التوقيع:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:110
 msgctxt "QObject|"
 msgid "Signature Detail:"
-msgstr ""
+msgstr "تفاصيل التوقيع:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:120
 msgctxt "QObject|"
 msgid " (optional)"
-msgstr ""
+msgstr " (اختياري)"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:123
 msgctxt "QObject|"
 msgid "Dependencies:"
-msgstr ""
+msgstr "التبعية"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:128
 #: launcher/ui/dialogs/PluginsDialog.cpp:132
 #: launcher/ui/dialogs/PluginsDialog.cpp:134
 msgctxt "QObject|"
 msgid "Status:"
-msgstr ""
+msgstr "الحالة:"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:132
 msgctxt "QObject|"
 msgid "Loaded"
-msgstr ""
+msgstr "تحميل"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:134
 msgctxt "QObject|"
 msgid "Discovered (not loaded)"
-msgstr ""
+msgstr "تم اكتشافه (غير محمل)"
 
 #: launcher/ui/pages/instance/ServersPage.cpp:50
 msgctxt "QObject|"
@@ -6779,50 +6237,48 @@ msgstr "فاتح"
 #: launcher/ui/themes/BrightTheme.cpp:42
 msgctxt "QObject|"
 msgid "A bright Fusion-based theme with blue accents"
-msgstr ""
+msgstr "موضوع مشرق مبني على الانفوشن مع لهجات زرقاء"
 
-#: launcher/ui/themes/DarkTheme.cpp:37
-#: launcher/ui/themes/ThemeManager.cpp:276
+#: launcher/ui/themes/DarkTheme.cpp:37 launcher/ui/themes/ThemeManager.cpp:276
 #: launcher/ui/themes/ThemeManager.cpp:278
 msgctxt "QObject|"
 msgid "Dark"
 msgstr "داكن"
 
-#: launcher/ui/themes/DarkTheme.cpp:42
-#: launcher/ui/themes/GreenDarkTheme.cpp:42
+#: launcher/ui/themes/DarkTheme.cpp:42 launcher/ui/themes/GreenDarkTheme.cpp:42
 msgctxt "QObject|"
 msgid "A dark Fusion-based theme with green accents"
-msgstr ""
+msgstr "سمة داكنة مبنية على الفيوشن مع لهجات خضراء"
 
 #: launcher/ui/themes/GreenDarkTheme.cpp:37
 msgctxt "QObject|"
 msgid "Green Dark"
-msgstr ""
+msgstr "الظلام الأخضر"
 
 #: launcher/ui/themes/GreenLightTheme.cpp:37
 msgctxt "QObject|"
 msgid "Green Light"
-msgstr ""
+msgstr "ضوء أخضر"
 
 #: launcher/ui/themes/GreenLightTheme.cpp:42
 msgctxt "QObject|"
 msgid "A bright Fusion-based theme with green accents"
-msgstr ""
+msgstr "موضوع مشرق مبني على الفيوشن مع لهجات خضراء"
 
 #: launcher/ui/themes/SystemTheme.cpp:76
 msgctxt "QObject|"
 msgid "Windows Vista"
-msgstr ""
+msgstr "ويندوز فيستا"
 
 #: launcher/ui/themes/SystemTheme.cpp:78
 msgctxt "QObject|"
 msgid "Windows 9x"
-msgstr ""
+msgstr "ويندوز 9x"
 
 #: launcher/ui/themes/SystemTheme.cpp:80
 msgctxt "QObject|"
 msgid "Windows 11"
-msgstr ""
+msgstr "ويندوز 11"
 
 #: launcher/ui/themes/SystemTheme.cpp:82
 msgctxt "QObject|"
@@ -6832,109 +6288,109 @@ msgstr "النظام"
 #: launcher/ui/themes/SystemTheme.cpp:91
 msgctxt "QObject|"
 msgid "Widget style trying to look like your win32 theme"
-msgstr ""
+msgstr "نمط الودجت يحاول أن يبدو مثل موضوع الفوز 32"
 
 #: launcher/ui/themes/SystemTheme.cpp:93
 msgctxt "QObject|"
 msgid "Windows 9x inspired widget style"
-msgstr ""
+msgstr "ويندوز 9x نمط القطعة الملهمة"
 
 #: launcher/ui/themes/SystemTheme.cpp:95
 msgctxt "QObject|"
 msgid "WinUI 3 inspired Qt widget style"
-msgstr ""
+msgstr "واجهة مستخدم 3 مستوحاة من نمط واجهة مستخدم Qt"
 
 #: launcher/ui/themes/SystemTheme.cpp:97
 msgctxt "QObject|"
 msgid "The default Qt widget style"
-msgstr ""
+msgstr "نمط القطعة الكمية الافتراضي"
 
 #: launcher/ui/themes/SystemTheme.cpp:99
 msgctxt "QObject|"
 msgid "Your current system theme"
-msgstr ""
+msgstr "قالب النظام الحالي"
 
 #: launcher/ui/themes/ThemeManager.cpp:259
 #: launcher/ui/themes/ThemeManager.cpp:259
 msgctxt "QObject|"
 msgid "Default"
-msgstr ""
+msgstr "الافتراضي"
 
 #: launcher/ui/themes/ThemeManager.cpp:263
 #: launcher/ui/themes/ThemeManager.cpp:264
 msgctxt "QObject|"
 msgid "Simple (Dark Icons)"
-msgstr ""
+msgstr "بسيط (أيقونة الظلام)"
 
 #: launcher/ui/themes/ThemeManager.cpp:265
 #: launcher/ui/themes/ThemeManager.cpp:266
 msgctxt "QObject|"
 msgid "Simple (Light Icons)"
-msgstr ""
+msgstr "بسيط (أيقونة الضوء)"
 
 #: launcher/ui/themes/ThemeManager.cpp:267
 #: launcher/ui/themes/ThemeManager.cpp:268
 msgctxt "QObject|"
 msgid "Simple (Blue Icons)"
-msgstr ""
+msgstr "بسيط (أيقونة أزرق)"
 
 #: launcher/ui/themes/ThemeManager.cpp:269
 #: launcher/ui/themes/ThemeManager.cpp:270
 msgctxt "QObject|"
 msgid "Simple (Colored Icons)"
-msgstr ""
+msgstr "بسيط (أيقونة مجمعة)"
 
 #: launcher/ui/themes/ThemeManager.cpp:273
 msgctxt "QObject|"
 msgid "Flat (Light)"
-msgstr ""
+msgstr "مسطح (ضوء"
 
 #: launcher/ui/themes/ThemeManager.cpp:274
 #: launcher/ui/themes/ThemeManager.cpp:280
 msgctxt "QObject|"
 msgid "Light"
-msgstr ""
+msgstr "فاتح"
 
 #: launcher/ui/themes/ThemeManager.cpp:275
 msgctxt "QObject|"
 msgid "Flat (Dark)"
-msgstr ""
+msgstr "مسطح (الظلام)"
 
 #: launcher/ui/themes/ThemeManager.cpp:277
 msgctxt "QObject|"
 msgid "Breeze (Dark)"
-msgstr ""
+msgstr "نزيف (الظلام)"
 
 #: launcher/ui/themes/ThemeManager.cpp:279
 msgctxt "QObject|"
 msgid "Breeze (Light)"
-msgstr ""
+msgstr "النهب (ضوء"
 
 #: launcher/ui/themes/ThemeManager.cpp:281
 #: launcher/ui/themes/ThemeManager.cpp:281
 msgctxt "QObject|"
 msgid "Custom"
-msgstr ""
+msgstr "مخصص"
 
 #: launcher/ui/themes/ThemeManager.cpp:288
 msgctxt "QObject|"
 msgid "Background Cat (from MultiMC)"
-msgstr ""
+msgstr "قطة الخلفية (من MultiMC)"
 
 #: launcher/ui/themes/ThemeManager.cpp:289
 msgctxt "QObject|"
 msgid "Rory ID 11 (drawn by Ashtaka)"
-msgstr ""
+msgstr "روي ID 11 (رسمه آشتاك)"
 
 #: launcher/ui/themes/ThemeManager.cpp:291
 msgctxt "QObject|"
 msgid "Rory ID 11 (flat edition, drawn by Ashtaka)"
-msgstr ""
+msgstr "Rory ID 11 (نسخة مسطحة، رسمتها أشتاكا)"
 
 #: launcher/ui/themes/ThemeManager.cpp:292
 msgctxt "QObject|"
 msgid "Teawie (drawn by SympathyTea)"
-msgstr ""
+msgstr "الشاوي (رسمه سيمباباتي الشاي)"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:302
 msgctxt "QObject|"
@@ -6960,12 +6416,12 @@ msgstr "نجح اختبار الجافا!<br />المنصة: %1<br />إصدار 
 #: plugins/BackupSystem/BackupPlugin.cpp:64
 msgctxt "QObject|"
 msgid "Backup System"
-msgstr ""
+msgstr "نظام النسخ الاحتياطي"
 
 #: plugins/BackupSystem/BackupPlugin.cpp:69
 msgctxt "QObject|"
 msgid "Automatically backup instances before launch"
-msgstr ""
+msgstr "النسخ الاحتياطي التلقائي للمثيلات قبل التشغيل"
 
 #: plugins/BackupSystem/BackupPlugin.cpp:72
 msgctxt "QObject|"
@@ -6983,183 +6439,183 @@ msgstr ""
 #: plugins/Filelink/FilelinkPlugin.cpp:583
 msgctxt "QObject|"
 msgid "Filelink"
-msgstr ""
+msgstr "رابط الفيلور"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:308
 #: plugins/Filelink/FilelinkPlugin.cpp:330
 msgctxt "QObject|"
 msgid "No instances available."
-msgstr ""
+msgstr "لا توجد أمثلة متوفرة."
 
 #: plugins/Filelink/FilelinkPlugin.cpp:331
 msgctxt "QObject|"
 msgid "The selected instance is no longer available."
-msgstr ""
+msgstr "لم يعد المثيل المحدد متاحاً."
 
 #: plugins/Filelink/FilelinkPlugin.cpp:336
 #: plugins/Filelink/FilelinkPlugin.cpp:507
 msgctxt "QObject|"
 msgid "Create Shortcut"
-msgstr ""
+msgstr "إنشاء اختصار"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:342
 msgctxt "QObject|"
 msgid "Instance"
-msgstr ""
+msgstr "مثيل"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:385
 msgctxt "QObject|"
 msgid "Shortcut Details"
-msgstr ""
+msgstr "تفاصيل الاختصار"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:397
 msgctxt "QObject|"
 msgid "Launch via MeshMC"
-msgstr ""
+msgstr "تشغيل عبر MeshMC"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:403
 msgctxt "QObject|"
 msgid "Auto-join server:"
-msgstr ""
+msgstr "الإنضمام التلقائي إلى الخادم:"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:406
 msgctxt "QObject|"
 msgid "(optional) e.g. play.example.com:25565"
-msgstr ""
+msgstr "(اختياري) مثل play.example.com:25565"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:418
 msgctxt "QObject|"
 msgid "Save Location"
-msgstr ""
+msgstr "حفظ الموقع"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:422
 msgctxt "QObject|"
 msgid "Desktop"
-msgstr ""
+msgstr "سطح المكتب"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:425
 msgctxt "QObject|"
 msgid "Other"
-msgstr ""
+msgstr "اخرى"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:429
 msgctxt "QObject|"
 msgid "Flatpak builds use 'Other' so the file picker can save outside the sandbox."
-msgstr ""
+msgstr "يقوم Flatpak بإنشاء استخدام \"Other\" حتى يتمكن منتقي الملفات من الحفظ خارج صندوق الرمال."
 
 #: plugins/Filelink/FilelinkPlugin.cpp:439
 msgctxt "QObject|"
 msgid "Icon"
-msgstr ""
+msgstr "أيقونة"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:485
 #: plugins/Filelink/FilelinkPlugin.cpp:532
 #, qt-format
 msgctxt "QObject|"
 msgid "Launch %1 via MeshMC"
-msgstr ""
+msgstr "تشغيل %1 عبر MeshMC"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:508
 msgctxt "QObject|"
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:519
 msgctxt "QObject|"
 msgid "Please select an instance."
-msgstr ""
+msgstr "الرجاء اختيار مثال."
 
 #: plugins/Filelink/FilelinkPlugin.cpp:525
 msgctxt "QObject|"
 msgid "Please enter a shortcut name."
-msgstr ""
+msgstr "الرجاء إدخال اسم مختصر."
 
 #: plugins/Filelink/FilelinkPlugin.cpp:549
 msgctxt "QObject|"
 msgid "Desktop location is not available on this system."
-msgstr ""
+msgstr "موقع سطح المكتب غير متوفر على هذا النظام."
 
 #: plugins/Filelink/FilelinkPlugin.cpp:555
 msgctxt "QObject|"
 msgid "Save Shortcut"
-msgstr ""
+msgstr "حفظ الاختصار"
 
 #: plugins/Filelink/FilelinkPlugin.cpp:578
 #, qt-format
 msgctxt "QObject|"
 msgid "Shortcut '%1' created at '%2'."
-msgstr ""
+msgstr "اختصار '%1' تم إنشاؤه في '%2'."
 
 #: plugins/Filelink/FilelinkPlugin.cpp:584
 #, qt-format
 msgctxt "QObject|"
 msgid "Failed to create shortcut '%1'."
-msgstr ""
+msgstr "فشل في إنشاء الاختصار '%1'."
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:11
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 B"
-msgstr ""
+msgstr "%1 B"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:14
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 KiB"
-msgstr ""
+msgstr "%1 KiB"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:17
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 MiB"
-msgstr ""
+msgstr "%1 MiB"
 
 #: plugins/GitVersioning/GitVersioningPage.cpp:19
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 GiB"
-msgstr ""
+msgstr "%1 GiB"
 
 #: plugins/GitVersioning/GitVersioningPage.h:32
 msgctxt "QObject|"
 msgid "Version History"
-msgstr ""
+msgstr "تاريخ الإصدار"
 
 #: plugins/GitVersioning/GitVersioningPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Git Versioning"
-msgstr ""
+msgstr "Git Versioning"
 
 #: plugins/GitVersioning/GitVersioningPlugin.cpp:133
 #: plugins/GitVersioning/GitVersioningPlugin.cpp:234
 msgctxt "QObject|"
 msgid "Auto-snapshot instance state before every launch"
-msgstr ""
+msgstr "حالة نموذج لقطة تلقائية قبل كل عملية تشغيل"
 
 #: plugins/GitVersioning/GitVersioningPlugin.cpp:137
 msgctxt "QObject|"
 msgid "Commit any pending changes to the instance's Git history right before the JVM starts. The history lives in the instance's .history/ directory."
-msgstr ""
+msgstr "قم بإدخال أي تغييرات معلقة على تاريخ الزاوية للمثيل مباشرة قبل أن تبدأ JVM. التاريخ يسري في دليل مثيل الظاهر .history/directory."
 
 #: plugins/GitVersioning/GitVersioningPlugin.cpp:143
 msgctxt "QObject|"
 msgid "<i>git is not installed — version history disabled.</i>"
-msgstr ""
+msgstr "<i>git غير مثبت — تاريخ الإصدار معطل.</i>"
 
 #: plugins/GitVersioning/GitVersioningPlugin.cpp:228
 msgctxt "QObject|"
 msgid "Override global Git Versioning settings"
-msgstr ""
+msgstr "تجاوز إعدادات إصدار Git العالمية"
 
 #: plugins/GitVersioning/GitVersioningPlugin.cpp:238
 msgctxt "QObject|"
 msgid "Commit any pending changes to this instance's Git history right before the JVM starts. The history lives in the instance's .history/ directory."
-msgstr ""
+msgstr "قم بإدخال أي تغييرات معلقة على تاريخ Git الخاص بهذه الحالة مباشرة قبل أن تبدأ JVM. التاريخ يسري في ملف مثيل .history/directory."
 
 #: plugins/GitVersioning/GitVersioningPlugin.cpp:246
 msgctxt "QObject|"
 msgid "git is not installed — version history disabled."
-msgstr ""
+msgstr "git غير مثبت - تاريخ الإصدار معطل."
 
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:79
 msgctxt "QObject|"
@@ -7180,7 +6636,9 @@ msgctxt "QObject|"
 msgid "GameMode is not available inside this Flatpak sandbox.\n"
 "Bundle the GameMode client tools in the Flatpak and allow access to\n"
 "com.feralinteractive.GameMode on the session bus."
-msgstr ""
+msgstr "وضع GameMode غير متوفر داخل صندوق الرمل هذا Flatpak.\n"
+"قم بتجميع أدوات عميل وضع GameMode في Flatpak والسماح بالوصول إلى\n"
+"com.feralinteractive.GameMode على حافلة الجلسة."
 
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:101
 msgctxt "QObject|"
@@ -7192,29 +6650,30 @@ msgstr ""
 #, qt-format
 msgctxt "QObject|"
 msgid "GameMode daemon: running — will activate at game launch  (%1)"
-msgstr ""
+msgstr "GameMode daemon: قيد التشغيل — سيتم تفعيله عند إطلاق اللعبة (%1)"
 
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:117
 msgctxt "QObject|"
 msgid "GameMode daemon: not reachable from sandbox — add session bus access to\n"
 "com.feralinteractive.GameMode and ensure the host gamemoded service is running"
-msgstr ""
+msgstr "GameMode daemon: لا يمكن الوصول إليها من sandbox - إضافة وصول لحافلة الدورة إلى\n"
+"com.feralinteractive.GameMode وتأكد من تشغيل خدمة مضيفة"
 
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:123
 msgctxt "QObject|"
 msgid "GameMode daemon: not responding — run \"systemctl --user enable --now gamemoded\" or check gamemode install"
-msgstr ""
+msgstr "GameMode daemon: لا يستجيب — قم بتشغيل \"systemctl --المستخدم تمكين --الآن CAemoded\" أو تحقق من تثبيت وضع الألعاب"
 
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:239
 msgctxt "QObject|"
 msgid "Linux Performance Tools"
-msgstr ""
+msgstr "أدوات أداء لينكس"
 
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:244
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:389
 msgctxt "QObject|"
 msgid "Enable MangoHud overlay (FPS / GPU / CPU metrics)"
-msgstr ""
+msgstr "تمكين تراكب مانغهود (FPS / GPU / CPU )"
 
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:251
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:397
@@ -7230,7 +6689,7 @@ msgstr ""
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:411
 msgctxt "QObject|"
 msgid "Enable GameMode (CPU / scheduler performance optimisations)"
-msgstr ""
+msgstr "تمكين وضع GameMode (CPU / جدولة تحسين الأداء)"
 
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:270
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:416
@@ -7244,261 +6703,179 @@ msgstr ""
 #: plugins/LinuxPerf/LinuxPerfPlugin.cpp:382
 msgctxt "QObject|"
 msgid "Override global Linux performance tools settings"
-msgstr ""
+msgstr "تجاوز إعدادات أدوات الأداء العالمية لينكس"
 
 #: plugins/NVIDIAPrime/NVIDIAPrimePlugin.cpp:78
 msgctxt "QObject|"
 msgid "Performance"
-msgstr ""
+msgstr "الأداء"
 
 #: plugins/NVIDIAPrime/NVIDIAPrimePlugin.cpp:83
 msgctxt "QObject|"
 msgid "Use discrete GPU (NVIDIA Prime Render Offload)"
-msgstr ""
+msgstr "استخدام GPU منفصلة (NVIDIA)"
 
 #: plugins/NVIDIAPrime/NVIDIAPrimePlugin.cpp:87
 msgctxt "QObject|"
 msgid "Forces Minecraft to use the NVIDIA discrete GPU on Optimus laptops.\n"
 "Uses prime-run on Flatpak, or sets environment variables directly otherwise."
-msgstr ""
+msgstr "اجبر Minecraft على استخدام NVIDIA GPU المنفصل على الحواسيب المحمولة المثلى.\n"
+"يستخدم أول تشغيل على Flatpak، أو يحدد متغيرات البيئة بشكل مباشر."
 
 #: plugins/OfflineWiki/WikiPage.h:40
 msgctxt "QObject|"
 msgid "Offline Wiki"
-msgstr ""
+msgstr "Offline Wiki"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:79
 #: plugins/PackPortal/PackPortalPlugin.cpp:85
 #: plugins/PackPortal/PackPortalPlugin.cpp:93
 msgctxt "QObject|"
 msgid "PackPortal"
-msgstr ""
+msgstr "بوابة الحزمة"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:80
 msgctxt "QObject|"
 msgid "Pick an instance in the launcher first, then click Export Instance again."
-msgstr ""
+msgstr "اختر مثيل في المشغل أولا، ثم انقر فوق تصدير مثيل مرة أخرى."
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:86
 msgctxt "QObject|"
 msgid "Plugin context not ready."
-msgstr ""
+msgstr "سياق الإضافة غير جاهز."
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:94
 msgctxt "QObject|"
 msgid "Instance no longer exists."
-msgstr ""
+msgstr "مثيل لم يعد موجودا."
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:100
 msgctxt "QObject|"
 msgid "Export Instance as Pack"
-msgstr ""
+msgstr "تصدير مثيل كحزمة"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:107
 msgctxt "QObject|"
 msgid "Modrinth (.mrpack)"
-msgstr ""
+msgstr "مودرنث (.mrpack)"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:109
 msgctxt "QObject|"
 msgid "CurseForge (.zip)"
-msgstr ""
+msgstr "اللعنة (.zip)"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:111
 msgctxt "QObject|"
 msgid "MultiMC/MeshMC raw (.zip)"
-msgstr ""
+msgstr "خام MultiMC/MeshMC (.zip)"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:113
 msgctxt "QObject|"
 msgid "Format:"
-msgstr ""
+msgstr "التنسيق:"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:122
 msgctxt "QObject|"
 msgid "Summary:"
-msgstr ""
+msgstr "الموجز:"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:125
 msgctxt "QObject|"
 msgid "Skip world saves"
-msgstr ""
+msgstr "تخطي حفظ العالم"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Skip logs / crash reports / screenshots"
-msgstr ""
+msgstr "تخطي السجلات / تقارير الأعطال / لقطات الشاشة"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:131
 msgctxt "QObject|"
 msgid "Embed every mod (no external download references)"
-msgstr ""
+msgstr "تضمين كل مورد (لا توجد مراجع تحميل خارجي)"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:142
 msgctxt "QObject|"
 msgid "Export…"
-msgstr ""
+msgstr "تصدير…"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:143
 msgctxt "QObject|"
 msgid "Close"
-msgstr ""
+msgstr "أغلق"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:170
 msgctxt "QObject|"
 msgid "Modrinth packs (*.mrpack)"
-msgstr ""
+msgstr "حزم الموديل (*.mrpack)"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:174
 #: plugins/PackPortal/PackPortalPlugin.cpp:178
 msgctxt "QObject|"
 msgid "Pack archives (*.zip)"
-msgstr ""
+msgstr "أرشيف الحزمة (*.zip)"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:183
 msgctxt "QObject|"
 msgid "Export pack"
-msgstr ""
+msgstr "تصدير حزمة"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:190
 msgctxt "QObject|"
 msgid "Exporting… this can take a minute for large instances."
-msgstr ""
+msgstr "تصدير… يمكن أن يستغرق ذلك دقيقة للحالات الكبيرة."
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:199
 #, qt-format
 msgctxt "QObject|"
 msgid "<b style='color:#cc6666'>Export failed:</b> %1"
-msgstr ""
+msgstr "<b style='color:#cc6666'>فشل التصدير:</b> %1"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:204
 msgctxt "QObject|"
 msgid "<br><br><b>Warnings:</b><ul>"
-msgstr ""
+msgstr "<br><br><b>تحذير:</b><ul>"
 
 #: plugins/PackPortal/PackPortalPlugin.cpp:211
 #, qt-format
 msgctxt "QObject|"
 msgid "<b style='color:#66aa66'>Exported:</b> %1<br>Embedded %2 files, referenced %3 external files.%4"
-msgstr ""
+msgstr "<b style='color:#66aa66'>تم تصديره:</b> %1<br>مضمن %2 ملفات، المشار إليها %3 ملفات خارجية.%4"
 
 #: plugins/SkinManager/SkinManagerPlugin.cpp:89
 msgctxt "QObject|"
 msgid "No account selected"
-msgstr ""
+msgstr "لا يوجد حساب محدد"
 
 #: plugins/SkinManager/SkinManagerPlugin.cpp:90
 msgctxt "QObject|"
 msgid "Select a Microsoft account from the list and click Upload Skin again."
-msgstr ""
+msgstr "حدد حساب مايكروسوفت من القائمة وانقر فوق تحميل مظهر مرة أخرى."
 
 #: plugins/SkinManager/SkinManagerPlugin.cpp:112
 msgctxt "QObject|"
 msgid "Offline account"
-msgstr ""
+msgstr "حساب غير متصل"
 
 #: plugins/SkinManager/SkinManagerPlugin.cpp:113
 msgctxt "QObject|"
 msgid "Offline accounts have no Mojang profile to upload a skin to. Pick a Microsoft account instead."
-msgstr ""
+msgstr "الحسابات دون اتصال لا تحتوي على ملف تعريف Mojang لتحميل الجلد إليها. اختر حساب Microsoft بدلا من ذلك."
 
 #: plugins/SystemTray/SystemTrayPlugin.cpp:301
 msgctxt "QObject|"
 msgid "System Tray"
-msgstr ""
+msgstr "ساحة النظام"
 
 #: plugins/SystemTray/SystemTrayPlugin.cpp:306
 msgctxt "QObject|"
 msgid "Show MeshMC system tray icon (Restart required.)"
-msgstr ""
+msgstr "إظهار رمز صورة نظام MC (إعادة التشغيل مطلوبة.)"
 
 #: plugins/SystemTray/SystemTrayPlugin.cpp:309
 msgctxt "QObject|"
 msgid "When on, MeshMC keeps a persistent tray icon with quick-launch shortcuts and an optional minimise-to-tray close handler.\n\n"
 "Toggle takes effect after restarting MeshMC."
-msgstr ""
-
-#: plugins/staging/ErrorOracle/AnalysisPage.h:31
-msgctxt "QObject|"
-msgid "Error Analysis"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ApplyProgressDialog.cpp:464
-#, qt-format
-msgctxt "QObject|"
-msgid "%1 file(s) failed to install."
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:51
-#, qt-format
-msgctxt "QObject|"
-msgid "CurseForge API returned HTTP %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:62
-msgctxt "QObject|"
-msgid "CurseForge response was not a JSON object"
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:71
-msgctxt "QObject|"
-msgid "CurseForge lists no files for this pack"
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:113
-msgctxt "QObject|"
-msgid "Plugin context unavailable"
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:119
-msgctxt "QObject|"
-msgid "This CurseForge record has no project id — the original `manifest.json` didn't carry one. Use Detach + re-attach once we wire the attach UI."
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:133
-msgctxt "QObject|"
-msgid "This build of MeshMC has no CurseForge API key configured (CURSEFORGE_API_KEY is empty)."
-msgstr ""
-
-#: plugins/staging/PackUpdater/CurseForgeSource.cpp:141
-msgctxt "QObject|"
-msgid "Host launcher is too old: http_get_with_headers (ABI 3) is required for CurseForge support."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:49
-#, qt-format
-msgctxt "QObject|"
-msgid "Modrinth API returned HTTP %1"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:60
-msgctxt "QObject|"
-msgid "Modrinth response was not a JSON array"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:68
-msgctxt "QObject|"
-msgid "Modrinth lists no versions for this pack"
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:125
-msgctxt "QObject|"
-msgid "This Modrinth record is missing a pack slug — the manifest may not have been preserved at import time."
-msgstr ""
-
-#: plugins/staging/PackUpdater/ModrinthSource.cpp:148
-msgctxt "QObject|"
-msgid "Could not queue Modrinth request"
-msgstr ""
-
-#: plugins/staging/PackUpdater/PackUpdaterPage.cpp:53
-msgctxt "QObject|"
-msgid "Unknown"
-msgstr ""
-
-#: plugins/staging/PackUpdater/UpdateApplier.cpp:538
-msgctxt "QObject|"
-msgid "Could not parse the new pack manifest."
 msgstr ""
 
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:40
@@ -7720,7 +7097,7 @@ msgstr "حزمة التظليل"
 #: launcher/minecraft/services/SkinDelete.cpp:47
 msgctxt "SkinDelete|"
 msgid "Deleting skin"
-msgstr ""
+msgstr "حذف الجلد"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:14
 #: plugins/SkinManager/SkinManagerDialog.cpp:414
@@ -7728,184 +7105,185 @@ msgstr ""
 #: plugins/SkinManager/SkinManagerDialog.cpp:444
 msgctxt "SkinManagerDialog|"
 msgid "Skin Upload"
-msgstr ""
+msgstr "تحميل الجلد"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:19
 msgctxt "SkinManagerDialog|"
 msgid "Account: —"
-msgstr ""
+msgstr "الحساب: —"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:21
 msgctxt "SkinManagerDialog|"
 msgid "font-weight: bold; padding: 4px 0;"
-msgstr ""
+msgstr "وزن الخط: عريضة: 4px 0؛"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:45
 msgctxt "SkinManagerDialog|"
 msgid "Skin file"
-msgstr ""
+msgstr "ملف الجلد"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:52
 msgctxt "SkinManagerDialog|"
 msgid "Keep current skin, or pick a new PNG…"
-msgstr ""
+msgstr "الحفاظ على الجلد الحالي، أو اختيار PNG…"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:59
 msgctxt "SkinManagerDialog|"
 msgid "Browse…"
-msgstr ""
+msgstr "تصفح…"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:67
 msgctxt "SkinManagerDialog|"
 msgid "Tip: drag-and-drop a 64×64 PNG onto the preview."
-msgstr ""
+msgstr "نصيحة: سحب وإسقاط 64×64 PNG على المعاينة."
 
 #: plugins/SkinManager/SkinManagerDialog.ui:70
 #: plugins/SkinManager/SkinManagerDialog.ui:138
 msgctxt "SkinManagerDialog|"
 msgid "color: palette(mid); font-size: 11px;"
-msgstr ""
+msgstr "color: palette(mid); font-size: 11px;"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:81
 msgctxt "SkinManagerDialog|"
 msgid "Model"
-msgstr ""
+msgstr "الموديل"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:85
 msgctxt "SkinManagerDialog|"
 msgid "Classic (4-pixel arms, Steve)"
-msgstr ""
+msgstr "كلاسيكي (4 بكسل ذراع، ستيف)"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:91
 msgctxt "SkinManagerDialog|"
 msgid "Slim (3-pixel arms, Alex)"
-msgstr ""
+msgstr "سليم (3 بيكسيل، ألكس)"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:100
 msgctxt "SkinManagerDialog|"
 msgid "Preview"
-msgstr ""
+msgstr "معاينة"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:104
 msgctxt "SkinManagerDialog|"
 msgid "Show second-layer overlay"
-msgstr ""
+msgstr "إظهار تراكب الطبقة الثانية"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:110
 msgctxt "SkinManagerDialog|"
 msgid "Auto-rotate"
-msgstr ""
+msgstr "تدوير تلقائي"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:119
 msgctxt "SkinManagerDialog|"
 msgid "Cape"
-msgstr ""
+msgstr "كيب"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:123
 msgctxt "SkinManagerDialog|"
 msgid "Active cape:"
-msgstr ""
+msgstr "الحد الاقصى النشط:"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:158
 msgctxt "SkinManagerDialog|"
 msgid "Reset to default skin…"
-msgstr ""
+msgstr "إعادة تعيين إلى المظهر الافتراضي…"
 
 #: plugins/SkinManager/SkinManagerDialog.ui:160
 msgctxt "SkinManagerDialog|"
 msgid "Remove the active custom skin and revert to Steve / Alex."
-msgstr ""
+msgstr "إزالة الجلد المخصص النشط والعودة إلى Steve / Alex."
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:95
 #, qt-format
 msgctxt "SkinManagerDialog|"
 msgid "Skin Upload — %1"
-msgstr ""
+msgstr "تحميل الجلد — %1"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:96
 msgctxt "SkinManagerDialog|"
 msgid "(no account)"
-msgstr ""
+msgstr "(بدون حساب)"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:141
 #, qt-format
 msgctxt "SkinManagerDialog|"
 msgid "Account: %1"
-msgstr ""
+msgstr "الحساب: %1"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:179
 msgctxt "SkinManagerDialog|"
 msgid "No Cape"
-msgstr ""
+msgstr "لا يوجد كيب"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:229
 msgctxt "SkinManagerDialog|"
 msgid "Select Skin Texture"
-msgstr ""
+msgstr "حدد صورة المظهر"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:230
 msgctxt "SkinManagerDialog|"
 msgid "Minecraft skin (*.png)"
-msgstr ""
+msgstr "جلد ماينكرافت (*.png)"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:246
 #, qt-format
 msgctxt "SkinManagerDialog|"
 msgid "Skin PNGs must be 64×64 (modern) or 64×32 (legacy). The chosen file is %1×%2."
-msgstr ""
+msgstr "يجب أن يكون الجلد PNGs 64×64 (حديث) أو 64×32 (الإرث). الملف المختار هو %1×%2."
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:278
 msgctxt "SkinManagerDialog|"
 msgid "Reset skin"
-msgstr ""
+msgstr "Reset skin"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:279
 #, qt-format
 msgctxt "SkinManagerDialog|"
 msgid "Remove the active custom skin for %1?\n\n"
 "Mojang will revert the account to the default Steve or Alex skin."
-msgstr ""
+msgstr "إزالة الجلد المخصص النشط ل %1?\n\n"
+"Mojang سوف يعيد الحساب إلى ستيف الافتراضي أو Alex Skin."
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:290
 msgctxt "SkinManagerDialog|"
 msgid "Skin reset failed"
-msgstr ""
+msgstr "فشلت إعادة تعيين الجلد"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:291
 msgctxt "SkinManagerDialog|"
 msgid "Mojang did not process the request."
-msgstr ""
+msgstr "ولم يقم موجانغ بمعالجة الطلب."
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:299
 msgctxt "SkinManagerDialog|"
 msgid "Skin reset to the Mojang default."
-msgstr ""
+msgstr "إعادة تعيين الجلد إلى الوضع الافتراضي Mojang."
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:386
 #, qt-format
 msgctxt "SkinManagerDialog|"
 msgid "Could not read %1: %2"
-msgstr ""
+msgstr "تعذر قراءة %1: %2"
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:415
 msgctxt "SkinManagerDialog|"
 msgid "Failed to apply skin changes."
-msgstr ""
+msgstr "فشل في تطبيق تغييرات الجلد."
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:424
 msgctxt "SkinManagerDialog|"
 msgid "Failed to apply cape change."
-msgstr ""
+msgstr "فشل في تطبيق تغيير الحد الأقصى."
 
 #: plugins/SkinManager/SkinManagerDialog.cpp:445
 msgctxt "SkinManagerDialog|"
 msgid "Successfully applied skin changes."
-msgstr ""
+msgstr "تم تطبيق تغييرات الجلد بنجاح."
 
 #: launcher/minecraft/services/SkinUpload.cpp:77
 msgctxt "SkinUpload|"
 msgid "Uploading skin"
-msgstr ""
+msgstr "تحميل الجلد"
 
 #: launcher/ui/dialogs/SkinUploadDialog.ui:14
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:63
@@ -7915,67 +7293,67 @@ msgstr ""
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:116
 msgctxt "SkinUploadDialog|"
 msgid "Skin Upload"
-msgstr ""
+msgstr "تحميل الجلد"
 
 #: launcher/ui/dialogs/SkinUploadDialog.ui:20
 msgctxt "SkinUploadDialog|"
 msgid "Skin File"
-msgstr ""
+msgstr "ملف الجلد"
 
 #: launcher/ui/dialogs/SkinUploadDialog.ui:51
 msgctxt "SkinUploadDialog|"
 msgid "Player Model"
-msgstr ""
+msgstr "موديل اللاعب"
 
 #: launcher/ui/dialogs/SkinUploadDialog.ui:57
 msgctxt "SkinUploadDialog|"
 msgid "Steve Model"
-msgstr ""
+msgstr "نموذج ستيف"
 
 #: launcher/ui/dialogs/SkinUploadDialog.ui:67
 msgctxt "SkinUploadDialog|"
 msgid "Alex Model"
-msgstr ""
+msgstr "أليكس موديل"
 
 #: launcher/ui/dialogs/SkinUploadDialog.ui:77
 msgctxt "SkinUploadDialog|"
 msgid "Cape"
-msgstr ""
+msgstr "كيب"
 
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:64
 msgctxt "SkinUploadDialog|"
 msgid "Using remote URLs for setting skins is not implemented yet."
-msgstr ""
+msgstr "لم يتم بعد تنفيذ استخدام عناوين URL البعيدة لإعداد الجلود."
 
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:74
 msgctxt "SkinUploadDialog|"
 msgid "You cannot use an invalid URL for uploading skins."
-msgstr ""
+msgstr "لا يمكنك استخدام عنوان URL غير صالح لتحميل المظاهر"
 
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:87
 msgctxt "SkinUploadDialog|"
 msgid "Skin file does not exist!"
-msgstr ""
+msgstr "ملف الجلد غير موجود!"
 
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:110
 msgctxt "SkinUploadDialog|"
 msgid "Failed to upload skin!"
-msgstr ""
+msgstr "فشل في تحميل الجلد!"
 
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:116
 msgctxt "SkinUploadDialog|"
 msgid "Success"
-msgstr ""
+msgstr "نجاح"
 
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:125
 msgctxt "SkinUploadDialog|"
 msgid "Select Skin Texture"
-msgstr ""
+msgstr "حدد صورة المظهر"
 
 #: launcher/ui/dialogs/SkinUploadDialog.cpp:141
 msgctxt "SkinUploadDialog|"
 msgid "No Cape"
-msgstr ""
+msgstr "لا يوجد كيب"
 
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:70
 #, qt-format
@@ -8016,19 +7394,21 @@ msgstr "نم إلغاء استيراد النموذج."
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Finding recommended version:\n"
 "%1"
-msgstr ""
+msgstr "العثور على الإصدار الموصى به:\n"
+"%1"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:72
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Finding recommended version"
-msgstr ""
+msgstr "العثور على النسخة الموصى بها"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:97
 #, qt-format
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Resolving modpack files:\n"
 "%1"
-msgstr ""
+msgstr "حل ملفات المودباب:\n"
+"%1"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:98
 msgctxt "Technic::SolderPackInstallTask|"
@@ -8038,7 +7418,7 @@ msgstr "جار تحليل ملفات حزمة الإضافات"
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:111
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Downloading modpack:"
-msgstr ""
+msgstr "تنزيل modpack:"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:130
 msgctxt "Technic::SolderPackInstallTask|"
@@ -8126,7 +7506,7 @@ msgstr " بحسب "
 #: launcher/ui/pages/modplatform/technic/TechnicPage.h:73
 msgctxt "TechnicPage|"
 msgid "Technic"
-msgstr ""
+msgstr "تقنيّة"
 
 #: launcher/minecraft/mod/TexturePackFolderModel.cpp:40
 msgctxt "TexturePackFolderModel|"
@@ -8200,23 +7580,23 @@ msgstr "تحديث النموذج باء بالفشل بسبب: %1\n\n"
 #, qt-format
 msgctxt "UpdateChecker|"
 msgid "Failed to parse update feed: %1"
-msgstr ""
+msgstr "فشل تحليل تغذية التحديث: %1"
 
 #: launcher/updater/UpdateChecker.cpp:392
 msgctxt "UpdateChecker|"
 msgid "No stable release entry found in the update feed."
-msgstr ""
+msgstr "لم يتم العثور على إدخال ثابت في التحديث."
 
 #: launcher/updater/UpdateChecker.cpp:405
 #, qt-format
 msgctxt "UpdateChecker|"
 msgid "Update feed has no asset matching this build (%1/%2/%3)."
-msgstr ""
+msgstr "التحديث لا يحتوي على أصول مطابقة لهذا البناء (%1/%2/%3)."
 
 #: launcher/UpdateController.cpp:58
 msgctxt "UpdateController|"
 msgid "Updater Not Found"
-msgstr ""
+msgstr "لم يتم العثور على التحديث"
 
 #: launcher/UpdateController.cpp:60
 #, qt-format
@@ -8224,24 +7604,27 @@ msgctxt "UpdateController|"
 msgid "The updater binary could not be found at:\n"
 "%1\n\n"
 "Please reinstall %2."
-msgstr ""
+msgstr "تعذر العثور على ثنائي التحديث في:\n"
+"%1\n\n"
+"الرجاء إعادة تثبيت %2."
 
 #: launcher/UpdateController.cpp:78
 msgctxt "UpdateController|"
 msgid "Update Failed"
-msgstr ""
+msgstr "فشل التحديث"
 
 #: launcher/UpdateController.cpp:79
 #, qt-format
 msgctxt "UpdateController|"
 msgid "Could not launch the updater binary.\n"
 "Please update %1 manually."
-msgstr ""
+msgstr "لا يمكن تشغيل ثنائية التحديث.\n"
+"الرجاء تحديث %1 يدويا."
 
 #: launcher/ui/dialogs/UpdateDialog.ui:14
 msgctxt "UpdateDialog|"
 msgid "MeshMC Update"
-msgstr ""
+msgstr "تحديث MeshMC"
 
 #: launcher/ui/dialogs/UpdateDialog.ui:61
 msgctxt "UpdateDialog|"
@@ -8257,23 +7640,23 @@ msgstr "تأجيل التحديث"
 #, qt-format
 msgctxt "UpdateDialog|"
 msgid "<b>%1 %2</b> is available!"
-msgstr ""
+msgstr "<b>%1 %2</b> متوفر!"
 
 #: launcher/ui/dialogs/UpdateDialog.cpp:46
 msgctxt "UpdateDialog|"
 msgid "<center><p>No release notes available.</p></center>"
-msgstr ""
+msgstr "<center><p>لا تتوفر ملاحظات الإصدار.</p></center>"
 
 #: launcher/ui/dialogs/UpdateDialog.cpp:49
 #, qt-format
 msgctxt "UpdateDialog|"
 msgid "You are running the latest version of %1."
-msgstr ""
+msgstr "أنت تقوم بتشغيل أحدث إصدار من %1."
 
 #: launcher/ui/dialogs/UpdateDialog.cpp:52
 msgctxt "UpdateDialog|"
 msgid "<center><p>No updates found.</p></center>"
-msgstr ""
+msgstr "<center><p>لم يتم العثور على تحديثات.</p></center>"
 
 #: launcher/ui/dialogs/UpdateDialog.cpp:54
 msgctxt "UpdateDialog|"
@@ -8283,22 +7666,22 @@ msgstr "إغلاق"
 #: launcher/ui/dialogs/UpdateProgressDialog.cpp:32
 msgctxt "UpdateProgressDialog|"
 msgid "MeshMC Update"
-msgstr ""
+msgstr "تحديث MeshMC"
 
 #: launcher/ui/dialogs/UpdateProgressDialog.cpp:38
 msgctxt "UpdateProgressDialog|"
 msgid "Checking for updates..."
-msgstr ""
+msgstr "البحث عن تحديثات..."
 
 #: launcher/ui/dialogs/UpdateProgressDialog.cpp:57
 msgctxt "UpdateProgressDialog|"
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: launcher/ui/dialogs/UpdateProgressDialog.cpp:84
 msgctxt "UpdateProgressDialog|"
 msgid "Close"
-msgstr ""
+msgstr "أغلق"
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:41
 msgctxt "VanillaPage|"
@@ -8349,123 +7732,123 @@ msgstr "فانيلا"
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Current Java version %1 does not meet the requirement of Java %2."
-msgstr ""
+msgstr "إصدار جافا الحالي %1 لا يفي بمتطلبات جافا %2."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:170
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Found installed Java %1 at: %2"
-msgstr ""
+msgstr "تم العثور على Java %1 مثبت: %2"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:179
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:392
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java path set to: %1"
-msgstr ""
+msgstr "تم تعيين مسار جافا إلى: %1"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:189
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java %1 is required but not installed. Automatic Java download is disabled."
-msgstr ""
+msgstr "جافا %1 مطلوب ولكن لم يتم تثبيته. تحميل جافا التلقائي معطل."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:196
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "No installed Java %1 found. Downloading..."
-msgstr ""
+msgstr "لم يتم العثور على Java %1 . تنزيل..."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:201
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java %1 is required but not installed. Please install it manually."
-msgstr ""
+msgstr "جافا %1 مطلوب ولكن لم يتم تثبيته. الرجاء تثبيته يدويا."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:218
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Using Java vendor: %1"
-msgstr ""
+msgstr "استخدام بائع جافا: %1"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:229
 msgctxt "VerifyJavaInstall|"
 msgid "Fetch Java versions"
-msgstr ""
+msgstr "إحضار إصدارات جافا"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:243
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to parse Java version list from meta server: %1"
-msgstr ""
+msgstr "فشل تحليل قائمة إصدار جافا من خادم ميتا: %1"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:249
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to parse Java version list from meta server."
-msgstr ""
+msgstr "فشل تحليل قائمة إصدار جافا من خادم ميتا."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:267
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java %1 is not available for download from the selected vendor. Please install it manually or try a different vendor in settings."
-msgstr ""
+msgstr "جافا %1 غير متوفر للتحميل من البائع المحدد. الرجاء تثبيته يدوياً أو محاولة بائع مختلف في الإعدادات."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:276
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to fetch Java version list: %1. Please install Java %2 manually."
-msgstr ""
+msgstr "فشل في جلب قائمة إصدار جافا: %1. الرجاء تثبيت Java %2 يدويا."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:295
 msgctxt "VerifyJavaInstall|"
 msgid "Fetch Java runtime details"
-msgstr ""
+msgstr "إحضار تفاصيل وقت تشغيل جافا"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:307
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to parse Java runtime details: %1"
-msgstr ""
+msgstr "فشل تحليل تفاصيل وقت تشغيل جافا: %1"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:312
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to parse Java runtime details."
-msgstr ""
+msgstr "فشل تحليل تفاصيل وقت تشغيل جافا."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:322
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Downloading %1 (%2)..."
-msgstr ""
+msgstr "تحميل %1 (%2)..."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:330
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "No Java %1 download available for your platform (%2). Please install it manually."
-msgstr ""
+msgstr "لا يوجد تحميل Java %1 متوفر للمنصة الخاصة بك (%2). الرجاء تثبيته يدويا."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:337
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to fetch Java runtime details: %1"
-msgstr ""
+msgstr "فشل في جلب تفاصيل وقت تشغيل جافا: %1"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:360
 msgctxt "VerifyJavaInstall|"
 msgid "Java was downloaded but the binary could not be found."
-msgstr ""
+msgstr "تم تنزيل جافا ولكن لم يتم العثور على ثنائية."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:364
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java downloaded and installed at: %1"
-msgstr ""
+msgstr "تم تنزيل جافا وتثبيت في: %1"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:371
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to download Java %1: %2"
-msgstr ""
+msgstr "فشل تحميل Java %1: %2"
 
 #: launcher/ui/widgets/VersionListView.cpp:52
 msgctxt "VersionListView|"
@@ -8590,7 +7973,7 @@ msgstr "تثبيت NeoForge"
 #: launcher/ui/pages/instance/VersionPage.ui:210
 msgctxt "VersionPage|"
 msgid "Install the NeoForge mod loader."
-msgstr ""
+msgstr "تثبيت محمل مورد NeoForge"
 
 #: launcher/ui/pages/instance/VersionPage.ui:215
 msgctxt "VersionPage|"
@@ -8781,17 +8164,17 @@ msgstr ""
 #: launcher/ui/pages/instance/VersionPage.cpp:457
 msgctxt "VersionPage|"
 msgid "Forge is incompatible with Fabric Loader. Please remove Fabric Loader first."
-msgstr ""
+msgstr "التصنيع غير متوافق مع Fabric Loader. الرجاء إزالة Fabric Loader أولاً."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:463
 msgctxt "VersionPage|"
 msgid "Forge is incompatible with NeoForge. Please remove NeoForge first."
-msgstr ""
+msgstr "التصنيع غير متوافق مع NeoForge. الرجاء إزالة NeoForge أولاً."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:469
 msgctxt "VersionPage|"
 msgid "Forge is incompatible with Quilt Loader. Please remove Quilt Loader first."
-msgstr ""
+msgstr "التصنيع غير متوافق مع \"حمولة القوات\". الرجاء إزالة \"لودر القتل\" أولاً."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:478
 msgctxt "VersionPage|"
@@ -8811,17 +8194,17 @@ msgstr "تعذر تحميل أو تنزيل قائمة إصدارات Forge!"
 #: launcher/ui/pages/instance/VersionPage.cpp:507
 msgctxt "VersionPage|"
 msgid "Fabric Loader is incompatible with Forge. Please remove Forge first."
-msgstr ""
+msgstr "المحمل الفاحش غير متوافق مع التصنيع. يرجى إزالة التصنيع أولا."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:513
 msgctxt "VersionPage|"
 msgid "Fabric Loader is incompatible with NeoForge. Please remove NeoForge first."
-msgstr ""
+msgstr "محمل فابريك غير متوافق مع NeoForge. الرجاء إزالة NeoForge أولاً."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:519
 msgctxt "VersionPage|"
 msgid "Fabric Loader is incompatible with Quilt Loader. Please remove Quilt Loader first."
-msgstr ""
+msgstr "Fabric Loader غير متوافق مع Quilt Loader. الرجاء إزالة Quilt Loader أولاً."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:529
 msgctxt "VersionPage|"
@@ -8841,17 +8224,17 @@ msgstr "تعذر تحميل أو تنزيل قائمة إصدارات Fabric Loa
 #: launcher/ui/pages/instance/VersionPage.cpp:557
 msgctxt "VersionPage|"
 msgid "NeoForge is incompatible with Forge. Please remove Forge first."
-msgstr ""
+msgstr "نيو فورج غير متوافق مع التصنيع. يرجى إزالة التصنيع أولا."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:564
 msgctxt "VersionPage|"
 msgid "NeoForge is incompatible with Fabric Loader. Please remove Fabric Loader first."
-msgstr ""
+msgstr "NoForge غير متوافقة مع Fabric Loader. الرجاء إزالة Fabric Loader أولاً."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:570
 msgctxt "VersionPage|"
 msgid "NeoForge is incompatible with Quilt Loader. Please remove Quilt Loader first."
-msgstr ""
+msgstr "NeoForge غير متوافقة مع Quilt Loader. الرجاء إزالة Quilt Loader أولاً."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:579
 msgctxt "VersionPage|"
@@ -8871,17 +8254,17 @@ msgstr "تعذر تحميل أو تنزيل قوائم إصدارات NeoForge!"
 #: launcher/ui/pages/instance/VersionPage.cpp:608
 msgctxt "VersionPage|"
 msgid "Quilt Loader is incompatible with Forge. Please remove Forge first."
-msgstr ""
+msgstr "حمولة القصة غير متوافقة مع التصنيع. يرجى إزالة التصنيع أولا."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:615
 msgctxt "VersionPage|"
 msgid "Quilt Loader is incompatible with Fabric Loader. Please remove Fabric Loader first."
-msgstr ""
+msgstr "\"Quilt Loader غير متوافق مع \"Fabric Loader\". الرجاء إزالة \"Fabric Loader أولاً\"."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:621
 msgctxt "VersionPage|"
 msgid "Quilt Loader is incompatible with NeoForge. Please remove NeoForge first."
-msgstr ""
+msgstr "Quilt Loader غير متوافق مع NeoForge. الرجاء إزالة NeoForge أولاً."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:630
 msgctxt "VersionPage|"
@@ -9040,23 +8423,23 @@ msgstr "تحديث القائمة باء بالفشل:\n"
 #: plugins/OfflineWiki/WikiPage.cpp:28
 msgctxt "WikiPage|"
 msgid "Search…"
-msgstr ""
+msgstr "البحث…"
 
 #: plugins/OfflineWiki/WikiPage.cpp:95
 msgctxt "WikiPage|"
 msgid "<h3>Wiki not available</h3><p>The MeshMC wiki is downloaded automatically using <b>git</b>, but no <code>git</code> program was found on your system, so the wiki cannot be fetched.</p><p>Install Git and restart MeshMC to download the wiki.</p>"
-msgstr ""
+msgstr "<h3>ويكي غير متاح</h3><p>ويكي MeshMC يتم تنزيله تلقائيًا باستخدام <b>git</b>، ولكن لم يتم العثور على برنامج <code>git</code> على النظام الخاص بك، لذلك لا يمكن جلب ويكي.</p><p>تثبيت Git وإعادة تشغيل MeshMC لتحميل الويكي.</p>"
 
 #: plugins/OfflineWiki/WikiPage.cpp:102
 msgctxt "WikiPage|"
 msgid "<h3>Downloading the MeshMC wiki…</h3><p>The wiki is fetched in the background the first time you are online and will appear here automatically once the download finishes. If you are offline, MeshMC retries on every launch.</p>"
-msgstr ""
+msgstr "<h3>تحميل wiki…</h3><p>يتم جلب ويكي في الخلفية لأول مرة كنت على الإنترنت وسوف يظهر هنا تلقائياً بمجرد انتهاء التحميل. إذا كنت غير متصل، يقوم MeshMC بمحاولة كل تشغيل.</p>"
 
 #: plugins/OfflineWiki/WikiPage.cpp:128
 #, qt-format
 msgctxt "WikiPage|"
 msgid "<p><i>Article not found: %1</i></p>"
-msgstr ""
+msgstr "<p><i>لم يتم العثور على مقالة: %1</i></p>"
 
 #: launcher/minecraft/WorldList.cpp:232
 msgctxt "WorldList|"
@@ -9116,7 +8499,7 @@ msgstr "إزالة"
 #: launcher/ui/pages/instance/WorldListPage.ui:117
 msgctxt "WorldListPage|"
 msgid "MCEdit"
-msgstr ""
+msgstr "MCEdit"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:122
 msgctxt "WorldListPage|"
@@ -9249,7 +8632,7 @@ msgstr "الحصول على إذن للوصول إلى خدمات %1."
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "Failed to get authorization for %1 services. Error %1."
-msgstr ""
+msgstr "فشل في الحصول على إذن لخدمات %1 . خطأ %1."
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:109
 #, qt-format
