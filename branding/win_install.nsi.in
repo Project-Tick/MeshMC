@@ -414,7 +414,7 @@ Section "@MeshMC_DisplayName@"
     WriteRegStr HKCU "${UNINST_KEY}" "InstallLocation" "$INSTDIR"
     WriteRegStr HKCU "${UNINST_KEY}" "Publisher" "@MeshMC_DisplayName@ Contributors"
     WriteRegStr HKCU "${UNINST_KEY}" "Version" "@MeshMC_VERSION_NAME4@"
-    WriteRegStr HKCU "${UNINST_KEY}" "DisplayVersion" "@MeshMC_VERSION_NAME@"
+    WriteRegStr HKCU "${UNINST_KEY}" "DisplayVersion" "@MeshMC_RELEASE_VERSION_NAME@"
     WriteRegStr HKCU "${UNINST_KEY}" "VersionMajor" "@MeshMC_VERSION_MAJOR@"
     WriteRegStr HKCU "${UNINST_KEY}" "VersionMinor" "@MeshMC_VERSION_MINOR@"
     ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
