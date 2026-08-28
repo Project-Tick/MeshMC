@@ -139,6 +139,8 @@ set(NET_SOURCES
 set(LAUNCH_SOURCES
     launch/steps/CheckJava.cpp
     launch/steps/CheckJava.h
+    launch/steps/CreateBackup.cpp
+    launch/steps/CreateBackup.h
     launch/steps/LookupServerAddress.cpp
     launch/steps/LookupServerAddress.h
     launch/steps/PostLaunchCommand.cpp
@@ -182,6 +184,14 @@ set(NEWS_SOURCES
     news/NewsChecker.cpp
     news/NewsEntry.h
     news/NewsEntry.cpp
+)
+
+# Instance backup snapshots (was the BackupSystem .mmco plugin)
+set(BACKUP_SOURCES
+    backup/BackupManager.h
+    backup/BackupManager.cpp
+    backup/BackupTask.h
+    backup/BackupTask.cpp
 )
 
 # Icon interface
@@ -572,6 +582,7 @@ set(PLUGIN_SOURCES
     plugin/PluginHooks.h
     plugin/PluginAPI.h
     plugin/PluginMetadata.h
+    plugin/CoreSupersededPlugins.h
     plugin/PluginLoader.h
     plugin/PluginLoader.cpp
     plugin/PluginManager.h
@@ -603,6 +614,7 @@ set(LOGIC_SOURCES
     ${UPDATE_SOURCES}
     ${NOTIFICATIONS_SOURCES}
     ${NEWS_SOURCES}
+    ${BACKUP_SOURCES}
     ${MINECRAFT_SOURCES}
     ${SCREENSHOTS_SOURCES}
     ${TASKS_SOURCES}
@@ -730,6 +742,8 @@ SET(MESHMC_SOURCES
     ui/pages/BasePageProvider.h
 
     # GUI - instance pages
+    ui/pages/instance/BackupPage.cpp
+    ui/pages/instance/BackupPage.h
     ui/pages/instance/GameOptionsPage.cpp
     ui/pages/instance/GameOptionsPage.h
     ui/pages/instance/VersionPage.cpp
@@ -936,6 +950,7 @@ qt6_wrap_ui(MESHMC_UI
     ui/pages/global/ProxyPage.ui
     ui/pages/global/MinecraftPage.ui
     ui/pages/global/ExternalToolsPage.ui
+    ui/pages/instance/BackupPage.ui
     ui/pages/instance/ModFolderPage.ui
     ui/pages/instance/NotesPage.ui
     ui/pages/instance/LogPage.ui

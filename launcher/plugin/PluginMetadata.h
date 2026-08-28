@@ -61,6 +61,8 @@ enum class PluginDisableReason {
 	SignatureInvalid,  /* Trailer is malformed or signature bad */
 	DependencyMissing, /* A required dependency is not loaded */
 	DependencyCycle,   /* This module is part of a dependency cycle */
+	SupersededByCore,  /* Functionality moved into the launcher itself —
+						  see plugin/CoreSupersededPlugins.h */
 };
 
 struct PluginDependencyRecord {

@@ -49,6 +49,7 @@
 #include "JavaCommon.h"
 #include "tasks/Task.h"
 #include "minecraft/auth/AccountTask.h"
+#include "launch/steps/CreateBackup.h"
 #include "launch/steps/TextPrint.h"
 
 LaunchController::LaunchController(QObject* parent) : Task(parent) {}
@@ -445,12 +446,29 @@ void LaunchController::launchInstance()
 		m_launcher.get(), "Launched instance in " + online_mode + " mode\n",
 		MessageLevel::MeshMC));
 
+	// Opt-in pre-launch snapshot (MeshMC settings -> Features).
+	//
+	// A launch step, not an inline call: zipping a whole instance takes
+	// long enough to freeze the window if it runs on the GUI thread, and
+	// getting rid of exactly that freeze is why the BackupSystem plugin
+	// moved its pre-launch work onto a background hook before it
+	// graduated into core. As a step it runs off-thread, shows real
+	// progress, and the launch waits for it.
+	//
+	// prependStep() calls stack in reverse, so this ends up between the
+	// version banner and the "Launched instance in ..." line — before
+	// any step that could touch the instance directory.
+	if (APPLICATION->settings()->get("BackupBeforeLaunch").toBool()) {
+		m_launcher->prependStep(new CreateBackup(m_launcher.get()));
+	}
+
 	// Prepend Version
 	m_launcher->prependStep(new TextPrint(
 		m_launcher.get(),
 		BuildConfig.MESHMC_NAME +
 			" version: " + BuildConfig.printableVersionString() + "\n\n",
 		MessageLevel::MeshMC));
+
 	// Dispatch pre-launch hook to plugins
 	if (APPLICATION->pluginManager()) {
 		APPLICATION->pluginManager()->clearPendingLaunchMods();

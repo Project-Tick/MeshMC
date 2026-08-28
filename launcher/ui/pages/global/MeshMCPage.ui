@@ -165,6 +165,25 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="backupFeaturesGroupBox">
+         <property name="title">
+          <string>Backup System</string>
+         </property>
+         <layout class="QVBoxLayout" name="backupFeaturesLayout">
+          <item>
+           <widget class="QCheckBox" name="backupBeforeLaunchCheck">
+            <property name="toolTip">
+             <string>Creates a snapshot of each instance before launching. Backups are saved in the instance's .backups folder with the label &quot;pre-launch&quot;.</string>
+            </property>
+            <property name="text">
+             <string>Automatically &amp;backup instances before launch</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
