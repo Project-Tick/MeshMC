@@ -42,6 +42,8 @@
 
 #pragma once
 #include <QtNetwork>
+#include <QUuid>
+#include <memory>
 #include "NetAction.h"
 #include "Download.h"
 #include "HttpMetaCache.h"
@@ -88,6 +90,14 @@ class NetJob : public Task
 
 	bool canAbort() const override;
 
+	/// A job with several files in it shows one line per file being fetched.
+	bool isMultiStep() const override
+	{
+		return downloads.size() > 1;
+	}
+
+	TaskStepProgressList getStepProgress() const override;
+
   private slots:
 	void startMoreParts();
 
@@ -102,12 +112,21 @@ class NetJob : public Task
 	void partAborted(int index);
 
   private:
+	/// Reports the state of a single file to whoever is showing our progress.
+	void emitPartStep(int index, TaskStepState state);
+	/// Keeps our own one line summary in sync with the file counts.
+	void updateStatus();
+
+  private:
 	shared_qobject_ptr<QNetworkAccessManager> m_network;
 
 	struct part_info {
 		qint64 current_progress = 0;
 		qint64 total_progress = 1;
 		int failures = 0;
+		/// The line this file gets in the progress dialog. Shared so that the
+		/// list handed out by getStepProgress() stays up to date.
+		std::shared_ptr<TaskStepProgress> step;
 	};
 	QList<NetAction::Ptr> downloads;
 	QList<part_info> parts_progress;

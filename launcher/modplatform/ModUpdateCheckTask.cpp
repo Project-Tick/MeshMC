@@ -261,6 +261,8 @@ void ModUpdateCheckTask::executeTask()
 					delete response;
 					onOneDone();
 				});
+		// Show the check as its own line in the progress dialog.
+		propagateStepsFrom(job);
 		job->start();
 	}
 }

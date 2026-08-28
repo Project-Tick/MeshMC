@@ -25,55 +25,30 @@
 
 #include "SequentialTask.h"
 
-SequentialTask::SequentialTask(QObject* parent)
-	: Task(parent), m_currentIndex(-1)
+SequentialTask::SequentialTask(QObject* parent, QString task_name)
+	: ConcurrentTask(parent, task_name, 1)
 {
 }
 
-void SequentialTask::addTask(Task::Ptr task)
+void SequentialTask::updateState()
 {
-	m_queue.append(task);
-}
-
-void SequentialTask::executeTask()
-{
-	m_currentIndex = -1;
-	startNext();
-}
-
-void SequentialTask::startNext()
-{
-	if (m_currentIndex != -1) {
-		Task::Ptr previous = m_queue[m_currentIndex];
-		disconnect(previous.get(), 0, this, 0);
-	}
-	m_currentIndex++;
-	if (m_queue.isEmpty() || m_currentIndex >= m_queue.size()) {
-		emitSucceeded();
+	if (totalSize() <= 1) {
+		// One step is not a sequence worth counting out loud. Let the step
+		// speak for itself, the way a plain ConcurrentTask would.
+		ConcurrentTask::updateState();
 		return;
 	}
-	Task::Ptr next = m_queue[m_currentIndex];
-	connect(next.get(), &Task::failed, this, &SequentialTask::subTaskFailed);
-	connect(next.get(), &Task::status, this, &SequentialTask::subTaskStatus);
-	connect(next.get(), &Task::progress, this,
-			&SequentialTask::subTaskProgress);
-	connect(next.get(), &Task::succeeded, this, &SequentialTask::startNext);
-	next->start();
+
+	setProgress(finishedSize(), totalSize());
+	setStatus(tr("Executing task %1 out of %2")
+				  .arg(QString::number(m_doing.size() + finishedSize()),
+					   QString::number(totalSize())));
 }
 
-void SequentialTask::subTaskFailed(const QString& msg)
+void SequentialTask::subTaskFailed(Task::Ptr task, const QString& reason)
 {
-	emitFailed(msg);
-}
-void SequentialTask::subTaskStatus(const QString& msg)
-{
-	setStatus(msg);
-}
-void SequentialTask::subTaskProgress(qint64 current, qint64 total)
-{
-	if (total == 0) {
-		setProgress(0, 100);
-		return;
-	}
-	setProgress(current, total);
+	// Every step here builds on the one before it, so there is nothing left
+	// worth running.
+	dropQueued();
+	ConcurrentTask::subTaskFailed(task, reason);
 }

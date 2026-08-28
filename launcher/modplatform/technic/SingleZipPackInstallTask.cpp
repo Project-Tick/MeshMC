@@ -82,6 +82,8 @@ void Technic::SingleZipPackInstallTask::executeTask()
 			&Technic::SingleZipPackInstallTask::downloadProgressChanged);
 	connect(job, &NetJob::failed, this,
 			&Technic::SingleZipPackInstallTask::downloadFailed);
+	// Show the file being fetched as its own line in the dialog.
+	propagateStepsFrom(job);
 	m_filesNetJob->start();
 }
 

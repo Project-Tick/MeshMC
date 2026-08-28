@@ -55,11 +55,33 @@ void Task::setStatus(const QString& new_status)
 	}
 }
 
+void Task::setDetails(const QString& new_details)
+{
+	if (m_details != new_details) {
+		m_details = new_details;
+		emit details(m_details);
+	}
+}
+
 void Task::setProgress(qint64 current, qint64 total)
 {
 	m_progress = current;
 	m_progressTotal = total;
 	emit progress(m_progress, m_progressTotal);
+}
+
+void Task::propagateStepProgress(TaskStepProgress const& step_progress)
+{
+	emit stepProgress(step_progress);
+}
+
+void Task::propagateStepsFrom(Task* other)
+{
+	if (!other) {
+		return;
+	}
+	connect(other, &Task::stepProgress, this, &Task::propagateStepProgress,
+			Qt::UniqueConnection);
 }
 
 void Task::start()

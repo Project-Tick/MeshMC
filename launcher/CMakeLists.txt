@@ -406,6 +406,8 @@ set(TASKS_SOURCES
     # Tasks
     tasks/Task.h
     tasks/Task.cpp
+    tasks/ConcurrentTask.h
+    tasks/ConcurrentTask.cpp
     tasks/SequentialTask.h
     tasks/SequentialTask.cpp
 )
@@ -904,6 +906,8 @@ SET(MESHMC_SOURCES
     ui/widgets/VersionSelectWidget.h
     ui/widgets/ProgressWidget.h
     ui/widgets/ProgressWidget.cpp
+    ui/widgets/TaskStepProgressBar.h
+    ui/widgets/TaskStepProgressBar.cpp
     ui/widgets/WideBar.h
     ui/widgets/WideBar.cpp
 
@@ -953,6 +957,7 @@ qt6_wrap_ui(MESHMC_UI
     ui/widgets/InstanceCardWidget.ui
     ui/widgets/CustomCommands.ui
     ui/widgets/MCModInfoFrame.ui
+    ui/widgets/TaskStepProgressBar.ui
     ui/dialogs/CopyInstanceDialog.ui
     ui/dialogs/ProfileSetupDialog.ui
     ui/dialogs/ProgressDialog.ui

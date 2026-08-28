@@ -69,6 +69,7 @@ void AssetUpdateTask::executeTask()
 			&AssetUpdateTask::assetIndexFailed);
 	connect(downloadJob.get(), &NetJob::progress, this,
 			&AssetUpdateTask::progress);
+	propagateStepsFrom(downloadJob.get());
 
 	qDebug() << m_inst->name() << ": Starting asset index download";
 	downloadJob->start();
@@ -109,6 +110,10 @@ void AssetUpdateTask::assetIndexFinished()
 				&AssetUpdateTask::assetsFailed);
 		connect(downloadJob.get(), &NetJob::progress, this,
 				&AssetUpdateTask::progress);
+		connect(downloadJob.get(), &NetJob::status, this,
+				&AssetUpdateTask::setStatus);
+		// Show each asset being fetched as its own line.
+		propagateStepsFrom(downloadJob.get());
 		downloadJob->start();
 		return;
 	}

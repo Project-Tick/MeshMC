@@ -45,8 +45,57 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QList>
+#include <QUuid>
+#include <memory>
 
 #include "QObjectPtr.h"
+
+/**
+ * The lifecycle of a single step of a multi step task, as seen by the UI.
+ */
+enum class TaskStepState { Waiting, Running, Failed, Succeeded };
+
+Q_DECLARE_METATYPE(TaskStepState)
+
+/**
+ * A snapshot of one step of a multi step task.
+ *
+ * Multi step tasks (see Task::isMultiStep) report every step they are made of
+ * through Task::stepProgress, so the UI can show one line per step instead of
+ * a single opaque progress bar. A step keeps the same uid for its whole
+ * lifetime, which lets the UI update the line it already has instead of piling
+ * up new ones.
+ */
+struct TaskStepProgress {
+	QUuid uid;
+	qint64 current = 0;
+	qint64 total = -1;
+
+	QString status;
+	QString details;
+	TaskStepState state = TaskStepState::Waiting;
+
+	TaskStepProgress() : uid(QUuid::createUuid()) {}
+	explicit TaskStepProgress(QUuid step_uid) : uid(step_uid) {}
+
+	bool isDone() const
+	{
+		return state == TaskStepState::Failed ||
+			   state == TaskStepState::Succeeded;
+	}
+
+	void update(qint64 new_current, qint64 new_total)
+	{
+		current = new_current;
+		total = new_total;
+		state = TaskStepState::Running;
+	}
+};
+
+Q_DECLARE_METATYPE(TaskStepProgress)
+
+using TaskStepProgressList = QList<std::shared_ptr<TaskStepProgress>>;
 
 class Task : public QObject
 {
@@ -65,6 +114,34 @@ class Task : public QObject
 	bool wasSuccessful() const;
 
 	/*!
+	 * A multi step task is a task that is made up of several other tasks.
+	 * Such a task reports the state of each of its steps through the
+	 * stepProgress signal, on top of its own overall progress.
+	 */
+	virtual bool isMultiStep() const
+	{
+		return false;
+	}
+
+	/*!
+	 * The state of every step this task is currently made of, for callers that
+	 * connect to an already running task and need to catch up.
+	 */
+	virtual TaskStepProgressList getStepProgress() const
+	{
+		return {};
+	}
+
+	/*!
+	 * Identifies this task among the steps of its parent. Stable for the whole
+	 * lifetime of the task.
+	 */
+	QUuid getUid() const
+	{
+		return m_uid;
+	}
+
+	/*!
 	 * Returns the string that was passed to emitFailed as the error message
 	 * when the task failed. If the task hasn't failed, returns an empty string.
 	 */
@@ -80,6 +157,15 @@ class Task : public QObject
 	QString getStatus()
 	{
 		return m_status;
+	}
+
+	/*!
+	 * Secondary, usually shorter piece of status shown next to the status
+	 * line - a byte count, an item count, that kind of thing.
+	 */
+	QString getDetails()
+	{
+		return m_details;
 	}
 
 	qint64 getProgress()
@@ -105,6 +191,9 @@ class Task : public QObject
 	void succeeded();
 	void failed(QString reason);
 	void status(QString status);
+	void details(QString details);
+	//! Emitted by multi step tasks whenever one of their steps moves along.
+	void stepProgress(TaskStepProgress const& step_progress);
 
   public slots:
 	virtual void start();
@@ -121,8 +210,22 @@ class Task : public QObject
 	virtual void emitAborted();
 	virtual void emitFailed(QString reason);
 
+	/*!
+	 * Passes a step reported by a child task on to our own listeners, so that
+	 * steps of nested multi step tasks stay visible all the way up.
+	 */
+	virtual void propagateStepProgress(TaskStepProgress const& step_progress);
+
+	/*!
+	 * Wires an inner task so that its steps show up among ours. Use this when
+	 * a task hands the actual work to a single task of its own, which would
+	 * otherwise report its steps to nobody.
+	 */
+	void propagateStepsFrom(Task* other);
+
   public slots:
 	void setStatus(const QString& status);
+	void setDetails(const QString& details);
 	void setProgress(qint64 current, qint64 total);
 
   private:
@@ -130,6 +233,8 @@ class Task : public QObject
 	QStringList m_Warnings;
 	QString m_failReason = "";
 	QString m_status;
+	QString m_details;
 	int m_progress = 0;
 	int m_progressTotal = 100;
+	QUuid m_uid = QUuid::createUuid();
 };

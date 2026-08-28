@@ -143,6 +143,8 @@ void Technic::SolderPackInstallTask::fileListSucceeded()
 			&Technic::SolderPackInstallTask::downloadProgressChanged);
 	connect(m_filesNetJob.get(), &NetJob::failed, this,
 			&Technic::SolderPackInstallTask::downloadFailed);
+	// One line per file being downloaded.
+	propagateStepsFrom(m_filesNetJob.get());
 	m_filesNetJob->start();
 }
 

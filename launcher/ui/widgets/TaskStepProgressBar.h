@@ -25,24 +25,31 @@
 
 #pragma once
 
-#include "ConcurrentTask.h"
+#include <QWidget>
+
+#include "tasks/Task.h"
+
+namespace Ui
+{
+	class TaskStepProgressBar;
+}
 
 /**
- * Runs its tasks one at a time, in the order they were added, and gives up as
- * soon as one of them fails.
- *
- * Use this when a step only makes sense if the step before it worked out. If
- * the tasks are independent of each other, use ConcurrentTask instead.
+ * One line in the list of things a multi step task is busy with: what it is
+ * doing, how far along it is, and a short detail on the right hand side.
  */
-class SequentialTask : public ConcurrentTask
+class TaskStepProgressBar : public QWidget
 {
 	Q_OBJECT
-  public:
-	explicit SequentialTask(QObject* parent = 0,
-							QString task_name = QString());
-	virtual ~SequentialTask() {};
 
-  protected:
-	void updateState() override;
-	void subTaskFailed(Task::Ptr task, const QString& reason) override;
+  public:
+	explicit TaskStepProgressBar(QWidget* parent = nullptr);
+	~TaskStepProgressBar();
+
+	/// Shows the given step. A step with an unknown total gets a busy
+	/// indicator rather than a made up percentage.
+	void setStep(const TaskStepProgress& step);
+
+  private:
+	Ui::TaskStepProgressBar* ui;
 };

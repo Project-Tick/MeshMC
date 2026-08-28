@@ -23,26 +23,45 @@
  *   along with this program.  If not, see <https://projecttick.org/licenses/>.
  */
 
-#pragma once
+#include "TaskStepProgressBar.h"
+#include "ui_TaskStepProgressBar.h"
 
-#include "ConcurrentTask.h"
+#include <limits>
 
-/**
- * Runs its tasks one at a time, in the order they were added, and gives up as
- * soon as one of them fails.
- *
- * Use this when a step only makes sense if the step before it worked out. If
- * the tasks are independent of each other, use ConcurrentTask instead.
- */
-class SequentialTask : public ConcurrentTask
+TaskStepProgressBar::TaskStepProgressBar(QWidget* parent)
+	: QWidget(parent), ui(new Ui::TaskStepProgressBar)
 {
-	Q_OBJECT
-  public:
-	explicit SequentialTask(QObject* parent = 0,
-							QString task_name = QString());
-	virtual ~SequentialTask() {};
+	ui->setupUi(this);
+}
 
-  protected:
-	void updateState() override;
-	void subTaskFailed(Task::Ptr task, const QString& reason) override;
-};
+TaskStepProgressBar::~TaskStepProgressBar()
+{
+	delete ui;
+}
+
+void TaskStepProgressBar::setStep(const TaskStepProgress& step)
+{
+	ui->statusLabel->setText(step.status);
+	ui->detailsLabel->setText(step.details);
+
+	if (step.total <= 0) {
+		// Nobody told us how much work there is, so sweep instead of making
+		// up a percentage.
+		ui->progressBar->setRange(0, 0);
+		ui->progressBar->setValue(0);
+		return;
+	}
+
+	// A progress bar counts in int, and byte counts do not fit in one. Work
+	// in a fraction of the whole int range instead, which keeps the printed
+	// percentage exact no matter how big the numbers get.
+	constexpr int range = std::numeric_limits<int>::max();
+	const double fraction =
+		qBound(0.0,
+			   static_cast<double>(step.current) /
+				   static_cast<double>(step.total),
+			   1.0);
+
+	ui->progressBar->setRange(0, range);
+	ui->progressBar->setValue(static_cast<int>(fraction * range));
+}

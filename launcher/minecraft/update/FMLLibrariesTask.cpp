@@ -93,6 +93,8 @@ void FMLLibrariesTask::executeTask()
 			&FMLLibrariesTask::fmllibsFinished);
 	connect(dljob, &NetJob::failed, this, &FMLLibrariesTask::fmllibsFailed);
 	connect(dljob, &NetJob::progress, this, &FMLLibrariesTask::progress);
+	// Show each library being fetched as its own line.
+	propagateStepsFrom(dljob);
 	downloadJob.reset(dljob);
 	downloadJob->start();
 }

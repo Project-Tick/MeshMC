@@ -209,6 +209,8 @@ void ComponentUpdateTask::loadComponents()
 					[this, taskIndex](const QString& error) {
 						remoteLoadFailed(taskIndex, error);
 					});
+			// Show the metadata fetch as its own line in the dialog.
+			propagateStepsFrom(indexLoadTask.get());
 			taskIndex++;
 		}
 	}
@@ -253,6 +255,8 @@ void ComponentUpdateTask::loadComponents()
 					[this, taskIndex](const QString& error) {
 						remoteLoadFailed(taskIndex, error);
 					});
+			// One line per component's metadata being fetched.
+			propagateStepsFrom(loadTask.get());
 			RemoteLoadStatus status;
 			status.type = loadType;
 			status.PackProfileIndex = componentIndex;

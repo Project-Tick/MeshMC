@@ -44,18 +44,25 @@
 #include "ui_ProgressDialog.h"
 
 #include <QKeyEvent>
+#include <QPoint>
 #include <QDebug>
 
 #include "tasks/Task.h"
+#include "ui/widgets/TaskStepProgressBar.h"
 
 ProgressDialog::ProgressDialog(QWidget* parent)
 	: QDialog(parent), ui(new Ui::ProgressDialog)
 {
 	ui->setupUi(this);
+	// Only tasks that are made up of several steps have anything to show in
+	// here, so stay out of the way until one of them turns up.
+	ui->stepScrollArea->setHidden(true);
 	this->setWindowFlags(this->windowFlags() &
 						 ~Qt::WindowContextHelpButtonHint);
-	setSkipButton(false);
+	setAttribute(Qt::WidgetAttribute::WA_QuitOnClose, true);
 	changeProgress(0, 100);
+	updateSize(true);
+	setSkipButton(false);
 }
 
 void ProgressDialog::setSkipButton(bool present, QString label)
@@ -72,26 +79,72 @@ void ProgressDialog::setSkipButton(bool present, QString label)
 void ProgressDialog::on_skipButton_clicked(bool checked)
 {
 	Q_UNUSED(checked);
-	task->abort();
+	// Escape reaches us here too, so check that skipping is actually on offer
+	// rather than trusting the caller.
+	if (task && ui->skipButton->isEnabled()) {
+		task->abort();
+	}
 }
 
 ProgressDialog::~ProgressDialog()
 {
+	// The task can outlive the dialog, and it must not talk to a half torn
+	// down one on the way out.
+	for (auto& connection : m_task_connections) {
+		disconnect(connection);
+	}
 	delete ui;
 }
 
-void ProgressDialog::updateSize()
+void ProgressDialog::updateSize(bool recenterParent)
 {
-	QSize qSize = QSize(480, minimumSizeHint().height());
-	resize(qSize);
-	setMinimumSize(qSize);
-	setMaximumSize(qSize);
+	QSize old_size = size();
+	QPoint old_pos = pos();
+
+	// Add up what actually has to fit: the status line, the overall bar, the
+	// step list while it is on show, and the skip button while it is offered.
+	const int spacing = ui->verticalLayout->spacing();
+	int min_height = ui->detailsLabel->minimumSize().height() + (spacing * 2);
+	min_height += ui->taskProgressBar->minimumSize().height() + spacing;
+	if (!ui->stepScrollArea->isHidden()) {
+		min_height += ui->stepScrollArea->minimumSizeHint().height() + spacing;
+	}
+	if (ui->skipButton->isVisible()) {
+		min_height += ui->skipButton->height() + spacing;
+	}
+	min_height = qMax(min_height, 60);
+
+	// No maximum: the size grip is there so the list can be pulled open.
+	setMinimumSize(QSize(480, min_height));
+	adjustSize();
+
+	QSize new_size = size();
+	QWidget* owner = parentWidget();
+
+	if (recenterParent && owner) {
+		move(qMax(0, owner->x() + ((owner->width() - new_size.width()) / 2)),
+			 qMax(0,
+				  owner->y() + ((owner->height() - new_size.height()) / 2)));
+		return;
+	}
+
+	if (old_size == new_size || !isVisible()) {
+		// Moving a dialog that was never shown counts as placing it by hand,
+		// which would rob it of being centred later on.
+		return;
+	}
+
+	// Grow around the middle, otherwise the dialog walks across the screen as
+	// steps are added and removed.
+	QSize diff = old_size - new_size;
+	move(qMax(0, old_pos.x() + (diff.width() / 2)),
+		 qMax(0, old_pos.y() + (diff.height() / 2)));
 }
 
 int ProgressDialog::execWithTask(Task* task)
 {
 	this->task = task;
-	QDialog::DialogCode result;
+	QDialog::DialogCode result{};
 
 	if (!task) {
 		qDebug() << "Programmer error: progress dialog created with null task.";
@@ -103,25 +156,43 @@ int ProgressDialog::execWithTask(Task* task)
 	}
 
 	// Connect signals.
-	connect(task, &Task::started, this, &ProgressDialog::onTaskStarted);
-	connect(task, &Task::failed, this, &ProgressDialog::onTaskFailed);
-	connect(task, &Task::succeeded, this, &ProgressDialog::onTaskSucceeded);
-	connect(task, &Task::status, this, &ProgressDialog::changeStatus);
-	connect(task, &Task::progress, this, &ProgressDialog::changeProgress);
+	m_task_connections.append(
+		connect(task, &Task::started, this, &ProgressDialog::onTaskStarted));
+	m_task_connections.append(
+		connect(task, &Task::failed, this, &ProgressDialog::onTaskFailed));
+	m_task_connections.append(connect(task, &Task::succeeded, this,
+									  &ProgressDialog::onTaskSucceeded));
+	m_task_connections.append(
+		connect(task, &Task::status, this, &ProgressDialog::changeStatus));
+	m_task_connections.append(
+		connect(task, &Task::details, this, &ProgressDialog::changeDetails));
+	m_task_connections.append(
+		connect(task, &Task::progress, this, &ProgressDialog::changeProgress));
+	m_task_connections.append(connect(task, &Task::stepProgress, this,
+									  &ProgressDialog::changeStepProgress));
 
-	// if this didn't connect to an already running task, invoke start
-	if (!task->isRunning()) {
-		task->start();
-	}
+	ui->stepScrollArea->setHidden(!task->isMultiStep());
+	updateSize();
+
 	if (task->isRunning()) {
-		changeProgress(task->getProgress(), task->getTotalProgress());
+		// Joined a task that is already under way, so catch up on where it
+		// has got to.
 		changeStatus(task->getStatus());
-		return QDialog::exec();
-	} else if (handleImmediateResult(result)) {
-		return result;
+		changeDetails(task->getDetails());
+		changeProgress(task->getProgress(), task->getTotalProgress());
+		for (auto& step : task->getStepProgress()) {
+			if (step) {
+				changeStepProgress(*step);
+			}
+		}
 	} else {
-		return QDialog::Rejected;
+		// Start it from inside the dialog's own event loop. Kicking it off
+		// beforehand would leave the user staring at a frozen window for as
+		// long as the task takes to get going.
+		QMetaObject::invokeMethod(task, &Task::start, Qt::QueuedConnection);
 	}
+
+	return QDialog::exec();
 }
 
 // TODO: only provide the unique_ptr overloads
@@ -158,17 +229,28 @@ void ProgressDialog::onTaskStarted() {}
 
 void ProgressDialog::onTaskFailed(QString failure)
 {
+	Q_UNUSED(failure);
 	reject();
+	hide();
 }
 
 void ProgressDialog::onTaskSucceeded()
 {
 	accept();
+	hide();
 }
 
 void ProgressDialog::changeStatus(const QString& status)
 {
 	ui->statusLabel->setText(status);
+	ui->statusLabel->adjustSize();
+	updateSize();
+}
+
+void ProgressDialog::changeDetails(const QString& details)
+{
+	ui->detailsLabel->setText(details);
+	ui->detailsLabel->adjustSize();
 	updateSize();
 }
 
@@ -176,6 +258,41 @@ void ProgressDialog::changeProgress(qint64 current, qint64 total)
 {
 	ui->taskProgressBar->setMaximum(total);
 	ui->taskProgressBar->setValue(current);
+}
+
+void ProgressDialog::changeStepProgress(const TaskStepProgress& step)
+{
+	if (step.isDone()) {
+		// The step is over, so its line goes away. Dropping it instead of
+		// hiding it keeps long jobs from piling up thousands of dead widgets.
+		auto bar = m_step_bars.take(step.uid);
+		if (bar) {
+			// Hide before dropping it from the layout, otherwise it lingers
+			// on screen until the deferred delete gets around to it.
+			bar->hide();
+			ui->stepLayout->removeWidget(bar);
+			bar->deleteLater();
+			updateSize();
+		}
+		return;
+	}
+
+	auto bar = m_step_bars.value(step.uid);
+	if (!bar) {
+		bar = new TaskStepProgressBar(ui->stepContainer);
+		m_step_bars.insert(step.uid, bar);
+		ui->stepLayout->addWidget(bar);
+
+		if (ui->stepScrollArea->isHidden()) {
+			// A task can turn out to have steps only once it is under way.
+			ui->stepScrollArea->setHidden(false);
+		}
+		bar->setStep(step);
+		updateSize();
+		return;
+	}
+
+	bar->setStep(step);
 }
 
 void ProgressDialog::keyPressEvent(QKeyEvent* e)

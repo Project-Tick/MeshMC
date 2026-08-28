@@ -43,9 +43,13 @@
 #pragma once
 
 #include <QDialog>
+#include <QHash>
+#include <QUuid>
 #include <memory>
 
-class Task;
+#include "tasks/Task.h"
+
+class TaskStepProgressBar;
 
 namespace Ui
 {
@@ -60,7 +64,9 @@ class ProgressDialog : public QDialog
 	explicit ProgressDialog(QWidget* parent = 0);
 	~ProgressDialog();
 
-	void updateSize();
+	/// Fits the dialog around whatever it is showing right now. Pass true to
+	/// centre it on its parent instead of around its own old position.
+	void updateSize(bool recenterParent = false);
 
 	int execWithTask(Task* task);
 	int execWithTask(std::unique_ptr<Task>&& task);
@@ -76,7 +82,11 @@ class ProgressDialog : public QDialog
 	void onTaskSucceeded();
 
 	void changeStatus(const QString& status);
+	void changeDetails(const QString& details);
 	void changeProgress(qint64 current, qint64 total);
+	/// Adds, updates or retires the line belonging to one step of a multi
+	/// step task.
+	void changeStepProgress(const TaskStepProgress& step);
 
   private slots:
 	void on_skipButton_clicked(bool checked);
@@ -92,4 +102,12 @@ class ProgressDialog : public QDialog
 	Ui::ProgressDialog* ui;
 
 	Task* task;
+
+	/// One line per step that is currently in flight, keyed by the step's uid.
+	/// Lines are dropped as their step reaches an end state.
+	QHash<QUuid, TaskStepProgressBar*> m_step_bars;
+
+	/// Everything we hooked up to the task, so it can be undone on the way
+	/// out even if the task lives on.
+	QList<QMetaObject::Connection> m_task_connections;
 };

@@ -190,7 +190,8 @@ static bool writeDiskEntry(struct archive* ar, const QString& absFilePath,
 }
 
 bool MMCZip::compressDir(QString zipFile, QString dir,
-						 FilterFunction excludeFilter)
+						 FilterFunction excludeFilter,
+						 ProgressFunction progress)
 {
 	auto aw = createZipForWriting(zipFile);
 	if (!aw)
@@ -199,6 +200,25 @@ bool MMCZip::compressDir(QString zipFile, QString dir,
 	QDir directory(dir);
 	if (!directory.exists())
 		return false;
+
+	// Counting up front costs one directory walk with no file reads,
+	// which is nothing next to reading and compressing everything we
+	// just counted — and it is the difference between a percentage and
+	// a bar that only sweeps. Only pay for it if someone is listening.
+	qint64 total = 0;
+	qint64 done = 0;
+	if (progress) {
+		QDirIterator counter(dir, QDir::Files | QDir::Hidden,
+							 QDirIterator::Subdirectories);
+		while (counter.hasNext()) {
+			counter.next();
+			if (excludeFilter &&
+				excludeFilter(directory.relativeFilePath(counter.filePath())))
+				continue;
+			total++;
+		}
+		progress(0, total);
+	}
 
 	QDirIterator it(dir, QDir::Files | QDir::Hidden,
 					QDirIterator::Subdirectories);
@@ -220,6 +240,10 @@ bool MMCZip::compressDir(QString zipFile, QString dir,
 		if (!writeFileToArchive(aw.get(), relPath, data)) {
 			success = false;
 			break;
+		}
+
+		if (progress) {
+			progress(++done, total);
 		}
 	}
 
