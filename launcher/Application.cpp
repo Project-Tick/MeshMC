@@ -432,7 +432,7 @@ void Application::initPlatform()
 	setOrganizationName(BuildConfig.MESHMC_NAME);
 	setOrganizationDomain(BuildConfig.MESHMC_DOMAIN);
 	setApplicationName(BuildConfig.MESHMC_NAME);
-	setApplicationDisplayName(BuildConfig.MESHMC_DISPLAYNAME);
+	setApplicationDisplayName(QString("%1 %2").arg(BuildConfig.MESHMC_DISPLAYNAME, BuildConfig.printableVersionString()));
 	setApplicationVersion(BuildConfig.printableVersionString());
 
 	startTime = QDateTime::currentDateTime();
