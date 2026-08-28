@@ -230,6 +230,7 @@ class MainWindow::Ui
 	// TranslatedAction actionRefresh;
 	TranslatedAction actionCheckUpdate;
 	TranslatedAction actionSettings;
+	TranslatedAction actionMoreNews;
 	TranslatedAction actionManageAccounts;
 	TranslatedAction actionLaunchInstance;
 	TranslatedAction actionRenameInstance;
@@ -530,6 +531,17 @@ class MainWindow::Ui
 		newsToolBar->setFloatable(false);
 		newsToolBar->setWindowTitle(
 			QT_TRANSLATE_NOOP("MainWindow", "News Toolbar"));
+
+		actionMoreNews = TranslatedAction(MainWindow);
+		actionMoreNews->setObjectName(QStringLiteral("actionMoreNews"));
+		actionMoreNews->setIcon(APPLICATION->getThemedIcon("news"));
+		actionMoreNews.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "More news..."));
+		actionMoreNews.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow",
+			"Open the development blog to read more news about %1."));
+		all_actions.append(&actionMoreNews);
+		newsToolBar->addAction(actionMoreNews);
 
 		all_toolbars.append(&newsToolBar);
 		MainWindow->addToolBar(Qt::BottomToolBarArea, newsToolBar);
@@ -859,12 +871,7 @@ MainWindow::MainWindow(QWidget* parent)
 								 QSizePolicy::Preferred);
 		newsLabel->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		newsLabel->setFocusPolicy(Qt::NoFocus);
-		// Previously this was `insertWidget(actionMoreNews, newsLabel)`
-		// so the headline sat to the LEFT of the "More News…" button.
-		// Now that actionMoreNews has been removed, just append the
-		// headline at the toolbar's tail — addWidget() handles that
-		// without needing a `before` anchor.
-		ui->newsToolBar->addWidget(newsLabel);
+		ui->newsToolBar->insertWidget(ui->actionMoreNews, newsLabel);
 		QObject::connect(newsLabel, &QAbstractButton::clicked, this,
 						 &MainWindow::newsButtonClicked);
 		QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this,
@@ -1137,6 +1144,8 @@ MainWindow::MainWindow(QWidget* parent)
 		mainReady.main_window = static_cast<void*>(this);
 		mainReady.news_toolbar =
 			static_cast<void*>(ui->newsToolBar.operator->());
+		mainReady.more_news_action =
+			static_cast<void*>(ui->actionMoreNews.operator->());
 		mainReady.news_label_button = static_cast<void*>(newsLabel);
 		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_MAIN_READY,
 												   &mainReady);
@@ -1967,6 +1976,12 @@ void MainWindow::on_actionManageAccounts_triggered()
 void MainWindow::on_actionReportBug_triggered()
 {
 	DesktopServices::openUrl(QUrl(BuildConfig.BUG_TRACKER_URL));
+}
+
+void MainWindow::on_actionMoreNews_triggered()
+{
+	DesktopServices::openUrl(
+		QUrl("https://projecttick.org/product/meshmc/news"));
 }
 
 void MainWindow::newsButtonClicked()
