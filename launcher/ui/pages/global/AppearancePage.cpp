@@ -27,6 +27,7 @@
 #include "ui_AppearancePage.h"
 
 #include "Application.h"
+#include "DesktopServices.h"
 #include "ui/themes/ITheme.h"
 #include "ui/themes/ThemeManager.h"
 #include "ui/themes/CatPack.h"
@@ -53,8 +54,38 @@ AppearancePage::AppearancePage(QWidget* parent)
 	connect(ui->catPackComboBox,
 			QOverload<int>::of(&QComboBox::currentIndexChanged), this,
 			&AppearancePage::applyCatTheme);
+	connect(ui->themesFolderButton, &QPushButton::clicked, this,
+			&AppearancePage::openThemesFolder);
+	connect(ui->iconsFolderButton, &QPushButton::clicked, this,
+			&AppearancePage::openIconThemesFolder);
+	connect(ui->reloadThemesButton, &QPushButton::clicked, this,
+			&AppearancePage::reloadThemes);
 
 	loadSettings();
+}
+
+void AppearancePage::openThemesFolder()
+{
+	auto folder = APPLICATION->themeManager()->getApplicationThemesFolder();
+	DesktopServices::openDirectory(folder.absolutePath(), true);
+}
+
+void AppearancePage::openIconThemesFolder()
+{
+	auto folder = APPLICATION->themeManager()->getIconThemesFolder();
+	DesktopServices::openDirectory(folder.absolutePath(), true);
+}
+
+void AppearancePage::reloadThemes()
+{
+	// NOTE: this invalidates every ITheme* handed out earlier, so the combo
+	// boxes must be repopulated before anything touches them again.
+	APPLICATION->themeManager()->refresh();
+	loadSettings();
+
+	// The active theme object was destroyed and rebuilt, so re-apply it to pick
+	// up edits made to the theme files on disk.
+	APPLICATION->themeManager()->applyCurrentlySelectedTheme();
 }
 
 AppearancePage::~AppearancePage()
