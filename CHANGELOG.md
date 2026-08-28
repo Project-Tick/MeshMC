@@ -1,3 +1,31 @@
+# MeshMC 9.0.0
+
+## Highlights
+
+* Wow! How many months has it been?
+* I was sent back to manually write the changelog.
+* I wonder what changes MeshMC made for this major!
+
+## Added
+
+* SHA1-based mode verification has been added for Curseforge.
+
+## Changed
+
+* Translations are now located within the MeshMC main repository.
+* The update system has been completely overhauled. [MANUAL UPDATE REQUIRED*]
+
+## Fixed
+
+* Errors specific to Windows in the Filelink plugin have been resolved.
+* The issue of missing bundle signings on macOS has been resolved.
+* The issue preventing MeshMC from opening via shortcut while in the system tray has been resolved.
+* Icon rendering issues have been resolved.
+* The issue of adding installed mods back to the mod upload list has been resolved.
+* The issue of downloading mods simultaneously due to addiction problems has been resolved.
+
+## Previous versions
+
 ## MeshMC 8.2.0 (2026-07-15)
 
 ### changed (3 changes)
@@ -15,8 +43,6 @@
 
 - [Fix MeshMC SystemTray Plugin bind issue and working issue](https://github.com/Project-Tick/MeshMC/commit/fb93657aa6ed97cffb46e3cabf33a2523791de4d) ([merge request](https://github.com/Project-Tick/MeshMC/pull/35))
 - [Fixed MeshMC Wiki URL's to migrated Wiki pages GitHub to Project Tick GitLab Instance](https://github.com/Project-Tick/MeshMC/commit/86f0f48e6efac7202dc0e4d821230271fbe0b594) ([merge request](https://github.com/Project-Tick/MeshMC/pull/32))
-
-## Previous versions
 
 ## MeshMC 8.1.1 (2026-06-22)
 

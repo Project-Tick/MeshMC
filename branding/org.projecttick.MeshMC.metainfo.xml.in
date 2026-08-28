@@ -63,6 +63,34 @@
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="9.0.0" date="2026-08-28">
+      <description>
+        <p><em>Highlights</em></p>
+        <ul>
+          <li>Wow! How many months has it been?</li>
+          <li>I was sent back to manually write the changelog.</li>
+          <li>I wonder what changes MeshMC made for this major!</li>
+        </ul>
+        <p><em>Added</em></p>
+        <ul>
+          <li>SHA1-based mode verification has been added for Curseforge.</li>
+        </ul>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>Translations are now located within the MeshMC main repository.</li>
+          <li>The update system has been completely overhauled. [MANUAL UPDATE REQUIRED*]</li>
+        </ul>
+        <p><em>Fixed</em></p>
+        <ul>
+          <li>Errors specific to Windows in the Filelink plugin have been resolved.</li>
+          <li>The issue of missing bundle signings on macOS has been resolved.</li>
+          <li>The issue preventing MeshMC from opening via shortcut while in the system tray has been resolved.</li>
+          <li>Icon rendering issues have been resolved.</li>
+          <li>The issue of adding installed mods back to the mod upload list has been resolved.</li>
+          <li>The issue of downloading mods simultaneously due to addiction problems has been resolved.</li>
+        </ul>
+      </description>
+    </release>
     <release version="8.2.0" date="2026-07-15">
       <description>
         <p><em>Added</em></p>
