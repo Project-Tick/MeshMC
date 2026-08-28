@@ -751,7 +751,11 @@ class InstanceStaging : public Task
 		connect(child, &Task::succeeded, this, &InstanceStaging::childSucceded);
 		connect(child, &Task::failed, this, &InstanceStaging::childFailed);
 		connect(child, &Task::status, this, &InstanceStaging::setStatus);
+		connect(child, &Task::details, this, &InstanceStaging::setDetails);
 		connect(child, &Task::progress, this, &InstanceStaging::setProgress);
+		// We are only a wrapper around the real work. Without this the step
+		// list of whatever we are staging never reaches the dialog.
+		propagateStepsFrom(child);
 		m_instanceName = instanceName;
 		m_groupName = groupName;
 		m_stagingPath = stagingPath;
@@ -786,6 +790,17 @@ class InstanceStaging : public Task
 	QStringList warnings() const override
 	{
 		return m_child->warnings();
+	}
+	bool isMultiStep() const override
+	{
+		return m_child && m_child->isMultiStep();
+	}
+	TaskStepProgressList getStepProgress() const override
+	{
+		if (!m_child) {
+			return {};
+		}
+		return m_child->getStepProgress();
 	}
 
   private slots:

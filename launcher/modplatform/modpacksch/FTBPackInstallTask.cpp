@@ -197,6 +197,8 @@ namespace ModpacksCH
 					abortable = true;
 					setProgress(current, total);
 				});
+		// One line per file being downloaded.
+		propagateStepsFrom(jobPtr.get());
 
 		jobPtr->start();
 	}

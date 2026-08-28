@@ -87,11 +87,25 @@ namespace MMCZip
 						QStringList& result, const QString& root = QString());
 
 	/**
+	 * Reports how far through a long running archive operation we are.
+	 * Called with (files done, files in total) — total is 0 when nothing
+	 * matched the filter.
+	 */
+	using ProgressFunction = std::function<void(qint64, qint64)>;
+
+	/**
 	 * Compress a directory into a zip, using a filter function to exclude
 	 * entries.
+	 *
+	 * \param progress Optional. When given, the directory is walked once
+	 * up front to count the entries that will actually be written, so the
+	 * callback can report a real percentage rather than a spinner. The
+	 * callback runs on the calling thread, once before the first file and
+	 * once per file written.
 	 */
 	bool compressDir(QString zipFile, QString dir,
-					 FilterFunction excludeFilter);
+					 FilterFunction excludeFilter,
+					 ProgressFunction progress = nullptr);
 
 	/**
 	 * Extract a subdirectory from an archive.

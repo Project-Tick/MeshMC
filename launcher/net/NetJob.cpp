@@ -44,6 +44,69 @@
 #include "Download.h"
 
 #include <QDebug>
+#include <QLocale>
+
+TaskStepProgressList NetJob::getStepProgress() const
+{
+	TaskStepProgressList steps;
+	steps.reserve(parts_progress.size());
+	for (auto& slot : parts_progress) {
+		if (slot.step) {
+			steps.append(slot.step);
+		}
+	}
+	return steps;
+}
+
+void NetJob::emitPartStep(int index, TaskStepState state)
+{
+	auto& slot = parts_progress[index];
+	if (!slot.step) {
+		return;
+	}
+
+	QString name;
+	if (downloads.size() == 1 && !objectName().isEmpty()) {
+		// A job holding a single file is better described by what it is for
+		// than by the tail of its URL, which for an API call is usually
+		// nothing but an id.
+		name = objectName();
+	} else {
+		name = downloads[index]->url().fileName();
+		if (name.isEmpty()) {
+			name = downloads[index]->url().toString();
+		}
+	}
+
+	QLocale locale;
+	QString details;
+	if (slot.total_progress > 0) {
+		details = tr("%1 of %2")
+					  .arg(locale.formattedDataSize(slot.current_progress),
+						   locale.formattedDataSize(slot.total_progress));
+	} else if (slot.current_progress > 0) {
+		details = locale.formattedDataSize(slot.current_progress);
+	}
+
+	slot.step->state = state;
+	slot.step->current = slot.current_progress;
+	slot.step->total = slot.total_progress;
+	slot.step->status = name;
+	slot.step->details = details;
+	emit stepProgress(*slot.step);
+}
+
+void NetJob::updateStatus()
+{
+	const QString done = QString::number(m_done.size());
+	const QString all = QString::number(downloads.size());
+
+	if (objectName().isEmpty()) {
+		setStatus(tr("%1 out of %2 files done").arg(done, all));
+		return;
+	}
+	setStatus(tr("%1: %2 out of %3 files done").arg(objectName(), done, all));
+}
 
 void NetJob::partSucceeded(int index)
 {
@@ -53,6 +116,8 @@ void NetJob::partSucceeded(int index)
 
 	m_doing.remove(index);
 	m_done.insert(index);
+	emitPartStep(index, TaskStepState::Succeeded);
+	updateStatus();
 	downloads[index].get()->disconnect(this);
 	startMoreParts();
 }
@@ -63,10 +128,14 @@ void NetJob::partFailed(int index)
 	auto& slot = parts_progress[index];
 	if (slot.failures == 3) {
 		m_failed.insert(index);
+		emitPartStep(index, TaskStepState::Failed);
 	} else {
 		slot.failures++;
 		m_todo.enqueue(index);
+		// Back in the queue for another go, so the line waits its turn again.
+		emitPartStep(index, TaskStepState::Waiting);
 	}
+	updateStatus();
 	downloads[index].get()->disconnect(this);
 	startMoreParts();
 }
@@ -76,6 +145,7 @@ void NetJob::partAborted(int index)
 	m_aborted = true;
 	m_doing.remove(index);
 	m_failed.insert(index);
+	emitPartStep(index, TaskStepState::Failed);
 	downloads[index].get()->disconnect(this);
 	startMoreParts();
 }
@@ -85,6 +155,12 @@ void NetJob::partProgress(int index, qint64 bytesReceived, qint64 bytesTotal)
 	auto& slot = parts_progress[index];
 	slot.current_progress = bytesReceived;
 	slot.total_progress = bytesTotal;
+
+	// Files that have not been picked up yet do not get a line of their own;
+	// a job with a thousand assets in it would drown everything else out.
+	if (m_doing.contains(index)) {
+		emitPartStep(index, TaskStepState::Running);
+	}
 
 	int done = m_done.size();
 	int doing = m_doing.size();
@@ -154,6 +230,10 @@ void NetJob::startMoreParts()
 			return;
 		int doThis = m_todo.dequeue();
 		m_doing.insert(doThis);
+		// Give it a line right away, so it shows up as running even before the
+		// first bytes come in.
+		emitPartStep(doThis, TaskStepState::Running);
+		updateStatus();
 		auto part = downloads[doThis];
 		// connect signals :D
 		connect(part.get(), &NetAction::succeeded, this,
@@ -212,6 +292,7 @@ bool NetJob::addNetAction(NetAction::Ptr action)
 	action->m_index_within_job = downloads.size();
 	downloads.append(action);
 	part_info pi;
+	pi.step = std::make_shared<TaskStepProgress>();
 	parts_progress.append(pi);
 	partProgress(parts_progress.count() - 1, action->currentProgress(),
 				 action->totalProgress());

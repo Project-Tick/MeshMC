@@ -55,6 +55,10 @@ void Update::executeTask()
 				&Update::updateFinished);
 		connect(m_updateTask.get(), &Task::progress, this, &Task::setProgress);
 		connect(m_updateTask.get(), &Task::status, this, &Task::setStatus);
+		connect(m_updateTask.get(), &Task::details, this, &Task::setDetails);
+		// We are only a wrapper around the update itself, so its steps have
+		// to carry on through us.
+		propagateStepsFrom(m_updateTask.get());
 		emit progressReportingRequest();
 		return;
 	}

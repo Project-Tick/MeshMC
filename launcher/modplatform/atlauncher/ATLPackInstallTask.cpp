@@ -512,6 +512,8 @@ namespace ATLauncher
 					abortable = true;
 					setProgress(current, total);
 				});
+		// One line per file being downloaded.
+		propagateStepsFrom(jobPtr.get());
 
 		jobPtr->start();
 	}
@@ -677,6 +679,8 @@ namespace ATLauncher
 					abortable = true;
 					setProgress(current, total);
 				});
+		// One line per mod being downloaded.
+		propagateStepsFrom(jobPtr.get());
 
 		jobPtr->start();
 	}

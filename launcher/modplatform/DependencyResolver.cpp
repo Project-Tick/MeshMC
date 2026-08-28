@@ -148,6 +148,8 @@ void DependencyResolver::resolveCurseForgeDependencies(
 		m_currentModIndex++;
 		resolveNextMod();
 	});
+	// Show the lookup as its own line in the progress dialog.
+	propagateStepsFrom(job);
 	job->start();
 }
 
@@ -183,6 +185,8 @@ void DependencyResolver::resolveModrinthDependencies(
 		m_pendingRequests--;
 		checkCompletion();
 	});
+	// Show the lookup as its own line in the progress dialog.
+	propagateStepsFrom(job);
 	job->start();
 	m_currentModIndex++;
 	resolveNextMod();
@@ -393,6 +397,8 @@ void DependencyResolver::processCFFileDeps(const QJsonObject& fileObj)
 					m_pendingRequests--;
 					checkCompletion();
 				});
+		// Show the lookup as its own line in the progress dialog.
+		propagateStepsFrom(depJob);
 		depJob->start();
 	}
 }
@@ -496,6 +502,8 @@ void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj)
 									m_pendingRequests--;
 									checkCompletion();
 								});
+						// Show the lookup as its own line in the dialog.
+						propagateStepsFrom(fbJob);
 						fbJob->start();
 						return;
 					}
@@ -542,6 +550,8 @@ void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj)
 						m_pendingRequests--;
 						checkCompletion();
 					});
+			// Show the lookup as its own line in the progress dialog.
+			propagateStepsFrom(depJob);
 			depJob->start();
 		} else {
 			auto* depResponse = new QByteArray();
@@ -574,6 +584,8 @@ void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj)
 						m_pendingRequests--;
 						checkCompletion();
 					});
+			// Show the lookup as its own line in the progress dialog.
+			propagateStepsFrom(depJob);
 			depJob->start();
 		}
 	}
@@ -615,6 +627,8 @@ void DependencyResolver::crossResolveFromCurseForge(const QString& projectId)
 		m_pendingRequests--;
 		checkCompletion();
 	});
+	// Show the lookup as its own line in the progress dialog.
+	propagateStepsFrom(job);
 	job->start();
 }
 
@@ -653,6 +667,8 @@ void DependencyResolver::crossResolveFromModrinth(const QString& projectId)
 		m_pendingRequests--;
 		checkCompletion();
 	});
+	// Show the lookup as its own line in the progress dialog.
+	propagateStepsFrom(job);
 	job->start();
 }
 
@@ -849,6 +865,8 @@ void DependencyResolver::executeCrossResolve(const QString& targetPlatform,
 								m_pendingRequests--;
 								checkCompletion();
 							});
+					// Show the lookup as its own line in the dialog.
+					propagateStepsFrom(depJob);
 					depJob->start();
 				} else {
 					bool wasResolved = false;
@@ -883,6 +901,8 @@ void DependencyResolver::executeCrossResolve(const QString& targetPlatform,
 		m_pendingRequests--;
 		checkCompletion();
 	});
+	// Show the search as its own line in the progress dialog.
+	propagateStepsFrom(job);
 	job->start();
 }
 

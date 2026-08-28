@@ -90,6 +90,8 @@ void JavaDownloadTask::downloadArchive()
 	connect(m_downloadJob.get(), &NetJob::failed, this,
 			&JavaDownloadTask::downloadFailed);
 	connect(m_downloadJob.get(), &NetJob::progress, this, &Task::setProgress);
+	// Show the archive being fetched as its own line in the dialog.
+	propagateStepsFrom(m_downloadJob.get());
 
 	m_downloadJob->start();
 }
@@ -283,6 +285,8 @@ void JavaDownloadTask::manifestDownloaded()
 	connect(m_downloadJob.get(), &NetJob::failed, this,
 			&JavaDownloadTask::downloadFailed);
 	connect(m_downloadJob.get(), &NetJob::progress, this, &Task::setProgress);
+	// One line per file being downloaded.
+	propagateStepsFrom(m_downloadJob.get());
 
 	m_downloadJob->start();
 }

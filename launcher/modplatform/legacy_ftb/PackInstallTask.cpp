@@ -85,6 +85,8 @@ namespace LegacyFTB
 				&PackInstallTask::onDownloadFailed);
 		connect(netJobContainer.get(), &NetJob::progress, this,
 				&PackInstallTask::onDownloadProgress);
+		// One line per file being downloaded.
+		propagateStepsFrom(netJobContainer.get());
 		netJobContainer->start();
 
 		progress(1, 4);

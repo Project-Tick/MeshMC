@@ -97,6 +97,8 @@ void InstanceImportTask::executeTask()
 				&InstanceImportTask::downloadProgressChanged);
 		connect(job, &NetJob::failed, this,
 				&InstanceImportTask::downloadFailed);
+		// Show the file being fetched as its own line in the dialog.
+		propagateStepsFrom(job);
 		m_filesNetJob->start();
 	}
 }
@@ -698,6 +700,8 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 	});
 	connect(m_filesNetJob.get(), &NetJob::progress,
 			[&](qint64 current, qint64 total) { setProgress(current, total); });
+	// One line per mod being downloaded.
+	propagateStepsFrom(m_filesNetJob.get());
 	setStatus(tr("Downloading mods..."));
 	m_filesNetJob->start();
 }
@@ -861,6 +865,8 @@ void InstanceImportTask::processModrinth()
 	});
 	connect(m_filesNetJob.get(), &NetJob::progress,
 			[&](qint64 current, qint64 total) { setProgress(current, total); });
+	// One line per mod being downloaded.
+	propagateStepsFrom(m_filesNetJob.get());
 
 	setStatus(tr("Downloading mods..."));
 	m_filesNetJob->start();

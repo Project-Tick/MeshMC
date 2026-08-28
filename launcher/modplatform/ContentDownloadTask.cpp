@@ -183,6 +183,8 @@ void ContentDownloadTask::executeTask()
 			&ContentDownloadTask::onDownloadFailed);
 	connect(m_netJob.get(), &NetJob::progress, this,
 			&ContentDownloadTask::onDownloadProgress);
+	// One line per file being downloaded.
+	propagateStepsFrom(m_netJob.get());
 
 	m_netJob->start();
 }

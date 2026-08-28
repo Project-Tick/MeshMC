@@ -100,6 +100,10 @@ void LibrariesTask::executeTask()
 			&LibrariesTask::jarlibFailed);
 	connect(downloadJob.get(), &NetJob::progress, this,
 			&LibrariesTask::progress);
+	connect(downloadJob.get(), &NetJob::status, this,
+			&LibrariesTask::setStatus);
+	// Show each library being fetched as its own line.
+	propagateStepsFrom(downloadJob.get());
 	downloadJob->start();
 }
 

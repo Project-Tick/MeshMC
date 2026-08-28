@@ -61,6 +61,21 @@ class Update : public LaunchStep
 	void executeTask() override;
 	bool canAbort() const override;
 	void proceed() override;
+
+	// We are a stand-in for the update task, so answer for it. Without this
+	// a progress dialog opened partway through has no steps to catch up on.
+	bool isMultiStep() const override
+	{
+		return m_updateTask && m_updateTask->isMultiStep();
+	}
+	TaskStepProgressList getStepProgress() const override
+	{
+		if (!m_updateTask) {
+			return {};
+		}
+		return m_updateTask->getStepProgress();
+	}
+
   public slots:
 	bool abort() override;
 

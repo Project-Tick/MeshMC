@@ -47,36 +47,32 @@
 #include <QUrl>
 
 #include "net/NetJob.h"
-#include "tasks/Task.h"
+#include "tasks/SequentialTask.h"
 #include "minecraft/VersionFilterData.h"
 
 class MinecraftVersion;
 class MinecraftInstance;
 
-class MinecraftUpdate : public Task
+/**
+ * Brings an instance up to date: folders, metadata, libraries, FML libraries
+ * and assets, in that order. Each of those shows up as its own line in the
+ * progress dialog.
+ */
+class MinecraftUpdate : public SequentialTask
 {
 	Q_OBJECT
   public:
 	explicit MinecraftUpdate(MinecraftInstance* inst, QObject* parent = 0);
 	virtual ~MinecraftUpdate() {};
 
-	void executeTask() override;
 	bool canAbort() const override;
 
-  private slots:
+  public slots:
 	bool abort() override;
-	void subtaskSucceeded();
-	void subtaskFailed(QString error);
 
-  private:
-	void next();
+  protected:
+	void executeTask() override;
 
   private:
 	MinecraftInstance* m_inst = nullptr;
-	QList<std::shared_ptr<Task>> m_tasks;
-	QString m_preFailure;
-	int m_currentTask = -1;
-	bool m_abort = false;
-	bool m_failed_out_of_order = false;
-	QString m_fail_reason;
 };

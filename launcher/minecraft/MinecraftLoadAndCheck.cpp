@@ -52,6 +52,10 @@ void MinecraftLoadAndCheck::executeTask()
 			&MinecraftLoadAndCheck::progress);
 	connect(m_task.get(), &Task::status, this,
 			&MinecraftLoadAndCheck::setStatus);
+	connect(m_task.get(), &Task::details, this,
+			&MinecraftLoadAndCheck::setDetails);
+	// We only stand in front of the metadata load; its steps belong to us.
+	propagateStepsFrom(m_task.get());
 }
 
 void MinecraftLoadAndCheck::subtaskSucceeded()

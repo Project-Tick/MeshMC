@@ -52,6 +52,8 @@ void Flame::FileResolvingTask::executeTask()
 	}
 	connect(m_dljob.get(), &NetJob::finished, this,
 			&Flame::FileResolvingTask::netJobFinished);
+	// One line per mod being looked up.
+	propagateStepsFrom(m_dljob.get());
 	m_dljob->start();
 }
 
