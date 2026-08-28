@@ -250,6 +250,7 @@ class MainWindow::Ui
 	TranslatedAction actionLaunchInstanceOffline;
 	TranslatedAction actionScreenshots;
 	TranslatedAction actionExportInstance;
+	TranslatedAction actionLockToolbars;
 	QVector<TranslatedAction*> all_actions;
 
 	LabeledToolButton* renameButton = nullptr;
@@ -307,8 +308,10 @@ class MainWindow::Ui
 	{
 		mainToolBar = TranslatedToolbar(MainWindow);
 		mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-		mainToolBar->setMovable(false);
-		mainToolBar->setAllowedAreas(Qt::TopToolBarArea);
+		// Movability is driven by the "ToolbarsLocked" setting, applied in the
+		// MainWindow constructor via lockToolbars().
+		mainToolBar->setAllowedAreas(Qt::TopToolBarArea |
+									 Qt::BottomToolBarArea);
 		mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		mainToolBar->setFloatable(false);
 		mainToolBar.setWindowTitleId(
@@ -508,6 +511,17 @@ class MainWindow::Ui
 		actionManageAccounts->setIcon(APPLICATION->getThemedIcon("accounts"));
 		all_actions.append(&actionManageAccounts);
 
+		// NOTE: deliberately not added to any toolbar. It is only offered in
+		// the toolbar area context menu, see MainWindow::createPopupMenu().
+		actionLockToolbars = TranslatedAction(MainWindow);
+		actionLockToolbars->setObjectName(QStringLiteral("actionLockToolbars"));
+		actionLockToolbars->setCheckable(true);
+		actionLockToolbars.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Lock Toolbars"));
+		actionLockToolbars.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Prevent the toolbars from being dragged around."));
+		all_actions.append(&actionLockToolbars);
+
 		all_toolbars.append(&mainToolBar);
 		MainWindow->addToolBar(Qt::TopToolBarArea, mainToolBar);
 	}
@@ -523,8 +537,10 @@ class MainWindow::Ui
 	{
 		newsToolBar = TranslatedToolbar(MainWindow);
 		newsToolBar->setObjectName(QStringLiteral("newsToolBar"));
-		newsToolBar->setMovable(false);
-		newsToolBar->setAllowedAreas(Qt::BottomToolBarArea);
+		// Movability is driven by the "ToolbarsLocked" setting, applied in the
+		// MainWindow constructor via lockToolbars().
+		newsToolBar->setAllowedAreas(Qt::TopToolBarArea |
+									 Qt::BottomToolBarArea);
 		newsToolBar->setIconSize(QSize(16, 16));
 		newsToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		newsToolBar->setFloatable(false);
@@ -541,6 +557,12 @@ class MainWindow::Ui
 		instanceToolBar->setObjectName(QStringLiteral("instanceToolBar"));
 		// disabled until we have an instance selected
 		instanceToolBar->setEnabled(false);
+		// Movability is driven by the "ToolbarsLocked" setting, applied in the
+		// MainWindow constructor via lockToolbars().
+		// NOTE: deliberately restricted to the vertical areas. This bar is
+		// designed as a sidebar: changeIconButton is a LabeledToolButton with a
+		// hardcoded 80px minimum height, so docking it horizontally produces a
+		// ~88px tall toolbar and ruins the layout.
 		instanceToolBar->setAllowedAreas(Qt::LeftToolBarArea |
 										 Qt::RightToolBarArea);
 		instanceToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
@@ -1075,6 +1097,17 @@ MainWindow::MainWindow(QWidget* parent)
 		checker->checkForNotifications();
 	}
 
+	// Toolbar movability, restored from settings. The layout the user drags the
+	// toolbars into is persisted separately by saveState()/restoreState().
+	{
+		bool toolbarsLocked =
+			APPLICATION->settings()->get("ToolbarsLocked").toBool();
+		ui->actionLockToolbars->setChecked(toolbarsLocked);
+		connect(ui->actionLockToolbars.operator->(), &QAction::toggled, this,
+				&MainWindow::lockToolbars);
+		lockToolbars(toolbarsLocked);
+	}
+
 	setSelectedInstanceById(
 		APPLICATION->settings()->get("SelectedInstance").toString());
 
@@ -1170,7 +1203,16 @@ QMenu* MainWindow::createPopupMenu()
 {
 	QMenu* filteredMenu = QMainWindow::createPopupMenu();
 	filteredMenu->removeAction(ui->mainToolBar->toggleViewAction());
+	filteredMenu->addAction(ui->actionLockToolbars);
 	return filteredMenu;
+}
+
+void MainWindow::lockToolbars(bool state)
+{
+	ui->mainToolBar->setMovable(!state);
+	ui->instanceToolBar->setMovable(!state);
+	ui->newsToolBar->setMovable(!state);
+	APPLICATION->settings()->set("ToolbarsLocked", state);
 }
 
 void MainWindow::konamiTriggered()
