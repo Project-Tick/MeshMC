@@ -31,6 +31,7 @@
 #include "plugin/PluginAPI.h"
 
 #include <QObject>
+#include <QMutex>
 #include <QPointer>
 #include <QString>
 #include <QStringList>
@@ -38,7 +39,9 @@
 #include <QMap>
 #include <QMultiMap>
 #include <QSet>
+#include <cstddef>
 #include <memory>
+#include <string>
 #include <vector>
 #include <functional>
 
@@ -115,6 +118,44 @@ class PluginManager : public QObject
 	QSet<QString> disabledModuleNames() const;
 
 	/*
+	 * ScratchString — the per-module scratch buffer that backs every
+	 * `const char*` getter in the plugin API.
+	 *
+	 * The ABI contract is "the returned pointer stays valid until the
+	 * next API call by the same module". This used to be a plain
+	 * std::string member of ModuleRuntime, which is only correct while
+	 * every call happens on the GUI thread: as soon as a hook callback
+	 * runs on a worker thread, two threads write the same buffer and a
+	 * reader can be handed a pointer that the other thread has already
+	 * reallocated.
+	 *
+	 * The bytes therefore live in thread-local storage keyed by the
+	 * ScratchString instance, which turns the contract into "valid
+	 * until the next API call by the same module *on the same thread*"
+	 * — what callers actually rely on, and safe for background hooks.
+	 * Call sites are untouched: assignment, c_str(), data() and
+	 * assign() all forward to the calling thread's own copy.
+	 */
+	class ScratchString
+	{
+	  public:
+		ScratchString() = default;
+		~ScratchString();
+
+		/* Non-copyable: the identity of the object is the storage key. */
+		ScratchString(const ScratchString&) = delete;
+		ScratchString& operator=(const ScratchString&) = delete;
+
+		ScratchString& operator=(std::string value);
+
+		/* Binary-safe fill, used for skin/cape PNG blobs. */
+		void assign(const char* bytes, size_t size);
+
+		const char* c_str() const;
+		const char* data() const;
+	};
+
+	/*
 	 * ModuleRuntime — the opaque object behind module_handle.
 	 * Lets static API callbacks find their way back to the manager.
 	 * Public so helper functions in the .cpp can use it.
@@ -122,8 +163,10 @@ class PluginManager : public QObject
 	struct ModuleRuntime {
 		PluginManager* manager;
 		int moduleIndex;
+		/* Written once during initializeAll(), read-only afterwards —
+		 * safe to hand out from any thread. */
 		std::string dataDir;
-		std::string tempString;
+		ScratchString tempString;
 	};
 
 	Application* m_app;
@@ -158,7 +201,16 @@ class PluginManager : public QObject
 		void* module_handle;
 		MMCOHookCallback callback;
 		void* user_data;
+		/* MMCO_HOOK_FLAG_* — 0 for anything registered through the
+		 * plain hook_register, which keeps the inline behaviour. */
+		uint32_t flags;
 	};
+
+	/* Runs the background-flagged callbacks of one dispatch as a
+	 * SequentialTask behind a ProgressDialog, one row per module.
+	 * Returns true if one of them vetoed the operation. */
+	bool runBackgroundHooks(uint32_t hook_id, void* payload,
+							const QVector<HookRegistration>& regs);
 
 	/* Static API trampolines — Section 1: Logging */
 	static void api_log_info(void* mh, const char* msg);
@@ -171,6 +223,14 @@ class PluginManager : public QObject
 								 MMCOHookCallback cb, void* ud);
 	static int api_hook_unregister(void* mh, uint32_t hook_id,
 								   MMCOHookCallback cb);
+
+	/* Section 32: Background hooks + progress reporting */
+	static int api_hook_register_ex(void* mh, uint32_t hook_id,
+									MMCOHookCallback cb, void* ud,
+									uint32_t flags);
+	static int api_progress_report(void* mh, const char* status,
+								   const char* details, int64_t current,
+								   int64_t total);
 
 	/* Section 3: Settings */
 	static const char* api_setting_get(void* mh, const char* key);
@@ -557,7 +617,13 @@ class PluginManager : public QObject
 	QVector<InstanceAction> m_instanceActions;
 	QVector<InstanceCallbackAction> m_instanceCallbackActions;
 
-	/* Pending launch modifications (set by plugins during PRE_LAUNCH hooks) */
+	/* Pending launch modifications (set by plugins during PRE_LAUNCH hooks).
+	 *
+	 * PRE_LAUNCH callbacks may run on a worker thread while
+	 * LaunchController reads the collected values on the GUI thread, so
+	 * every access goes through m_launchModMutex. The mutex is
+	 * recursive-free: no method below calls another one that locks. */
+	mutable QMutex m_launchModMutex;
 	QMap<QString, QString> m_pendingLaunchEnv;
 	QString m_pendingLaunchWrapper;
 

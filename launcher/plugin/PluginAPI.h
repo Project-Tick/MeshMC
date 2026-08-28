@@ -817,4 +817,36 @@ struct MMCOContext {
 					   int arg_count, const char* working_dir,
 					   const char* stdin_data, int stdin_size, char* out_buf,
 					   int out_buf_size, int* out_exit_code, int timeout_ms);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S32 — Background hooks + progress reporting (additive; ABI
+	 * stays at 3, `struct_size` tells the host what a module was
+	 * built against)
+	 *
+	 * hook_register_ex is hook_register plus a flags word — see
+	 * MMCO_HOOK_FLAG_* in PluginHooks.h. Passing 0 behaves exactly
+	 * like hook_register, so opting in is a one-line change.
+	 *
+	 * progress_report publishes the running background callback's
+	 * progress into the launcher's progress dialog:
+	 *   handle  — the module_handle the callback was invoked with.
+	 *   status  — short line shown as the row's title, NULL to keep
+	 *             the current one.
+	 *   details — optional second line, NULL to keep the current one.
+	 *   current — work done so far.
+	 *   total   — total work; <= 0 means "indeterminate", which the
+	 *             host renders as a busy bar.
+	 *
+	 * Returns 0 if the update was queued, -1 if the arguments are
+	 * unusable or the caller is not currently inside a background hook
+	 * callback (there is no row to report into). The host marshals the
+	 * update onto the GUI thread, so calling this in a tight loop is
+	 * safe and never blocks on the UI.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*hook_register_ex)(void* mh, uint32_t hook_id,
+							MMCOHookCallback callback, void* user_data,
+							uint32_t flags);
+	int (*progress_report)(void* handle, const char* status,
+						   const char* details, int64_t current,
+						   int64_t total);
 };

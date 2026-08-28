@@ -9,6 +9,8 @@
 
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
 
+#include <functional>
+
 /*
  * BackupManager talks to the host through the MMCO C ABI: every zip
  * operation is routed via the MMCOContext's zip_* function pointers
@@ -33,9 +35,20 @@ class BackupManager
 	BackupManager(const QString& instanceId, const QString& instanceRoot,
 				  MMCOContext* ctx = nullptr);
 
+	/* Reports how a long running backup is getting on:
+	 *   status  — line describing the phase, empty to leave it alone.
+	 *   details — second line, empty to leave it alone.
+	 *   current/total — file counts; total 0 means "no idea yet".
+	 * Only the staging copy drives this; the compression phase is
+	 * reported by the host from inside zip_compress_dir. */
+	using ProgressFn = std::function<void(const QString& status,
+										  const QString& details,
+										  qint64 current, qint64 total)>;
+
 	QString backupDir() const;
 	QList<BackupEntry> listBackups() const;
-	BackupEntry createBackup(const QString& label = {});
+	BackupEntry createBackup(const QString& label = {},
+							 const ProgressFn& progress = nullptr);
 	bool restoreBackup(const BackupEntry& entry);
 	bool exportBackup(const BackupEntry& entry, const QString& destPath);
 	BackupEntry importBackup(const QString& srcZipPath,
@@ -51,7 +64,7 @@ class BackupManager
 	 * so we don't recurse into our own zip archive collection.
 	 * Returns the temp dir path (caller deletes when done) or an
 	 * empty string on failure. */
-	QString stageInstance() const;
+	QString stageInstance(const ProgressFn& progress) const;
 
 	QString m_instanceId;
 	QString m_instanceRoot;

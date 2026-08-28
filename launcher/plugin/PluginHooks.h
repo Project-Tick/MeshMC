@@ -159,6 +159,40 @@ enum MMCOHookId : uint32_t {
 typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,
 								void* payload, void* user_data);
 
+/*
+ * Flags for MMCOContext::hook_register_ex.
+ *
+ * MMCO_HOOK_FLAG_BACKGROUND — run this callback on a worker thread
+ * instead of on the thread that fired the hook. The host wraps every
+ * background callback of a dispatch into its own task and shows it as
+ * a separate row in the launcher's progress dialog, so a slow callback
+ * (archiving an instance, shelling out to git, hashing files) no
+ * longer freezes the window.
+ *
+ * A background callback MUST NOT touch any ui_*, tray_* or
+ * main_window_* function, must not create or mutate Qt widgets, and
+ * must not assume anything about its thread beyond "not the GUI
+ * thread". It MAY use log_*, fs_*, zip_*, process_run and
+ * progress_report.
+ *
+ * Everything else — the settings getters and setters, and every
+ * instance / account / mod / world accessor — reads launcher state
+ * that only the GUI thread owns. Register a second, inline callback
+ * for the same hook, read what you need there, and hand it to the
+ * background one: the host runs all inline callbacks of a dispatch
+ * before any background one.
+ *
+ * Dispatch still waits for every background callback to finish before
+ * it returns, so the ordering guarantees callers rely on (e.g.
+ * LaunchController reading pending env right after PRE_LAUNCH) are
+ * unchanged.
+ *
+ * Omitting the flag — or using the plain hook_register — keeps the
+ * legacy behaviour: the callback runs inline, blocking the caller.
+ */
+#define MMCO_HOOK_FLAG_NONE 0u
+#define MMCO_HOOK_FLAG_BACKGROUND 1u
+
 /* Payload structures for hooks */
 
 struct MMCOInstanceInfo {
