@@ -64,9 +64,22 @@ bool UpdateController::startUpdate()
 		return false;
 	}
 
-	const QStringList args = {"--url",	m_downloadUrl,
-							  "--root", m_root,
-							  "--exec", QApplication::applicationFilePath()};
+	// The updater keeps its log, its lock file and the staging area next to
+	// our own data instead of inside the installation, so that a failed update
+	// leaves no debris behind -- and nothing that would show up in the next
+	// release's manifest. resolveDataPath() makes the data path the working
+	// directory (Application.cpp, QDir::setCurrent) before anything else runs.
+	const QString dataDir = QDir::currentPath();
+
+	// Hand over our process id so the updater can wait for us to actually be
+	// gone rather than sleeping for a couple of seconds and hoping. MainWindow
+	// quits the application as soon as this returns.
+	const QStringList args = {
+		"--url",	  m_downloadUrl,
+		"--root",	  m_root,
+		"--exec",	  QApplication::applicationFilePath(),
+		"--data-dir", dataDir,
+		"--wait-pid", QString::number(QCoreApplication::applicationPid())};
 
 	qDebug() << "UpdateController: launching" << updaterPath << "with args"
 			 << args;
