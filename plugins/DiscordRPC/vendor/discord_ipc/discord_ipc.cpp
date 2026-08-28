@@ -1,4 +1,5 @@
 /* SPDX-License-Identifier: MIT
+ * Copyright (C) 2026 Project Tick
  *
  * Minimal Qt-only Discord IPC client — see discord_ipc.h.
  */
