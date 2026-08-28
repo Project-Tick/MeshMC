@@ -50,7 +50,19 @@ runs:
         INSTALL_DIR: ${{ github.workspace }}/install
       run: |
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
-        Get-ChildItem ${{ env.INSTALL_DIR }} -Recurse | ForEach FullName | Resolve-Path -Relative | %{ $_.TrimStart('.\') } | %{ $_.TrimStart('${{ env.INSTALL_DIR }}') } | %{ $_.TrimStart('\') } | Out-File -FilePath ${{ env.INSTALL_DIR }}/manifest.txt
+
+        # NOTE: do NOT use String.TrimStart() to strip the install prefix here.
+        # .NET has no TrimStart(string) overload, so PowerShell binds to
+        # TrimStart(params char[]) and strips *any* leading character that
+        # appears anywhere in the prefix -- "iconengines" became "conengines",
+        # "platforms" became "forms" and "bin" vanished entirely. Substring()
+        # off the measured prefix length is the only correct way.
+        $installDir = (Resolve-Path -LiteralPath '${{ env.INSTALL_DIR }}').Path.TrimEnd('\', '/')
+        $manifest = Join-Path $installDir 'manifest.txt'
+        New-Item -ItemType File -Path $manifest -Force | Out-Null  # list the manifest itself, like the MinGW branch does
+        Get-ChildItem -LiteralPath $installDir -Recurse -File |
+            ForEach-Object { $_.FullName.Substring($installDir.Length).TrimStart('\', '/') } |
+            Set-Content -LiteralPath $manifest -Encoding utf8
 
     - name: Fetch codesign certificate
       shell: bash # yes, we are not using MSYS2 or PowerShell here
@@ -97,7 +109,15 @@ runs:
         cp -r ${{ env.INSTALL_DIR }} ${{ env.INSTALL_PORTABLE_DIR }}  # cmake install on Windows is slow, let's just copy instead
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }} --component portable
 
-        Get-ChildItem ${{ env.INSTALL_PORTABLE_DIR }} -Recurse | ForEach FullName | Resolve-Path -Relative | %{ $_.TrimStart('.\') } | %{ $_.TrimStart('${{ env.INSTALL_PORTABLE_DIR }}') } | %{ $_.TrimStart('\') } | Out-File -FilePath ${{ env.INSTALL_DIR }}/manifest.txt
+        # See the note in "Package (MSVC)" about TrimStart(). This block also
+        # used to write its manifest to INSTALL_DIR, clobbering the
+        # non-portable manifest with the portable file list.
+        $portableDir = (Resolve-Path -LiteralPath '${{ env.INSTALL_PORTABLE_DIR }}').Path.TrimEnd('\', '/')
+        $manifest = Join-Path $portableDir 'manifest.txt'
+        New-Item -ItemType File -Path $manifest -Force | Out-Null
+        Get-ChildItem -LiteralPath $portableDir -Recurse -File |
+            ForEach-Object { $_.FullName.Substring($portableDir.Length).TrimStart('\', '/') } |
+            Set-Content -LiteralPath $manifest -Encoding utf8
 
     - name: Package (installer)
       shell: pwsh
