@@ -76,3 +76,48 @@ endif()
 # The list MESHMC_IN_TREE_PLUGIN_TARGETS is kept above for tooling /
 # documentation that wants to know which targets exist, but no longer
 # drives signing.
+
+#################### Plugin runtime dependencies (Windows) ####################
+#
+# Neither of the launcher's two Windows deployment paths covers plugins:
+#
+#   * install(RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET) in
+#     launcher/CMakeLists.txt only resolves the targets that joined that
+#     set — and the install(TARGETS) rule in each plugin directory does
+#     not.
+#   * windeployqt is invoked on meshmc.exe alone, so it only ever sees
+#     the Qt modules the launcher itself links (Core, Gui, Widgets,
+#     Network, Xml, NetworkAuth, Concurrent).
+#
+# So a Qt module that *only* a plugin links never reaches the package,
+# and the module dies at startup with LoadLibrary error 126
+# (ERROR_MOD_NOT_FOUND) — the file is found, its dependency is not.
+# That is exactly what happened to SkinManager, the only in-tree plugin
+# pulling in Qt6::OpenGL / Qt6::OpenGLWidgets.
+#
+# $<TARGET_RUNTIME_DLLS:tgt> is precisely the list we need (the shared
+# libraries a target links, transitively) and it covers every plugin
+# registered above without each one having to remember to opt in.
+#
+# No equivalent copy is made for the build tree on purpose: nothing puts
+# Qt DLLs next to build/<cfg>/meshmc.exe either, so running from the
+# build tree resolves every Qt DLL — launcher and plugin alike —
+# through PATH. Adding a plugins-only copy there would just be
+# inconsistent.
+if(WIN32)
+    set(MESHMC_PLUGIN_RUNTIME_DLLS "")
+    foreach(_plugin_target IN LISTS MESHMC_IN_TREE_PLUGIN_TARGETS)
+        list(APPEND MESHMC_PLUGIN_RUNTIME_DLLS
+            "$<TARGET_RUNTIME_DLLS:${_plugin_target}>")
+    endforeach()
+    unset(_plugin_target)
+
+    if(MESHMC_PLUGIN_RUNTIME_DLLS)
+        # Most of what this resolves (Qt6Core, Qt6Gui, Qt6Widgets,
+        # Qt6Network) the launcher already installs, and re-installing an
+        # identical file is a no-op. The point is the handful that it
+        # does not.
+        install(FILES ${MESHMC_PLUGIN_RUNTIME_DLLS}
+            DESTINATION "${BINARY_DEST_DIR}")
+    endif()
+endif()
