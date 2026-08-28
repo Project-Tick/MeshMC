@@ -809,7 +809,7 @@ class MainWindow::Ui
 			winTitle += tr(" on %1", "on platform, as in operating system")
 							.arg(BuildConfig.BUILD_PLATFORM);
 		}
-		MainWindow->setWindowTitle(winTitle);
+		MainWindow->setWindowTitle(APPLICATION->applicationDisplayName());
 		// all the actions
 		for (auto* item : all_actions) {
 			item->retranslate();
