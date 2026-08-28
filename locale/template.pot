@@ -148,25 +148,30 @@ msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.ui:221
 msgctxt "AboutDialog|"
-msgid "Channel:"
+msgid "Version Channel:"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.ui:248
+#: launcher/ui/dialogs/AboutDialog.ui:237
+msgctxt "AboutDialog|"
+msgid "Update Channel:"
+msgstr ""
+
+#: launcher/ui/dialogs/AboutDialog.ui:264
 msgctxt "AboutDialog|"
 msgid "Credits"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.ui:262
+#: launcher/ui/dialogs/AboutDialog.ui:278
 msgctxt "AboutDialog|"
 msgid "License"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.ui:298
+#: launcher/ui/dialogs/AboutDialog.ui:314
 msgctxt "AboutDialog|"
 msgid "About Qt"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.ui:318
+#: launcher/ui/dialogs/AboutDialog.ui:334
 msgctxt "AboutDialog|"
 msgid "Close"
 msgstr ""
@@ -182,21 +187,26 @@ msgctxt "AboutDialog|"
 msgid "Platform"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:119
+#: launcher/ui/dialogs/AboutDialog.cpp:120
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Commit: %1"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:125
+#: launcher/ui/dialogs/AboutDialog.cpp:126
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Build date: %1"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:130
+#: launcher/ui/dialogs/AboutDialog.cpp:131
 msgctxt "AboutDialog|"
-msgid "Channel"
+msgid "Version Channel"
+msgstr ""
+
+#: launcher/ui/dialogs/AboutDialog.cpp:137
+msgctxt "AboutDialog|"
+msgid "Update Channel"
 msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:355
@@ -536,6 +546,59 @@ msgstr ""
 #: launcher/Application.cpp:1014
 msgctxt "Application|"
 msgid "Settings"
+msgstr ""
+
+#: updater/ApplyStage.cpp:72
+#, qt-format
+msgctxt "ApplyStage|"
+msgid ""
+"The first stage of the update did not exit (pid %1). Nothing has been "
+"changed."
+msgstr ""
+
+#: updater/ApplyStage.cpp:90
+#, qt-format
+msgctxt "ApplyStage|"
+msgid ""
+"The unpacked update contains no files:\n"
+"%1"
+msgstr ""
+
+#: updater/ApplyStage.cpp:147
+#, qt-format
+msgctxt "ApplyStage|"
+msgid ""
+"Cannot create the backup directory:\n"
+"%1"
+msgstr ""
+
+#: updater/ApplyStage.cpp:163
+#, qt-format
+msgctxt "ApplyStage|"
+msgid ""
+"Could not back up the current version before updating.\n"
+"\n"
+"%1\n"
+"\n"
+"Nothing has been changed."
+msgstr ""
+
+#: updater/ApplyStage.cpp:190
+#, qt-format
+msgctxt "ApplyStage|"
+msgid ""
+"Could not install the update.\n"
+"\n"
+"%1\n"
+"\n"
+"%2 of %3 file(s) had already been replaced. The previous version was saved "
+"to:\n"
+"%4"
+msgstr ""
+
+#: updater/ApplyStage.cpp:197
+msgctxt "ApplyStage|"
+msgid "(no backup was made)"
 msgstr ""
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:44
@@ -2092,115 +2155,6 @@ msgstr ""
 #: launcher/ui/pages/modplatform/ImportPage.h:67
 msgctxt "ImportPage|"
 msgid "Import from zip"
-msgstr ""
-
-#: updater/Installer.cpp:59
-#, qt-format
-msgctxt "Installer|"
-msgid "Downloading update from %1 …"
-msgstr ""
-
-#: updater/Installer.cpp:86
-#, qt-format
-msgctxt "Installer|"
-msgid "Downloading … %1%"
-msgstr ""
-
-#: updater/Installer.cpp:99
-#, qt-format
-msgctxt "Installer|"
-msgid "Download failed: %1"
-msgstr ""
-
-#: updater/Installer.cpp:107
-#, qt-format
-msgctxt "Installer|"
-msgid "Cannot write temp file: %1"
-msgstr ""
-
-#: updater/Installer.cpp:113
-#, qt-format
-msgctxt "Installer|"
-msgid "Cannot commit temp file: %1"
-msgstr ""
-
-#: updater/Installer.cpp:117
-msgctxt "Installer|"
-msgid "Download complete. Installing …"
-msgstr ""
-
-#: updater/Installer.cpp:151
-msgctxt "Installer|"
-msgid "Cannot create temporary directory for extraction."
-msgstr ""
-
-#: updater/Installer.cpp:155
-msgctxt "Installer|"
-msgid "Extracting archive …"
-msgstr ""
-
-#: updater/Installer.cpp:170
-msgctxt "Installer|"
-msgid "Installing files …"
-msgstr ""
-
-#: updater/Installer.cpp:207 updater/Installer.cpp:310
-#: updater/Installer.cpp:395
-#, qt-format
-msgctxt "Installer|"
-msgid "Cannot create directory: %1"
-msgstr ""
-
-#: updater/Installer.cpp:231
-#, qt-format
-msgctxt "Installer|"
-msgid "Cannot copy %1 to %2."
-msgstr ""
-
-#: updater/Installer.cpp:251
-#, qt-format
-msgctxt "Installer|"
-msgid "Unknown archive format: %1"
-msgstr ""
-
-#: updater/Installer.cpp:260
-msgctxt "Installer|"
-msgid "Launching installer …"
-msgstr ""
-
-#: updater/Installer.cpp:264
-#, qt-format
-msgctxt "Installer|"
-msgid "Failed to launch installer: %1"
-msgstr ""
-
-#: updater/Installer.cpp:272
-msgctxt "Installer|"
-msgid ".exe installers are only supported on Windows."
-msgstr ""
-
-#: updater/Installer.cpp:287
-#, qt-format
-msgctxt "Installer|"
-msgid "Cannot open zip archive: %1"
-msgstr ""
-
-#: updater/Installer.cpp:353
-#, qt-format
-msgctxt "Installer|"
-msgid "Failed to extract zip archive: %1"
-msgstr ""
-
-#: updater/Installer.cpp:372
-#, qt-format
-msgctxt "Installer|"
-msgid "Cannot open tar archive: %1"
-msgstr ""
-
-#: updater/Installer.cpp:438
-#, qt-format
-msgctxt "Installer|"
-msgid "Failed to extract tar archive: %1"
 msgstr ""
 
 #: launcher/ui/widgets/InstanceCardWidget.ui:27
@@ -5794,6 +5748,129 @@ msgid ""
 "\n"
 msgstr ""
 
+#: updater/PrepareStage.cpp:119
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"Cannot create the download directory:\n"
+"%1"
+msgstr ""
+
+#: updater/PrepareStage.cpp:128
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"Cannot write to the download directory:\n"
+"%1\n"
+"\n"
+"%2"
+msgstr ""
+
+#: updater/PrepareStage.cpp:192
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"Could not download the update.\n"
+"\n"
+"%1%2"
+msgstr ""
+
+#: updater/PrepareStage.cpp:194
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"\n"
+"HTTP status: %1"
+msgstr ""
+
+#: updater/PrepareStage.cpp:202
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"The downloaded update is empty:\n"
+"%1"
+msgstr ""
+
+#: updater/PrepareStage.cpp:225
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"Could not unpack the update.\n"
+"\n"
+"%1"
+msgstr ""
+
+#: updater/PrepareStage.cpp:256
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"The downloaded update does not look like a MeshMC release: it contains no "
+"%1.\n"
+"\n"
+"Unpacked to:\n"
+"%2"
+msgstr ""
+
+#: updater/PrepareStage.cpp:263
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"The downloaded update does not contain %1.\n"
+"\n"
+"Unpacked to:\n"
+"%2"
+msgstr ""
+
+#: updater/PrepareStage.cpp:289
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"Could not start the downloaded installer:\n"
+"%1\n"
+"\n"
+"%2"
+msgstr ""
+
+#: updater/PrepareStage.cpp:302
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"This update is a Windows installer and cannot be applied on this platform:\n"
+"%1"
+msgstr ""
+
+#: updater/PrepareStage.cpp:318
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"MeshMC is still running and did not exit within %1 seconds.\n"
+"\n"
+"Close MeshMC and try again."
+msgstr ""
+
+#: updater/PrepareStage.cpp:348
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"Could not start the second stage of the update:\n"
+"%1\n"
+"\n"
+"%2"
+msgstr ""
+
+#: updater/PrepareStage.cpp:360
+#, qt-format
+msgctxt "PrepareStage|"
+msgid ""
+"The update could not be handed over to the version being installed.\n"
+"\n"
+"Its updater (%1) did not start. This happens when the release being "
+"installed is older than the current update mechanism.\n"
+"\n"
+"Nothing has been changed -- %2 is still installed and working. Please "
+"install the new version manually."
+msgstr ""
+
 #: launcher/ui/dialogs/ProfileSelectDialog.ui:14
 msgctxt "ProfileSelectDialog|"
 msgid "Select an Account"
@@ -6268,7 +6345,7 @@ msgid "Dependency cycle"
 msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:86
-#: plugins/Filelink/FilelinkPlugin.cpp:389
+#: plugins/Filelink/FilelinkPlugin.cpp:514
 #: plugins/PackPortal/PackPortalPlugin.cpp:119
 msgctxt "QObject|"
 msgid "Name:"
@@ -6292,7 +6369,7 @@ msgid "License:"
 msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:90
-#: plugins/Filelink/FilelinkPlugin.cpp:395
+#: plugins/Filelink/FilelinkPlugin.cpp:520
 msgctxt "QObject|"
 msgid "Description:"
 msgstr ""
@@ -6359,8 +6436,8 @@ msgctxt "QObject|"
 msgid "A bright Fusion-based theme with blue accents"
 msgstr ""
 
-#: launcher/ui/themes/DarkTheme.cpp:37 launcher/ui/themes/ThemeManager.cpp:276
-#: launcher/ui/themes/ThemeManager.cpp:278
+#: launcher/ui/themes/DarkTheme.cpp:37 launcher/ui/themes/ThemeManager.cpp:277
+#: launcher/ui/themes/ThemeManager.cpp:279
 msgctxt "QObject|"
 msgid "Dark"
 msgstr ""
@@ -6430,84 +6507,84 @@ msgctxt "QObject|"
 msgid "Your current system theme"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:259
-#: launcher/ui/themes/ThemeManager.cpp:259
+#: launcher/ui/themes/ThemeManager.cpp:260
+#: launcher/ui/themes/ThemeManager.cpp:260
 msgctxt "QObject|"
 msgid "Default"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:263
 #: launcher/ui/themes/ThemeManager.cpp:264
+#: launcher/ui/themes/ThemeManager.cpp:265
 msgctxt "QObject|"
 msgid "Simple (Dark Icons)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:265
 #: launcher/ui/themes/ThemeManager.cpp:266
+#: launcher/ui/themes/ThemeManager.cpp:267
 msgctxt "QObject|"
 msgid "Simple (Light Icons)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:267
 #: launcher/ui/themes/ThemeManager.cpp:268
+#: launcher/ui/themes/ThemeManager.cpp:269
 msgctxt "QObject|"
 msgid "Simple (Blue Icons)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:269
 #: launcher/ui/themes/ThemeManager.cpp:270
+#: launcher/ui/themes/ThemeManager.cpp:271
 msgctxt "QObject|"
 msgid "Simple (Colored Icons)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:273
+#: launcher/ui/themes/ThemeManager.cpp:274
 msgctxt "QObject|"
 msgid "Flat (Light)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:274
-#: launcher/ui/themes/ThemeManager.cpp:280
+#: launcher/ui/themes/ThemeManager.cpp:275
+#: launcher/ui/themes/ThemeManager.cpp:281
 msgctxt "QObject|"
 msgid "Light"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:275
+#: launcher/ui/themes/ThemeManager.cpp:276
 msgctxt "QObject|"
 msgid "Flat (Dark)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:277
+#: launcher/ui/themes/ThemeManager.cpp:278
 msgctxt "QObject|"
 msgid "Breeze (Dark)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:279
+#: launcher/ui/themes/ThemeManager.cpp:280
 msgctxt "QObject|"
 msgid "Breeze (Light)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:281
-#: launcher/ui/themes/ThemeManager.cpp:281
+#: launcher/ui/themes/ThemeManager.cpp:282
+#: launcher/ui/themes/ThemeManager.cpp:282
 msgctxt "QObject|"
 msgid "Custom"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:288
+#: launcher/ui/themes/ThemeManager.cpp:289
 msgctxt "QObject|"
 msgid "Background Cat (from MultiMC)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:289
+#: launcher/ui/themes/ThemeManager.cpp:290
 msgctxt "QObject|"
 msgid "Rory ID 11 (drawn by Ashtaka)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:291
+#: launcher/ui/themes/ThemeManager.cpp:292
 msgctxt "QObject|"
 msgid "Rory ID 11 (flat edition, drawn by Ashtaka)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:292
+#: launcher/ui/themes/ThemeManager.cpp:293
 msgctxt "QObject|"
 msgid "Teawie (drawn by SympathyTea)"
 msgstr ""
@@ -6553,124 +6630,124 @@ msgid ""
 "with the label \"pre-launch\"."
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:307
-#: plugins/Filelink/FilelinkPlugin.cpp:328
-#: plugins/Filelink/FilelinkPlugin.cpp:518
-#: plugins/Filelink/FilelinkPlugin.cpp:524
-#: plugins/Filelink/FilelinkPlugin.cpp:548
-#: plugins/Filelink/FilelinkPlugin.cpp:577
-#: plugins/Filelink/FilelinkPlugin.cpp:583
+#: plugins/Filelink/FilelinkPlugin.cpp:438
+#: plugins/Filelink/FilelinkPlugin.cpp:459
+#: plugins/Filelink/FilelinkPlugin.cpp:636
+#: plugins/Filelink/FilelinkPlugin.cpp:642
+#: plugins/Filelink/FilelinkPlugin.cpp:666
+#: plugins/Filelink/FilelinkPlugin.cpp:695
+#: plugins/Filelink/FilelinkPlugin.cpp:701
 msgctxt "QObject|"
 msgid "Filelink"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:308
-#: plugins/Filelink/FilelinkPlugin.cpp:330
+#: plugins/Filelink/FilelinkPlugin.cpp:439
+#: plugins/Filelink/FilelinkPlugin.cpp:461
 msgctxt "QObject|"
 msgid "No instances available."
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:331
+#: plugins/Filelink/FilelinkPlugin.cpp:462
 msgctxt "QObject|"
 msgid "The selected instance is no longer available."
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:336
-#: plugins/Filelink/FilelinkPlugin.cpp:507
+#: plugins/Filelink/FilelinkPlugin.cpp:467
+#: plugins/Filelink/FilelinkPlugin.cpp:625
 msgctxt "QObject|"
 msgid "Create Shortcut"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:342
+#: plugins/Filelink/FilelinkPlugin.cpp:473
 msgctxt "QObject|"
 msgid "Instance"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:385
+#: plugins/Filelink/FilelinkPlugin.cpp:510
 msgctxt "QObject|"
 msgid "Shortcut Details"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:397
+#: plugins/Filelink/FilelinkPlugin.cpp:522
 msgctxt "QObject|"
 msgid "Launch via MeshMC"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:403
+#: plugins/Filelink/FilelinkPlugin.cpp:528
 msgctxt "QObject|"
 msgid "Auto-join server:"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:406
+#: plugins/Filelink/FilelinkPlugin.cpp:531
 msgctxt "QObject|"
 msgid "(optional) e.g. play.example.com:25565"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:418
+#: plugins/Filelink/FilelinkPlugin.cpp:543
 msgctxt "QObject|"
 msgid "Save Location"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:422
+#: plugins/Filelink/FilelinkPlugin.cpp:547
 msgctxt "QObject|"
 msgid "Desktop"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:425
+#: plugins/Filelink/FilelinkPlugin.cpp:550
 msgctxt "QObject|"
 msgid "Other"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:429
+#: plugins/Filelink/FilelinkPlugin.cpp:554
 msgctxt "QObject|"
 msgid ""
 "Flatpak builds use 'Other' so the file picker can save outside the sandbox."
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:439
+#: plugins/Filelink/FilelinkPlugin.cpp:564
 msgctxt "QObject|"
 msgid "Icon"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:485
-#: plugins/Filelink/FilelinkPlugin.cpp:532
+#: plugins/Filelink/FilelinkPlugin.cpp:603
+#: plugins/Filelink/FilelinkPlugin.cpp:650
 #, qt-format
 msgctxt "QObject|"
 msgid "Launch %1 via MeshMC"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:508
+#: plugins/Filelink/FilelinkPlugin.cpp:626
 msgctxt "QObject|"
 msgid "Cancel"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:519
+#: plugins/Filelink/FilelinkPlugin.cpp:637
 msgctxt "QObject|"
 msgid "Please select an instance."
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:525
+#: plugins/Filelink/FilelinkPlugin.cpp:643
 msgctxt "QObject|"
 msgid "Please enter a shortcut name."
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:549
+#: plugins/Filelink/FilelinkPlugin.cpp:667
 msgctxt "QObject|"
 msgid "Desktop location is not available on this system."
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:555
+#: plugins/Filelink/FilelinkPlugin.cpp:673
 msgctxt "QObject|"
 msgid "Save Shortcut"
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:578
+#: plugins/Filelink/FilelinkPlugin.cpp:696
 #, qt-format
 msgctxt "QObject|"
 msgid "Shortcut '%1' created at '%2'."
 msgstr ""
 
-#: plugins/Filelink/FilelinkPlugin.cpp:584
+#: plugins/Filelink/FilelinkPlugin.cpp:702
 #, qt-format
 msgctxt "QObject|"
 msgid "Failed to create shortcut '%1'."
@@ -7731,21 +7808,16 @@ msgid ""
 "\n"
 msgstr ""
 
-#: launcher/updater/UpdateChecker.cpp:387
+#: launcher/updater/UpdateChecker.cpp:414
 #, qt-format
 msgctxt "UpdateChecker|"
 msgid "Failed to parse update feed: %1"
 msgstr ""
 
-#: launcher/updater/UpdateChecker.cpp:392
-msgctxt "UpdateChecker|"
-msgid "No stable release entry found in the update feed."
-msgstr ""
-
-#: launcher/updater/UpdateChecker.cpp:405
+#: launcher/updater/UpdateChecker.cpp:424
 #, qt-format
 msgctxt "UpdateChecker|"
-msgid "Update feed has no asset matching this build (%1/%2/%3)."
+msgid "The update feed has no release for the %1 channel."
 msgstr ""
 
 #: launcher/UpdateController.cpp:58
@@ -7763,12 +7835,12 @@ msgid ""
 "Please reinstall %2."
 msgstr ""
 
-#: launcher/UpdateController.cpp:78
+#: launcher/UpdateController.cpp:91
 msgctxt "UpdateController|"
 msgid "Update Failed"
 msgstr ""
 
-#: launcher/UpdateController.cpp:79
+#: launcher/UpdateController.cpp:92
 #, qt-format
 msgctxt "UpdateController|"
 msgid ""
@@ -7836,6 +7908,85 @@ msgstr ""
 #: launcher/ui/dialogs/UpdateProgressDialog.cpp:84
 msgctxt "UpdateProgressDialog|"
 msgid "Close"
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:133
+#, qt-format
+msgctxt "UpdaterOptions|"
+msgid "--wait-pid expects a process id, got \"%1\"."
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:147
+msgctxt "UpdaterOptions|"
+msgid "No installation root was given (--root)."
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:152
+#, qt-format
+msgctxt "UpdaterOptions|"
+msgid ""
+"The installation root does not exist:\n"
+"%1"
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:157
+#, qt-format
+msgctxt "UpdaterOptions|"
+msgid ""
+"The installation root is not a directory:\n"
+"%1"
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:162
+#, qt-format
+msgctxt "UpdaterOptions|"
+msgid ""
+"The installation root is not writable:\n"
+"%1\n"
+"\n"
+"MeshMC cannot update itself without write access to its own installation."
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:171
+msgctxt "UpdaterOptions|"
+msgid "No download URL was given (--url)."
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:176
+#, qt-format
+msgctxt "UpdaterOptions|"
+msgid ""
+"The download URL is not a valid URL:\n"
+"%1"
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:183
+#, qt-format
+msgctxt "UpdaterOptions|"
+msgid ""
+"Refusing to download an update over \"%1\". Only http and https are "
+"supported."
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:190
+#, qt-format
+msgctxt "UpdaterOptions|"
+msgid ""
+"The binary to restart does not exist:\n"
+"%1"
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:196
+msgctxt "UpdaterOptions|"
+msgid "No unpacked update was given (--source)."
+msgstr ""
+
+#: updater/UpdaterOptions.cpp:199
+#, qt-format
+msgctxt "UpdaterOptions|"
+msgid ""
+"The unpacked update is missing:\n"
+"%1"
 msgstr ""
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:41
@@ -8911,4 +9062,42 @@ msgstr ""
 #: launcher/minecraft/auth/steps/XboxUserStep.cpp:96
 msgctxt "XboxUserStep|"
 msgid "Got Xbox user token"
+msgstr ""
+
+#: updater/main.cpp:99
+#, qt-format
+msgctxt "main|"
+msgid ""
+"Full log:\n"
+"%1"
+msgstr ""
+
+#: updater/main.cpp:159 updater/main.cpp:170 updater/main.cpp:204
+msgctxt "main|"
+msgid "Update Failed"
+msgstr ""
+
+#: updater/main.cpp:160
+#, qt-format
+msgctxt "main|"
+msgid ""
+"The updater was started with arguments it does not understand.\n"
+"\n"
+"%1"
+msgstr ""
+
+#: updater/main.cpp:182
+msgctxt "main|"
+msgid "Update Already Running"
+msgstr ""
+
+#: updater/main.cpp:183
+#, qt-format
+msgctxt "main|"
+msgid ""
+"Another MeshMC update is already in progress.\n"
+"\n"
+"%1\n"
+"\n"
+"Wait for it to finish, or close it and try again."
 msgstr ""
