@@ -76,6 +76,19 @@ class ThemeManager
 
 	QString bestIconThemeForPalette(const QString& currentIconId) const;
 
+	/// Folder holding the user's custom widget themes.
+	QDir getApplicationThemesFolder();
+
+	/// Folder holding the user's custom icon themes.
+	QDir getIconThemesFolder();
+
+	/*!
+	 * Drops every registered theme, icon theme and cat pack and scans them
+	 * from disk again, so newly added themes show up without a restart.
+	 * NOTE: invalidates every ITheme* previously handed out by getTheme().
+	 */
+	void refresh();
+
 	// CatPack API
 	QString getCatPack(const QString& catName = QString());
 	QList<CatPack*> getValidCatPacks();
@@ -86,10 +99,15 @@ class ThemeManager
 	QList<IconThemeEntry> m_iconThemes;
 	std::map<QString, std::unique_ptr<CatPack>> m_catPacks;
 	QDir m_catPacksFolder;
+	QDir m_applicationThemeFolder;
+	QDir m_iconThemeFolder;
 	QString m_defaultStyle;
 	QPalette m_defaultPalette;
 
+	void initializeThemes();
+	void initializeCustomThemes(ITheme* baseTheme);
 	void initIconThemes();
+	void initCustomIconThemes();
 	void initializeCatPacks();
 	void addCatPack(std::unique_ptr<CatPack> catPack);
 };

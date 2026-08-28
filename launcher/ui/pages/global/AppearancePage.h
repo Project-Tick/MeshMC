@@ -64,6 +64,9 @@ class AppearancePage : public QWidget, public BasePage
 	void applyWidgetTheme(int index);
 	void applyIconTheme(int index);
 	void applyCatTheme(int index);
+	void openThemesFolder();
+	void openIconThemesFolder();
+	void reloadThemes();
 
   private:
 	void applySettings();

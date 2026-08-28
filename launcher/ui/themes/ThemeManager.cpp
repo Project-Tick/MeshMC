@@ -38,8 +38,10 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDirIterator>
+#include <QFileInfo>
 #include <QImageReader>
 #include <QSet>
+#include <QSettings>
 #include <QStyle>
 #include <QStyleFactory>
 #include <QSysInfo>
@@ -47,10 +49,19 @@
 
 ThemeManager::ThemeManager()
 {
+	// NOTE: captured once, before any theme is applied, so that the "System"
+	// theme keeps reporting the real system look even after a refresh().
 	const auto& style = QApplication::style();
 	m_defaultStyle = style->objectName();
 	m_defaultPalette = QApplication::palette();
 
+	initializeThemes();
+	initIconThemes();
+	initializeCatPacks();
+}
+
+void ThemeManager::initializeThemes()
+{
 	// Default "System" theme
 	addTheme(
 		std::make_unique<SystemTheme>(m_defaultStyle, m_defaultPalette, true));
@@ -73,9 +84,55 @@ ThemeManager::ThemeManager()
 		addTheme(std::make_unique<SystemTheme>(st, m_defaultPalette, false));
 	}
 
-	// Custom theme
-	addTheme(std::make_unique<CustomTheme>(darkTheme, "custom"));
+	// User themes from the themes/ folder. DarkTheme is the base every custom
+	// theme inherits unspecified values from.
+	initializeCustomThemes(darkTheme);
+}
 
+void ThemeManager::initializeCustomThemes(ITheme* baseTheme)
+{
+	m_applicationThemeFolder = QDir("themes");
+	if (!m_applicationThemeFolder.mkpath(".")) {
+		qWarning() << "Couldn't create themes folder";
+		return;
+	}
+
+	// First run, or the user wiped the folder: leave a starter theme behind so
+	// there is something to copy and edit instead of a blank page.
+	if (m_applicationThemeFolder.isEmpty(QDir::AllEntries |
+										 QDir::NoDotAndDotDot)) {
+		CustomTheme::writeSkeleton(baseTheme, QStringLiteral("custom"));
+	}
+
+	QDirIterator directoryIterator(m_applicationThemeFolder.path(),
+								   QDir::Dirs | QDir::NoDotAndDotDot);
+	while (directoryIterator.hasNext()) {
+		QDir dir(directoryIterator.next());
+		QFileInfo manifest(
+			dir.absoluteFilePath(CustomTheme::manifestFileName));
+
+		if (manifest.isFile()) {
+			// theme.json based theme
+			addTheme(CustomTheme::fromManifest(baseTheme, manifest));
+		} else {
+			// Plain stylesheet themes: every .qss/.css in the folder becomes
+			// a theme of its own.
+			QDirIterator styleSheetIterator(
+				dir.absolutePath(), {"*.qss", "*.css"}, QDir::Files);
+			while (styleSheetIterator.hasNext()) {
+				QFileInfo info(styleSheetIterator.next());
+				addTheme(CustomTheme::fromStyleSheet(baseTheme, info));
+			}
+		}
+	}
+}
+
+void ThemeManager::refresh()
+{
+	m_themes.clear();
+	m_catPacks.clear();
+
+	initializeThemes();
 	initIconThemes();
 	initializeCatPacks();
 }
@@ -83,6 +140,13 @@ ThemeManager::ThemeManager()
 void ThemeManager::addTheme(std::unique_ptr<ITheme> theme)
 {
 	QString id = theme->id();
+	if (m_themes.find(id) != m_themes.end()) {
+		// std::map::insert would silently drop it, which is very confusing
+		// when it happens to a user's custom theme.
+		qWarning() << "Theme" << id
+				   << "not added to prevent id duplication";
+		return;
+	}
 	m_themes.insert(std::make_pair(id, std::move(theme)));
 }
 
@@ -254,6 +318,56 @@ ThemeManager::bestIconThemeForPalette(const QString& currentIconId) const
 	return resolved.isEmpty() ? currentIconId : resolved;
 }
 
+namespace
+{
+
+/*!
+ * Reads `<dir>/index.theme` into \a out.
+ *
+ * The freedesktop `[Icon Theme] Name` key supplies the display name. Family
+ * and variant are MeshMC extensions (`X-MeshMC-Family` / `X-MeshMC-Variant`):
+ * two folders sharing a family but differing in variant are treated as the
+ * dark and light flavours of one theme and picked automatically, matching how
+ * the built-in Flat and Breeze themes behave.
+ *
+ * \return false when the folder is not an icon theme, or has no Name.
+ */
+bool readIconThemeIndex(const QDir& dir, IconThemeEntry& out)
+{
+	const QString indexPath =
+		dir.absoluteFilePath(QStringLiteral("index.theme"));
+	if (!QFileInfo::exists(indexPath)) {
+		qDebug() << "Skipping" << dir.path() << ": no index.theme";
+		return false;
+	}
+
+	QSettings index(indexPath, QSettings::IniFormat);
+	index.beginGroup(QStringLiteral("Icon Theme"));
+	const QString name = index.value(QStringLiteral("Name")).toString();
+	const QString family =
+		index.value(QStringLiteral("X-MeshMC-Family")).toString();
+	const QString variant =
+		index.value(QStringLiteral("X-MeshMC-Variant")).toString();
+	index.endGroup();
+
+	if (name.isEmpty()) {
+		qWarning() << "Icon theme at" << dir.path()
+				   << "has no Name in index.theme";
+		return false;
+	}
+
+	// The folder name is the id: that is what Qt's icon loader resolves
+	// against QIcon::themeSearchPaths().
+	out.id = dir.dirName();
+	out.name = name;
+	// No family declared means the theme stands alone, so it is its own family.
+	out.family = family.isEmpty() ? name : family;
+	out.variant = variant;
+	return true;
+}
+
+} // namespace
+
 void ThemeManager::initIconThemes()
 {
 	m_iconThemes = {
@@ -279,8 +393,53 @@ void ThemeManager::initIconThemes()
 		 QObject::tr("Dark")},
 		{"breeze_light", QObject::tr("Breeze (Light)"),
 		 QStringLiteral("Breeze"), QObject::tr("Light")},
-		{"custom", QObject::tr("Custom"), QObject::tr("Custom"), QString()},
 	};
+
+	// NOTE: there used to be a hardcoded "custom" entry here, but no such
+	// theme ships in the resources, so selecting it left the UI without icons.
+	// It is now discovered from iconthemes/custom like any other user theme,
+	// and therefore only offered when it actually exists.
+	initCustomIconThemes();
+}
+
+void ThemeManager::initCustomIconThemes()
+{
+	// NOTE: this folder is already on QIcon::themeSearchPaths(), set up in
+	// Application::initialize(). All that is missing is discovery, so the
+	// themes actually show up in the Appearance page.
+	m_iconThemeFolder = QDir("iconthemes");
+	if (!m_iconThemeFolder.mkpath(".")) {
+		qWarning() << "Couldn't create iconthemes folder";
+		return;
+	}
+
+	QSet<QString> knownIds;
+	for (const auto& entry : m_iconThemes) {
+		knownIds.insert(entry.id);
+	}
+
+	QDirIterator directoryIterator(m_iconThemeFolder.path(),
+								   QDir::Dirs | QDir::NoDotAndDotDot);
+	while (directoryIterator.hasNext()) {
+		QDir dir(directoryIterator.next());
+
+		IconThemeEntry entry;
+		if (!readIconThemeIndex(dir, entry)) {
+			continue;
+		}
+
+		if (knownIds.contains(entry.id)) {
+			// Silently shadowing a built-in theme would be very confusing.
+			qWarning() << "Icon theme" << entry.id
+					   << "not added to prevent id duplication";
+			continue;
+		}
+
+		knownIds.insert(entry.id);
+		m_iconThemes.append(entry);
+		qDebug() << "Loaded custom icon theme" << entry.id << "from"
+				 << dir.path();
+	}
 }
 
 void ThemeManager::initializeCatPacks()
@@ -375,4 +534,14 @@ QList<CatPack*> ThemeManager::getValidCatPacks()
 QDir ThemeManager::getCatPacksFolder()
 {
 	return m_catPacksFolder;
+}
+
+QDir ThemeManager::getApplicationThemesFolder()
+{
+	return m_applicationThemeFolder;
+}
+
+QDir ThemeManager::getIconThemesFolder()
+{
+	return m_iconThemeFolder;
 }

@@ -1009,6 +1009,13 @@ endif()
 
 # Add executable
 add_library(MeshMC_logic STATIC ${LOGIC_SOURCES} ${MESHMC_SOURCES} ${MESHMC_UI} ${MESHMC_RESOURCES})
+
+# Declared after MeshMC_logic because it links against it.
+add_unit_test(CustomTheme
+    SOURCES ui/themes/CustomTheme_test.cpp
+    LIBS MeshMC_logic
+    )
+
 target_link_libraries(MeshMC_logic
     systeminfo::systeminfo
     classparser
