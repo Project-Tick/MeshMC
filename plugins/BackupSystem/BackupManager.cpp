@@ -15,7 +15,27 @@ BackupManager::BackupManager(const QString& instanceId,
 	ensureBackupDir();
 }
 
-QString BackupManager::stageInstance() const
+namespace
+{
+	/* How many files live under `root`, ignoring everything below
+	 * `skipDir`. Only used to turn the copy loop into a percentage, so
+	 * it walks names and never opens a file. */
+	qint64 countFilesBelow(const QString& root, const QString& skipDir)
+	{
+		qint64 count = 0;
+		QDirIterator it(root, QDir::Files | QDir::Hidden,
+						QDirIterator::Subdirectories);
+		while (it.hasNext()) {
+			it.next();
+			if (!skipDir.isEmpty() && it.filePath().startsWith(skipDir))
+				continue;
+			count++;
+		}
+		return count;
+	}
+} // namespace
+
+QString BackupManager::stageInstance(const ProgressFn& progress) const
 {
 	/* Build a unique temp dir, then mirror everything from
 	 * instanceRoot/ into it except for .backups/.  Hard-linking is
@@ -30,6 +50,50 @@ QString BackupManager::stageInstance() const
 	if (!QDir().mkpath(stage))
 		return {};
 
+	qint64 total = 0;
+	qint64 done = 0;
+	if (progress) {
+		total = countFilesBelow(m_instanceRoot, m_backupDir);
+		progress(QObject::tr("Copying instance files..."),
+				 QObject::tr("%1 / %2 files").arg(0).arg(total), 0, total);
+	}
+
+	/* One update per file would be a queued call per file for no visible
+	 * gain, so only speak up when the percentage actually moves. */
+	const qint64 step = qMax(qint64(1), total / 100);
+	const auto tick = [&progress, &done, total, step] {
+		done++;
+		if (!progress)
+			return;
+		if (done % step != 0 && done != total)
+			return;
+		progress(QString(), QObject::tr("%1 / %2 files").arg(done).arg(total),
+				 done, total);
+	};
+
+	const auto copyTree = [&tick](const QString& src, const QString& dst,
+								  auto&& self) -> bool {
+		QFileInfo fi(src);
+		if (fi.isDir()) {
+			if (!QDir().mkpath(dst))
+				return false;
+			QDirIterator inner(src, QDir::AllEntries | QDir::NoDotAndDotDot |
+										QDir::Hidden);
+			while (inner.hasNext()) {
+				inner.next();
+				const QString childSrc = inner.filePath();
+				const QString childDst = QDir(dst).filePath(inner.fileName());
+				if (!self(childSrc, childDst, self))
+					return false;
+			}
+			return true;
+		}
+		if (!QFile::copy(src, dst))
+			return false;
+		tick();
+		return true;
+	};
+
 	QDirIterator it(m_instanceRoot,
 					QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden,
 					QDirIterator::NoIteratorFlags);
@@ -38,28 +102,6 @@ QString BackupManager::stageInstance() const
 		const QFileInfo fi = it.fileInfo();
 		if (fi.fileName() == QStringLiteral(".backups"))
 			continue;
-
-		auto copyTree = [](const QString& src, const QString& dst,
-						   auto&& self) -> bool {
-			QFileInfo fi(src);
-			if (fi.isDir()) {
-				if (!QDir().mkpath(dst))
-					return false;
-				QDirIterator inner(src, QDir::AllEntries |
-											QDir::NoDotAndDotDot |
-											QDir::Hidden);
-				while (inner.hasNext()) {
-					inner.next();
-					const QString childSrc = inner.filePath();
-					const QString childDst =
-						QDir(dst).filePath(inner.fileName());
-					if (!self(childSrc, childDst, self))
-						return false;
-				}
-				return true;
-			}
-			return QFile::copy(src, dst);
-		};
 
 		const QString dst = QDir(stage).filePath(fi.fileName());
 		if (!copyTree(fi.absoluteFilePath(), dst, copyTree)) {
@@ -98,7 +140,8 @@ QList<BackupEntry> BackupManager::listBackups() const
 	return result;
 }
 
-BackupEntry BackupManager::createBackup(const QString& label)
+BackupEntry BackupManager::createBackup(const QString& label,
+										const ProgressFn& progress)
 {
 	ensureBackupDir();
 
@@ -118,10 +161,16 @@ BackupEntry BackupManager::createBackup(const QString& label)
 	 * zip never contains nested backup archives. The host's
 	 * zip_compress_dir takes a directory and walks it whole; we work
 	 * around the missing skip-predicate by pre-filtering the tree. */
-	const QString stage = stageInstance();
+	const QString stage = stageInstance(progress);
 	if (stage.isEmpty()) {
 		qWarning() << "[BackupSystem] Could not stage instance for backup.";
 		return {};
+	}
+
+	if (progress) {
+		/* The per-file detail line from here on is written by the host
+		 * from inside zip_compress_dir. */
+		progress(QObject::tr("Compressing backup..."), QString(), 0, 0);
 	}
 
 	const QByteArray zipUtf8 = zipPath.toUtf8();

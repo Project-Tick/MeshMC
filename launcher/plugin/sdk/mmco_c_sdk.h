@@ -334,6 +334,27 @@ typedef struct MMCOSessionFillEvent {
 typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,
 								void* payload, void* user_data);
 
+/* Flags for hook_register_ex (S32).
+ *
+ * MMCO_HOOK_FLAG_BACKGROUND — run the callback on a worker thread and
+ * give it its own row in the launcher's progress dialog instead of
+ * blocking the GUI thread for its whole duration.
+ *
+ * A background callback MUST NOT touch ui_*, tray_* or main_window_*,
+ * and must not create or mutate Qt widgets. It MAY use log_*, fs_*,
+ * zip_*, process_run and progress_report.
+ *
+ * Everything else — settings, instances, accounts, mods, worlds —
+ * reads launcher state owned by the GUI thread. Register a second,
+ * inline callback for the same hook, read what you need there, and
+ * hand it over: all inline callbacks of a dispatch run before any
+ * background one.
+ *
+ * Dispatch still waits for all background callbacks to finish, so hook
+ * ordering is unchanged. Flags 0 == the legacy inline behaviour. */
+#define MMCO_HOOK_FLAG_NONE 0u
+#define MMCO_HOOK_FLAG_BACKGROUND 1u
+
 typedef void (*MMCOHttpCallback)(void* user_data, int status_code,
 								 const void* response_body,
 								 size_t response_size);
@@ -796,6 +817,31 @@ typedef struct MMCOContext {
 					   int arg_count, const char* working_dir,
 					   const char* stdin_data, int stdin_size, char* out_buf,
 					   int out_buf_size, int* out_exit_code, int timeout_ms);
+
+	/* ───────────────────────────────────────────────────────────────
+	 * S32 — Background hooks + progress reporting (additive, ABI 3)
+	 *
+	 * hook_register_ex == hook_register plus a flags word; see
+	 * MMCO_HOOK_FLAG_* above. flags 0 is the legacy behaviour.
+	 *
+	 * progress_report publishes the running background callback's
+	 * progress into the launcher's progress dialog:
+	 *   handle  — the module_handle the callback was invoked with.
+	 *   status  — row title, or NULL to keep the current one.
+	 *   details — second line, or NULL to keep the current one.
+	 *   current — work done so far.
+	 *   total   — total work; <= 0 renders an indeterminate bar.
+	 *
+	 * Returns 0 if queued, -1 on bad arguments or when called outside
+	 * a background hook callback. The host marshals the update to the
+	 * GUI thread, so a tight loop is fine and never blocks.
+	 * ─────────────────────────────────────────────────────────────── */
+	int (*hook_register_ex)(void* mh, uint32_t hook_id,
+							MMCOHookCallback callback, void* user_data,
+							uint32_t flags);
+	int (*progress_report)(void* handle, const char* status,
+						   const char* details, int64_t current,
+						   int64_t total);
 } MMCOContext;
 
 /*

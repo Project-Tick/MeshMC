@@ -576,6 +576,8 @@ set(PLUGIN_SOURCES
     plugin/PluginLoader.cpp
     plugin/PluginManager.h
     plugin/PluginManager.cpp
+    plugin/PluginHookTask.h
+    plugin/PluginHookTask.cpp
     plugin/PluginSignature.h
     plugin/PluginSignature.cpp
     plugin/PluginDependencyResolver.h

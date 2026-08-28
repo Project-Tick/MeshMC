@@ -44,6 +44,7 @@
 #include "minecraft/services/SkinUpload.h"
 #include "minecraft/services/SkinDelete.h"
 #include "minecraft/services/CapeChange.h"
+#include "plugin/PluginHookTask.h"
 #include "tasks/SequentialTask.h"
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/pages/instance/InstanceSettingsPage.h"
@@ -56,6 +57,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QDirIterator>
+#include <QEventLoop>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -88,7 +90,10 @@
 #include <QCursor>
 #include <QIcon>
 #include <QSystemTrayIcon>
+#include <QMutexLocker>
 #include <QProcess>
+#include <unordered_map>
+#include <utility>
 
 #ifdef Q_OS_WIN
 #ifndef WIN32_LEAN_AND_MEAN
@@ -336,13 +341,106 @@ void PluginManager::shutdownAll()
 
 bool PluginManager::dispatchHook(uint32_t hook_id, void* payload)
 {
-	auto range = m_hooks.equal_range(hook_id);
-	for (auto it = range.first; it != range.second; ++it) {
-		const auto& reg = it.value();
+	/* Snapshot first: a callback is allowed to register or unregister
+	 * hooks, which would invalidate iterators into m_hooks while we
+	 * walk them. The relative order of the registrations is preserved,
+	 * so nothing about the existing dispatch order changes. */
+	QVector<HookRegistration> inlineRegs;
+	QVector<HookRegistration> backgroundRegs;
+	{
+		auto range = m_hooks.equal_range(hook_id);
+		for (auto it = range.first; it != range.second; ++it) {
+			if (it.value().flags & MMCO_HOOK_FLAG_BACKGROUND) {
+				backgroundRegs.append(it.value());
+			} else {
+				inlineRegs.append(it.value());
+			}
+		}
+	}
+
+	/* Inline callbacks first. They are the cheap ones by definition, and
+	 * running them up front means a veto from one of them saves us from
+	 * starting the expensive background work at all. */
+	for (const auto& reg : inlineRegs) {
 		int rc =
 			reg.callback(reg.module_handle, hook_id, payload, reg.user_data);
 		if (rc != 0) {
 			return true; // cancelled
+		}
+	}
+
+	if (backgroundRegs.isEmpty()) {
+		return false;
+	}
+
+	return runBackgroundHooks(hook_id, payload, backgroundRegs);
+}
+
+bool PluginManager::runBackgroundHooks(uint32_t hook_id, void* payload,
+									   const QVector<HookRegistration>& regs)
+{
+	/* Off-loading only buys us anything while there is an event loop and
+	 * a window to keep responsive. During startup and shutdown there is
+	 * neither, so run the callbacks the old way rather than pop a modal
+	 * dialog at a point where the launcher is not in a state to show
+	 * one. */
+	/* activeWindow() is null whenever the launcher is not the focused
+	 * application, so it answers "where do I parent this dialog", not
+	 * "is there a UI at all". The main window answers the second one:
+	 * it does not exist yet during startup and is gone by shutdown. */
+	QWidget* owner = QApplication::activeWindow();
+	if (!owner) {
+		owner = resolveMainWindow();
+	}
+	if (!owner || m_shutdownDone) {
+		for (const auto& reg : regs) {
+			int rc = reg.callback(reg.module_handle, hook_id, payload,
+								  reg.user_data);
+			if (rc != 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	SequentialTask sequence(nullptr, QStringLiteral("PluginHooks"));
+	QVector<PluginHookTask*> tasks;
+	tasks.reserve(regs.size());
+
+	for (const auto& reg : regs) {
+		auto* r = rt(reg.module_handle);
+		const QString name = (r && r->moduleIndex >= 0 &&
+							  r->moduleIndex < m_modules.size())
+								 ? m_modules[r->moduleIndex].name
+								 : QStringLiteral("plugin");
+
+		auto task = shared_qobject_ptr<PluginHookTask>(
+			new PluginHookTask(name, reg.module_handle, hook_id, reg.callback,
+							   payload, reg.user_data));
+		tasks.append(task.get());
+		sequence.addTask(task);
+	}
+
+	ProgressDialog prog(owner);
+	prog.execWithTask(&sequence);
+
+	/* Escape dismisses the dialog without stopping anything, and a C
+	 * callback cannot be interrupted anyway. Keep the event loop
+	 * turning until the sequence really has finished — tearing the
+	 * tasks down while a worker is still inside one of them would mean
+	 * blocking the GUI thread in a destructor, which is the freeze we
+	 * came here to get rid of. */
+	if (sequence.isRunning()) {
+		QEventLoop loop;
+		connect(&sequence, &Task::finished, &loop, &QEventLoop::quit);
+		loop.exec();
+	}
+
+	/* A vetoing task fails, which also stops the sequence — so at most
+	 * one of these can be set, and the tasks after it never ran. */
+	for (auto* task : tasks) {
+		if (task->cancelRequested()) {
+			return true;
 		}
 	}
 	return false;
@@ -364,6 +462,10 @@ MMCOContext PluginManager::buildContext(PluginMetadata& meta)
 	// S2 — Hooks
 	ctx.hook_register = api_hook_register;
 	ctx.hook_unregister = api_hook_unregister;
+
+	// S32 — Background hooks + progress reporting
+	ctx.hook_register_ex = api_hook_register_ex;
+	ctx.progress_report = api_progress_report;
 
 	// S3 — Settings
 	ctx.setting_get = api_setting_get;
@@ -621,6 +723,53 @@ void PluginManager::ensurePluginDataDir(PluginMetadata& meta)
 	QDir().mkpath(meta.dataDir);
 }
 
+namespace
+{
+	/* Thread-local backing store for ScratchString.
+	 *
+	 * Keyed by the ScratchString instance, so each (module, thread)
+	 * pair gets its own buffer. A function-local static keeps the
+	 * initialisation order sane across translation units and lets
+	 * threads that never touch the plugin API pay nothing. */
+	std::unordered_map<const void*, std::string>& scratchStore()
+	{
+		static thread_local std::unordered_map<const void*, std::string> store;
+		return store;
+	}
+} // namespace
+
+PluginManager::ScratchString::~ScratchString()
+{
+	/* Only the destroying thread's entry can be reclaimed here; other
+	 * threads' entries stay behind until that thread exits. They are
+	 * inert: a later ScratchString reusing this address overwrites the
+	 * value before any getter hands it out, and modules live for the
+	 * whole process anyway. */
+	scratchStore().erase(this);
+}
+
+PluginManager::ScratchString&
+PluginManager::ScratchString::operator=(std::string value)
+{
+	scratchStore()[this] = std::move(value);
+	return *this;
+}
+
+void PluginManager::ScratchString::assign(const char* bytes, size_t size)
+{
+	scratchStore()[this].assign(bytes, size);
+}
+
+const char* PluginManager::ScratchString::c_str() const
+{
+	return scratchStore()[this].c_str();
+}
+
+const char* PluginManager::ScratchString::data() const
+{
+	return scratchStore()[this].data();
+}
+
 PluginManager::ModuleRuntime* PluginManager::rt(void* mh)
 {
 	return static_cast<ModuleRuntime*>(mh);
@@ -665,8 +814,60 @@ int PluginManager::api_hook_register(void* mh, uint32_t hook_id,
 	reg.module_handle = mh;
 	reg.callback = cb;
 	reg.user_data = ud;
+	reg.flags = MMCO_HOOK_FLAG_NONE;
 
 	r->manager->m_hooks.insert(hook_id, reg);
+	return 0;
+}
+
+int PluginManager::api_hook_register_ex(void* mh, uint32_t hook_id,
+										MMCOHookCallback cb, void* ud,
+										uint32_t flags)
+{
+	auto* r = rt(mh);
+	if (!cb)
+		return -1;
+
+	/* Reject flags we don't know: a module built against a newer SDK
+	 * must not silently get the old behaviour for a flag we cannot
+	 * honour. */
+	constexpr uint32_t known = MMCO_HOOK_FLAG_BACKGROUND;
+	if ((flags & ~known) != 0u) {
+		qWarning() << "[PluginManager] Module"
+				   << r->manager->m_modules[r->moduleIndex].name
+				   << "registered hook" << Qt::hex << hook_id
+				   << "with unknown flags" << flags;
+		return -1;
+	}
+
+	HookRegistration reg;
+	reg.module_handle = mh;
+	reg.callback = cb;
+	reg.user_data = ud;
+	reg.flags = flags;
+
+	r->manager->m_hooks.insert(hook_id, reg);
+	return 0;
+}
+
+int PluginManager::api_progress_report(void* mh, const char* status,
+									   const char* details, int64_t current,
+									   int64_t total)
+{
+	auto* task = PluginHookTask::currentOnThisThread();
+	if (!task) {
+		/* Called from an inline callback, or from a thread the plugin
+		 * spawned itself. There is no row to write to. */
+		return -1;
+	}
+	if (mh && task->moduleHandle() != mh) {
+		/* Reporting on behalf of another module is not a thing. */
+		return -1;
+	}
+
+	task->reportProgress(status ? QString::fromUtf8(status) : QString(),
+						 details ? QString::fromUtf8(details) : QString(),
+						 current, total);
 	return 0;
 }
 
@@ -1419,11 +1620,39 @@ const char* PluginManager::api_get_app_name(void* mh)
 int PluginManager::api_zip_compress_dir(void* mh, const char* zip,
 										const char* dir)
 {
-	(void)mh;
 	if (!zip || !dir)
 		return -1;
+
+	/* Inside a background hook this is the slow part of the callback, so
+	 * turn the file count into a real percentage on the plugin's row.
+	 * Called from anywhere else there is nobody listening, and we skip
+	 * the counting pass entirely. */
+	auto* task = PluginHookTask::currentOnThisThread();
+	if (mh && task && task->moduleHandle() != mh) {
+		task = nullptr;
+	}
+
+	MMCZip::ProgressFunction progress = nullptr;
+	if (task) {
+		/* One queued UI update per file would drown the event loop on a
+		 * big instance, and the user cannot see more than a percent of
+		 * movement anyway. */
+		auto lastReported = std::make_shared<qint64>(-1);
+		progress = [task, lastReported](qint64 current, qint64 total) {
+			const qint64 step = qMax(qint64(1), total / 100);
+			if (current != total && current / step == *lastReported) {
+				return;
+			}
+			*lastReported = current / step;
+			task->reportProgress(
+				QString(),
+				PluginManager::tr("%1 / %2 files").arg(current).arg(total),
+				current, total);
+		};
+	}
+
 	bool ok = MMCZip::compressDir(QString::fromUtf8(zip),
-								  QString::fromUtf8(dir), nullptr);
+								  QString::fromUtf8(dir), nullptr, progress);
 	return ok ? 0 : -1;
 }
 
@@ -2321,6 +2550,7 @@ int PluginManager::api_launch_set_env(void* mh, const char* key,
 	auto* r = rt(mh);
 	if (!key || !value)
 		return -1;
+	QMutexLocker lock(&r->manager->m_launchModMutex);
 	r->manager->m_pendingLaunchEnv.insert(QString::fromUtf8(key),
 										  QString::fromUtf8(value));
 	return 0;
@@ -2332,6 +2562,7 @@ int PluginManager::api_launch_prepend_wrapper(void* mh, const char* wrapper_cmd)
 	if (!wrapper_cmd || wrapper_cmd[0] == '\0')
 		return -1;
 	QString cmd = QString::fromUtf8(wrapper_cmd);
+	QMutexLocker lock(&r->manager->m_launchModMutex);
 	if (r->manager->m_pendingLaunchWrapper.isEmpty()) {
 		r->manager->m_pendingLaunchWrapper = cmd;
 	} else {
@@ -2343,6 +2574,7 @@ int PluginManager::api_launch_prepend_wrapper(void* mh, const char* wrapper_cmd)
 
 void PluginManager::clearPendingLaunchMods()
 {
+	QMutexLocker lock(&m_launchModMutex);
 	m_pendingLaunchEnv.clear();
 	m_pendingLaunchWrapper.clear();
 }
@@ -2370,6 +2602,7 @@ const char* PluginManager::api_app_setting_get(void* mh, const char* key)
 
 QMap<QString, QString> PluginManager::takePendingLaunchEnv()
 {
+	QMutexLocker lock(&m_launchModMutex);
 	QMap<QString, QString> env;
 	env.swap(m_pendingLaunchEnv);
 	return env;
@@ -2377,6 +2610,7 @@ QMap<QString, QString> PluginManager::takePendingLaunchEnv()
 
 QString PluginManager::takePendingLaunchWrapper()
 {
+	QMutexLocker lock(&m_launchModMutex);
 	QString w;
 	w.swap(m_pendingLaunchWrapper);
 	return w;
