@@ -206,6 +206,9 @@ void MeshMCPage::applySettings()
 	// (UpdateChannel setting removed - the new updater always checks the stable
 	// feed)
 
+	// Instance backups
+	s->set("BackupBeforeLaunch", ui->backupBeforeLaunchCheck->isChecked());
+
 	// Console settings
 	s->set("ShowConsole", ui->showConsoleCheck->isChecked());
 	s->set("AutoCloseConsole", ui->autoCloseConsoleCheck->isChecked());
@@ -245,6 +248,10 @@ void MeshMCPage::loadSettings()
 	// Updates
 	ui->autoUpdateCheckBox->setChecked(s->get("AutoUpdate").toBool());
 	// (no channel to read in the new updater system)
+
+	// Instance backups
+	ui->backupBeforeLaunchCheck->setChecked(
+		s->get("BackupBeforeLaunch").toBool());
 
 	// Console settings
 	ui->showConsoleCheck->setChecked(s->get("ShowConsole").toBool());

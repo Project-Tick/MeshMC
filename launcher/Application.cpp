@@ -971,6 +971,17 @@ void Application::initSettings()
 	m_settings->registerSetting({"PreLaunchCommand", "PreLaunchCmd"}, "");
 	m_settings->registerSetting({"PostExitCommand", "PostExitCmd"}, "");
 
+	// Instance backups.
+	//
+	// The legacy synonym is the key the out-of-tree BackupSystem .mmco
+	// plugin registered through app_setting_register() — same config
+	// file, so anyone who had pre-launch snapshots switched on keeps
+	// them after the plugin graduated into core. The old key is dropped
+	// from meshmc.cfg the first time the setting is written.
+	m_settings->registerSetting(
+		{"BackupBeforeLaunch", "plugin.backup_system.BackupBeforeLaunch"},
+		false);
+
 	// The cat
 	m_settings->registerSetting("TheCat", false);
 	m_settings->registerSetting("BackgroundCat", QString("kitteh"));

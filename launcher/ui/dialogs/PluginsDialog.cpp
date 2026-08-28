@@ -59,6 +59,8 @@ namespace
 				return QObject::tr("Missing dependency");
 			case PluginDisableReason::DependencyCycle:
 				return QObject::tr("Dependency cycle");
+			case PluginDisableReason::SupersededByCore:
+				return QObject::tr("Built into MeshMC");
 		}
 		return QString();
 	}
@@ -185,13 +187,23 @@ void PluginsDialog::populateTree()
 
 		auto* item = new QTreeWidgetItem(tree);
 		item->setData(0, ModuleIndexRole, i);
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		// disabled-by-user → unchecked. Anything else (signed-out,
-		// dep-missing, cycle) is shown unchecked too but the user can
-		// still toggle the box; we only persist the "user wants it
-		// disabled" bit.
-		const bool userDisabled = pm->isModuleDisabled(mod.name);
-		item->setCheckState(0, userDisabled ? Qt::Unchecked : Qt::Checked);
+
+		// A module core has absorbed can never be turned back on, so
+		// don't offer a checkbox that would quietly do nothing.
+		const bool superseded =
+			mod.disableReason == PluginDisableReason::SupersededByCore;
+		if (superseded) {
+			item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
+			item->setCheckState(0, Qt::Unchecked);
+		} else {
+			item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+			// disabled-by-user → unchecked. Anything else (signed-out,
+			// dep-missing, cycle) is shown unchecked too but the user can
+			// still toggle the box; we only persist the "user wants it
+			// disabled" bit.
+			const bool userDisabled = pm->isModuleDisabled(mod.name);
+			item->setCheckState(0, userDisabled ? Qt::Unchecked : Qt::Checked);
+		}
 
 		item->setText(1, mod.name +
 							 (mod.version.isEmpty()
@@ -243,6 +255,9 @@ void PluginsDialog::onItemChanged(QTreeWidgetItem* item, int column)
 	if (!ok)
 		return;
 	if (row < 0 || row >= pm->modules().size())
+		return;
+	if (pm->modules().at(row).disableReason ==
+		PluginDisableReason::SupersededByCore)
 		return;
 
 	const QString name = pm->modules().at(row).name;

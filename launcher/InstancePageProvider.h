@@ -43,6 +43,7 @@
 #include "ui/pages/instance/WorldListPage.h"
 #include "ui/pages/instance/ServersPage.h"
 #include "ui/pages/instance/GameOptionsPage.h"
+#include "ui/pages/instance/BackupPage.h"
 #include "Application.h"
 #include "plugin/PluginManager.h"
 #include "plugin/PluginHooks.h"
@@ -98,6 +99,11 @@ class InstancePageProvider : public QObject, public BasePageProvider
 			values.append(
 				new OtherLogsPage(inst->getLogFileRoot(), logMatcher));
 		}
+
+		// Backups work on the instance directory as a whole, so every
+		// instance type gets the page. Kept last to match where the old
+		// BackupSystem plugin used to insert it (via UI_INSTANCE_PAGES).
+		values.append(new BackupPage(inst.get()));
 
 		// Let plugins add their own instance pages
 		if (APPLICATION->pluginManager()) {

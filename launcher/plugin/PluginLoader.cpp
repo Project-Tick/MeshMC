@@ -25,6 +25,7 @@
 
 #include "plugin/PluginLoader.h"
 #include "plugin/PluginSignature.h"
+#include "plugin/CoreSupersededPlugins.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -169,12 +170,29 @@ PluginLoader::scanDirectory(const QString& dir,
 		if (!meta.loaded)
 			continue;
 
+		// Refuse modules whose job core has taken over. This outranks
+		// the user disable list below: re-enabling such a module in the
+		// dialog cannot make it safe to load, so we never let it look
+		// like a user choice.
+		const CoreSupersededPlugin* superseded =
+			findCoreSupersededPlugin(meta.name);
+		if (!superseded)
+			superseded = findCoreSupersededPlugin(meta.moduleId());
+
+		if (superseded) {
+			meta.disabled = true;
+			meta.disableReason = PluginDisableReason::SupersededByCore;
+			meta.disableDetail = QString(superseded->detail);
+			qInfo().noquote()
+				<< "[PluginLoader] Not loading" << meta.name << "from"
+				<< meta.filePath << "-" << meta.disableDetail;
+		}
 		// Apply user disable list. We keep the library loaded so that
 		// the plugins dialog can still display the module's metadata
 		// (name, version, signature state, etc.) — but flag it so the
 		// manager refuses to call mmco_init() on it.
-		if (disabledNames.contains(meta.name.toLower()) ||
-			disabledNames.contains(meta.moduleId().toLower())) {
+		else if (disabledNames.contains(meta.name.toLower()) ||
+				 disabledNames.contains(meta.moduleId().toLower())) {
 			meta.disabled = true;
 			meta.disableReason = PluginDisableReason::UserDisabled;
 			meta.disableDetail =
