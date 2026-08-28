@@ -30,8 +30,14 @@ endif()
 # `MeshMC_STAGING_PLUGINS` cache option (off by default). Plugins
 # graduate out of staging by moving their subdirectory back up one
 # level and being re-listed below.
+#
+# Plugins can also graduate the other way — out of plugins/ and into
+# the launcher itself. When that happens, drop the subdirectory here
+# and add the module name to launcher/plugin/CoreSupersededPlugins.h so
+# stale .mmco files in users' mmcmodules/ directories are refused
+# instead of doubling up on the core feature.
+#   - BackupSystem: moved into core (launcher/backup + BackupPage)
 set(MESHMC_IN_TREE_PLUGIN_TARGETS
-    BackupSystem
     NewsViewer
     SystemTray
     DesktopNotifier
@@ -42,7 +48,6 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
     OfflineWiki
 )
 
-add_subdirectory(BackupSystem)
 add_subdirectory(NewsViewer)
 add_subdirectory(SystemTray)
 add_subdirectory(DesktopNotifier)
