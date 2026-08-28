@@ -979,6 +979,9 @@ void Application::initSettings()
 	m_settings->registerSetting("InstSortMode", "Name");
 	m_settings->registerSetting("SelectedInstance", QString());
 
+	// Toolbar customization
+	m_settings->registerSetting("ToolbarsLocked", false);
+
 	// Window state and geometry
 	m_settings->registerSetting("MainWindowState", "");
 	m_settings->registerSetting("MainWindowGeometry", "");

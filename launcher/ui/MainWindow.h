@@ -224,6 +224,13 @@ class MainWindow : public QMainWindow
 
 	void globalSettingsClosed();
 
+	/*!
+	 * Toggles whether the toolbars can be dragged between dock areas.
+	 * Persisted via the "ToolbarsLocked" setting; the resulting layout itself
+	 * is persisted by QMainWindow::saveState() in closeEvent().
+	 */
+	void lockToolbars(bool state);
+
   private:
 	void retranslateUi();
 
