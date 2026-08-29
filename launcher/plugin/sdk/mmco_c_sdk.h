@@ -89,14 +89,14 @@ extern "C" {
 #endif
 
 #define MMCO_MAGIC 0x4D4D434F
-#define MMCO_VERSION "8.0.0"
-#define MMCO_ABI_VERSION 3
+#define MMCO_VERSION "10.0.0"
+#define MMCO_ABI_VERSION 4
 #define MMCO_EXTENSION ".mmco"
 #define MMCO_FLAG_NONE 0x00000000
 #define MMCO_TRAILER_MAGIC 0x53434D4D /* ASCII "MMCS" — see MMCOFormat.h */
 #define MMCO_VERNUM                                                            \
-	0x08000000L /* MMNNRRSM: major minor revision status modified */
-#define MMCO_VER_MAJOR 8
+	0x0A000000L /* MMNNRRSM: major minor revision status modified */
+#define MMCO_VER_MAJOR 10
 #define MMCO_VER_MINOR 0
 #define MMCO_VER_REVISION 0
 #define MMCO_VER_STATUS 0 /* 0=devel, 1-E=beta, F=Release (DEPRECATED) */
@@ -533,14 +533,17 @@ typedef struct MMCOContext {
 								   const char* prompt,
 								   const char* default_value);
 	int (*ui_confirm_dialog)(void* mh, const char* title, const char* message);
+	/* DEPRECATED, no-op since the instance sidebar was fixed to a set list
+	 * of instance-wide commands. Always returns 0 and registers nothing;
+	 * the slot is kept only so existing modules still link.
+	 * Use ui_register_instance_page() instead -- an instance window page is
+	 * where per-instance plugin UI belongs. */
 	int (*ui_register_instance_action)(void* mh, const char* text,
 									   const char* tooltip,
 									   const char* icon_name,
 									   const char* page_id);
 
-	/* Register a callback-based action in the instance toolbar.
-	 * Unlike ui_register_instance_action which opens a settings page,
-	 * this calls the given callback when the button is clicked. */
+	/* DEPRECATED, no-op. See ui_register_instance_action above. */
 	int (*ui_register_instance_action_cb)(void* mh, const char* text,
 										  const char* tooltip,
 										  const char* icon_name,

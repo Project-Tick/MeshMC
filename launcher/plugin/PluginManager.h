@@ -588,34 +588,10 @@ class PluginManager : public QObject
 	/* hook_id -> list of registrations */
 	QMultiMap<uint32_t, HookRegistration> m_hooks;
 
-  public:
-	/* Registered instance toolbar actions (for MainWindow to consume) */
-	struct InstanceAction {
-		QString text;
-		QString tooltip;
-		QString iconName;
-		QString pageId;
-	};
-	const QVector<InstanceAction>& instanceActions() const
-	{
-		return m_instanceActions;
-	}
-
-	struct InstanceCallbackAction {
-		QString text;
-		QString tooltip;
-		QString iconName;
-		void (*callback)(void* ud);
-		void* userData;
-	};
-	const QVector<InstanceCallbackAction>& instanceCallbackActions() const
-	{
-		return m_instanceCallbackActions;
-	}
-
   private:
-	QVector<InstanceAction> m_instanceActions;
-	QVector<InstanceCallbackAction> m_instanceCallbackActions;
+	/* NOTE: the instance toolbar actions a plugin could once register here
+	 * are gone along with the API that fed them; see the deprecation note
+	 * on api_ui_register_instance_action() in PluginManager.cpp. */
 
 	/* Pending launch modifications (set by plugins during PRE_LAUNCH hooks).
 	 *

@@ -250,17 +250,17 @@ struct MMCOContext {
 	/* Returns 1=Yes, 0=No */
 	int (*ui_confirm_dialog)(void* mh, const char* title, const char* message);
 
-	/* Register an action in the main window's instance toolbar.
-	 * text/tooltip are shown in the toolbar; icon_name refers to a themed icon;
-	 * page_id is the page opened via showInstanceWindow(). */
+	/* DEPRECATED, no-op since the instance sidebar was fixed to a set list
+	 * of instance-wide commands. Always returns 0 and registers nothing;
+	 * the slot is kept only so existing modules still link.
+	 * Use ui_register_instance_page() instead -- an instance window page is
+	 * where per-instance plugin UI belongs. */
 	int (*ui_register_instance_action)(void* mh, const char* text,
 									   const char* tooltip,
 									   const char* icon_name,
 									   const char* page_id);
 
-	/* Register a callback-based action in the instance toolbar.
-	 * Unlike ui_register_instance_action which opens a settings page,
-	 * this calls the given callback when the button is clicked. */
+	/* DEPRECATED, no-op. See ui_register_instance_action above. */
 	int (*ui_register_instance_action_cb)(void* mh, const char* text,
 										  const char* tooltip,
 										  const char* icon_name,

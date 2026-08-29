@@ -68,8 +68,8 @@
 #include <cstdint>
 
 #define MMCO_MAGIC 0x4D4D434F
-#define MMCO_VERSION "8.0.0"
-#define MMCO_ABI_VERSION 3
+#define MMCO_VERSION "10.0.0"
+#define MMCO_ABI_VERSION 4
 #define MMCO_EXTENSION ".mmco"
 
 /* Magic value that identifies the GPG signature trailer at the end of a
@@ -78,8 +78,8 @@
 #define MMCO_TRAILER_MAGIC 0x53434D4D
 #define MMCO_FLAG_NONE 0x00000000
 #define MMCO_VERNUM                                                            \
-	0x08000000L /* MMNNRRSM: major minor revision status modified */
-#define MMCO_VER_MAJOR 8
+	0x0A000000L /* MMNNRRSM: major minor revision status modified */
+#define MMCO_VER_MAJOR 10
 #define MMCO_VER_MINOR 0
 #define MMCO_VER_REVISION 0
 #define MMCO_VER_STATUS 0 /* 0=devel, 1-E=beta, F=Release (DEPRECATED) */
