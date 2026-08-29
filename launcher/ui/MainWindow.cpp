@@ -45,7 +45,7 @@
 #include "plugin/PluginHooks.h"
 
 #include "MainWindow.h"
-#include "ui/MacOSMenuBar.h"
+#include "ui/MacMenuBar.h"
 #include "ui/themes/ThemeManager.h"
 
 #include <QtCore/QVariant>
@@ -108,6 +108,7 @@
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/dialogs/AboutDialog.h"
+#include "ui/dialogs/NewsViewerDialog.h"
 #include "ui/dialogs/MeshMCLogsDialog.h"
 #include "ui/dialogs/FeatureFlagsDialog.h"
 #include "ui/dialogs/PluginsDialog.h"
@@ -1359,8 +1360,14 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// Add the news label to the news toolbar.
 	{
-		m_newsChecker.reset(
-			new NewsChecker(APPLICATION->network(), BuildConfig.NEWS_RSS_URL));
+		// Feed 0 is ours; anything after it comes from
+		// -DMeshMC_NEWS_EXTRA_FEEDS at build time. The news bar only
+		// ever shows the newest headline across the lot; the rest is
+		// for the news dialog.
+		QStringList feeds{BuildConfig.NEWS_RSS_URL};
+		feeds.append(BuildConfig.NEWS_EXTRA_FEEDS.split(QLatin1Char(';'),
+														Qt::SkipEmptyParts));
+		m_newsChecker.reset(new NewsChecker(APPLICATION->network(), feeds));
 		newsLabel = new QToolButton();
 		newsLabel->setIcon(APPLICATION->getThemedIcon("news"));
 		newsLabel->setSizePolicy(QSizePolicy::Expanding,
@@ -1372,6 +1379,19 @@ MainWindow::MainWindow(QWidget* parent)
 						 &MainWindow::newsButtonClicked);
 		QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this,
 						 &MainWindow::updateNewsLabel);
+
+		/* Re-publish a finished load as MMCO_HOOK_NEWS_UPDATED. The
+		 * checker is ours, so this is the only place that knows when
+		 * every feed has landed — and by now they all have, which is
+		 * what the hook promises its listeners. */
+		QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this,
+						 []() {
+							 if (APPLICATION->pluginManager()) {
+								 APPLICATION->pluginManager()->dispatchHook(
+									 MMCO_HOOK_NEWS_UPDATED);
+							 }
+						 });
+
 		updateNewsLabel();
 	}
 
@@ -1456,6 +1476,8 @@ MainWindow::MainWindow(QWidget* parent)
 	ui->mainToolBar->addWidget(spacer);
 
 	accountMenu = new QMenu(this);
+	// Named so the macOS menu bar can find it and mirror it.
+	accountMenu->setObjectName(QStringLiteral("accountMenu"));
 
 	repopulateAccountsMenu();
 
@@ -1505,58 +1527,11 @@ MainWindow::MainWindow(QWidget* parent)
 	// Show initial account
 	defaultAccountChanged();
 
-	// macOS native top bar — composed of the same QActions that drive the
-	// toolbars, so triggering a menu item runs the same slot as the toolbar
-	// button. No-op on non-Apple builds.
-	{
-		MacOSMenuBar::Actions menuActions;
-		menuActions.addInstance = ui->actionAddInstance.operator->();
-		menuActions.launch = ui->actionLaunchInstance.operator->();
-		menuActions.launchOffline =
-			ui->actionLaunchInstanceOffline.operator->();
-		menuActions.editInstance = ui->actionEditInstance.operator->();
-		menuActions.instanceSettings = ui->actionInstanceSettings.operator->();
-		menuActions.editNotes = ui->actionEditInstNotes.operator->();
-		menuActions.viewMods = ui->actionMods.operator->();
-		menuActions.viewWorlds = ui->actionWorlds.operator->();
-		menuActions.screenshots = ui->actionScreenshots.operator->();
-		menuActions.rename = ui->actionRenameInstance.operator->();
-		menuActions.changeGroup = ui->actionChangeInstGroup.operator->();
-		menuActions.changeIcon = ui->actionChangeInstIcon.operator->();
-		menuActions.copyInstance = ui->actionCopyInstance.operator->();
-		menuActions.exportInstance = ui->actionExportInstance.operator->();
-		menuActions.deleteInstance = ui->actionDeleteInstance.operator->();
-
-		menuActions.viewInstanceFolder =
-			ui->actionViewInstanceFolder.operator->();
-		menuActions.viewCentralModsFolder =
-			ui->actionViewCentralModsFolder.operator->();
-		menuActions.viewSelectedMCFolder =
-			ui->actionViewSelectedMCFolder.operator->();
-		menuActions.viewSelectedModsFolder =
-			ui->actionViewSelectedModsFolder.operator->();
-		menuActions.viewSelectedConfigFolder =
-			ui->actionConfig_Folder.operator->();
-		menuActions.viewSelectedInstFolder =
-			ui->actionViewSelectedInstFolder.operator->();
-
-		menuActions.toggleCat = ui->actionCAT.operator->();
-
-		menuActions.preferences = ui->actionSettings.operator->();
-		menuActions.about = ui->actionAbout.operator->();
-
-		menuActions.manageAccounts = ui->actionManageAccounts.operator->();
-		menuActions.accountSubmenu = accountMenu;
-
-		menuActions.reportBug = ui->actionReportBug.operator->();
-		menuActions.discord = ui->actionDISCORD.operator->();
-		menuActions.reddit = ui->actionREDDIT.operator->();
-		menuActions.plugins = ui->actionPlugins.operator->();
-		menuActions.viewLogs = ui->actionMeshMCLogs.operator->();
-		menuActions.checkUpdate = ui->actionCheckUpdate.operator->();
-
-		MacOSMenuBar::install(this, menuActions);
-	}
+	/* Give macOS its screen-top menu. The bar finds the toolbar actions by
+	 * object name and reuses them, so nothing has to be listed here, and it
+	 * keeps itself in step with the account list and the interface
+	 * language on its own. Dormant everywhere else. */
+	MacMenuBar::attachTo(this);
 
 	// TODO: refresh accounts here?
 	// auto accounts = APPLICATION->accounts();
@@ -2678,21 +2653,31 @@ void MainWindow::on_actionPatreon_triggered()
     DesktopServices::openUrl(QUrl(BuildConfig.PATREON_URL));
 }
 
+/*
+ * The two ways into the news dialog. They differ only in whether the
+ * list of every entry is open: "More news" wants to browse, the
+ * headline in the news bar wants that one post.
+ */
+void MainWindow::showNews(bool withSidebar)
+{
+	if (!m_newsDialog) {
+		m_newsDialog = new NewsViewerDialog(m_newsChecker.get(), this);
+		m_newsDialog->setAttribute(Qt::WA_DeleteOnClose);
+	}
+	m_newsDialog->loadEntries(withSidebar);
+	m_newsDialog->show();
+	m_newsDialog->raise();
+	m_newsDialog->activateWindow();
+}
+
 void MainWindow::on_actionMoreNews_triggered()
 {
-	DesktopServices::openUrl(
-		QUrl("https://projecttick.org/product/meshmc/news"));
+	showNews(true);
 }
 
 void MainWindow::newsButtonClicked()
 {
-	QList<NewsEntryPtr> entries = m_newsChecker->getNewsEntries();
-	if (entries.count() > 0) {
-		DesktopServices::openUrl(QUrl(entries[0]->link));
-	} else {
-		DesktopServices::openUrl(
-			QUrl("https://projecttick.org/product/meshmc/news"));
-	}
+	showNews(false);
 }
 
 void MainWindow::on_actionAbout_triggered()

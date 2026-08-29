@@ -706,8 +706,8 @@ SET(MESHMC_SOURCES
     ui/ColorCache.cpp
     ui/MainWindow.h
     ui/MainWindow.cpp
-    ui/MacOSMenuBar.h
-    ui/MacOSMenuBar.cpp
+    ui/MacMenuBar.h
+    ui/MacMenuBar.cpp
     ui/InstanceWindow.h
     ui/InstanceWindow.cpp
 
@@ -890,6 +890,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/NewComponentDialog.h
     ui/dialogs/NewInstanceDialog.cpp
     ui/dialogs/NewInstanceDialog.h
+    ui/dialogs/NewsViewerDialog.cpp
+    ui/dialogs/NewsViewerDialog.h
     ui/dialogs/NotificationDialog.cpp
     ui/dialogs/NotificationDialog.h
     ui/pagedialog/PageDialog.cpp

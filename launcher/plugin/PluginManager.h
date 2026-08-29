@@ -30,6 +30,8 @@
 #include "plugin/PluginHooks.h"
 #include "plugin/PluginAPI.h"
 
+#include "news/NewsEntry.h"
+
 #include <QObject>
 #include <QMutex>
 #include <QPointer>
@@ -45,6 +47,7 @@
 #include <vector>
 #include <functional>
 
+class NewsChecker;
 class QAction;
 class QEvent;
 class QMenu;
@@ -563,8 +566,13 @@ class PluginManager : public QObject
 	static int api_main_window_hide(void* mh);
 	static int api_main_window_is_visible(void* mh);
 
-	/* S17 — News API */
-	void rebuildNewsCache();
+	/* S17 — News API.
+	 *
+	 * Read-only projection of MainWindow's NewsChecker, which owns and
+	 * parses every feed. Both helpers cope with there being no main
+	 * window yet (startup) or any more (shutdown). */
+	NewsChecker* newsChecker() const;
+	QList<NewsEntryPtr> newsEntries() const;
 	static int api_news_get_entry_count(void* mh);
 	static const char* api_news_get_entry_title(void* mh, int index);
 	static const char* api_news_get_entry_link(void* mh, int index);
@@ -603,20 +611,8 @@ class PluginManager : public QObject
 	QMap<QString, QString> m_pendingLaunchEnv;
 	QString m_pendingLaunchWrapper;
 
-	/* S17 — News state */
-	QStringList m_extraFeedUrls;
-	/* Flat list of all entries from all feeds: (feedIndex, entry) pairs.
-	 * feedIndex 0 = default BuildConfig.NEWS_RSS_URL,
-	 * feedIndex N = m_extraFeedUrls[N-1] */
-	struct NewsEntryCache {
-		int feedIndex;
-		QString title;
-		QString link;
-		QString content;
-		QString author;
-		QString date; /* ISO 8601 */
-	};
-	QVector<NewsEntryCache> m_newsCache;
+	/* S17 — News: no state. NewsChecker holds the feeds and the
+	 * entries; see newsChecker() above. */
 
 	/* S19 / S20 — system-tray and main-window helpers state.
 	 * All tray icons, menus, actions and close filters are tracked per

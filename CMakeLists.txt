@@ -745,7 +745,7 @@ set(MeshMC_VERSION_NAME4_COMMA "${MeshMC_VERSION_MAJOR},${MeshMC_VERSION_MINOR},
 ######## Thirdly, please define URLs and API keys ########
 
 set(MeshMC_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch MeshMC's news RSS feed from.")
-set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml;" CACHE STRING "Semicolon-separated list of extra RSS feed URLs for the NewsViewer plugin.")
+set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml;" CACHE STRING "Semicolon-separated list of extra RSS feed URLs shown alongside the launcher's own news feed.")
 
 # Build number
 set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
@@ -824,7 +824,7 @@ set(MeshMC_ANALYTICS_SECRET "_EG4lDmVT-S1oGiOIwvzPA" CACHE STRING "API secret fo
 set(MeshMC_BUG_TRACKER_URL "https://github.com/Project-Tick/MeshMC/issues" CACHE STRING "URL for the bug tracker.")
 
 # Discord URL
-set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
+set(MeshMC_DISCORD_URL "https://discord.gg/PMxPTqwEwj" CACHE STRING "URL for the Discord guild.")
 
 # Subreddit URL
 set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")

@@ -73,8 +73,6 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QDomDocument>
-#include <QDomNodeList>
 #include <QStringList>
 #include "news/NewsChecker.h"
 #include "ui/MainWindow.h"
@@ -218,18 +216,10 @@ void PluginManager::initializeAll()
 	// those hooks inside mmco_init() see the very first dispatch.
 	connectAppSignals();
 
-	// Seed the news extra-feed list from BuildConfig so plugins that
-	// consume the news API see every feed configured at build time
-	// without having to link BuildConfig themselves.
-	if (!BuildConfig.NEWS_EXTRA_FEEDS.isEmpty()) {
-		const QStringList urls = BuildConfig.NEWS_EXTRA_FEEDS.split(
-			QLatin1Char(';'), Qt::SkipEmptyParts);
-		for (const QString& url : urls) {
-			const QString trimmed = url.trimmed();
-			if (!trimmed.isEmpty() && !m_extraFeedUrls.contains(trimmed))
-				m_extraFeedUrls.append(trimmed);
-		}
-	}
+	// The news feed list used to be seeded here from BuildConfig. It is
+	// MainWindow's NewsChecker that owns the feeds now — it is
+	// constructed with NEWS_RSS_URL plus NEWS_EXTRA_FEEDS — and the
+	// news_* API reads straight out of it.
 
 	// Fire app-initialized hook
 	dispatchHook(MMCO_HOOK_APP_INITIALIZED);
@@ -2684,119 +2674,95 @@ const char* PluginManager::api_ui_plugin_icon(void* mh, const char* name)
 /* ── S17 — News API ────────────────────────────────────────────────── */
 
 /*
- * Internal helper: rebuild m_newsCache from the MainWindow's NewsChecker
- * (feed index 0) and any extra feeds registered by plugins.
- * Called lazily on first access and after news_reload().
+ * The whole S17 surface is a read-only view onto MainWindow's
+ * NewsChecker, which owns every feed — the launcher's own plus the
+ * extra ones from MeshMC_NEWS_EXTRA_FEEDS — parses them, and hands
+ * them back merged and sorted newest first.
+ *
+ * It used to be a cache in this class, with the extra feeds downloaded
+ * and parsed here. That never actually worked: every getter called
+ * rebuildNewsCache(), which cleared the cache and refilled it from feed
+ * 0 alone, so the entries api_news_reload() appended for the extra
+ * feeds were wiped before any plugin could read them. Feeds belong to
+ * NewsChecker now and there is nothing left to cache.
  */
-void PluginManager::rebuildNewsCache()
+NewsChecker* PluginManager::newsChecker() const
 {
-	m_newsCache.clear();
-
-	// Feed 0: default NewsChecker from MainWindow
 	if (!m_app)
-		return;
-
+		return nullptr;
 	auto* mw = m_app->mainWindow();
-	if (mw) {
-		auto* checker = mw->newsChecker();
-		if (checker) {
-			const auto entries = checker->getNewsEntries();
-			for (const auto& e : entries) {
-				NewsEntryCache c;
-				c.feedIndex = 0;
-				c.title = e->title;
-				c.link = e->link;
-				c.content = e->content;
-				c.author = e->author;
-				c.date = e->pubDate.toString(Qt::ISODate);
-				m_newsCache.append(c);
-			}
-		}
-	}
-
-	// Feeds 1..N: extra feeds are appended by api_news_reload callbacks.
-	// rebuildNewsCache only populates feed 0; extra feed entries persist
-	// in m_newsCache between reloads (appended by the NetJob callbacks).
+	if (!mw)
+		return nullptr;
+	return mw->newsChecker();
 }
+
+QList<NewsEntryPtr> PluginManager::newsEntries() const
+{
+	auto* checker = newsChecker();
+	if (!checker)
+		return {};
+	return checker->getNewsEntries();
+}
+
+/* Every entry getter looks the same: resolve the runtime, take the
+ * merged entry list, bounds-check, stash the answer in the module's
+ * scratch string so the returned pointer stays valid until its next
+ * API call. */
+#define MMCO_NEWS_ENTRY_STRING(field)                                          \
+	auto* r = rt(mh);                                                          \
+	if (!r)                                                                    \
+		return nullptr;                                                        \
+	const auto entries = r->manager->newsEntries();                            \
+	if (index < 0 || index >= entries.size())                                  \
+		return nullptr;                                                        \
+	r->tempString = (field).toStdString();                                     \
+	return r->tempString.c_str();
 
 int PluginManager::api_news_get_entry_count(void* mh)
 {
 	auto* r = rt(mh);
 	if (!r)
 		return -1;
-	r->manager->rebuildNewsCache();
-	return r->manager->m_newsCache.size();
+	return r->manager->newsEntries().size();
 }
 
 const char* PluginManager::api_news_get_entry_title(void* mh, int index)
 {
-	auto* r = rt(mh);
-	if (!r)
-		return nullptr;
-	r->manager->rebuildNewsCache();
-	if (index < 0 || index >= r->manager->m_newsCache.size())
-		return nullptr;
-	r->tempString = r->manager->m_newsCache[index].title.toStdString();
-	return r->tempString.c_str();
+	MMCO_NEWS_ENTRY_STRING(entries[index]->title)
 }
 
 const char* PluginManager::api_news_get_entry_link(void* mh, int index)
 {
-	auto* r = rt(mh);
-	if (!r)
-		return nullptr;
-	r->manager->rebuildNewsCache();
-	if (index < 0 || index >= r->manager->m_newsCache.size())
-		return nullptr;
-	r->tempString = r->manager->m_newsCache[index].link.toStdString();
-	return r->tempString.c_str();
+	MMCO_NEWS_ENTRY_STRING(entries[index]->link)
 }
 
 const char* PluginManager::api_news_get_entry_content(void* mh, int index)
 {
-	auto* r = rt(mh);
-	if (!r)
-		return nullptr;
-	r->manager->rebuildNewsCache();
-	if (index < 0 || index >= r->manager->m_newsCache.size())
-		return nullptr;
-	r->tempString = r->manager->m_newsCache[index].content.toStdString();
-	return r->tempString.c_str();
+	MMCO_NEWS_ENTRY_STRING(entries[index]->content)
 }
 
 const char* PluginManager::api_news_get_entry_author(void* mh, int index)
 {
-	auto* r = rt(mh);
-	if (!r)
-		return nullptr;
-	r->manager->rebuildNewsCache();
-	if (index < 0 || index >= r->manager->m_newsCache.size())
-		return nullptr;
-	r->tempString = r->manager->m_newsCache[index].author.toStdString();
-	return r->tempString.c_str();
+	MMCO_NEWS_ENTRY_STRING(entries[index]->author)
 }
 
 const char* PluginManager::api_news_get_entry_date(void* mh, int index)
 {
-	auto* r = rt(mh);
-	if (!r)
-		return nullptr;
-	r->manager->rebuildNewsCache();
-	if (index < 0 || index >= r->manager->m_newsCache.size())
-		return nullptr;
-	r->tempString = r->manager->m_newsCache[index].date.toStdString();
-	return r->tempString.c_str();
+	/* The ABI documents this as ISO 8601. */
+	MMCO_NEWS_ENTRY_STRING(entries[index]->pubDate.toString(Qt::ISODate))
 }
+
+#undef MMCO_NEWS_ENTRY_STRING
 
 int PluginManager::api_news_get_entry_feed_index(void* mh, int index)
 {
 	auto* r = rt(mh);
 	if (!r)
 		return -1;
-	r->manager->rebuildNewsCache();
-	if (index < 0 || index >= r->manager->m_newsCache.size())
+	const auto entries = r->manager->newsEntries();
+	if (index < 0 || index >= entries.size())
 		return -1;
-	return r->manager->m_newsCache[index].feedIndex;
+	return entries[index]->feedIndex;
 }
 
 int PluginManager::api_news_add_feed_url(void* mh, const char* url)
@@ -2804,12 +2770,19 @@ int PluginManager::api_news_add_feed_url(void* mh, const char* url)
 	auto* r = rt(mh);
 	if (!r || !url)
 		return -1;
-	QString qUrl = QString::fromUtf8(url);
-	if (qUrl.isEmpty())
-		return -1;
-	if (!r->manager->m_extraFeedUrls.contains(qUrl))
-		r->manager->m_extraFeedUrls.append(qUrl);
-	return 0;
+
+	/* Feeds are fixed at build time (MeshMC_NEWS_EXTRA_FEEDS) and set up
+	 * with the NewsChecker in one go, because the indices they get are
+	 * handed out to everyone reading the news. Adding one mid-session
+	 * would renumber the list under those readers.
+	 *
+	 * The call used to "succeed" by appending to a list nothing ever
+	 * downloaded from, so no caller can have depended on it working.
+	 * Saying so out loud beats pretending. */
+	qWarning() << "[PluginManager] news_add_feed_url is no longer supported:"
+			   << "feeds are configured at build time. Ignoring"
+			   << QString::fromUtf8(url);
+	return -1;
 }
 
 int PluginManager::api_news_get_feed_count(void* mh)
@@ -2817,8 +2790,8 @@ int PluginManager::api_news_get_feed_count(void* mh)
 	auto* r = rt(mh);
 	if (!r)
 		return 0;
-	// +1 for the default feed
-	return 1 + r->manager->m_extraFeedUrls.size();
+	auto* checker = r->manager->newsChecker();
+	return checker ? checker->feedUrls().size() : 0;
 }
 
 const char* PluginManager::api_news_get_feed_url(void* mh, int index)
@@ -2826,15 +2799,16 @@ const char* PluginManager::api_news_get_feed_url(void* mh, int index)
 	auto* r = rt(mh);
 	if (!r || index < 0)
 		return nullptr;
-	if (index == 0) {
-		// Default feed URL from BuildConfig
-		r->tempString = BuildConfig.NEWS_RSS_URL.toStdString();
-		return r->tempString.c_str();
-	}
-	int extraIdx = index - 1;
-	if (extraIdx >= r->manager->m_extraFeedUrls.size())
+
+	auto* checker = r->manager->newsChecker();
+	if (!checker)
 		return nullptr;
-	r->tempString = r->manager->m_extraFeedUrls[extraIdx].toStdString();
+
+	const QStringList urls = checker->feedUrls();
+	if (index >= urls.size())
+		return nullptr;
+
+	r->tempString = urls.at(index).toStdString();
 	return r->tempString.c_str();
 }
 
@@ -2844,70 +2818,15 @@ int PluginManager::api_news_reload(void* mh)
 	if (!r)
 		return -1;
 
-	auto* app = r->manager->m_app;
-	if (!app)
+	auto* checker = r->manager->newsChecker();
+	if (!checker)
 		return -1;
 
-	// Reload default feed via MainWindow's NewsChecker
-	auto* mw = app->mainWindow();
-	if (mw) {
-		auto* checker = mw->newsChecker();
-		if (checker)
-			checker->reloadNews();
-	}
-
-	// Extra feeds: fetch via NetJob and append to cache
-	// We use the existing http_get infrastructure for simplicity.
-	// Each extra feed is fetched; on completion we parse and append.
-	int feedIdx = 1;
-	for (const QString& feedUrl : r->manager->m_extraFeedUrls) {
-		const int capturedFeedIdx = feedIdx++;
-		QByteArray* buf = new QByteArray();
-		NetJob* job =
-			new NetJob(QStringLiteral("NewsViewer extra feed"), app->network());
-		job->addNetAction(Net::Download::makeByteArray(feedUrl, buf));
-
-		QObject::connect(
-			job, &NetJob::succeeded, r->manager,
-			[mgr = r->manager, buf, capturedFeedIdx]() {
-				QDomDocument doc;
-				if (!doc.setContent(*buf)) {
-					delete buf;
-					return;
-				}
-				delete buf;
-
-				QDomNodeList items = doc.elementsByTagName("item");
-				for (int i = 0; i < items.length(); i++) {
-					QDomElement el = items.at(i).toElement();
-					auto childText = [&](const QString& tag,
-										 const QString& def = {}) -> QString {
-						auto nodes = el.elementsByTagName(tag);
-						return nodes.count() > 0
-								   ? nodes.at(0).toElement().text()
-								   : def;
-					};
-					PluginManager::NewsEntryCache c;
-					c.feedIndex = capturedFeedIdx;
-					c.title = childText("title", QObject::tr("Untitled"));
-					c.content = childText("description");
-					c.link = childText("link");
-					c.author = childText("dc:creator");
-					QString dateStr = childText("pubDate");
-					QDateTime dt = QDateTime::fromString(
-						dateStr, "ddd, dd MMM yyyy hh:mm:ss");
-					c.date = dt.isValid() ? dt.toString(Qt::ISODate) : dateStr;
-					mgr->m_newsCache.append(c);
-				}
-				mgr->dispatchHook(MMCO_HOOK_NEWS_UPDATED);
-			});
-
-		QObject::connect(job, &NetJob::failed, r->manager,
-						 [buf](const QString&) { delete buf; });
-
-		job->start();
-	}
-
+	/* One reload covers every feed. MMCO_HOOK_NEWS_UPDATED is dispatched
+	 * from the newsLoaded() handler once they have all landed, so a
+	 * plugin reading the entries from that hook sees the complete set
+	 * rather than a half-filled list. */
+	checker->reloadNews();
 	return 0;
 }
 
