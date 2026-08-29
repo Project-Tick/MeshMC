@@ -29,6 +29,7 @@
 
 #include "ui/MainWindow.h"
 #include "ui/InstanceWindow.h"
+#include "ui/MacMenuBar.h"
 
 #include <QWindow>
 
@@ -840,8 +841,11 @@ void Application::initSettings()
 	m_settings->registerSetting("IconTheme", QString("pe_colored"));
 	m_settings->registerSetting("ApplicationTheme", QString("system"));
 
-	// Native macOS top bar (no-op on other platforms).
-	m_settings->registerSetting("UseMacNativeMenuBar", true);
+	/* Screen-top menu bar. Only macOS has one; elsewhere the setting is
+	 * carried but never acted on. The second key is what this shipped as
+	 * originally, kept so existing configs still read. */
+	m_settings->registerSetting(
+		{MacMenuBar::settingKey(), MacMenuBar::legacySettingKey()}, true);
 
 	// Notifications
 	m_settings->registerSetting("ShownNotifications", QString());
