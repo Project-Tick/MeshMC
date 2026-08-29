@@ -180,7 +180,7 @@ void InstanceWindow::updateLaunchButtons()
 
 void InstanceWindow::on_btnLaunchMinecraftOffline_clicked()
 {
-	APPLICATION->launch(m_instance, false, nullptr);
+	APPLICATION->launch(m_instance, LaunchMode::Offline);
 }
 
 void InstanceWindow::on_InstanceLaunchTask_changed(
@@ -231,7 +231,7 @@ void InstanceWindow::on_btnKillMinecraft_clicked()
 	if (m_instance->isRunning()) {
 		APPLICATION->kill(m_instance);
 	} else {
-		APPLICATION->launch(m_instance, true, nullptr);
+		APPLICATION->launch(m_instance, LaunchMode::Normal);
 	}
 }
 

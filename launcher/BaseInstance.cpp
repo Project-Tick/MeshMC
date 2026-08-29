@@ -77,6 +77,12 @@ BaseInstance::BaseInstance(SettingsObjectPtr globalSettings,
 	 * short enough that nothing here needs to be fast. */
 	m_settings->registerSetting("shortcuts", QString());
 
+	/* Which profiler this instance launches under. Empty means none. This
+	 * is a property of the instance rather than of one click on a menu
+	 * entry, so that Launch Offline (and anything else that starts the
+	 * game) profiles too. */
+	m_settings->registerSetting("Profiler", "");
+
 	/* Pack-source provenance keys (consumed by the PackUpdater
 	 * plugin via instance_setting_get). All optional — empty string
 	 * means "not a pack-managed instance" or "we couldn't recover
@@ -359,6 +365,21 @@ void BaseInstance::setShortcuts(const QList<ShortcutData>& shortcuts)
 	m_settings->set("shortcuts",
 					QString::fromUtf8(QJsonDocument(array).toJson(
 						QJsonDocument::Compact)));
+}
+
+QString BaseInstance::profilerKey() const
+{
+	return m_settings->get("Profiler").toString();
+}
+
+void BaseInstance::setProfilerKey(const QString& key)
+{
+	if (profilerKey() == key) {
+		// Writing a setting means writing a file. Not for a no-op.
+		return;
+	}
+	m_settings->set("Profiler", key);
+	emit profilerChanged();
 }
 
 void BaseInstance::setIconKey(QString val)

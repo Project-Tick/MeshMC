@@ -254,6 +254,44 @@ QSet<QString> MinecraftInstance::traits() const
 	return profile->getTraits();
 }
 
+QString MinecraftInstance::minecraftVersion() const
+{
+	auto components = getPackProfile();
+	if (!components) {
+		return QString();
+	}
+
+	QString version = components->getComponentVersion("net.minecraft");
+	if (!version.isEmpty()) {
+		return version;
+	}
+
+	/* Nothing has read the profile from disk yet. It is only loaded when a
+	 * launch, an update or the version page needs it, so anything asking
+	 * earlier - a menu being built, the status bar - sees every component
+	 * version as empty. Load it here, offline: filling in a menu entry must
+	 * never wait on the network. */
+	components->reload(Net::Mode::Offline);
+	return components->getComponentVersion("net.minecraft");
+}
+
+bool MinecraftInstance::supportsDemo() const
+{
+	const QString version = minecraftVersion();
+	if (version.isEmpty()) {
+		/* The version could not be determined at all - a broken or
+		 * not-yet-written profile. Offer demo anyway and let the launch be
+		 * the thing that fails: every Minecraft release since 1.3.1 supports
+		 * it, so refusing on an unknown version hides the feature from
+		 * practically everyone it works for. */
+		return true;
+	}
+	/* Snapshot and pre-release names are only handled as far as Version's
+	 * section comparison takes them; the pre-1.0 alpha/beta naming schemes
+	 * are not recognised at all. */
+	return Version(version) >= Version("1.3.1");
+}
+
 QString MinecraftInstance::gameRoot() const
 {
 	QFileInfo mcDir(FS::PathCombine(instanceRoot(), "minecraft"));
@@ -880,10 +918,10 @@ QString MinecraftInstance::getStatusbarDescription()
 	}
 
 	QString description;
+	/* Through the accessor, so that a profile nobody has read yet gets loaded
+	 * instead of putting an empty version in the status bar. */
 	description.append(
-		tr("Minecraft %1 (%2)")
-			.arg(m_components->getComponentVersion("net.minecraft"))
-			.arg(typeName()));
+		tr("Minecraft %1 (%2)").arg(minecraftVersion()).arg(typeName()));
 	if (m_settings->get("ShowGameTime").toBool()) {
 		if (lastTimePlayed() > 0) {
 			description.append(

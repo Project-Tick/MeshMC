@@ -69,12 +69,27 @@ void LaunchController::executeTask()
 
 void LaunchController::decideAccount()
 {
+	auto accounts = APPLICATION->accounts();
+
+	/* Demo was asked for up front (the Launch Demo entry), so there is no
+	 * account question to ask: login() skips authentication entirely. All
+	 * that is missing is a name to show in game. Borrowing the default
+	 * account's profile name keeps the demo from being called "User" for
+	 * someone who does have an account. */
+	if (m_demoMode) {
+		if (m_demoUsername.isEmpty()) {
+			auto account = accounts->defaultAccount();
+			QString profileName = account ? account->profileName() : QString();
+			m_demoUsername = profileName.isEmpty() ? tr("User") : profileName;
+		}
+		return;
+	}
+
 	if (m_accountToUse) {
 		return;
 	}
 
 	// Find an account to use.
-	auto accounts = APPLICATION->accounts();
 	if (accounts->count() <= 0) {
 		// Tell the user they need to log in at least one account in order to
 		// play.

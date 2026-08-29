@@ -61,6 +61,28 @@ class MinecraftInstance : public BaseInstance
 		return true;
 	}
 
+	/**
+	 * @brief the Minecraft version this instance is set to, or empty
+	 *
+	 * Reads it from the pack profile, loading that profile first if nothing
+	 * has needed it yet. That load is the point of this accessor: the profile
+	 * is only read on demand, so anything that asks the components directly
+	 * before a launch or an update gets an empty string back and silently
+	 * concludes whatever an empty version implies.
+	 *
+	 * Never touches the network.
+	 */
+	QString minecraftVersion() const;
+
+	/**
+	 * Whether this instance's Minecraft version understands --demo.
+	 *
+	 * Demo mode was added in 1.3.1; older clients ignore the argument and
+	 * start a normal (unauthenticated, and therefore broken) session, so
+	 * offering it there would be a trap.
+	 */
+	bool supportsDemo() const;
+
 	////// Directories and files //////
 	QString jarModsDir() const;
 	QString resourcePacksDir() const;

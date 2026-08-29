@@ -174,6 +174,20 @@ class BaseInstance : public QObject,
 	/// Replace the whole list.
 	void setShortcuts(const QList<ShortcutData>& shortcuts);
 
+	/**
+	 * Key of the profiler this instance launches under, empty for none.
+	 *
+	 * The key is whatever Application::profilers() is indexed by. It is
+	 * kept verbatim even when no such profiler is registered in this
+	 * build, so that an instance shared between machines does not
+	 * quietly lose the setting.
+	 */
+	QString profilerKey() const;
+
+	/// Set (or, with an empty key, clear) the profiler. Emits
+	/// profilerChanged() only when the value actually moves.
+	void setProfilerKey(const QString& key);
+
 	QString getPreLaunchCommand();
 	QString getPostExitCommand();
 	QString getWrapperCommand();
@@ -309,6 +323,9 @@ class BaseInstance : public QObject,
 	void launchTaskChanged(shared_qobject_ptr<LaunchTask>);
 
 	void runningStatusChanged(bool running);
+
+	/// The profiler this instance launches under was changed.
+	void profilerChanged();
 
 	void statusChanged(Status from, Status to);
 
