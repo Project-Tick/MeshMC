@@ -824,7 +824,7 @@ set(MeshMC_ANALYTICS_SECRET "_EG4lDmVT-S1oGiOIwvzPA" CACHE STRING "API secret fo
 set(MeshMC_BUG_TRACKER_URL "https://github.com/Project-Tick/MeshMC/issues" CACHE STRING "URL for the bug tracker.")
 
 # Discord URL
-set(MeshMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
+set(MeshMC_DISCORD_URL "https://discord.gg/PMxPTqwEwj" CACHE STRING "URL for the Discord guild.")
 
 # Subreddit URL
 set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
