@@ -2257,21 +2257,69 @@ void MainWindow::on_actionDeleteInstance_triggered()
 	const int shortcutCount = m_selectedInstance->shortcuts().size();
 	QString shortcutNote;
 	if (shortcutCount > 0) {
-		shortcutNote =
-			tr("\n\n%n shortcut(s) to it will be deleted as well.", "",
+		shortcutNote = tr("\n\n%n shortcut(s) to it will go the same way.", "",
 			   shortcutCount);
 	}
 
-	auto response = CustomMessageBox::selectable(
-						this, tr("CAREFUL!"),
-						tr("About to delete: %1\nThis is permanent and will "
-						   "completely delete the instance.%2\n\nAre you sure?")
-								.arg(m_selectedInstance->name(), shortcutNote),
-						QMessageBox::Warning,
-						QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
+	/* Say which of the two this is going to be instead of hedging: with a
+	 * trash to move it into the instance can be brought back, and without
+	 * one it cannot. */
+	const bool recoverable = FS::canTrash();
+	const QString fate =
+		recoverable
+			? tr("It will be moved to the trash. To bring it back, "
+				 "right-click the instance list and pick Restore.")
+			: tr("There is no usable trash on this system, so this is "
+				 "permanent.");
+
+	/* One title for both cases: the difference between recoverable and
+	 * permanent is a whole sentence in the body, and shouting CAREFUL at
+	 * one of them only makes the other look safe to click through. */
+	auto response =
+		CustomMessageBox::selectable(
+			this, tr("Delete instance?"),
+			tr("About to delete: %1\n%2%3\n\nAre you sure?")
+				.arg(m_selectedInstance->name(), fate, shortcutNote),
+			QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No,
+			QMessageBox::No)
 						->exec();
-	if (response == QMessageBox::Yes) {
-		APPLICATION->instances()->deleteInstance(id);
+	if (response != QMessageBox::Yes) {
+		return;
+	}
+
+	auto instances = APPLICATION->instances();
+	if (!instances->trashInstance(id)) {
+		/* canTrash() said yes but the move failed, or it said no in the
+		 * first place. Either way the user asked for the instance to go. */
+		if (recoverable) {
+			qWarning() << "Trashing" << id
+					   << "failed after all; deleting it instead.";
+		}
+		instances->deleteInstance(id);
+	}
+	ui->actionUndoTrashInstance->setEnabled(instances->trashedSomething());
+
+	/* The instance is gone either way, so stop pointing at it. The rescan
+	 * that follows would get here eventually, but until it does the
+	 * sidebar is still armed with commands for something that no longer
+	 * exists. */
+	APPLICATION->settings()->set("SelectedInstance", QString());
+	selectionBad();
+}
+
+void MainWindow::restoreTrashedInstance()
+{
+	auto instances = APPLICATION->instances();
+	const bool complete = instances->undoTrashInstance();
+	ui->actionUndoTrashInstance->setEnabled(instances->trashedSomething());
+
+	if (!complete) {
+		CustomMessageBox::selectable(
+			this, tr("Restore Instance"),
+			tr("Not everything could be put back. Check your trash to "
+			   "recover the rest by hand."),
+			QMessageBox::Warning, QMessageBox::Ok)
+			->exec();
 	}
 }
 

@@ -122,6 +122,29 @@ namespace FS
 	 */
 	bool deletePath(QString path);
 
+	/**
+	 * Whether this platform has a trash we can trust to be reversible.
+	 *
+	 * Worth asking before offering the user a choice, so that a dialog
+	 * can promise "recoverable" or "permanent" and be right either way
+	 * rather than hedging.
+	 */
+	bool canTrash();
+
+	/**
+	 * Move a file or folder to the platform's trash, so that the user can
+	 * put it back.
+	 *
+	 * On success @p pathInTrash, when given, receives where the item
+	 * landed, which is what makes an undo possible.
+	 *
+	 * Returns false without touching anything where there is no trash we
+	 * can trust to be reversible; the caller is then free to fall back to
+	 * deletePath() -- but it has to say so, because at that point the
+	 * operation is no longer undoable.
+	 */
+	bool trash(const QString& path, QString* pathInTrash = nullptr);
+
 	QString PathCombine(const QString& path1, const QString& path2);
 	QString PathCombine(const QString& path1, const QString& path2,
 						const QString& path3);

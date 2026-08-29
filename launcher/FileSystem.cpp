@@ -61,9 +61,12 @@
 #include <objidl.h>
 #include <shlguid.h>
 #include <shlobj.h>
+#include <versionhelpers.h>
 #else
 #include <utime.h>
 #endif
+
+#include "DesktopServices.h"
 
 namespace FS
 {
@@ -194,6 +197,36 @@ namespace FS
 			return false;
 		}
 		return true;
+	}
+
+	bool canTrash()
+	{
+		/* Qt writes into the sandbox's own trash instead of asking the
+		 * host through the portal, so from the user's side the folder
+		 * would simply vanish with no way back. */
+		if (DesktopServices::isFlatpak()) {
+			return false;
+		}
+
+#if defined(Q_OS_WIN)
+		/* A Server install has no recycle bin unless one was set up, and
+		 * the shell answers a recycle request on such a volume by
+		 * deleting outright -- the one thing a trash operation is
+		 * supposed to rule out. */
+		if (IsWindowsServer()) {
+			return false;
+		}
+#endif
+
+		return QFile::supportsMoveToTrash();
+	}
+
+	bool trash(const QString& path, QString* pathInTrash)
+	{
+		if (!canTrash()) {
+			return false;
+		}
+		return QFile::moveToTrash(path, pathInTrash);
 	}
 
 	bool deletePath(QString path)
@@ -482,10 +515,14 @@ namespace FS
 		{
 			QTextStream stream(&runner);
 			stream << "#!/bin/bash\n";
-			stream << quoteArgs({target}, QStringLiteral("\""),
-								QStringLiteral("\\\""))
-				   << " "
-				   << quoteArgs(args, QStringLiteral("\""),
+			/* One list, one call: quoting the target and the arguments
+			 * separately and gluing them with a space left a trailing
+			 * space behind whenever there were no arguments. Harmless --
+			 * every parser drops it -- but it is written into a file a
+			 * user can open. */
+			QStringList command{target};
+			command += args;
+			stream << quoteArgs(command, QStringLiteral("\""),
 								QStringLiteral("\\\""))
 				   << "\n";
 		}
@@ -538,11 +575,14 @@ namespace FS
 			stream << "[Desktop Entry]\n";
 			stream << "Type=Application\n";
 			stream << "Categories=Game;ActionGame;AdventureGame;Simulation\n";
+			/* One list, one call, so that an argument-less shortcut does
+			 * not get a trailing space after Exec=. With arguments the
+			 * line is byte-for-byte what it was: quoteArgs() joins with
+			 * the same single space. */
+			QStringList command{target};
+			command += args;
 			stream << "Exec="
-				   << quoteArgs({target}, QStringLiteral("'"),
-								QStringLiteral("'\\''"))
-				   << " "
-				   << quoteArgs(args, QStringLiteral("'"),
+				   << quoteArgs(command, QStringLiteral("'"),
 								QStringLiteral("'\\''"))
 				   << "\n";
 			stream << "Name=" << name << "\n";

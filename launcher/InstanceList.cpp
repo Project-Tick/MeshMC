@@ -44,6 +44,7 @@
 #include <QDirIterator>
 #include <QSet>
 #include <QFile>
+#include <QFileInfo>
 #include <QThread>
 #include <QTextStream>
 #include <QXmlStreamReader>
@@ -328,6 +329,152 @@ void InstanceList::deleteInstance(const InstanceId& id)
 					   << shortcut.filePath << "of deleted instance" << id;
 		}
 	}
+}
+
+bool InstanceList::trashInstance(const InstanceId& id)
+{
+	auto inst = getInstanceById(id);
+	if (!inst) {
+		qWarning() << "Cannot trash instance" << id
+				   << ". No such instance is present (deleted externally?).";
+		return false;
+	}
+
+	const QString root = inst->instanceRoot();
+	const GroupId group = m_instanceGroupIndex.value(id);
+	/* Read while the folder is still there: the list lives in the
+	 * instance's own config file, and shortcuts() checks the disk. */
+	const QList<ShortcutData> shortcuts = inst->shortcuts();
+
+	qDebug() << "Will trash instance" << id;
+	QString trashedRoot;
+	if (!FS::trash(root, &trashedRoot)) {
+		qWarning() << "Could not move instance" << id << "to the trash.";
+		return false;
+	}
+	qDebug() << "Instance" << id << "is in the trash at" << trashedRoot;
+
+	/* Only now: had the move failed, the instance would still be here
+	 * and would have lost its group for nothing. */
+	if (m_instanceGroupIndex.remove(id)) {
+		saveGroupList();
+	}
+
+	TrashedInstance record;
+	record.id = id;
+	record.name = inst->name();
+	record.path = root;
+	record.trashPath = trashedRoot;
+	record.group = group;
+
+	for (const ShortcutData& shortcut : shortcuts) {
+		QString trashedShortcut;
+		if (FS::trash(shortcut.filePath, &trashedShortcut)) {
+			record.shortcuts.append({shortcut, trashedShortcut});
+			continue;
+		}
+
+		/* A shortcut whose instance is in the trash launches nothing, so
+		 * one that refuses to be trashed is deleted instead. Losing the
+		 * ability to undo that one beats leaving it on the desktop. */
+		qWarning() << "Could not trash shortcut" << shortcut.name << "at"
+				   << shortcut.filePath << "-- deleting it instead.";
+		if (!FS::deletePath(shortcut.filePath)) {
+			qWarning() << "... and could not delete it either.";
+		}
+	}
+
+	m_trashHistory.append(record);
+	return true;
+}
+
+bool InstanceList::trashedSomething() const
+{
+	return !m_trashHistory.isEmpty();
+}
+
+QString InstanceList::lastTrashedName() const
+{
+	if (m_trashHistory.isEmpty()) {
+		return {};
+	}
+	const TrashedInstance& record = m_trashHistory.last();
+	return record.name.isEmpty() ? record.id : record.name;
+}
+
+bool InstanceList::undoTrashInstance()
+{
+	if (m_trashHistory.isEmpty()) {
+		/* Nothing to do is not a failed restore -- saying otherwise makes
+		 * the caller apologise for something that did not happen. */
+		qWarning() << "Nothing to restore from the trash.";
+		return true;
+	}
+
+	const TrashedInstance record = m_trashHistory.takeLast();
+
+	/* An instance's id is its folder name, so if something has appeared
+	 * at that path in the meantime it now owns the name. Stepping aside
+	 * keeps both instead of refusing to restore. */
+	InstanceId id = record.id;
+	QString path = record.path;
+	while (QFileInfo::exists(path)) {
+		id += QLatin1Char('1');
+		path += QLatin1Char('1');
+	}
+
+	if (!QFile::rename(record.trashPath, path)) {
+		qWarning() << "Could not move" << record.trashPath << "back to"
+				   << path;
+		/* The folder is still in the trash, so put the record back: the
+		 * obstacle may be temporary (a file open, the volume busy) and a
+		 * second attempt is worth allowing. Only dropped once the move has
+		 * actually happened. */
+		m_trashHistory.append(record);
+		return false;
+	}
+	qDebug() << "Restored instance" << id << "from" << record.trashPath;
+
+	bool complete = true;
+	for (const TrashedShortcut& item : record.shortcuts) {
+		/* Not stepped aside the way the folder above is: a shortcut path
+		 * ends in a suffix the shell reads (.lnk, .desktop, .app), and
+		 * appending past it would produce something inert. */
+		if (QFileInfo::exists(item.shortcut.filePath)) {
+			qWarning() << "Not restoring shortcut" << item.shortcut.name
+					   << "-- something else is at"
+					   << item.shortcut.filePath;
+			complete = false;
+			continue;
+		}
+		if (!QFile::rename(item.trashPath, item.shortcut.filePath)) {
+			qWarning() << "Could not move shortcut" << item.shortcut.name
+					   << "back to" << item.shortcut.filePath;
+			complete = false;
+			continue;
+		}
+		qDebug() << "Restored shortcut" << item.shortcut.name << "to"
+				 << item.shortcut.filePath;
+	}
+
+	/* Set the group before the rescan, so the instance comes back in the
+	 * group it left rather than at the top level. */
+	if (!record.group.isEmpty()) {
+		m_instanceGroupIndex[id] = record.group;
+		m_groupNameCache.insert(record.group);
+	}
+
+	// Synchronous: this lands in providerUpdated() -> loadList().
+	emit instancesChanged();
+
+	/* Only worth writing once the rescan has put the id in instanceSet;
+	 * saveGroupList() skips instances it does not know about. */
+	if (!record.group.isEmpty()) {
+		saveGroupList();
+	}
+
+	emit instanceSelectRequest(id);
+	return complete;
 }
 
 static QMap<InstanceId, InstanceLocator>
