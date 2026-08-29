@@ -53,11 +53,11 @@ QPalette GreenDarkTheme::colorScheme()
 	palette.setColor(QPalette::Window, QColor(49, 49, 49));
 	palette.setColor(QPalette::WindowText, Qt::white);
 	palette.setColor(QPalette::Base, QColor(34, 34, 34));
-	palette.setColor(QPalette::AlternateBase, QColor(49, 49, 49));
+	palette.setColor(QPalette::AlternateBase, QColor(42, 42, 42));
 	palette.setColor(QPalette::ToolTipBase, Qt::white);
 	palette.setColor(QPalette::ToolTipText, Qt::white);
 	palette.setColor(QPalette::Text, Qt::white);
-	palette.setColor(QPalette::Button, QColor(49, 49, 49));
+	palette.setColor(QPalette::Button, QColor(48, 48, 48));
 	palette.setColor(QPalette::ButtonText, Qt::white);
 	palette.setColor(QPalette::BrightText, Qt::red);
 	palette.setColor(QPalette::Link, QColor(47, 163, 198));
