@@ -36,6 +36,7 @@ endif()
 # and add the module name to launcher/plugin/CoreSupersededPlugins.h so
 # stale .mmco files in users' mmcmodules/ directories are refused
 # instead of doubling up on the core feature.
+#   - Filelink: moved into core
 #   - BackupSystem: moved into core (launcher/backup + BackupPage)
 set(MESHMC_IN_TREE_PLUGIN_TARGETS
     NewsViewer
@@ -61,11 +62,6 @@ if(UNIX AND NOT APPLE)
     add_subdirectory(NVIDIAPrime)
     add_subdirectory(LinuxPerf)
     list(APPEND MESHMC_IN_TREE_PLUGIN_TARGETS NVIDIAPrime LinuxPerf)
-endif()
-
-if(NOT APPLE)
-    add_subdirectory(Filelink)
-    list(APPEND MESHMC_IN_TREE_PLUGIN_TARGETS Filelink)
 endif()
 
 # Automatic signing is wired *inside each plugin's own CMakeLists.txt*
