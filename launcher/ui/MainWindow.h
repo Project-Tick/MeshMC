@@ -139,6 +139,22 @@ class MainWindow : public QMainWindow
 
 	void on_actionViewCentralModsFolder_triggered();
 
+	void on_actionViewLauncherRootFolder_triggered();
+
+	void on_actionViewIconThemeFolder_triggered();
+
+	void on_actionViewWidgetThemeFolder_triggered();
+
+	void on_actionViewCatPackFolder_triggered();
+
+	void on_actionViewIconsFolder_triggered();
+	
+	void on_actionViewLogsFolder_triggered();
+
+	void on_actionViewJavaFolder_triggered();
+
+    void on_actionViewSkinsFolder_triggered();
+
 	void checkForUpdates();
 
 	void on_actionSettings_triggered();

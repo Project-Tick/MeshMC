@@ -264,6 +264,14 @@ class MainWindow::Ui
 	TranslatedToolButton foldersMenuButton;
 	TranslatedAction actionViewInstanceFolder;
 	TranslatedAction actionViewCentralModsFolder;
+	TranslatedAction actionViewWidgetThemeFolder;
+	TranslatedAction actionViewCatPackFolder;
+	TranslatedAction actionViewIconsFolder;
+	TranslatedAction actionViewLogsFolder;
+	TranslatedAction actionViewIconThemeFolder;
+	TranslatedAction actionViewJavaFolder;
+	TranslatedAction actionViewSkinsFolder;
+	TranslatedAction actionViewLauncherRootFolder;
 
 	QMenu* helpMenu = nullptr;
 	TranslatedToolButton helpMenuButton;
@@ -336,13 +344,27 @@ class MainWindow::Ui
 		foldersMenu = new QMenu(MainWindow);
 		foldersMenu->setToolTipsVisible(true);
 
+		actionViewLauncherRootFolder = TranslatedAction(MainWindow);
+		actionViewLauncherRootFolder->setObjectName(
+			QStringLiteral("actionViewLauncherRootFolder"));
+		actionViewLauncherRootFolder->setIcon(
+			APPLICATION->getThemedIcon("viewfolder"));
+		actionViewLauncherRootFolder.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Launcher Root"));
+		actionViewLauncherRootFolder.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Open the launcher's root folder in a file browser."));
+		all_actions.append(&actionViewLauncherRootFolder);
+		foldersMenu->addAction(actionViewLauncherRootFolder);
+
+		foldersMenu->addSeparator();
+
 		actionViewInstanceFolder = TranslatedAction(MainWindow);
 		actionViewInstanceFolder->setObjectName(
 			QStringLiteral("actionViewInstanceFolder"));
 		actionViewInstanceFolder->setIcon(
 			APPLICATION->getThemedIcon("viewfolder"));
 		actionViewInstanceFolder.setTextId(
-			QT_TRANSLATE_NOOP("MainWindow", "View Instance Folder"));
+			QT_TRANSLATE_NOOP("MainWindow", "Instances"));
 		actionViewInstanceFolder.setTooltipId(QT_TRANSLATE_NOOP(
 			"MainWindow", "Open the instance folder in a file browser."));
 		all_actions.append(&actionViewInstanceFolder);
@@ -354,11 +376,99 @@ class MainWindow::Ui
 		actionViewCentralModsFolder->setIcon(
 			APPLICATION->getThemedIcon("centralmods"));
 		actionViewCentralModsFolder.setTextId(
-			QT_TRANSLATE_NOOP("MainWindow", "View Central Mods Folder"));
+			QT_TRANSLATE_NOOP("MainWindow", "Central Mods"));
 		actionViewCentralModsFolder.setTooltipId(QT_TRANSLATE_NOOP(
 			"MainWindow", "Open the central mods folder in a file browser."));
 		all_actions.append(&actionViewCentralModsFolder);
 		foldersMenu->addAction(actionViewCentralModsFolder);
+
+		actionViewSkinsFolder = TranslatedAction(MainWindow);
+		actionViewSkinsFolder->setObjectName(
+			QStringLiteral("actionViewSkinsFolder"));
+		actionViewSkinsFolder->setIcon(
+			APPLICATION->getThemedIcon("viewfolder"));
+		actionViewSkinsFolder.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Skins"));
+		actionViewSkinsFolder.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Open the skins folder in a file browser."));
+		all_actions.append(&actionViewSkinsFolder);
+		foldersMenu->addAction(actionViewSkinsFolder);
+
+		actionViewJavaFolder = TranslatedAction(MainWindow);
+		actionViewJavaFolder->setObjectName(
+			QStringLiteral("actionViewJavaFolder"));
+		actionViewJavaFolder->setIcon(
+			APPLICATION->getThemedIcon("viewfolder"));
+		actionViewJavaFolder.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Java"));
+		actionViewJavaFolder.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Open the Java folder in a file browser. Only available if the built-in Java downloader is used."));
+		all_actions.append(&actionViewJavaFolder);
+		foldersMenu->addAction(actionViewJavaFolder);
+
+		foldersMenu->addSeparator();
+
+		actionViewIconThemeFolder = TranslatedAction(MainWindow);
+		actionViewIconThemeFolder->setObjectName(
+			QStringLiteral("actionViewIconThemeFolder"));
+		actionViewIconThemeFolder->setIcon(
+			APPLICATION->getThemedIcon("viewfolder"));
+		actionViewIconThemeFolder.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Icon Theme"));
+		actionViewIconThemeFolder.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Open the icon theme folder in a file browser."));
+		all_actions.append(&actionViewIconThemeFolder);
+		foldersMenu->addAction(actionViewIconThemeFolder);
+
+		actionViewWidgetThemeFolder = TranslatedAction(MainWindow);
+		actionViewWidgetThemeFolder->setObjectName(
+			QStringLiteral("actionViewWidgetThemeFolder"));
+		actionViewWidgetThemeFolder->setIcon(
+			APPLICATION->getThemedIcon("viewfolder"));
+		actionViewWidgetThemeFolder.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Widget Themes"));
+		actionViewWidgetThemeFolder.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Open the widget themes folder in a file browser."));
+		all_actions.append(&actionViewWidgetThemeFolder);
+		foldersMenu->addAction(actionViewWidgetThemeFolder);
+
+		actionViewCatPackFolder = TranslatedAction(MainWindow);
+		actionViewCatPackFolder->setObjectName(
+			QStringLiteral("actionViewCatPackFolder"));
+		actionViewCatPackFolder->setIcon(
+			APPLICATION->getThemedIcon("viewfolder"));
+		actionViewCatPackFolder.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Cat Packs"));
+		actionViewCatPackFolder.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Open the cat packs folder in a file browser."));
+		all_actions.append(&actionViewCatPackFolder);
+		foldersMenu->addAction(actionViewCatPackFolder);
+
+		actionViewIconsFolder = TranslatedAction(MainWindow);
+		actionViewIconsFolder->setObjectName(
+			QStringLiteral("actionViewIconsFolder"));
+		actionViewIconsFolder->setIcon(
+			APPLICATION->getThemedIcon("viewfolder"));
+		actionViewIconsFolder.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Instance Icons"));
+		actionViewIconsFolder.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Open the instance icons folder in a file browser."));
+		all_actions.append(&actionViewIconsFolder);
+		foldersMenu->addAction(actionViewIconsFolder);
+
+		foldersMenu->addSeparator();
+
+		actionViewLogsFolder = TranslatedAction(MainWindow);
+		actionViewLogsFolder->setObjectName(
+			QStringLiteral("actionViewLogsFolder"));
+		actionViewLogsFolder->setIcon(
+			APPLICATION->getThemedIcon("viewfolder"));
+		actionViewLogsFolder.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Logs"));
+		actionViewLogsFolder.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow", "Open the logs folder in a file browser."));
+		all_actions.append(&actionViewLogsFolder);
+		foldersMenu->addAction(actionViewLogsFolder);
 
 		foldersMenuButton = TranslatedToolButton(MainWindow);
 		foldersMenuButton.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Folders"));
@@ -1925,6 +2035,11 @@ void MainWindow::deleteGroup()
 	}
 }
 
+void MainWindow::on_actionViewLauncherRootFolder_triggered()
+{
+	DesktopServices::openDirectory(".");
+}
+
 void MainWindow::on_actionViewInstanceFolder_triggered()
 {
 	QString str = APPLICATION->settings()->get("InstanceDir").toString();
@@ -1940,6 +2055,41 @@ void MainWindow::on_actionViewCentralModsFolder_triggered()
 {
 	DesktopServices::openDirectory(
 		APPLICATION->settings()->get("CentralModsDir").toString(), true);
+}
+
+void MainWindow::on_actionViewSkinsFolder_triggered()
+{
+	DesktopServices::openDirectory(APPLICATION->settings()->get("SkinsDir").toString(), true);
+}
+
+void MainWindow::on_actionViewIconThemeFolder_triggered()
+{
+	DesktopServices::openDirectory(APPLICATION->themeManager()->getIconThemesFolder().path(), true);
+}
+
+void MainWindow::on_actionViewWidgetThemeFolder_triggered()
+{
+	DesktopServices::openDirectory(APPLICATION->themeManager()->getApplicationThemesFolder().path(), true);
+}
+
+void MainWindow::on_actionViewCatPackFolder_triggered()
+{
+	DesktopServices::openDirectory(APPLICATION->themeManager()->getCatPacksFolder().path(), true);
+}
+
+void MainWindow::on_actionViewIconsFolder_triggered()
+{
+	DesktopServices::openDirectory(APPLICATION->icons()->getDirectory(), true);
+}
+
+void MainWindow::on_actionViewLogsFolder_triggered()
+{
+	DesktopServices::openDirectory("logs", true);
+}
+
+void MainWindow::on_actionViewJavaFolder_triggered()
+{
+	DesktopServices::openDirectory(APPLICATION->javaPath(), true);
 }
 
 void MainWindow::on_actionConfig_Folder_triggered()
