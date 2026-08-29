@@ -60,6 +60,11 @@ ThemeManager::ThemeManager()
 	initializeCatPacks();
 }
 
+ThemeManager::~ThemeManager()
+{
+    stopSettingNewWindowColorsOnMac();
+}
+
 void ThemeManager::initializeThemes()
 {
 	// Default "System" theme
@@ -88,6 +93,12 @@ void ThemeManager::initializeThemes()
 	// theme inherits unspecified values from.
 	initializeCustomThemes(darkTheme);
 }
+
+#ifndef Q_OS_MACOS
+void ThemeManager::setTitlebarColorOnMac(WId windowId, QColor color) {}
+void ThemeManager::setTitlebarColorOfAllWindowsOnMac(QColor color) {}
+void ThemeManager::stopSettingNewWindowColorsOnMac() {}
+#endif
 
 void ThemeManager::initializeCustomThemes(ITheme* baseTheme)
 {
@@ -164,6 +175,7 @@ void ThemeManager::setApplicationTheme(const QString& id, bool initial)
 	auto theme = getTheme(id);
 	if (theme) {
 		theme->apply(initial);
+		setTitlebarColorOfAllWindowsOnMac(qApp->palette().window().color());
 	} else {
 		qWarning() << "Tried to set invalid theme:" << id;
 	}

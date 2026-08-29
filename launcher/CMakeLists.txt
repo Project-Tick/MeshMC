@@ -1003,6 +1003,13 @@ if(NOT MeshMC_DISABLE_JAVA_DOWNLOADER)
     )
 endif()
 
+if (APPLE)
+    set(MESHMC_SOURCES
+        ${MESHMC_SOURCES}
+        ui/themes/ThemeManager.mm
+    )
+endif()
+
 qt6_add_resources(MESHMC_RESOURCES
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
