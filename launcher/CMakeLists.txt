@@ -683,8 +683,8 @@ SET(MESHMC_SOURCES
     ui/ColorCache.cpp
     ui/MainWindow.h
     ui/MainWindow.cpp
-    ui/MacOSMenuBar.h
-    ui/MacOSMenuBar.cpp
+    ui/MacMenuBar.h
+    ui/MacMenuBar.cpp
     ui/InstanceWindow.h
     ui/InstanceWindow.cpp
 
