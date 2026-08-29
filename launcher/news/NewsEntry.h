@@ -89,6 +89,15 @@ class NewsEntry : public QObject
 
 	//! The date and time that this post was published.
 	QDateTime pubDate;
+
+	/*!
+	 * Which of NewsChecker's feeds this entry came from. 0 is the
+	 * launcher's own feed; anything higher is an extra feed configured
+	 * at build time via MeshMC_NEWS_EXTRA_FEEDS. Set by NewsChecker
+	 * after parsing, not by fromXmlElement() — the XML says nothing
+	 * about where it was downloaded from.
+	 */
+	int feedIndex = 0;
 };
 
 typedef std::shared_ptr<NewsEntry> NewsEntryPtr;

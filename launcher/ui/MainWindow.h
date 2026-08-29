@@ -45,6 +45,7 @@
 #include <memory>
 
 #include <QMainWindow>
+#include <QPointer>
 #include <QProcess>
 #include <QTimer>
 
@@ -55,6 +56,7 @@
 
 class LaunchController;
 class NewsChecker;
+class NewsViewerDialog;
 class NotificationChecker;
 class QToolButton;
 class InstanceProxyModel;
@@ -247,6 +249,10 @@ class MainWindow : public QMainWindow
 	void instanceFromInstanceTask(InstanceTask* task);
 	void finalizeInstance(InstancePtr inst);
 
+	/* Opens (or raises) the news dialog. withSidebar picks between
+	 * browsing every entry and going straight to the latest one. */
+	void showNews(bool withSidebar);
+
   private:
 	std::unique_ptr<Ui> ui;
 
@@ -262,6 +268,10 @@ class MainWindow : public QMainWindow
 
 	unique_qobject_ptr<NewsChecker> m_newsChecker;
 	unique_qobject_ptr<NotificationChecker> m_notificationChecker;
+
+	// Deletes itself on close (WA_DeleteOnClose), so this only ever
+	// holds a live dialog.
+	QPointer<NewsViewerDialog> m_newsDialog;
 
 	InstancePtr m_selectedInstance;
 	QString m_currentInstIcon;

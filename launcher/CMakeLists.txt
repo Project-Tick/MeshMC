@@ -860,6 +860,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/NewComponentDialog.h
     ui/dialogs/NewInstanceDialog.cpp
     ui/dialogs/NewInstanceDialog.h
+    ui/dialogs/NewsViewerDialog.cpp
+    ui/dialogs/NewsViewerDialog.h
     ui/dialogs/NotificationDialog.cpp
     ui/dialogs/NotificationDialog.h
     ui/pagedialog/PageDialog.cpp
