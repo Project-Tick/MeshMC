@@ -745,7 +745,7 @@ set(MeshMC_VERSION_NAME4_COMMA "${MeshMC_VERSION_MAJOR},${MeshMC_VERSION_MINOR},
 ######## Thirdly, please define URLs and API keys ########
 
 set(MeshMC_NEWS_RSS_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "URL to fetch MeshMC's news RSS feed from.")
-set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml;" CACHE STRING "Semicolon-separated list of extra RSS feed URLs for the NewsViewer plugin.")
+set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed.xml;" CACHE STRING "Semicolon-separated list of extra RSS feed URLs shown alongside the launcher's own news feed.")
 
 # Build number
 set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")

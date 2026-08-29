@@ -44,12 +44,26 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QList>
 
 #include <net/NetJob.h>
 
 #include "NewsEntry.h"
 
+/*
+ * NewsChecker — downloads and parses the launcher's RSS feed, plus any
+ * extra feeds configured at build time (MeshMC_NEWS_EXTRA_FEEDS).
+ *
+ * Feed 0 is the launcher's own feed and is the one the news bar in the
+ * main window speaks for: if it fails, the whole load is reported as
+ * failed. Extra feeds are additive — one of them being unreachable
+ * leaves the rest of the news perfectly usable, so it is logged and
+ * otherwise ignored rather than blanking the news bar.
+ *
+ * getNewsEntries() returns every feed's entries merged and sorted
+ * newest first, each tagged with the index of the feed it came from.
+ */
 class NewsChecker : public QObject
 {
 	Q_OBJECT
@@ -59,6 +73,18 @@ class NewsChecker : public QObject
 	 */
 	NewsChecker(shared_qobject_ptr<QNetworkAccessManager> network,
 				const QString& feedUrl);
+
+	/*!
+	 * Constructs a news reader over several feeds. The first URL is the
+	 * primary feed; empty entries are dropped and duplicates collapsed.
+	 */
+	NewsChecker(shared_qobject_ptr<QNetworkAccessManager> network,
+				const QStringList& feedUrls);
+
+	/*!
+	 * The feeds being watched, in the order their indices refer to.
+	 */
+	QStringList feedUrls() const;
 
 	/*!
 	 * Returns the error message for the last time the news was loaded.
@@ -76,7 +102,8 @@ class NewsChecker : public QObject
 	bool isLoadingNews() const;
 
 	/*!
-	 * Returns a list of news entries.
+	 * Every feed's entries merged into one list, newest first. Each
+	 * entry carries the index of the feed it came from.
 	 */
 	QList<NewsEntryPtr> getNewsEntries() const;
 
@@ -98,23 +125,38 @@ class NewsChecker : public QObject
 	void newsLoadingFailed(QString errorMsg);
 
   protected slots:
-	void rssDownloadFinished();
-	void rssDownloadFailed(QString reason);
+	void rssDownloadFinished(int feedIndex);
+	void rssDownloadFailed(int feedIndex, QString reason);
+
+  protected: /* methods */
+	/*!
+	 * Called once per feed as its download settles, whichever way it
+	 * went. Emits newsLoaded()/newsLoadingFailed() once the last
+	 * outstanding feed has reported in — never before, so a caller
+	 * never sees a half-populated list.
+	 */
+	void feedSettled();
 
   protected: /* data */
-	//! The URL for the RSS feed to fetch.
-	QString m_feedUrl;
+	/*! Everything one feed needs to be downloaded and parsed
+	 *  independently of the others. */
+	struct Feed {
+		QString url;
+		QByteArray data;
+		QList<NewsEntryPtr> entries;
+		NetJob::Ptr job;
+	};
 
-	//! List of news entries.
-	QList<NewsEntryPtr> m_newsEntries;
+	QList<Feed> m_feeds;
 
-	//! The network job to use to load the news.
-	NetJob::Ptr m_newsNetJob;
+	//! Feeds still being downloaded in the current reload.
+	int m_pendingFeeds = 0;
+
+	//! Set when the primary feed failed during the current reload.
+	QString m_primaryError;
 
 	//! True if news has been loaded.
-	bool m_loadedNews;
-
-	QByteArray newsData;
+	bool m_loadedNews = false;
 
 	/*!
 	 * Gets the error message that was given last time the news was loaded.

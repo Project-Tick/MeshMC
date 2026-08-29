@@ -37,8 +37,9 @@ endif()
 # stale .mmco files in users' mmcmodules/ directories are refused
 # instead of doubling up on the core feature.
 #   - BackupSystem: moved into core (launcher/backup + BackupPage)
+#   - NewsViewer:   moved into core (launcher/ui/dialogs/NewsViewerDialog,
+#                   multi-feed support folded into news/NewsChecker)
 set(MESHMC_IN_TREE_PLUGIN_TARGETS
-    NewsViewer
     SystemTray
     DesktopNotifier
     DiscordRPC
@@ -48,7 +49,6 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
     OfflineWiki
 )
 
-add_subdirectory(NewsViewer)
 add_subdirectory(SystemTray)
 add_subdirectory(DesktopNotifier)
 add_subdirectory(DiscordRPC)

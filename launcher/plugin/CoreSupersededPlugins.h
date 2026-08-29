@@ -68,6 +68,9 @@ findCoreSupersededPlugin(const QString& name)
 		{QLatin1String("BackupSystem"),
 		 QLatin1String("Instance backups are now part of MeshMC itself "
 					   "(instance settings -> Backups)")},
+		{QLatin1String("NewsViewer"),
+		 QLatin1String("The news viewer is now part of MeshMC itself "
+					   "(the news bar headline and \"More news\")")},
 	};
 
 	if (name.isEmpty())
