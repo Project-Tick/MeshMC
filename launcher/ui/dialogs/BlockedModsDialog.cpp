@@ -33,6 +33,8 @@
 #include <QStandardPaths>
 #include <QUrl>
 
+#include "modplatform/flame/FlameApi.h"
+
 BlockedModsDialog::BlockedModsDialog(QWidget* parent, const QString& title,
 									 const QString& text,
 									 QList<BlockedMod>& mods)
@@ -174,9 +176,7 @@ void BlockedModsDialog::openModDownload(int index)
 		return;
 
 	const auto& mod = m_mods[index];
-	QString url =
-		QString("https://www.curseforge.com/api/v1/mods/%1/files/%2/download")
-			.arg(mod.projectId)
-			.arg(mod.fileId);
+	const QString url = FlameApi::browserDownloadUrl(
+		QString::number(mod.projectId), QString::number(mod.fileId));
 	DesktopServices::openUrl(QUrl(url));
 }

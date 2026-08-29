@@ -50,6 +50,7 @@
 #include <LoggedProcess.h>
 
 class WorldList;
+class ModFolderModel;
 namespace Ui
 {
 	class WorldListPage;
@@ -103,6 +104,11 @@ class WorldListPage : public QMainWindow, public BasePage
   private:
 	Ui::WorldListPage* ui;
 	std::shared_ptr<WorldList> m_worlds;
+	/* Model for the currently open per-world data pack dialog. Rebuilt
+	 * every time the dialog opens because it is bound to one world's
+	 * saves/<world>/datapacks folder; kept alive here because the dialog
+	 * only borrows it. */
+	std::shared_ptr<ModFolderModel> m_datapackModel;
 	unique_qobject_ptr<LoggedProcess> m_mceditProcess;
 	bool m_mceditStarting = false;
 

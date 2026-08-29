@@ -86,12 +86,15 @@
    <addaction name="actionAdd"/>
    <addaction name="actionDownload"/>
    <addaction name="actionUpdate"/>
+   <addaction name="actionChangeVersion"/>
    <addaction name="separator"/>
    <addaction name="actionRemove"/>
    <addaction name="actionEnable"/>
    <addaction name="actionDisable"/>
    <addaction name="actionView_configs"/>
    <addaction name="actionView_Folder"/>
+   <addaction name="actionViewHomepage"/>
+   <addaction name="actionExportList"/>
   </widget>
   <action name="actionAdd">
    <property name="text">
@@ -148,10 +151,59 @@
   </action>
   <action name="actionUpdate">
    <property name="text">
-    <string>&amp;Update</string>
+    <string>Check for &amp;Updates</string>
    </property>
    <property name="toolTip">
     <string>Check tracked mods for newer compatible versions and update them.</string>
+   </property>
+  </action>
+  <action name="actionChangeVersion">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Change &amp;Version</string>
+   </property>
+   <property name="toolTip">
+    <string>Change a mod's version.</string>
+   </property>
+  </action>
+  <action name="actionVerifyDependencies">
+   <property name="text">
+    <string>Verify Dependencies</string>
+   </property>
+   <property name="toolTip">
+    <string>Check that the dependencies of the installed mods are present, and offer to install the ones that are missing.</string>
+   </property>
+  </action>
+  <action name="actionResetMetadata">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Reset update metadata</string>
+   </property>
+   <property name="toolTip">
+    <string>Forget where the selected files came from. They stay where they are, but are no longer tracked for updates.</string>
+   </property>
+  </action>
+  <action name="actionViewHomepage">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>View Homepage</string>
+   </property>
+   <property name="toolTip">
+    <string>View the homepages of all selected items.</string>
+   </property>
+  </action>
+  <action name="actionExportList">
+   <property name="text">
+    <string>Export List</string>
+   </property>
+   <property name="toolTip">
+    <string>Export this list to text.</string>
    </property>
   </action>
  </widget>

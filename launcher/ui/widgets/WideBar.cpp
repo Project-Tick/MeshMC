@@ -39,7 +39,8 @@ class ActionButton : public QToolButton
 		connect(this, &ActionButton::clicked, action, &QAction::trigger);
 		actionChanged();
 	};
-  private slots:
+
+  public slots:
 	void actionChanged()
 	{
 		setEnabled(m_action->isEnabled());
@@ -49,6 +50,18 @@ class ActionButton : public QToolButton
 		setIcon(m_action->icon());
 		setToolTip(m_action->toolTip());
 		setHidden(!m_action->isVisible());
+
+		/* An action that carries a menu gets a button split in two: the
+		 * near side does what the action does, the arrow opens the menu.
+		 * Without this the menu is unreachable - the button knows
+		 * nothing about it and a plain click just triggers the action,
+		 * which is how a submenu full of entries can end up invisible. */
+		if (menu() != m_action->menu()) {
+			setMenu(m_action->menu());
+		}
+		setPopupMode(m_action->menu() ? QToolButton::MenuButtonPopup
+									  : QToolButton::DelayedPopup);
+
 		setFocusPolicy(Qt::NoFocus);
 	}
 
@@ -114,6 +127,19 @@ void WideBar::insertSpacer(QAction* action)
 	entry->qAction = insertWidget((*iter)->qAction, spacer);
 	entry->type = BarEntry::Spacer;
 	m_entries.insert(iter, entry);
+}
+
+void WideBar::refreshActions()
+{
+	for (auto* entry : m_entries) {
+		if (entry->type != BarEntry::Action || !entry->qAction) {
+			continue;
+		}
+		if (auto* button =
+				qobject_cast<ActionButton*>(widgetForAction(entry->qAction))) {
+			button->actionChanged();
+		}
+	}
 }
 
 QMenu* WideBar::createContextMenu(QWidget* parent, const QString& title)

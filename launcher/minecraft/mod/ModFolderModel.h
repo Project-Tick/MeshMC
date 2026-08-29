@@ -169,8 +169,28 @@ class ModFolderModel : public QAbstractListModel
 	void updateFinished();
 
   private:
-	void resolveMod(Mod& m);
 	bool setModStatus(int index, ModStatusAction action);
+
+  protected:
+	void resolveMod(Mod& m);
+
+	/* Gate for "Add" / drag-and-drop installs.
+	 *
+	 * The base model accepts anything Mod recognises, which is right for
+	 * mods and resource packs - both are identified by the folder they
+	 * live in rather than by their contents. Subclasses backing a folder
+	 * whose format has a mandatory on-disk layout (shader packs, data
+	 * packs) override this so a file that would silently do nothing
+	 * in-game is rejected up front instead of quietly sitting there.
+	 *
+	 * Called before the file is copied into the folder, so `file` still
+	 * points at the user's original path. */
+	virtual bool acceptsFile(const QFileInfo& file, Mod::ModType type) const
+	{
+		Q_UNUSED(file)
+		Q_UNUSED(type)
+		return true;
+	}
 
   protected:
 	QFileSystemWatcher* m_watcher;

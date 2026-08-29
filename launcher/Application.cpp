@@ -71,6 +71,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QList>
+#include <QMutex>
 #include <QStringList>
 #include <QDebug>
 #include <QStyleFactory>

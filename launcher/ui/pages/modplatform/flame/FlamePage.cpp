@@ -33,6 +33,7 @@
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "InstanceImportTask.h"
 #include "FlameModel.h"
+#include "modplatform/flame/FlameApi.h"
 
 FlamePage::FlamePage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::FlamePage), dialog(dialog)
@@ -48,13 +49,12 @@ FlamePage::FlamePage(NewInstanceDialog* dialog, QWidget* parent)
 		Qt::ScrollBarAsNeeded);
 	ui->versionSelectionBox->view()->parentWidget()->setMaximumHeight(300);
 
-	// index is used to set the sorting with the curseforge api
-	ui->sortByBox->addItem(tr("Sort by featured"));
-	ui->sortByBox->addItem(tr("Sort by popularity"));
-	ui->sortByBox->addItem(tr("Sort by last updated"));
-	ui->sortByBox->addItem(tr("Sort by name"));
-	ui->sortByBox->addItem(tr("Sort by author"));
-	ui->sortByBox->addItem(tr("Sort by total downloads"));
+	/* Filled from the provider itself: the combo index is handed
+	 * straight back to FlameApi, so the two must not be allowed to
+	 * drift apart. */
+	for (const auto& sorting : FlameApi::get().sortingMethods()) {
+		ui->sortByBox->addItem(sorting.readableName);
+	}
 
 	connect(ui->sortByBox, &QComboBox::currentIndexChanged, this,
 			&FlamePage::triggerSearch);
@@ -149,7 +149,7 @@ void FlamePage::onSelectionChanged(QModelIndex first, QModelIndex second)
 		std::shared_ptr<QByteArray> response = std::make_shared<QByteArray>();
 		int addonId = current.addonId;
 		netJob->addNetAction(Net::Download::makeByteArray(
-			QString("https://api.curseforge.com/v1/mods/%1/files").arg(addonId),
+			FlameApi::allProjectFilesUrl(QString::number(addonId)),
 			response.get()));
 
 		QObject::connect(netJob, &NetJob::succeeded, this, [this, response] {
@@ -228,10 +228,8 @@ void FlamePage::suggestCurrent()
 		// Restricted download — construct CurseForge browser download URL
 		// This URL triggers a browser download when opened, respecting ToS
 		downloadUrl =
-			QString(
-				"https://www.curseforge.com/api/v1/mods/%1/files/%2/download")
-				.arg(version.addonId)
-				.arg(version.fileId);
+			FlameApi::browserDownloadUrl(QString::number(version.addonId),
+										 QString::number(version.fileId));
 		qDebug() << "Pack has no API download URL, using browser download URL:"
 				 << downloadUrl;
 	}

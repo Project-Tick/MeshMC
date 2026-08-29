@@ -52,6 +52,7 @@
 #include "ByteArraySink.h"
 
 #include "BuildConfig.h"
+#include "modplatform/flame/FlameApi.h"
 
 namespace Net
 {
@@ -130,7 +131,7 @@ namespace Net
 						  BuildConfig.USER_AGENT);
 
 		if (!BuildConfig.CURSEFORGE_API_KEY.isEmpty() &&
-			m_url.host() == "api.curseforge.com") {
+			m_url.host() == FlameApi::apiHost()) {
 			request.setRawHeader("x-api-key",
 								 BuildConfig.CURSEFORGE_API_KEY.toUtf8());
 			request.setRawHeader("Accept", "application/json");

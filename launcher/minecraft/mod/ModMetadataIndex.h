@@ -31,6 +31,7 @@
 #include <QList>
 #include <QMutex>
 #include <QString>
+#include <QStringList>
 
 /*
  * ModMetadataIndex
@@ -40,9 +41,17 @@
  * version, the SHA-1 we recorded, whether it was pulled in as a transitive
  * dependency, when it was installed).
  *
- * The index lives in `<folder>/.index/`. For every managed file
- * `<folder>/<filename>` there is a sibling `<folder>/.index/<filename>.json`.
- * Stale entries (whose target file is gone) are pruned on `load()`.
+ * The index lives in `<folder>/.index/`, and the sidecars are packwiz
+ * `*.pw.toml` files - the format the rest of this ecosystem reads and
+ * writes - so an instance's folder stays usable by packwiz itself and by
+ * other launchers. See PackwizSidecar.h for the format. Sidecars written
+ * by earlier versions of this launcher (`<filename>.json`) are still read,
+ * and are replaced with a TOML one the next time the entry is written.
+ *
+ * Stale `*.json` entries (whose target file is gone) are pruned on
+ * `load()`. Orphaned `*.pw.toml` files are left alone: in a packwiz pack
+ * the sidecar is the definition and the file next to it may simply not
+ * have been downloaded yet, so deleting it would throw away the pack.
  *
  * The class is thread-safe: all mutations are guarded by an internal mutex
  * so the model thread and the install / dependency-resolver tasks can hit
@@ -61,8 +70,22 @@ class ModMetadataIndex
 		/* Descriptive */
 		QString name; /* Human-readable mod name at install time         */
 		QString slug; /* Platform slug, if known                         */
+		QString side; /* "client" | "server" | "both" | "" if unknown    */
 		QString downloadUrl;
+
+		/* The SHA-1 we recorded for the file, and the digest the sidecar
+		 * carries verbatim.
+		 *
+		 * These are not the same thing. Sidecars name their digest with a
+		 * `hash-format`, and other tools store whatever the provider gave
+		 * them - Modrinth is asked for SHA-512 first - so `sha1` stays
+		 * empty for a foreign entry whose format says something else,
+		 * rather than handing a SHA-512 to code that will compare it
+		 * against a SHA-1 and conclude every file is corrupt. */
 		QString sha1;
+		QString hashFormat;
+		QString hash;
+
 		qint64 fileSize = 0;
 
 		/* Flags */
@@ -127,12 +150,29 @@ class ModMetadataIndex
 	static QString canonicalFileName(const QString& fileName);
 
   private:
-	QString sidecarPath(const QString& fileName) const;
+	QString sidecarPath(const QString& sidecarName) const;
+
+	/* Delete `sidecarName` only when it really describes `canonicalName`.
+	 *
+	 * A sidecar is named after the project, not after the file, so two
+	 * versions of one mod sitting in the folder together aim at the same
+	 * name. Removing one of them must not take the other's provenance
+	 * with it, so the file is read back before it is deleted. */
+	bool dropSidecarOwnedBy(const QString& sidecarName,
+							const QString& canonicalName) const;
+
+	/* Legacy sidecars from before this folder spoke packwiz. Read-only:
+	 * an entry that gets written again lands in a `.pw.toml` and the old
+	 * file is removed, so a folder converts itself as it is used. */
 	static Entry parseJson(const QByteArray& bytes);
-	static QByteArray serializeJson(const Entry& entry);
 
 	QDir m_folder;	 /* the mods/resourcepacks/... folder */
 	QDir m_indexDir; /* <folder>/.index */
 	mutable QMutex m_mutex;
 	QHash<QString, Entry> m_entries; /* canonical fileName -> entry */
+
+	/* Canonical fileName -> the sidecar file it was read from or written
+	 * to. Needed because the sidecar's name comes from the slug, which
+	 * cannot be recovered from the file name it describes. */
+	QHash<QString, QString> m_sidecars;
 };

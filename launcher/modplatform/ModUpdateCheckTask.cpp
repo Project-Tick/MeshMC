@@ -35,59 +35,71 @@
 #include "Json.h"
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/ContentType.h"
+#include "modplatform/VersionPicker.h"
+#include "modplatform/flame/FlameApi.h"
+#include "modplatform/modrinth/ModrinthApi.h"
 #include "net/Download.h"
 #include "net/NetJob.h"
 
 ModUpdateCheckTask::ModUpdateCheckTask(std::shared_ptr<ModMetadataIndex> index,
 									   QString mcVersion, QString loader,
+									   ModPlatform::ContentType contentType,
 									   QObject* parent)
 	: Task(parent), m_index(std::move(index)),
-	  m_mcVersion(std::move(mcVersion)), m_loader(std::move(loader))
+	  m_mcVersion(std::move(mcVersion)), m_loader(std::move(loader)),
+	  m_contentType(contentType)
 {
+	/* A resource pack has no loader, and asking for one would filter
+	 * every candidate out. The kind of content decides this, not the
+	 * caller, so that every page can hand over the instance's loader
+	 * without having to know whether it means anything here. */
+	if (!ModPlatform::contentTypeUsesLoader(m_contentType)) {
+		m_loader.clear();
+	}
 }
 
 namespace
 {
 	/* Build the per-platform "latest matching version" endpoint URL. */
 	QString buildQueryUrl(const ModMetadataIndex::Entry& e,
-						  const QString& mcVersion, const QString& loader)
+						  const QString& mcVersion, const QString& loader,
+						  ModPlatform::ContentType contentType)
 	{
-		if (e.platform == QStringLiteral("modrinth")) {
-			QString url =
-				QStringLiteral("https://api.modrinth.com/v2/project/%1/"
-							   "version?game_versions=[\"%2\"]")
-					.arg(e.projectId, mcVersion);
-			if (!loader.isEmpty()) {
-				url += QStringLiteral("&loaders=[\"%1\"]").arg(loader);
-			}
-			return url;
+		ModPlatform::VersionQuery query;
+		query.projectId = e.projectId;
+		query.contentType = contentType;
+		query.mcVersions = ModPlatform::singleVersionList(mcVersion);
+		/* Empty for content that knows nothing about loaders; the
+		 * constructor has already cleared it in that case. */
+		query.loaders = loader.isEmpty()
+							? QStringList()
+							: ModPlatform::singleLoaderList(loader);
+
+		if (e.platform == ModrinthApi::get().id()) {
+			return ModrinthApi::get().projectVersionsUrl(query).toString();
 		}
-		if (e.platform == QStringLiteral("curseforge")) {
-			QString url =
-				QStringLiteral("https://api.curseforge.com/v1/mods/%1/"
-							   "files?gameVersion=%2")
-					.arg(e.projectId, mcVersion);
-			if (!loader.isEmpty()) {
-				const int t =
-					ModPlatform::loaderToCurseForgeModLoaderType(loader);
-				if (t > 0) {
-					url += QStringLiteral("&modLoaderType=%1").arg(t);
-				}
-			}
-			return url;
+		if (e.platform == FlameApi::get().id()) {
+			return FlameApi::get().projectVersionsUrl(query).toString();
 		}
 		return {};
 	}
 
 	bool buildModrinthUpdate(const ModMetadataIndex::Entry& entry,
-							 const QByteArray& body,
+							 const QByteArray& body, const QString& loader,
 							 ModUpdateCheckTask::UpdateInfo& out)
 	{
 		QJsonDocument doc = QJsonDocument::fromJson(body);
 		if (!doc.isArray() || doc.array().isEmpty()) {
 			return false;
 		}
-		const auto vObj = doc.array().first().toObject();
+		/* Newest build that runs on this loader, not whichever the
+		 * provider listed first: offering an update to a file that
+		 * cannot load is worse than offering none. */
+		const auto vObj =
+			ModPlatform::newestModrinthVersion(doc.array(), loader);
+		if (vObj.isEmpty()) {
+			return false;
+		}
 		const QString newVer = Json::ensureString(vObj, "id", "");
 		if (newVer.isEmpty() || newVer == entry.versionId) {
 			return false;
@@ -129,7 +141,7 @@ namespace
 	}
 
 	bool buildCurseForgeUpdate(const ModMetadataIndex::Entry& entry,
-							   const QByteArray& body,
+							   const QByteArray& body, const QString& loader,
 							   ModUpdateCheckTask::UpdateInfo& out)
 	{
 		QJsonDocument doc = QJsonDocument::fromJson(body);
@@ -143,7 +155,10 @@ namespace
 		if (arr.isEmpty()) {
 			return false;
 		}
-		const auto fObj = arr.first().toObject();
+		const auto fObj = ModPlatform::newestCurseForgeFile(arr, loader);
+		if (fObj.isEmpty()) {
+			return false;
+		}
 		const QString newVer =
 			QString::number(Json::ensureInteger(fObj, "id", 0));
 		if (newVer.isEmpty() || newVer == QStringLiteral("0") ||
@@ -167,11 +182,8 @@ namespace
 		if (item.downloadUrl.isEmpty()) {
 			const int fileId = Json::ensureInteger(fObj, "id", 0);
 			if (fileId > 0 && !item.fileName.isEmpty()) {
-				item.downloadUrl =
-					QStringLiteral("https://www.curseforge.com/api/v1/mods/"
-								   "%1/files/%2/download")
-						.arg(entry.projectId)
-						.arg(fileId);
+				item.downloadUrl = FlameApi::browserDownloadUrl(
+					entry.projectId, QString::number(fileId));
 			}
 		}
 		if (item.downloadUrl.isEmpty() || item.fileName.isEmpty()) {
@@ -224,41 +236,57 @@ void ModUpdateCheckTask::executeTask()
 			continue;
 		}
 
-		const QString url = buildQueryUrl(e, m_mcVersion, m_loader);
+		const QString url =
+			buildQueryUrl(e, m_mcVersion, m_loader, m_contentType);
 		if (url.isEmpty()) {
 			continue;
 		}
 
-		auto* response = new QByteArray();
+		/* Held by both handlers rather than freed by hand in each: only
+		 * one of them runs, and if the job dies without either firing
+		 * the buffer goes with it instead of leaking. */
+		auto response = std::make_shared<QByteArray>();
 		NetJob* job = new NetJob(
 			QString("UpdateCheck(%1:%2)").arg(e.platform, e.projectId),
 			APPLICATION->network());
-		job->addNetAction(Net::Download::makeByteArray(QUrl(url), response));
+		job->addNetAction(
+			Net::Download::makeByteArray(QUrl(url), response.get()));
 
 		const ModMetadataIndex::Entry entry = e;
 		m_pending++;
+		m_activeJobs.append(job);
 
 		connect(job, &NetJob::succeeded, this, [this, entry, response, job]() {
+			m_activeJobs.removeAll(QPointer<NetJob>(job));
 			job->deleteLater();
+			if (m_aborted) {
+				/* Given up on. The count is still kept honest, but no
+				 * verdict follows - see onOneDone(). */
+				m_pending--;
+				return;
+			}
 			UpdateInfo u;
 			bool found = false;
 			if (entry.platform == QStringLiteral("modrinth")) {
-				found = buildModrinthUpdate(entry, *response, u);
+				found = buildModrinthUpdate(entry, *response, m_loader, u);
 			} else if (entry.platform == QStringLiteral("curseforge")) {
-				found = buildCurseForgeUpdate(entry, *response, u);
+				found = buildCurseForgeUpdate(entry, *response, m_loader, u);
 			}
 			if (found) {
 				m_updates.append(u);
 			}
-			delete response;
 			onOneDone();
 		});
 		connect(job, &NetJob::failed, this,
 				[this, response, job, entry](QString reason) {
+					m_activeJobs.removeAll(QPointer<NetJob>(job));
+					job->deleteLater();
+					if (m_aborted) {
+						m_pending--;
+						return;
+					}
 					qWarning() << "Update check failed for" << entry.name << ":"
 							   << reason;
-					job->deleteLater();
-					delete response;
 					onOneDone();
 				});
 		// Show the check as its own line in the progress dialog.
@@ -267,8 +295,35 @@ void ModUpdateCheckTask::executeTask()
 	}
 }
 
+bool ModUpdateCheckTask::abort()
+{
+	if (m_aborted) {
+		return true;
+	}
+	m_aborted = true;
+
+	/* Call off what is still in the air. Each job reports failed() as it
+	 * unwinds, which the handlers above drop because the latch is
+	 * already set. */
+	for (const QPointer<NetJob>& job : m_activeJobs) {
+		if (job && job->isRunning()) {
+			job->abort();
+		}
+	}
+	m_activeJobs.clear();
+
+	if (isRunning()) {
+		emitAborted();
+	}
+	return true;
+}
+
 void ModUpdateCheckTask::onOneDone()
 {
+	if (m_aborted) {
+		return;
+	}
+
 	m_completed++;
 	m_pending--;
 	setProgress(m_completed, m_total);

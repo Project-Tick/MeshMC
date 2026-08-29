@@ -33,6 +33,7 @@
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "InstanceImportTask.h"
 #include "ModrinthModel.h"
+#include "modplatform/modrinth/ModrinthApi.h"
 
 ModrinthPage::ModrinthPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::ModrinthPage), dialog(dialog)
@@ -48,11 +49,12 @@ ModrinthPage::ModrinthPage(NewInstanceDialog* dialog, QWidget* parent)
 		Qt::ScrollBarAsNeeded);
 	ui->versionSelectionBox->view()->parentWidget()->setMaximumHeight(300);
 
-	ui->sortByBox->addItem(tr("Sort by relevance"));
-	ui->sortByBox->addItem(tr("Sort by downloads"));
-	ui->sortByBox->addItem(tr("Sort by last updated"));
-	ui->sortByBox->addItem(tr("Sort by newest"));
-	ui->sortByBox->addItem(tr("Sort by follows"));
+	/* Filled from the provider itself: the combo index is handed
+	 * straight back to ModrinthApi, so the two must not be allowed to
+	 * drift apart. */
+	for (const auto& sorting : ModrinthApi::get().sortingMethods()) {
+		ui->sortByBox->addItem(sorting.readableName);
+	}
 
 	connect(ui->sortByBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
 			this, &ModrinthPage::triggerSearch);
@@ -140,10 +142,13 @@ void ModrinthPage::onSelectionChanged(QModelIndex first, QModelIndex second)
 		std::shared_ptr<QByteArray> versionResponse =
 			std::make_shared<QByteArray>();
 		QString projectId = current.projectId;
+		/* A modpack ships its own loader, so accept any of them here
+		 * rather than filtering to the instance's. */
 		netJob->addNetAction(Net::Download::makeByteArray(
-			QString("https://api.modrinth.com/v2/project/%1/version?"
-					"loaders=[\"forge\",\"fabric\",\"quilt\",\"neoforge\"]")
-				.arg(projectId),
+			ModrinthApi::projectVersionsUrlForLoaders(
+				projectId, {QStringLiteral("forge"), QStringLiteral("fabric"),
+							QStringLiteral("quilt"),
+							QStringLiteral("neoforge")}),
 			versionResponse.get()));
 
 		QObject::connect(

@@ -66,6 +66,12 @@ class MinecraftInstance : public BaseInstance
 	QString resourcePacksDir() const;
 	QString texturePacksDir() const;
 	QString shaderPacksDir() const;
+	/* Instance-wide data pack folder. Vanilla only loads data packs from
+	 * saves/<world>/datapacks, so this folder is only meaningful with a
+	 * global data pack loader (Paxi, OpenLoader, ...); its location is
+	 * therefore configurable through the GlobalDataPacksPath setting and
+	 * defaults to <gameRoot>/datapacks. */
+	QString dataPacksDir() const;
 	QString modsRoot() const override;
 	QString coreModsDir() const;
 	QString modsCacheLocation() const;
@@ -98,6 +104,7 @@ class MinecraftInstance : public BaseInstance
 	std::shared_ptr<ModFolderModel> resourcePackList() const;
 	std::shared_ptr<ModFolderModel> texturePackList() const;
 	std::shared_ptr<ModFolderModel> shaderPackList() const;
+	std::shared_ptr<ModFolderModel> dataPackList() const;
 	std::shared_ptr<WorldList> worldList() const;
 	std::shared_ptr<GameOptions> gameOptionsModel() const;
 
@@ -159,6 +166,7 @@ class MinecraftInstance : public BaseInstance
 	mutable std::shared_ptr<ModFolderModel> m_resource_pack_list;
 	mutable std::shared_ptr<ModFolderModel> m_shader_pack_list;
 	mutable std::shared_ptr<ModFolderModel> m_texture_pack_list;
+	mutable std::shared_ptr<ModFolderModel> m_data_pack_list;
 	mutable std::shared_ptr<WorldList> m_world_list;
 	mutable std::shared_ptr<GameOptions> m_game_options;
 };

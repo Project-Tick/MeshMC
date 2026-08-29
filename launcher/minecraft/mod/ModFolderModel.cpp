@@ -319,6 +319,13 @@ bool ModFolderModel::installMod(const QString& filename)
 		return false;
 	}
 
+	if (!acceptsFile(fileinfo, type)) {
+		qDebug() << originalPath
+				 << "does not have the layout this folder expects, ignoring "
+					"it.";
+		return false;
+	}
+
 	auto newpath =
 		FS::NormalizePath(FS::PathCombine(m_dir.path(), fileinfo.fileName()));
 	if (originalPath == newpath) {

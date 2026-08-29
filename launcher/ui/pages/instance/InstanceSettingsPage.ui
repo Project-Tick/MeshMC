@@ -517,6 +517,48 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="globalDataPacksGroupBox">
+         <property name="title">
+          <string>Global data packs folder</string>
+         </property>
+         <property name="toolTip">
+          <string>Manage one data pack folder shared by every world. Minecraft only reads data packs from each world's own folder, so this needs a loader such as Paxi or OpenLoader to have any effect. Use the Worlds page to manage a single world's data packs.</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_globalDataPacks">
+          <item>
+           <layout class="QGridLayout" name="globalDataPacksLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="globalDataPacksPathLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Folder (relative to .minecraft):</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="globalDataPacksPath">
+              <property name="placeholderText">
+               <string>datapacks</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacerMiscellaneous">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

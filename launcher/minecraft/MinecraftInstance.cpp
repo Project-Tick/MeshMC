@@ -62,13 +62,16 @@
 
 #include "icons/IconList.h"
 
+#include "mod/DataPackFolderModel.h"
 #include "mod/ModFolderModel.h"
 #include "mod/ResourcePackFolderModel.h"
+#include "mod/ShaderPackFolderModel.h"
 #include "mod/TexturePackFolderModel.h"
 
 #include "WorldList.h"
 
 #include "PackProfile.h"
+#include "Version.h"
 #include "AssetsUtils.h"
 #include "MinecraftUpdate.h"
 #include "MinecraftLoadAndCheck.h"
@@ -187,6 +190,22 @@ MinecraftInstance::MinecraftInstance(SettingsObjectPtr globalSettings,
 	m_settings->registerSetting("JoinServerOnLaunch", false);
 	m_settings->registerSetting("JoinServerOnLaunchAddress", "");
 
+	/* Vanilla only ever reads data packs from saves/<world>/datapacks, so
+	 * an instance-wide folder is meaningless unless a loader such as Paxi
+	 * or OpenLoader is installed to sweep it into every world. Off by
+	 * default; the per-world manager in WorldListPage is the normal way
+	 * to get at data packs. */
+	auto dataPacksEnabled =
+		m_settings->registerSetting("GlobalDataPacksEnabled", false);
+	auto dataPacksPath = m_settings->registerSetting("GlobalDataPacksPath", "");
+
+	// Both settings pick the folder the model watches, so the cached model
+	// has to go when either of them moves.
+	connect(dataPacksEnabled.get(), &Setting::SettingChanged, this,
+			[this] { m_data_pack_list.reset(); });
+	connect(dataPacksPath.get(), &Setting::SettingChanged, this,
+			[this] { m_data_pack_list.reset(); });
+
 	// DEPRECATED: Read what versions the user configuration thinks should be
 	// used
 	m_settings->registerSetting({"IntendedVersion", "MinecraftVersion"}, "");
@@ -297,6 +316,17 @@ QString MinecraftInstance::texturePacksDir() const
 QString MinecraftInstance::shaderPacksDir() const
 {
 	return FS::PathCombine(gameRoot(), "shaderpacks");
+}
+
+QString MinecraftInstance::dataPacksDir() const
+{
+	// Global data pack loaders don't agree on a folder name, so let the
+	// user point us at whichever one their loader watches.
+	QString relativePath = settings()->get("GlobalDataPacksPath").toString();
+	if (relativePath.isEmpty()) {
+		relativePath = QStringLiteral("datapacks");
+	}
+	return FS::PathCombine(gameRoot(), relativePath);
 }
 
 QString MinecraftInstance::instanceConfigFolder() const
@@ -1077,10 +1107,22 @@ std::shared_ptr<ModFolderModel> MinecraftInstance::texturePackList() const
 std::shared_ptr<ModFolderModel> MinecraftInstance::shaderPackList() const
 {
 	if (!m_shader_pack_list) {
-		m_shader_pack_list.reset(new ResourcePackFolderModel(shaderPacksDir()));
+		m_shader_pack_list.reset(new ShaderPackFolderModel(shaderPacksDir()));
 		// Shader packs can be safely added while Minecraft is running
 	}
 	return m_shader_pack_list;
+}
+
+std::shared_ptr<ModFolderModel> MinecraftInstance::dataPackList() const
+{
+	// Null when the global folder is switched off - callers must check.
+	if (!m_data_pack_list &&
+		settings()->get("GlobalDataPacksEnabled").toBool()) {
+		m_data_pack_list.reset(new DataPackFolderModel(dataPacksDir()));
+		// Data packs are re-read by /reload, so they can be added while
+		// Minecraft is running
+	}
+	return m_data_pack_list;
 }
 
 std::shared_ptr<WorldList> MinecraftInstance::worldList() const

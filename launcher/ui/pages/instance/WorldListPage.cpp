@@ -48,15 +48,25 @@
 #include <QMenu>
 #include <QKeyEvent>
 #include <QClipboard>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QTreeView>
 #include <QInputDialog>
 #include <QProcess>
+#include <QVBoxLayout>
+
+#include <algorithm>
 
 #include "tools/MCEditTool.h"
 #include "FileSystem.h"
 
+#include "minecraft/mod/DataPackFolderModel.h"
 #include "ui/GuiUtil.h"
+#include "ui/pages/BasePageProvider.h"
+#include "ui/pages/instance/DataPackPage.h"
+#include "ui/widgets/PageContainer.h"
 #include "DesktopServices.h"
 
 #include "Application.h"
@@ -214,10 +224,73 @@ void WorldListPage::on_actionDatapacks_triggered()
 	if (!worldSafetyNagQuestion())
 		return;
 
-	auto fullPath = m_worlds->data(index, WorldList::FolderRole).toString();
+	const QString fullPath =
+		m_worlds->data(index, WorldList::FolderRole).toString();
+	const QString folder = FS::PathCombine(fullPath, "datapacks");
+	const QString worldName =
+		m_worlds->data(index, WorldList::NameRole).toString();
 
-	DesktopServices::openDirectory(FS::PathCombine(fullPath, "datapacks"),
-								   true);
+	/* This page also backs legacy instances, which have no pack profile
+	 * to search against and predate data packs entirely. Keep the old
+	 * "just open the folder" behaviour for them. */
+	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
+	if (!mcInst) {
+		DesktopServices::openDirectory(folder, true);
+		return;
+	}
+
+	/* Vanilla loads data packs per world, so this is the folder that
+	 * actually matters. Previously we just opened it in the file manager;
+	 * now it gets the same list/add/remove/download page the other
+	 * content folders have, hosted in its own modal dialog. */
+	auto* dialog = new QDialog(this);
+	dialog->setWindowTitle(tr("Data packs for %1").arg(worldName));
+	dialog->setWindowModality(Qt::WindowModal);
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->resize(
+		static_cast<int>(std::max(0.5 * window()->width(), 400.0)),
+		static_cast<int>(std::max(0.75 * window()->height(), 400.0)));
+	dialog->restoreGeometry(QByteArray::fromBase64(
+		APPLICATION->settings()->get("DataPackManagerGeometry").toByteArray()));
+
+	m_datapackModel.reset(new DataPackFolderModel(folder));
+
+	/* The provider is only read while PageContainer is being built, so a
+	 * stack object outlives its use even though the dialog is modeless. */
+	GenericPageProvider provider(dialog->windowTitle());
+	provider.addPageCreator([this, mcInst]() -> BasePage* {
+		return new DataPackPage(mcInst, m_datapackModel);
+	});
+
+	auto* layout = new QVBoxLayout(dialog);
+
+	// The page's own widgets would otherwise grab the default button and
+	// swallow Enter; park it on a hidden button instead.
+	auto* focusStealer = new QPushButton(dialog);
+	focusStealer->setDefault(true);
+	focusStealer->hide();
+	layout->addWidget(focusStealer);
+
+	auto* pageContainer = new PageContainer(&provider, {}, dialog);
+	pageContainer->hidePageList();
+	layout->addWidget(pageContainer);
+
+	auto* buttonBox =
+		new QDialogButtonBox(QDialogButtonBox::Close | QDialogButtonBox::Help);
+	connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+	connect(buttonBox, &QDialogButtonBox::helpRequested, pageContainer,
+			&PageContainer::help);
+	layout->addWidget(buttonBox);
+
+	connect(dialog, &QDialog::finished, this, [this, dialog] {
+		APPLICATION->settings()->set("DataPackManagerGeometry",
+									 dialog->saveGeometry().toBase64());
+		// The dialog only borrowed the model; drop it so the folder is
+		// no longer watched once the manager is gone.
+		m_datapackModel.reset();
+	});
+
+	dialog->open();
 }
 
 void WorldListPage::on_actionReset_Icon_triggered()

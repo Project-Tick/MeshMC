@@ -335,10 +335,18 @@ set(MINECRAFT_SOURCES
     minecraft/mod/LocalModParseTask.cpp
     minecraft/mod/ModMetadataIndex.h
     minecraft/mod/ModMetadataIndex.cpp
+    minecraft/mod/PackwizSidecar.h
+    minecraft/mod/PackwizSidecar.cpp
+    minecraft/mod/PackLayout.h
+    minecraft/mod/PackLayout.cpp
     minecraft/mod/ResourcePackFolderModel.h
     minecraft/mod/ResourcePackFolderModel.cpp
     minecraft/mod/TexturePackFolderModel.h
     minecraft/mod/TexturePackFolderModel.cpp
+    minecraft/mod/ShaderPackFolderModel.h
+    minecraft/mod/ShaderPackFolderModel.cpp
+    minecraft/mod/DataPackFolderModel.h
+    minecraft/mod/DataPackFolderModel.cpp
 
     # Assets
     minecraft/AssetsUtils.h
@@ -527,8 +535,10 @@ set(FLAME_SOURCES
     modplatform/flame/PackManifest.cpp
     modplatform/flame/FileResolvingTask.h
     modplatform/flame/FileResolvingTask.cpp
-    modplatform/flame/FlameModModel.h
-    modplatform/flame/FlameModModel.cpp
+    modplatform/flame/FlameContentModel.h
+    modplatform/flame/FlameContentModel.cpp
+    modplatform/flame/FlameApi.h
+    modplatform/flame/FlameApi.cpp
 )
 
 set(MODPACKSCH_SOURCES
@@ -561,11 +571,20 @@ set(MODRINTH_SOURCES
     modplatform/modrinth/ModrinthPackIndex.h
     modplatform/modrinth/ModrinthPackManifest.cpp
     modplatform/modrinth/ModrinthPackManifest.h
-    modplatform/modrinth/ModrinthModModel.h
-    modplatform/modrinth/ModrinthModModel.cpp
+    modplatform/modrinth/ModrinthContentModel.h
+    modplatform/modrinth/ModrinthContentModel.cpp
+    modplatform/modrinth/ModrinthApi.h
+    modplatform/modrinth/ModrinthApi.cpp
 )
 
 set(CONTENT_DOWNLOAD_SOURCES
+    modplatform/ContentApi.h
+    modplatform/VersionPicker.h
+    modplatform/VersionPicker.cpp
+    modplatform/ContentProviderModel.h
+    modplatform/ContentProviderModel.cpp
+    modplatform/ContentListExport.h
+    modplatform/ContentListExport.cpp
     modplatform/ContentType.h
     modplatform/ModDownloadTypes.h
     modplatform/DependencyResolver.h
@@ -753,6 +772,8 @@ SET(MESHMC_SOURCES
     ui/pages/instance/TexturePackPage.h
     ui/pages/instance/ResourcePackPage.h
     ui/pages/instance/ShaderPackPage.h
+    ui/pages/instance/DataPackPage.h
+    ui/pages/instance/DataPackPage.cpp
     ui/pages/instance/ModFolderPage.cpp
     ui/pages/instance/ModFolderPage.h
     ui/pages/instance/NotesPage.cpp
@@ -797,6 +818,9 @@ SET(MESHMC_SOURCES
     # GUI - platform pages
     ui/pages/modplatform/VanillaPage.cpp
     ui/pages/modplatform/VanillaPage.h
+
+    ui/pages/modplatform/ContentProviderPage.cpp
+    ui/pages/modplatform/ContentProviderPage.h
 
     ui/pages/modplatform/atlauncher/AtlFilterModel.cpp
     ui/pages/modplatform/atlauncher/AtlFilterModel.h
@@ -848,6 +872,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/ProfileSetupDialog.h
     ui/dialogs/CopyInstanceDialog.cpp
     ui/dialogs/CopyInstanceDialog.h
+    ui/dialogs/CreateShortcutDialog.cpp
+    ui/dialogs/CreateShortcutDialog.h
     ui/dialogs/CustomMessageBox.cpp
     ui/dialogs/CustomMessageBox.h
     ui/dialogs/EditAccountDialog.cpp
@@ -882,6 +908,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/DownloadSummaryDialog.h
     ui/dialogs/ModUpdateDialog.cpp
     ui/dialogs/ModUpdateDialog.h
+    ui/dialogs/ExportListDialog.cpp
+    ui/dialogs/ExportListDialog.h
     ui/dialogs/MeshMCLogsDialog.cpp
     ui/dialogs/MeshMCLogsDialog.h
     ui/dialogs/FeatureFlagsDialog.cpp
@@ -924,6 +952,14 @@ SET(MESHMC_SOURCES
     ui/widgets/VersionSelectWidget.h
     ui/widgets/ProgressWidget.h
     ui/widgets/ProgressWidget.cpp
+    ui/widgets/ProjectItemDelegate.h
+    ui/widgets/ProjectItemDelegate.cpp
+    ui/widgets/ProjectDescriptionPage.h
+    ui/widgets/ProjectDescriptionPage.cpp
+    ui/widgets/ContentFilterWidget.h
+    ui/widgets/ContentFilterWidget.cpp
+    ui/widgets/CheckComboBox.h
+    ui/widgets/CheckComboBox.cpp
     ui/widgets/TaskStepProgressBar.h
     ui/widgets/TaskStepProgressBar.cpp
     ui/widgets/WideBar.h
@@ -967,6 +1003,7 @@ qt6_wrap_ui(MESHMC_UI
     ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui
     ui/pages/modplatform/atlauncher/AtlPage.ui
     ui/pages/modplatform/VanillaPage.ui
+    ui/pages/modplatform/ContentProviderPage.ui
     ui/pages/modplatform/flame/FlamePage.ui
     ui/pages/modplatform/modrinth/ModrinthPage.ui
     ui/pages/modplatform/legacy_ftb/Page.ui
