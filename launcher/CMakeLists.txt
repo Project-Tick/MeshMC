@@ -18,6 +18,8 @@ set(CORE_SOURCES
     InstanceTask.cpp
     LoggedProcess.h
     LoggedProcess.cpp
+    Logging.h
+    Logging.cpp
     MessageLevel.cpp
     MessageLevel.h
     BaseVersion.h
@@ -1092,6 +1094,16 @@ target_link_libraries(MeshMC_logic
 if(MeshMC_DISABLE_JAVA_DOWNLOADER)
     target_compile_definitions(MeshMC_logic PUBLIC MeshMC_DISABLE_JAVA_DOWNLOADER)
 endif()
+
+# Keep the function/line of every log message in *all* configurations. Qt only
+# fills the QMessageLogContext in while QT_NO_DEBUG is absent, which CMake
+# defines for every config except Debug - so without this, official builds log
+# no source locations at all and the log is much harder to act on. PUBLIC
+# because the message logger macros expand at every call site, including the
+# ones in the application target.
+# Cost, knowingly accepted: __FILE__ is baked into the binary for each
+# translation unit that logs, so the binary grows and carries build paths.
+target_compile_definitions(MeshMC_logic PUBLIC QT_MESSAGELOGCONTEXT)
 target_link_libraries(MeshMC_logic
     Qt6::Core
     Qt6::Xml

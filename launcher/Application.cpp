@@ -111,6 +111,7 @@
 
 #include <ganalytics.h>
 #include <sys.h>
+#include "Logging.h"
 #include "MMCStrings.h"
 
 #if defined Q_OS_WIN32
@@ -232,31 +233,66 @@ namespace
 
 namespace
 {
+	// All four layouts, built once. Plain goes into the log file, coloured
+	// goes to the console, and the source location suffix depends on whether
+	// the message that is being formatted actually carries one.
+	const QString& logPattern(bool coloured, bool withSourceLocation)
+	{
+		static const QString patterns[] = {
+			Logging::messagePattern(false, false),
+			Logging::messagePattern(false, true),
+			Logging::messagePattern(true, false),
+			Logging::messagePattern(true, true),
+		};
+		return patterns[(coloured ? 2 : 0) + (withSourceLocation ? 1 : 0)];
+	}
+
 	void appDebugOutput(QtMsgType type, const QMessageLogContext& context,
 						const QString& msg)
 	{
-		const char* levels = "DWCFIS";
-		const QString format("%1 %2 %3\n");
+		// The log file is a plain QFile and messages also arrive from worker
+		// threads, so the whole handler is serialised. That also keeps the
+		// pattern swapping below from being observed by another thread.
+		static QMutex mutex;
+		QMutexLocker locker(&mutex);
 
-		qint64 msecstotal = APPLICATION->timeSinceStart();
-		qint64 seconds = msecstotal / 1000;
-		qint64 msecs = msecstotal % 1000;
-		QString foo;
-		char buf[1025] = {0};
-		::snprintf(buf, 1024, "%5lld.%03lld", seconds, msecs);
+		// Formatting is handed to Qt instead of being assembled here, because
+		// that is what gives us the message's category and a readable
+		// function name; the context argument used to be dropped on the floor.
+		//
+		// NOTE: when QT_MESSAGE_PATTERN is set in the environment, Qt ignores
+		// qSetMessagePattern() completely, so both copies come out in the
+		// user's own layout and the console one loses its colour. That is
+		// Qt's documented precedence, and it was measured, not assumed.
+		// Qt's prebuilt libraries carry no message log context, so their
+		// warnings would end in "(unknown:0)" if the suffix were static -
+		// and a good half of a typical log is Qt talking about the network.
+		// Measured, probe9.
+		const bool located = context.line != 0;
 
-		QString out = format.arg(buf).arg(levels[type]).arg(msg);
+		qSetMessagePattern(logPattern(false, located));
+		const QString plain = qFormatLogMessage(type, context, msg);
 
-		APPLICATION->logFile->write(out.toUtf8());
-		APPLICATION->logFile->flush();
-		QString coloredOut = QString("%1 %2%3%4%5 %6\n")
-								 .arg(buf)
-								 .arg(Strings::logColor(type))
-								 .arg(levels[type])
-								 .arg(":")
-								 .arg(Strings::logColorReset())
-								 .arg(msg);
-		QTextStream(stderr) << coloredOut.toLocal8Bit();
+		if (APPLICATION->logFile) {
+			APPLICATION->logFile->write(plain.toUtf8() + '\n');
+			APPLICATION->logFile->flush();
+		}
+
+		// Only pay for the second rendering when the console can actually
+		// render escape sequences. When it cannot - a redirect, a pipe, an
+		// old console host, or NO_COLOR - the plain copy is what it gets,
+		// instead of the escapes it would print verbatim.
+		QString console = plain;
+		if (Logging::consoleColourEnabled()) {
+			qSetMessagePattern(logPattern(true, located));
+			console = qFormatLogMessage(type, context, msg);
+			// Leave a plain layout installed: it is the one that belongs in a
+			// file, and it is what anything formatting outside this handler
+			// gets.
+			qSetMessagePattern(logPattern(false, located));
+		}
+
+		QTextStream(stderr) << console.toLocal8Bit() << '\n';
 		fflush(stderr);
 	}
 
@@ -430,6 +466,10 @@ void Application::initPlatform()
 		consoleAttached = true;
 	}
 #endif
+	// After the console is attached and the streams are reopened, because the
+	// answer depends on what stderr ends up pointing at. Before the message
+	// handler is installed, so the very first line is already correct.
+	Logging::prepareConsoleColour();
 	setOrganizationName(BuildConfig.MESHMC_NAME);
 	setOrganizationDomain(BuildConfig.MESHMC_DOMAIN);
 	setApplicationName(BuildConfig.MESHMC_NAME);
