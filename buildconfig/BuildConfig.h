@@ -190,6 +190,7 @@ class Config
 	QString BUG_TRACKER_URL;
 	QString DISCORD_URL;
 	QString SUBREDDIT_URL;
+	QString PATREON_URL;
 
 	/**
 	 * GitLab Unleash-compatible feature flags endpoint.

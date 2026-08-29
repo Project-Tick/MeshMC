@@ -113,6 +113,8 @@ class MainWindow : public QMainWindow
 
 	void on_actionDISCORD_triggered();
 
+	void on_actionPatreon_triggered();
+
 	void on_actionCopyInstance_triggered();
 
 	void on_actionChangeInstGroup_triggered();
