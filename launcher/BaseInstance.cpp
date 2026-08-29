@@ -45,6 +45,9 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDebug>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QRegularExpression>
 
 #include "settings/INISettingsObject.h"
@@ -68,6 +71,11 @@ BaseInstance::BaseInstance(SettingsObjectPtr globalSettings,
 	m_settings->registerSetting("lastLaunchTime", 0);
 	m_settings->registerSetting("totalTimePlayed", 0);
 	m_settings->registerSetting("lastTimePlayed", 0);
+
+	/* Shortcuts this instance has had written for it, as a compact JSON
+	 * array. One string keeps it to a single INI key, and the list is
+	 * short enough that nothing here needs to be fast. */
+	m_settings->registerSetting("shortcuts", QString());
 
 	/* Pack-source provenance keys (consumed by the PackUpdater
 	 * plugin via instance_setting_get). All optional — empty string
@@ -281,6 +289,76 @@ void BaseInstance::setNotes(QString val)
 QString BaseInstance::notes() const
 {
 	return m_settings->get("notes").toString();
+}
+
+QList<ShortcutData> BaseInstance::shortcuts() const
+{
+	const QJsonDocument document = QJsonDocument::fromJson(
+		m_settings->get("shortcuts").toString().toUtf8());
+	if (!document.isArray()) {
+		return {};
+	}
+
+	QList<ShortcutData> results;
+	for (const QJsonValue& entry : document.array()) {
+		const QJsonObject object = entry.toObject();
+		const QString name = object.value("name").toString();
+		const QString filePath = object.value("filePath").toString();
+		const int target = object.value("target").toInt(-1);
+
+		if (filePath.isEmpty() || target < 0 ||
+			target > static_cast<int>(ShortcutTarget::Other)) {
+			qWarning() << "Skipping an unreadable shortcut entry of instance"
+					   << id();
+			continue;
+		}
+
+		/* Whatever is no longer there is no longer ours: the user has
+		 * moved or removed it by hand, and something else may well be
+		 * sitting at that path now. */
+		if (!QFileInfo::exists(filePath)) {
+			qDebug() << "Forgetting shortcut" << name << "of instance" << id()
+					 << "-- nothing at" << filePath << "any more";
+			continue;
+		}
+
+		results.append(
+			{name, filePath, static_cast<ShortcutTarget>(target)});
+	}
+	return results;
+}
+
+void BaseInstance::registerShortcut(const ShortcutData& shortcut)
+{
+	if (shortcut.filePath.isEmpty()) {
+		return;
+	}
+
+	QList<ShortcutData> current = shortcuts();
+
+	/* Writing over an existing shortcut is one shortcut, not two. */
+	current.removeIf([&shortcut](const ShortcutData& known) {
+		return known.filePath == shortcut.filePath;
+	});
+	current.append(shortcut);
+
+	qDebug() << "Instance" << id() << "now owns shortcut" << shortcut.name
+			 << "at" << shortcut.filePath;
+	setShortcuts(current);
+}
+
+void BaseInstance::setShortcuts(const QList<ShortcutData>& shortcuts)
+{
+	QJsonArray array;
+	for (const ShortcutData& shortcut : shortcuts) {
+		array.append(QJsonObject{{"name", shortcut.name},
+								 {"filePath", shortcut.filePath},
+								 {"target", static_cast<int>(shortcut.target)}});
+	}
+
+	m_settings->set("shortcuts",
+					QString::fromUtf8(QJsonDocument(array).toJson(
+						QJsonDocument::Compact)));
 }
 
 void BaseInstance::setIconKey(QString val)

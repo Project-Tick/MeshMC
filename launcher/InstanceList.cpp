@@ -302,6 +302,11 @@ void InstanceList::deleteInstance(const InstanceId& id)
 		saveGroupList();
 	}
 
+	/* Read before the folder goes: the list lives in the instance's own
+	 * config file, and shortcuts() drops entries whose file has since
+	 * been moved away, which is a check that needs the disk. */
+	const QList<ShortcutData> shortcuts = inst->shortcuts();
+
 	qDebug() << "Will delete instance" << id;
 	if (!FS::deletePath(inst->instanceRoot())) {
 		qWarning() << "Deletion of instance" << id
@@ -310,6 +315,19 @@ void InstanceList::deleteInstance(const InstanceId& id)
 	}
 
 	qDebug() << "Instance" << id << "has been deleted by MeshMC.";
+
+	/* The shortcuts are dead now whatever happens -- they point at a
+	 * folder that is gone -- so a failure here is worth a line in the
+	 * log and nothing more. */
+	for (const ShortcutData& shortcut : shortcuts) {
+		if (FS::deletePath(shortcut.filePath)) {
+			qDebug() << "Deleted shortcut" << shortcut.name << "at"
+					 << shortcut.filePath;
+		} else {
+			qWarning() << "Could not delete shortcut" << shortcut.name << "at"
+					   << shortcut.filePath << "of deleted instance" << id;
+		}
+	}
 }
 
 static QMap<InstanceId, InstanceLocator>

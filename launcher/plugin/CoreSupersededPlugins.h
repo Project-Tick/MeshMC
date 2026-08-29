@@ -65,6 +65,8 @@ inline const CoreSupersededPlugin*
 findCoreSupersededPlugin(const QString& name)
 {
 	static const CoreSupersededPlugin entries[] = {
+		{QLatin1String("Filelink"),
+		 QLatin1String("The shortcut system is now part of MeshMC itself ")},
 		{QLatin1String("BackupSystem"),
 		 QLatin1String("Instance backups are now part of MeshMC itself "
 					   "(instance settings -> Backups)")},

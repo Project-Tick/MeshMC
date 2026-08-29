@@ -60,4 +60,15 @@ namespace DesktopServices
 	 * Open the URL, most likely in a browser. Maybe.
 	 */
 	bool openUrl(const QUrl& url);
+
+	/**
+	 * Whether this process is running inside a Flatpak sandbox.
+	 *
+	 * It matters wherever the launcher has to name or reach itself from the
+	 * outside: its own executable path means nothing to the host, so a
+	 * desktop entry has to go through `flatpak run` instead, and a file can
+	 * only be written outside the sandbox through the portal's own save
+	 * dialog.
+	 */
+	bool isFlatpak();
 } // namespace DesktopServices

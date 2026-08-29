@@ -163,9 +163,21 @@ namespace FS
 	// Get the Directory representing the User's Desktop
 	QString getDesktopDir();
 
-	// Create a shortcut at *location*, pointing to *dest* called with the
-	// arguments *args* call it *name* and assign it the icon *icon* return true
-	// if operation succeeded
-	bool createShortCut(QString location, QString dest, QStringList args,
-						QString name, QString iconLocation);
+	// Get the directory the platform lists installed applications in
+	QString getApplicationsDir();
+
+	/**
+	 * Write a shortcut that runs @p target with @p args, labelled @p name and
+	 * wearing the image at @p iconPath.
+	 *
+	 * @p destination is the path to create *without* a suffix -- each
+	 * platform appends its own, because what a shortcut even is differs: a
+	 * `.lnk` shell link on Windows, a `.desktop` entry on Linux and the BSDs,
+	 * and a small `.app` bundle on macOS, that being the only form Finder
+	 * will show with an icon and arguments of its own.
+	 *
+	 * Returns the path actually written, or an empty string if nothing was.
+	 */
+	QString createShortcut(QString destination, QString target,
+						   QStringList args, QString name, QString iconPath);
 } // namespace FS

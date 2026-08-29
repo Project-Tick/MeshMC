@@ -69,6 +69,20 @@ class BaseInstance;
 // pointer for lazy people
 typedef std::shared_ptr<BaseInstance> InstancePtr;
 
+/// Where a shortcut to an instance was asked to be written.
+enum class ShortcutTarget : quint8 { Desktop, Applications, Other };
+
+/// One shortcut an instance knows it is responsible for, so that
+/// deleting the instance can take its shortcuts with it.
+struct ShortcutData {
+	/// What the shortcut is called, for log messages.
+	QString name;
+	/// The file (or, on macOS, the .app bundle) that was written.
+	QString filePath;
+	/// Which folder it was written into.
+	ShortcutTarget target = ShortcutTarget::Other;
+};
+
 /*!
  * \brief Base class for instances.
  * This class implements many functions that are common between instances and
@@ -143,6 +157,22 @@ class BaseInstance : public QObject,
 
 	QString notes() const;
 	void setNotes(QString val);
+
+	/**
+	 * Shortcuts written for this instance that are still where they were
+	 * written.
+	 *
+	 * An entry whose file has since been moved or deleted is dropped on
+	 * the way out, which is what keeps the launcher from deleting
+	 * something at a path it no longer owns.
+	 */
+	QList<ShortcutData> shortcuts() const;
+
+	/// Take responsibility for one more shortcut.
+	void registerShortcut(const ShortcutData& shortcut);
+
+	/// Replace the whole list.
+	void setShortcuts(const QList<ShortcutData>& shortcuts);
 
 	QString getPreLaunchCommand();
 	QString getPostExitCommand();

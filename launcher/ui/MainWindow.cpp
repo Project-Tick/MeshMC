@@ -115,6 +115,7 @@
 #include "ui/dialogs/EditAccountDialog.h"
 #include "ui/dialogs/NotificationDialog.h"
 #include "ui/dialogs/ExportInstanceDialog.h"
+#include "ui/dialogs/CreateShortcutDialog.h"
 
 #include "UpdateController.h"
 #include "KonamiCode.h"
@@ -251,6 +252,7 @@ class MainWindow::Ui
 	TranslatedAction actionLaunchInstanceOffline;
 	TranslatedAction actionScreenshots;
 	TranslatedAction actionExportInstance;
+	TranslatedAction actionCreateInstanceShortcut;
 	TranslatedAction actionLockToolbars;
 	QVector<TranslatedAction*> all_actions;
 
@@ -782,7 +784,22 @@ class MainWindow::Ui
 		actionCopyInstance.setTooltipId(
 			QT_TRANSLATE_NOOP("MainWindow", "Copy the selected instance."));
 		all_actions.append(&actionCopyInstance);
+
+		actionCreateInstanceShortcut = TranslatedAction(MainWindow);
+		actionCreateInstanceShortcut->setObjectName(
+			QStringLiteral("actionCreateInstanceShortcut"));
+		actionCreateInstanceShortcut->setIcon(
+			APPLICATION->getThemedIcon("shortcut"));
+		actionCreateInstanceShortcut.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Create Shortcut"));
+		actionCreateInstanceShortcut.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow",
+			"Create a shortcut in a folder of your choosing that launches "
+			"the selected instance."));
+		all_actions.append(&actionCreateInstanceShortcut);
+
 		instanceToolBar->addAction(actionCopyInstance);
+		instanceToolBar->addAction(actionCreateInstanceShortcut);
 
 		all_toolbars.append(&instanceToolBar);
 		MainWindow->addToolBar(Qt::RightToolBarArea, instanceToolBar);
@@ -2067,11 +2084,22 @@ void MainWindow::on_actionDeleteInstance_triggered()
 		return;
 	}
 	auto id = m_selectedInstance->id();
+
+	/* Shortcuts go with the instance, so say so before it happens
+	 * rather than leaving the user to notice their desktop is emptier. */
+	const int shortcutCount = m_selectedInstance->shortcuts().size();
+	QString shortcutNote;
+	if (shortcutCount > 0) {
+		shortcutNote =
+			tr("\n\n%n shortcut(s) to it will be deleted as well.", "",
+			   shortcutCount);
+	}
+
 	auto response = CustomMessageBox::selectable(
 						this, tr("CAREFUL!"),
 						tr("About to delete: %1\nThis is permanent and will "
-						   "completely delete the instance.\n\nAre you sure?")
-							.arg(m_selectedInstance->name()),
+						   "completely delete the instance.%2\n\nAre you sure?")
+								.arg(m_selectedInstance->name(), shortcutNote),
 						QMessageBox::Warning,
 						QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
 						->exec();
@@ -2085,6 +2113,23 @@ void MainWindow::on_actionExportInstance_triggered()
 	if (m_selectedInstance) {
 		ExportInstanceDialog dlg(m_selectedInstance, this);
 		dlg.exec();
+	}
+}
+
+void MainWindow::on_actionCreateInstanceShortcut_triggered()
+{
+	/* The dialog reads the instance's world folder, so it needs more
+	 * than a BaseInstance. Nothing else can currently be selected, but a
+	 * cast that fails is a reason to do nothing rather than to crash. */
+	auto instance =
+		std::dynamic_pointer_cast<MinecraftInstance>(m_selectedInstance);
+	if (!instance) {
+		return;
+	}
+
+	CreateShortcutDialog dlg(instance.get(), this);
+	if (dlg.exec() == QDialog::Accepted) {
+		dlg.createShortcut();
 	}
 }
 
