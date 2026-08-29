@@ -310,7 +310,7 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 
 	if (m_instanceIdToLaunch.isEmpty() && !m_profileToUse.isEmpty()) {
 		qWarning()
-			<< "--account can only be used in combination with --launch!";
+			<< "--profile can only be used in combination with --launch!";
 		m_status = Application::Failed;
 		return;
 	}
@@ -880,6 +880,8 @@ void Application::initSettings()
 	m_settings->registerSetting("InstanceDir", "instances");
 	m_settings->registerSetting({"CentralModsDir", "ModsDir"}, "mods");
 	m_settings->registerSetting("IconsDir", "icons");
+	m_settings->registerSetting("SkinsDir", "skins");
+    m_settings->registerSetting("JavaDir", "java");
 
 	// Editors
 	m_settings->registerSetting("JsonEditor", QString());
@@ -993,6 +995,12 @@ void Application::initSettings()
 	// Toolbar customization
 	m_settings->registerSetting("ToolbarsLocked", false);
 
+	/* Whether the main window keeps its menu bar and gives up the main
+	 * toolbar. Off means the toolbar stays and tapping Alt shows the menu
+	 * bar for a moment. No effect on macOS, where the menu bar is native
+	 * and always present. */
+	m_settings->registerSetting("MenuBarInsteadOfToolBar", false);
+
 	// Window state and geometry
 	m_settings->registerSetting("MainWindowState", "");
 	m_settings->registerSetting("MainWindowGeometry", "");
@@ -1007,6 +1015,16 @@ void Application::initSettings()
 	m_settings->registerSetting("NewInstanceGeometry", "");
 
 	m_settings->registerSetting("UpdateDialogGeometry", "");
+
+	m_settings->registerSetting("DataPackManagerGeometry", "");
+
+	m_settings->registerSetting("ModDownloadGeometry", "");
+
+	m_settings->registerSetting("RPDownloadGeometry", "");
+
+	m_settings->registerSetting("ShaderDownloadGeometry", "");
+
+	m_settings->registerSetting("DataPackDownloadGeometry", "");
 
 	// paste.ee API key
 	m_settings->registerSetting("PasteEEAPIKey", "meshmc");
@@ -1192,6 +1210,8 @@ void Application::initSubsystems()
 							 QDir("cache/ModrinthPacks").absolutePath());
 		m_metacache->addBase("ModrinthModIcons",
 							 QDir("cache/ModrinthModIcons").absolutePath());
+		m_metacache->addBase("ContentImages",
+							 QDir("cache/ContentImages").absolutePath());
 		m_metacache->addBase("root", QDir::currentPath());
 		m_metacache->addBase("translations",
 							 QDir("translations").absolutePath());
@@ -1440,7 +1460,7 @@ void Application::performMainStartupAction()
 				qDebug() << "   Launching with account" << m_profileToUse;
 			}
 
-			launch(inst, true, nullptr, serverToJoin, accountToUse);
+			launch(inst, LaunchMode::Normal, serverToJoin, accountToUse);
 			return;
 		}
 	}
@@ -1545,7 +1565,7 @@ void Application::messageReceived(const QByteArray& message)
 			}
 		}
 
-		launch(instance, true, nullptr, serverObject, accountObject);
+		launch(instance, LaunchMode::Normal, serverObject, accountObject);
 	} else {
 		qWarning() << "Received invalid message" << message;
 	}
@@ -1616,8 +1636,7 @@ bool Application::openJsonEditor(const QString& filename)
 	}
 }
 
-bool Application::launch(InstancePtr instance, bool online,
-						 BaseProfilerFactory* profiler,
+bool Application::launch(InstancePtr instance, LaunchMode mode,
 						 MinecraftServerTargetPtr serverToJoin,
 						 MinecraftAccountPtr accountToUse)
 {
@@ -1635,8 +1654,27 @@ bool Application::launch(InstancePtr instance, bool online,
 		auto& controller = extras.controller;
 		controller.reset(new LaunchController());
 		controller->setInstance(instance);
-		controller->setOnline(online);
-		controller->setProfiler(profiler);
+		controller->setOnline(mode != LaunchMode::Offline);
+		controller->setDemoMode(mode == LaunchMode::Demo);
+
+		/* The profiler follows the instance, not the click. An unknown key
+		 * is left alone rather than cleared: this build simply has no such
+		 * profiler, which is not the same as the user not wanting one.
+		 * A known but misconfigured one is still handed over, so that
+		 * LaunchController says so instead of quietly running unprofiled. */
+		const QString profilerKey = instance->profilerKey();
+		if (!profilerKey.isEmpty()) {
+			auto profiler = m_profilers.value(profilerKey, nullptr);
+			if (profiler) {
+				controller->setProfiler(profiler.get());
+			} else {
+				qWarning() << "Instance" << instance->id()
+						   << "asks for profiler" << profilerKey
+						   << "which this build does not have. Launching "
+							  "without a profiler.";
+			}
+		}
+
 		controller->setServerToJoin(serverToJoin);
 		controller->setAccountToUse(accountToUse);
 		if (window) {
@@ -2077,4 +2115,9 @@ QString Application::getJarsPath()
 #endif
 	}
 	return m_jarsPath;
+}
+
+const QString Application::javaPath()
+{
+    return m_settings->get("JavaDir").toString();
 }

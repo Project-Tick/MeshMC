@@ -93,6 +93,8 @@ class MeshMCPage : public QWidget, public BasePage
 	void on_instDirBrowseBtn_clicked();
 	void on_modsDirBrowseBtn_clicked();
 	void on_iconsDirBrowseBtn_clicked();
+	void on_skinsDirBrowseBtn_clicked();
+	void on_javaDirBrowseBtn_clicked();
 	void on_migrateDataFolderMacBtn_clicked();
 
 	/*!
