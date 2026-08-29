@@ -105,6 +105,17 @@ class LaunchTask : public Task
 
 	bool canAbort() const override;
 
+	/**
+	 * @brief whether an abort has already been requested and accepted
+	 *
+	 * Both this and a launch step that refuses to be interrupted make
+	 * canAbort() false, and the two need different things said to the user.
+	 */
+	bool isAborting() const
+	{
+		return state == LaunchTask::Aborted;
+	}
+
 	shared_qobject_ptr<LogModel> getLogModel();
 
   public:

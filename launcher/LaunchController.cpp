@@ -608,6 +608,26 @@ bool LaunchController::abort()
 		return true;
 	}
 	if (!m_launcher->canAbort()) {
+		// Returning false here used to be the whole story, and nobody looks
+		// at the return value - so pressing Kill did nothing at all, with no
+		// explanation. Say it here, where the reason is actually known,
+		// instead of threading a result code through Application::kill().
+		if (m_launcher->isAborting()) {
+			CustomMessageBox::selectable(
+				m_parentWidget, tr("Already stopping"),
+				tr("MeshMC is already shutting this instance down. Give it a "
+				   "few seconds - if the game does not react, it gets killed "
+				   "automatically."),
+				QMessageBox::Information)
+				->exec();
+		} else {
+			CustomMessageBox::selectable(
+				m_parentWidget, tr("Can't kill Minecraft"),
+				tr("This instance is at a point in the launch process that "
+				   "can't be interrupted. Please try again in a moment."),
+				QMessageBox::Warning)
+				->exec();
+		}
 		return false;
 	}
 	auto response = CustomMessageBox::selectable(
