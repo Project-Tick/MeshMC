@@ -93,6 +93,17 @@ class LoggedProcess : public QProcess
   private:
 	void changeState(LoggedProcess::State state);
 
+#ifdef Q_OS_WIN
+	/**
+	 * @brief put the child into a fresh job object
+	 *
+	 * Called once the child actually exists. Without this, kill() can only
+	 * reach the direct child - which is the wrapper command when one is
+	 * configured, leaving java (and whatever java spawned) alive.
+	 */
+	void assignToJobObject();
+#endif
+
   private:
 	QString m_err_leftover;
 	QString m_out_leftover;
@@ -101,4 +112,12 @@ class LoggedProcess : public QProcess
 	int m_exit_code = 0;
 	bool m_is_aborting = false;
 	bool m_is_detachable = false;
+#ifdef Q_OS_WIN
+	// The job object the child was assigned to, or null if we never got one
+	// (then kill() falls back to only killing the direct child).
+	// Typed as void* on purpose: this is a Windows HANDLE, but keeping it
+	// opaque means windows.h stays out of every translation unit that
+	// launches a process.
+	void* m_job = nullptr;
+#endif
 };

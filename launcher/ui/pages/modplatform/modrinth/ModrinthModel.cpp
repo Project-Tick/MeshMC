@@ -27,6 +27,7 @@
 
 #include "Application.h"
 #include "Json.h"
+#include "modplatform/modrinth/ModrinthApi.h"
 
 #include <QtMath>
 
@@ -167,21 +168,11 @@ namespace Modrinth
 
 	void ListModel::performPaginatedSearch()
 	{
-		static const char* sortFields[] = {"relevance", "downloads", "updated",
-										   "newest", "follows"};
-		int sortIndex = (currentSort >= 0 && currentSort < 5) ? currentSort : 0;
-
 		NetJob* netJob = new NetJob("Modrinth::Search", APPLICATION->network());
-		auto searchUrl = QString("https://api.modrinth.com/v2/search?"
-								 "query=%1&"
-								 "facets=[[\"project_type:modpack\"]]&"
-								 "index=%2&"
-								 "offset=%3&"
-								 "limit=20")
-							 .arg(currentSearchTerm, sortFields[sortIndex])
-							 .arg(nextSearchOffset);
-		netJob->addNetAction(
-			Net::Download::makeByteArray(QUrl(searchUrl), &response));
+		netJob->addNetAction(Net::Download::makeByteArray(
+			ModrinthApi::modpackSearchUrl(currentSearchTerm, currentSort,
+										  nextSearchOffset),
+			&response));
 		jobPtr = netJob;
 		jobPtr->start();
 		QObject::connect(netJob, &NetJob::succeeded, this,

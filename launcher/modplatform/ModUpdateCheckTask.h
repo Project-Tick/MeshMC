@@ -27,10 +27,13 @@
 
 #include <QList>
 #include <QObject>
+#include <QPointer>
 #include <QString>
 #include <memory>
 
+#include "modplatform/ContentType.h"
 #include "modplatform/ModDownloadTypes.h"
+#include "net/NetJob.h"
 #include "tasks/Task.h"
 
 class ModMetadataIndex;
@@ -62,14 +65,30 @@ class ModUpdateCheckTask : public Task
 		ModPlatform::DownloadItem item;
 	};
 
+	/* `loader` is ignored for content that has no loaders (resource
+	 * packs, shader packs, data packs) - see the constructor. */
 	ModUpdateCheckTask(std::shared_ptr<ModMetadataIndex> index,
 					   QString mcVersion, QString loader,
+					   ModPlatform::ContentType contentType,
 					   QObject* parent = nullptr);
 
+	/* Whatever was found so far. Still meaningful after abort(): the
+	 * mods that were checked before the user gave up are checked, and
+	 * throwing that away would only make them do it again. */
 	QList<UpdateInfo> availableUpdates() const
 	{
 		return m_updates;
 	}
+
+	/* One lookup per tracked mod, so a large instance takes a while and
+	 * the progress dialog offers an Abort button for it. */
+	bool canAbort() const override
+	{
+		return true;
+	}
+
+  public slots:
+	bool abort() override;
 
   protected:
 	void executeTask() override;
@@ -80,8 +99,16 @@ class ModUpdateCheckTask : public Task
 	std::shared_ptr<ModMetadataIndex> m_index;
 	QString m_mcVersion;
 	QString m_loader;
+	ModPlatform::ContentType m_contentType = ModPlatform::ContentType::Mod;
 	QList<UpdateInfo> m_updates;
 	int m_pending = 0;
 	int m_total = 0;
 	int m_completed = 0;
+
+	/* Lookups still in flight, so abort() can call them off. Guarded
+	 * pointers because a job deletes itself once it has reported. */
+	QList<QPointer<NetJob>> m_activeJobs;
+	/* Latched by abort(): replies still arrive but are dropped, and no
+	 * second verdict is given on top of the aborted one. */
+	bool m_aborted = false;
 };

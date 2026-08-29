@@ -32,6 +32,10 @@
 #include <unistd.h>
 #endif
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 LoggedProcess::LoggedProcess(QObject* parent) : QProcess(parent)
 {
 	// QProcess has a strange interface... let's map a lot of those into a few.
@@ -55,6 +59,15 @@ LoggedProcess::~LoggedProcess()
 	if (m_is_detachable) {
 		setProcessState(QProcess::NotRunning);
 	}
+#ifdef Q_OS_WIN
+	// Closing the job handle does not kill anything, because the job was
+	// created without JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE. That is deliberate:
+	// see assignToJobObject().
+	if (m_job) {
+		CloseHandle(static_cast<HANDLE>(m_job));
+		m_job = nullptr;
+	}
+#endif
 }
 
 QStringList reprocess(const QByteArray& data, QString& leftover)
@@ -146,10 +159,78 @@ void LoggedProcess::kill()
 	if (pid > 0) {
 		::kill(-pid, SIGKILL);
 	}
+#elif defined(Q_OS_WIN)
+	// Terminating the job takes down every process in it, so a wrapper
+	// command and the java process behind it both die. QProcess::kill() is
+	// only the fallback: it reaches the direct child and nothing else.
+	if (m_job) {
+		if (TerminateJobObject(static_cast<HANDLE>(m_job), 1)) {
+			return;
+		}
+		qWarning() << "TerminateJobObject failed with error"
+				   << GetLastError()
+				   << "- killing only the direct child instead";
+	}
+	QProcess::kill();
 #else
 	QProcess::kill();
 #endif
 }
+
+#ifdef Q_OS_WIN
+void LoggedProcess::assignToJobObject()
+{
+	if (m_job) {
+		return;
+	}
+	auto pid = processId();
+	if (pid <= 0) {
+		// There is no pid before the process is actually running, which is
+		// why this is called from the Running state change and not earlier.
+		return;
+	}
+
+	HANDLE job = CreateJobObjectW(nullptr, nullptr);
+	if (!job) {
+		qWarning() << "Could not create a job object for process" << pid
+				   << "- error" << GetLastError()
+				   << "; killing it will not take down its children";
+		return;
+	}
+
+	// NOTE: the job deliberately has no limits set on it. In particular it
+	// must NOT get JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE: setDetachable(true)
+	// means the game is allowed to outlive the launcher, and that flag would
+	// shoot it the moment the handle is closed. A limitless job is still
+	// enough for TerminateJobObject().
+
+	// Reopening the child by pid is safe here: QProcess keeps a handle to it,
+	// and Windows does not recycle a pid while a handle to the process is
+	// open.
+	HANDLE process = OpenProcess(PROCESS_SET_QUOTA | PROCESS_TERMINATE, FALSE,
+								 static_cast<DWORD>(pid));
+	if (!process) {
+		qWarning() << "Could not open process" << pid << "- error"
+				   << GetLastError();
+		CloseHandle(job);
+		return;
+	}
+	if (!AssignProcessToJobObject(job, process)) {
+		qWarning() << "Could not assign process" << pid
+				   << "to a job object - error" << GetLastError();
+		CloseHandle(process);
+		CloseHandle(job);
+		return;
+	}
+	CloseHandle(process);
+	m_job = job;
+
+	// Known, unavoidable race: a grandchild spawned between CreateProcess and
+	// the assignment above is not in the job. Closing that hole would need
+	// the child to start suspended, and QProcess does not hand out the
+	// PROCESS_INFORMATION required to resume its main thread.
+}
+#endif
 
 int LoggedProcess::exitCode() const
 {
@@ -187,15 +268,16 @@ void LoggedProcess::on_stateChange(QProcess::ProcessState state)
 				qWarning() << "Wrong state change for process from state"
 						   << m_state << "to" << (int)LoggedProcess::Running;
 			}
+#ifdef Q_OS_WIN
+			// Before changeState(), so that anything reacting to Running -
+			// including an immediate kill() - already sees the job.
+			assignToJobObject();
+#endif
 			changeState(LoggedProcess::Running);
 			return;
 		}
 	}
 }
-
-#if defined Q_OS_WIN32
-#include <windows.h>
-#endif
 
 qint64 LoggedProcess::processId() const
 {

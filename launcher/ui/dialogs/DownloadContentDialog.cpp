@@ -26,618 +26,428 @@
 
 #include "DownloadContentDialog.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QSplitter>
-#include <QGroupBox>
-#include <QHeaderView>
-#include <QKeyEvent>
-#include <QMessageBox>
-#include <QTimer>
+#include <QPushButton>
 #include <QRegularExpression>
+#include <QSet>
+#include <algorithm>
+#include <utility>
 
 #include "Application.h"
-#include "Json.h"
 #include "minecraft/PackProfile.h"
 #include "minecraft/mod/ModMetadataIndex.h"
-#include "modplatform/ContentType.h"
-#include "modplatform/flame/FlameModModel.h"
-#include "modplatform/modrinth/ModrinthModModel.h"
-#include "net/Download.h"
-#include "net/NetJob.h"
+#include "modplatform/flame/FlameContentModel.h"
+#include "modplatform/modrinth/ModrinthContentModel.h"
+#include "settings/SettingsObject.h"
+#include "ui/dialogs/CustomMessageBox.h"
+#include "ui/pages/modplatform/ContentProviderPage.h"
+#include "ui/widgets/PageContainer.h"
 
-static QString normalizeModName(const QString& name)
+namespace
 {
-	QString n = name.toLower().trimmed();
-	n.remove(QRegularExpression("\\s*\\([^)]*\\)\\s*"));
-	n.remove(QRegularExpression("[^a-z0-9 ]"));
-	return n.simplified();
-}
+
+	struct UrlHandler {
+		/* Matched against "<host><path>", so no scheme. */
+		QString pattern;
+		QString providerId;
+	};
+
+	/* Project page addresses, which differ per kind of content: a mod
+	 * lives under modrinth.com/mod/, a shader under modrinth.com/shader/
+	 * and so on. Pasting the wrong kind of link should fall through to
+	 * the web browser rather than search for nonsense. */
+	QList<UrlHandler> urlHandlersFor(ModPlatform::ContentType type)
+	{
+		QString modrinthPath;
+		QString curseForgePath;
+
+		switch (type) {
+			case ModPlatform::ContentType::Mod:
+				modrinthPath = "mod";
+				curseForgePath = "mc-mods";
+				break;
+			case ModPlatform::ContentType::ResourcePack:
+				modrinthPath = "resourcepack";
+				curseForgePath = "texture-packs";
+				break;
+			case ModPlatform::ContentType::ShaderPack:
+				modrinthPath = "shader";
+				curseForgePath = "shaders";
+				break;
+			case ModPlatform::ContentType::DataPack:
+				modrinthPath = "datapack";
+				curseForgePath = "data-packs";
+				break;
+		}
+
+		return {
+			{QString(R"((?:www\.)?modrinth\.com/%1/([^/]+)/?)")
+				 .arg(modrinthPath),
+			 QStringLiteral("modrinth")},
+			{QString(R"((?:www\.)?curseforge\.com/minecraft/%1/([^/]+)/?)")
+				 .arg(curseForgePath),
+			 QStringLiteral("curseforge")},
+			/* The old CurseForge address, still handed out by search
+			 * engines and old forum posts. */
+			{QString(R"(minecraft\.curseforge\.com/projects/([^/]+)/?)"),
+			 QStringLiteral("curseforge")},
+		};
+	}
+
+} // namespace
 
 DownloadContentDialog::DownloadContentDialog(
 	MinecraftInstance* instance, ModPlatform::ContentType contentType,
-	QWidget* parent)
-	: QDialog(parent), m_instance(instance), m_contentType(contentType)
+	QWidget* parent, bool suppressInitialSearch)
+	: QDialog(parent), m_instance(instance), m_contentType(contentType),
+	  m_suppressInitialSearch(suppressInitialSearch),
+	  m_buttons(QDialogButtonBox::Help | QDialogButtonBox::Ok |
+				QDialogButtonBox::Cancel),
+	  m_layout(this)
 {
-	// Get Minecraft version and loader from instance
-	auto profile = m_instance->getPackProfile();
-	if (profile) {
-		m_mcVersion = profile->getComponentVersion("net.minecraft");
-		// Detect loader
-		if (profile->getComponent("net.minecraftforge")) {
-			m_loaderType = "forge";
-		} else if (profile->getComponent("net.fabricmc.fabric-loader")) {
-			m_loaderType = "fabric";
-		} else if (profile->getComponent("org.quiltmc.quilt-loader")) {
-			m_loaderType = "quilt";
-		} else if (profile->getComponent("net.neoforged")) {
-			// NeoForge's component uid is "net.neoforged" (matches what
-			// InstanceImportTask / FTB / ATL / Technic write and what
-			// VersionPage reads). The previous "net.neoforged.neoforge"
-			// string never matched, so mod-download dialogs opened against
-			// a NeoForge instance left m_loaderType empty and showed no
-			// loader filter.
-			m_loaderType = "neoforge";
-		}
+	setObjectName(QStringLiteral("DownloadContentDialog"));
+	setWindowTitle(dialogTitle());
+	setWindowIcon(APPLICATION->getThemedIcon("new"));
+	setWindowModality(Qt::WindowModal);
+
+	/* Half the parent's width and three quarters of its height, which is
+	 * roughly what this needs to show a list and a description side by
+	 * side, but never smaller than usable. */
+	if (parent != nullptr) {
+		resize(std::max(parent->width() / 2, 700),
+			   std::max((parent->height() * 3) / 4, 500));
+	} else {
+		resize(900, 600);
 	}
 
-	setupUi();
+	detectInstanceProfile();
 
-	// Setup search debounce timer
-	m_searchTimer = new QTimer(this);
-	m_searchTimer->setInterval(500); // 500ms delay
-	connect(m_searchTimer, &QTimer::timeout, this,
-			&DownloadContentDialog::triggerSearch);
+	auto* okButton = m_buttons.button(QDialogButtonBox::Ok);
+	okButton->setText(tr("Review and confirm"));
+	okButton->setToolTip(
+		tr("Close this window and review the %1 you picked before anything "
+		   "is downloaded. Shortcut: Ctrl+Return")
+			.arg(contentsNoun()));
+	okButton->setShortcut(tr("Ctrl+Return"));
+	okButton->setDefault(true);
+	okButton->setAutoDefault(true);
+	okButton->setEnabled(false);
 
-	m_flameModel = new Flame::ModListModel(contentType, this);
-	m_modrinthModel = new Modrinth::ModListModel(contentType, this);
+	auto* cancelButton = m_buttons.button(QDialogButtonBox::Cancel);
+	cancelButton->setDefault(false);
+	cancelButton->setAutoDefault(false);
 
-	m_curseForgeView->setModel(m_flameModel);
-	m_modrinthView->setModel(m_modrinthModel);
+	auto* helpButton = m_buttons.button(QDialogButtonBox::Help);
+	helpButton->setDefault(false);
+	helpButton->setAutoDefault(false);
 
-	connect(m_curseForgeView->selectionModel(),
-			&QItemSelectionModel::currentChanged, this,
-			&DownloadContentDialog::onModSelectionChanged);
-	connect(m_modrinthView->selectionModel(),
-			&QItemSelectionModel::currentChanged, this,
-			&DownloadContentDialog::onModSelectionChanged);
-	connect(m_curseForgeView, &QListView::doubleClicked, this,
-			&DownloadContentDialog::onModDoubleClicked);
-	connect(m_modrinthView, &QListView::doubleClicked, this,
-			&DownloadContentDialog::onModDoubleClicked);
+	buildPages();
 
-	// Trigger initial search
-	QTimer::singleShot(0, this, &DownloadContentDialog::triggerSearch);
+	connect(okButton, &QPushButton::clicked, this,
+			&DownloadContentDialog::accept);
+	connect(cancelButton, &QPushButton::clicked, this,
+			&DownloadContentDialog::reject);
+	connect(helpButton, &QPushButton::clicked, m_container,
+			&PageContainer::help);
+
+	const QString saved =
+		APPLICATION->settings()->get(geometrySaveKey()).toString();
+	if (!saved.isEmpty()) {
+		restoreGeometry(QByteArray::fromBase64(saved.toUtf8()));
+	}
 }
 
 DownloadContentDialog::~DownloadContentDialog() {}
+
+void DownloadContentDialog::detectInstanceProfile()
+{
+	auto profile = m_instance->getPackProfile();
+	if (!profile) {
+		return;
+	}
+
+	m_mcVersion = profile->getComponentVersion("net.minecraft");
+
+	if (profile->getComponent("net.minecraftforge")) {
+		m_loaderType = "forge";
+	} else if (profile->getComponent("net.fabricmc.fabric-loader")) {
+		m_loaderType = "fabric";
+	} else if (profile->getComponent("org.quiltmc.quilt-loader")) {
+		m_loaderType = "quilt";
+	} else if (profile->getComponent("net.neoforged")) {
+		/* NeoForge's component uid is "net.neoforged" - what
+		 * InstanceImportTask / FTB / ATL / Technic write and what
+		 * VersionPage reads. The longer "net.neoforged.neoforge" never
+		 * matched, which left the loader filter empty here. */
+		m_loaderType = "neoforge";
+	}
+}
+
+void DownloadContentDialog::buildPages()
+{
+	/* An instance with no loader detected searches without a loader
+	 * filter rather than with an empty one, and content that is not
+	 * loader-specific never carries one - otherwise the filter panel,
+	 * which shows no loader boxes for those, would look like it had
+	 * cleared the loader the moment anything else was touched, and the
+	 * search would be run again for nothing. */
+	ModPlatform::SearchFilters filters;
+	filters.mcVersions = ModPlatform::singleVersionList(m_mcVersion);
+	if (!m_loaderType.isEmpty() &&
+		ModPlatform::contentTypeUsesLoader(m_contentType)) {
+		filters.loaders = QStringList{m_loaderType};
+	}
+	/* side and openSourceOnly start off: the panel's boxes start
+	 * unticked, and the two have to agree or the first touch of any
+	 * other box would look like a change and search again. */
+
+	auto* flameModel = new FlameContentModel(m_contentType, filters);
+	auto* modrinthModel = new ModrinthContentModel(m_contentType, filters);
+
+	/* Modrinth first, as the reference launcher does: it is the one that
+	 * hands out download links without conditions. */
+	m_pages.append(new ContentProviderPage(
+		this, modrinthModel, APPLICATION->getThemedIcon("modrinth")));
+	m_pages.append(new ContentProviderPage(
+		this, flameModel, APPLICATION->getThemedIcon("flame")));
+
+	/* Before the container exists, because building it selects a page,
+	 * and selecting a page is what would start that search. */
+	for (auto* page : m_pages) {
+		page->setSuppressInitialSearch(m_suppressInitialSearch);
+	}
+
+	m_layout.setContentsMargins(0, 0, 0, 0);
+
+	m_container = new PageContainer(this, QString(), this);
+	m_container->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+	m_container->layout()->setContentsMargins(0, 0, 0, 0);
+	m_layout.addWidget(m_container);
+
+	m_buttons.setContentsMargins(0, 0, 6, 6);
+	m_container->addButtons(&m_buttons);
+
+	connect(m_container, &PageContainer::selectedPageChanged, this,
+			&DownloadContentDialog::onPageChanged);
+}
+
+QList<BasePage*> DownloadContentDialog::getPages()
+{
+	QList<BasePage*> pages;
+	pages.reserve(m_pages.size());
+	for (auto* page : m_pages) {
+		pages.append(page);
+	}
+	return pages;
+}
+
+QString DownloadContentDialog::dialogTitle()
+{
+	return tr("Download %1")
+		.arg(ModPlatform::contentTypeDisplayName(m_contentType));
+}
+
+QString DownloadContentDialog::contentNoun() const
+{
+	return ModPlatform::contentTypeNoun(m_contentType);
+}
+
+QString DownloadContentDialog::contentsNoun() const
+{
+	return ModPlatform::contentTypeNounPlural(m_contentType);
+}
 
 void DownloadContentDialog::setInstalledIndex(
 	std::shared_ptr<ModMetadataIndex> index)
 {
 	m_installedIndex = std::move(index);
+	for (auto* page : m_pages) {
+		page->setInstalledIndex(m_installedIndex);
+	}
 }
 
-QString DownloadContentDialog::alreadyInstalledReason(
-	const QString& platform, const QString& projectId,
-	const QString& name) const
+QString
+DownloadContentDialog::installedVersionId(const QString& platform,
+										  const QString& projectId) const
 {
-	if (!m_installedIndex) {
+	if (!m_installedIndex || platform.isEmpty() || projectId.isEmpty()) {
 		return QString();
 	}
+	return m_installedIndex->findByPlatformProject(platform, projectId)
+		.versionId;
+}
 
-	if (!platform.isEmpty() && !projectId.isEmpty()) {
-		const auto byProject =
-			m_installedIndex->findByPlatformProject(platform, projectId);
-		if (byProject.isValid()) {
-			return tr("Already installed (%1)").arg(byProject.fileName);
+bool DownloadContentDialog::openForVersionChange(const QString& platform,
+												 const QString& projectId,
+												 const QString& name)
+{
+	ContentProviderPage* target = nullptr;
+	for (auto* page : m_pages) {
+		if (page->id() == platform) {
+			target = page;
+			break;
+		}
+	}
+	if (target == nullptr || projectId.isEmpty()) {
+		return false;
+	}
+
+	m_container->selectPage(platform);
+	setWindowTitle(tr("Change %1 version").arg(name));
+	/* No provider to choose any more, and the dialog's own buttons are
+	 * replaced by the page's Reinstall/Cancel pair. */
+	m_container->hidePageList();
+	m_buttons.hide();
+	target->openProject(projectId);
+	return true;
+}
+
+bool DownloadContentDialog::openProjectLink(const QUrl& url)
+{
+	const QString address = url.host() + url.path();
+
+	for (const auto& handler : urlHandlersFor(m_contentType)) {
+		const QRegularExpression expression(
+			QRegularExpression::anchoredPattern(handler.pattern));
+		const auto match = expression.match(address);
+		if (!match.hasMatch()) {
+			continue;
+		}
+
+		const QString slug = match.captured(1);
+		if (slug.isEmpty()) {
+			continue;
+		}
+
+		for (auto* page : m_pages) {
+			if (page->id() != handler.providerId) {
+				continue;
+			}
+			/* The link may well point at the provider the user is not
+			 * currently looking at. */
+			m_container->selectPage(handler.providerId);
+			page->openProjectSlug(slug);
+			return true;
 		}
 	}
 
+	return false;
+}
+
+bool DownloadContentDialog::isNameQueued(const QString& name) const
+{
 	const QString normalized = ModMetadataIndex::normalizeName(name);
-	if (!normalized.isEmpty()) {
-		const auto byName = m_installedIndex->findByNormalizedName(normalized);
-		if (byName.isValid()) {
-			return tr("Already installed (%1)").arg(byName.fileName);
+	for (const auto& queued : m_queue) {
+		if (ModMetadataIndex::normalizeName(queued.name) == normalized) {
+			return true;
 		}
 	}
-
-	return QString();
+	return false;
 }
 
-void DownloadContentDialog::setupUi()
+void DownloadContentDialog::queueContent(const ModPlatform::SelectedMod& mod)
 {
-	QString title =
-		tr("Download %1")
-			.arg(ModPlatform::contentTypeDisplayName(m_contentType));
-	setWindowTitle(title);
-	resize(900, 600);
-
-	auto* mainLayout = new QHBoxLayout(this);
-
-	// Left panel: platform selection
-	auto* leftPanel = new QVBoxLayout();
-	m_platformList = new QListWidget(this);
-	m_platformList->addItem(tr("CurseForge"));
-	m_platformList->addItem(tr("Modrinth"));
-	m_platformList->setCurrentRow(0);
-	m_platformList->setMaximumWidth(150);
-	m_platformList->setMinimumWidth(120);
-	connect(m_platformList, &QListWidget::currentRowChanged, this,
-			&DownloadContentDialog::onPlatformChanged);
-
-	// Selected mods section below platform list
-	auto* selectedGroup = new QGroupBox(tr("Selected"), this);
-	auto* selectedLayout = new QVBoxLayout(selectedGroup);
-	m_selectedListWidget = new QListWidget(this);
-	m_selectedListWidget->setMaximumWidth(150);
-	m_selectedListWidget->setMinimumWidth(120);
-	selectedLayout->addWidget(m_selectedListWidget);
-	connect(m_selectedListWidget, &QListWidget::doubleClicked, this,
-			[this](const QModelIndex& idx) { removeSelectedMod(idx.row()); });
-
-	leftPanel->addWidget(m_platformList);
-	leftPanel->addWidget(selectedGroup);
-
-	// Right panel: search + results
-	auto* rightPanel = new QVBoxLayout();
-
-	// Search bar
-	auto* searchLayout = new QHBoxLayout();
-	m_searchEdit = new QLineEdit(this);
-	m_searchEdit->setPlaceholderText(
-		tr("Search %1...")
-			.arg(ModPlatform::contentTypeDisplayName(m_contentType)));
-	m_searchEdit->setClearButtonEnabled(true);
-
-	m_sortBox = new QComboBox(this);
-	m_sortBox->addItem(tr("Sort by relevance"));
-	m_sortBox->addItem(tr("Sort by downloads"));
-	m_sortBox->addItem(tr("Sort by updated"));
-	m_sortBox->addItem(tr("Sort by newest"));
-	m_sortBox->addItem(tr("Sort by follows"));
-
-	searchLayout->addWidget(m_searchEdit, 1);
-	searchLayout->addWidget(m_sortBox);
-
-	connect(m_searchEdit, &QLineEdit::returnPressed, this,
-			&DownloadContentDialog::triggerSearch);
-	connect(m_searchEdit, &QLineEdit::textChanged, this,
-			&DownloadContentDialog::onSearchTextChanged);
-	connect(m_sortBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-			this, &DownloadContentDialog::onSortChanged);
-
-	// Content stack (CurseForge / Modrinth views)
-	m_contentStack = new QStackedWidget(this);
-
-	m_curseForgeView = new QListView(this);
-	m_curseForgeView->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_curseForgeView->setIconSize(QSize(48, 48));
-	m_curseForgeView->setSpacing(2);
-
-	m_modrinthView = new QListView(this);
-	m_modrinthView->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_modrinthView->setIconSize(QSize(48, 48));
-	m_modrinthView->setSpacing(2);
-
-	m_contentStack->addWidget(m_curseForgeView);
-	m_contentStack->addWidget(m_modrinthView);
-
-	// Mod detail area
-	auto* detailLayout = new QHBoxLayout();
-	m_descriptionLabel = new QLabel(this);
-	m_descriptionLabel->setWordWrap(true);
-	m_descriptionLabel->setMaximumHeight(80);
-	m_descriptionLabel->setTextFormat(Qt::RichText);
-	m_descriptionLabel->setOpenExternalLinks(true);
-
-	m_versionBox = new QComboBox(this);
-	m_versionBox->setMinimumWidth(200);
-	m_versionBox->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-	m_addButton = new QPushButton(tr("Add"), this);
-	m_addButton->setEnabled(false);
-	connect(m_addButton, &QPushButton::clicked, this, [this] {
-		auto currentView =
-			(m_currentPlatform == 0) ? m_curseForgeView : m_modrinthView;
-		auto idx = currentView->currentIndex();
-		if (idx.isValid()) {
-			onModDoubleClicked(idx);
-		}
-	});
-
-	detailLayout->addWidget(m_descriptionLabel, 1);
-	detailLayout->addWidget(m_versionBox);
-	detailLayout->addWidget(m_addButton);
-
-	// Bottom buttons
-	auto* buttonLayout = new QHBoxLayout();
-	buttonLayout->addStretch();
-	m_cancelButton = new QPushButton(tr("Cancel"), this);
-	m_continueButton = new QPushButton(tr("Continue"), this);
-	m_continueButton->setDefault(true);
-	m_continueButton->setEnabled(false);
-	connect(m_cancelButton, &QPushButton::clicked, this,
-			&DownloadContentDialog::onCancelClicked);
-	connect(m_continueButton, &QPushButton::clicked, this,
-			&DownloadContentDialog::onContinueClicked);
-	buttonLayout->addWidget(m_cancelButton);
-	buttonLayout->addWidget(m_continueButton);
-
-	rightPanel->addLayout(searchLayout);
-	rightPanel->addWidget(m_contentStack, 1);
-	rightPanel->addLayout(detailLayout);
-	rightPanel->addLayout(buttonLayout);
-
-	mainLayout->addLayout(leftPanel);
-	mainLayout->addLayout(rightPanel, 1);
-}
-
-void DownloadContentDialog::onPlatformChanged(int index)
-{
-	m_currentPlatform = index;
-	m_contentStack->setCurrentIndex(index);
-	m_versionBox->clear();
-	m_descriptionLabel->clear();
-	m_addButton->setEnabled(false);
-	triggerSearch();
-}
-
-void DownloadContentDialog::onSearchTextChanged()
-{
-	if (m_searchTimer) {
-		m_searchTimer->stop();
-		m_searchTimer->start();
-	}
-}
-
-void DownloadContentDialog::onSortChanged(int index)
-{
-	triggerSearch();
-}
-
-void DownloadContentDialog::triggerSearch()
-{
-	QString term = m_searchEdit->text();
-	int sort = m_sortBox->currentIndex();
-
-	if (m_currentPlatform == 0) {
-		m_flameModel->searchWithTerm(term, m_mcVersion, m_loaderType, sort);
-	} else {
-		m_modrinthModel->searchWithTerm(term, m_mcVersion, m_loaderType, sort);
-	}
-}
-
-void DownloadContentDialog::onModSelectionChanged(const QModelIndex& current,
-												  const QModelIndex& previous)
-{
-	m_versionBox->clear();
-	m_descriptionLabel->clear();
-	m_addButton->setEnabled(false);
-
-	if (!current.isValid())
+	if (isNameQueued(mod.name)) {
 		return;
+	}
 
-	if (m_currentPlatform == 0) {
-		// CurseForge
-		auto mod = m_flameModel->modAt(current.row());
-		QString desc = QString("<b>%1</b> by %2<br>%3")
-						   .arg(mod.name.toHtmlEscaped(),
-								mod.author.toHtmlEscaped(),
-								mod.description.toHtmlEscaped());
-		const QString installedReason = alreadyInstalledReason(
-			"curseforge", QString::number(mod.addonId), mod.name);
-		if (!installedReason.isEmpty()) {
-			desc += QString("<br><b style=\"color:#c0392b;\">%1</b>")
-						.arg(installedReason.toHtmlEscaped());
+	/* Something already installed is allowed into the queue on purpose.
+	 * That is what changing a version looks like from here, and the
+	 * conflict analyzer decides afterwards whether the file has to be
+	 * replaced or the pick was a no-op. Refusing it here would make the
+	 * checkbox on an installed row a control that does nothing. */
+
+	m_queue.append(mod);
+	queueChanged();
+}
+
+void DownloadContentDialog::unqueueContent(const QString& name)
+{
+	const QString normalized = ModMetadataIndex::normalizeName(name);
+	for (int i = 0; i < m_queue.size(); ++i) {
+		if (ModMetadataIndex::normalizeName(m_queue.at(i).name) == normalized) {
+			m_queue.removeAt(i);
+			queueChanged();
+			return;
 		}
-		m_descriptionLabel->setText(desc);
-
-		m_currentMod.platform = "curseforge";
-		m_currentMod.projectId = QString::number(mod.addonId);
-		m_currentMod.name = mod.name;
-		m_currentMod.addonId = mod.addonId;
-
-		loadVersionsForMod(current);
-	} else {
-		// Modrinth
-		auto mod = m_modrinthModel->modAt(current.row());
-		QString desc = QString("<b>%1</b> by %2<br>%3")
-						   .arg(mod.name.toHtmlEscaped(),
-								mod.author.toHtmlEscaped(),
-								mod.description.toHtmlEscaped());
-		const QString installedReason =
-			alreadyInstalledReason("modrinth", mod.projectId, mod.name);
-		if (!installedReason.isEmpty()) {
-			desc += QString("<br><b style=\"color:#c0392b;\">%1</b>")
-						.arg(installedReason.toHtmlEscaped());
-		}
-		m_descriptionLabel->setText(desc);
-
-		m_currentMod.platform = "modrinth";
-		m_currentMod.projectId = mod.projectId;
-		m_currentMod.name = mod.name;
-		m_currentMod.addonId = 0;
-
-		loadVersionsForMod(current);
 	}
 }
 
-void DownloadContentDialog::loadVersionsForMod(const QModelIndex& index)
+void DownloadContentDialog::queueChanged()
 {
-	m_versionBox->clear();
-
-	if (m_currentMod.platform == "curseforge") {
-		auto* response = new QByteArray();
-		NetJob* job =
-			new NetJob(QString("CF::Versions(%1)").arg(m_currentMod.name),
-					   APPLICATION->network());
-
-		QString url = QString("https://api.curseforge.com/v1/mods/%1/files")
-						  .arg(m_currentMod.projectId);
-		QStringList cfParams;
-		if (!m_mcVersion.isEmpty()) {
-			cfParams << "gameVersion=" + m_mcVersion;
-		}
-		if (!m_loaderType.isEmpty()) {
-			// Only filter by loader for mods - resource packs and shaders are
-			// loader-agnostic
-			if (m_contentType == ModPlatform::ContentType::Mod) {
-				int loaderType =
-					ModPlatform::loaderToCurseForgeModLoaderType(m_loaderType);
-				if (loaderType > 0) {
-					cfParams << "modLoaderType=" + QString::number(loaderType);
-				}
-			}
-		}
-		if (!cfParams.isEmpty()) {
-			url += "?" + cfParams.join("&");
-		}
-		job->addNetAction(Net::Download::makeByteArray(QUrl(url), response));
-
-		connect(job, &NetJob::succeeded, this, [this, response, job] {
-			job->deleteLater();
-			QJsonDocument doc = QJsonDocument::fromJson(*response);
-			delete response;
-
-			QJsonArray arr;
-			if (doc.isObject() && doc.object().contains("data")) {
-				arr = doc.object().value("data").toArray();
-			} else {
-				arr = doc.array();
-			}
-
-			for (auto fileRaw : arr) {
-				auto fileObj = fileRaw.toObject();
-				QString displayName =
-					Json::ensureString(fileObj, "displayName", "");
-				QString fileName = Json::ensureString(fileObj, "fileName", "");
-				int fileId = Json::ensureInteger(fileObj, "id", 0);
-				QString downloadUrl =
-					Json::ensureString(fileObj, "downloadUrl", "");
-				QString sha1 = ModPlatform::curseForgeSha1FromFileObject(fileObj);
-				int fileLength = Json::ensureInteger(fileObj, "fileLength", 0);
-
-				// Handle restricted downloads (downloadUrl is null)
-				if (downloadUrl.isEmpty() && fileId > 0 &&
-					!fileName.isEmpty()) {
-					downloadUrl = QString("https://www.curseforge.com/api/v1/"
-										  "mods/%1/files/%2/download")
-									  .arg(m_currentMod.projectId)
-									  .arg(fileId);
-				}
-
-				if (displayName.isEmpty())
-					displayName = fileName;
-
-				QVariantMap data;
-				data["fileId"] = fileId;
-				data["fileName"] = fileName;
-				data["downloadUrl"] = downloadUrl;
-				data["sha1"] = sha1;
-				data["fileSize"] = fileLength;
-				m_versionBox->addItem(displayName, QVariant(data));
-			}
-
-			bool alreadySelected = false;
-			for (const auto& existing : m_selectedMods) {
-				if (normalizeModName(existing.name) ==
-					normalizeModName(m_currentMod.name)) {
-					alreadySelected = true;
-					break;
-				}
-			}
-			const bool alreadyInstalled =
-				!alreadyInstalledReason(m_currentMod.platform,
-									   m_currentMod.projectId,
-									   m_currentMod.name)
-					 .isEmpty();
-			m_addButton->setEnabled(m_versionBox->count() > 0 &&
-									!alreadySelected && !alreadyInstalled);
-		});
-		connect(job, &NetJob::failed, this, [response, job](QString) {
-			job->deleteLater();
-			delete response;
-		});
-		job->start();
-
-	} else if (m_currentMod.platform == "modrinth") {
-		auto* response = new QByteArray();
-		NetJob* job =
-			new NetJob(QString("MR::Versions(%1)").arg(m_currentMod.name),
-					   APPLICATION->network());
-
-		QString url = QString("https://api.modrinth.com/v2/project/%1/version")
-						  .arg(m_currentMod.projectId);
-		QStringList params;
-		if (!m_mcVersion.isEmpty()) {
-			params << QString("game_versions=[\"%1\"]").arg(m_mcVersion);
-		}
-		// Only filter by loader for mods - resource packs and shaders are
-		// loader-agnostic
-		if (!m_loaderType.isEmpty() &&
-			m_contentType == ModPlatform::ContentType::Mod) {
-			params << QString("loaders=[\"%1\"]").arg(m_loaderType);
-		}
-		if (!params.isEmpty()) {
-			url += "?" + params.join("&");
-		}
-		job->addNetAction(Net::Download::makeByteArray(QUrl(url), response));
-
-		connect(job, &NetJob::succeeded, this, [this, response, job] {
-			job->deleteLater();
-			QJsonDocument doc = QJsonDocument::fromJson(*response);
-			delete response;
-
-			if (!doc.isArray())
-				return;
-
-			for (auto versionRaw : doc.array()) {
-				auto vObj = versionRaw.toObject();
-				QString name = Json::ensureString(vObj, "name", "");
-				QString versionNumber =
-					Json::ensureString(vObj, "version_number", "");
-				QString versionId = Json::ensureString(vObj, "id", "");
-
-				QString downloadUrl;
-				QString fileName;
-				QString sha1;
-				int fileSize = 0;
-				auto files = Json::ensureArray(vObj, "files");
-				for (auto fileRaw : files) {
-					auto fileObj = fileRaw.toObject();
-					bool primary =
-						Json::ensureBoolean(fileObj, "primary", false);
-					if (primary || files.size() == 1) {
-						downloadUrl = Json::ensureString(fileObj, "url", "");
-						fileName = Json::ensureString(fileObj, "filename", "");
-						fileSize = Json::ensureInteger(fileObj, "size", 0);
-						auto hashes = Json::ensureObject(fileObj, "hashes");
-						sha1 = Json::ensureString(hashes, "sha1", "");
-						break;
-					}
-				}
-
-				if (downloadUrl.isEmpty())
-					continue;
-
-				QString displayText =
-					name.isEmpty()
-						? versionNumber
-						: QString("%1 (%2)").arg(name, versionNumber);
-
-				QVariantMap data;
-				data["versionId"] = versionId;
-				data["fileName"] = fileName;
-				data["downloadUrl"] = downloadUrl;
-				data["sha1"] = sha1;
-				data["fileSize"] = fileSize;
-				m_versionBox->addItem(displayText, QVariant(data));
-			}
-
-			bool alreadySelected = false;
-			for (const auto& existing : m_selectedMods) {
-				if (normalizeModName(existing.name) ==
-					normalizeModName(m_currentMod.name)) {
-					alreadySelected = true;
-					break;
-				}
-			}
-			const bool alreadyInstalled =
-				!alreadyInstalledReason(m_currentMod.platform,
-									   m_currentMod.projectId,
-									   m_currentMod.name)
-					 .isEmpty();
-			m_addButton->setEnabled(m_versionBox->count() > 0 &&
-									!alreadySelected && !alreadyInstalled);
-		});
-		connect(job, &NetJob::failed, this, [response, job](QString) {
-			job->deleteLater();
-			delete response;
-		});
-		job->start();
+	QSet<QString> names;
+	names.reserve(m_queue.size());
+	for (const auto& queued : m_queue) {
+		names.insert(ModMetadataIndex::normalizeName(queued.name));
 	}
+
+	/* Every page, not just the visible one: a mod queued from one site
+	 * shows as ticked on the other too. */
+	for (auto* page : m_pages) {
+		page->queueChanged(names);
+	}
+
+	m_buttons.button(QDialogButtonBox::Ok)->setEnabled(!m_queue.isEmpty());
 }
 
-void DownloadContentDialog::onModDoubleClicked(const QModelIndex& index)
+void DownloadContentDialog::onPageChanged(BasePage* previous,
+										  BasePage* selected)
 {
-	if (m_versionBox->count() == 0)
+	auto* previousPage = dynamic_cast<ContentProviderPage*>(previous);
+	auto* selectedPage = dynamic_cast<ContentProviderPage*>(selected);
+	if (previousPage == nullptr || selectedPage == nullptr) {
 		return;
-
-	auto data = m_versionBox->currentData().toMap();
-
-	ModPlatform::SelectedMod mod;
-	mod.name = m_currentMod.name;
-	mod.platform = m_currentMod.platform;
-	mod.projectId = m_currentMod.projectId;
-	mod.mcVersion = m_mcVersion;
-	mod.loaders = m_loaderType;
-
-	if (m_currentMod.platform == "curseforge") {
-		mod.versionId = QString::number(data["fileId"].toInt());
-	} else {
-		mod.versionId = data["versionId"].toString();
 	}
 
-		mod.fileName = data["fileName"].toString();
-		mod.downloadUrl = data["downloadUrl"].toString();
-		mod.sha1 = data["sha1"].toString();
-		mod.fileSize = data["fileSize"].toInt();
+	/* Carry the term across, so the two providers feel like one search
+	 * bar rather than two independent ones. */
+	selectedPage->setSearchTerm(previousPage->searchTerm());
+}
 
-	// Don't add duplicates (check by normalized name across platforms)
-	for (const auto& existing : m_selectedMods) {
-		if (normalizeModName(existing.name) == normalizeModName(mod.name)) {
+QString DownloadContentDialog::geometrySaveKey() const
+{
+	switch (m_contentType) {
+		case ModPlatform::ContentType::Mod:
+			return QStringLiteral("ModDownloadGeometry");
+		case ModPlatform::ContentType::ResourcePack:
+			return QStringLiteral("RPDownloadGeometry");
+		case ModPlatform::ContentType::ShaderPack:
+			return QStringLiteral("ShaderDownloadGeometry");
+		case ModPlatform::ContentType::DataPack:
+			return QStringLiteral("DataPackDownloadGeometry");
+	}
+	return QStringLiteral("ModDownloadGeometry");
+}
+
+void DownloadContentDialog::saveGeometryState()
+{
+	APPLICATION->settings()->set(
+		geometrySaveKey(), QString::fromUtf8(saveGeometry().toBase64()));
+}
+
+void DownloadContentDialog::accept()
+{
+	saveGeometryState();
+	QDialog::accept();
+}
+
+void DownloadContentDialog::reject()
+{
+	if (!m_queue.isEmpty()) {
+		const auto reply =
+			CustomMessageBox::selectable(
+				this, tr("Confirmation Needed"),
+				tr("You have %1 selected %2.\n"
+				   "Are you sure you want to close this dialog?")
+					.arg(m_queue.size())
+					.arg(contentsNoun()),
+				QMessageBox::Question, QMessageBox::Yes | QMessageBox::No,
+				QMessageBox::No)
+				->exec();
+		if (reply != QMessageBox::Yes) {
 			return;
 		}
 	}
 
-	// Never let an already-installed mod be queued again, even if the Add
-	// button was somehow still enabled (e.g. stale state from before the
-	// installed index was set).
-	if (!alreadyInstalledReason(mod.platform, mod.projectId, mod.name)
-			 .isEmpty()) {
-		return;
-	}
-
-	m_selectedMods.append(mod);
-	updateSelectedList();
-	m_addButton->setEnabled(false); // just added this mod, disable Add
-}
-
-void DownloadContentDialog::removeSelectedMod(int index)
-{
-	if (index >= 0 && index < m_selectedMods.size()) {
-		QString removedName = m_selectedMods[index].name;
-		m_selectedMods.removeAt(index);
-		updateSelectedList();
-		// Re-enable Add if the removed mod matches the currently viewed mod
-		// (and it isn't already installed - removing it from the pending
-		// selection doesn't uninstall it from disk).
-		if (removedName == m_currentMod.name && m_versionBox->count() > 0 &&
-			alreadyInstalledReason(m_currentMod.platform,
-								   m_currentMod.projectId, m_currentMod.name)
-				.isEmpty()) {
-			m_addButton->setEnabled(true);
-		}
-	}
-}
-
-void DownloadContentDialog::updateSelectedList()
-{
-	m_selectedListWidget->clear();
-	for (const auto& mod : m_selectedMods) {
-		QString prefix = (mod.platform == "curseforge") ? "[CF] " : "[MR] ";
-		m_selectedListWidget->addItem(prefix + mod.name);
-	}
-	m_continueButton->setEnabled(!m_selectedMods.isEmpty());
-}
-
-void DownloadContentDialog::onContinueClicked()
-{
-	accept();
-}
-
-void DownloadContentDialog::onCancelClicked()
-{
-	reject();
+	saveGeometryState();
+	QDialog::reject();
 }

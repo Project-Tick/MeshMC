@@ -135,6 +135,11 @@ bool PageContainer::selectPage(QString pageId)
 	return false;
 }
 
+QList<BasePage*> PageContainer::getPages() const
+{
+	return m_model->pages();
+}
+
 void PageContainer::refreshContainer()
 {
 	m_proxyModel->invalidate();
@@ -190,6 +195,11 @@ void PageContainer::createUI()
 	setLayout(m_layout);
 }
 
+void PageContainer::hidePageList()
+{
+	m_pageList->hide();
+}
+
 void PageContainer::addButtons(QWidget* buttons)
 {
 	m_layout->addWidget(buttons, 2, 0, 1, 2);
@@ -202,6 +212,7 @@ void PageContainer::addButtons(QLayout* buttons)
 
 void PageContainer::showPage(int row)
 {
+	BasePage* previous = m_currentPage;
 	if (m_currentPage) {
 		m_currentPage->closed();
 	}
@@ -219,6 +230,10 @@ void PageContainer::showPage(int row)
 		m_pageStack->setCurrentIndex(0);
 		m_header->setText(QString());
 		m_iconHeader->setIcon(APPLICATION->getThemedIcon("bug"));
+	}
+
+	if (previous != m_currentPage) {
+		emit selectedPageChanged(previous, m_currentPage);
 	}
 }
 

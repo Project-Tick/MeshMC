@@ -61,11 +61,39 @@ class MinecraftInstance : public BaseInstance
 		return true;
 	}
 
+	/**
+	 * @brief the Minecraft version this instance is set to, or empty
+	 *
+	 * Reads it from the pack profile, loading that profile first if nothing
+	 * has needed it yet. That load is the point of this accessor: the profile
+	 * is only read on demand, so anything that asks the components directly
+	 * before a launch or an update gets an empty string back and silently
+	 * concludes whatever an empty version implies.
+	 *
+	 * Never touches the network.
+	 */
+	QString minecraftVersion() const;
+
+	/**
+	 * Whether this instance's Minecraft version understands --demo.
+	 *
+	 * Demo mode was added in 1.3.1; older clients ignore the argument and
+	 * start a normal (unauthenticated, and therefore broken) session, so
+	 * offering it there would be a trap.
+	 */
+	bool supportsDemo() const;
+
 	////// Directories and files //////
 	QString jarModsDir() const;
 	QString resourcePacksDir() const;
 	QString texturePacksDir() const;
 	QString shaderPacksDir() const;
+	/* Instance-wide data pack folder. Vanilla only loads data packs from
+	 * saves/<world>/datapacks, so this folder is only meaningful with a
+	 * global data pack loader (Paxi, OpenLoader, ...); its location is
+	 * therefore configurable through the GlobalDataPacksPath setting and
+	 * defaults to <gameRoot>/datapacks. */
+	QString dataPacksDir() const;
 	QString modsRoot() const override;
 	QString coreModsDir() const;
 	QString modsCacheLocation() const;
@@ -98,6 +126,7 @@ class MinecraftInstance : public BaseInstance
 	std::shared_ptr<ModFolderModel> resourcePackList() const;
 	std::shared_ptr<ModFolderModel> texturePackList() const;
 	std::shared_ptr<ModFolderModel> shaderPackList() const;
+	std::shared_ptr<ModFolderModel> dataPackList() const;
 	std::shared_ptr<WorldList> worldList() const;
 	std::shared_ptr<GameOptions> gameOptionsModel() const;
 
@@ -159,6 +188,7 @@ class MinecraftInstance : public BaseInstance
 	mutable std::shared_ptr<ModFolderModel> m_resource_pack_list;
 	mutable std::shared_ptr<ModFolderModel> m_shader_pack_list;
 	mutable std::shared_ptr<ModFolderModel> m_texture_pack_list;
+	mutable std::shared_ptr<ModFolderModel> m_data_pack_list;
 	mutable std::shared_ptr<WorldList> m_world_list;
 	mutable std::shared_ptr<GameOptions> m_game_options;
 };

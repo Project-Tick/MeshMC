@@ -1164,7 +1164,11 @@ int PluginManager::api_instance_launch(void* mh, const char* id, int online)
 	auto inst = app->instances()->getInstanceById(QString::fromUtf8(id));
 	if (!inst)
 		return -1;
-	return app->launch(inst, online != 0) ? 0 : -1;
+	/* The C ABI only knows online/offline, so a module cannot ask for the
+	 * demo; the instance's own profiler setting still applies. */
+	const LaunchMode mode =
+		online != 0 ? LaunchMode::Normal : LaunchMode::Offline;
+	return app->launch(inst, mode) ? 0 : -1;
 }
 
 int PluginManager::api_instance_kill(void* mh, const char* id)
@@ -2194,22 +2198,40 @@ int PluginManager::api_ui_confirm_dialog(void* mh, const char* title,
 	return ret == QMessageBox::Yes ? 1 : 0;
 }
 
+/*
+ * ─── Deprecated: instance sidebar injection ───────────────────────────
+ *
+ * Both entry points below stay in the table so existing .mmco modules
+ * keep loading and keep the rest of their features, but they no longer
+ * register anything.
+ *
+ * The instance sidebar was cut back to a fixed set of instance-wide
+ * commands -- launch, edit, group, folder, export, copy, delete -- and
+ * an open-ended list of plugin buttons is the surest way for it to
+ * drift straight back out again. What a plugin wants to show for an
+ * instance belongs in the instance window, where
+ * ui_register_instance_page() already puts it alongside Mods, Worlds
+ * and the rest, with room to breathe instead of one line in a column.
+ *
+ * They report 0, the same "not registered" a caller would get if the
+ * launcher had run out of memory. Claiming success would leave a plugin
+ * waiting on a button that is never going to appear.
+ */
+
 int PluginManager::api_ui_register_instance_action(void* mh, const char* text,
 												   const char* tooltip,
 												   const char* icon_name,
 												   const char* page_id)
 {
 	(void)mh;
-	auto* pm = APPLICATION->pluginManager();
-	if (!pm)
-		return 0;
-	InstanceAction action;
-	action.text = text ? QString::fromUtf8(text) : QString();
-	action.tooltip = tooltip ? QString::fromUtf8(tooltip) : QString();
-	action.iconName = icon_name ? QString::fromUtf8(icon_name) : QString();
-	action.pageId = page_id ? QString::fromUtf8(page_id) : QString();
-	pm->m_instanceActions.append(action);
-	return 1;
+	(void)tooltip;
+	(void)icon_name;
+	qWarning() << "ui_register_instance_action() is deprecated and does "
+				  "nothing; ignoring instance action"
+			   << (text ? text : "(unnamed)") << "for page"
+			   << (page_id ? page_id : "(none)")
+			   << "- register an instance page instead.";
+	return 0;
 }
 
 int PluginManager::api_ui_register_instance_action_cb(
@@ -2217,17 +2239,15 @@ int PluginManager::api_ui_register_instance_action_cb(
 	void (*cb)(void* ud), void* ud)
 {
 	(void)mh;
-	auto* pm = APPLICATION->pluginManager();
-	if (!pm || !cb)
-		return 0;
-	InstanceCallbackAction action;
-	action.text = text ? QString::fromUtf8(text) : QString();
-	action.tooltip = tooltip ? QString::fromUtf8(tooltip) : QString();
-	action.iconName = icon_name ? QString::fromUtf8(icon_name) : QString();
-	action.callback = cb;
-	action.userData = ud;
-	pm->m_instanceCallbackActions.append(action);
-	return 1;
+	(void)tooltip;
+	(void)icon_name;
+	(void)cb;
+	(void)ud;
+	qWarning() << "ui_register_instance_action_cb() is deprecated and does "
+				  "nothing; ignoring instance action"
+			   << (text ? text : "(unnamed)")
+			   << "- register an instance page instead.";
+	return 0;
 }
 
 #include "ui/pages/BasePage.h"

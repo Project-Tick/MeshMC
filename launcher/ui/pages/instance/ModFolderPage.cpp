@@ -47,10 +47,17 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QAbstractItemModel>
+#include <QCryptographicHash>
+#include <QDir>
+#include <QFile>
 #include <QMenu>
 #include <QSortFilterProxyModel>
+#include <QStandardPaths>
 
 #include "Application.h"
+#include "FileSystem.h"
+#include "minecraft/mod/ModMetadataIndex.h"
+#include "ui/dialogs/BlockedModsDialog.h"
 
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/DownloadContentDialog.h"
@@ -64,10 +71,15 @@
 #include "minecraft/mod/Mod.h"
 #include "minecraft/VersionFilterData.h"
 #include "minecraft/PackProfile.h"
+#include "minecraft/Component.h"
 #include "modplatform/DependencyResolver.h"
 #include "modplatform/ContentDownloadTask.h"
+#include "modplatform/ContentListExport.h"
 #include "modplatform/ModInstallConflictAnalyzer.h"
 #include "modplatform/ModUpdateCheckTask.h"
+#include "modplatform/flame/FlameApi.h"
+#include "modplatform/modrinth/ModrinthApi.h"
+#include "ui/dialogs/ExportListDialog.h"
 #include "ui/dialogs/ModUpdateDialog.h"
 
 #include "Version.h"
@@ -218,10 +230,45 @@ ModFolderPage::ModFolderPage(BaseInstance* inst,
 	auto smodel = ui->modTreeView->selectionModel();
 	connect(smodel, &QItemSelectionModel::currentChanged, this,
 			&ModFolderPage::modCurrent);
+	/* selectionChanged rather than currentChanged: the action is about
+	 * how many rows are selected, and moving the cursor within an
+	 * existing multi-row selection does not change that. */
+	connect(smodel, &QItemSelectionModel::selectionChanged, this,
+			&ModFolderPage::updateSelectionActions);
+	connect(m_mods.get(), &ModFolderModel::updateFinished, this,
+			&ModFolderPage::updateSelectionActions);
 	connect(ui->filterEdit, &QLineEdit::textChanged, this,
 			&ModFolderPage::on_filterTextChanged);
 	connect(m_inst, &BaseInstance::runningStatusChanged, this,
 			&ModFolderPage::runningStateChanged);
+
+	/* The update button carries a menu, the way the reference launcher
+	 * arranges it (ModFolderPage.cpp:84-100 there): pressing the button
+	 * checks for updates, and the menu holds the two related things that
+	 * would otherwise need buttons of their own.
+	 *
+	 * "Check for Updates" is a second entry pointing at the same action
+	 * rather than the action itself: an action that owns a menu opens it
+	 * on click, so the menu needs its own way of asking for the check. */
+	auto* updateMenu = new QMenu(this);
+	auto* checkEntry = updateMenu->addAction(tr("Check for Updates"));
+	connect(checkEntry, &QAction::triggered, this,
+			[this] { runUpdateCheck(); });
+
+	/* Both go in unconditionally and are hidden when they do not apply.
+	 * The content type is not known yet: subclasses call
+	 * setContentType() from their own constructor, which runs after this
+	 * one, so anything that depends on it has to be decided later -
+	 * updateSelectionActions() does it. */
+	updateMenu->addAction(ui->actionVerifyDependencies);
+	updateMenu->addAction(ui->actionResetMetadata);
+	ui->actionUpdate->setMenu(updateMenu);
+
+	/* The toolbar built its buttons back in setupUi(), before the action
+	 * had a menu, so it has to be told to look again. */
+	ui->actionsToolbar->refreshActions();
+
+	updateSelectionActions();
 }
 
 void ModFolderPage::modItemActivated(const QModelIndex&)
@@ -309,23 +356,19 @@ void ModFolderPage::runningStateChanged(bool running)
 	ui->actionEnable->setEnabled(m_controlsEnabled);
 	ui->actionRemove->setEnabled(m_controlsEnabled);
 
-	// Resource packs and shader packs can be safely added while
-	// Minecraft is running (reloaded via F3+T or settings menu)
-	bool canDownload =
-		m_controlsEnabled ||
-		m_contentType == ModPlatform::ContentType::ResourcePack ||
-		m_contentType == ModPlatform::ContentType::ShaderPack;
+	// Resource packs, shader packs and data packs can be safely added
+	// while Minecraft is running (reloaded via F3+T, the settings menu or
+	// /reload respectively)
+	const bool canDownload = contentChangesAllowed();
 	ui->actionDownload->setEnabled(canDownload);
-	ui->actionAdd->setEnabled(m_controlsEnabled || canDownload);
-	// Update is mod-only: we don't track resource/shader pack provenance
-	// across versions today.
-	if (ui->actionUpdate) {
-		const bool canUpdate =
-			canDownload && m_contentType == ModPlatform::ContentType::Mod;
-		ui->actionUpdate->setEnabled(canUpdate);
-		ui->actionUpdate->setVisible(m_contentType ==
-									 ModPlatform::ContentType::Mod);
-	}
+	ui->actionAdd->setEnabled(canDownload);
+	/* Update, Change version, Reset metadata, View homepage and Export
+	 * list are all offered for every kind of content the page serves, as
+	 * the reference launcher does (ResourcePackPage.cpp:55-71,
+	 * ShaderPackPage.cpp:58-74, DataPackPage.cpp:38-54): they need
+	 * nothing but a recorded origin, which downloads write for all of
+	 * them. Only Verify Dependencies stays mod-only. */
+	updateSelectionActions();
 }
 
 bool ModFolderPage::shouldDisplay() const
@@ -335,25 +378,38 @@ bool ModFolderPage::shouldDisplay() const
 
 bool CoreModFolderPage::shouldDisplay() const
 {
-	if (ModFolderPage::shouldDisplay()) {
-		auto inst = dynamic_cast<MinecraftInstance*>(m_inst);
-		if (!inst)
-			return true;
-		auto version = inst->getPackProfile();
-		if (!version)
-			return true;
-		if (!version->getComponent("net.minecraftforge")) {
-			return false;
-		}
-		if (!version->getComponent("net.minecraft")) {
-			return false;
-		}
-		if (version->getComponent("net.minecraft")->getReleaseDateTime() <
-			g_VersionFilterData.legacyCutoffDate) {
-			return true;
-		}
+	if (!ModFolderPage::shouldDisplay()) {
+		return false;
 	}
-	return false;
+
+	/* Unknown answers "no", and the page appears once the answer is
+	 * really known.
+	 *
+	 * This used to answer "yes" whenever the instance or its component
+	 * list could not be inspected, which put a folder that only means
+	 * something to Forge from the 1.5 era into the sidebar of instances
+	 * that have nothing to do with it. The question is only answerable
+	 * once the Minecraft component has been loaded and can say when that
+	 * version was released, so an unloaded one is a "not yet" rather
+	 * than a "sure". */
+	auto* inst = dynamic_cast<MinecraftInstance*>(m_inst);
+	if (!inst) {
+		return false;
+	}
+	auto profile = inst->getPackProfile();
+	if (!profile) {
+		return false;
+	}
+	if (!profile->getComponent("net.minecraftforge")) {
+		return false;
+	}
+
+	Component* minecraft = profile->getComponent("net.minecraft");
+	if (!minecraft || !minecraft->m_loaded) {
+		return false;
+	}
+	return minecraft->getReleaseDateTime() <
+		   g_VersionFilterData.legacyCutoffDate;
 }
 
 bool ModFolderPage::modListFilter(QKeyEvent* keyEvent)
@@ -384,9 +440,7 @@ bool ModFolderPage::eventFilter(QObject* obj, QEvent* ev)
 
 void ModFolderPage::on_actionAdd_triggered()
 {
-	if (!m_controlsEnabled &&
-		m_contentType != ModPlatform::ContentType::ResourcePack &&
-		m_contentType != ModPlatform::ContentType::ShaderPack) {
+	if (!contentChangesAllowed()) {
 		return;
 	}
 	auto list = GuiUtil::BrowseForFiles(
@@ -459,9 +513,7 @@ void ModFolderPage::modCurrent(const QModelIndex& current,
 
 void ModFolderPage::on_actionDownload_triggered()
 {
-	if (!m_controlsEnabled &&
-		m_contentType != ModPlatform::ContentType::ResourcePack &&
-		m_contentType != ModPlatform::ContentType::ShaderPack) {
+	if (!contentChangesAllowed()) {
 		return;
 	}
 
@@ -470,25 +522,8 @@ void ModFolderPage::on_actionDownload_triggered()
 		return;
 	}
 
-	// For mods, require a mod loader to be installed
-	if (m_contentType == ModPlatform::ContentType::Mod) {
-		auto profile = mcInst->getPackProfile();
-		bool hasLoader = false;
-		if (profile) {
-			hasLoader = profile->getComponent("net.minecraftforge") ||
-						profile->getComponent("net.fabricmc.fabric-loader") ||
-						profile->getComponent("org.quiltmc.quilt-loader") ||
-						profile->getComponent("net.neoforged");
-		}
-		if (!hasLoader) {
-			QMessageBox::warning(
-				this->parentWidget(), tr("No Mod Loader"),
-				tr("No mod loader (Forge, Fabric, Quilt, or NeoForge) is "
-				   "installed "
-				   "in this instance. Please install a mod loader first before "
-				   "downloading mods."));
-			return;
-		}
+	if (!ensureModLoaderPresent()) {
+		return;
 	}
 
 	// Step 1: Open browse dialog. Hand it the persistent install index so
@@ -506,31 +541,309 @@ void ModFolderPage::on_actionDownload_triggered()
 		return;
 	}
 
+	installSelection(selectedMods, browseDialog.mcVersion(),
+					 browseDialog.loaderType());
+}
+
+bool ModFolderPage::ensureModLoaderPresent()
+{
+	if (m_contentType != ModPlatform::ContentType::Mod) {
+		return true;
+	}
+
+	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
+	auto profile = mcInst ? mcInst->getPackProfile() : nullptr;
+	bool hasLoader = false;
+	if (profile) {
+		hasLoader = profile->getComponent("net.minecraftforge") ||
+					profile->getComponent("net.fabricmc.fabric-loader") ||
+					profile->getComponent("org.quiltmc.quilt-loader") ||
+					profile->getComponent("net.neoforged");
+	}
+	if (hasLoader) {
+		return true;
+	}
+
+	QMessageBox::warning(
+		this->parentWidget(), tr("No Mod Loader"),
+		tr("No mod loader (Forge, Fabric, Quilt, or NeoForge) is "
+		   "installed "
+		   "in this instance. Please install a mod loader first before "
+		   "downloading mods."));
+	return false;
+}
+
+QList<int> ModFolderPage::selectedSourceRows() const
+{
+	QList<int> rows;
+	/* The constructor reports the running state before the tree view has
+	 * a model, so there is a window where there is no selection model to
+	 * ask. */
+	if (m_filterModel == nullptr ||
+		ui->modTreeView->selectionModel() == nullptr) {
+		return rows;
+	}
+
+	const auto selection = m_filterModel->mapSelectionToSource(
+		ui->modTreeView->selectionModel()->selection());
+	for (const auto& index : selection.indexes()) {
+		if (index.isValid() && !rows.contains(index.row())) {
+			rows.append(index.row());
+		}
+	}
+	return rows;
+}
+
+int ModFolderPage::singleSelectedRow() const
+{
+	if (!m_mods) {
+		return -1;
+	}
+	const auto rows = selectedSourceRows();
+	if (rows.size() != 1) {
+		return -1;
+	}
+	/* A rescan can shrink the list between the selection being made and
+	 * this being asked, and ModFolderModel::at() does not tolerate a row
+	 * that is no longer there. */
+	const int row = rows.first();
+	if (row < 0 || size_t(row) >= m_mods->size()) {
+		return -1;
+	}
+	return row;
+}
+
+ModMetadataIndex::Entry ModFolderPage::selectedModOrigin() const
+{
+	const int row = singleSelectedRow();
+	auto index = m_mods ? m_mods->metadataIndex() : nullptr;
+	if (row < 0 || !index) {
+		return ModMetadataIndex::Entry();
+	}
+	const Mod& mod = m_mods->at(size_t(row));
+	return index->get(
+		ModMetadataIndex::canonicalFileName(mod.filename().fileName()));
+}
+
+void ModFolderPage::updateChangeVersionAction()
+{
+	/* Reachable from runningStateChanged(), which the constructor calls
+	 * before the mod list is in place. */
+	if (!ui->actionChangeVersion || !m_mods) {
+		return;
+	}
+
+	/* Without a recorded platform and project there is no version list
+	 * to offer: the file could have come from anywhere. */
+	ui->actionChangeVersion->setEnabled(
+		contentChangesAllowed() && selectedModOrigin().hasPlatformOrigin());
+}
+
+QList<int> ModFolderPage::rowsForBulkAction() const
+{
+	QList<int> rows = selectedSourceRows();
+	if (!rows.isEmpty() || !m_mods) {
+		return rows;
+	}
+	/* Nothing selected means "all of it", which is how the update
+	 * actions read to anyone who has used them. */
+	for (size_t i = 0; i < m_mods->size(); ++i) {
+		rows.append(int(i));
+	}
+	return rows;
+}
+
+QString ModFolderPage::homepageForRow(int row) const
+{
+	if (!m_mods || row < 0 || size_t(row) >= m_mods->size()) {
+		return QString();
+	}
+	const Mod& mod = m_mods->at(size_t(row));
+
+	auto index = m_mods->metadataIndex();
+	if (index) {
+		const ModMetadataIndex::Entry entry = index->get(
+			ModMetadataIndex::canonicalFileName(mod.filename().fileName()));
+		if (entry.hasPlatformOrigin()) {
+			/* Each provider owns the shape of its own addresses. */
+			if (entry.platform == ModrinthApi::get().id()) {
+				return ModrinthApi::get()
+					.projectPageUrl(entry.projectId)
+					.toString();
+			}
+			if (entry.platform == FlameApi::get().id()) {
+				return FlameApi::get()
+					.projectPageUrl(entry.projectId)
+					.toString();
+			}
+		}
+	}
+
+	/* Falls back to what the archive says about itself, so a manually
+	 * added mod still has somewhere to go. */
+	return mod.homeurl();
+}
+
+void ModFolderPage::updateSelectionActions()
+{
+	/* Reachable before the list exists: the constructor calls this and
+	 * runningStateChanged() runs earlier still. */
+	if (!m_mods || !ui->actionUpdate) {
+		return;
+	}
+
+	updateChangeVersionAction();
+
+	const QList<int> selected = selectedSourceRows();
+	const bool hasSelection = !selected.isEmpty();
+	const bool hasAnything = m_mods->size() > 0;
+
+	/* Update and its menu apply to every kind of content: the sidecar
+	 * that makes an update possible is written for resource packs,
+	 * shader packs and data packs too. The reference launcher offers it
+	 * on each of those pages as well (ResourcePackPage.cpp:55-67,
+	 * ShaderPackPage.cpp:58-70, DataPackPage.cpp:38-50). */
+	ui->actionUpdate->setEnabled(contentChangesAllowed() && hasAnything);
+	ui->actionUpdate->setVisible(true);
+
+	/* Dependencies are a mod-only idea. Decided here rather than in the
+	 * constructor because that is where the content type is known. */
+	ui->actionVerifyDependencies->setVisible(
+		m_contentType == ModPlatform::ContentType::Mod);
+	ui->actionVerifyDependencies->setEnabled(contentChangesAllowed()
+											 && hasAnything);
+
+	ui->actionResetMetadata->setEnabled(hasSelection);
+	ui->actionExportList->setEnabled(hasAnything);
+
+	/* Only offered when at least one of the selected files has anywhere
+	 * to go, so the action is not a dead end. */
+	bool anyHomepage = false;
+	for (const int row : selected) {
+		if (!homepageForRow(row).isEmpty()) {
+			anyHomepage = true;
+			break;
+		}
+	}
+	ui->actionViewHomepage->setEnabled(hasSelection && anyHomepage);
+}
+
+void ModFolderPage::on_actionChangeVersion_triggered()
+{
+	if (!contentChangesAllowed()) {
+		return;
+	}
+
+	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
+	if (!mcInst) {
+		return;
+	}
+
+	auto metaIndex = m_mods->metadataIndex();
+	if (!metaIndex) {
+		return;
+	}
+
+	const int row = singleSelectedRow();
+	if (row < 0) {
+		return;
+	}
+
+	const Mod& mod = m_mods->at(size_t(row));
+	const auto entry = selectedModOrigin();
+	if (!entry.hasPlatformOrigin()) {
+		QMessageBox::information(
+			this->parentWidget(), tr("Cannot Change Version"),
+			tr("There is no record of where '%1' came from, so its other "
+			   "versions cannot be listed. Download it through this page "
+			   "once and the version can be changed from then on.")
+				.arg(mod.name()));
+		return;
+	}
+
+	if (!ensureModLoaderPresent()) {
+		return;
+	}
+
+	/* The pages would otherwise search the moment the dialog is built,
+	 * only for the single-project lookup below to throw the results
+	 * away. */
+	DownloadContentDialog browseDialog(mcInst, m_contentType,
+									   this->parentWidget(), true);
+	browseDialog.setInstalledIndex(metaIndex);
+	if (!browseDialog.openForVersionChange(
+			entry.platform, entry.projectId,
+			entry.name.isEmpty() ? mod.name() : entry.name)) {
+		QMessageBox::information(
+			this->parentWidget(), tr("Cannot Change Version"),
+			tr("'%1' was installed from a source this page cannot browse.")
+				.arg(mod.name()));
+		return;
+	}
+
+	if (browseDialog.exec() != QDialog::Accepted) {
+		return;
+	}
+
+	auto selectedMods = browseDialog.selectedMods();
+	if (selectedMods.isEmpty()) {
+		return;
+	}
+
+	/* Identical from here on: replacing a file is what the conflict
+	 * analyzer makes of a pick whose project is already on disk, which
+	 * is the same thing it does when the same mod is picked out of an
+	 * ordinary search. */
+	installSelection(selectedMods, browseDialog.mcVersion(),
+					 browseDialog.loaderType());
+}
+
+void ModFolderPage::installSelection(
+	const QList<ModPlatform::SelectedMod>& selectedMods,
+	const QString& mcVersion, const QString& loaderType)
+{
 	// Step 2: Resolve dependencies (only for mods). Feed the resolver
 	// the persistent install index so transitive deps that are already
 	// on disk are not re-fetched and re-downloaded.
 	QList<ModPlatform::DependencyInfo> dependencies;
 	QList<ModPlatform::UnresolvedDep> unresolvedDeps;
 	if (m_contentType == ModPlatform::ContentType::Mod) {
-		auto* resolver = new DependencyResolver(
-			selectedMods, browseDialog.mcVersion(), browseDialog.loaderType());
+		/* Shared ownership, not `new` and `delete`: Skip aborts the
+		 * resolver while its lookups are still unwinding, and the plain
+		 * delete that used to sit at the end of this block freed the
+		 * object those replies were about to land in. shared_qobject_ptr
+		 * destroys through deleteLater, so the resolver outlives its own
+		 * callbacks. */
+		shared_qobject_ptr<DependencyResolver> resolver(
+			new DependencyResolver(selectedMods, mcVersion, loaderType));
 		resolver->setInstalledIndex(m_mods->metadataIndex());
 
 		ProgressDialog depProgress(this->parentWidget());
-		depProgress.setSkipButton(true, tr("Skip"));
-		if (depProgress.execWithTask(resolver) != QDialog::Accepted) {
+		/* "Abort" rather than "Skip", matching the reference launcher's
+		 * wording on every one of these dialogs. */
+		depProgress.setSkipButton(true, tr("Abort"));
+		if (depProgress.execWithTask(resolver.get()) != QDialog::Accepted) {
 			if (!resolver->wasSuccessful()) {
 				qWarning() << "Dependency resolution failed or was skipped";
 			}
 		}
+		/* Whatever was resolved before Skip is still worth having. */
 		dependencies = resolver->resolvedDependencies();
 		unresolvedDeps = resolver->unresolvedDependencies();
-		delete resolver;
 	}
 
+	reviewAndInstall(selectedMods, dependencies, unresolvedDeps);
+}
+
+void ModFolderPage::reviewAndInstall(
+	const QList<ModPlatform::SelectedMod>& selectedMods,
+	const QList<ModPlatform::DependencyInfo>& dependencies,
+	const QList<ModPlatform::UnresolvedDep>& unresolvedDeps)
+{
 	// Step 3: Show summary dialog
 	DownloadSummaryDialog summaryDialog(selectedMods, dependencies,
-										unresolvedDeps, this->parentWidget());
+										unresolvedDeps, m_contentType,
+										this->parentWidget());
 	if (summaryDialog.exec() != QDialog::Accepted) {
 		return;
 	}
@@ -577,27 +890,402 @@ void ModFolderPage::on_actionDownload_triggered()
 	// Step 4: Download everything
 	QString targetDir = m_mods->dir().absolutePath();
 
-	auto* downloadTask = new ContentDownloadTask(plan, targetDir);
+	/* Shared ownership for the same reason as the resolver above: the
+	 * download can now be called off, and the transfers report back as
+	 * they unwind - after the plain delete that used to sit here had
+	 * already freed what they report to. */
+	shared_qobject_ptr<ContentDownloadTask> downloadTask(
+		new ContentDownloadTask(plan, targetDir));
 	downloadTask->setMetadataIndex(m_mods->metadataIndex());
 	ProgressDialog downloadProgress(this->parentWidget());
-	downloadProgress.execWithTask(downloadTask);
+	downloadProgress.setSkipButton(true, tr("Abort"));
+	downloadProgress.execWithTask(downloadTask.get());
 
-	if (downloadTask->wasSuccessful()) {
+	if (downloadTask->wasAborted()) {
+		/* Nothing to complain about when the user called it off. Still
+		 * rescan: some of the files will have landed before they did. */
 		m_mods->update();
-	} else {
+	} else if (downloadTask->wasSuccessful()) {
+		m_mods->update();
+	} else if (!offerManualDownloads(plan, targetDir)) {
+		/* Not something the manual route can fix, so say what went
+		 * wrong. */
 		QMessageBox::warning(this->parentWidget(), tr("Download Failed"),
 							 tr("Some files failed to download: %1")
 								 .arg(downloadTask->failReason()));
 	}
-	delete downloadTask;
+
+	m_mods->update();
+}
+
+bool ModFolderPage::offerManualDownloads(
+	const QList<ModPlatform::DownloadItem>& plan, const QString& targetDir)
+{
+	/* Only files whose author blocked third-party downloads are worth
+	 * offering this for. Anything else that failed - a dead connection,
+	 * a checksum mismatch - is not something fetching by hand fixes, and
+	 * the error message is the honest answer there. */
+	QList<BlockedMod> blocked;
+	const QDir dir(targetDir);
+	for (const auto& item : plan) {
+		if (!item.browserDownloadOnly || item.fileName.isEmpty()) {
+			continue;
+		}
+		if (QFile::exists(dir.filePath(item.fileName))) {
+			/* This one did come through after all. */
+			continue;
+		}
+
+		BlockedMod entry;
+		entry.projectId = item.projectId.toInt();
+		entry.fileId = item.versionId.toInt();
+		entry.fileName = item.fileName;
+		entry.targetPath = dir.filePath(item.fileName);
+		blocked.append(entry);
+	}
+
+	if (blocked.isEmpty()) {
+		return false;
+	}
+
+	BlockedModsDialog dialog(
+		this->parentWidget(), tr("Restricted Downloads"),
+		tr("The authors of these files have blocked downloads outside the "
+		   "CurseForge website, and fetching them through it did not work.\n"
+		   "Click Download next to each one to open its page in your "
+		   "browser. Once the files are in your Downloads folder, click "
+		   "Continue and they will be moved into place."),
+		blocked);
+
+	if (dialog.exec() != QDialog::Accepted) {
+		return true;
+	}
+
+	const QString downloadDir =
+		QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+	int placed = 0;
+	for (const auto& entry : dialog.resultMods()) {
+		if (!entry.found) {
+			continue;
+		}
+		const QString source = FS::PathCombine(downloadDir, entry.fileName);
+		if (!QFile::exists(source)) {
+			continue;
+		}
+
+		/* Moved rather than copied, as the pack importer does with the
+		 * same dialog: a stray second copy in Downloads is how people
+		 * end up installing the same jar again by hand later. A rename
+		 * across volumes is not possible, hence the fallback. */
+		bool ok = QFile::rename(source, entry.targetPath);
+		if (!ok) {
+			ok = QFile::copy(source, entry.targetPath);
+		}
+		if (!ok) {
+			qWarning() << "Could not place manually downloaded file"
+					   << entry.fileName;
+			continue;
+		}
+		placed++;
+
+		writeManualDownloadSidecar(plan, entry.fileName, entry.targetPath);
+	}
+
+	qDebug() << "Placed" << placed << "manually downloaded file(s)";
+	return true;
+}
+
+void ModFolderPage::writeManualDownloadSidecar(
+	const QList<ModPlatform::DownloadItem>& plan, const QString& fileName,
+	const QString& path)
+{
+	auto index = m_mods->metadataIndex();
+	if (!index) {
+		return;
+	}
+
+	const ModPlatform::DownloadItem* source = nullptr;
+	for (const auto& item : plan) {
+		if (item.fileName == fileName) {
+			source = &item;
+			break;
+		}
+	}
+	if (source == nullptr) {
+		return;
+	}
+
+	/* A sidecar states a hash as fact, and this file came from wherever
+	 * the user's browser put it - the dialog matches by name alone. If
+	 * it is not the file we expected, the provenance is recorded as
+	 * unknown rather than as a hash that does not hold: the update
+	 * checker and the conflict analyzer both trust what is in here. */
+	if (source->sha1.isEmpty()) {
+		qWarning() << "No known checksum for" << fileName
+				   << "- not recording where it came from";
+		return;
+	}
+
+	QFile file(path);
+	if (!file.open(QIODevice::ReadOnly)) {
+		return;
+	}
+	QCryptographicHash hash(QCryptographicHash::Sha1);
+	hash.addData(&file);
+	file.close();
+
+	if (hash.result().toHex() != source->sha1.toLatin1().toLower()) {
+		qWarning() << "Manually downloaded" << fileName
+				   << "does not match the expected checksum - not recording "
+					  "where it came from";
+		return;
+	}
+
+	ModMetadataIndex::Entry entry;
+	entry.fileName = source->fileName;
+	entry.platform = source->platform;
+	entry.projectId = source->projectId;
+	entry.versionId = source->versionId;
+	entry.name = source->name;
+	entry.slug = source->slug;
+	entry.downloadUrl = source->downloadUrl;
+	entry.sha1 = source->sha1.toLower();
+	entry.fileSize = source->fileSize;
+	entry.isDependency = source->isDependency;
+	entry.installedAt = QDateTime::currentDateTimeUtc();
+	index->put(entry);
+}
+
+void ModFolderPage::verifyDependencies()
+{
+	if (!contentChangesAllowed() || !m_mods) {
+		return;
+	}
+	auto index = m_mods->metadataIndex();
+	if (!index) {
+		return;
+	}
+	if (!ensureModLoaderPresent()) {
+		return;
+	}
+
+	const QString mcVersion = instanceMcVersion();
+	if (mcVersion.isEmpty()) {
+		QMessageBox::warning(
+			this->parentWidget(), tr("Cannot Verify Dependencies"),
+			tr("This instance has no Minecraft version configured."));
+		return;
+	}
+
+	/* The installed mods stand in for a selection: the resolver asks each
+	 * provider what its recorded version requires, and drops anything
+	 * already on disk at that exact version. What is left is what is
+	 * missing. */
+	QList<ModPlatform::SelectedMod> installed;
+	for (const auto& entry : index->all()) {
+		if (!entry.hasPlatformOrigin() || entry.versionId.isEmpty()) {
+			continue;
+		}
+		ModPlatform::SelectedMod mod;
+		mod.name = entry.name;
+		mod.projectId = entry.projectId;
+		mod.versionId = entry.versionId;
+		mod.slug = entry.slug;
+		mod.fileName = entry.fileName;
+		mod.platform = entry.platform;
+		mod.mcVersion = mcVersion;
+		installed.append(mod);
+	}
+
+	if (installed.isEmpty()) {
+		QMessageBox::information(
+			this->parentWidget(), tr("Verify Dependencies"),
+			tr("None of the installed mods has a recorded origin, so there "
+			   "is nothing to look up. Download mods through this page and "
+			   "their dependencies can be checked from then on."));
+		return;
+	}
+
+	shared_qobject_ptr<DependencyResolver> resolver(
+		new DependencyResolver(installed, mcVersion, instanceLoader()));
+	resolver->setInstalledIndex(index);
+
+	ProgressDialog progress(this->parentWidget());
+	progress.setSkipButton(true, tr("Abort"));
+	progress.execWithTask(resolver.get());
+
+	/* Whatever was resolved before Abort is still worth offering. */
+	const auto dependencies = resolver->resolvedDependencies();
+	const auto unresolved = resolver->unresolvedDependencies();
+
+	if (dependencies.isEmpty() && unresolved.isEmpty()) {
+		QMessageBox::information(
+			this->parentWidget(), tr("Verify Dependencies"),
+			tr("Every dependency of the installed mods is present."));
+		return;
+	}
+
+	/* Deliberately not the reference launcher's arrangement: there,
+	 * Verify Dependencies is the update flow with the dependency step
+	 * switched on (ModFolderPage.cpp:90), so the review list also holds
+	 * every available update. Here it stands on its own, which keeps the
+	 * list to what the action asked about - what is missing. Updates
+	 * have their own entry in the same menu. */
+	reviewAndInstall({}, dependencies, unresolved);
+}
+
+void ModFolderPage::on_actionResetMetadata_triggered()
+{
+	if (!m_mods) {
+		return;
+	}
+	auto index = m_mods->metadataIndex();
+	if (!index) {
+		return;
+	}
+
+	const QList<int> rows = selectedSourceRows();
+	if (rows.isEmpty()) {
+		return;
+	}
+
+	if (rows.size() > 1) {
+		auto response =
+			CustomMessageBox::selectable(
+				this->parentWidget(), tr("Confirm Removal"),
+				tr("You are about to remove the metadata for %1 files.\n"
+				   "Are you sure?")
+					.arg(rows.size()),
+				QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No,
+				QMessageBox::No)
+				->exec();
+		if (response != QMessageBox::Yes) {
+			return;
+		}
+	}
+
+	for (const int row : rows) {
+		if (row < 0 || size_t(row) >= m_mods->size()) {
+			continue;
+		}
+		const Mod& mod = m_mods->at(size_t(row));
+		index->remove(mod.filename().fileName());
+	}
+
+	m_mods->update();
+	updateSelectionActions();
+}
+
+void ModFolderPage::on_actionViewHomepage_triggered()
+{
+	for (const int row : selectedSourceRows()) {
+		const QString url = homepageForRow(row);
+		if (!url.isEmpty()) {
+			DesktopServices::openUrl(QUrl(url));
+		}
+	}
+}
+
+void ModFolderPage::on_actionExportList_triggered()
+{
+	if (!m_mods) {
+		return;
+	}
+
+	auto index = m_mods->metadataIndex();
+
+	QList<ContentListExport::Item> items;
+	for (const int row : rowsForBulkAction()) {
+		if (row < 0 || size_t(row) >= m_mods->size()) {
+			continue;
+		}
+		const Mod& mod = m_mods->at(size_t(row));
+
+		ContentListExport::Item item;
+		item.name = mod.name();
+		item.modId = mod.mmc_id();
+		item.fileName = mod.filename().fileName();
+		item.url = homepageForRow(row);
+		item.authors = mod.authors();
+
+		/* What the archive says about itself first, since that is the
+		 * version a person recognises; the recorded version id is a
+		 * platform's identifier and only stands in when there is
+		 * nothing better. */
+		item.version = mod.version();
+		if (item.version.isEmpty() && index) {
+			const auto entry = index->get(
+				ModMetadataIndex::canonicalFileName(item.fileName));
+			item.version = entry.versionId;
+		}
+
+		items.append(item);
+	}
+
+	if (items.isEmpty()) {
+		return;
+	}
+
+	ExportListDialog dialog(m_inst->name(), items, this->parentWidget());
+	dialog.exec();
+}
+
+QString ModFolderPage::instanceMcVersion() const
+{
+	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
+	if (!mcInst) {
+		return QString();
+	}
+	auto profile = mcInst->getPackProfile();
+	return profile ? profile->getComponentVersion("net.minecraft") : QString();
+}
+
+QString ModFolderPage::instanceLoader() const
+{
+	if (!ModPlatform::contentTypeUsesLoader(m_contentType)) {
+		return QString();
+	}
+	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
+	if (!mcInst) {
+		return QString();
+	}
+	auto profile = mcInst->getPackProfile();
+	if (!profile) {
+		return QString();
+	}
+	if (profile->getComponent("net.fabricmc.fabric-loader")) {
+		return QStringLiteral("fabric");
+	}
+	if (profile->getComponent("org.quiltmc.quilt-loader")) {
+		return QStringLiteral("quilt");
+	}
+	if (profile->getComponent("net.neoforged")) {
+		return QStringLiteral("neoforge");
+	}
+	if (profile->getComponent("net.minecraftforge")) {
+		return QStringLiteral("forge");
+	}
+	return QString();
 }
 
 void ModFolderPage::on_actionUpdate_triggered()
 {
-	if (!m_controlsEnabled) {
+	runUpdateCheck();
+}
+
+void ModFolderPage::on_actionVerifyDependencies_triggered()
+{
+	/* Mod-only, and the action is hidden elsewhere; checked again here
+	 * because a shortcut or a context menu can reach a hidden action. */
+	if (m_contentType != ModPlatform::ContentType::Mod) {
 		return;
 	}
-	if (m_contentType != ModPlatform::ContentType::Mod) {
+	verifyDependencies();
+}
+
+void ModFolderPage::runUpdateCheck()
+{
+	if (!contentChangesAllowed()) {
 		return;
 	}
 	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
@@ -610,23 +1298,8 @@ void ModFolderPage::on_actionUpdate_triggered()
 		return;
 	}
 
-	// Figure out the instance's MC version + primary loader so the update
-	// query stays compatible with the configured profile.
-	QString mcVersion;
-	QString loader;
-	auto profile = mcInst->getPackProfile();
-	if (profile) {
-		mcVersion = profile->getComponentVersion("net.minecraft");
-		if (profile->getComponent("net.fabricmc.fabric-loader")) {
-			loader = QStringLiteral("fabric");
-		} else if (profile->getComponent("org.quiltmc.quilt-loader")) {
-			loader = QStringLiteral("quilt");
-		} else if (profile->getComponent("net.neoforged")) {
-			loader = QStringLiteral("neoforge");
-		} else if (profile->getComponent("net.minecraftforge")) {
-			loader = QStringLiteral("forge");
-		}
-	}
+	const QString mcVersion = instanceMcVersion();
+	const QString loader = instanceLoader();
 
 	if (mcVersion.isEmpty()) {
 		QMessageBox::warning(
@@ -635,13 +1308,18 @@ void ModFolderPage::on_actionUpdate_triggered()
 		return;
 	}
 
-	auto* check = new ModUpdateCheckTask(index, mcVersion, loader);
+	/* Shared ownership, and Abort now actually calls the lookups off:
+	 * the button was there before but the task had no abort() to
+	 * override, so pressing it did nothing at all, and the plain delete
+	 * below would have freed the object its replies land in. */
+	shared_qobject_ptr<ModUpdateCheckTask> check(
+		new ModUpdateCheckTask(index, mcVersion, loader, m_contentType));
 	ProgressDialog progress(this->parentWidget());
-	progress.setSkipButton(true, tr("Skip"));
-	progress.execWithTask(check);
+	progress.setSkipButton(true, tr("Abort"));
+	progress.execWithTask(check.get());
 
+	/* Whatever was checked before Abort is still worth offering. */
 	const auto updates = check->availableUpdates();
-	delete check;
 
 	ModUpdateDialog dlg(updates, this->parentWidget());
 	if (dlg.exec() != QDialog::Accepted) {
@@ -653,16 +1331,17 @@ void ModFolderPage::on_actionUpdate_triggered()
 		return;
 	}
 
-	auto* dl = new ContentDownloadTask(plan, m_mods->dir().absolutePath());
+	shared_qobject_ptr<ContentDownloadTask> dl(
+		new ContentDownloadTask(plan, m_mods->dir().absolutePath()));
 	dl->setMetadataIndex(index);
 	ProgressDialog dlProgress(this->parentWidget());
-	dlProgress.execWithTask(dl);
-	if (dl->wasSuccessful()) {
+	dlProgress.setSkipButton(true, tr("Abort"));
+	dlProgress.execWithTask(dl.get());
+	if (dl->wasAborted() || dl->wasSuccessful()) {
 		m_mods->update();
 	} else {
 		QMessageBox::warning(
 			this->parentWidget(), tr("Update Failed"),
 			tr("Some updates failed to download: %1").arg(dl->failReason()));
 	}
-	delete dl;
 }

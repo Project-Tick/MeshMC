@@ -232,6 +232,16 @@ void InstanceSettingsPage::applySettings()
 		m_settings->reset("JoinServerOnLaunchAddress");
 	}
 
+	// Global data packs folder
+	bool globalDataPacks = ui->globalDataPacksGroupBox->isChecked();
+	m_settings->set("GlobalDataPacksEnabled", globalDataPacks);
+	if (globalDataPacks) {
+		m_settings->set("GlobalDataPacksPath",
+						ui->globalDataPacksPath->text().trimmed());
+	} else {
+		m_settings->reset("GlobalDataPacksPath");
+	}
+
 	emit settingsAboutToApply();
 }
 
@@ -320,6 +330,11 @@ void InstanceSettingsPage::loadSettings()
 		m_settings->get("JoinServerOnLaunch").toBool());
 	ui->serverJoinAddress->setText(
 		m_settings->get("JoinServerOnLaunchAddress").toString());
+
+	ui->globalDataPacksGroupBox->setChecked(
+		m_settings->get("GlobalDataPacksEnabled").toBool());
+	ui->globalDataPacksPath->setText(
+		m_settings->get("GlobalDataPacksPath").toString());
 
 	emit settingsLoaded();
 }

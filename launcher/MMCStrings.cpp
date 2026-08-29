@@ -134,3 +134,13 @@ const char* Strings::logColorReset()
 {
 	return "\033[0m";
 }
+
+const char* Strings::logColorFaint()
+{
+	return "\033[2m";
+}
+
+const char* Strings::logColorBold()
+{
+	return "\033[1m";
+}

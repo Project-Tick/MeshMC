@@ -50,6 +50,26 @@ void ContentDownloadTask::setMetadataIndex(
 	m_metadata = std::move(index);
 }
 
+bool ContentDownloadTask::abort()
+{
+	if (m_aborted) {
+		return true;
+	}
+	m_aborted = true;
+
+	if (m_netJob && m_netJob->isRunning()) {
+		m_netJob->abort();
+	}
+
+	/* Only a running task may report a verdict - emitAborted() complains
+	 * loudly otherwise - but the latch above still holds, so a task
+	 * called off before it started will simply do nothing. */
+	if (isRunning()) {
+		emitAborted();
+	}
+	return true;
+}
+
 void ContentDownloadTask::executeTask()
 {
 	if (m_items.isEmpty()) {
@@ -194,6 +214,14 @@ void ContentDownloadTask::writeSidecars()
 	if (!m_metadata) {
 		return;
 	}
+	if (m_aborted) {
+		/* A cancelled batch leaves files in whatever state the transfer
+		 * reached, and a sidecar records a size and a SHA1 as fact. One
+		 * written for a half-finished file would make the update checker
+		 * and the conflict analyzer trust a hash that is simply wrong,
+		 * which is worse than the file having no record at all. */
+		return;
+	}
 	const QDir dir(m_targetDir);
 	for (const auto& item : m_items) {
 		// We only persist sidecars for items that finished on disk and that
@@ -210,7 +238,11 @@ void ContentDownloadTask::writeSidecars()
 		e.projectId = item.projectId;
 		e.versionId = item.versionId;
 		e.name = item.name;
-		e.slug = QString();
+		/* Recorded rather than thrown away: the slug is how the same
+		 * project is recognised across the two providers, and it is what
+		 * a packwiz sidecar is named after. Clearing it here left every
+		 * entry in the index unable to answer either question. */
+		e.slug = item.slug;
 		e.downloadUrl = item.downloadUrl;
 		e.sha1 = item.sha1.toLower();
 		e.fileSize = item.fileSize;
@@ -222,6 +254,9 @@ void ContentDownloadTask::writeSidecars()
 
 void ContentDownloadTask::onDownloadSucceeded()
 {
+	if (m_aborted) {
+		return;
+	}
 	m_netJob.reset();
 	writeSidecars();
 	emitSucceeded();
@@ -229,11 +264,19 @@ void ContentDownloadTask::onDownloadSucceeded()
 
 void ContentDownloadTask::onDownloadFailed(QString reason)
 {
+	if (m_aborted) {
+		/* This is the aborted job unwinding, not a transfer that went
+		 * wrong. The verdict has already been given. */
+		return;
+	}
 	m_netJob.reset();
 	emitFailed(reason);
 }
 
 void ContentDownloadTask::onDownloadProgress(qint64 current, qint64 total)
 {
+	if (m_aborted) {
+		return;
+	}
 	setProgress(current, total);
 }

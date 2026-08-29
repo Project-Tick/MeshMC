@@ -11,6 +11,14 @@
         <!-- REDDIT logo icon, needs reddit license! -->
         <file>scalable/reddit-alien.svg</file>
 
+        <!-- Patron logo. (C) 2014 Patreon, Inc., http://www.patreon.com/toolbox?ftyp=media -->
+        <file>16x16/patreon.png</file>
+        <file>22x22/patreon.png</file>
+        <file>24x24/patreon.png</file>
+        <file>32x32/patreon.png</file>
+        <file>48x48/patreon.png</file>
+        <file>64x64/patreon.png</file>
+
         <!-- launcher settings page -->
         <file>scalable/launcher.svg</file>
 

@@ -49,6 +49,7 @@ class ThemeManager
 {
   public:
 	ThemeManager();
+	~ThemeManager();
 
 	void addTheme(std::unique_ptr<ITheme> theme);
 
@@ -110,4 +111,10 @@ class ThemeManager
 	void initCustomIconThemes();
 	void initializeCatPacks();
 	void addCatPack(std::unique_ptr<CatPack> catPack);
+	void setTitlebarColorOfAllWindowsOnMac(QColor color);
+	void setTitlebarColorOnMac(WId windowId, QColor color);
+	void stopSettingNewWindowColorsOnMac();
+#ifdef Q_OS_MACOS
+    NSObject* m_windowTitlebarObserver = nullptr;
+#endif
 };

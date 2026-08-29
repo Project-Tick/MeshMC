@@ -43,6 +43,7 @@
 #include "MeshMCPartLaunch.h"
 
 #include <QStandardPaths>
+#include <QTimer>
 
 #include "launch/LaunchTask.h"
 #include "minecraft/MinecraftInstance.h"
@@ -224,12 +225,32 @@ void MeshMCPartLaunch::proceed()
 	}
 }
 
+// How long the helper gets to act on "abort" before we stop being polite.
+// Long enough for a healthy helper to shut the game down by itself, short
+// enough that the user does not conclude that Kill did nothing.
+static constexpr int ABORT_GRACE_MS = 3000;
+
 bool MeshMCPartLaunch::abort()
 {
 	if (mayProceed) {
 		mayProceed = false;
 		QString launchString("abort\n");
 		m_process.write(launchString.toUtf8());
+		// Writing "abort" only *asks* the helper to quit. A helper that is
+		// itself wedged never reads it, and since the launch task is marked
+		// as aborted either way, the game would be left running with nothing
+		// left for the user to press Kill on. Escalate if it is still there.
+		QTimer::singleShot(ABORT_GRACE_MS, this, [this]() {
+			auto state = m_process.state();
+			if (state != LoggedProcess::Running &&
+				state != LoggedProcess::Starting) {
+				return;
+			}
+			emit logLine(tr("The game did not react to the abort request. "
+							"Killing it."),
+						 MessageLevel::MeshMC);
+			m_process.kill();
+		});
 	} else {
 		auto state = m_process.state();
 		if (state == LoggedProcess::Running ||

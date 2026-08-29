@@ -35,6 +35,7 @@
 #include "ui/pages/instance/ResourcePackPage.h"
 #include "ui/pages/instance/TexturePackPage.h"
 #include "ui/pages/instance/ShaderPackPage.h"
+#include "ui/pages/instance/DataPackPage.h"
 #include "ui/pages/instance/NotesPage.h"
 #include "ui/pages/instance/ScreenshotsPage.h"
 #include "ui/pages/instance/InstanceSettingsPage.h"
@@ -77,6 +78,10 @@ class InstancePageProvider : public QObject, public BasePageProvider
 			values.append(new ResourcePackPage(onesix.get()));
 			values.append(new TexturePackPage(onesix.get()));
 			values.append(new ShaderPackPage(onesix.get()));
+			/* Global (instance-wide) data pack folder. Hidden unless the
+			 * user turns it on in instance settings - vanilla reads data
+			 * packs per world, which WorldListPage handles. */
+			values.append(new GlobalDataPackPage(onesix.get()));
 			values.append(new NotesPage(onesix.get()));
 			values.append(new WorldListPage(onesix.get(), onesix->worldList()));
 			values.append(new ServersPage(onesix));

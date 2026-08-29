@@ -122,6 +122,29 @@ namespace FS
 	 */
 	bool deletePath(QString path);
 
+	/**
+	 * Whether this platform has a trash we can trust to be reversible.
+	 *
+	 * Worth asking before offering the user a choice, so that a dialog
+	 * can promise "recoverable" or "permanent" and be right either way
+	 * rather than hedging.
+	 */
+	bool canTrash();
+
+	/**
+	 * Move a file or folder to the platform's trash, so that the user can
+	 * put it back.
+	 *
+	 * On success @p pathInTrash, when given, receives where the item
+	 * landed, which is what makes an undo possible.
+	 *
+	 * Returns false without touching anything where there is no trash we
+	 * can trust to be reversible; the caller is then free to fall back to
+	 * deletePath() -- but it has to say so, because at that point the
+	 * operation is no longer undoable.
+	 */
+	bool trash(const QString& path, QString* pathInTrash = nullptr);
+
 	QString PathCombine(const QString& path1, const QString& path2);
 	QString PathCombine(const QString& path1, const QString& path2,
 						const QString& path3);
@@ -163,9 +186,21 @@ namespace FS
 	// Get the Directory representing the User's Desktop
 	QString getDesktopDir();
 
-	// Create a shortcut at *location*, pointing to *dest* called with the
-	// arguments *args* call it *name* and assign it the icon *icon* return true
-	// if operation succeeded
-	bool createShortCut(QString location, QString dest, QStringList args,
-						QString name, QString iconLocation);
+	// Get the directory the platform lists installed applications in
+	QString getApplicationsDir();
+
+	/**
+	 * Write a shortcut that runs @p target with @p args, labelled @p name and
+	 * wearing the image at @p iconPath.
+	 *
+	 * @p destination is the path to create *without* a suffix -- each
+	 * platform appends its own, because what a shortcut even is differs: a
+	 * `.lnk` shell link on Windows, a `.desktop` entry on Linux and the BSDs,
+	 * and a small `.app` bundle on macOS, that being the only form Finder
+	 * will show with an icon and arguments of its own.
+	 *
+	 * Returns the path actually written, or an empty string if nothing was.
+	 */
+	QString createShortcut(QString destination, QString target,
+						   QStringList args, QString name, QString iconPath);
 } // namespace FS

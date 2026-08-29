@@ -68,6 +68,11 @@ class PageContainer : public QWidget, public BasePageContainer
 
 	void addButtons(QWidget* buttons);
 	void addButtons(QLayout* buttons);
+
+	/* Drop the sidebar. Used when the container hosts a single page and
+	 * the list would just be a one-item column taking up space.
+	 * Defined out of line because m_pageList is only forward declared. */
+	void hidePageList();
 	/*
 	 * Save any unsaved state and prepare to be closed.
 	 * @return true if everything can be saved, false if there is something that
@@ -87,6 +92,16 @@ class PageContainer : public QWidget, public BasePageContainer
 
 	virtual bool selectPage(QString pageId) override;
 
+	/* Every page held by this container, in the order they were given.
+	 * Lets a hosting dialog talk to all of its pages at once. */
+	QList<BasePage*> getPages() const;
+	/* The page currently on screen, or null before the first one is
+	 * shown. */
+	BasePage* selectedPage() const
+	{
+		return m_currentPage;
+	}
+
 	void refreshContainer() override;
 	virtual void setParentContainer(BasePageContainer* container)
 	{
@@ -95,6 +110,11 @@ class PageContainer : public QWidget, public BasePageContainer
 
   private:
 	void createUI();
+
+  signals:
+	/* Fired after the visible page changed. `previous` is null for the
+	 * first page shown. */
+	void selectedPageChanged(BasePage* previous, BasePage* selected);
 
   public slots:
 	void help();

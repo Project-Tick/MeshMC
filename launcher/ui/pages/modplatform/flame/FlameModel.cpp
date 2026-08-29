@@ -25,6 +25,7 @@
 
 #include "FlameModel.h"
 #include "Application.h"
+#include "modplatform/flame/FlameApi.h"
 #include <Json.h>
 
 #include <MMCStrings.h>
@@ -175,31 +176,11 @@ namespace Flame
 
 	void ListModel::performPaginatedSearch()
 	{
-		// API v1 sort fields (1-indexed): 1=Featured, 2=Popularity,
-		// 3=LastUpdated, 4=Name, 5=Author, 6=TotalDownloads Use desc for
-		// Featured/Popularity/LastUpdated/TotalDownloads, asc for Name/Author
-		// (A-Z)
-		static const char* sortOrders[] = {"desc", "desc", "desc",
-										   "asc",  "asc",  "desc"};
-		const char* sortOrder = (currentSort >= 0 && currentSort < 6)
-									? sortOrders[currentSort]
-									: "desc";
-
 		NetJob* netJob = new NetJob("Flame::Search", APPLICATION->network());
-		auto searchUrl = QString("https://api.curseforge.com/v1/mods/search?"
-								 "gameId=432&"
-								 "classId=4471&"
-								 "index=%1&"
-								 "pageSize=25&"
-								 "searchFilter=%2&"
-								 "sortField=%3&"
-								 "sortOrder=%4")
-							 .arg(nextSearchOffset)
-							 .arg(currentSearchTerm)
-							 .arg(currentSort + 1)
-							 .arg(sortOrder);
-		netJob->addNetAction(
-			Net::Download::makeByteArray(QUrl(searchUrl), &response));
+		netJob->addNetAction(Net::Download::makeByteArray(
+			FlameApi::modpackSearchUrl(currentSearchTerm, currentSort,
+									   nextSearchOffset),
+			&response));
 		jobPtr = netJob;
 		jobPtr->start();
 		QObject::connect(netJob, &NetJob::succeeded, this,

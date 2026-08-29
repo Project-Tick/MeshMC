@@ -26,6 +26,7 @@
 #include "DesktopServices.h"
 #include <QDir>
 #include <QDesktopServices>
+#include <QFile>
 #include <QProcess>
 #include <QDebug>
 
@@ -141,6 +142,22 @@ namespace DesktopServices
 		return QProcess::startDetached("xdg-open", args);
 #else
 		return QDesktopServices::openUrl(url);
+#endif
+	}
+
+	bool isFlatpak()
+	{
+#ifdef Q_OS_LINUX
+		/* Both are set by the runtime for every Flatpak app: the marker
+		 * file is what flatpak-spawn and friends look for, and the
+		 * variable is what the app itself is told. Either one alone is
+		 * enough to be sure. */
+		static const bool sandboxed =
+			QFile::exists(QStringLiteral("/.flatpak-info")) ||
+			qEnvironmentVariableIsSet("FLATPAK_ID");
+		return sandboxed;
+#else
+		return false;
 #endif
 	}
 

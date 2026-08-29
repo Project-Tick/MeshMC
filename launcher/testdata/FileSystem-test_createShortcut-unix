@@ -1,6 +1,5 @@
 [Desktop Entry]
 Type=Application
-TryExec=asdfDest
-Exec=asdfDest 'arg1' 'arg2'
+Categories=Game;ActionGame;AdventureGame;Simulation
+Exec='asdfDest' 'arg1' 'arg2'
 Name=asdf
-Icon=

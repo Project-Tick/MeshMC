@@ -158,6 +158,28 @@ void MeshMCPage::on_iconsDirBrowseBtn_clicked()
 		ui->iconsDirTextBox->setText(cooked_dir);
 	}
 }
+void MeshMCPage::on_skinsDirBrowseBtn_clicked()
+{
+	QString raw_dir = QFileDialog::getExistingDirectory(
+		this, tr("Skins Folder"), ui->skinsDirTextBox->text());
+
+	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
+	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
+		QString cooked_dir = FS::NormalizePath(raw_dir);
+		ui->skinsDirTextBox->setText(cooked_dir);
+	}
+}
+void MeshMCPage::on_javaDirBrowseBtn_clicked()
+{
+	QString raw_dir = QFileDialog::getExistingDirectory(
+		this, tr("Java Folder"), ui->javaDirTextBox->text());
+
+	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
+	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
+		QString cooked_dir = FS::NormalizePath(raw_dir);
+		ui->javaDirTextBox->setText(cooked_dir);
+	}
+}
 void MeshMCPage::on_modsDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
@@ -225,6 +247,8 @@ void MeshMCPage::applySettings()
 	s->set("InstanceDir", ui->instDirTextBox->text());
 	s->set("CentralModsDir", ui->modsDirTextBox->text());
 	s->set("IconsDir", ui->iconsDirTextBox->text());
+	s->set("SkinsDir", ui->skinsDirTextBox->text());
+	s->set("JavaDir", ui->javaDirTextBox->text());
 
 	auto sortMode = (InstSortMode)ui->sortingModeGroup->checkedId();
 	switch (sortMode) {
@@ -277,6 +301,8 @@ void MeshMCPage::loadSettings()
 	ui->instDirTextBox->setText(s->get("InstanceDir").toString());
 	ui->modsDirTextBox->setText(s->get("CentralModsDir").toString());
 	ui->iconsDirTextBox->setText(s->get("IconsDir").toString());
+	ui->skinsDirTextBox->setText(s->get("SkinsDir").toString());
+	ui->javaDirTextBox->setText(s->get("JavaDir").toString());
 
 	QString sortMode = s->get("InstSortMode").toString();
 

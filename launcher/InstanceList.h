@@ -67,6 +67,27 @@ enum class InstCreateError {
 
 enum class GroupsState { NotLoaded, Steady, Dirty };
 
+/// One shortcut that went to the trash along with its instance, and
+/// where it went, so that both halves can be put back.
+struct TrashedShortcut {
+	ShortcutData shortcut;
+	QString trashPath;
+};
+
+/// Everything needed to undo one trashInstance() call.
+struct TrashedInstance {
+	InstanceId id;
+	/// Display name as it was, for the offer to restore it. The instance's
+	/// own config file is in the trash, so this cannot be looked up later.
+	QString name;
+	/// The folder it came from, and where it goes back to.
+	QString path;
+	QString trashPath;
+	/// The group it was in, which is not recorded inside the folder.
+	GroupId group;
+	QList<TrashedShortcut> shortcuts;
+};
+
 class InstanceList : public QAbstractListModel
 {
 	Q_OBJECT
@@ -120,7 +141,41 @@ class InstanceList : public QAbstractListModel
 	void setInstanceGroup(const InstanceId& id, const GroupId& name);
 
 	void deleteGroup(const GroupId& name);
+
+	/// Delete an instance and its shortcuts for good.
 	void deleteInstance(const InstanceId& id);
+
+	/**
+	 * Move an instance and its shortcuts to the platform's trash.
+	 *
+	 * Returns false if the platform has no usable trash, or if the move
+	 * failed; in both cases nothing has been removed and the caller
+	 * should offer deleteInstance() instead.
+	 */
+	bool trashInstance(const InstanceId& id);
+
+	/// Whether there is anything left to undo.
+	bool trashedSomething() const;
+
+	/**
+	 * Display name of the instance undoTrashInstance() would put back, so
+	 * that the offer to restore it can say which one it means. Empty when
+	 * there is nothing to restore.
+	 *
+	 * Read from the record rather than from disk: the instance's own
+	 * config file is in the trash by now.
+	 */
+	QString lastTrashedName() const;
+
+	/**
+	 * Put the most recently trashed instance back, shortcuts included.
+	 *
+	 * Returns true when there was nothing to do. Returns false if a part
+	 * could not be restored; the entry is then kept only when the
+	 * instance folder itself is still in the trash, so that a second
+	 * attempt can retry it.
+	 */
+	bool undoTrashInstance();
 
 	// Wrap an instance creation task in some more task machinery and make it
 	// ready to be used
@@ -201,6 +256,8 @@ class InstanceList : public QAbstractListModel
 	QSet<QString> m_collapsedGroups;
 	QMap<InstanceId, GroupId> m_instanceGroupIndex;
 	QSet<InstanceId> instanceSet;
+	/// Trashed instances, most recent last, for undoTrashInstance().
+	QList<TrashedInstance> m_trashHistory;
 	bool m_groupsLoaded = false;
 	bool m_instancesProbed = false;
 };

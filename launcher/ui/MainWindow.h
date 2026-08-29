@@ -59,6 +59,7 @@ class NewsChecker;
 class NewsViewerDialog;
 class NotificationChecker;
 class QToolButton;
+class QActionGroup;
 class InstanceProxyModel;
 class LabeledToolButton;
 class QLabel;
@@ -81,6 +82,16 @@ class MainWindow : public QMainWindow
 	bool eventFilter(QObject* obj, QEvent* ev) override;
 	void closeEvent(QCloseEvent* event) override;
 	void changeEvent(QEvent* event) override;
+	/// Re-applies the menu bar / main toolbar choice, which
+	/// QMainWindow::restoreState() would otherwise overrule -- it runs
+	/// after the constructor. See the implementation.
+	void showEvent(QShowEvent* event) override;
+#ifndef Q_OS_MACOS
+	/// Tapping Alt shows the menu bar for as long as it is wanted, for
+	/// windows that keep the main toolbar instead. Not on macOS, where
+	/// the menu bar is native and always there.
+	void keyReleaseEvent(QKeyEvent* event) override;
+#endif
 
 	void checkInstancePathForProblems();
 
@@ -115,7 +126,11 @@ class MainWindow : public QMainWindow
 
 	void on_actionDISCORD_triggered();
 
+	void on_actionPatreon_triggered();
+
 	void on_actionCopyInstance_triggered();
+
+	void on_actionViewBackups_triggered();
 
 	void on_actionChangeInstGroup_triggered();
 
@@ -139,6 +154,22 @@ class MainWindow : public QMainWindow
 
 	void on_actionViewCentralModsFolder_triggered();
 
+	void on_actionViewLauncherRootFolder_triggered();
+
+	void on_actionViewIconThemeFolder_triggered();
+
+	void on_actionViewWidgetThemeFolder_triggered();
+
+	void on_actionViewCatPackFolder_triggered();
+
+	void on_actionViewIconsFolder_triggered();
+	
+	void on_actionViewLogsFolder_triggered();
+
+	void on_actionViewJavaFolder_triggered();
+
+    void on_actionViewSkinsFolder_triggered();
+
 	void checkForUpdates();
 
 	void on_actionSettings_triggered();
@@ -155,13 +186,28 @@ class MainWindow : public QMainWindow
 
 	void on_actionLaunchInstance_triggered();
 
+	void on_actionKillInstance_triggered();
+
 	void on_actionLaunchInstanceOffline_triggered();
 
 	void on_actionDeleteInstance_triggered();
 
+	/// Put the most recently trashed instance back. Offered in the Edit
+	/// menu and in the instance list's context menu, not on a toolbar --
+	/// see createMainToolbar() for why.
+	void restoreTrashedInstance();
+
+	/**
+	 * Keep the menu bar and give the main toolbar up, or the other way
+	 * round. Persisted as the "MenuBarInsteadOfToolBar" setting.
+	 */
+	void setMenuBarInsteadOfToolBar(bool state);
+
 	void deleteGroup();
 
 	void on_actionExportInstance_triggered();
+
+	void on_actionCreateInstanceShortcut_triggered();
 
 	void on_actionRenameInstance_triggered();
 	void on_renameButton_clicked(bool)
@@ -196,6 +242,9 @@ class MainWindow : public QMainWindow
 						 const QModelIndex& previous);
 
 	void instanceSelectRequest(QString id);
+
+	/// Re-reads the selected instance, e.g. after it started or stopped.
+	void refreshCurrentInstance();
 
 	void instanceDataChanged(const QModelIndex& topLeft,
 							 const QModelIndex& bottomRight);
@@ -238,6 +287,14 @@ class MainWindow : public QMainWindow
   private:
 	void retranslateUi();
 
+	/**
+	 * Show the menu bar or the main toolbar according to the setting.
+	 *
+	 * Does nothing where there is no QMenuBar of ours -- on macOS the
+	 * menu bar belongs to MacOSMenuBar and the toolbar always stays.
+	 */
+	void updateMenuBarVisibility();
+
 	void addInstance(QString url = QString());
 	void activateInstance(InstancePtr instance);
 	void setCatBackground(bool enabled);
@@ -264,6 +321,11 @@ class MainWindow : public QMainWindow
 	QLabel* m_statusCenter = nullptr;
 	QMenu* accountMenu = nullptr;
 	QToolButton* accountMenuButton = nullptr;
+	/* Exclusive group behind the profiler entries of the launch menu. It
+	 * has to outlive updateToolsMenu(), and the menu's own clear() takes
+	 * the actions but not the group, so the group is tracked here and
+	 * replaced on every rebuild. */
+	QActionGroup* m_profilerActions = nullptr;
 	KonamiCode* secretEventFilter = nullptr;
 
 	unique_qobject_ptr<NewsChecker> m_newsChecker;
@@ -275,9 +337,6 @@ class MainWindow : public QMainWindow
 
 	InstancePtr m_selectedInstance;
 	QString m_currentInstIcon;
-
-	// Plugin-registered instance toolbar actions
-	QList<QAction*> m_pluginInstanceActions;
 
 	// managed by the application object
 	Task* m_versionLoadTask = nullptr;

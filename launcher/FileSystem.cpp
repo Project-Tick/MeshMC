@@ -61,9 +61,12 @@
 #include <objidl.h>
 #include <shlguid.h>
 #include <shlobj.h>
+#include <versionhelpers.h>
 #else
 #include <utime.h>
 #endif
+
+#include "DesktopServices.h"
 
 namespace FS
 {
@@ -194,6 +197,36 @@ namespace FS
 			return false;
 		}
 		return true;
+	}
+
+	bool canTrash()
+	{
+		/* Qt writes into the sandbox's own trash instead of asking the
+		 * host through the portal, so from the user's side the folder
+		 * would simply vanish with no way back. */
+		if (DesktopServices::isFlatpak()) {
+			return false;
+		}
+
+#if defined(Q_OS_WIN)
+		/* A Server install has no recycle bin unless one was set up, and
+		 * the shell answers a recycle request on such a volume by
+		 * deleting outright -- the one thing a trash operation is
+		 * supposed to rule out. */
+		if (IsWindowsServer()) {
+			return false;
+		}
+#endif
+
+		return QFile::supportsMoveToTrash();
+	}
+
+	bool trash(const QString& path, QString* pathInTrash)
+	{
+		if (!canTrash()) {
+			return false;
+		}
+		return QFile::moveToTrash(path, pathInTrash);
 	}
 
 	bool deletePath(QString path)
@@ -405,71 +438,241 @@ namespace FS
 			QStandardPaths::DesktopLocation);
 	}
 
-	// Cross-platform Shortcut creation
-	bool createShortCut(QString location, QString dest, QStringList args,
-						QString name, QString icon)
+	QString getApplicationsDir()
 	{
-#if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-		location = PathCombine(location, name + ".desktop");
+		return QStandardPaths::writableLocation(
+			QStandardPaths::ApplicationsLocation);
+	}
 
-		QFile f(location);
-		if (!f.open(QIODevice::WriteOnly | QIODevice::Text))
-			return false;
-		QTextStream stream(&f);
+	namespace
+	{
+		/* Joins arguments into one command line for a file that a shell or
+		 * the shell API will read back, wrapping each argument in @p wrap and
+		 * rewriting any wrapper character inside an argument as @p escaped.
+		 * With @p onlyIfNeeded an argument that cannot be misread is left
+		 * bare, which keeps a Windows link's argument string readable in its
+		 * properties dialog. */
+		QString quoteArgs(const QStringList& args, const QString& wrap,
+						  const QString& escaped, bool onlyIfNeeded = false)
+		{
+			QStringList quoted;
+			quoted.reserve(args.size());
+			for (QString arg : args) {
+				arg.replace(wrap, escaped);
+				const bool needsWrap = !onlyIfNeeded || arg.isEmpty() ||
+									   arg.contains(QLatin1Char(' ')) ||
+									   arg.contains(QLatin1Char('\t')) ||
+									   arg.contains(wrap);
+				quoted << (needsWrap ? wrap + arg + wrap : arg);
+			}
+			return quoted.join(QLatin1Char(' '));
+		}
+	} // namespace
 
-		QString argstring;
-		if (!args.empty())
-			argstring = " '" + args.join("' '") + "'";
+	QString createShortcut(QString destination, QString target,
+						   QStringList args, QString name, QString iconPath)
+	{
+		if (destination.isEmpty()) {
+			destination =
+				PathCombine(getDesktopDir(), RemoveInvalidFilenameChars(name));
+		}
+		if (!ensureFilePathExists(destination)) {
+			qWarning() << "Cannot create the folder the shortcut goes in:"
+					   << destination;
+			return QString();
+		}
 
-		stream << "[Desktop Entry]"
-			   << "\n";
-		stream << "Type=Application"
-			   << "\n";
-		stream << "TryExec=" << dest.toLocal8Bit() << "\n";
-		stream << "Exec=" << dest.toLocal8Bit() << argstring.toLocal8Bit()
-			   << "\n";
-		stream << "Name=" << name.toLocal8Bit() << "\n";
-		stream << "Icon=" << icon.toLocal8Bit() << "\n";
+#if defined(Q_OS_MACOS)
+		/* Finder only honours a custom icon and fixed arguments for a real
+		 * bundle, so the shortcut is a minimal .app around a shell script. */
+		QDir bundle(destination + QLatin1String(".app"));
+		if (bundle.exists()) {
+			qWarning() << "Refusing to overwrite the bundle already at"
+					   << bundle.path();
+			return QString();
+		}
 
-		stream.flush();
-		f.close();
+		QDir contents(bundle.filePath(QStringLiteral("Contents")));
+		QDir resources(contents.filePath(QStringLiteral("Resources")));
+		QDir macos(contents.filePath(QStringLiteral("MacOS")));
+		if (!(bundle.mkpath(".") && contents.mkpath(".") &&
+			  resources.mkpath(".") && macos.mkpath("."))) {
+			qWarning() << "Could not lay out the bundle at" << bundle.path();
+			return QString();
+		}
 
-		f.setPermissions(f.permissions() | QFileDevice::ExeOwner |
-						 QFileDevice::ExeGroup | QFileDevice::ExeOther);
+		if (!iconPath.isEmpty()) {
+			QFile::copy(iconPath,
+						resources.filePath(QStringLiteral("Icon.icns")));
+		}
 
-		return true;
-#elif defined Q_OS_WIN
-		// TODO: Fix
-		//    QFile file(PathCombine(location, name + ".lnk"));
-		//    WCHAR *file_w;
-		//    WCHAR *dest_w;
-		//    WCHAR *args_w;
-		//    file.fileName().toWCharArray(file_w);
-		//    dest.toWCharArray(dest_w);
+		QFile runner(macos.filePath(QStringLiteral("Run.command")));
+		if (!runner.open(QIODevice::WriteOnly | QIODevice::Text)) {
+			qWarning() << "Cannot write" << runner.fileName() << ":"
+					   << runner.errorString();
+			return QString();
+		}
+		{
+			QTextStream stream(&runner);
+			stream << "#!/bin/bash\n";
+			/* One list, one call: quoting the target and the arguments
+			 * separately and gluing them with a space left a trailing
+			 * space behind whenever there were no arguments. Harmless --
+			 * every parser drops it -- but it is written into a file a
+			 * user can open. */
+			QStringList command{target};
+			command += args;
+			stream << quoteArgs(command, QStringLiteral("\""),
+								QStringLiteral("\\\""))
+				   << "\n";
+		}
+		runner.close();
+		runner.setPermissions(runner.permissions() | QFileDevice::ExeOwner |
+							  QFileDevice::ExeGroup | QFileDevice::ExeOther);
 
-		//    QString argStr;
-		//    for (int i = 0; i < args.count(); i++)
-		//    {
-		//        argStr.append(args[i]);
-		//        argStr.append(" ");
-		//    }
-		//    argStr.toWCharArray(args_w);
+		QFile info(contents.filePath(QStringLiteral("Info.plist")));
+		if (!info.open(QIODevice::WriteOnly | QIODevice::Text)) {
+			qWarning() << "Cannot write" << info.fileName() << ":"
+					   << info.errorString();
+			return QString();
+		}
+		{
+			QTextStream stream(&info);
+			stream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				   << "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST "
+					  "1.0//EN\" "
+					  "\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
+				   << "<plist version=\"1.0\">\n<dict>\n"
+				   << "\t<key>CFBundleExecutable</key>\n"
+				   << "\t<string>Run.command</string>\n"
+				   << "\t<key>CFBundleIconFile</key>\n"
+				   << "\t<string>Icon.icns</string>\n"
+				   << "\t<key>CFBundleName</key>\n\t<string>" << name
+				   << "</string>\n"
+				   << "\t<key>CFBundlePackageType</key>\n"
+				   << "\t<string>APPL</string>\n"
+				   << "\t<key>CFBundleShortVersionString</key>\n"
+				   << "\t<string>1.0</string>\n"
+				   << "\t<key>CFBundleVersion</key>\n\t<string>1.0</string>\n"
+				   << "</dict>\n</plist>\n";
+		}
+		info.close();
+		return bundle.path();
 
-		//    return SUCCEEDED(CreateLink(file_w, dest_w, args_w));
-		(void)location;
-		(void)dest;
-		(void)args;
-		(void)name;
-		(void)icon;
-		return false;
+#elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD) || defined(Q_OS_OPENBSD)
+		if (!destination.endsWith(QLatin1String(".desktop"))) {
+			destination += QLatin1String(".desktop");
+		}
+
+		QFile entry(destination);
+		if (!entry.open(QIODevice::WriteOnly | QIODevice::Text)) {
+			qWarning() << "Cannot write" << destination << ":"
+					   << entry.errorString();
+			return QString();
+		}
+		{
+			QTextStream stream(&entry);
+			stream << "[Desktop Entry]\n";
+			stream << "Type=Application\n";
+			stream << "Categories=Game;ActionGame;AdventureGame;Simulation\n";
+			/* One list, one call, so that an argument-less shortcut does
+			 * not get a trailing space after Exec=. With arguments the
+			 * line is byte-for-byte what it was: quoteArgs() joins with
+			 * the same single space. */
+			QStringList command{target};
+			command += args;
+			stream << "Exec="
+				   << quoteArgs(command, QStringLiteral("'"),
+								QStringLiteral("'\\''"))
+				   << "\n";
+			stream << "Name=" << name << "\n";
+			if (!iconPath.isEmpty()) {
+				stream << "Icon=" << iconPath << "\n";
+			}
+		}
+		entry.close();
+		entry.setPermissions(entry.permissions() | QFileDevice::ExeOwner |
+							 QFileDevice::ExeGroup | QFileDevice::ExeOther);
+		return destination;
+
+#elif defined(Q_OS_WIN)
+		QFileInfo targetInfo(target);
+		if (!targetInfo.exists()) {
+			qWarning() << "Shortcut target does not exist:" << target;
+			return QString();
+		}
+		target = targetInfo.absoluteFilePath();
+		if (target.length() >= MAX_PATH || iconPath.length() >= MAX_PATH) {
+			qWarning() << "Shortcut target or icon path is too long for the "
+						  "shell to accept.";
+			return QString();
+		}
+		if (!destination.endsWith(QLatin1String(".lnk"), Qt::CaseInsensitive)) {
+			destination += QLatin1String(".lnk");
+		}
+
+		/* Only balance CoUninitialize() against an initialise that actually
+		 * happened here: the GUI thread is usually already in an apartment,
+		 * and tearing that down underneath it would be rude. */
+		const HRESULT init = CoInitialize(nullptr);
+		const bool weInitialised = SUCCEEDED(init);
+
+		IShellLinkW* link = nullptr;
+		HRESULT hr = CoCreateInstance(CLSID_ShellLink, nullptr,
+									  CLSCTX_INPROC_SERVER, IID_IShellLinkW,
+									  reinterpret_cast<void**>(&link));
+		if (FAILED(hr)) {
+			if (weInitialised) {
+				CoUninitialize();
+			}
+			qWarning() << "Could not reach the shell to build a link.";
+			return QString();
+		}
+
+		const QString nativeTarget = QDir::toNativeSeparators(target);
+		const QString nativeDir =
+			QDir::toNativeSeparators(targetInfo.absolutePath());
+		const QString argLine = quoteArgs(args, QStringLiteral("\""),
+										  QStringLiteral("\\\""), true);
+
+		link->SetPath(reinterpret_cast<LPCWSTR>(nativeTarget.utf16()));
+		link->SetWorkingDirectory(reinterpret_cast<LPCWSTR>(nativeDir.utf16()));
+		link->SetDescription(reinterpret_cast<LPCWSTR>(name.utf16()));
+		link->SetArguments(reinterpret_cast<LPCWSTR>(argLine.utf16()));
+		if (!iconPath.isEmpty()) {
+			// The shell wants a native path; Qt hands out '/' separators.
+			const QString nativeIcon = QDir::toNativeSeparators(iconPath);
+			link->SetIconLocation(reinterpret_cast<LPCWSTR>(nativeIcon.utf16()),
+								  0);
+		}
+
+		IPersistFile* file = nullptr;
+		hr = link->QueryInterface(IID_IPersistFile,
+								  reinterpret_cast<void**>(&file));
+		if (SUCCEEDED(hr)) {
+			const QString nativeDest = QDir::toNativeSeparators(destination);
+			hr = file->Save(reinterpret_cast<LPCOLESTR>(nativeDest.utf16()),
+							TRUE);
+			file->Release();
+		}
+		link->Release();
+		if (weInitialised) {
+			CoUninitialize();
+		}
+
+		if (FAILED(hr)) {
+			qWarning() << "The shell refused to save a link at" << destination;
+			return QString();
+		}
+		return destination;
+
 #else
-		(void)location;
-		(void)dest;
+		(void)target;
 		(void)args;
 		(void)name;
-		(void)icon;
-		qWarning("Desktop Shortcuts not supported on your platform!");
-		return false;
+		(void)iconPath;
+		qWarning() << "Shortcuts are not supported on this platform.";
+		return QString();
 #endif
 	}
 } // namespace FS

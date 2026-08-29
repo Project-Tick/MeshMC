@@ -112,6 +112,7 @@ Config::Config()
 	BUG_TRACKER_URL = "@MeshMC_BUG_TRACKER_URL@";
 	DISCORD_URL = "@MeshMC_DISCORD_URL@";
 	SUBREDDIT_URL = "@MeshMC_SUBREDDIT_URL@";
+	PATREON_URL = "@MeshMC_Patreon_Url@";
 
 	// Feature flags (GitLab Unleash-compatible backend).
 	UNLEASH_URL = "@MeshMC_UNLEASH_URL@";

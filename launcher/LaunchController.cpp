@@ -69,12 +69,27 @@ void LaunchController::executeTask()
 
 void LaunchController::decideAccount()
 {
+	auto accounts = APPLICATION->accounts();
+
+	/* Demo was asked for up front (the Launch Demo entry), so there is no
+	 * account question to ask: login() skips authentication entirely. All
+	 * that is missing is a name to show in game. Borrowing the default
+	 * account's profile name keeps the demo from being called "User" for
+	 * someone who does have an account. */
+	if (m_demoMode) {
+		if (m_demoUsername.isEmpty()) {
+			auto account = accounts->defaultAccount();
+			QString profileName = account ? account->profileName() : QString();
+			m_demoUsername = profileName.isEmpty() ? tr("User") : profileName;
+		}
+		return;
+	}
+
 	if (m_accountToUse) {
 		return;
 	}
 
 	// Find an account to use.
-	auto accounts = APPLICATION->accounts();
 	if (accounts->count() <= 0) {
 		// Tell the user they need to log in at least one account in order to
 		// play.
@@ -608,6 +623,26 @@ bool LaunchController::abort()
 		return true;
 	}
 	if (!m_launcher->canAbort()) {
+		// Returning false here used to be the whole story, and nobody looks
+		// at the return value - so pressing Kill did nothing at all, with no
+		// explanation. Say it here, where the reason is actually known,
+		// instead of threading a result code through Application::kill().
+		if (m_launcher->isAborting()) {
+			CustomMessageBox::selectable(
+				m_parentWidget, tr("Already stopping"),
+				tr("MeshMC is already shutting this instance down. Give it a "
+				   "few seconds - if the game does not react, it gets killed "
+				   "automatically."),
+				QMessageBox::Information)
+				->exec();
+		} else {
+			CustomMessageBox::selectable(
+				m_parentWidget, tr("Can't kill Minecraft"),
+				tr("This instance is at a point in the launch process that "
+				   "can't be interrupted. Please try again in a moment."),
+				QMessageBox::Warning)
+				->exec();
+		}
 		return false;
 	}
 	auto response = CustomMessageBox::selectable(

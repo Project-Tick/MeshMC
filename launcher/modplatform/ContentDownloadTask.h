@@ -53,6 +53,27 @@ class ContentDownloadTask : public Task
 	 * without lifetime concerns. */
 	void setMetadataIndex(std::shared_ptr<ModMetadataIndex> index);
 
+	/* The progress dialog carries a Skip button, so this has to be able
+	 * to give up part way through. What is already on disk stays there:
+	 * the folder model rescans afterwards either way. */
+	bool canAbort() const override
+	{
+		return true;
+	}
+
+	/* Whether this stopped because the user said so, as opposed to a
+	 * transfer going wrong. Task itself does not tell the two apart -
+	 * emitAborted() sets the fail reason to "Aborted." - and the caller
+	 * has to, since there is nothing to complain about when the answer
+	 * is yes. */
+	bool wasAborted() const
+	{
+		return m_aborted;
+	}
+
+  public slots:
+	bool abort() override;
+
   protected:
 	void executeTask() override;
 
@@ -68,4 +89,9 @@ class ContentDownloadTask : public Task
 	QString m_targetDir;
 	NetJob::Ptr m_netJob;
 	std::shared_ptr<ModMetadataIndex> m_metadata;
+
+	/* Latched by abort(). Aborting the job makes it report failed() as
+	 * it unwinds, and that must not turn into a second verdict on top of
+	 * the aborted one. */
+	bool m_aborted = false;
 };

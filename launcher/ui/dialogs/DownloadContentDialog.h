@@ -27,49 +27,74 @@
 #pragma once
 
 #include <QDialog>
-#include <QListView>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QComboBox>
-#include <QStackedWidget>
-#include <QListWidget>
-#include <QLabel>
-#include <QTimer>
+#include <QDialogButtonBox>
+#include <QList>
+#include <QString>
+#include <QUrl>
+#include <QVBoxLayout>
 #include <memory>
 
 #include "minecraft/MinecraftInstance.h"
 #include "modplatform/ContentType.h"
 #include "modplatform/ModDownloadTypes.h"
+#include "ui/pages/BasePageProvider.h"
 
+class ContentProviderPage;
 class ModMetadataIndex;
+class PageContainer;
 
-namespace Flame
-{
-	class ModListModel;
-}
-namespace Modrinth
-{
-	class ModListModel;
-}
-
-class DownloadContentDialog : public QDialog
+/* Browse CurseForge and Modrinth for one kind of content and build up a
+ * list of things to download.
+ *
+ * The dialog is only the frame: each provider is a page inside a
+ * PageContainer, exactly like the settings window, and the pages do the
+ * searching. What the dialog owns is the queue - one list shared by all
+ * pages, so the same mod cannot be picked up twice just because it is
+ * published on both sites - plus the buttons and the window geometry.
+ *
+ * Nothing is downloaded here. On accept the caller reads selectedMods()
+ * and takes it from there (dependency resolution, review, download). */
+class DownloadContentDialog final : public QDialog, public BasePageProvider
 {
 	Q_OBJECT
 
   public:
+	/* `suppressInitialSearch` keeps the pages from searching the moment
+	 * they are shown. Set it when the dialog is going to be handed to
+	 * openForVersionChange(), whose lookup replaces those results
+	 * anyway - two requests where one will do, and on a slow connection
+	 * the discarded one is the reply that arrives last. */
 	explicit DownloadContentDialog(MinecraftInstance* instance,
 								   ModPlatform::ContentType contentType,
-								   QWidget* parent = nullptr);
-	virtual ~DownloadContentDialog();
+								   QWidget* parent = nullptr,
+								   bool suppressInitialSearch = false);
+	~DownloadContentDialog() override;
 
-	/* When set, the dialog refuses to add (and visually flags) any mod
-	 * that is already installed in the target instance, so the same mod
-	 * cannot be queued for download twice. */
+	/* Turns the whole dialog into a version picker for one project that
+	 * is already installed: the provider list goes away, so do the
+	 * dialog's own buttons, and the provider's page grows its own
+	 * Reinstall/Cancel pair.
+	 *
+	 * Returns false when no page serves that platform - a file recorded
+	 * as coming from somewhere we cannot browse has no version list to
+	 * offer, and the caller should say so rather than show an empty
+	 * window. */
+	bool openForVersionChange(const QString& platform,
+							  const QString& projectId, const QString& name);
+
+	/* BasePageProvider */
+	QList<BasePage*> getPages() override;
+	QString dialogTitle() override;
+
+	/* What the target instance already has. Matching rows are faded out
+	 * and tagged, and the version they are on is marked in the version
+	 * box. They stay selectable: picking a different version of an
+	 * installed project is how it gets changed. */
 	void setInstalledIndex(std::shared_ptr<ModMetadataIndex> index);
 
 	QList<ModPlatform::SelectedMod> selectedMods() const
 	{
-		return m_selectedMods;
+		return m_queue;
 	}
 	QString mcVersion() const
 	{
@@ -80,64 +105,60 @@ class DownloadContentDialog : public QDialog
 		return m_loaderType;
 	}
 
+	/* Lower-case nouns for button and placeholder text. */
+	QString contentNoun() const;
+	QString contentsNoun() const;
+
+	ModPlatform::ContentType contentType() const
+	{
+		return m_contentType;
+	}
+
+	/* Queue handling, called by the pages. Matching is by name rather
+	 * than project id, so the same mod from the two providers counts
+	 * once. */
+	bool isNameQueued(const QString& name) const;
+	void queueContent(const ModPlatform::SelectedMod& mod);
+	void unqueueContent(const QString& name);
+
+	/* Version of `projectId` already installed, or an empty string. Used
+	 * to tag it in the version list. */
+	QString installedVersionId(const QString& platform,
+							   const QString& projectId) const;
+
+	/* If `url` points at a project page on one of the providers - the
+	 * kind of link people paste out of a browser - switch to that
+	 * provider and look the project up. Returns false when the link is
+	 * something else, so the caller can hand it to the web browser. */
+	bool openProjectLink(const QUrl& url);
+
+	void accept() override;
+	void reject() override;
+
   private slots:
-	void onPlatformChanged(int index);
-	void onSearchTextChanged();
-	void onSortChanged(int index);
-	void onModSelectionChanged(const QModelIndex& current,
-							   const QModelIndex& previous);
-	void onModDoubleClicked(const QModelIndex& index);
-	void onContinueClicked();
-	void onCancelClicked();
-	void removeSelectedMod(int index);
+	void onPageChanged(BasePage* previous, BasePage* selected);
 
   private:
-	void setupUi();
-	void triggerSearch();
-	void updateSelectedList();
-	void loadVersionsForMod(const QModelIndex& index);
-	/* Returns a human-readable reason string ("Already installed (foo.jar)")
-	 * if `platform`/`projectId` (or, failing that, `name`) matches a mod
-	 * already present in the target instance; otherwise an empty string. */
-	QString alreadyInstalledReason(const QString& platform,
-								   const QString& projectId,
-								   const QString& name) const;
+	void detectInstanceProfile();
+	void buildPages();
+	/* Hands the queue to every page's model, so rows can draw the tick,
+	 * and refreshes the pages' buttons. */
+	void queueChanged();
+	void saveGeometryState();
+	QString geometrySaveKey() const;
 
   private:
 	MinecraftInstance* m_instance;
 	ModPlatform::ContentType m_contentType;
 	QString m_mcVersion;
 	QString m_loaderType;
+	bool m_suppressInitialSearch;
 	std::shared_ptr<ModMetadataIndex> m_installedIndex;
 
-	// UI elements
-	QListWidget* m_platformList = nullptr;
-	QStackedWidget* m_contentStack = nullptr;
-	QLineEdit* m_searchEdit = nullptr;
-	QComboBox* m_sortBox = nullptr;
-	QListView* m_curseForgeView = nullptr;
-	QListView* m_modrinthView = nullptr;
-	QComboBox* m_versionBox = nullptr;
-	QLabel* m_descriptionLabel = nullptr;
-	QListWidget* m_selectedListWidget = nullptr;
-	QPushButton* m_continueButton = nullptr;
-	QPushButton* m_cancelButton = nullptr;
-	QPushButton* m_addButton = nullptr;
+	QList<ModPlatform::SelectedMod> m_queue;
 
-	// Models
-	Flame::ModListModel* m_flameModel = nullptr;
-	Modrinth::ModListModel* m_modrinthModel = nullptr;
-
-	// State
-	QList<ModPlatform::SelectedMod> m_selectedMods;
-	int m_currentPlatform = 0; // 0=CurseForge, 1=Modrinth
-	QTimer* m_searchTimer = nullptr;
-
-	// Currently selected mod info for version loading
-	struct CurrentModInfo {
-		QString platform;
-		QString projectId;
-		QString name;
-		int addonId = 0; // for CurseForge
-	} m_currentMod;
+	QList<ContentProviderPage*> m_pages;
+	PageContainer* m_container = nullptr;
+	QDialogButtonBox m_buttons;
+	QVBoxLayout m_layout;
 };

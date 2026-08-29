@@ -45,8 +45,10 @@
 #include <QMainWindow>
 
 #include "minecraft/MinecraftInstance.h"
+#include "minecraft/mod/ModMetadataIndex.h"
 #include "ui/pages/BasePage.h"
 #include "modplatform/ContentType.h"
+#include "modplatform/ModDownloadTypes.h"
 
 #include <Application.h>
 
@@ -103,6 +105,88 @@ class ModFolderPage : public QMainWindow, public BasePage
 	bool modListFilter(QKeyEvent* ev);
 	QMenu* createPopupMenu() override;
 
+	/* Mods are the only content type Minecraft holds open while it runs.
+	 * Resource packs (including legacy texture packs), shader packs and
+	 * data packs can all be added mid-session and picked up on reload,
+	 * so their pages stay usable while the instance is running. */
+	bool allowsChangesWhileRunning() const
+	{
+		return m_contentType != ModPlatform::ContentType::Mod;
+	}
+	bool contentChangesAllowed() const
+	{
+		return m_controlsEnabled || allowsChangesWhileRunning();
+	}
+
+  private:
+	/* Rows of the underlying model that are selected, each once.
+	 * selection().indexes() hands out one index per cell, so a single
+	 * selected line arrives as one index per column. */
+	QList<int> selectedSourceRows() const;
+	/* The one selected row, or -1 when the selection is not exactly one
+	 * row that still exists. */
+	int singleSelectedRow() const;
+	/* Where the single selected file came from, as recorded in the
+	 * folder's sidecar index. Invalid when nothing usable is selected. */
+	ModMetadataIndex::Entry selectedModOrigin() const;
+
+	/* Mods need a loader before any of this makes sense. Warns and
+	 * returns false when there is none; always true for content types
+	 * that do not load through one. */
+	bool ensureModLoaderPresent();
+
+	/* The instance's Minecraft version and primary loader, as the
+	 * providers spell them. The loader is empty for content that does
+	 * not load through one. */
+	QString instanceMcVersion() const;
+	QString instanceLoader() const;
+
+	/* Check the tracked files for newer versions and offer them. */
+	void runUpdateCheck();
+
+	/* Rows the actions should act on: the selection, or everything when
+	 * nothing is selected, which is how the update actions behave. */
+	QList<int> rowsForBulkAction() const;
+
+	/* Where a file's project lives on the web, from its recorded origin,
+	 * falling back to whatever homepage the archive itself declares. */
+	QString homepageForRow(int row) const;
+
+	/* Everything that happens after the browse dialog has been accepted:
+	 * resolve dependencies, review, work out the plan against what is on
+	 * disk, download, offer the manual route if that failed.
+	 *
+	 * Shared by the ordinary download action and by changing one mod's
+	 * version, which differ only in how the selection was arrived at. */
+	void installSelection(const QList<ModPlatform::SelectedMod>& selection,
+						  const QString& mcVersion, const QString& loaderType);
+
+	/* Everything from the review dialog onwards. Split out so that the
+	 * dependency check, which has no picks of its own to install, can
+	 * put its findings through the same review, conflict analysis and
+	 * download as an ordinary selection. */
+	void reviewAndInstall(
+		const QList<ModPlatform::SelectedMod>& selection,
+		const QList<ModPlatform::DependencyInfo>& dependencies,
+		const QList<ModPlatform::UnresolvedDep>& unresolvedDeps);
+
+	/* Walks what is installed looking for dependencies that are not
+	 * there, and offers them. */
+	void verifyDependencies();
+
+	/* Offers the manual route for files whose author blocked
+	 * third-party downloads and that are still missing after a failed
+	 * download. Returns whether there was anything to offer, so the
+	 * caller knows whether the generic error message is still the right
+	 * thing to show. */
+	bool offerManualDownloads(const QList<ModPlatform::DownloadItem>& plan,
+							  const QString& targetDir);
+	/* Records where a manually placed file came from, but only once its
+	 * checksum says it really is that file. */
+	void writeManualDownloadSidecar(
+		const QList<ModPlatform::DownloadItem>& plan, const QString& fileName,
+		const QString& path);
+
   protected:
 	BaseInstance* m_inst = nullptr;
 
@@ -134,6 +218,17 @@ class ModFolderPage : public QMainWindow, public BasePage
 	void on_actionView_configs_triggered();
 	void on_actionDownload_triggered();
 	void on_actionUpdate_triggered();
+	void on_actionChangeVersion_triggered();
+	void on_actionVerifyDependencies_triggered();
+	void on_actionResetMetadata_triggered();
+	void on_actionViewHomepage_triggered();
+	void on_actionExportList_triggered();
+	/* Changing a version only means anything for exactly one file whose
+	 * origin we recorded, so the action follows the selection. */
+	void updateChangeVersionAction();
+	/* The actions that only make sense for part of a selection, kept in
+	 * step with it. */
+	void updateSelectionActions();
 	void ShowContextMenu(const QPoint& pos);
 };
 

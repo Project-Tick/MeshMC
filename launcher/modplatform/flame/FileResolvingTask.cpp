@@ -25,6 +25,7 @@
 
 #include "FileResolvingTask.h"
 #include "Json.h"
+#include "modplatform/flame/FlameApi.h"
 
 Flame::FileResolvingTask::FileResolvingTask(
 	shared_qobject_ptr<QNetworkAccessManager> network,
@@ -43,10 +44,8 @@ void Flame::FileResolvingTask::executeTask()
 	for (auto& file : m_toProcess.files) {
 		auto projectIdStr = QString::number(file.projectId);
 		auto fileIdStr = QString::number(file.fileId);
-		QString metaurl =
-			QString("https://api.curseforge.com/v1/mods/%1/files/%2")
-				.arg(projectIdStr, fileIdStr);
-		auto dl = Net::Download::makeByteArray(QUrl(metaurl), &results[index]);
+		auto dl = Net::Download::makeByteArray(
+			FlameApi::fileUrl(projectIdStr, fileIdStr), &results[index]);
 		m_dljob->addNetAction(dl);
 		index++;
 	}

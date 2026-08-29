@@ -62,13 +62,16 @@
 
 #include "icons/IconList.h"
 
+#include "mod/DataPackFolderModel.h"
 #include "mod/ModFolderModel.h"
 #include "mod/ResourcePackFolderModel.h"
+#include "mod/ShaderPackFolderModel.h"
 #include "mod/TexturePackFolderModel.h"
 
 #include "WorldList.h"
 
 #include "PackProfile.h"
+#include "Version.h"
 #include "AssetsUtils.h"
 #include "MinecraftUpdate.h"
 #include "MinecraftLoadAndCheck.h"
@@ -187,6 +190,22 @@ MinecraftInstance::MinecraftInstance(SettingsObjectPtr globalSettings,
 	m_settings->registerSetting("JoinServerOnLaunch", false);
 	m_settings->registerSetting("JoinServerOnLaunchAddress", "");
 
+	/* Vanilla only ever reads data packs from saves/<world>/datapacks, so
+	 * an instance-wide folder is meaningless unless a loader such as Paxi
+	 * or OpenLoader is installed to sweep it into every world. Off by
+	 * default; the per-world manager in WorldListPage is the normal way
+	 * to get at data packs. */
+	auto dataPacksEnabled =
+		m_settings->registerSetting("GlobalDataPacksEnabled", false);
+	auto dataPacksPath = m_settings->registerSetting("GlobalDataPacksPath", "");
+
+	// Both settings pick the folder the model watches, so the cached model
+	// has to go when either of them moves.
+	connect(dataPacksEnabled.get(), &Setting::SettingChanged, this,
+			[this] { m_data_pack_list.reset(); });
+	connect(dataPacksPath.get(), &Setting::SettingChanged, this,
+			[this] { m_data_pack_list.reset(); });
+
 	// DEPRECATED: Read what versions the user configuration thinks should be
 	// used
 	m_settings->registerSetting({"IntendedVersion", "MinecraftVersion"}, "");
@@ -233,6 +252,44 @@ QSet<QString> MinecraftInstance::traits() const
 		return {"version-incomplete"};
 	}
 	return profile->getTraits();
+}
+
+QString MinecraftInstance::minecraftVersion() const
+{
+	auto components = getPackProfile();
+	if (!components) {
+		return QString();
+	}
+
+	QString version = components->getComponentVersion("net.minecraft");
+	if (!version.isEmpty()) {
+		return version;
+	}
+
+	/* Nothing has read the profile from disk yet. It is only loaded when a
+	 * launch, an update or the version page needs it, so anything asking
+	 * earlier - a menu being built, the status bar - sees every component
+	 * version as empty. Load it here, offline: filling in a menu entry must
+	 * never wait on the network. */
+	components->reload(Net::Mode::Offline);
+	return components->getComponentVersion("net.minecraft");
+}
+
+bool MinecraftInstance::supportsDemo() const
+{
+	const QString version = minecraftVersion();
+	if (version.isEmpty()) {
+		/* The version could not be determined at all - a broken or
+		 * not-yet-written profile. Offer demo anyway and let the launch be
+		 * the thing that fails: every Minecraft release since 1.3.1 supports
+		 * it, so refusing on an unknown version hides the feature from
+		 * practically everyone it works for. */
+		return true;
+	}
+	/* Snapshot and pre-release names are only handled as far as Version's
+	 * section comparison takes them; the pre-1.0 alpha/beta naming schemes
+	 * are not recognised at all. */
+	return Version(version) >= Version("1.3.1");
 }
 
 QString MinecraftInstance::gameRoot() const
@@ -297,6 +354,17 @@ QString MinecraftInstance::texturePacksDir() const
 QString MinecraftInstance::shaderPacksDir() const
 {
 	return FS::PathCombine(gameRoot(), "shaderpacks");
+}
+
+QString MinecraftInstance::dataPacksDir() const
+{
+	// Global data pack loaders don't agree on a folder name, so let the
+	// user point us at whichever one their loader watches.
+	QString relativePath = settings()->get("GlobalDataPacksPath").toString();
+	if (relativePath.isEmpty()) {
+		relativePath = QStringLiteral("datapacks");
+	}
+	return FS::PathCombine(gameRoot(), relativePath);
 }
 
 QString MinecraftInstance::instanceConfigFolder() const
@@ -850,10 +918,10 @@ QString MinecraftInstance::getStatusbarDescription()
 	}
 
 	QString description;
+	/* Through the accessor, so that a profile nobody has read yet gets loaded
+	 * instead of putting an empty version in the status bar. */
 	description.append(
-		tr("Minecraft %1 (%2)")
-			.arg(m_components->getComponentVersion("net.minecraft"))
-			.arg(typeName()));
+		tr("Minecraft %1 (%2)").arg(minecraftVersion()).arg(typeName()));
 	if (m_settings->get("ShowGameTime").toBool()) {
 		if (lastTimePlayed() > 0) {
 			description.append(
@@ -1077,10 +1145,22 @@ std::shared_ptr<ModFolderModel> MinecraftInstance::texturePackList() const
 std::shared_ptr<ModFolderModel> MinecraftInstance::shaderPackList() const
 {
 	if (!m_shader_pack_list) {
-		m_shader_pack_list.reset(new ResourcePackFolderModel(shaderPacksDir()));
+		m_shader_pack_list.reset(new ShaderPackFolderModel(shaderPacksDir()));
 		// Shader packs can be safely added while Minecraft is running
 	}
 	return m_shader_pack_list;
+}
+
+std::shared_ptr<ModFolderModel> MinecraftInstance::dataPackList() const
+{
+	// Null when the global folder is switched off - callers must check.
+	if (!m_data_pack_list &&
+		settings()->get("GlobalDataPacksEnabled").toBool()) {
+		m_data_pack_list.reset(new DataPackFolderModel(dataPacksDir()));
+		// Data packs are re-read by /reload, so they can be added while
+		// Minecraft is running
+	}
+	return m_data_pack_list;
 }
 
 std::shared_ptr<WorldList> MinecraftInstance::worldList() const

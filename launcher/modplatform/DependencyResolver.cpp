@@ -29,6 +29,9 @@
 #include "Json.h"
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/ContentType.h"
+#include "modplatform/VersionPicker.h"
+#include "modplatform/flame/FlameApi.h"
+#include "modplatform/modrinth/ModrinthApi.h"
 #include "net/Download.h"
 #include "net/NetJob.h"
 
@@ -37,6 +40,28 @@
 #include <QJsonObject>
 #include <QRegularExpression>
 #include <QUrl>
+
+namespace
+{
+
+	/* CurseForge's releaseType as the name the review dialog and the
+	 * release channel filter use. Modrinth states this outright, in a
+	 * "version_type" field, so only this side needs translating. */
+	QString curseForgeReleaseTypeName(int releaseType)
+	{
+		switch (releaseType) {
+			case 1:
+				return QStringLiteral("release");
+			case 2:
+				return QStringLiteral("beta");
+			case 3:
+				return QStringLiteral("alpha");
+			default:
+				return QString();
+		}
+	}
+
+} // namespace
 
 DependencyResolver::DependencyResolver(
 	const QList<ModPlatform::SelectedMod>& selectedMods,
@@ -56,33 +81,105 @@ void DependencyResolver::setInstalledIndex(
 	std::shared_ptr<ModMetadataIndex> index)
 {
 	m_installed = std::move(index);
+
+	/* Deliberately not used to pre-populate the resolved sets any more.
+	 * Treating everything on disk as already dealt with saved a lookup
+	 * per installed dependency, but it also meant a library that is
+	 * present at the wrong version - built for another Minecraft
+	 * version, or left behind damaged - was silently declared fine and
+	 * never mentioned again.
+	 *
+	 * What happens instead, and what the reference launcher does: the
+	 * dependency is looked up either way, dropped when the very version
+	 * it asks for is the one on disk, and otherwise offered to the user
+	 * unticked. See acceptDependency(). */
+}
+
+bool DependencyResolver::isVersionInstalled(const QString& platform,
+											const QString& projectId,
+											const QString& versionId) const
+{
+	if (!m_installed || platform.isEmpty() || projectId.isEmpty() ||
+		versionId.isEmpty()) {
+		return false;
+	}
+	const auto entry = m_installed->findByPlatformProject(platform, projectId);
+	return entry.isValid() && entry.versionId == versionId;
+}
+
+bool DependencyResolver::isProjectInstalled(const QString& platform,
+											const QString& projectId,
+											const QString& name) const
+{
 	if (!m_installed) {
+		return false;
+	}
+	if (!platform.isEmpty() && !projectId.isEmpty() &&
+		m_installed->findByPlatformProject(platform, projectId).isValid()) {
+		return true;
+	}
+	/* Also by name, which catches the same library installed from the
+	 * other site. */
+	const QString normalized = normalizeName(name);
+	return !normalized.isEmpty() &&
+		   m_installed->findByNormalizedName(normalized).isValid();
+}
+
+void DependencyResolver::acceptDependency(ModPlatform::DependencyInfo dep)
+{
+	if (dep.downloadUrl.isEmpty()) {
+		qWarning() << "Dependency" << dep.name << "on" << dep.platform
+				   << "has no download URL, skipping";
 		return;
 	}
-	// Treat anything already on disk as "already resolved". Without this
-	// the resolver would happily refetch transitively-required libraries
-	// that an earlier install already pulled in.
-	for (const auto& entry : m_installed->all()) {
-		if (entry.hasPlatformOrigin()) {
-			m_resolvedProjectIds.insert(entry.platform + ":" + entry.projectId);
-		}
-		if (!entry.name.isEmpty()) {
-			m_resolvedNames.insert(normalizeName(entry.name));
+
+	if (isVersionInstalled(dep.platform, dep.projectId, dep.versionId)) {
+		/* The exact file it asks for is the one already on disk. There
+		 * is nothing to do and nothing worth saying about it. */
+		qDebug() << "Dependency" << dep.name
+				 << "is already installed at this version, dropping";
+		return;
+	}
+
+	/* Present, but not as this version. Offered rather than forced: the
+	 * review dialog shows the row unticked. */
+	dep.maybeInstalled =
+		isProjectInstalled(dep.platform, dep.projectId, dep.name);
+
+	m_resolvedNames.insert(normalizeName(dep.name));
+	m_dependencies.append(dep);
+}
+
+void DependencyResolver::noteAlsoRequiredBy(const QString& platform,
+											const QString& projectId,
+											const QStringList& requiredBy)
+{
+	if (requiredBy.isEmpty()) {
+		return;
+	}
+	for (auto& dep : m_dependencies) {
+		if (dep.platform == platform && dep.projectId == projectId) {
+			for (const QString& name : requiredBy) {
+				if (!name.isEmpty() && !dep.requiredBy.contains(name)) {
+					dep.requiredBy.append(name);
+				}
+			}
+			return;
 		}
 	}
 }
 
 QString DependencyResolver::normalizeName(const QString& name)
 {
-	// Lowercase, trim, remove common suffixes like " (Fabric)", remove
-	// non-alphanumeric
-	QString n = name.toLower().trimmed();
-	// Remove parenthesized loader/version suffixes: "(Fabric)", "(Forge)", etc.
-	n.remove(QRegularExpression("\\s*\\([^)]*\\)\\s*"));
-	// Keep only alphanumeric and spaces, then collapse spaces
-	n.remove(QRegularExpression("[^a-z0-9 ]"));
-	n = n.simplified();
-	return n;
+	/* One implementation, in the index.
+	 *
+	 * There were two, spelled out separately here and there, and they
+	 * were meant to agree: the resolver decides whether a dependency is
+	 * the same thing as something already installed, and the index
+	 * decides what "already installed" looks up as. Two copies of that
+	 * rule is one copy too many - they only have to disagree by a
+	 * bracket for a mod to be resolved and installed twice. */
+	return ModMetadataIndex::normalizeName(name);
 }
 
 void DependencyResolver::executeTask()
@@ -96,8 +193,87 @@ void DependencyResolver::executeTask()
 	resolveNextMod();
 }
 
+bool DependencyResolver::abort()
+{
+	if (m_aborted) {
+		return true;
+	}
+	m_aborted = true;
+
+	/* Call off what is still in the air. Each job reports failed() as it
+	 * unwinds, which lands in the handler below and is dropped because
+	 * m_aborted is already set. */
+	for (const QPointer<NetJob>& job : m_activeJobs) {
+		if (job && job->isRunning()) {
+			job->abort();
+		}
+	}
+	m_activeJobs.clear();
+
+	/* Only a running task may report a verdict; emitAborted() complains
+	 * loudly otherwise. The latch above holds either way. */
+	if (isRunning()) {
+		emitAborted();
+	}
+	return true;
+}
+
+void DependencyResolver::request(const QString& name, const QUrl& url,
+								 std::function<void(const QByteArray&)> onDone)
+{
+	if (m_aborted) {
+		return;
+	}
+
+	/* Held by both handlers rather than freed by hand in each: only one
+	 * of them runs, and if the job dies without either firing the buffer
+	 * goes with it instead of leaking. */
+	auto response = std::make_shared<QByteArray>();
+	auto* job = new NetJob(name, APPLICATION->network());
+	job->addNetAction(Net::Download::makeByteArray(url, response.get()));
+
+	m_pendingRequests++;
+	m_activeJobs.append(job);
+
+	auto finish = [this, job](const std::function<void(const QByteArray&)>& fn,
+							  const QByteArray& bytes) {
+		m_activeJobs.removeAll(QPointer<NetJob>(job));
+		job->deleteLater();
+
+		if (m_aborted) {
+			/* Still decremented: the count has to end up honest even
+			 * when nobody is going to look at it again. */
+			m_pendingRequests--;
+			return;
+		}
+
+		fn(bytes);
+		m_pendingRequests--;
+		checkCompletion();
+	};
+
+	connect(job, &NetJob::succeeded, this,
+			[finish, onDone, response] { finish(onDone, *response); });
+	connect(job, &NetJob::failed, this,
+			[finish, onDone, response, name](QString reason) {
+				qWarning() << "Lookup failed:" << name << ":" << reason;
+				/* An empty reply, so the handler takes its "could not
+				 * resolve" path rather than being skipped entirely and
+				 * leaving the dependency silently unaccounted for. */
+				finish(onDone, QByteArray());
+			});
+
+	// Show the lookup as its own line in the progress dialog.
+	propagateStepsFrom(job);
+	job->start();
+}
+
 void DependencyResolver::resolveNextMod()
 {
+	if (m_aborted) {
+		return;
+	}
+
 	if (m_currentModIndex >= m_selectedMods.size()) {
 		checkCompletion();
 		return;
@@ -123,34 +299,18 @@ void DependencyResolver::resolveCurseForgeDependencies(
 		return;
 	}
 
-	auto* response = new QByteArray();
-	NetJob* job = new NetJob(QString("CF::DepResolve(%1)").arg(mod.name),
-							 APPLICATION->network());
-	auto url = QString("https://api.curseforge.com/v1/mods/%1/files/%2")
-				   .arg(mod.projectId, mod.versionId);
-	job->addNetAction(Net::Download::makeByteArray(QUrl(url), response));
-
-	m_pendingRequests++;
-	auto currentMod = mod;
-	connect(job, &NetJob::succeeded, this, [this, currentMod, response, job] {
-		job->deleteLater();
-		onCurseForgeVersionResolved(currentMod, *response);
-		delete response;
-		m_pendingRequests--;
-		m_currentModIndex++;
-		resolveNextMod();
-	});
-	connect(job, &NetJob::failed, this, [this, response, job](QString reason) {
-		job->deleteLater();
-		delete response;
-		qWarning() << "Failed to resolve CurseForge dependencies:" << reason;
-		m_pendingRequests--;
-		m_currentModIndex++;
-		resolveNextMod();
-	});
-	// Show the lookup as its own line in the progress dialog.
-	propagateStepsFrom(job);
-	job->start();
+	const auto currentMod = mod;
+	request(QString("CF::DepResolve(%1)").arg(mod.name),
+			FlameApi::fileUrl(mod.projectId, mod.versionId),
+			[this, currentMod](const QByteArray& bytes) {
+				if (!bytes.isEmpty()) {
+					onCurseForgeVersionResolved(currentMod, bytes);
+				}
+				/* On to the next mod either way: one lookup that came
+				 * back empty must not stall the whole queue. */
+				m_currentModIndex++;
+				resolveNextMod();
+			});
 }
 
 void DependencyResolver::resolveModrinthDependencies(
@@ -162,32 +322,18 @@ void DependencyResolver::resolveModrinthDependencies(
 		return;
 	}
 
-	auto* response = new QByteArray();
-	NetJob* job = new NetJob(QString("MR::DepResolve(%1)").arg(mod.name),
-							 APPLICATION->network());
-	auto url =
-		QString("https://api.modrinth.com/v2/version/%1").arg(mod.versionId);
-	job->addNetAction(Net::Download::makeByteArray(QUrl(url), response));
+	const auto currentMod = mod;
+	request(QString("MR::DepResolve(%1)").arg(mod.name),
+			ModrinthApi::versionUrl(mod.versionId),
+			[this, currentMod](const QByteArray& bytes) {
+				if (!bytes.isEmpty()) {
+					onModrinthVersionResolved(currentMod, bytes);
+				}
+			});
 
-	m_pendingRequests++;
-	auto currentMod = mod;
-	connect(job, &NetJob::succeeded, this, [this, currentMod, response, job] {
-		job->deleteLater();
-		onModrinthVersionResolved(currentMod, *response);
-		delete response;
-		m_pendingRequests--;
-		checkCompletion();
-	});
-	connect(job, &NetJob::failed, this, [this, response, job](QString reason) {
-		job->deleteLater();
-		delete response;
-		qWarning() << "Failed to resolve Modrinth dependencies:" << reason;
-		m_pendingRequests--;
-		checkCompletion();
-	});
-	// Show the lookup as its own line in the progress dialog.
-	propagateStepsFrom(job);
-	job->start();
+	/* Unlike the CurseForge path this does not wait for the answer: the
+	 * next mod is started straight away and the replies are collected as
+	 * they come. */
 	m_currentModIndex++;
 	resolveNextMod();
 }
@@ -207,7 +353,7 @@ void DependencyResolver::onCurseForgeVersionResolved(
 		fileObj = doc.object();
 	}
 
-	processCFFileDeps(fileObj);
+	processCFFileDeps(fileObj, {mod.name});
 }
 
 void DependencyResolver::onModrinthVersionResolved(
@@ -218,12 +364,12 @@ void DependencyResolver::onModrinthVersionResolved(
 	if (parseError.error != QJsonParseError::NoError)
 		return;
 
-	processMRVersionDeps(doc.object());
+	processMRVersionDeps(doc.object(), {mod.name});
 }
 
-void DependencyResolver::onDependencyProjectResolved(const QString& platform,
-													 const QString& projectId,
-													 const QByteArray& data)
+void DependencyResolver::onDependencyProjectResolved(
+	const QString& platform, const QString& projectId, const QByteArray& data,
+	const QStringList& requiredBy)
 {
 	QJsonParseError parseError;
 	QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
@@ -245,7 +391,20 @@ void DependencyResolver::onDependencyProjectResolved(const QString& platform,
 		if (filesArr.isEmpty()) {
 			qWarning() << "No compatible files found for CurseForge dependency"
 					   << projectId << "- attempting cross resolve to Modrinth";
-			crossResolveFromCurseForge(projectId);
+			crossResolveFromCurseForge(projectId, requiredBy);
+			return;
+		}
+
+		/* Newest file that can run on this loader, rather than whatever
+		 * CurseForge happens to list first - it will gladly return a
+		 * Forge build among the matches for a Fabric instance. */
+		const auto fileObj =
+			ModPlatform::newestCurseForgeFile(filesArr, m_loader);
+		if (fileObj.isEmpty()) {
+			qWarning() << "No file for loader" << m_loader
+					   << "among CurseForge dependency" << projectId
+					   << "files - attempting cross resolve to Modrinth";
+			crossResolveFromCurseForge(projectId, requiredBy);
 			return;
 		}
 
@@ -253,39 +412,42 @@ void DependencyResolver::onDependencyProjectResolved(const QString& platform,
 		dep.projectId = projectId;
 		dep.platform = "curseforge";
 		dep.isRequired = true;
-
-		// Pick the first file (already filtered by gameVersion via API)
-		auto fileObj = filesArr.first().toObject();
+		dep.requiredBy = requiredBy;
 		dep.versionId = QString::number(Json::ensureInteger(fileObj, "id", 0));
 		dep.fileName = Json::ensureString(fileObj, "fileName", "");
 		dep.downloadUrl = Json::ensureString(fileObj, "downloadUrl", "");
 		dep.fileSize = Json::ensureInteger(fileObj, "fileLength", 0);
 		dep.sha1 = ModPlatform::curseForgeSha1FromFileObject(fileObj);
 		dep.name = Json::ensureString(fileObj, "displayName", dep.fileName);
+		dep.versionType = curseForgeReleaseTypeName(
+			Json::ensureInteger(fileObj, "releaseType", 0));
 
 		// Handle restricted downloads (downloadUrl is null)
 		if (dep.downloadUrl.isEmpty()) {
 			int fileId = Json::ensureInteger(fileObj, "id", 0);
 			if (fileId > 0 && !dep.fileName.isEmpty()) {
-				dep.downloadUrl = QString("https://www.curseforge.com/api/v1/"
-										  "mods/%1/files/%2/download")
-									  .arg(projectId)
-									  .arg(fileId);
+				dep.downloadUrl = FlameApi::browserDownloadUrl(
+					projectId, QString::number(fileId));
+				dep.browserDownloadOnly = true;
 				qWarning() << "CurseForge dependency" << projectId
 						   << "has restricted download, using fallback URL";
 			}
 		}
 
-		if (!dep.downloadUrl.isEmpty()) {
-			qDebug() << "Resolved CurseForge dependency:" << dep.name
-					 << "file:" << dep.fileName << "url:" << dep.downloadUrl;
-			m_resolvedNames.insert(normalizeName(dep.name));
-			m_dependencies.append(dep);
-			processCFFileDeps(fileObj); // recurse into sub-deps
-		} else {
+		if (dep.downloadUrl.isEmpty()) {
+			/* Nothing to fetch, so nothing this file needs is worth
+			 * chasing either. */
 			qWarning() << "CurseForge dependency" << projectId
 					   << "has no download URL, skipping";
+			return;
 		}
+
+		qDebug() << "Resolved CurseForge dependency:" << dep.name
+				 << "file:" << dep.fileName << "url:" << dep.downloadUrl;
+		const QString depName = dep.name;
+		acceptDependency(dep);
+		/* Into its own dependencies, which are now required by it. */
+		processCFFileDeps(fileObj, {depName});
 	} else if (platform == "modrinth") {
 		// data is an array of versions
 		QJsonArray arr;
@@ -299,18 +461,29 @@ void DependencyResolver::onDependencyProjectResolved(const QString& platform,
 			qWarning() << "No compatible files found for Modrinth dependency"
 					   << projectId
 					   << "- attempting cross resolve to CurseForge";
-			crossResolveFromModrinth(projectId);
+			crossResolveFromModrinth(projectId, requiredBy);
 			return;
 		}
 
-		// Pick the first (latest compatible) version
-		auto vObj = arr.first().toObject();
+		/* Newest version that lists this loader; see the CurseForge
+		 * branch above for why the order is not trusted. */
+		const auto vObj = ModPlatform::newestModrinthVersion(arr, m_loader);
+		if (vObj.isEmpty()) {
+			qWarning() << "No version for loader" << m_loader
+					   << "among Modrinth dependency" << projectId
+					   << "versions - attempting cross resolve to CurseForge";
+			crossResolveFromModrinth(projectId, requiredBy);
+			return;
+		}
+
 		ModPlatform::DependencyInfo dep;
 		dep.projectId = projectId;
 		dep.versionId = Json::ensureString(vObj, "id", "");
 		dep.name = Json::ensureString(vObj, "name", projectId);
 		dep.platform = "modrinth";
 		dep.isRequired = true;
+		dep.requiredBy = requiredBy;
+		dep.versionType = Json::ensureString(vObj, "version_type", "");
 
 		auto files = Json::ensureArray(vObj, "files");
 		for (auto fileRaw : files) {
@@ -326,15 +499,20 @@ void DependencyResolver::onDependencyProjectResolved(const QString& platform,
 			}
 		}
 
-		if (!dep.downloadUrl.isEmpty()) {
-			m_resolvedNames.insert(normalizeName(dep.name));
-			m_dependencies.append(dep);
-			processMRVersionDeps(vObj); // recurse into sub-deps
+		if (dep.downloadUrl.isEmpty()) {
+			qWarning() << "Modrinth dependency" << projectId
+					   << "has no downloadable file, skipping";
+			return;
 		}
+
+		const QString depName = dep.name;
+		acceptDependency(dep);
+		processMRVersionDeps(vObj, {depName});
 	}
 }
 
-void DependencyResolver::processCFFileDeps(const QJsonObject& fileObj)
+void DependencyResolver::processCFFileDeps(const QJsonObject& fileObj,
+										   const QStringList& requiredBy)
 {
 	auto deps = Json::ensureArray(fileObj, "dependencies");
 	for (auto depRaw : deps) {
@@ -356,54 +534,44 @@ void DependencyResolver::processCFFileDeps(const QJsonObject& fileObj)
 			continue;
 		}
 
-		if (relationType != 3)
-			continue; // 3 = required
-
-		if (m_resolvedProjectIds.contains(key))
+		if (relationType != 3) {
+			/* 2 = Optional, 4 = Tool, 5 = Incompatible. Deliberately not
+			 * followed: the reference launcher only walks required
+			 * dependencies too, and pulling in everything a mod merely
+			 * suggests would quietly install mods nobody asked for. */
 			continue;
+		}
+
+		if (m_resolvedProjectIds.contains(key)) {
+			/* Already on its way in for something else - that something
+			 * just joins the list of things asking for it. */
+			noteAlsoRequiredBy(QStringLiteral("curseforge"), depProjectId,
+							   requiredBy);
+			continue;
+		}
 		m_resolvedProjectIds.insert(key);
 
-		auto* depResponse = new QByteArray();
-		NetJob* depJob =
-			new NetJob(QString("CF::DepFetch(%1)").arg(depProjectId),
-					   APPLICATION->network());
-		QString url =
-			QString(
-				"https://api.curseforge.com/v1/mods/%1/files?gameVersion=%2")
-				.arg(depProjectId, m_mcVersion);
-		if (!m_loader.isEmpty()) {
-			url += QString("&modLoaderType=%1")
-					   .arg(ModPlatform::loaderToCurseForgeModLoaderType(
-						   m_loader));
-		}
-		qDebug() << "Fetching CurseForge dependency files (recursive):" << url;
-		depJob->addNetAction(
-			Net::Download::makeByteArray(QUrl(url), depResponse));
+		ModPlatform::VersionQuery cfQuery;
+		cfQuery.projectId = depProjectId;
+		cfQuery.contentType = ModPlatform::ContentType::Mod;
+		cfQuery.mcVersions = ModPlatform::singleVersionList(m_mcVersion);
+		cfQuery.loaders = ModPlatform::singleLoaderList(m_loader);
+		const auto url = FlameApi::get().projectVersionsUrl(cfQuery);
+		qDebug() << "Fetching CurseForge dependency files (recursive):"
+				 << url.toString();
 
-		m_pendingRequests++;
-		connect(depJob, &NetJob::succeeded, this,
-				[this, depProjectId, depResponse, depJob] {
-					depJob->deleteLater();
-					onDependencyProjectResolved("curseforge", depProjectId,
-												*depResponse);
-					delete depResponse;
-					m_pendingRequests--;
-					checkCompletion();
+		request(QString("CF::DepFetch(%1)").arg(depProjectId), url,
+				[this, depProjectId, requiredBy](const QByteArray& bytes) {
+					if (!bytes.isEmpty()) {
+						onDependencyProjectResolved("curseforge", depProjectId,
+													bytes, requiredBy);
+					}
 				});
-		connect(depJob, &NetJob::failed, this,
-				[this, depResponse, depJob](QString) {
-					depJob->deleteLater();
-					delete depResponse;
-					m_pendingRequests--;
-					checkCompletion();
-				});
-		// Show the lookup as its own line in the progress dialog.
-		propagateStepsFrom(depJob);
-		depJob->start();
 	}
 }
 
-void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj)
+void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj,
+											  const QStringList& requiredBy)
 {
 	auto deps = Json::ensureArray(versionObj, "dependencies");
 	for (auto depRaw : deps) {
@@ -423,38 +591,40 @@ void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj)
 			continue;
 		}
 
-		if (depType != "required")
+		if (depType != "required") {
+			/* "optional" and "incompatible" are deliberately not
+			 * followed - see the CurseForge side for why. */
 			continue;
+		}
 
-		if (m_resolvedProjectIds.contains(key))
+		if (m_resolvedProjectIds.contains(key)) {
+			noteAlsoRequiredBy(QStringLiteral("modrinth"), depProjectId,
+							   requiredBy);
 			continue;
+		}
 		m_resolvedProjectIds.insert(key);
 
 		if (!depVersionId.isEmpty()) {
-			auto* depResponse = new QByteArray();
-			NetJob* depJob =
-				new NetJob(QString("MR::DepVersion(%1)").arg(depProjectId),
-						   APPLICATION->network());
-			const auto url = QString("https://api.modrinth.com/v2/version/%1")
-								 .arg(depVersionId);
-			depJob->addNetAction(
-				Net::Download::makeByteArray(QUrl(url), depResponse));
+			request(
+				QString("MR::DepVersion(%1)").arg(depProjectId),
+				ModrinthApi::versionUrl(depVersionId),
+				[this, depProjectId, depVersionId,
+				 requiredBy](const QByteArray& bytes) {
+					if (bytes.isEmpty()) {
+						/* The lookup itself failed. Not retried through
+						 * the project endpoint below: on a systematic
+						 * failure that turns one dead request into two
+						 * for every dependency in the tree. */
+						return;
+					}
 
-			m_pendingRequests++;
-			connect(
-				depJob, &NetJob::succeeded, this,
-				[this, depProjectId, depVersionId, depResponse, depJob] {
-					depJob->deleteLater();
+					const auto vObj = QJsonDocument::fromJson(bytes).object();
 
-					QJsonDocument vDoc = QJsonDocument::fromJson(*depResponse);
-					auto vObj = vDoc.object();
-
-					// Check game version compatibility before accepting this
-					// version
-					auto gameVersions =
-						Json::ensureArray(vObj, "game_versions");
+					/* The dependency names one exact version, but that
+					 * version may predate the Minecraft version this
+					 * instance runs. */
 					bool compatible = false;
-					for (auto v : gameVersions) {
+					for (auto v : Json::ensureArray(vObj, "game_versions")) {
 						if (v.toString() == m_mcVersion) {
 							compatible = true;
 							break;
@@ -466,45 +636,30 @@ void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj)
 							<< "Modrinth dep version" << depVersionId
 							<< "is not compatible with MC" << m_mcVersion
 							<< "- falling back to project version search";
-						delete depResponse;
 
-						// Fall back to project-level search with game version
-						// filter
-						auto* fbResponse = new QByteArray();
-						NetJob* fbJob = new NetJob(
+						/* Ask the project as a whole for something that
+						 * does fit. The pending count needs no nudging:
+						 * this lookup still counts until we return, and
+						 * the new one has already been counted. */
+						ModPlatform::VersionQuery fbQuery;
+						fbQuery.projectId = depProjectId;
+						fbQuery.contentType = ModPlatform::ContentType::Mod;
+						fbQuery.mcVersions =
+							ModPlatform::singleVersionList(m_mcVersion);
+						fbQuery.loaders =
+							ModPlatform::singleLoaderList(m_loader);
+
+						request(
 							QString("MR::DepProject(%1)").arg(depProjectId),
-							APPLICATION->network());
-						auto fbUrl =
-							QString("https://api.modrinth.com/v2/project/%1/"
-									"version?game_versions=[\"%2\"]")
-								.arg(depProjectId, m_mcVersion);
-						if (!m_loader.isEmpty()) {
-							fbUrl += QString("&loaders=[\"%1\"]").arg(m_loader);
-						}
-						fbJob->addNetAction(Net::Download::makeByteArray(
-							QUrl(fbUrl), fbResponse));
-
-						// Reuse pending count - don't decrement for current,
-						// don't increment for fallback
-						connect(fbJob, &NetJob::succeeded, this,
-								[this, depProjectId, fbResponse, fbJob] {
-									fbJob->deleteLater();
+							ModrinthApi::get().projectVersionsUrl(fbQuery),
+							[this, depProjectId,
+							 requiredBy](const QByteArray& fb) {
+								if (!fb.isEmpty()) {
 									onDependencyProjectResolved(
-										"modrinth", depProjectId, *fbResponse);
-									delete fbResponse;
-									m_pendingRequests--;
-									checkCompletion();
-								});
-						connect(fbJob, &NetJob::failed, this,
-								[this, fbResponse, fbJob](QString) {
-									fbJob->deleteLater();
-									delete fbResponse;
-									m_pendingRequests--;
-									checkCompletion();
-								});
-						// Show the lookup as its own line in the dialog.
-						propagateStepsFrom(fbJob);
-						fbJob->start();
+										"modrinth", depProjectId, fb,
+										requiredBy);
+								}
+							});
 						return;
 					}
 
@@ -514,6 +669,9 @@ void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj)
 					dep.name = Json::ensureString(vObj, "name", depProjectId);
 					dep.platform = "modrinth";
 					dep.isRequired = true;
+					dep.requiredBy = requiredBy;
+					dep.versionType =
+						Json::ensureString(vObj, "version_type", "");
 
 					auto files = Json::ensureArray(vObj, "files");
 					for (auto fileRaw : files) {
@@ -533,148 +691,84 @@ void DependencyResolver::processMRVersionDeps(const QJsonObject& versionObj)
 						}
 					}
 
-					if (!dep.downloadUrl.isEmpty()) {
-						m_resolvedNames.insert(normalizeName(dep.name));
-						m_dependencies.append(dep);
-						processMRVersionDeps(vObj); // recurse into sub-deps
+					if (dep.downloadUrl.isEmpty()) {
+						qWarning() << "Modrinth dep version" << depVersionId
+								   << "has no downloadable file, skipping";
+						return;
 					}
 
-					delete depResponse;
-					m_pendingRequests--;
-					checkCompletion();
+					const QString depName = dep.name;
+					acceptDependency(dep);
+					processMRVersionDeps(vObj, {depName});
 				});
-			connect(depJob, &NetJob::failed, this,
-					[this, depResponse, depJob](QString) {
-						depJob->deleteLater();
-						delete depResponse;
-						m_pendingRequests--;
-						checkCompletion();
-					});
-			// Show the lookup as its own line in the progress dialog.
-			propagateStepsFrom(depJob);
-			depJob->start();
 		} else {
-			auto* depResponse = new QByteArray();
-			NetJob* depJob =
-				new NetJob(QString("MR::DepProject(%1)").arg(depProjectId),
-						   APPLICATION->network());
-			auto url = QString("https://api.modrinth.com/v2/project/%1/"
-							   "version?game_versions=[\"%2\"]")
-						   .arg(depProjectId, m_mcVersion);
-			if (!m_loader.isEmpty()) {
-				url += QString("&loaders=[\"%1\"]").arg(m_loader);
-			}
-			depJob->addNetAction(
-				Net::Download::makeByteArray(QUrl(url), depResponse));
+			ModPlatform::VersionQuery mrQuery;
+			mrQuery.projectId = depProjectId;
+			mrQuery.contentType = ModPlatform::ContentType::Mod;
+			mrQuery.mcVersions = ModPlatform::singleVersionList(m_mcVersion);
+			mrQuery.loaders = ModPlatform::singleLoaderList(m_loader);
 
-			m_pendingRequests++;
-			connect(depJob, &NetJob::succeeded, this,
-					[this, depProjectId, depResponse, depJob] {
-						depJob->deleteLater();
-						onDependencyProjectResolved("modrinth", depProjectId,
-													*depResponse);
-						delete depResponse;
-						m_pendingRequests--;
-						checkCompletion();
+			request(QString("MR::DepProject(%1)").arg(depProjectId),
+					ModrinthApi::get().projectVersionsUrl(mrQuery),
+					[this, depProjectId, requiredBy](const QByteArray& bytes) {
+						if (!bytes.isEmpty()) {
+							onDependencyProjectResolved(
+								"modrinth", depProjectId, bytes, requiredBy);
+						}
 					});
-			connect(depJob, &NetJob::failed, this,
-					[this, depResponse, depJob](QString) {
-						depJob->deleteLater();
-						delete depResponse;
-						m_pendingRequests--;
-						checkCompletion();
-					});
-			// Show the lookup as its own line in the progress dialog.
-			propagateStepsFrom(depJob);
-			depJob->start();
 		}
 	}
 }
 
-void DependencyResolver::crossResolveFromCurseForge(const QString& projectId)
+void DependencyResolver::crossResolveFromCurseForge(
+	const QString& projectId, const QStringList& requiredBy)
 {
-	auto* response = new QByteArray();
-	NetJob* job = new NetJob(QString("CF::FetchName(%1)").arg(projectId),
-							 APPLICATION->network());
-	job->addNetAction(Net::Download::makeByteArray(
-		QUrl(QString("https://api.curseforge.com/v1/mods/%1").arg(projectId)),
-		response));
+	request(QString("CF::FetchName(%1)").arg(projectId),
+			FlameApi::get().projectUrl(projectId),
+			[this, projectId, requiredBy](const QByteArray& bytes) {
+				const QJsonDocument doc = QJsonDocument::fromJson(bytes);
 
-	m_pendingRequests++;
-	connect(job, &NetJob::succeeded, this, [this, projectId, response, job]() {
-		job->deleteLater();
-		QJsonDocument doc = QJsonDocument::fromJson(*response);
-		delete response;
-
-		QString name;
-		QString slug;
-		if (doc.isObject() && doc.object().contains("data")) {
-			auto dataObj = doc.object().value("data").toObject();
-			name = Json::ensureString(dataObj, "name", "");
-			slug = Json::ensureString(dataObj, "slug", "");
-		}
-		if (!name.isEmpty()) {
-			qDebug() << "CF cross resolve extracted name:" << name
-					 << "slug:" << slug << "for" << projectId;
-			executeCrossResolve("modrinth", name, slug);
-		}
-		m_pendingRequests--;
-		checkCompletion();
-	});
-	connect(job, &NetJob::failed, this, [this, response, job](QString) {
-		job->deleteLater();
-		delete response;
-		m_pendingRequests--;
-		checkCompletion();
-	});
-	// Show the lookup as its own line in the progress dialog.
-	propagateStepsFrom(job);
-	job->start();
+				QString name;
+				QString slug;
+				if (doc.isObject() && doc.object().contains("data")) {
+					const auto dataObj = doc.object().value("data").toObject();
+					name = Json::ensureString(dataObj, "name", "");
+					slug = Json::ensureString(dataObj, "slug", "");
+				}
+				if (!name.isEmpty()) {
+					qDebug() << "CF cross resolve extracted name:" << name
+							 << "slug:" << slug << "for" << projectId;
+					executeCrossResolve("modrinth", name, slug, requiredBy);
+				}
+			});
 }
 
-void DependencyResolver::crossResolveFromModrinth(const QString& projectId)
+void DependencyResolver::crossResolveFromModrinth(
+	const QString& projectId, const QStringList& requiredBy)
 {
-	auto* response = new QByteArray();
-	NetJob* job = new NetJob(QString("MR::FetchName(%1)").arg(projectId),
-							 APPLICATION->network());
-	job->addNetAction(Net::Download::makeByteArray(
-		QUrl(QString("https://api.modrinth.com/v2/project/%1").arg(projectId)),
-		response));
+	request(QString("MR::FetchName(%1)").arg(projectId),
+			ModrinthApi::get().projectUrl(projectId),
+			[this, projectId, requiredBy](const QByteArray& bytes) {
+				const QJsonDocument doc = QJsonDocument::fromJson(bytes);
 
-	m_pendingRequests++;
-	connect(job, &NetJob::succeeded, this, [this, projectId, response, job]() {
-		job->deleteLater();
-		QJsonDocument doc = QJsonDocument::fromJson(*response);
-		delete response;
-
-		QString name;
-		QString slug;
-		if (doc.isObject()) {
-			name = Json::ensureString(doc.object(), "title", "");
-			slug = Json::ensureString(doc.object(), "slug", "");
-		}
-		if (!name.isEmpty()) {
-			qDebug() << "MR cross resolve extracted title:" << name
-					 << "slug:" << slug << "for" << projectId;
-			executeCrossResolve("curseforge", name, slug);
-		}
-		m_pendingRequests--;
-		checkCompletion();
-	});
-	connect(job, &NetJob::failed, this, [this, response, job](QString) {
-		job->deleteLater();
-		delete response;
-		m_pendingRequests--;
-		checkCompletion();
-	});
-	// Show the lookup as its own line in the progress dialog.
-	propagateStepsFrom(job);
-	job->start();
+				QString name;
+				QString slug;
+				if (doc.isObject()) {
+					name = Json::ensureString(doc.object(), "title", "");
+					slug = Json::ensureString(doc.object(), "slug", "");
+				}
+				if (!name.isEmpty()) {
+					qDebug() << "MR cross resolve extracted title:" << name
+							 << "slug:" << slug << "for" << projectId;
+					executeCrossResolve("curseforge", name, slug, requiredBy);
+				}
+			});
 }
 
 void DependencyResolver::executeCrossResolve(const QString& targetPlatform,
 											 const QString& projectName,
-											 const QString& sourceSlug)
+											 const QString& sourceSlug,
+											 const QStringList& requiredBy)
 {
 	// Check if we already resolved something with this name (cross-platform
 	// dedup)
@@ -685,33 +779,27 @@ void DependencyResolver::executeCrossResolve(const QString& targetPlatform,
 		return;
 	}
 
-	auto* response = new QByteArray();
-	NetJob* job = new NetJob(QString("CrossSearch(%1)").arg(projectName),
-							 APPLICATION->network());
+	const QString query = QUrl::toPercentEncoding(projectName);
+	const QUrl url = (targetPlatform == "modrinth")
+						 ? ModrinthApi::nameSearchUrl(query)
+						 : FlameApi::nameSearchUrl(query);
 
-	QString query = QUrl::toPercentEncoding(projectName);
-	QString url;
-	if (targetPlatform == "modrinth") {
-		url = QString(
-				  "https://api.modrinth.com/v2/search?query=%1&limit=5&facets=")
-				  .arg(query) +
-			  "[[%22project_type:mod%22]]";
-	} else {
-		url = QString("https://api.curseforge.com/v1/mods/"
-					  "search?gameId=432&classId=6&searchFilter=%1&sortField=2&"
-					  "sortOrder=desc&pageSize=5")
-				  .arg(query);
-	}
+	request(
+		QString("CrossSearch(%1)").arg(projectName), url,
+		[this, targetPlatform, projectName, sourceSlug,
+		 requiredBy](const QByteArray& bytes) {
+			if (bytes.isEmpty()) {
+				/* The search itself did not come back. The dependency is
+				 * no less unresolved for it, and saying so beats
+				 * dropping it without a word. */
+				qWarning() << "Cross resolve search failed for" << projectName;
+				ModPlatform::UnresolvedDep unresolved;
+				unresolved.name = projectName;
+				m_unresolvedDeps.append(unresolved);
+				return;
+			}
 
-	job->addNetAction(Net::Download::makeByteArray(QUrl(url), response));
-
-	m_pendingRequests++;
-	connect(
-		job, &NetJob::succeeded, this,
-		[this, targetPlatform, projectName, sourceSlug, response, job]() {
-			job->deleteLater();
-			QJsonDocument doc = QJsonDocument::fromJson(*response);
-			delete response;
+			const QJsonDocument doc = QJsonDocument::fromJson(bytes);
 
 			// Extract multiple hits and find the best match using slug
 			// comparison
@@ -813,62 +901,33 @@ void DependencyResolver::executeCrossResolve(const QString& targetPlatform,
 							 << "project" << hitId << "slug:" << hitSlug
 							 << "(source slug:" << sourceSlug << ")";
 
-					auto* depResponse = new QByteArray();
-					NetJob* depJob =
-						new NetJob(QString("CrossDepResolve(%1)").arg(hitId),
-								   APPLICATION->network());
+					ModPlatform::VersionQuery crossQuery;
+					crossQuery.projectId = hitId;
+					crossQuery.contentType = ModPlatform::ContentType::Mod;
+					crossQuery.mcVersions =
+						ModPlatform::singleVersionList(m_mcVersion);
+					crossQuery.loaders =
+						ModPlatform::singleLoaderList(m_loader);
+					const QUrl fileUrl =
+						(targetPlatform == "modrinth")
+							? ModrinthApi::get().projectVersionsUrl(crossQuery)
+							: FlameApi::get().projectVersionsUrl(crossQuery);
 
-					QString fileUrl;
-					if (targetPlatform == "modrinth") {
-						fileUrl = QString("https://api.modrinth.com/v2/project/"
-										  "%1/version?game_versions=[\"%2\"]")
-									  .arg(hitId, m_mcVersion);
-						if (!m_loader.isEmpty()) {
-							fileUrl +=
-								QString("&loaders=[\"%1\"]").arg(m_loader);
-						}
-					} else {
-						fileUrl = QString("https://api.curseforge.com/v1/mods/"
-										  "%1/files?gameVersion=%2")
-									  .arg(hitId, m_mcVersion);
-						if (!m_loader.isEmpty()) {
-							int loaderType =
-								ModPlatform::loaderToCurseForgeModLoaderType(
-									m_loader);
-							if (loaderType > 0) {
-								fileUrl += QString("&modLoaderType=%1")
-											   .arg(loaderType);
-							}
-						}
-					}
-
-					depJob->addNetAction(Net::Download::makeByteArray(
-						QUrl(fileUrl), depResponse));
-					m_pendingRequests++;
-					connect(depJob, &NetJob::succeeded, this,
+					request(QString("CrossDepResolve(%1)").arg(hitId), fileUrl,
 							[this, targetPlatform, hitId, projectName,
-							 depResponse, depJob]() {
-								depJob->deleteLater();
+							 requiredBy](const QByteArray& depBytes) {
+								if (depBytes.isEmpty()) {
+									ModPlatform::UnresolvedDep unresolved;
+									unresolved.name = projectName;
+									m_unresolvedDeps.append(unresolved);
+									return;
+								}
 								onDependencyProjectResolved(
-									targetPlatform, hitId, *depResponse);
-								delete depResponse;
-								m_pendingRequests--;
-								checkCompletion();
+									targetPlatform, hitId, depBytes,
+									requiredBy);
 							});
-					connect(depJob, &NetJob::failed, this,
-							[this, projectName, depResponse, depJob](QString) {
-								depJob->deleteLater();
-								delete depResponse;
-								ModPlatform::UnresolvedDep unresolved;
-								unresolved.name = projectName;
-								m_unresolvedDeps.append(unresolved);
-								m_pendingRequests--;
-								checkCompletion();
-							});
-					// Show the lookup as its own line in the dialog.
-					propagateStepsFrom(depJob);
-					depJob->start();
 				} else {
+					noteAlsoRequiredBy(targetPlatform, hitId, requiredBy);
 					bool wasResolved = false;
 					for (const auto& dep : m_dependencies) {
 						if ((dep.platform + ":" + dep.projectId) == key) {
@@ -891,23 +950,18 @@ void DependencyResolver::executeCrossResolve(const QString& targetPlatform,
 				unresolved.name = projectName;
 				m_unresolvedDeps.append(unresolved);
 			}
-
-			m_pendingRequests--;
-			checkCompletion();
 		});
-	connect(job, &NetJob::failed, this, [this, response, job](QString) {
-		job->deleteLater();
-		delete response;
-		m_pendingRequests--;
-		checkCompletion();
-	});
-	// Show the search as its own line in the progress dialog.
-	propagateStepsFrom(job);
-	job->start();
 }
 
 void DependencyResolver::checkCompletion()
 {
+	if (m_aborted) {
+		/* Given up on. The task has already reported aborted, and
+		 * emitting succeeded on top of that would be a second verdict on
+		 * the same run. */
+		return;
+	}
+
 	if (m_pendingRequests <= 0 && m_currentModIndex >= m_selectedMods.size()) {
 		// === Pass 1: Deduplicate dependencies by same platform+projectId
 		// (version conflict) === If multiple dep chains resolved different

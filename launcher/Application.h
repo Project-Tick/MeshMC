@@ -71,6 +71,24 @@ namespace Meta
 	class Index;
 }
 
+/**
+ * How the game is to be started.
+ *
+ * These are mutually exclusive on purpose: a demo session is never a
+ * logged-in one, so a pair of booleans would allow combinations that mean
+ * nothing. The profiler is deliberately not part of this -- it is an
+ * instance setting now, not a property of one launch.
+ */
+enum class LaunchMode
+{
+	/// Log in, launch.
+	Normal,
+	/// Launch with whatever the account cache already has.
+	Offline,
+	/// Launch the demo, without logging in at all.
+	Demo
+};
+
 #if defined(APPLICATION)
 #undef APPLICATION
 #endif
@@ -175,6 +193,8 @@ class Application : public QApplication
 		return m_rootPath;
 	}
 
+	const QString javaPath();
+
 	/*!
 	 * Opens a json file using either a system default editor, or, if not empty,
 	 * the editor specified in the settings
@@ -205,8 +225,14 @@ class Application : public QApplication
 									 BaseInstance* instance);
 
   public slots:
-	bool launch(InstancePtr instance, bool online = true,
-				BaseProfilerFactory* profiler = nullptr,
+	/**
+	 * Start an instance.
+	 *
+	 * The profiler is read from the instance's own settings, so every way
+	 * into the game profiles the same way; there is no per-launch profiler
+	 * argument left to forget to pass.
+	 */
+	bool launch(InstancePtr instance, LaunchMode mode = LaunchMode::Normal,
 				MinecraftServerTargetPtr serverToJoin = nullptr,
 				MinecraftAccountPtr accountToUse = nullptr);
 	bool kill(InstancePtr instance);
