@@ -34,7 +34,7 @@ jobs:
           cache: false
 
       - name: Build translations
-        run: ./launcher/locale/release.sh
+        run: ./launcher/scripts/release.sh
 
       - name: Move directory
         run: |
