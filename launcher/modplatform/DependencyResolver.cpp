@@ -316,15 +316,37 @@ void DependencyResolver::resolveCurseForgeDependencies(
 void DependencyResolver::resolveModrinthDependencies(
 	const ModPlatform::SelectedMod& mod)
 {
-	if (mod.versionId.isEmpty()) {
+	/* Two ways to name the version whose dependencies we want, and the
+	 * shape of what we were given decides which.
+	 *
+	 * A version id addresses the version directly. But plenty of what we
+	 * have on record is not an id at all: a file installed from an mrpack
+	 * has only its hash and its download URL, and the URL spells out the
+	 * version *number* ("1.1.1+1.17"). Handed to the version endpoint
+	 * that produces a 404, which looks exactly like a mod with no
+	 * dependencies - the failure this is here to stop being silent.
+	 *
+	 * The hash is the way back in that case: it names one file, and the
+	 * endpoint answers with the same version object. */
+	QUrl lookup;
+	if (ModrinthApi::isVersionId(mod.versionId)) {
+		lookup = ModrinthApi::versionUrl(mod.versionId);
+	} else if (!mod.sha1.isEmpty()) {
+		lookup = ModrinthApi::versionByHashUrl(mod.sha1);
+	} else {
+		if (!mod.versionId.isEmpty()) {
+			qWarning() << "Not resolving dependencies for" << mod.name
+					   << ": recorded version" << mod.versionId
+					   << "is not a Modrinth version id and no file hash "
+						  "is known";
+		}
 		m_currentModIndex++;
 		resolveNextMod();
 		return;
 	}
 
 	const auto currentMod = mod;
-	request(QString("MR::DepResolve(%1)").arg(mod.name),
-			ModrinthApi::versionUrl(mod.versionId),
+	request(QString("MR::DepResolve(%1)").arg(mod.name), lookup,
 			[this, currentMod](const QByteArray& bytes) {
 				if (!bytes.isEmpty()) {
 					onModrinthVersionResolved(currentMod, bytes);

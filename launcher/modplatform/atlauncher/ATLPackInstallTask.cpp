@@ -45,6 +45,7 @@
 
 #include <QtConcurrent/QtConcurrent>
 #include <QRegularExpression>
+#include <QDateTime>
 
 #include "MMCZip.h"
 #include "minecraft/OneSixVersionFormat.h"
@@ -875,6 +876,26 @@ namespace ATLauncher
 
 		instance.setName(m_instName);
 		instance.setIconKey(m_instIcon);
+
+		/* Record where this instance came from, using the same keys the
+		 * Modrinth and CurseForge importers write.
+		 *
+		 * ATLauncher identifies a pack by its safe name rather than a
+		 * numeric id, and a version by its name, so those go in the id
+		 * fields - they are what this platform would need to look the
+		 * pack up again. There is no MeshMC UI that reads these back for
+		 * an ATLauncher pack today, but they cannot be recovered after
+		 * the fact, so install time is the only chance to record
+		 * them. */
+		instanceSettings->set("PackProvider", QStringLiteral("atlauncher"));
+		instanceSettings->set("PackId", m_pack);
+		instanceSettings->set("PackName", m_pack);
+		instanceSettings->set("PackVersionId", m_version_name);
+		instanceSettings->set("PackVersionLabel", m_version_name);
+		instanceSettings->set(
+			"PackInstalledAt",
+			QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+
 		instanceSettings->resumeSave();
 
 		jarmods.clear();

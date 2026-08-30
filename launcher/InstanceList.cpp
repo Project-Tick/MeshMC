@@ -424,8 +424,7 @@ bool InstanceList::undoTrashInstance()
 	}
 
 	if (!QFile::rename(record.trashPath, path)) {
-		qWarning() << "Could not move" << record.trashPath << "back to"
-				   << path;
+		qWarning() << "Could not move" << record.trashPath << "back to" << path;
 		/* The folder is still in the trash, so put the record back: the
 		 * obstacle may be temporary (a file open, the volume busy) and a
 		 * second attempt is worth allowing. Only dropped once the move has
@@ -442,8 +441,7 @@ bool InstanceList::undoTrashInstance()
 		 * appending past it would produce something inert. */
 		if (QFileInfo::exists(item.shortcut.filePath)) {
 			qWarning() << "Not restoring shortcut" << item.shortcut.name
-					   << "-- something else is at"
-					   << item.shortcut.filePath;
+					   << "-- something else is at" << item.shortcut.filePath;
 			complete = false;
 			continue;
 		}
@@ -652,6 +650,45 @@ InstancePtr InstanceList::getInstanceById(QString instId) const
 		return InstancePtr();
 	for (auto& inst : m_instances) {
 		if (inst->id() == instId) {
+			return inst;
+		}
+	}
+	return InstancePtr();
+}
+
+/* Whether two provider names mean the same catalogue.
+ *
+ * The launcher records CurseForge as "curseforge", but "flame" is the
+ * name the same platform goes by in pack formats and in other launchers,
+ * so an instance imported with that spelling has to still be recognised
+ * as the same pack. */
+static bool sameProvider(const QString& left, const QString& right)
+{
+	auto canonical = [](const QString& provider) {
+		const QString lower = provider.toLower();
+		if (lower == QLatin1String("flame")) {
+			return QStringLiteral("curseforge");
+		}
+		return lower;
+	};
+	return canonical(left) == canonical(right);
+}
+
+InstancePtr InstanceList::getInstanceByManagedPack(const QString& provider,
+												   const QString& packId) const
+{
+	/* Both halves are required. A pack id on its own is a number that
+	 * means different things on each catalogue, and a provider on its own
+	 * would match every pack the user ever installed from it. */
+	if (provider.isEmpty() || packId.isEmpty()) {
+		return InstancePtr();
+	}
+
+	for (auto& inst : m_instances) {
+		if (inst->managedPackId() != packId) {
+			continue;
+		}
+		if (sameProvider(inst->managedPackProvider(), provider)) {
 			return inst;
 		}
 	}
@@ -906,12 +943,12 @@ class InstanceStaging : public Task
 	const unsigned maxBackoff = 16;
 
   public:
-	InstanceStaging(InstanceList* parent, Task* child,
-					const QString& stagingPath, const QString& instanceName,
-					const QString& groupName)
+	InstanceStaging(InstanceList* parent, InstanceTask* child,
+					const QString& stagingPath, const QString& groupName)
 		: backoff(minBackoff, maxBackoff)
 	{
 		m_parent = parent;
+		m_instanceTask = child;
 		m_child.reset(child);
 		connect(child, &Task::succeeded, this, &InstanceStaging::childSucceded);
 		connect(child, &Task::failed, this, &InstanceStaging::childFailed);
@@ -921,7 +958,6 @@ class InstanceStaging : public Task
 		// We are only a wrapper around the real work. Without this the step
 		// list of whatever we are staging never reaches the dialog.
 		propagateStepsFrom(child);
-		m_instanceName = instanceName;
 		m_groupName = groupName;
 		m_stagingPath = stagingPath;
 		m_backoffTimer.setSingleShot(true);
@@ -972,8 +1008,23 @@ class InstanceStaging : public Task
 	void childSucceded()
 	{
 		unsigned sleepTime = backoff();
-		if (m_parent->commitStagedInstance(m_stagingPath, m_instanceName,
-										   m_groupName)) {
+
+		/* Asked now rather than remembered from construction time.
+		 *
+		 * A task does not necessarily know at the moment it is wrapped
+		 * whether it is replacing an instance or creating one - that can
+		 * depend on what it finds once it starts looking - and the name
+		 * it settles on can change while it runs, too. Reading both here
+		 * means the staging step always acts on what the task actually
+		 * decided, instead of on a snapshot taken before it ran. */
+		const QString instanceName = m_instanceTask->name();
+		const QString overrideInstanceId = m_instanceTask->overrideInstanceId();
+		const QStringList filesToRemove =
+			m_instanceTask->filesToRemoveAfterCommit();
+
+		if (m_parent->commitStagedInstance(m_stagingPath, instanceName,
+										   m_groupName, overrideInstanceId,
+										   filesToRemove)) {
 			emitSucceeded();
 			return;
 		}
@@ -983,7 +1034,7 @@ class InstanceStaging : public Task
 						  "retries. It is being blocked by something."));
 			return;
 		}
-		qDebug() << "Failed to commit instance" << m_instanceName
+		qDebug() << "Failed to commit instance" << instanceName
 				 << "Initiating backoff:" << sleepTime;
 		m_backoffTimer.start(sleepTime * 500);
 	}
@@ -1004,8 +1055,12 @@ class InstanceStaging : public Task
 	QString m_stagingPath;
 	InstanceList* m_parent;
 	unique_qobject_ptr<Task> m_child;
-	QString m_instanceName;
 	QString m_groupName;
+	/* Same object as m_child, kept at its real type so that the commit
+	 * step can ask it the instance-level questions - its name, and
+	 * whether it is replacing an existing instance - that Task does not
+	 * answer. Ownership stays with m_child. */
+	InstanceTask* m_instanceTask = nullptr;
 	QTimer m_backoffTimer;
 };
 
@@ -1014,8 +1069,10 @@ Task* InstanceList::wrapInstanceTask(InstanceTask* task)
 	auto stagingPath = getStagedInstancePath();
 	task->setStagingPath(stagingPath);
 	task->setParentSettings(m_globalSettings);
-	return new InstanceStaging(this, task, stagingPath, task->name(),
-							   task->group());
+	/* The group is settled before wrapping and does not change; the name
+	 * and the override target are read at commit time instead, because
+	 * the task may still decide them while it runs. */
+	return new InstanceStaging(this, task, stagingPath, task->group());
 }
 
 QString InstanceList::getStagedInstancePath()
@@ -1032,20 +1089,93 @@ QString InstanceList::getStagedInstancePath()
 
 bool InstanceList::commitStagedInstance(const QString& path,
 										const QString& instanceName,
-										const QString& groupName)
+										const QString& groupName,
+										const QString& overrideInstanceId,
+										const QStringList& filesToRemove)
 {
+	const bool isOverride = !overrideInstanceId.isEmpty();
+
 	QDir dir;
-	QString instID = FS::DirNameFromString(instanceName, m_instDir);
+	QString instID = isOverride
+						 ? overrideInstanceId
+						 : FS::DirNameFromString(instanceName, m_instDir);
 	{
 		WatchLock lock(m_watcher, m_instDir);
 		QString destination = FS::PathCombine(m_instDir, instID);
-		if (!dir.rename(path, destination)) {
-			qWarning() << "Failed to move" << path << "to" << destination;
-			return false;
+
+		if (isOverride) {
+			/* Merge over the instance that is already there, so that
+			 * anything the pack does not ship - worlds, screenshots,
+			 * the user's own config edits - is left where it is. */
+			if (!FS::overrideFolder(destination, path)) {
+				qWarning() << "Failed to merge" << path << "over"
+						   << destination;
+				return false;
+			}
+
+			/* No group or id bookkeeping to do: the instance already has
+			 * both, and the whole point of overriding is that they do
+			 * not change. Its name, however, lives inside the staged
+			 * instance.cfg we just moved into place, so it has already
+			 * been updated. */
+
+			/* Re-read that file into the instance we still have in
+			 * memory.
+			 *
+			 * loadList() deliberately keeps the existing object for an
+			 * id it already knows, so nothing else is going to notice
+			 * that instance.cfg changed under it. Two things then go
+			 * wrong, and the second is the dangerous one:
+			 *
+			 *  - everything still shows the pre-update values, so the
+			 *    pack page reports the version we just replaced;
+			 *  - INISettingsObject rewrites the whole file on any set(),
+			 *    so the first unrelated write - launching the instance
+			 *    is enough, it touches lastLaunchTime - flushes the
+			 *    stale in-memory copy back to disk and silently undoes
+			 *    part of the update.
+			 */
+			if (auto existing = getInstanceById(instID)) {
+				if (!existing->settings()->reload()) {
+					qWarning() << "Could not re-read settings for" << instID
+							   << "after update";
+				}
+			}
+
+			/* Now that the new version is actually in place, remove what
+			 * it no longer ships.
+			 *
+			 * After the merge, not before: a file the update makes
+			 * obsolete is still a file the *current* version needs, so
+			 * deleting it earlier would leave a failed or aborted update
+			 * with an instance missing its mods. By this point the merge
+			 * has succeeded and the old files are genuinely orphans.
+			 *
+			 * A failure to delete is reported but not fatal - the
+			 * instance is already updated and consistent; a leftover jar
+			 * is a problem to tell the user about, not a reason to
+			 * declare the whole update failed and leave them with no
+			 * idea what state they are in. */
+			for (const QString& path : filesToRemove) {
+				if (!QFileInfo::exists(path)) {
+					continue;
+				}
+				if (!FS::deletePath(path)) {
+					qWarning() << "Could not remove obsolete file" << path;
+				} else {
+					qDebug() << "Removed obsolete file" << path;
+				}
+			}
+		} else {
+			if (!dir.rename(path, destination)) {
+				qWarning() << "Failed to move" << path << "to" << destination;
+				return false;
+			}
+			m_instanceGroupIndex[instID] = groupName;
+			m_groupNameCache.insert(groupName);
 		}
-		m_instanceGroupIndex[instID] = groupName;
+
 		instanceSet.insert(instID);
-		m_groupNameCache.insert(groupName);
 		emit instancesChanged();
 		emit instanceSelectRequest(instID);
 	}

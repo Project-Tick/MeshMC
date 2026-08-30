@@ -68,10 +68,74 @@ class InstanceTask : public Task
 		return m_instGroup;
 	}
 
+	/* ---- Overwriting an existing instance ---------------------------
+	 *
+	 * By default a task stages a new instance directory and the staging
+	 * wrapper moves it into place under a fresh id. Updating a modpack
+	 * in place is the same work with a different ending: the staged
+	 * directory replaces an existing instance instead of becoming a new
+	 * one, so that the instance keeps its id, its group, its saves and
+	 * everything else that refers to it by id (shortcuts, the group
+	 * index, the "last launched" bookkeeping).
+	 *
+	 * Kept on InstanceTask rather than on the importer because it is the
+	 * *staging* step that has to behave differently, and that step only
+	 * ever sees an InstanceTask.
+	 */
+
+	/* Replace `instanceId` with whatever this task stages. Passing an
+	 * empty id turns overriding back off. */
+	void setOverrideInstance(const QString& instanceId)
+	{
+		m_overrideInstanceId = instanceId;
+	}
+
+	/* An empty id is the whole "no" answer: there is no way to override
+	 * without naming a target, so a separate flag could only ever
+	 * disagree with this. */
+	bool shouldOverride() const
+	{
+		return !m_overrideInstanceId.isEmpty();
+	}
+
+	QString overrideInstanceId() const
+	{
+		return m_overrideInstanceId;
+	}
+
+	/* ---- Files the update makes obsolete ----------------------------
+	 *
+	 * When a pack update drops a mod, merging the new version over the
+	 * old one does not remove it: the merge only replaces what the new
+	 * version actually ships, which is the whole point - it is what
+	 * keeps the user's worlds and configs. So a file the pack no longer
+	 * carries has to be named explicitly, or it lingers and gets loaded
+	 * alongside the version that replaced it.
+	 *
+	 * Collected as absolute paths by whoever worked out that they are
+	 * obsolete, and acted on by the staging step *after* the merge
+	 * succeeds. Deleting earlier would mean a failed or aborted update
+	 * leaves the instance missing mods it still needs.
+	 */
+	void scheduleForRemoval(const QString& absolutePath)
+	{
+		if (!absolutePath.isEmpty() &&
+			!m_filesToRemoveAfterCommit.contains(absolutePath)) {
+			m_filesToRemoveAfterCommit.append(absolutePath);
+		}
+	}
+
+	QStringList filesToRemoveAfterCommit() const
+	{
+		return m_filesToRemoveAfterCommit;
+	}
+
   protected: /* data */
 	SettingsObjectPtr m_globalSettings;
 	QString m_instName;
 	QString m_instIcon;
 	QString m_instGroup;
 	QString m_stagingPath;
+	QString m_overrideInstanceId;
+	QStringList m_filesToRemoveAfterCommit;
 };

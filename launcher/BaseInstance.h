@@ -158,6 +158,76 @@ class BaseInstance : public QObject,
 	QString notes() const;
 	void setNotes(QString val);
 
+	/* ---- Managed pack provenance ------------------------------------
+	 *
+	 * An instance is "managed" when it came from a Modrinth or
+	 * CurseForge modpack and we still know *which* pack, and which
+	 * version of it, is currently on disk. That is exactly enough to
+	 * ask the catalogue what other versions exist and to replace the
+	 * instance with one of them in place - which is what
+	 * ManagedPackPage does.
+	 *
+	 * These read the pack-source keys registered in the constructor.
+	 * Deliberately thin wrappers rather than a cached struct:
+	 * isManagedPack() is asked on every repaint of a page that shows
+	 * an instance, and a settings lookup is already a hash probe.
+	 *
+	 * Every field is allowed to be empty. An older MeshMC recorded
+	 * fewer of them, and a pack imported by drag-and-drop never had a
+	 * catalogue entry to record in the first place, so the page has to
+	 * cope with partial records rather than assume all-or-nothing.
+	 */
+
+	/* "modrinth" or "curseforge", matching ContentApi::id(). Empty
+	 * means this instance is not tied to a catalogue. */
+	QString managedPackProvider() const;
+	/* Modrinth project id / CurseForge numeric project id as a
+	 * string. */
+	QString managedPackId() const;
+	/* Modrinth slug; empty on CurseForge, which has no equivalent. */
+	QString managedPackSlug() const;
+	/* Pack title as the catalogue spells it, which is not necessarily
+	 * the instance name - the user is free to rename the instance.
+	 * Falls back to the slug, then to the instance name, so that
+	 * instances imported before this field was recorded still show
+	 * something meaningful. */
+	QString managedPackName() const;
+	/* Modrinth version id / CurseForge file id, as a string. */
+	QString managedPackVersionId() const;
+	/* Human-readable version, e.g. "1.2.3". */
+	QString managedPackVersionName() const;
+	/* Canonical pack page recorded at import time, if any. */
+	QString managedPackSourceUrl() const;
+
+	/* True when this instance came from a catalogue at all, i.e. a
+	 * provider is recorded.
+	 *
+	 * Deliberately does *not* require a pack id. An instance can have a
+	 * provider and no id - that is what an import from a local .mrpack
+	 * or a pack imported by an older MeshMC looks like - and such an
+	 * instance is still worth showing the pack page for, because it can
+	 * be updated from a file or from a URL the user supplies. Requiring
+	 * the id here would hide the page in exactly the case where it is
+	 * the only way to update. */
+	bool isManagedPack() const;
+
+	/* True when there is enough recorded to *ask the catalogue*: a
+	 * provider and a pack id. Everything that issues an API request
+	 * has to check this, because every endpoint is keyed by the id. */
+	bool hasManagedPackId() const;
+
+	/* URL the user typed for a pack we have no catalogue entry for.
+	 * Lets a hand-made or drag-dropped instance still be updated from
+	 * a file or a link the user vouches for. */
+	QString managedPackUpdateUrl() const;
+	void setManagedPackUpdateUrl(const QString& url);
+
+	/* Move the recorded version forward. Called after an update has
+	 * actually landed on disk, so that the page and the catalogue
+	 * agree about what is installed. */
+	void setManagedPackVersion(const QString& versionId,
+							   const QString& versionName);
+
 	/**
 	 * Shortcuts written for this instance that are still where they were
 	 * written.

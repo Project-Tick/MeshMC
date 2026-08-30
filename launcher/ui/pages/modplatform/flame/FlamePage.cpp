@@ -234,6 +234,15 @@ void FlamePage::suggestCurrent()
 				 << downloadUrl;
 	}
 	auto* task = new InstanceImportTask(downloadUrl);
+	/* The launcher chose this download itself, from the catalogue the
+	 * user is browsing, so the mod files come from CurseForge's own CDN.
+	 * There is nothing here the user has not already picked. */
+	task->setTrustedSource(true);
+	/* The task may have to ask something before it can finish - whether
+	 * to update an instance this pack is already installed in, most
+	 * likely - and a question about what the user is doing in this window
+	 * belongs to this window. */
+	task->setDialogParent(this);
 	task->setPackSourceHint(hint);
 	dialog->setSuggestedPack(current.name, task);
 

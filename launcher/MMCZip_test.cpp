@@ -25,6 +25,7 @@
 
 #include <QTest>
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
 #include <QTemporaryDir>
@@ -45,6 +46,174 @@ namespace
 			return false;
 		}
 		return file.write(content) == content.size();
+	}
+
+	// CRC-32 as the zip format wants it. Spelled out here so the test does
+	// not depend on which compression library the launcher happens to link.
+	quint32 crc32Of(const QByteArray& data)
+	{
+		static quint32 table[256];
+		static bool ready = false;
+		if (!ready) {
+			for (quint32 i = 0; i < 256; i++) {
+				quint32 c = i;
+				for (int k = 0; k < 8; k++) {
+					c = (c & 1) ? (0xEDB88320u ^ (c >> 1)) : (c >> 1);
+				}
+				table[i] = c;
+			}
+			ready = true;
+		}
+		quint32 c = 0xFFFFFFFFu;
+		for (char byte : data) {
+			c = table[(c ^ static_cast<quint8>(byte)) & 0xFF] ^ (c >> 8);
+		}
+		return c ^ 0xFFFFFFFFu;
+	}
+
+	void appendLE16(QByteArray& out, quint16 value)
+	{
+		out.append(static_cast<char>(value & 0xFF));
+		out.append(static_cast<char>((value >> 8) & 0xFF));
+	}
+
+	void appendLE32(QByteArray& out, quint32 value)
+	{
+		out.append(static_cast<char>(value & 0xFF));
+		out.append(static_cast<char>((value >> 8) & 0xFF));
+		out.append(static_cast<char>((value >> 16) & 0xFF));
+		out.append(static_cast<char>((value >> 24) & 0xFF));
+	}
+
+	/* Write a zip the way Info-ZIP, 7-Zip and every modpack site's build
+	 * pipeline write one: stored entries whose local header already carries
+	 * the CRC and the sizes, followed by a central directory.
+	 *
+	 * MMCZip::compressDir cannot stand in for this. libarchive's writer does
+	 * not know the sizes up front, so it emits a zero CRC in the local
+	 * header and puts the real one in a trailing data descriptor - which
+	 * happens to make truncation loud. The archives we download are not
+	 * built that way, and the interesting failure only shows up on the
+	 * layout they do use.
+	 */
+	bool writeStoredZip(const QString& path,
+						const QList<QPair<QString, QByteArray>>& entries)
+	{
+		QByteArray zip;
+		struct Placed {
+			QByteArray name;
+			quint32 crc;
+			quint32 size;
+			quint32 offset;
+		};
+		QList<Placed> placed;
+
+		for (const auto& entry : entries) {
+			Placed p;
+			p.name = entry.first.toUtf8();
+			p.crc = crc32Of(entry.second);
+			p.size = static_cast<quint32>(entry.second.size());
+			p.offset = static_cast<quint32>(zip.size());
+			placed.append(p);
+
+			zip.append("PK\x03\x04", 4);
+			appendLE16(zip, 20); // version needed
+			appendLE16(zip, 0);	 // flags: sizes known here, no descriptor
+			appendLE16(zip, 0);	 // method: stored
+			appendLE16(zip, 0);	 // time
+			appendLE16(zip, 0);	 // date
+			appendLE32(zip, p.crc);
+			appendLE32(zip, p.size);
+			appendLE32(zip, p.size);
+			appendLE16(zip, static_cast<quint16>(p.name.size()));
+			appendLE16(zip, 0); // extra length
+			zip.append(p.name);
+			zip.append(entry.second);
+		}
+
+		const quint32 centralOffset = static_cast<quint32>(zip.size());
+		for (const auto& p : placed) {
+			zip.append("PK\x01\x02", 4);
+			appendLE16(zip, 20); // version made by
+			appendLE16(zip, 20); // version needed
+			appendLE16(zip, 0);	 // flags
+			appendLE16(zip, 0);	 // method
+			appendLE16(zip, 0);	 // time
+			appendLE16(zip, 0);	 // date
+			appendLE32(zip, p.crc);
+			appendLE32(zip, p.size);
+			appendLE32(zip, p.size);
+			appendLE16(zip, static_cast<quint16>(p.name.size()));
+			appendLE16(zip, 0); // extra length
+			appendLE16(zip, 0); // comment length
+			appendLE16(zip, 0); // disk number start
+			appendLE16(zip, 0); // internal attributes
+			appendLE32(zip, 0); // external attributes
+			appendLE32(zip, p.offset);
+			zip.append(p.name);
+		}
+		const quint32 centralSize =
+			static_cast<quint32>(zip.size()) - centralOffset;
+
+		zip.append("PK\x05\x06", 4);
+		appendLE16(zip, 0); // disk number
+		appendLE16(zip, 0); // disk with central directory
+		appendLE16(zip, static_cast<quint16>(placed.size()));
+		appendLE16(zip, static_cast<quint16>(placed.size()));
+		appendLE32(zip, centralSize);
+		appendLE32(zip, centralOffset);
+		appendLE16(zip, 0); // comment length
+
+		QFile file(path);
+		if (!file.open(QIODevice::WriteOnly)) {
+			return false;
+		}
+		return file.write(zip) == zip.size();
+	}
+
+	// Cut a file down to `size` bytes, the way an interrupted download or a
+	// mirror serving half a file leaves it.
+	bool truncateFile(const QString& path, qint64 size)
+	{
+		QFile file(path);
+		if (!file.open(QIODevice::ReadWrite)) {
+			return false;
+		}
+		return file.resize(size);
+	}
+
+	// Offset of the n-th (1-based) local file header in a zip.
+	qint64 localHeaderOffset(const QString& path, int nth)
+	{
+		QFile file(path);
+		if (!file.open(QIODevice::ReadOnly)) {
+			return -1;
+		}
+		const QByteArray content = file.readAll();
+		const QByteArray signature("PK\x03\x04", 4);
+		int from = 0;
+		for (int found = 0; found < nth; found++) {
+			const int at = content.indexOf(signature, from);
+			if (at < 0) {
+				return -1;
+			}
+			if (found + 1 == nth) {
+				return at;
+			}
+			from = at + 1;
+		}
+		return -1;
+	}
+
+	int countFilesUnder(const QString& dir)
+	{
+		int count = 0;
+		QDirIterator it(dir, QDir::Files, QDirIterator::Subdirectories);
+		while (it.hasNext()) {
+			it.next();
+			count++;
+		}
+		return count;
 	}
 
 	int countEntries(const QStringList& entries, const QString& name)
@@ -157,6 +326,128 @@ class MMCZipTest : public QObject
 		QVERIFY(!MMCZip::createModdedJar(root.absoluteFilePath("nope.jar"),
 										 targetJar, mods));
 		QVERIFY(!QFile::exists(targetJar));
+	}
+
+	// Baseline for the two truncation tests below: an archive that is all
+	// there extracts completely.
+	void test_ExtractSubDir_CompleteArchive()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		QDir root(tempDir.path());
+
+		auto packDir = root.absoluteFilePath("pack");
+		QVERIFY(writeFile(packDir + "/mods/a.jar", QByteArray(4000, 'a')));
+		QVERIFY(writeFile(packDir + "/mods/b.jar", QByteArray(4000, 'b')));
+		QVERIFY(writeFile(packDir + "/mods/c.jar", QByteArray(4000, 'c')));
+		auto zip = root.absoluteFilePath("modpack.zip");
+		QVERIFY(MMCZip::compressDir(zip, packDir, nullptr));
+
+		auto target = root.absoluteFilePath("out");
+		auto extracted = MMCZip::extractSubDir(zip, QString(""), target);
+		QVERIFY(extracted.has_value());
+		QCOMPARE(countFilesUnder(target), 3);
+	}
+
+	// The whole archive, laid out the way the packs we download are, still
+	// extracts completely.
+	void test_ExtractSubDir_CompleteStoredArchive()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		QDir root(tempDir.path());
+
+		auto zip = root.absoluteFilePath("modpack.zip");
+		QVERIFY(writeStoredZip(zip, {{"mods/a.jar", QByteArray(4000, 'a')},
+									 {"mods/b.jar", QByteArray(4000, 'b')},
+									 {"mods/c.jar", QByteArray(4000, 'c')}}));
+
+		auto target = root.absoluteFilePath("out");
+		auto extracted = MMCZip::extractSubDir(zip, QString(""), target);
+		QVERIFY(extracted.has_value());
+		QCOMPARE(countFilesUnder(target), 3);
+		QCOMPARE(MMCZip::readFileFromZip(zip, "mods/c.jar"),
+				 QByteArray(4000, 'c'));
+	}
+
+	// A download that stopped on an entry boundary still looks like a
+	// perfectly readable zip to a streaming reader: it walks local headers
+	// until the bytes run out and calls that the end of the archive. So
+	// extraction reports success for the entries that made it and the
+	// instance ends up quietly missing mods - no error anywhere, nothing to
+	// re-download, and a pack that breaks at launch instead.
+	void test_ExtractSubDir_TruncatedOnEntryBoundaryIsRejected()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		QDir root(tempDir.path());
+
+		auto zip = root.absoluteFilePath("modpack.zip");
+		QVERIFY(writeStoredZip(zip, {{"mods/a.jar", QByteArray(4000, 'a')},
+									 {"mods/b.jar", QByteArray(4000, 'b')},
+									 {"mods/c.jar", QByteArray(4000, 'c')}}));
+
+		const qint64 thirdEntry = localHeaderOffset(zip, 3);
+		QVERIFY(thirdEntry > 0);
+		QVERIFY(truncateFile(zip, thirdEntry));
+
+		auto target = root.absoluteFilePath("out");
+		auto extracted = MMCZip::extractSubDir(zip, QString(""), target);
+		QVERIFY2(!extracted.has_value(),
+				 "a truncated archive must not extract as if it were whole");
+		QCOMPARE(countFilesUnder(target), 0);
+	}
+
+	// The same cut, this time in the middle of an entry's data.
+	void test_ExtractSubDir_StoredTruncatedMidEntryIsRejected()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		QDir root(tempDir.path());
+
+		auto zip = root.absoluteFilePath("modpack.zip");
+		QVERIFY(writeStoredZip(zip, {{"mods/a.jar", QByteArray(4000, 'a')},
+									 {"mods/b.jar", QByteArray(4000, 'b')},
+									 {"mods/c.jar", QByteArray(4000, 'c')}}));
+
+		const qint64 second = localHeaderOffset(zip, 2);
+		const qint64 third = localHeaderOffset(zip, 3);
+		QVERIFY(second > 0);
+		QVERIFY(third > second);
+		QVERIFY(truncateFile(zip, second + (third - second) / 2));
+
+		auto target = root.absoluteFilePath("out");
+		auto extracted = MMCZip::extractSubDir(zip, QString(""), target);
+		QVERIFY(!extracted.has_value());
+		QCOMPARE(countFilesUnder(target), 0);
+	}
+
+	// The same, cut in the middle of an entry's compressed data - where a
+	// streaming reader gets as far as a CRC mismatch. Nothing half-written
+	// may be left behind for the game to load.
+	void test_ExtractSubDir_TruncatedMidEntryIsRejected()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		QDir root(tempDir.path());
+
+		auto packDir = root.absoluteFilePath("pack");
+		QVERIFY(writeFile(packDir + "/mods/a.jar", QByteArray(4000, 'a')));
+		QVERIFY(writeFile(packDir + "/mods/b.jar", QByteArray(4000, 'b')));
+		QVERIFY(writeFile(packDir + "/mods/c.jar", QByteArray(4000, 'c')));
+		auto zip = root.absoluteFilePath("modpack.zip");
+		QVERIFY(MMCZip::compressDir(zip, packDir, nullptr));
+
+		const qint64 second = localHeaderOffset(zip, 2);
+		const qint64 third = localHeaderOffset(zip, 3);
+		QVERIFY(second > 0);
+		QVERIFY(third > second);
+		QVERIFY(truncateFile(zip, second + (third - second) / 2));
+
+		auto target = root.absoluteFilePath("out");
+		auto extracted = MMCZip::extractSubDir(zip, QString(""), target);
+		QVERIFY(!extracted.has_value());
+		QCOMPARE(countFilesUnder(target), 0);
 	}
 };
 

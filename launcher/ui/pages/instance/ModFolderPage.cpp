@@ -1083,13 +1083,23 @@ void ModFolderPage::verifyDependencies()
 	 * missing. */
 	QList<ModPlatform::SelectedMod> installed;
 	for (const auto& entry : index->all()) {
-		if (!entry.hasPlatformOrigin() || entry.versionId.isEmpty()) {
+		if (!entry.hasPlatformOrigin()) {
+			continue;
+		}
+		/* Either identifier will do. A file installed from an mrpack has
+		 * no version id recorded - that format lists hashes and download
+		 * URLs and no version ids at all - and dropping those from the
+		 * check is how "verify dependencies" came to quietly ignore every
+		 * mod a modpack installed. The resolver knows how to look a
+		 * version up by hash. */
+		if (entry.versionId.isEmpty() && entry.sha1.isEmpty()) {
 			continue;
 		}
 		ModPlatform::SelectedMod mod;
 		mod.name = entry.name;
 		mod.projectId = entry.projectId;
 		mod.versionId = entry.versionId;
+		mod.sha1 = entry.sha1;
 		mod.slug = entry.slug;
 		mod.fileName = entry.fileName;
 		mod.platform = entry.platform;
@@ -1209,14 +1219,16 @@ void ModFolderPage::on_actionExportList_triggered()
 		item.authors = mod.authors();
 
 		/* What the archive says about itself first, since that is the
-		 * version a person recognises; the recorded version id is a
-		 * platform's identifier and only stands in when there is
-		 * nothing better. */
+		 * version a person recognises. Then the version number we
+		 * recorded at install time, which is the same kind of string.
+		 * The version id is a platform's own handle and reads like
+		 * nothing at all, so it is the last resort. */
 		item.version = mod.version();
 		if (item.version.isEmpty() && index) {
-			const auto entry = index->get(
-				ModMetadataIndex::canonicalFileName(item.fileName));
-			item.version = entry.versionId;
+			const auto entry =
+				index->get(ModMetadataIndex::canonicalFileName(item.fileName));
+			item.version = !entry.versionNumber.isEmpty() ? entry.versionNumber
+														  : entry.versionId;
 		}
 
 		items.append(item);

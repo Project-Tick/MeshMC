@@ -43,6 +43,7 @@
 #pragma once
 
 #include "InstanceTask.h"
+#include "net/HttpMetaCache.h"
 #include "net/NetJob.h"
 
 #include <QFutureWatcher>
@@ -84,6 +85,11 @@ namespace Technic
 		QUrl m_sourceUrl;
 		QString m_minecraftVersion;
 		QString m_archivePath;
+		/* The cache slot the archive was downloaded into. Kept so that a
+		 * failed extraction can throw the file away: an archive that
+		 * cannot be unpacked is worthless, and leaving it cached and
+		 * fresh means every retry unpacks the same broken bytes. */
+		MetaEntryPtr m_archiveEntry;
 		NetJob::Ptr m_filesNetJob;
 		QFuture<nonstd::optional<QStringList>> m_extractFuture;
 		QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;

@@ -99,6 +99,19 @@ BaseInstance::BaseInstance(SettingsObjectPtr globalSettings,
 	m_settings->registerSetting("PackInstalledAt", "");
 	m_settings->registerSetting("PackManifestSha512", "");
 
+	/* The pack's own title, as the catalogue spells it. Separate from
+	 * "name" because the user may rename the instance and we still
+	 * want to be able to say which pack it is. Instances imported
+	 * before this key existed leave it empty; managedPackName() falls
+	 * back rather than showing a blank field. */
+	m_settings->registerSetting("PackName", "");
+
+	/* An update source the user supplied by hand, for instances with
+	 * no catalogue entry (drag-dropped zips, hand-made instances).
+	 * Remembered so the field is still filled in next time the page
+	 * is opened. */
+	m_settings->registerSetting("PackUpdateUrl", "");
+
 	// Custom Commands
 	auto commandSetting = m_settings->registerSetting(
 		{"OverrideCommands", "OverrideLaunchCmd"}, false);
@@ -295,6 +308,102 @@ void BaseInstance::setNotes(QString val)
 QString BaseInstance::notes() const
 {
 	return m_settings->get("notes").toString();
+}
+
+/* ---- Managed pack provenance ------------------------------------------
+ *
+ * Every getter trims. These keys are written by the importer, but they
+ * are also plain text in instance.cfg, and a stray trailing space in a
+ * pack id turns into a 404 that is very hard to read back from a log.
+ */
+
+QString BaseInstance::managedPackProvider() const
+{
+	return m_settings->get("PackProvider").toString().trimmed();
+}
+
+QString BaseInstance::managedPackId() const
+{
+	return m_settings->get("PackId").toString().trimmed();
+}
+
+QString BaseInstance::managedPackSlug() const
+{
+	return m_settings->get("PackSlug").toString().trimmed();
+}
+
+QString BaseInstance::managedPackName() const
+{
+	const QString recorded = m_settings->get("PackName").toString().trimmed();
+	if (!recorded.isEmpty()) {
+		return recorded;
+	}
+	/* Older imports never recorded the title. The slug is the next best
+	 * thing - it is derived from the title and is at least stable - and
+	 * failing that the instance name, which the user chose and will
+	 * recognise even if it is not what the catalogue calls the pack. */
+	const QString slug = managedPackSlug();
+	if (!slug.isEmpty()) {
+		return slug;
+	}
+	return name();
+}
+
+QString BaseInstance::managedPackVersionId() const
+{
+	return m_settings->get("PackVersionId").toString().trimmed();
+}
+
+QString BaseInstance::managedPackVersionName() const
+{
+	return m_settings->get("PackVersionLabel").toString().trimmed();
+}
+
+QString BaseInstance::managedPackSourceUrl() const
+{
+	return m_settings->get("PackSourceUrl").toString().trimmed();
+}
+
+bool BaseInstance::isManagedPack() const
+{
+	return !managedPackProvider().isEmpty();
+}
+
+bool BaseInstance::hasManagedPackId() const
+{
+	/* An id without a provider does not say which API to ask, and a
+	 * provider without an id gives every endpoint nothing to key on, so
+	 * a catalogue lookup needs both. */
+	return !managedPackProvider().isEmpty() && !managedPackId().isEmpty();
+}
+
+QString BaseInstance::managedPackUpdateUrl() const
+{
+	return m_settings->get("PackUpdateUrl").toString().trimmed();
+}
+
+void BaseInstance::setManagedPackUpdateUrl(const QString& url)
+{
+	const QString trimmed = url.trimmed();
+	if (managedPackUpdateUrl() == trimmed) {
+		// Writing a setting writes a file; this one is fed by a
+		// textChanged signal, so it would otherwise write on every
+		// keystroke that does not change the trimmed value.
+		return;
+	}
+	m_settings->set("PackUpdateUrl", trimmed);
+}
+
+void BaseInstance::setManagedPackVersion(const QString& versionId,
+										 const QString& versionName)
+{
+	if (managedPackVersionId() == versionId.trimmed() &&
+		managedPackVersionName() == versionName.trimmed()) {
+		return;
+	}
+	m_settings->set("PackVersionId", versionId.trimmed());
+	m_settings->set("PackVersionLabel", versionName.trimmed());
+	emit propertiesChanged(this);
 }
 
 QList<ShortcutData> BaseInstance::shortcuts() const

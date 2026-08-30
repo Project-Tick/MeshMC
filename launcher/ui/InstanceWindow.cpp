@@ -79,6 +79,22 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
 		m_container->setParentContainer(this);
 		setCentralWidget(m_container);
 		setContentsMargins(0, 0, 0, 0);
+
+		/* The modpack page closes this window after a successful
+		 * update, because by then everything the window is showing has
+		 * been replaced on disk. It cannot be told about the window at
+		 * construction time - the page container is built before there
+		 * is a window to hand out - so it is wired up here.
+		 *
+		 * The page is absent for instances that are not managed packs,
+		 * which is the common case, hence the search rather than an
+		 * assumption about where it is. */
+		for (BasePage* page : m_container->getPages()) {
+			if (page->id() == QLatin1String("managed_pack")) {
+				static_cast<ManagedPackPage*>(page)->setInstanceWindow(this);
+				break;
+			}
+		}
 	}
 
 	// Add custom buttons to the page container layout.

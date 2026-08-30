@@ -137,6 +137,11 @@ set(NET_SOURCES
     net/Validator.h
 )
 
+add_unit_test(FileSink
+    SOURCES net/FileSink_test.cpp
+    LIBS MeshMC_logic
+    )
+
 # Game launch logic
 set(LAUNCH_SOURCES
     launch/steps/CheckJava.cpp
@@ -581,6 +586,10 @@ set(MODRINTH_SOURCES
 
 set(CONTENT_DOWNLOAD_SOURCES
     modplatform/ContentApi.h
+    modplatform/ManagedPackVersions.h
+    modplatform/ManagedPackVersions.cpp
+    modplatform/PackContents.h
+    modplatform/PackContents.cpp
     modplatform/VersionPicker.h
     modplatform/VersionPicker.cpp
     modplatform/ContentProviderModel.h
@@ -598,6 +607,11 @@ set(CONTENT_DOWNLOAD_SOURCES
     modplatform/ModUpdateCheckTask.h
     modplatform/ModUpdateCheckTask.cpp
 )
+
+add_unit_test(PackContents
+    SOURCES modplatform/PackContents_test.cpp
+    LIBS MeshMC_logic
+    )
 
 set(PLUGIN_SOURCES
     # MMCO Plugin System
@@ -792,6 +806,8 @@ SET(MESHMC_SOURCES
     ui/pages/instance/ServersPage.h
     ui/pages/instance/LegacyUpgradePage.cpp
     ui/pages/instance/LegacyUpgradePage.h
+    ui/pages/instance/ManagedPackPage.cpp
+    ui/pages/instance/ManagedPackPage.h
     ui/pages/instance/WorldListPage.cpp
     ui/pages/instance/WorldListPage.h
 
@@ -1003,6 +1019,7 @@ qt6_wrap_ui(MESHMC_UI
     ui/pages/instance/VersionPage.ui
     ui/pages/instance/WorldListPage.ui
     ui/pages/instance/LegacyUpgradePage.ui
+    ui/pages/instance/ManagedPackPage.ui
     ui/pages/instance/ScreenshotsPage.ui
     ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui
     ui/pages/modplatform/atlauncher/AtlPage.ui

@@ -72,6 +72,7 @@ void Technic::SingleZipPackInstallTask::executeTask()
 	const QString path = m_sourceUrl.host() + '/' + m_sourceUrl.path();
 	auto entry = APPLICATION->metacache()->resolveEntry("general", path);
 	entry->setStale(true);
+	m_archiveEntry = entry;
 	m_filesNetJob = new NetJob(tr("Modpack download"), APPLICATION->network());
 	m_filesNetJob->addNetAction(Net::Download::makeCached(m_sourceUrl, entry));
 	m_archivePath = entry->getFullPath();
@@ -92,11 +93,25 @@ void Technic::SingleZipPackInstallTask::downloadSucceeded()
 	m_abortable = false;
 
 	setStatus(tr("Extracting modpack"));
-	QDir extractDir(FS::PathCombine(m_stagingPath, ".minecraft"));
+
+	/* Create the destination before extracting into it.
+	 *
+	 * QDir(path) only wraps a path - it does not make the directory
+	 * exist - so this used to hand extractSubDir a target that was not
+	 * there. The Solder path next door has always called
+	 * ensureFolderPathExists() here, and the drag-and-drop importer does
+	 * its own mkpath, which is why those two work and this one was the
+	 * odd one out. */
+	const QString extractPath = FS::PathCombine(m_stagingPath, ".minecraft");
+	if (!FS::ensureFolderPathExists(extractPath)) {
+		emitFailed(tr("Could not create the instance's minecraft folder:\n%1")
+					   .arg(extractPath));
+		return;
+	}
+
 	qDebug() << "Attempting to create instance from" << m_archivePath;
 
 	QString archivePath = m_archivePath;
-	QString extractPath = extractDir.absolutePath();
 	m_extractFuture = QtConcurrent::run(
 		QThreadPool::globalInstance(), [archivePath, extractPath]() {
 			return MMCZip::extractSubDir(archivePath, QString(""), extractPath);
@@ -126,7 +141,32 @@ void Technic::SingleZipPackInstallTask::downloadProgressChanged(qint64 current,
 void Technic::SingleZipPackInstallTask::extractFinished()
 {
 	if (!m_extractFuture.result()) {
-		emitFailed(tr("Failed to extract modpack"));
+		/* Drop the cached archive.
+		 *
+		 * An archive we cannot unpack is of no use to anyone, and while
+		 * it sits in the cache marked fresh every retry reads it back
+		 * and fails in exactly the same place - which is what turned one
+		 * bad download into a pack that could never be installed again.
+		 * Evicting it means "try again" actually re-downloads. */
+		if (m_archiveEntry) {
+			qWarning() << "Discarding unusable cached archive"
+					   << m_archivePath;
+			/* The file has to go, not just the entry's freshness.
+			 * Evicting only marks the entry stale, and a stale entry
+			 * whose file is still on disk makes the next request a
+			 * conditional one - so the server answers 304 and we go
+			 * right back to the same damaged bytes. With the file gone
+			 * MetaCacheSink sends no If-None-Match and we get a real
+			 * download. */
+			if (!QFile::remove(m_archivePath)) {
+				qWarning() << "Could not remove" << m_archivePath;
+			}
+			APPLICATION->metacache()->evictEntry(m_archiveEntry);
+			m_archiveEntry.reset();
+		}
+		emitFailed(tr("Failed to extract modpack. The downloaded archive is "
+					  "damaged; it has been discarded, so trying again will "
+					  "download it afresh."));
 		return;
 	}
 	QDir extractDir(m_stagingPath);

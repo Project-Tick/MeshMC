@@ -133,6 +133,21 @@ class InstanceList : public QAbstractListModel
 	void saveNow();
 
 	InstancePtr getInstanceById(QString id) const;
+
+	/* An instance that was installed from @p packId on @p provider, if
+	 * there is one.
+	 *
+	 * Asked before installing a modpack, so that installing a pack the
+	 * user already has can offer to update that instance instead of
+	 * quietly producing a second copy of it.
+	 *
+	 * Only the first match is returned. Having two instances of the same
+	 * pack is a perfectly reasonable thing - one to play, one to
+	 * experiment in - and nothing here could pick between them; the
+	 * caller is offering the user a choice, not making one. */
+	InstancePtr getInstanceByManagedPack(const QString& provider,
+										 const QString& packId) const;
+
 	QModelIndex getInstanceIndexById(const QString& id) const;
 	QStringList getGroups();
 	bool isGroupCollapsed(const QString& groupName);
@@ -190,10 +205,27 @@ class InstanceList : public QAbstractListModel
 	/**
 	 * Commit the staging area given by @keyPath to the provider - used when
 	 * creation succeeds. Used by instance manipulation tasks.
+	 *
+	 * With @p overrideInstanceId empty this creates a new instance: the
+	 * staging directory is moved into place under an id derived from
+	 * @p instanceName, and the group index gains an entry.
+	 *
+	 * With @p overrideInstanceId set, the staging directory is instead
+	 * merged over that existing instance, which is how a modpack update
+	 * lands. The instance keeps its id, its directory and its group -
+	 * @p instanceName and @p groupName are then only used for the new
+	 * instance's own name - so that everything referring to it by id
+	 * (shortcuts, the group index, play-time records) stays valid.
+	 *
+	 * @p filesToRemove are absolute paths deleted only after an override
+	 * has landed successfully - the files a pack update makes obsolete.
+	 * Ignored when not overriding.
 	 */
 	bool commitStagedInstance(const QString& keyPath,
 							  const QString& instanceName,
-							  const QString& groupName);
+							  const QString& groupName,
+							  const QString& overrideInstanceId = QString(),
+							  const QStringList& filesToRemove = {});
 
 	/**
 	 * Destroy a previously created staging area given by @keyPath - used when

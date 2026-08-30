@@ -123,6 +123,29 @@ namespace FS
 	bool deletePath(QString path);
 
 	/**
+	 * Move everything in @p source on top of @p destination, replacing
+	 * files that exist in both and leaving files that exist only in
+	 * @p destination alone.
+	 *
+	 * This is how a modpack update lands: the staged copy of the new
+	 * version is merged over the live instance, so that the instance
+	 * keeps its identity and everything the pack does not ship - saves,
+	 * screenshots, logs, the user's own config edits - survives.
+	 *
+	 * Deliberately *not* "delete the destination and move the source
+	 * in": the whole point is that the destination holds data the pack
+	 * has no copy of. Files the new version dropped are removed by the
+	 * caller, which is the only party that knows the difference between
+	 * "this file is gone from the pack" and "the user put this here".
+	 *
+	 * @p source is removed on success. Returns false on the first
+	 * failure, having done part of the work -- there is no way to roll a
+	 * partial merge back, so callers should treat a failure as "the
+	 * instance may be in a mixed state" and say so.
+	 */
+	bool overrideFolder(const QString& destination, const QString& source);
+
+	/**
 	 * Whether this platform has a trash we can trust to be reversible.
 	 *
 	 * Worth asking before offering the user a choice, so that a dialog

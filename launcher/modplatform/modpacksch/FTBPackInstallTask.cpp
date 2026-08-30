@@ -53,6 +53,8 @@
 #include "BuildConfig.h"
 #include "Application.h"
 
+#include <QDateTime>
+
 namespace ModpacksCH
 {
 
@@ -278,6 +280,27 @@ namespace ModpacksCH
 
 		instance.setName(m_instName);
 		instance.setIconKey(m_instIcon);
+
+		/* Record where this instance came from.
+		 *
+		 * These are the same keys the Modrinth and CurseForge importers
+		 * write. FTB has no page for changing versions - there is no
+		 * MeshMC UI that reads these back for an FTB pack today - but
+		 * recording them costs one INI write and is the difference
+		 * between an instance that knows it is version 1.4.0 of a
+		 * specific pack and one that only knows its own name. Anything
+		 * that later wants to notice "you already have this pack" or
+		 * offer an update needs it to have been written at install
+		 * time, because it cannot be recovered afterwards. */
+		instanceSettings->set("PackProvider", QStringLiteral("modpacksch"));
+		instanceSettings->set("PackId", QString::number(m_pack.id));
+		instanceSettings->set("PackName", m_pack.name);
+		instanceSettings->set("PackVersionId", QString::number(m_version.id));
+		instanceSettings->set("PackVersionLabel", m_version.name);
+		instanceSettings->set(
+			"PackInstalledAt",
+			QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+
 		instanceSettings->resumeSave();
 
 		emitSucceeded();
