@@ -147,6 +147,11 @@ QString ModrinthApi::apiBase()
 	return QStringLiteral("https://") + apiHost() + QStringLiteral("/v2");
 }
 
+QString ModrinthApi::cdnHost()
+{
+	return QStringLiteral("cdn.modrinth.com");
+}
+
 QString ModrinthApi::id() const
 {
 	return QStringLiteral("modrinth");

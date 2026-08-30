@@ -41,6 +41,11 @@ class ModrinthApi final : public ModPlatform::ContentApi
 	/* Scheme + host + version prefix, no trailing slash. */
 	static QString apiBase();
 
+	/* The host every Modrinth version file is served from. A different
+	 * host from the API, and the only one the download-attribution
+	 * header means anything to. */
+	static QString cdnHost();
+
 	QString id() const override;
 	QString displayName() const override;
 	int searchPageSize() const override;
