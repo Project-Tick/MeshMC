@@ -50,7 +50,12 @@ namespace LegacyFTB
 
 		bool canAbort() const override
 		{
-			return true;
+			/* Two abortable stretches, with a gap between them: the
+			 * pack's own download while `abortable` is set, and the
+			 * optional game-file download the base class runs once the
+			 * instance is built. Answering "always" would light up a
+			 * button that abort() then refuses to act on. */
+			return abortable || InstanceTask::canAbort();
 		}
 		bool abort() override;
 

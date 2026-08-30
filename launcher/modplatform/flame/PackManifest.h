@@ -45,6 +45,19 @@ namespace Flame
 		bool resolved = false;
 		QString fileName;
 		QUrl url;
+
+		/* SHA-1 digest and length of the file, as the API reports them.
+		 *
+		 * Recorded so an update can tell whether the file it is about to
+		 * fetch is already sitting in the instance: two versions of a
+		 * pack are mostly the same files, and the only trustworthy
+		 * answer to "do I already have this one" is what is on disk.
+		 *
+		 * Left empty/zero when the response does not carry them, which
+		 * costs nothing but a download. */
+		QString sha1;
+		qint64 fileSize = 0;
+
 		QString targetFolder = QLatin1String("mods");
 		enum class Type {
 			Unknown,

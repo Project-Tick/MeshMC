@@ -936,6 +936,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/FeatureFlagsDialog.h
     ui/dialogs/UpdateProgressDialog.cpp
     ui/dialogs/UpdateProgressDialog.h
+    ui/dialogs/UntrustedModsDialog.cpp
+    ui/dialogs/UntrustedModsDialog.h
 
 
     # GUI - widgets
@@ -1052,6 +1054,7 @@ qt6_wrap_ui(MESHMC_UI
     ui/dialogs/MSALoginDialog.ui
     ui/dialogs/AboutDialog.ui
     ui/dialogs/EditAccountDialog.ui
+    ui/dialogs/UntrustedModsDialog.ui
 )
 
 if(NOT MeshMC_DISABLE_JAVA_DOWNLOADER)

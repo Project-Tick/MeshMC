@@ -111,6 +111,22 @@ bool Flame::File::parseFromBytes(const QByteArray& bytes)
 	if (fileName.isEmpty()) {
 		fileName = Json::requireString(obj, "FileNameOnDisk");
 	}
+	/* CurseForge reports one digest per algorithm, tagged with a numeric
+	 * "algo": 1 is SHA-1, 2 is MD5. SHA-1 is the one worth keeping,
+	 * since that is what the launcher hashes an installed file with when
+	 * it needs to decide whether an update has to fetch it again.
+	 * Anything else is ignored rather than guessed at - a digest
+	 * compared under the wrong algorithm reports every file as changed,
+	 * which would turn the check into pure cost. */
+	fileSize = static_cast<qint64>(Json::ensureDouble(obj, "fileLength", 0.0));
+	for (const auto& hashRaw : Json::ensureArray(obj, "hashes")) {
+		const QJsonObject hashObj = hashRaw.toObject();
+		if (Json::ensureInteger(hashObj, "algo", 0) == 1) {
+			sha1 = Json::ensureString(hashObj, "value", QString());
+			break;
+		}
+	}
+
 	QString rawUrl = Json::ensureString(obj, "downloadUrl", QString());
 	if (rawUrl.isEmpty()) {
 		rawUrl = Json::ensureString(obj, "DownloadURL", QString());

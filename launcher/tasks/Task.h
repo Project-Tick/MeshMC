@@ -181,6 +181,25 @@ class Task : public QObject
   protected:
 	void logWarning(const QString& line);
 
+	/*!
+	 * Announce whatever canAbort() currently answers.
+	 *
+	 * Called by a task at the points where that answer changes. Reading it
+	 * back through the virtual rather than taking a parameter means the
+	 * button and abort() itself can never disagree about whether there is
+	 * anything to abort.
+	 */
+	void reportAbortStatus()
+	{
+		emit abortStatusChanged(canAbort());
+	}
+
+	/*! Relabel the button offering abort() - see abortButtonTextChanged. */
+	void setAbortButtonText(const QString& text)
+	{
+		emit abortButtonTextChanged(text);
+	}
+
   private:
 	QString describe();
 
@@ -194,6 +213,28 @@ class Task : public QObject
 	void details(QString details);
 	//! Emitted by multi step tasks whenever one of their steps moves along.
 	void stepProgress(TaskStepProgress const& step_progress);
+
+	/*!
+	 * The answer to canAbort() has changed.
+	 *
+	 * canAbort() is computed rather than stored, so nothing can tell from
+	 * the outside when it starts or stops being true - a task that changes
+	 * its mind mid-run has to say so. A task that never emits this is a
+	 * task whose abort button keeps whatever state the caller gave it,
+	 * which is what every task did before this existed.
+	 */
+	void abortStatusChanged(bool abortable);
+
+	/*!
+	 * The button offering abort() should be relabelled.
+	 *
+	 * Because "abort" is not always what pressing it does. A task that has
+	 * already produced its result and is only running an optional extra
+	 * step is not cancelled by that button - the step is skipped and the
+	 * task still succeeds. Saying "Abort" there promises a rollback that
+	 * is not going to happen.
+	 */
+	void abortButtonTextChanged(QString text);
 
   public slots:
 	virtual void start();

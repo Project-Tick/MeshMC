@@ -53,6 +53,7 @@
 #include "QObjectPtr.h"
 
 #include <nonstd/optional>
+#include <memory>
 
 namespace Flame
 {
@@ -66,6 +67,7 @@ namespace Modrinth
 	struct File;
 }
 
+class BaseInstance;
 class MinecraftInstance;
 
 class InstanceImportTask : public InstanceTask
@@ -221,16 +223,29 @@ class InstanceImportTask : public InstanceTask
 	QFutureWatcher<DetectResult> m_detectFutureWatcher;
 	PackSourceHint m_packHint;
 	UpdateTarget m_updateTarget;
+	/* The staged instance, reopened once its files are all in place so
+	 * that the game's own files can be fetched for it.
+	 *
+	 * A member because that download is asynchronous and runs against
+	 * this object; the instance each process*() path builds while
+	 * configuring the pack is a local, and is deliberately let go before
+	 * this is opened - two live settings objects over one instance.cfg
+	 * means whichever writes last wins. */
+	std::shared_ptr<MinecraftInstance> m_gameFilesInstance;
 	QWidget* m_dialogParent = nullptr;
 	bool m_trustedSource = false;
 
 	/* Helper: persist the pack source hint into the freshly created
-	 * MinecraftInstance's instance.cfg. Called by processFlame and
-	 * processModrinth right after they finish setting up the
-	 * instance. Centralised here so the key names stay in one
-	 * place; BaseInstance pre-registers the same keys so the values
-	 * survive a save+reload cycle. */
-	void writePackSourceToInstance(MinecraftInstance& instance,
+	 * instance's instance.cfg. Called by every process*() path right
+	 * after it finishes setting up the instance. Centralised here so the
+	 * key names stay in one place; BaseInstance pre-registers the same
+	 * keys so the values survive a save+reload cycle.
+	 *
+	 * Takes a BaseInstance because that is all it needs - the settings
+	 * object - and because the two archive formats that carry their own
+	 * instance.cfg are staged through a NullInstance rather than a
+	 * MinecraftInstance. */
+	void writePackSourceToInstance(BaseInstance& instance,
 								   const PackSourceHint& hint);
 
 	/* Copy the settings that belong to the *user* rather than to the
@@ -246,7 +261,17 @@ class InstanceImportTask : public InstanceTask
 	 * pack update.
 	 *
 	 * No-op when this is not an update. */
-	void carryOverUserSettings(MinecraftInstance& instance);
+	void carryOverUserSettings(BaseInstance& instance);
+
+	/* Reopen the staged instance so the game's own files can be fetched
+	 * for it, and keep it alive for as long as that takes.
+	 *
+	 * Returns null when the staging directory does not describe an
+	 * instance we can drive, which the caller treats as "nothing to
+	 * pre-download" rather than as an error - the pack itself is already
+	 * installed by then.
+	 */
+	MinecraftInstance* openStagedInstance();
 
 	/* Ask the user before installing code from places we cannot vouch
 	 * for.

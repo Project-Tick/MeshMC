@@ -39,14 +39,22 @@ InstanceCreationTask::InstanceCreationTask(BaseVersionPtr version)
 void InstanceCreationTask::executeTask()
 {
 	setStatus(tr("Creating instance from version %1").arg(m_version->name()));
+
+	/* Outlives the scope below on purpose: this function ends by handing
+	 * the instance to downloadFiles(), which runs asynchronously against
+	 * it. The scope is still what it was - everything that writes to
+	 * instance.cfg is released before we finish - the instance is simply
+	 * no longer part of what the scope owns. */
+	std::shared_ptr<MinecraftInstance> instance;
 	{
 		auto instanceSettings = std::make_shared<INISettingsObject>(
 			FS::PathCombine(m_stagingPath, "instance.cfg"));
 		instanceSettings->suspendSave();
 		instanceSettings->registerSetting("InstanceType", "Legacy");
 		instanceSettings->set("InstanceType", "OneSix");
-		MinecraftInstance inst(m_globalSettings, instanceSettings,
-							   m_stagingPath);
+		instance = std::make_shared<MinecraftInstance>(
+			m_globalSettings, instanceSettings, m_stagingPath);
+		MinecraftInstance& inst = *instance;
 		auto components = inst.getPackProfile();
 		components->buildingFromScratch();
 		components->setComponentVersion("net.minecraft",
@@ -55,5 +63,7 @@ void InstanceCreationTask::executeTask()
 		inst.setIconKey(m_instIcon);
 		instanceSettings->resumeSave();
 	}
-	emitSucceeded();
+
+	/* Finishes the task, whether or not it downloads anything. */
+	downloadFiles(instance);
 }

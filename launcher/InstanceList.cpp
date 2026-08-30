@@ -1180,6 +1180,16 @@ class InstanceStaging : public Task
 		connect(child, &Task::status, this, &InstanceStaging::setStatus);
 		connect(child, &Task::details, this, &InstanceStaging::setDetails);
 		connect(child, &Task::progress, this, &InstanceStaging::setProgress);
+		/* The dialog is watching us, not the task we wrap, so anything the
+		 * task says about its abort button has to be passed through -
+		 * including the point where it turns into a "Skip" button for the
+		 * optional game-file download. Forwarded rather than recomputed:
+		 * our own canAbort() already asks the child, so re-deriving it here
+		 * would be two answers to one question. */
+		connect(child, &Task::abortStatusChanged, this,
+				&InstanceStaging::abortStatusChanged);
+		connect(child, &Task::abortButtonTextChanged, this,
+				&InstanceStaging::abortButtonTextChanged);
 		// We are only a wrapper around the real work. Without this the step
 		// list of whatever we are staging never reaches the dialog.
 		propagateStepsFrom(child);

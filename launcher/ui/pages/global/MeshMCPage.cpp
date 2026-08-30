@@ -123,17 +123,17 @@ bool MeshMCPage::confirmInstanceDirPath(const QString& rawDir,
 									   const QString& cookedDir)
 {
 	if (FS::checkProblemticPathJava(QDir(cookedDir))) {
-			QMessageBox warning;
-			warning.setText(
-				tr("You're trying to specify an instance folder which\'s path "
-				   "contains at least one \'!\'. "
-				   "Java is known to cause problems if that is the case, your "
-				   "instances (probably) won't start!"));
-			warning.setInformativeText(
-				tr("Do you really want to use this path? "
-				   "Selecting \"No\" will close this and not alter your "
-				   "instance path."));
-			warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+		QMessageBox warning;
+		warning.setText(
+			tr("You're trying to specify an instance folder which\'s path "
+			   "contains at least one \'!\'. "
+			   "Java is known to cause problems if that is the case, your "
+			   "instances (probably) won't start!"));
+		warning.setInformativeText(
+			tr("Do you really want to use this path? "
+			   "Selecting \"No\" will close this and not alter your "
+			   "instance path."));
+		warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		return warning.exec() == QMessageBox::Yes;
 	}
 
@@ -184,7 +184,7 @@ QStringList MeshMCPage::additionalInstanceDirs() const
 	QStringList dirs;
 	for (int i = 0; i < ui->additionalInstDirsList->count(); i++) {
 		dirs << ui->additionalInstDirsList->item(i)->text();
-			}
+	}
 	return dirs;
 }
 
@@ -330,6 +330,15 @@ void MeshMCPage::applySettings()
 	// Instance backups
 	s->set("BackupBeforeLaunch", ui->backupBeforeLaunchCheck->isChecked());
 
+	/* Instance creation. The modpack prompt is stored inverted - the
+	 * setting says what to *skip* - so that a launcher nobody has
+	 * configured asks, which is the useful default and the behaviour
+	 * that existed before it was optional. */
+	s->set("SkipModpackUpdatePrompt",
+		   !ui->modpackUpdatePromptCheck->isChecked());
+	s->set("DownloadGameFilesDuringInstanceCreation",
+		   ui->downloadGameFilesCheck->isChecked());
+
 	// Console settings
 	s->set("ShowConsole", ui->showConsoleCheck->isChecked());
 	s->set("AutoCloseConsole", ui->autoCloseConsoleCheck->isChecked());
@@ -380,6 +389,12 @@ void MeshMCPage::loadSettings()
 	// Instance backups
 	ui->backupBeforeLaunchCheck->setChecked(
 		s->get("BackupBeforeLaunch").toBool());
+
+	// Instance creation
+	ui->modpackUpdatePromptCheck->setChecked(
+		!s->get("SkipModpackUpdatePrompt").toBool());
+	ui->downloadGameFilesCheck->setChecked(
+		s->get("DownloadGameFilesDuringInstanceCreation").toBool());
 
 	// Console settings
 	ui->showConsoleCheck->setChecked(s->get("ShowConsole").toBool());

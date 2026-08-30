@@ -3063,42 +3063,62 @@ void MainWindow::selectionBad()
 
 void MainWindow::checkInstancePathForProblems()
 {
-	QString instanceFolder =
-		APPLICATION->settings()->get("InstanceDir").toString();
-	if (FS::checkProblemticPathJava(QDir(instanceFolder))) {
-		QMessageBox warning(this);
-		warning.setText(tr("Your instance folder contains \'!\' and this is "
-						   "known to cause Java problems!"));
-		warning.setInformativeText(
-			tr("You have now two options: <br/>"
-			   " - change the instance folder in the settings <br/>"
-			   " - move this installation of %1 to a different folder")
-				.arg(BuildConfig.MESHMC_NAME));
-		warning.setDefaultButton(QMessageBox::Ok);
-		warning.exec();
-	}
+	/* Every configured instance folder is checked, not just the primary
+	 * one. None of these problems care which of our folders an instance
+	 * came out of - Java chokes on '!' in a path wherever that path is,
+	 * and an unextracted archive is no less temporary for being the second
+	 * folder in the list. Checking one and staying quiet about the rest
+	 * would leave the user with instances that fail for a reason we
+	 * already knew how to name.
+	 *
+	 * Each message names the folder it is about, because with more than
+	 * one configured "your instance folder" is no longer an answer.
+	 */
 	auto tempFolderText = tr("This is a problem: <br/>"
 							 " - MeshMC will likely be deleted without warning "
 							 "by the operating system <br/>"
 							 " - close MeshMC now and extract it to a real "
 							 "location, not a temporary folder");
-	QString pathfoldername = QDir(instanceFolder).absolutePath();
-	if (pathfoldername.contains("Rar$", Qt::CaseInsensitive)) {
-		QMessageBox warning(this);
-		warning.setText(tr("Your instance folder contains \'Rar$\' - that "
-						   "means you haven't extracted MeshMC archive!"));
-		warning.setInformativeText(tempFolderText);
-		warning.setDefaultButton(QMessageBox::Ok);
-		warning.exec();
-	} else if (pathfoldername.startsWith(QDir::tempPath()) ||
-			   pathfoldername.contains("/TempState/")) {
-		QMessageBox warning(this);
-		warning.setText(
-			tr("Your instance folder is in a temporary folder: \'%1\'!")
-				.arg(QDir::tempPath()));
-		warning.setInformativeText(tempFolderText);
-		warning.setDefaultButton(QMessageBox::Ok);
-		warning.exec();
+
+	const QStringList instanceFolders =
+		APPLICATION->instances()->instanceDirs();
+	for (const QString& instanceFolder : instanceFolders) {
+		if (FS::checkProblemticPathJava(QDir(instanceFolder))) {
+			QMessageBox warning(this);
+			warning.setText(
+				tr("Your instance folder \'%1\' contains \'!\' and this is "
+				   "known to cause Java problems!")
+					.arg(instanceFolder));
+			warning.setInformativeText(
+				tr("You have now two options: <br/>"
+				   " - change the instance folder in the settings <br/>"
+				   " - move this installation of %1 to a different folder")
+					.arg(BuildConfig.MESHMC_NAME));
+			warning.setDefaultButton(QMessageBox::Ok);
+			warning.exec();
+		}
+
+		QString pathfoldername = QDir(instanceFolder).absolutePath();
+		if (pathfoldername.contains("Rar$", Qt::CaseInsensitive)) {
+			QMessageBox warning(this);
+			warning.setText(
+				tr("Your instance folder \'%1\' contains \'Rar$\' - that "
+				   "means you haven't extracted MeshMC archive!")
+					.arg(instanceFolder));
+			warning.setInformativeText(tempFolderText);
+			warning.setDefaultButton(QMessageBox::Ok);
+			warning.exec();
+		} else if (pathfoldername.startsWith(QDir::tempPath()) ||
+				   pathfoldername.contains("/TempState/")) {
+			QMessageBox warning(this);
+			warning.setText(
+				tr("Your instance folder \'%1\' is in a temporary folder: "
+				   "\'%2\'!")
+					.arg(instanceFolder, QDir::tempPath()));
+			warning.setInformativeText(tempFolderText);
+			warning.setDefaultButton(QMessageBox::Ok);
+			warning.exec();
+		}
 	}
 }
 

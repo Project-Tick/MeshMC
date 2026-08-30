@@ -164,8 +164,14 @@ namespace LegacyFTB
 		instanceSettings->registerSetting("InstanceType", "Legacy");
 		instanceSettings->set("InstanceType", "OneSix");
 
-		MinecraftInstance instance(m_globalSettings, instanceSettings,
-								   m_stagingPath);
+		/* Held behind a shared_ptr, and by reference below so that the
+		 * rest of this function reads as it did. The pointer is what
+		 * matters: this function ends by handing the instance to
+		 * downloadFiles(), which runs against it after we return, and a
+		 * local object would be gone by then. */
+		auto instancePtr = std::make_shared<MinecraftInstance>(
+			m_globalSettings, instanceSettings, m_stagingPath);
+		MinecraftInstance& instance = *instancePtr;
 		auto components = instance.getPackProfile();
 		components->buildingFromScratch();
 		components->setComponentVersion("net.minecraft", m_pack.mcVersion,
@@ -239,7 +245,8 @@ namespace LegacyFTB
 		instance.setIconKey(m_instIcon);
 		instanceSettings->resumeSave();
 
-		emitSucceeded();
+		/* Finishes the task, whether or not it downloads anything. */
+		downloadFiles(instancePtr);
 	}
 
 	bool PackInstallTask::abort()
@@ -247,7 +254,13 @@ namespace LegacyFTB
 		if (abortable) {
 			return netJobContainer->abort();
 		}
-		return false;
+
+		/* Past the pack's own download there is still one abortable
+		 * phase: the optional game-file download the base class runs
+		 * after the instance is built. It knows whether that is
+		 * happening, and returns false when it is not - which is the
+		 * answer this used to give unconditionally. */
+		return InstanceTask::abort();
 	}
 
 } // namespace LegacyFTB

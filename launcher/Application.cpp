@@ -366,8 +366,14 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 		initSettings();
 
 		// Load instance list
-		QString instDir = m_settings->get("InstanceDir").toString();
-		m_instances.reset(new InstanceList(m_settings, instDir, this));
+		/* The CLI path lists and exports instances, so it has to see the
+		 * additional folders too - otherwise "list instances" would
+		 * disagree with the window that shows them. */
+		QStringList instDirs;
+		instDirs << m_settings->get("InstanceDir").toString();
+		instDirs << InstanceList::decodeInstanceDirList(
+			m_settings->get("AdditionalInstanceDirs"));
+		m_instances.reset(new InstanceList(m_settings, instDirs, this));
 		m_instances->loadList();
 
 		performCLIAction();
@@ -948,6 +954,28 @@ void Application::initSettings()
 	m_settings->registerSetting("SkinsDir", "skins");
     m_settings->registerSetting("JavaDir", "java");
 
+	/* Whether installing a modpack that is already installed offers to
+	 * update that instance instead of creating a second one.
+	 *
+	 * Phrased as "skip" so that false - the default, and what every
+	 * existing config reads as - means the question gets asked. Anyone
+	 * who deliberately keeps several copies of a pack around is the one
+	 * person for whom the question is only ever noise, and this is how
+	 * they turn it off. */
+	m_settings->registerSetting("SkipModpackUpdatePrompt", false);
+
+	/* Whether creating or updating an instance also fetches the game's
+	 * own files - version metadata, libraries, assets - instead of
+	 * leaving all of it to the first launch.
+	 *
+	 * On by default: the download happens either way, and doing it while
+	 * the user is already waiting for an install to finish is time they
+	 * have agreed to spend. The alternative is that the first launch of a
+	 * freshly installed pack is the slow one, which is the worst moment
+	 * for it. */
+	m_settings->registerSetting("DownloadGameFilesDuringInstanceCreation",
+								true);
+
 	// Editors
 	m_settings->registerSetting("JsonEditor", QString());
 
@@ -1232,12 +1260,12 @@ void Application::initSubsystems()
 		 * is Java's and it does not care which of our folders the instance
 		 * it was handed came out of. */
 		for (const QString& instDir : instDirs) {
-		qDebug() << "Instance path              : " << instDir;
-		if (FS::checkProblemticPathJava(QDir(instDir))) {
+			qDebug() << "Instance path              : " << instDir;
+			if (FS::checkProblemticPathJava(QDir(instDir))) {
 				qWarning() << "Your instance path" << instDir
 						   << "contains \'!\' and this is "
-						  "known to cause java problems!";
-		}
+							  "known to cause java problems!";
+			}
 		}
 
 		m_instances.reset(new InstanceList(m_settings, instDirs, this));

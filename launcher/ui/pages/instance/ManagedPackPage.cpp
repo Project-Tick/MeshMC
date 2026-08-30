@@ -116,8 +116,24 @@ bool ManagedPackPage::isSupported(const BaseInstance* instance)
 	if (instance == nullptr || !instance->isManagedPack()) {
 		return false;
 	}
-	return providerFromString(instance->managedPackProvider()) !=
-		   Provider::Unknown;
+
+	const Provider provider =
+		providerFromString(instance->managedPackProvider());
+	if (provider == Provider::Unknown) {
+		return false;
+	}
+
+	if (provider == Provider::CurseForge &&
+		APPLICATION->settings()->get("CurseForgeAPIKey").toString().isEmpty()) {
+		/* Every request this page makes to CurseForge needs that key,
+		 * and a build without one cannot list a single version. Showing
+		 * the tab anyway would offer a feature that can only fail, so it
+		 * is better not to offer it: the instance is still a CurseForge
+		 * pack, we just have no way to talk to the catalogue about it. */
+		return false;
+	}
+
+	return true;
 }
 
 ManagedPackPage::ManagedPackPage(BaseInstance* instance,
@@ -753,6 +769,27 @@ void ManagedPackPage::updatePack(const QUrl& url, bool trusted,
 								 const QString& versionId,
 								 const QString& versionName)
 {
+	/* Not while the game is running.
+	 *
+	 * An update replaces the pack's files underneath a live process:
+	 * mods are deleted while the JVM holds them open, which on Windows
+	 * fails outright and elsewhere leaves the running game executing
+	 * code that is no longer on disk. Either way what comes back is not
+	 * what the update meant to produce.
+	 *
+	 * Checked here because this is the one point every route to an
+	 * update passes through. */
+	if (m_instance->isRunning()) {
+		CustomMessageBox::selectable(
+			this, tr("Instance is running"),
+			tr("This instance is currently running. Close the game before "
+			   "updating the modpack - an update replaces the files the "
+			   "game has open."),
+			QMessageBox::Warning)
+			->show();
+		return;
+	}
+
 	auto* task = new InstanceImportTask(url);
 
 	/* Replace this instance rather than create a second one. */
@@ -785,7 +822,8 @@ void ManagedPackPage::updatePack(const QUrl& url, bool trusted,
 	const QString oldVersionName = m_instance->managedPackVersionName();
 
 	/* Keep the instance where and how the user left it. */
-	task->setGroup(APPLICATION->instances()->getInstanceGroup(m_instance->id()));
+	task->setGroup(
+		APPLICATION->instances()->getInstanceGroup(m_instance->id()));
 	task->setIcon(m_instance->iconKey());
 
 	/* If the user never renamed the instance away from the pack's own
@@ -795,12 +833,33 @@ void ManagedPackPage::updatePack(const QUrl& url, bool trusted,
 	QString newName = m_instance->name();
 	if (!versionName.isEmpty() && !oldVersionName.isEmpty()) {
 		newName.replace(oldVersionName, versionName);
+		if (newName != m_instance->name()) {
+			/* Asked rather than done. The name is the user's, even when
+			 * it started out as the pack's: they may have kept the old
+			 * version in it on purpose, and an update is not the moment
+			 * to decide that for them. Only reachable when the old
+			 * version string actually appears in the name, so this is
+			 * never a question about a name we were not going to touch
+			 * anyway. */
+			auto* box = CustomMessageBox::selectable(
+				this, tr("Change instance name"),
+				tr("The instance's name includes the version being "
+				   "replaced. Would you like to update it?\n\n"
+				   "Old name: %1\n"
+				   "New name: %2")
+					.arg(m_instance->name(), newName),
+				QMessageBox::Question, QMessageBox::Yes | QMessageBox::No,
+				QMessageBox::Yes);
+			if (box->exec() != QMessageBox::Yes) {
+				newName = m_instance->name();
+			}
+		}
 	}
 	task->setName(newName);
 
 	const bool succeeded = runUpdateTask(task);
-	onUpdateFinished(succeeded, versionName.isEmpty() ? oldVersionName
-													  : versionName);
+	onUpdateFinished(succeeded,
+					 versionName.isEmpty() ? oldVersionName : versionName);
 }
 
 bool ManagedPackPage::runUpdateTask(InstanceTask* task)

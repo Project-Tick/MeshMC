@@ -79,7 +79,13 @@ namespace ATLauncher
 		if (abortable) {
 			return jobPtr->abort();
 		}
-		return false;
+
+		/* Past the pack's own downloads there is still one abortable
+		 * phase: the optional game-file download the base class runs
+		 * after the instance is built. It knows whether that is
+		 * happening, and returns false when it is not - which is the
+		 * answer this used to give unconditionally. */
+		return InstanceTask::abort();
 	}
 
 	void PackInstallTask::executeTask()
@@ -810,8 +816,14 @@ namespace ATLauncher
 		instanceSettings->registerSetting("InstanceType", "Legacy");
 		instanceSettings->set("InstanceType", "OneSix");
 
-		MinecraftInstance instance(m_globalSettings, instanceSettings,
-								   m_stagingPath);
+		/* Held behind a shared_ptr, and by reference below so that the
+		 * rest of this function reads as it did. The pointer is what
+		 * matters: this function ends by handing the instance to
+		 * downloadFiles(), which runs against it after we return, and a
+		 * local object would be gone by then. */
+		auto instancePtr = std::make_shared<MinecraftInstance>(
+			m_globalSettings, instanceSettings, m_stagingPath);
+		MinecraftInstance& instance = *instancePtr;
 		auto components = instance.getPackProfile();
 		components->buildingFromScratch();
 
@@ -899,7 +911,9 @@ namespace ATLauncher
 		instanceSettings->resumeSave();
 
 		jarmods.clear();
-		emitSucceeded();
+
+		/* Finishes the task, whether or not it downloads anything. */
+		downloadFiles(instancePtr);
 	}
 
 } // namespace ATLauncher
