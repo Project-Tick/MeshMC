@@ -46,6 +46,8 @@
 #include <QAbstractListModel>
 #include <QSet>
 #include <QList>
+#include <QHash>
+#include <QStringList>
 
 #include "BaseInstance.h"
 
@@ -93,8 +95,14 @@ class InstanceList : public QAbstractListModel
 	Q_OBJECT
 
   public:
-	explicit InstanceList(SettingsObjectPtr settings, const QString& instDir,
-						  QObject* parent = 0);
+	/* @p instDirs are the instance roots, most important first. The first
+	 * one is the primary folder: it is where a new instance goes when
+	 * nothing asked for somewhere specific, and where the group file
+	 * lives. Duplicates and paths that cannot be created are dropped, so
+	 * the list this ends up with may be shorter than the one passed in.
+	 */
+	explicit InstanceList(SettingsObjectPtr settings,
+						  const QStringList& instDirs, QObject* parent = 0);
 	virtual ~InstanceList();
 
   public:
@@ -199,8 +207,49 @@ class InstanceList : public QAbstractListModel
 	/**
 	 * Create a new empty staging area for instance creation and @return a
 	 * path/key top commit it later. Used by instance manipulation tasks.
+	 *
+	 * @p targetDir names which configured instance root to stage inside;
+	 * empty means the primary one. Staging inside the destination root is
+	 * not an implementation detail - committing is a rename, and a rename
+	 * only works within one filesystem. Staging somewhere else would turn
+	 * every install on a second drive into a full copy.
+	 *
+	 * Returns an empty string on failure, including when @p targetDir is
+	 * not a configured root: an unknown destination is a caller bug or a
+	 * folder the user removed from the settings while a task was queued,
+	 * and guessing at a substitute would put the instance somewhere
+	 * nobody asked for.
 	 */
-	QString getStagedInstancePath();
+	QString getStagedInstancePath(const QString& targetDir = QString());
+
+	/// The folder new instances go to when nothing asks for another one.
+	QString primaryDir() const
+	{
+		return m_instDirs.isEmpty() ? QString() : m_instDirs.first();
+	}
+
+	/// Every configured instance root, primary first.
+	QStringList instanceDirs() const
+	{
+		return m_instDirs;
+	}
+
+	/* The "AdditionalInstanceDirs" setting, decoded and encoded.
+	 *
+	 * It is stored as a JSON array inside a single string rather than as a
+	 * QStringList, because INIFile writes every value out through
+	 * QVariant::toString() - and that yields an *empty string* for a list
+	 * holding anything other than exactly one element. Stored as a list,
+	 * the setting would come back empty on the next launch and the user's
+	 * extra folders would quietly disappear. Prism can store a list
+	 * directly because it keeps settings in QSettings; we cannot.
+	 *
+	 * JSON rather than a joined string because these are filesystem paths,
+	 * and any separator worth picking is a character that some path is
+	 * allowed to contain.
+	 */
+	static QStringList decodeInstanceDirList(const QVariant& value);
+	static QVariant encodeInstanceDirList(const QStringList& dirs);
 
 	/**
 	 * Commit the staging area given by @keyPath to the provider - used when
@@ -220,12 +269,21 @@ class InstanceList : public QAbstractListModel
 	 * @p filesToRemove are absolute paths deleted only after an override
 	 * has landed successfully - the files a pack update makes obsolete.
 	 * Ignored when not overriding.
+	 *
+	 * @p removalWarnings, when given, collects a ready-to-show message
+	 * for every one of those files that could not be deleted. Failing to
+	 * delete is not failing to update - the new version is already in
+	 * place and consistent - but it does leave a mod behind that the
+	 * pack no longer includes, and the user is the only one who can do
+	 * anything about that. So it is handed back for the task to report
+	 * rather than being buried in the log.
 	 */
 	bool commitStagedInstance(const QString& keyPath,
 							  const QString& instanceName,
 							  const QString& groupName,
 							  const QString& overrideInstanceId = QString(),
-							  const QStringList& filesToRemove = {});
+							  const QStringList& filesToRemove = {},
+							  QStringList* removalWarnings = nullptr);
 
 	/**
 	 * Destroy a previously created staging area given by @keyPath - used when
@@ -274,6 +332,34 @@ class InstanceList : public QAbstractListModel
 	QList<InstanceId> discoverInstances();
 	InstancePtr loadInstance(const InstanceId& id);
 
+	/* Which root @p id was discovered in.
+	 *
+	 * Falls back to the primary folder for an id nothing has discovered
+	 * yet - an instance being committed right now is the normal case - so
+	 * callers get a usable path rather than an empty string.
+	 */
+	QString rootDirOf(const InstanceId& id) const;
+
+	/* Which configured root contains @p stagingPath, or empty if none do.
+	 *
+	 * The staging directory was created inside its destination root on
+	 * purpose, so this reads the answer back off the path instead of
+	 * trusting a second copy of it to still agree by commit time.
+	 */
+	QString rootForStaging(const QString& stagingPath) const;
+
+	/* Canonicalise, deduplicate and create @p dirs.
+	 *
+	 * Resolution only - deliberately kept apart from adopting the result,
+	 * because the caller has to be able to compare the new list against
+	 * the one in use, and act on the old one, before the switch happens.
+	 */
+	QStringList resolveInstanceDirs(const QStringList& dirs) const;
+
+	/* Adopt @p resolved as the configured roots, moving the filesystem
+	 * watcher onto them. */
+	void applyInstanceDirs(const QStringList& resolved);
+
   private:
 	int m_watchLevel = 0;
 	int totalPlayTime = 0;
@@ -282,7 +368,17 @@ class InstanceList : public QAbstractListModel
 	QSet<QString> m_groupNameCache;
 
 	SettingsObjectPtr m_globalSettings;
-	QString m_instDir;
+	/// Instance roots, canonical and deduplicated, primary first.
+	QStringList m_instDirs;
+	/* Which root each discovered instance lives in.
+	 *
+	 * Instance ids are directory names, so the same id can exist in two
+	 * roots; discoverInstances() keeps the first it sees and this map is
+	 * what every later path calculation goes through, instead of assuming
+	 * one folder. Rebuilt from scratch on every discovery pass - a stale
+	 * entry would point an instance at the wrong disk.
+	 */
+	QHash<InstanceId, QString> m_instanceRootDirMap;
 	QFileSystemWatcher* m_watcher;
 	// FIXME: this is so inefficient that looking at it is almost painful.
 	QSet<QString> m_collapsedGroups;

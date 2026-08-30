@@ -2350,6 +2350,12 @@ void MainWindow::addInstance(QString url)
 
 	APPLICATION->settings()->set("LastUsedGroupForNewInstance",
 								 newInstDlg.instGroup());
+	/* Remembered alongside the group, and for the same reason: somebody
+	 * installing several packs onto a second disk should not have to
+	 * re-pick the folder each time. Recorded only once the dialog was
+	 * accepted, so browsing and cancelling moves nothing. */
+	APPLICATION->settings()->set("LastUsedInstDirForNewInstance",
+								 newInstDlg.instDir());
 
 	InstanceTask* creationTask = newInstDlg.extractTask();
 	if (creationTask) {
@@ -2491,8 +2497,12 @@ void MainWindow::on_actionViewLauncherRootFolder_triggered()
 
 void MainWindow::on_actionViewInstanceFolder_triggered()
 {
-	QString str = APPLICATION->settings()->get("InstanceDir").toString();
-	DesktopServices::openDirectory(str);
+	/* The primary folder, asked of the list rather than read back out of
+	 * the setting: the setting may be a relative path, while the list has
+	 * already resolved it against the working directory and confirmed it
+	 * exists. With several folders configured this opens the one new
+	 * instances go to, which is the one this action has always meant. */
+	DesktopServices::openDirectory(APPLICATION->instances()->primaryDir());
 }
 
 void MainWindow::refreshInstances()

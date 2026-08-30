@@ -94,6 +94,19 @@ NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 	ui->groupBox->setCurrentIndex(index);
 	ui->groupBox->lineEdit()->setPlaceholderText(tr("No group"));
 
+	refreshInstDirBox();
+	/* Reopen on the folder used last time.
+	 *
+	 * Someone who keeps their packs on a second disk installs several in a
+	 * row, and defaulting back to the primary folder every time makes each
+	 * one a chance to forget. Falling back to index 0 covers the folder
+	 * having been removed from the settings since.
+	 */
+	const QString lastUsedDir =
+		APPLICATION->settings()->get("LastUsedInstDirForNewInstance").toString();
+	const int lastUsedIdx = ui->instDirBox->findData(lastUsedDir);
+	ui->instDirBox->setCurrentIndex(lastUsedIdx >= 0 ? lastUsedIdx : 0);
+
 	// NOTE: m_buttons must be initialized before PageContainer, because it
 	// indirectly accesses m_buttons through setSuggestedPack! Do not move
 	// this below.
@@ -211,6 +224,40 @@ void NewInstanceDialog::setSuggestedIcon(const QString& key)
 	ui->iconButton->setIcon(icon);
 }
 
+void NewInstanceDialog::refreshInstDirBox()
+{
+	/* Keep whatever was selected across a refresh, matched by path rather
+	 * than by row: the folder list can gain or lose entries while the
+	 * dialog is open, and a remembered row number would then point at a
+	 * different folder than the one the user chose. */
+	const QString previouslySelected = ui->instDirBox->currentData().toString();
+	ui->instDirBox->clear();
+
+	/* The primary folder is labelled with the setting as the user wrote it,
+	 * not with the resolved path it stands for. "Default (instances)" is
+	 * what they typed and recognise; the absolute path it expands to is
+	 * long, repeats the data folder they already know, and tells them
+	 * nothing they asked. The resolved path is still what gets selected -
+	 * it is carried in the item's data. */
+	const QString rawPrimary =
+		APPLICATION->settings()->get("InstanceDir").toString();
+
+	const QStringList dirs = APPLICATION->instances()->instanceDirs();
+	for (int i = 0; i < dirs.size(); i++) {
+		const QString& dir = dirs.at(i);
+		ui->instDirBox->addItem(
+			i == 0 ? tr("Default (%1)").arg(rawPrimary) : dir, dir);
+	}
+
+	const int idx = ui->instDirBox->findData(previouslySelected);
+	ui->instDirBox->setCurrentIndex(idx >= 0 ? idx : 0);
+}
+
+QString NewInstanceDialog::instDir() const
+{
+	return ui->instDirBox->currentData().toString();
+}
+
 InstanceTask* NewInstanceDialog::extractTask()
 {
 	InstanceTask* extracted = creationTask.get();
@@ -218,6 +265,10 @@ InstanceTask* NewInstanceDialog::extractTask()
 	extracted->setName(instName());
 	extracted->setGroup(instGroup());
 	extracted->setIcon(iconKey());
+	/* Set here rather than at each of the pages that build a task: this is
+	 * the one funnel every creation path goes through, so a new page cannot
+	 * forget to carry the folder over. */
+	extracted->setTargetDir(instDir());
 	return extracted;
 }
 

@@ -54,7 +54,9 @@
 #include <QUuid>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonParseError>
 #include <QMimeData>
+#include <algorithm>
 
 #include "InstanceList.h"
 #include "BaseInstance.h"
@@ -69,26 +71,136 @@
 
 const static int GROUP_FILE_FORMAT_VERSION = 1;
 
-InstanceList::InstanceList(SettingsObjectPtr settings, const QString& instDir,
-						   QObject* parent)
+InstanceList::InstanceList(SettingsObjectPtr settings,
+						   const QStringList& instDirs, QObject* parent)
 	: QAbstractListModel(parent), m_globalSettings(settings)
 {
 	resumeWatch();
-	// Create aand normalize path
-	if (!QDir::current().exists(instDir)) {
-		QDir::current().mkpath(instDir);
-	}
 
 	connect(this, &InstanceList::instancesChanged, this,
 			&InstanceList::providerUpdated);
 
-	// NOTE: canonicalPath requires the path to exist. Do not move this above
-	// the creation block!
-	m_instDir = QDir(instDir).canonicalPath();
 	m_watcher = new QFileSystemWatcher(this);
 	connect(m_watcher, &QFileSystemWatcher::directoryChanged, this,
 			&InstanceList::instanceDirContentsChanged);
-	m_watcher->addPath(m_instDir);
+
+	applyInstanceDirs(resolveInstanceDirs(instDirs));
+}
+
+QStringList InstanceList::resolveInstanceDirs(const QStringList& dirs) const
+{
+	QStringList resolved;
+	for (const QString& dir : dirs) {
+		if (dir.isEmpty()) {
+			continue;
+		}
+		/* Create before canonicalising: canonicalPath() answers about the
+		 * filesystem and returns nothing for a path that is not there, so
+		 * the order here is load-bearing rather than stylistic. */
+		if (!QDir::current().exists(dir) && !QDir::current().mkpath(dir)) {
+			qWarning() << "Ignoring instance folder" << dir
+					   << "- it does not exist and could not be created";
+			continue;
+		}
+		const QString canonical = QDir(dir).canonicalPath();
+		if (canonical.isEmpty()) {
+			qWarning() << "Ignoring instance folder" << dir
+					   << "- could not be resolved";
+			continue;
+		}
+		/* Two settings pointing at one folder, or a path spelled two ways,
+		 * would otherwise make every instance in it a duplicate of itself
+		 * and get skipped by discovery. */
+		if (resolved.contains(canonical)) {
+			qDebug() << "Ignoring duplicate instance folder" << dir;
+			continue;
+		}
+		resolved << canonical;
+	}
+	return resolved;
+}
+
+void InstanceList::applyInstanceDirs(const QStringList& resolved)
+{
+	for (const QString& dir : m_instDirs) {
+		m_watcher->removePath(dir);
+	}
+	m_instDirs = resolved;
+	for (const QString& dir : m_instDirs) {
+		m_watcher->addPath(dir);
+	}
+	qDebug() << "Instance folders:" << m_instDirs;
+}
+
+QString InstanceList::rootDirOf(const InstanceId& id) const
+{
+	return m_instanceRootDirMap.value(id, primaryDir());
+}
+
+QStringList InstanceList::decodeInstanceDirList(const QVariant& value)
+{
+	/* A genuine QStringList is accepted as well as the encoded form.
+	 *
+	 * Nothing writes the setting that way, but a value set and read back
+	 * within one session never passes through the INI file at all, and a
+	 * config edited by hand can be either. Dropping the user's folders
+	 * over that distinction would be a poor trade for strictness.
+	 */
+	if (value.metaType().id() == QMetaType::QStringList) {
+		return value.toStringList();
+	}
+
+	const QString encoded = value.toString().trimmed();
+	if (encoded.isEmpty()) {
+		return {};
+	}
+
+	QJsonParseError error;
+	const QJsonDocument doc = QJsonDocument::fromJson(encoded.toUtf8(), &error);
+	if (error.error != QJsonParseError::NoError || !doc.isArray()) {
+		qWarning() << "Could not read the additional instance folders setting"
+				   << "-" << error.errorString()
+				   << "- ignoring it rather than guessing";
+		return {};
+	}
+
+	QStringList out;
+	const QJsonArray array = doc.array();
+	for (const QJsonValue& entry : array) {
+		const QString dir = entry.toString();
+		if (!dir.isEmpty()) {
+			out << dir;
+		}
+	}
+	return out;
+}
+
+QVariant InstanceList::encodeInstanceDirList(const QStringList& dirs)
+{
+	QJsonArray array;
+	for (const QString& dir : dirs) {
+		if (!dir.isEmpty()) {
+			array.append(dir);
+		}
+	}
+	return QString::fromUtf8(
+		QJsonDocument(array).toJson(QJsonDocument::Compact));
+}
+
+QString InstanceList::rootForStaging(const QString& stagingPath) const
+{
+	if (stagingPath.isEmpty()) {
+		return QString();
+	}
+	const QString absolute = QFileInfo(stagingPath).absoluteFilePath();
+	for (const QString& dir : m_instDirs) {
+		/* The separator is not decoration: without it "/data/instances"
+		 * would claim a staging path under "/data/instances-backup". */
+		if (absolute.startsWith(dir + QLatin1Char('/'))) {
+			return dir;
+		}
+	}
+	return QString();
 }
 
 InstanceList::~InstanceList() {}
@@ -493,30 +605,58 @@ getIdMapping(const QList<InstancePtr>& list)
 
 QList<InstanceId> InstanceList::discoverInstances()
 {
-	qDebug() << "Discovering instances in" << m_instDir;
 	QList<InstanceId> out;
-	QDirIterator iter(m_instDir,
-					  QDir::Dirs | QDir::NoDot | QDir::NoDotDot |
-						  QDir::Readable | QDir::Hidden,
-					  QDirIterator::FollowSymlinks);
-	while (iter.hasNext()) {
-		QString subDir = iter.next();
-		QFileInfo dirInfo(subDir);
-		if (!QFileInfo(FS::PathCombine(subDir, "instance.cfg")).exists())
-			continue;
-		// if it is a symlink, ignore it if it goes to the instance folder
-		if (dirInfo.isSymLink()) {
-			QFileInfo targetInfo(dirInfo.symLinkTarget());
-			QFileInfo instDirInfo(m_instDir);
-			if (targetInfo.canonicalPath() == instDirInfo.canonicalFilePath()) {
-				qDebug() << "Ignoring symlink" << subDir
-						 << "that leads into the instances folder";
+	m_instanceRootDirMap.clear();
+
+	for (const QString& rootDir : m_instDirs) {
+		qDebug() << "Discovering instances in" << rootDir;
+		QDirIterator iter(rootDir,
+						  QDir::Dirs | QDir::NoDot | QDir::NoDotDot |
+							  QDir::Readable | QDir::Hidden,
+						  QDirIterator::FollowSymlinks);
+		while (iter.hasNext()) {
+			QString subDir = iter.next();
+			QFileInfo dirInfo(subDir);
+			if (!QFileInfo(FS::PathCombine(subDir, "instance.cfg")).exists())
+				continue;
+			/* A symlink pointing into any configured root is the same
+			 * instance reached a second way, not a second instance.
+			 * Checking only the root being walked would let a link in one
+			 * folder resurrect an instance from another as a phantom
+			 * duplicate. */
+			if (dirInfo.isSymLink()) {
+				const QString targetCanonical =
+					QFileInfo(dirInfo.symLinkTarget()).canonicalFilePath();
+				const bool pointsIntoAnyRoot = std::any_of(
+					m_instDirs.cbegin(), m_instDirs.cend(),
+					[&targetCanonical](const QString& otherRoot) {
+						return targetCanonical.startsWith(
+							QFileInfo(otherRoot).canonicalFilePath());
+					});
+				if (pointsIntoAnyRoot) {
+					qDebug() << "Ignoring symlink" << subDir
+							 << "that leads into a configured instance folder";
+					continue;
+				}
+			}
+			auto id = dirInfo.fileName();
+			/* Ids are directory names, so two roots can each hold one
+			 * called "1.20.1". Only one can win, because everything else
+			 * - the group index, shortcuts, play time - keys off the id
+			 * alone. First root wins, which makes the outcome depend on
+			 * the configured order rather than on directory iteration,
+			 * and the loser is reported rather than silently missing. */
+			if (m_instanceRootDirMap.contains(id)) {
+				qWarning() << "Duplicate instance ID" << id << "found in"
+						   << rootDir << "- already claimed by"
+						   << m_instanceRootDirMap.value(id)
+						   << ". Skipping the copy in" << rootDir;
 				continue;
 			}
+			m_instanceRootDirMap[id] = rootDir;
+			out.append(id);
+			qDebug() << "Found instance ID" << id << "in" << rootDir;
 		}
-		auto id = dirInfo.fileName();
-		out.append(id);
-		qDebug() << "Found instance ID" << id;
 	}
 	instanceSet = QSet<QString>(out.begin(), out.end());
 	m_instancesProbed = true;
@@ -726,7 +866,7 @@ InstancePtr InstanceList::loadInstance(const InstanceId& id)
 		loadGroupList();
 	}
 
-	auto instanceRoot = FS::PathCombine(m_instDir, id);
+	auto instanceRoot = FS::PathCombine(rootDirOf(id), id);
 	auto instanceSettings = std::make_shared<INISettingsObject>(
 		FS::PathCombine(instanceRoot, "instance.cfg"));
 	InstancePtr inst;
@@ -758,8 +898,20 @@ void InstanceList::saveGroupList()
 					"list of instances yet.";
 		return;
 	}
-	WatchLock foo(m_watcher, m_instDir);
-	QString groupFileName = m_instDir + "/instgroups.json";
+	/* The group file lives in the data folder, not inside an instance
+	 * folder.
+	 *
+	 * Grouping is not per-folder data - an instance in a secondary folder
+	 * can share a group with one from the primary, so a file per root
+	 * could not express it. Keeping the single file in the primary folder
+	 * instead, which is what this used to do, ties it to a folder the user
+	 * is free to repoint, and repointing it then loses every group.
+	 *
+	 * No WatchLock any more: the path is no longer inside a watched
+	 * instance folder, so writing it cannot trip the directory watcher
+	 * into a rescan and there is nothing to suspend.
+	 */
+	QString groupFileName = QDir::current().filePath("instgroups.json");
 	QMap<QString, QSet<QString>> reverseGroupMap;
 	for (auto iter = m_instanceGroupIndex.begin();
 		 iter != m_instanceGroupIndex.end(); iter++) {
@@ -812,11 +964,43 @@ void InstanceList::loadGroupList()
 {
 	qDebug() << "Will load group list now.";
 
-	QString groupFileName = m_instDir + "/instgroups.json";
+	QString groupFileName = QDir::current().filePath("instgroups.json");
 
-	// if there's no group file, fail
-	if (!QFileInfo(groupFileName).exists())
-		return;
+	/* Start from nothing.
+	 *
+	 * This runs again whenever the folder settings change, and without
+	 * clearing first, the indices would accumulate: groups for instances
+	 * that no longer exist, and collapsed-state for groups that are gone.
+	 * The file is the whole truth about grouping, so re-reading it should
+	 * replace what we hold rather than add to it.
+	 */
+	m_instanceGroupIndex.clear();
+	m_groupNameCache.clear();
+	m_collapsedGroups.clear();
+
+	bool migratingLegacyGroups = false;
+
+	/* No file in the data folder? Look where it used to live.
+	 *
+	 * The group file was kept inside the primary instance folder until the
+	 * launcher learned about more than one of them. Reading the old path
+	 * once, and writing the result back to the new one at the end of this
+	 * function, is what stops an upgrade from looking like every group the
+	 * user ever made was deleted. The old file is left alone rather than
+	 * removed: it costs nothing and it is the only copy if anything about
+	 * this goes wrong.
+	 */
+	if (!QFileInfo::exists(groupFileName)) {
+		QString legacyGroupFileName =
+			FS::PathCombine(primaryDir(), "instgroups.json");
+		if (!QFileInfo::exists(legacyGroupFileName)) {
+			return;
+		}
+		qInfo() << "Migrating instance groups from legacy location"
+				<< legacyGroupFileName;
+		groupFileName = legacyGroupFileName;
+		migratingLegacyGroups = true;
+	}
 
 	QByteArray jsonData;
 	try {
@@ -903,6 +1087,19 @@ void InstanceList::loadGroupList()
 	m_groupsLoaded = true;
 	m_groupNameCache.unite(groupSet);
 	qDebug() << "Group list loaded.";
+
+	/* Having read the old file, write the new one.
+	 *
+	 * Done here rather than left to the next thing that happens to save,
+	 * so that the migration completes on the launch that noticed it - if
+	 * it waited for the user to rename a group, a crash in between would
+	 * leave the groups only in a location nothing reads any more.
+	 *
+	 * m_groupsLoaded is already true, so this cannot recurse.
+	 */
+	if (migratingLegacyGroups) {
+		saveGroupList();
+	}
 }
 
 void InstanceList::instanceDirContentsChanged(const QString& path)
@@ -914,15 +1111,43 @@ void InstanceList::instanceDirContentsChanged(const QString& path)
 void InstanceList::on_InstFolderChanged(const Setting& setting, QVariant value)
 {
 	(void)setting;
-	QString newInstDir = QDir(value.toString()).canonicalPath();
-	if (newInstDir != m_instDir) {
-		if (m_groupsLoaded) {
-			saveGroupList();
-		}
-		m_instDir = newInstDir;
-		m_groupsLoaded = false;
-		emit instancesChanged();
+	(void)value;
+	/* Both folder settings are re-read rather than the changed one being
+	 * applied on its own.
+	 *
+	 * This slot is connected to "InstanceDir" and to
+	 * "AdditionalInstanceDirs", and the roots are an ordered set built
+	 * from the pair - the primary decides where new instances and the
+	 * group file go, so a change to either has to be resolved against the
+	 * other. Taking the value argument alone cannot do that, and there is
+	 * nothing to gain by trying: reading a setting is cheap next to the
+	 * rescan this triggers.
+	 */
+	QStringList dirs;
+	dirs << m_globalSettings->get("InstanceDir").toString();
+	dirs << decodeInstanceDirList(
+		m_globalSettings->get("AdditionalInstanceDirs"));
+
+	const QStringList resolved = resolveInstanceDirs(dirs);
+	if (resolved == m_instDirs) {
+		return;
 	}
+
+	/* Flush the groups before the switch, not after.
+	 *
+	 * saveGroupList() writes to primaryDir(), so once the new list is in
+	 * place it would write the current groups into the *new* primary
+	 * folder - inventing a group file there and leaving the folder the
+	 * user is moving away from with a stale one. Saving first puts them
+	 * back where they came from.
+	 */
+	if (m_groupsLoaded) {
+		saveGroupList();
+	}
+
+	applyInstanceDirs(resolved);
+	m_groupsLoaded = false;
+	emit instancesChanged();
 }
 
 void InstanceList::on_GroupStateChanged(const QString& group, bool collapsed)
@@ -990,7 +1215,11 @@ class InstanceStaging : public Task
 	}
 	QStringList warnings() const override
 	{
-		return m_child->warnings();
+		/* Both halves of the job: what the task ran into while building
+		 * the instance, and what went wrong while putting it in place.
+		 * The second only exists here, because committing happens after
+		 * the task has already finished. */
+		return m_child->warnings() + m_commitWarnings;
 	}
 	bool isMultiStep() const override
 	{
@@ -1022,9 +1251,14 @@ class InstanceStaging : public Task
 		const QStringList filesToRemove =
 			m_instanceTask->filesToRemoveAfterCommit();
 
+		/* Cleared first: this slot runs again on every backoff retry,
+		 * and a warning from an attempt that was then retried should not
+		 * be reported twice - or at all, if the retry got further. */
+		m_commitWarnings.clear();
+
 		if (m_parent->commitStagedInstance(m_stagingPath, instanceName,
 										   m_groupName, overrideInstanceId,
-										   filesToRemove)) {
+										   filesToRemove, &m_commitWarnings)) {
 			emitSucceeded();
 			return;
 		}
@@ -1062,11 +1296,29 @@ class InstanceStaging : public Task
 	 * answer. Ownership stays with m_child. */
 	InstanceTask* m_instanceTask = nullptr;
 	QTimer m_backoffTimer;
+	/* Problems the commit itself ran into that are worth telling the
+	 * user about without failing the whole thing. Merged into
+	 * warnings(), which is where the caller looks after we succeed. */
+	QStringList m_commitWarnings;
 };
 
 Task* InstanceList::wrapInstanceTask(InstanceTask* task)
 {
-	auto stagingPath = getStagedInstancePath();
+	QString targetDir = task->targetDir();
+	if (targetDir.isEmpty() && task->shouldOverride()) {
+		/* An update is staged in the folder its instance already lives in,
+		 * not in the primary one.
+		 *
+		 * Committing an override merges the staged tree over the existing
+		 * instance, so staging elsewhere would make every pack update of
+		 * an instance in a secondary folder a cross-filesystem copy of the
+		 * whole pack. The caller is updating a specific instance and has
+		 * no reason to know which disk it sits on, so this is worked out
+		 * here rather than pushed onto them.
+		 */
+		targetDir = rootDirOf(task->overrideInstanceId());
+	}
+	auto stagingPath = getStagedInstancePath(targetDir);
 	task->setStagingPath(stagingPath);
 	task->setParentSettings(m_globalSettings);
 	/* The group is settled before wrapping and does not change; the name
@@ -1075,12 +1327,36 @@ Task* InstanceList::wrapInstanceTask(InstanceTask* task)
 	return new InstanceStaging(this, task, stagingPath, task->group());
 }
 
-QString InstanceList::getStagedInstancePath()
+QString InstanceList::getStagedInstancePath(const QString& targetDir)
 {
+	QString root = primaryDir();
+	if (!targetDir.isEmpty()) {
+		/* Refuse rather than fall back to the primary folder. A target
+		 * that is not configured means either a caller bug or a folder the
+		 * user removed from the settings while this task sat in the queue;
+		 * quietly installing somewhere else is the one outcome nobody
+		 * asked for, and it would be discovered much later. */
+		if (!m_instDirs.contains(targetDir)) {
+			qCritical() << "Requested instance folder" << targetDir
+						<< "is not one of the configured folders";
+			return QString();
+		}
+		if (!QDir(targetDir).exists()) {
+			qCritical() << "Requested instance folder" << targetDir
+						<< "is configured but not accessible on disk";
+			return QString();
+		}
+		root = targetDir;
+	}
+	if (root.isEmpty()) {
+		qCritical() << "No usable instance folder to stage into";
+		return QString();
+	}
+
 	QString key = QUuid::createUuid().toString();
 	QString relPath = FS::PathCombine("_MESHMC_TEMP/", key);
-	QDir rootPath(m_instDir);
-	auto path = FS::PathCombine(m_instDir, relPath);
+	QDir rootPath(root);
+	auto path = FS::PathCombine(root, relPath);
 	if (!rootPath.mkpath(relPath)) {
 		return QString();
 	}
@@ -1091,17 +1367,35 @@ bool InstanceList::commitStagedInstance(const QString& path,
 										const QString& instanceName,
 										const QString& groupName,
 										const QString& overrideInstanceId,
-										const QStringList& filesToRemove)
+										const QStringList& filesToRemove,
+										QStringList* removalWarnings)
 {
 	const bool isOverride = !overrideInstanceId.isEmpty();
 
+	/* Which folder this instance is landing in.
+	 *
+	 * For an override it is wherever the instance already is - moving it
+	 * between folders is not what updating a pack means. For a new
+	 * instance it is the folder the staging directory is already inside,
+	 * read back off the path rather than taken from the task a second
+	 * time: committing is a rename, and a rename only stays a rename
+	 * while both ends are on one filesystem. Deriving the destination
+	 * from the source is what guarantees that.
+	 */
+	const QString root = isOverride ? rootDirOf(overrideInstanceId)
+									: rootForStaging(path);
+	if (root.isEmpty()) {
+		qWarning() << "Cannot commit" << path
+				   << "- no configured instance folder contains it";
+		return false;
+	}
+
 	QDir dir;
-	QString instID = isOverride
-						 ? overrideInstanceId
-						 : FS::DirNameFromString(instanceName, m_instDir);
+	QString instID = isOverride ? overrideInstanceId
+								: FS::DirNameFromString(instanceName, root);
 	{
-		WatchLock lock(m_watcher, m_instDir);
-		QString destination = FS::PathCombine(m_instDir, instID);
+		WatchLock lock(m_watcher, root);
+		QString destination = FS::PathCombine(root, instID);
 
 		if (isOverride) {
 			/* Merge over the instance that is already there, so that
@@ -1155,13 +1449,25 @@ bool InstanceList::commitStagedInstance(const QString& path,
 			 * instance is already updated and consistent; a leftover jar
 			 * is a problem to tell the user about, not a reason to
 			 * declare the whole update failed and leave them with no
-			 * idea what state they are in. */
+			 * idea what state they are in.
+			 *
+			 * Told to the user, though, and not only to the log: a mod
+			 * the new version does not include is still going to be
+			 * loaded by the game, so an update that could not remove one
+			 * has not entirely happened. Only the user can free the file
+			 * and only if they know about it. */
 			for (const QString& path : filesToRemove) {
 				if (!QFileInfo::exists(path)) {
 					continue;
 				}
 				if (!FS::deletePath(path)) {
 					qWarning() << "Could not remove obsolete file" << path;
+					if (removalWarnings) {
+						removalWarnings->append(
+							tr("Could not remove a file the updated pack no "
+							   "longer includes: %1")
+								.arg(QDir::toNativeSeparators(path)));
+					}
 				} else {
 					qDebug() << "Removed obsolete file" << path;
 				}
@@ -1176,6 +1482,12 @@ bool InstanceList::commitStagedInstance(const QString& path,
 		}
 
 		instanceSet.insert(instID);
+		/* Record the folder now, rather than waiting for the next
+		 * discovery pass. Everything between here and that pass - loading
+		 * the instance so it can be selected, most immediately - asks
+		 * rootDirOf() for its path, and without this it would be answered
+		 * with the primary folder and look in the wrong place. */
+		m_instanceRootDirMap[instID] = root;
 		emit instancesChanged();
 		emit instanceSelectRequest(instID);
 	}

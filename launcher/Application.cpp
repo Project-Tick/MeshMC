@@ -923,6 +923,26 @@ void Application::initSettings()
 
 	// Folders
 	m_settings->registerSetting("InstanceDir", "instances");
+	/* Extra instance folders, searched after the primary one.
+	 *
+	 * Instances found in these are listed and launched exactly like the
+	 * ones in "InstanceDir"; the primary folder keeps its special roles -
+	 * it is the default destination for new instances, and it holds the
+	 * group file. Empty by default, so a launcher nobody has configured
+	 * behaves exactly as it did when there was only one folder.
+	 *
+	 * Held as a JSON array in a single string, not as a QStringList:
+	 * INIFile saves every value through QVariant::toString(), which is
+	 * empty for a multi-element list, so a list would not survive being
+	 * written and read back. Use InstanceList::decodeInstanceDirList() and
+	 * encodeInstanceDirList() at the boundary rather than touching the
+	 * raw value.
+	 */
+	m_settings->registerSetting("AdditionalInstanceDirs", QString());
+	/* Which folder the new-instance dialog opens on. A single path, so it
+	 * needs no encoding; empty until the user has created something, which
+	 * the dialog reads as "the primary folder". */
+	m_settings->registerSetting("LastUsedInstDirForNewInstance", QString());
 	m_settings->registerSetting({"CentralModsDir", "ModsDir"}, "mods");
 	m_settings->registerSetting("IconsDir", "icons");
 	m_settings->registerSetting("SkinsDir", "skins");
@@ -1197,17 +1217,35 @@ void Application::initSubsystems()
 	// initialize and load all instances
 	{
 		auto InstDirSetting = m_settings->getSetting("InstanceDir");
+		auto AdditionalInstDirsSetting =
+			m_settings->getSetting("AdditionalInstanceDirs");
+
+		QStringList instDirs;
+		instDirs << InstDirSetting->get().toString();
+		instDirs << InstanceList::decodeInstanceDirList(
+			AdditionalInstDirsSetting->get());
+
 		// instance path: check for problems with '!' in instance path and
 		// warn the user in the log and remember that we have to show him a
 		// dialog when the gui starts (if it does so)
-		QString instDir = InstDirSetting->get().toString();
+		/* Every folder is checked, not just the primary one: the '!' problem
+		 * is Java's and it does not care which of our folders the instance
+		 * it was handed came out of. */
+		for (const QString& instDir : instDirs) {
 		qDebug() << "Instance path              : " << instDir;
 		if (FS::checkProblemticPathJava(QDir(instDir))) {
-			qWarning() << "Your instance path contains \'!\' and this is "
+				qWarning() << "Your instance path" << instDir
+						   << "contains \'!\' and this is "
 						  "known to cause java problems!";
 		}
-		m_instances.reset(new InstanceList(m_settings, instDir, this));
+		}
+
+		m_instances.reset(new InstanceList(m_settings, instDirs, this));
 		connect(InstDirSetting.get(), &Setting::SettingChanged,
+				m_instances.get(), &InstanceList::on_InstFolderChanged);
+		/* The same slot for both settings: it re-reads the pair and rebuilds
+		 * the folder list, because which folder is primary depends on both. */
+		connect(AdditionalInstDirsSetting.get(), &Setting::SettingChanged,
 				m_instances.get(), &InstanceList::on_InstFolderChanged);
 		qDebug() << "Loading Instances...";
 		m_instances->loadList();
