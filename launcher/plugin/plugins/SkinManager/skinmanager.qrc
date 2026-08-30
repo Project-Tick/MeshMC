@@ -14,13 +14,13 @@
   bundling the shaders into the plugin's resource segment we make the
   paths reliable without touching the launcher's build.
 
-  The alias attribute strips the long ../../launcher/resources path
+  The alias attribute strips the long ../../../resources path
   away so the runtime URL stays short:
       :/skinmanager/shaders/vshader_skin_model.glsl
 -->
 <RCC>
   <qresource prefix="/skinmanager/shaders">
-    <file alias="vshader_skin_model.glsl">../../launcher/resources/shaders/vshader_skin_model.glsl</file>
-    <file alias="fshader.glsl">../../launcher/resources/shaders/fshader.glsl</file>
+    <file alias="vshader_skin_model.glsl">../../../resources/shaders/vshader_skin_model.glsl</file>
+    <file alias="fshader.glsl">../../../resources/shaders/fshader.glsl</file>
   </qresource>
 </RCC>

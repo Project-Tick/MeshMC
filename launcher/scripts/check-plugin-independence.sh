@@ -26,9 +26,9 @@
 #   2  — invocation / environment error (e.g. running outside the repo).
 #
 # Usage:
-#   scripts/check-plugin-independence.sh                 # auto-locate build dir
-#   scripts/check-plugin-independence.sh build/          # explicit build dir
-#   scripts/check-plugin-independence.sh --source-only   # skip link-line check
+#   check-plugin-independence.sh                 # auto-locate build dir
+#   check-plugin-independence.sh build/          # explicit build dir
+#   check-plugin-independence.sh --source-only   # skip link-line check
 #
 # The script is **read-only**: it never modifies source, build, or
 # generated files. Safe to wire into pre-commit, CI, and ad-hoc local

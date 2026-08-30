@@ -1470,10 +1470,10 @@ add_subdirectory(buildconfig)
 # Whether the *launcher* offers updates is a separate decision, made by
 # BuildConfig.UPDATER_ENABLED (see buildconfig/BuildConfig.cpp.in).
 if(NOT MeshMC_UPDATER_FEED_URL STREQUAL "")
-    add_subdirectory(updater)
+    add_subdirectory(launcher/updater/MeshMCUpdater)
 endif()
 
-add_subdirectory(crashreporter)
+add_subdirectory(launcher/crashreporter)
 
 # NOTE: this must always be last to appease the CMake deity of quirky install command evaluation order.
 add_subdirectory(launcher)
@@ -1483,5 +1483,5 @@ if(MeshMC_PLUGINS)
     add_subdirectory(launcher/plugin/sdk)
 
     # In-tree .mmco plugins (after launcher so MeshMC_logic target is available)
-    add_subdirectory(plugins)
+    add_subdirectory(launcher/plugin/plugins)
 endif()

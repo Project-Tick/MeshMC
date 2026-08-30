@@ -2346,7 +2346,7 @@ msgstr "Mods downloaden..."
 msgctxt "InstanceImportTask|"
 msgid "Could not understand Modrinth modpack manifest:\n"
 msgstr "Kon Modrinth modpack manifest:\n"
-" niet begrijpen"
+" niet begrijpen\n"
 
 #: launcher/InstanceImportTask.cpp:816
 msgctxt "InstanceImportTask|"

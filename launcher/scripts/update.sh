@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Regenerates locale/template.pot from the sources in this repository.
+# Regenerates launcher/locale/template.pot from the sources in this repository.
 #
 # The translations used to live in a separate repository, where the launcher
 # source tree had to be copied (or symlinked) into ./src first. Now that the
@@ -17,18 +17,18 @@
 set -e
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-REPO=$(CDPATH= cd -- "$ROOT/.." && pwd)
+REPO=$(git -C "$ROOT" rev-parse --show-toplevel)
 
 # Directories scanned for translatable strings, relative to the repository root.
 # Override with e.g. SRC_DIRS="launcher" ./update.sh
-SRC_DIRS=${SRC_DIRS:-"launcher plugins crashreporter updater"}
+SRC_DIRS=${SRC_DIRS:-"$REPO/launcher $REPO/plugins $REPO/launcher/crashreporter $REPO/launcher/updater"}
 
 # plugins/staging/ is gated behind the MeshMC_STAGING_PLUGINS option (off by
 # default), so those strings are not shipped and must not reach translators.
 EXCLUDE_RE=${EXCLUDE_RE:-^plugins/staging/}
 
-TEMPLATE_PO="$ROOT/template.pot"
-BASE_LST_FILE="$ROOT/base_lst_file"
+TEMPLATE_PO="$REPO/launcher/locale/template.pot"
+BASE_LST_FILE="$REPO/base_lst_file"
 
 # lupdate writes source locations relative to the .ts file, and lconvert copies
 # them into the .pot verbatim (its -locations switch is ignored for non-.ts
