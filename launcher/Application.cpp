@@ -366,8 +366,14 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 		initSettings();
 
 		// Load instance list
-		QString instDir = m_settings->get("InstanceDir").toString();
-		m_instances.reset(new InstanceList(m_settings, instDir, this));
+		/* The CLI path lists and exports instances, so it has to see the
+		 * additional folders too - otherwise "list instances" would
+		 * disagree with the window that shows them. */
+		QStringList instDirs;
+		instDirs << m_settings->get("InstanceDir").toString();
+		instDirs << InstanceList::decodeInstanceDirList(
+			m_settings->get("AdditionalInstanceDirs"));
+		m_instances.reset(new InstanceList(m_settings, instDirs, this));
 		m_instances->loadList();
 
 		performCLIAction();
@@ -923,10 +929,52 @@ void Application::initSettings()
 
 	// Folders
 	m_settings->registerSetting("InstanceDir", "instances");
+	/* Extra instance folders, searched after the primary one.
+	 *
+	 * Instances found in these are listed and launched exactly like the
+	 * ones in "InstanceDir"; the primary folder keeps its special roles -
+	 * it is the default destination for new instances, and it holds the
+	 * group file. Empty by default, so a launcher nobody has configured
+	 * behaves exactly as it did when there was only one folder.
+	 *
+	 * Held as a JSON array in a single string, not as a QStringList:
+	 * INIFile saves every value through QVariant::toString(), which is
+	 * empty for a multi-element list, so a list would not survive being
+	 * written and read back. Use InstanceList::decodeInstanceDirList() and
+	 * encodeInstanceDirList() at the boundary rather than touching the
+	 * raw value.
+	 */
+	m_settings->registerSetting("AdditionalInstanceDirs", QString());
+	/* Which folder the new-instance dialog opens on. A single path, so it
+	 * needs no encoding; empty until the user has created something, which
+	 * the dialog reads as "the primary folder". */
+	m_settings->registerSetting("LastUsedInstDirForNewInstance", QString());
 	m_settings->registerSetting({"CentralModsDir", "ModsDir"}, "mods");
 	m_settings->registerSetting("IconsDir", "icons");
 	m_settings->registerSetting("SkinsDir", "skins");
     m_settings->registerSetting("JavaDir", "java");
+
+	/* Whether installing a modpack that is already installed offers to
+	 * update that instance instead of creating a second one.
+	 *
+	 * Phrased as "skip" so that false - the default, and what every
+	 * existing config reads as - means the question gets asked. Anyone
+	 * who deliberately keeps several copies of a pack around is the one
+	 * person for whom the question is only ever noise, and this is how
+	 * they turn it off. */
+	m_settings->registerSetting("SkipModpackUpdatePrompt", false);
+
+	/* Whether creating or updating an instance also fetches the game's
+	 * own files - version metadata, libraries, assets - instead of
+	 * leaving all of it to the first launch.
+	 *
+	 * On by default: the download happens either way, and doing it while
+	 * the user is already waiting for an install to finish is time they
+	 * have agreed to spend. The alternative is that the first launch of a
+	 * freshly installed pack is the slow one, which is the worst moment
+	 * for it. */
+	m_settings->registerSetting("DownloadGameFilesDuringInstanceCreation",
+								true);
 
 	// Editors
 	m_settings->registerSetting("JsonEditor", QString());
@@ -1197,17 +1245,35 @@ void Application::initSubsystems()
 	// initialize and load all instances
 	{
 		auto InstDirSetting = m_settings->getSetting("InstanceDir");
+		auto AdditionalInstDirsSetting =
+			m_settings->getSetting("AdditionalInstanceDirs");
+
+		QStringList instDirs;
+		instDirs << InstDirSetting->get().toString();
+		instDirs << InstanceList::decodeInstanceDirList(
+			AdditionalInstDirsSetting->get());
+
 		// instance path: check for problems with '!' in instance path and
 		// warn the user in the log and remember that we have to show him a
 		// dialog when the gui starts (if it does so)
-		QString instDir = InstDirSetting->get().toString();
-		qDebug() << "Instance path              : " << instDir;
-		if (FS::checkProblemticPathJava(QDir(instDir))) {
-			qWarning() << "Your instance path contains \'!\' and this is "
-						  "known to cause java problems!";
+		/* Every folder is checked, not just the primary one: the '!' problem
+		 * is Java's and it does not care which of our folders the instance
+		 * it was handed came out of. */
+		for (const QString& instDir : instDirs) {
+			qDebug() << "Instance path              : " << instDir;
+			if (FS::checkProblemticPathJava(QDir(instDir))) {
+				qWarning() << "Your instance path" << instDir
+						   << "contains \'!\' and this is "
+							  "known to cause java problems!";
+			}
 		}
-		m_instances.reset(new InstanceList(m_settings, instDir, this));
+
+		m_instances.reset(new InstanceList(m_settings, instDirs, this));
 		connect(InstDirSetting.get(), &Setting::SettingChanged,
+				m_instances.get(), &InstanceList::on_InstFolderChanged);
+		/* The same slot for both settings: it re-reads the pair and rebuilds
+		 * the folder list, because which folder is primary depends on both. */
+		connect(AdditionalInstDirsSetting.get(), &Setting::SettingChanged,
 				m_instances.get(), &InstanceList::on_InstFolderChanged);
 		qDebug() << "Loading Instances...";
 		m_instances->loadList();

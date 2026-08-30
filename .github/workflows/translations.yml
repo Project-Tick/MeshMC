@@ -3,7 +3,7 @@ name: Build Translations and Serve
 on:
   push:
     branches:
-      - "master"
+      - "develop"
   workflow_dispatch:
 
 permissions:
@@ -35,7 +35,7 @@ jobs:
 
       - name: Build translations
         working-directory: locale
-        run: ./release.sh
+        run: ./launcher/locale/release.sh
 
       - name: Move directory
         run: |

@@ -73,6 +73,16 @@ class ModMetadataIndex
 		QString side; /* "client" | "server" | "both" | "" if unknown    */
 		QString downloadUrl;
 
+		/* The version as a person reads it - "1.1.1+1.17" - kept apart
+		 * from versionId, which is the platform's own opaque handle.
+		 *
+		 * They are not interchangeable and the two used to be confused: a
+		 * Modrinth download URL spells out the number and carries no id
+		 * at all, so a file installed from an mrpack has only this. Held
+		 * separately so that it can be shown to the user without ever
+		 * being sent somewhere an id is expected. */
+		QString versionNumber;
+
 		/* The SHA-1 we recorded for the file, and the digest the sidecar
 		 * carries verbatim.
 		 *
@@ -136,6 +146,19 @@ class ModMetadataIndex
 	/* Remove sidecar associated with `fileName`. Returns true if a sidecar
 	 * existed and was deleted. */
 	bool remove(const QString& fileName);
+
+	/* The absolute path of the sidecar that describes `fileName`, or an
+	 * empty string when nothing loaded from this folder does.
+	 *
+	 * For callers that have to *schedule* a removal rather than perform
+	 * one: a modpack update deletes the files it no longer ships only
+	 * once the new version is safely in place, and the sidecar of a file
+	 * that is going belongs on the same list. Read out here rather than
+	 * rebuilt by the caller, because the sidecar's name comes from the
+	 * project's slug and cannot be derived from the file name.
+	 *
+	 * Requires load() to have run. */
+	QString sidecarPathFor(const QString& fileName) const;
 
 	/* Move sidecar to follow a renamed file. Used when a mod is toggled
 	 * (`foo.jar` <-> `foo.jar.disabled`) or otherwise renamed in place. */

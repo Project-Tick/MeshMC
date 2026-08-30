@@ -229,6 +229,70 @@ namespace FS
 		return QFile::moveToTrash(path, pathInTrash);
 	}
 
+	bool overrideFolder(const QString& destination, const QString& source)
+	{
+		if (!ensureFolderPathExists(destination)) {
+			qWarning() << "Cannot create override destination" << destination;
+			return false;
+		}
+
+		const QDir sourceDir(source);
+		if (!sourceDir.exists()) {
+			qWarning() << "Override source" << source << "does not exist";
+			return false;
+		}
+
+		const auto entries = sourceDir.entryInfoList(
+			QDir::NoDotAndDotDot | QDir::System | QDir::Hidden |
+				QDir::AllDirs | QDir::Files,
+			QDir::DirsFirst);
+
+		for (const QFileInfo& entry : entries) {
+			const QString target =
+				PathCombine(destination, entry.fileName());
+
+			if (entry.isDir() && !entry.isSymLink()) {
+				/* Recurse rather than move the directory wholesale: the
+				 * destination almost certainly has a directory of the
+				 * same name (every pack ships "mods", every instance
+				 * already has one) and moving onto an existing
+				 * directory fails. Merging is the entire point. */
+				if (!overrideFolder(target, entry.absoluteFilePath())) {
+					return false;
+				}
+				continue;
+			}
+
+			/* QFile::rename refuses to clobber, so anything already
+			 * there has to go first. This is the case that makes an
+			 * update an update: the pack's own files are replaced. */
+			if (QFileInfo::exists(target) && !deletePath(target)) {
+				qWarning() << "Cannot replace" << target;
+				return false;
+			}
+
+			if (!QFile::rename(entry.absoluteFilePath(), target)) {
+				/* Across filesystems rename fails and there is nothing
+				 * to be gained by pretending otherwise -- the staging
+				 * directory lives under the instance root precisely so
+				 * that this stays a rename. */
+				qWarning() << "Cannot move" << entry.absoluteFilePath()
+						   << "to" << target;
+				return false;
+			}
+		}
+
+		/* Whatever is left is empty directories we have just drained. */
+		if (!deletePath(source)) {
+			/* Not fatal: the merge itself succeeded and the instance is
+			 * consistent. A leftover staging directory is litter, not
+			 * corruption, so say so and carry on. */
+			qWarning() << "Merged" << source << "but could not remove it";
+		}
+
+		return true;
+	}
+
 	bool deletePath(QString path)
 	{
 		bool OK = true;

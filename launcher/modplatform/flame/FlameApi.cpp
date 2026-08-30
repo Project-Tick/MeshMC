@@ -263,6 +263,12 @@ QUrl FlameApi::allProjectFilesUrl(const QString& projectId)
 	return QUrl(QString("%1/mods/%2/files").arg(apiBase(), projectId));
 }
 
+QUrl FlameApi::fileChangelogUrl(const QString& projectId, const QString& fileId)
+{
+	return QUrl(QString("%1/mods/%2/files/%3/changelog")
+					.arg(apiBase(), projectId, fileId));
+}
+
 QUrl FlameApi::modpackSearchUrl(const QString& term, int sortIndex, int offset)
 {
 	return QUrl(QString("%1/mods/search?"

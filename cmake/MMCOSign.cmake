@@ -88,7 +88,7 @@ function(mmco_sign_plugin target)
         return()
     endif()
 
-    set(_script "${CMAKE_SOURCE_DIR}/scripts/mmco_sign.py")
+    set(_script "${CMAKE_SOURCE_DIR}/launcher/scripts/mmco_sign.py")
     if(NOT EXISTS "${_script}")
         message(WARNING
             "mmco_sign_plugin(${target}): ${_script} not found, "

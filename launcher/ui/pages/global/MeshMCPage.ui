@@ -194,6 +194,43 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="0" colspan="3">
+           <widget class="QGroupBox" name="additionalInstDirsGroupBox">
+            <property name="title">
+             <string>Additional instance directories</string>
+            </property>
+            <layout class="QVBoxLayout" name="additionalInstDirsLayout">
+             <item>
+              <widget class="QListWidget" name="additionalInstDirsList"/>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="additionalInstDirsBtnLayout">
+               <item>
+                <widget class="QPushButton" name="addInstDirBtn">
+                 <property name="text">
+                  <string>Add</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="removeInstDirBtn">
+                 <property name="text">
+                  <string>Remove</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="additionalInstDirsSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -217,6 +254,35 @@
             </property>
             <property name="text">
              <string>Automatically &amp;backup instances before launch</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="instanceCreationGroupBox">
+         <property name="title">
+          <string>Instance creation</string>
+         </property>
+         <layout class="QVBoxLayout" name="instanceCreationLayout">
+          <item>
+           <widget class="QCheckBox" name="modpackUpdatePromptCheck">
+            <property name="toolTip">
+             <string>When installing a modpack that is already installed, offer to update that instance instead of creating a second copy of it.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Suggest updating an existing instance during modpack installation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="downloadGameFilesCheck">
+            <property name="toolTip">
+             <string>Download the game's libraries and assets while the instance is being created, instead of waiting until the first time it is launched.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Download the game's files while creating an instance</string>
             </property>
            </widget>
           </item>

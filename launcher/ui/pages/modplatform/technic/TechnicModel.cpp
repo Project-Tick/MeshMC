@@ -42,6 +42,7 @@
 
 #include "TechnicModel.h"
 #include "Application.h"
+#include "BuildConfig.h"
 #include "Json.h"
 
 #include <QIcon>
@@ -110,11 +111,14 @@ void Technic::ListModel::performSearch()
 	NetJob* netJob = new NetJob("Technic::Search", APPLICATION->network());
 	QString searchUrl = "";
 	if (currentSearchTerm.isEmpty()) {
-		searchUrl = "https://api.technicpack.net/trending?build=meshmc";
+		searchUrl = QString("%1trending?build=%2")
+						.arg(BuildConfig.TECHNIC_API_BASE_URL,
+							 BuildConfig.TECHNIC_API_BUILD);
 	} else {
-		searchUrl =
-			QString("https://api.technicpack.net/search?build=meshmc&q=%1")
-				.arg(currentSearchTerm);
+		searchUrl = QString("%1search?build=%2&q=%3")
+						.arg(BuildConfig.TECHNIC_API_BASE_URL,
+							 BuildConfig.TECHNIC_API_BUILD,
+							 currentSearchTerm);
 	}
 	netJob->addNetAction(
 		Net::Download::makeByteArray(QUrl(searchUrl), &response));

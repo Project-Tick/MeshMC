@@ -57,3 +57,10 @@ tree.txt
 /.vs/
 
 CMakeUserPresets.json
+
+base_lst_file*
+*~
+build/
+*.mo
+*.ts
+*kdev4

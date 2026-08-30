@@ -53,6 +53,8 @@
 #include "BuildConfig.h"
 #include "Application.h"
 
+#include <QDateTime>
+
 namespace ModpacksCH
 {
 
@@ -67,7 +69,13 @@ namespace ModpacksCH
 		if (abortable) {
 			return jobPtr->abort();
 		}
-		return false;
+
+		/* Past the pack's own downloads there is still one abortable
+		 * phase: the optional game-file download the base class runs
+		 * after the instance is built. It knows whether that is
+		 * happening, and returns false when it is not - which is the
+		 * answer this used to give unconditionally. */
+		return InstanceTask::abort();
 	}
 
 	void PackInstallTask::executeTask()
@@ -229,8 +237,14 @@ namespace ModpacksCH
 		instanceSettings->registerSetting("InstanceType", "Legacy");
 		instanceSettings->set("InstanceType", "OneSix");
 
-		MinecraftInstance instance(m_globalSettings, instanceSettings,
-								   m_stagingPath);
+		/* Held behind a shared_ptr, and by reference below so that the
+		 * rest of this function reads as it did. The pointer is what
+		 * matters: this function ends by handing the instance to
+		 * downloadFiles(), which runs against it after we return, and a
+		 * local object would be gone by then. */
+		auto instancePtr = std::make_shared<MinecraftInstance>(
+			m_globalSettings, instanceSettings, m_stagingPath);
+		MinecraftInstance& instance = *instancePtr;
 		auto components = instance.getPackProfile();
 		components->buildingFromScratch();
 
@@ -278,9 +292,31 @@ namespace ModpacksCH
 
 		instance.setName(m_instName);
 		instance.setIconKey(m_instIcon);
+
+		/* Record where this instance came from.
+		 *
+		 * These are the same keys the Modrinth and CurseForge importers
+		 * write. FTB has no page for changing versions - there is no
+		 * MeshMC UI that reads these back for an FTB pack today - but
+		 * recording them costs one INI write and is the difference
+		 * between an instance that knows it is version 1.4.0 of a
+		 * specific pack and one that only knows its own name. Anything
+		 * that later wants to notice "you already have this pack" or
+		 * offer an update needs it to have been written at install
+		 * time, because it cannot be recovered afterwards. */
+		instanceSettings->set("PackProvider", QStringLiteral("modpacksch"));
+		instanceSettings->set("PackId", QString::number(m_pack.id));
+		instanceSettings->set("PackName", m_pack.name);
+		instanceSettings->set("PackVersionId", QString::number(m_version.id));
+		instanceSettings->set("PackVersionLabel", m_version.name);
+		instanceSettings->set(
+			"PackInstalledAt",
+			QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+
 		instanceSettings->resumeSave();
 
-		emitSucceeded();
+		/* Finishes the task, whether or not it downloads anything. */
+		downloadFiles(instancePtr);
 	}
 
 } // namespace ModpacksCH

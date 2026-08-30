@@ -75,7 +75,7 @@ jobs:
         uses: redhat-actions/buildah-build@v3
         with:
           containerfiles: |
-            ./Containerfile
+            ./.github/Containerfile
           tags: ${{ steps.image-metadata.outputs.tags }}
           labels: ${{ steps.image-metadata.outputs.labels }}
 

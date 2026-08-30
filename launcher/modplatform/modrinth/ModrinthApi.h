@@ -41,6 +41,11 @@ class ModrinthApi final : public ModPlatform::ContentApi
 	/* Scheme + host + version prefix, no trailing slash. */
 	static QString apiBase();
 
+	/* The host every Modrinth version file is served from. A different
+	 * host from the API, and the only one the download-attribution
+	 * header means anything to. */
+	static QString cdnHost();
+
 	QString id() const override;
 	QString displayName() const override;
 	int searchPageSize() const override;
@@ -61,6 +66,24 @@ class ModrinthApi final : public ModPlatform::ContentApi
 	/* A single version addressed by its own id. Modrinth version ids are
 	 * globally unique, so unlike CurseForge this needs no project id. */
 	static QUrl versionUrl(const QString& versionId);
+
+	/* Whether @p candidate can be a Modrinth version or project id.
+	 *
+	 * They are base62 and eight characters long, which is exactly what a
+	 * version *number* is not: numbers carry dots, plus signs and loader
+	 * names ("1.1.1+1.17"). The distinction matters because the two are
+	 * easy to confuse - a file's CDN URL spells out the number, not the
+	 * id - and asking the version endpoint for a number gets a 404 that
+	 * looks like a dependency with nothing to resolve. */
+	static bool isVersionId(const QString& candidate);
+
+	/* The version that owns a file with the given SHA-1.
+	 *
+	 * The way back to a version when all we kept was the file: an mrpack
+	 * manifest lists hashes and download URLs and no version ids at all,
+	 * so for everything installed from one this is the only honest
+	 * lookup. Answers with the same version object as versionUrl(). */
+	static QUrl versionByHashUrl(const QString& sha1);
 
 	/* Project versions restricted to an explicit set of loaders. Used
 	 * for modpack browsing, where any of the mod loaders will do. */

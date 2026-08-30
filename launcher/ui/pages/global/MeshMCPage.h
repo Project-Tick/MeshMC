@@ -89,8 +89,31 @@ class MeshMCPage : public QWidget, public BasePage
 	void applySettings();
 	void loadSettings();
 
+	/*!
+	 * Vet a folder the user picked for holding instances, and answer whether
+	 * to go ahead with it.
+	 *
+	 * Shared by the primary instance folder and the additional ones, because
+	 * the hazards belong to the path and not to the box it was typed into:
+	 * an instance under a '!' fails the same way whichever folder it was
+	 * discovered in. Returns true when there is nothing wrong, or when the
+	 * user has seen the warning and chosen to continue anyway.
+	 *
+	 * Both spellings of the path are needed. The '!' check wants the
+	 * normalised one, while the Flatpak check has to look at what the file
+	 * dialog actually handed back - normalising resolves the sandbox path
+	 * away and the check would never fire.
+	 */
+	bool confirmInstanceDirPath(const QString& rawDir,
+								const QString& cookedDir);
+
+	/// The additional folders currently listed, in order.
+	QStringList additionalInstanceDirs() const;
+
   private slots:
 	void on_instDirBrowseBtn_clicked();
+	void on_addInstDirBtn_clicked();
+	void on_removeInstDirBtn_clicked();
 	void on_modsDirBrowseBtn_clicked();
 	void on_iconsDirBrowseBtn_clicked();
 	void on_skinsDirBrowseBtn_clicked();

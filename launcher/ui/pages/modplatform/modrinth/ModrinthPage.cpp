@@ -244,6 +244,12 @@ void ModrinthPage::suggestCurrent()
 	}
 
 	auto* task = new InstanceImportTask(selectedVersion);
+	/* Chosen by the launcher from the catalogue the user is browsing, so
+	 * the mod files come from Modrinth's own CDN. */
+	task->setTrustedSource(true);
+	/* Same as the CurseForge page: any question the task raises is a
+	 * question about what the user is doing here. */
+	task->setDialogParent(this);
 	task->setPackSourceHint(hint);
 	dialog->setSuggestedPack(current.name, task);
 	QString editedLogoName;

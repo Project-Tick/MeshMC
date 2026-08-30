@@ -53,6 +53,7 @@
 #include "Json.h"
 
 #include "Application.h"
+#include "BuildConfig.h"
 
 TechnicPage::TechnicPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::TechnicPage), dialog(dialog)
@@ -143,8 +144,9 @@ void TechnicPage::suggestCurrent()
 	std::shared_ptr<QByteArray> response = std::make_shared<QByteArray>();
 	QString slug = current.slug;
 	netJob->addNetAction(Net::Download::makeByteArray(
-		QString("https://api.technicpack.net/modpack/%1?build=meshmc")
-			.arg(slug),
+		QString("%1modpack/%2?build=%3")
+			.arg(BuildConfig.TECHNIC_API_BASE_URL, slug,
+				 BuildConfig.TECHNIC_API_BUILD),
 		response.get()));
 	QObject::connect(netJob, &NetJob::succeeded, this, [this, response, slug] {
 		if (current.slug != slug) {

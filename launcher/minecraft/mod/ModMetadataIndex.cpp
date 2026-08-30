@@ -133,6 +133,7 @@ ModMetadataIndex::Entry ModMetadataIndex::parseJson(const QByteArray& bytes)
 	e.platform = o.value(QStringLiteral("platform")).toString();
 	e.projectId = o.value(QStringLiteral("projectId")).toString();
 	e.versionId = o.value(QStringLiteral("versionId")).toString();
+	e.versionNumber = o.value(QStringLiteral("versionNumber")).toString();
 	e.name = o.value(QStringLiteral("name")).toString();
 	e.slug = o.value(QStringLiteral("slug")).toString();
 	e.downloadUrl = o.value(QStringLiteral("downloadUrl")).toString();
@@ -426,6 +427,17 @@ bool ModMetadataIndex::remove(const QString& fileName)
 		}
 	}
 	return false;
+}
+
+QString ModMetadataIndex::sidecarPathFor(const QString& fileName) const
+{
+	const QString canon = canonicalFileName(fileName);
+	QMutexLocker lock(&m_mutex);
+	const QString name = m_sidecars.value(canon);
+	if (name.isEmpty()) {
+		return {};
+	}
+	return sidecarPath(name);
 }
 
 void ModMetadataIndex::rename(const QString& oldFileName,

@@ -1,3 +1,0 @@
-files:
-  - source: /locale/template.pot
-    translation: /locale/%two_letters_code%.po

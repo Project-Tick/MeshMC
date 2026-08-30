@@ -41,6 +41,7 @@
 #include "ui/pages/instance/InstanceSettingsPage.h"
 #include "ui/pages/instance/OtherLogsPage.h"
 #include "ui/pages/instance/LegacyUpgradePage.h"
+#include "ui/pages/instance/ManagedPackPage.h"
 #include "ui/pages/instance/WorldListPage.h"
 #include "ui/pages/instance/ServersPage.h"
 #include "ui/pages/instance/GameOptionsPage.h"
@@ -67,6 +68,14 @@ class InstancePageProvider : public QObject, public BasePageProvider
 			std::dynamic_pointer_cast<MinecraftInstance>(inst);
 		if (onesix) {
 			values.append(new VersionPage(onesix.get()));
+			/* Only for instances that actually came from a modpack
+			 * catalogue. Checked here rather than left to
+			 * shouldDisplay() so that the page - and the network
+			 * machinery behind it - is not built at all for the
+			 * majority of instances, which are not managed packs. */
+			if (ManagedPackPage::isSupported(onesix.get())) {
+				values.append(new ManagedPackPage(onesix.get()));
+			}
 			auto modsPage = new ModFolderPage(
 				onesix.get(), onesix->loaderModList(), "mods", "loadermods",
 				tr("Loader mods"), "Loader-mods");

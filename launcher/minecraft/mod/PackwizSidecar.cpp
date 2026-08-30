@@ -248,6 +248,14 @@ QByteArray Packwiz::serialize(const ModMetadataIndex::Entry& entry)
 								  entry.versionId.toStdString());
 		}
 	}
+	/* Outside the block above on purpose: the version as a person reads
+	 * it is worth keeping whether or not the file has an update source,
+	 * and the format has nowhere else to put it - packwiz's own provider
+	 * tables take ids. */
+	if (!entry.versionNumber.isEmpty()) {
+		root.insert_or_assign("x-meshmc-version-number",
+							  entry.versionNumber.toStdString());
+	}
 	if (curseForge && !entry.downloadUrl.isEmpty()) {
 		root.insert_or_assign("x-meshmc-download-url",
 							  entry.downloadUrl.toStdString());
@@ -327,6 +335,8 @@ ModMetadataIndex::Entry Packwiz::parse(const QByteArray& bytes,
 		entry.projectId = nodeString(table["x-meshmc-project-id"]);
 		entry.versionId = nodeString(table["x-meshmc-version-id"]);
 	}
+
+	entry.versionNumber = nodeString(table["x-meshmc-version-number"]);
 
 	entry.slug = nodeString(table["x-meshmc-slug"]);
 	if (entry.slug.isEmpty()) {

@@ -131,6 +131,19 @@ namespace
 			return false;
 		}
 
+		/* The same bytes we already have, under a version id we never
+		 * recorded.
+		 *
+		 * Comparing ids alone is not enough: a file installed from an
+		 * mrpack has no version id on record - that format lists hashes
+		 * and URLs, nothing else - so every such mod compared unequal to
+		 * the newest version and was offered as an update to itself,
+		 * every time the check ran. The hash settles it. */
+		if (!entry.sha1.isEmpty() && !item.sha1.isEmpty() &&
+			item.sha1.compare(entry.sha1, Qt::CaseInsensitive) == 0) {
+			return false;
+		}
+
 		out.currentFileName = entry.fileName;
 		out.currentVersionId = entry.versionId;
 		out.newVersionId = newVer;

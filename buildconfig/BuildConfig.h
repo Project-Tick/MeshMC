@@ -219,6 +219,23 @@ class Config
 
 	QString MODPACKSCH_API_BASE_URL = "https://api.modpacks.ch/";
 
+	QString TECHNIC_API_BASE_URL = "https://api.technicpack.net/";
+	/**
+	 * \brief Identifies our build to the Technic API.
+	 *
+	 * Technic takes this into account when deciding which download URL to hand
+	 * back, and an unrecognised value is not guaranteed to resolve to the
+	 * official CDN: asking as "meshmc" returned a third-party mirror
+	 * (bhrepo.com) whose archive failed libarchive's CRC check on every
+	 * attempt, byte for byte. "multimc" is the long-recognised value that other
+	 * launchers send.
+	 *
+	 * Keep this in one place. It used to be spelled out inside three separate
+	 * request URLs, which is how the three of them came to disagree with the
+	 * rest of the world unnoticed.
+	 */
+	QString TECHNIC_API_BUILD = "multimc";
+
 	QString LEGACY_FTB_CDN_BASE_URL = "https://dist.creeper.host/FTB2/";
 
 	QString ATL_DOWNLOAD_SERVER_URL =

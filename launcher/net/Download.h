@@ -51,6 +51,37 @@
 
 namespace Net
 {
+	/* Why a Modrinth file is being downloaded.
+	 *
+	 * Modrinth counts downloads per version and shows authors those
+	 * numbers. A download that arrives without this is still counted but
+	 * says nothing about what caused it, and the ones made on a user's
+	 * behalf while installing or updating a modpack are exactly the ones
+	 * an author would want told apart from someone installing their mod
+	 * directly. Sent only to Modrinth's own CDN, which is where the
+	 * header means something.
+	 *
+	 * `reason` is what makes the rest meaningful, so an empty reason
+	 * means "send nothing at all"; the other fields are context and are
+	 * left out individually when we do not know them.
+	 */
+	struct ModrinthDownloadMeta {
+		QString reason;
+		QString gameVersion;
+		QString loader;
+		/* The pack version this download is part of, if it is part of
+		 * one. */
+		QString dependentOn;
+
+		bool isEmpty() const
+		{
+			return reason.isEmpty();
+		}
+
+		/* Compact JSON, which is what the header carries. */
+		QByteArray toJson() const;
+	};
+
 	class Download : public NetAction
 	{
 		Q_OBJECT
@@ -81,6 +112,16 @@ namespace Net
 		bool abort() override;
 		bool canAbort() override;
 
+		/* Attach download attribution, for the hosts that accept it.
+		 *
+		 * Ignored for every other host, so callers that build a mixed
+		 * batch of downloads can set it uniformly rather than working
+		 * out which ones it applies to. */
+		void setModrinthDownloadMeta(const ModrinthDownloadMeta& meta)
+		{
+			m_modrinthMeta = meta;
+		}
+
 	  private: /* methods */
 		bool handleRedirect();
 
@@ -99,6 +140,7 @@ namespace Net
 		QString m_target_path;
 		std::unique_ptr<Sink> m_sink;
 		Options m_options;
+		ModrinthDownloadMeta m_modrinthMeta;
 	};
 } // namespace Net
 

@@ -47,6 +47,7 @@
 #include <QtConcurrentRun>
 #include <MMCZip.h>
 #include "TechnicPackProcessor.h"
+#include "net/ChecksumValidator.h"
 
 Technic::SolderPackInstallTask::SolderPackInstallTask(
 	shared_qobject_ptr<QNetworkAccessManager> network, const QUrl& sourceUrl,
@@ -109,7 +110,16 @@ void Technic::SolderPackInstallTask::versionSucceeded()
 void Technic::SolderPackInstallTask::fileListSucceeded()
 {
 	setStatus(tr("Downloading modpack:"));
-	QStringList modUrls;
+
+	/* Solder publishes an md5 alongside every mod URL. Carry the two together
+	 * so the download can actually be checked against it - reading only the
+	 * URL threw away the one piece of information that tells us whether the
+	 * bytes we received are the bytes the pack author published. */
+	struct SolderMod {
+		QString url;
+		QString md5;
+	};
+	QList<SolderMod> modsToDownload;
 	try {
 		QJsonDocument doc = Json::requireDocument(m_response);
 		QJsonObject obj = Json::requireObject(doc);
@@ -120,7 +130,13 @@ void Technic::SolderPackInstallTask::fileListSucceeded()
 		QJsonArray mods = Json::requireArray(obj, "mods", "'mods'");
 		for (auto mod : mods) {
 			QJsonObject modObject = Json::requireObject(mod);
-			modUrls.append(Json::requireString(modObject, "url", "'url'"));
+			/* The hash is optional on purpose. Some third-party Solder
+			 * instances omit it, and refusing their packs outright would
+			 * trade one broken install for many. A missing hash just leaves
+			 * that file unverified, exactly as it was before. */
+			modsToDownload.append(
+				{ Json::requireString(modObject, "url", "'url'"),
+				  Json::ensureString(modObject, "md5", QString()) });
 		}
 	} catch (const JSONValidationError& e) {
 		emitFailed(e.cause());
@@ -129,13 +145,30 @@ void Technic::SolderPackInstallTask::fileListSucceeded()
 	}
 	m_filesNetJob = new NetJob(tr("Downloading modpack"), m_network);
 	int i = 0;
-	for (auto& modUrl : modUrls) {
+	for (const auto& mod : modsToDownload) {
 		auto path = FS::PathCombine(m_outputDir.path(), QString("%1").arg(i));
-		m_filesNetJob->addNetAction(Net::Download::makeFile(modUrl, path));
+		auto dl = Net::Download::makeFile(mod.url, path);
+		/* Catch a bad transfer here, while it can still be retried.
+		 *
+		 * Unverified, a jar that arrived corrupted gets written out and fed
+		 * to the extractor, and the first hint of trouble is a CRC error
+		 * from the zip reader - or no hint at all, and an instance that
+		 * misbehaves in ways nobody traces back to this download. Failing on
+		 * the hash mismatch keeps the problem where it can be reported.
+		 *
+		 * Note the hex decode: this validator compares against the raw
+		 * digest, so handing it the hex string from the manifest verbatim
+		 * would fail every single file. */
+		if (!mod.md5.isEmpty()) {
+			auto rawMd5 = QByteArray::fromHex(mod.md5.toLatin1());
+			dl->addValidator(
+				new Net::ChecksumValidator(QCryptographicHash::Md5, rawMd5));
+		}
+		m_filesNetJob->addNetAction(dl);
 		i++;
 	}
 
-	m_modCount = modUrls.size();
+	m_modCount = modsToDownload.size();
 
 	connect(m_filesNetJob.get(), &NetJob::succeeded, this,
 			&Technic::SolderPackInstallTask::downloadSucceeded);

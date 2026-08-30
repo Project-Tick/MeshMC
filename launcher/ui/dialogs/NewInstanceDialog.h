@@ -84,6 +84,9 @@ class NewInstanceDialog : public QDialog, public BasePageProvider
 	QString instGroup() const;
 	QString iconKey() const;
 
+	/// The instance folder the user picked, as an absolute path.
+	QString instDir() const;
+
   public slots:
 	void accept() override;
 	void reject() override;
@@ -107,4 +110,14 @@ class NewInstanceDialog : public QDialog, public BasePageProvider
 	QString importIconName;
 
 	void importIconNow();
+
+	/*!
+	 * Fill the folder box from the instance list's configured folders.
+	 *
+	 * Sourced from InstanceList rather than from the settings directly:
+	 * that list has already been resolved, deduplicated, and reduced to
+	 * the folders that actually exist, so a folder the user typed but that
+	 * could not be created cannot be offered here as a destination.
+	 */
+	void refreshInstDirBox();
 };

@@ -45,6 +45,7 @@
 
 #include <QKeyEvent>
 #include <QPoint>
+#include <QPushButton>
 #include <QDebug>
 
 #include "tasks/Task.h"
@@ -170,6 +171,19 @@ int ProgressDialog::execWithTask(Task* task)
 		connect(task, &Task::progress, this, &ProgressDialog::changeProgress));
 	m_task_connections.append(connect(task, &Task::stepProgress, this,
 									  &ProgressDialog::changeStepProgress));
+	/* Let the task drive the skip button while it runs.
+	 *
+	 * Whether the button is on offer at all stays the caller's decision -
+	 * setSkipButton() controls that, and a task that says nothing about
+	 * either of these keeps exactly the button the caller asked for. What
+	 * a task can do is narrow that down as it goes: greying the button out
+	 * over the stretches where aborting is not possible, and renaming it
+	 * where pressing it means something other than "abort".
+	 */
+	m_task_connections.append(connect(task, &Task::abortStatusChanged,
+									  ui->skipButton, &QPushButton::setEnabled));
+	m_task_connections.append(connect(task, &Task::abortButtonTextChanged,
+									  ui->skipButton, &QPushButton::setText));
 
 	ui->stepScrollArea->setHidden(!task->isMultiStep());
 	updateSize();
