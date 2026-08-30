@@ -306,6 +306,31 @@ QUrl ModrinthApi::versionUrl(const QString& versionId)
 	return QUrl(QString("%1/version/%2").arg(apiBase(), versionId));
 }
 
+bool ModrinthApi::isVersionId(const QString& candidate)
+{
+	/* Eight base62 characters, no separators. Checked by shape rather
+	 * than by asking the server, because the whole point is to not make
+	 * a request that cannot succeed. */
+	if (candidate.size() != 8) {
+		return false;
+	}
+	for (const QChar c : candidate) {
+		if (c.unicode() > 127 || !c.isLetterOrNumber()) {
+			return false;
+		}
+	}
+	return true;
+}
+
+QUrl ModrinthApi::versionByHashUrl(const QString& sha1)
+{
+	/* The algorithm is named explicitly: the endpoint happens to default
+	 * to SHA-1, but a default is not a promise, and a digest sent under
+	 * the wrong name matches nothing. */
+	return QUrl(QString("%1/version_file/%2?algorithm=sha1")
+					.arg(apiBase(), sha1.toLower()));
+}
+
 QUrl ModrinthApi::projectVersionsUrlForLoaders(const QString& projectId,
 											   const QStringList& loaders)
 {
