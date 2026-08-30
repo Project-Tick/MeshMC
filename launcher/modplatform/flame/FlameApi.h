@@ -80,6 +80,16 @@ class FlameApi final : public ModPlatform::ContentApi
 	/* Every file of a project, with no version or loader filter. */
 	static QUrl allProjectFilesUrl(const QString& projectId);
 
+	/* Changelog for one file, as HTML wrapped in a `data` string.
+	 *
+	 * A request per file, unlike Modrinth which ships changelogs with
+	 * the version list. That asymmetry is the reason the managed-pack
+	 * page fetches changelogs lazily instead of all at once: a pack with
+	 * two hundred files would otherwise mean two hundred requests to
+	 * open a tab. */
+	static QUrl fileChangelogUrl(const QString& projectId,
+								 const QString& fileId);
+
 	/* Modpack browsing. Separate from searchUrl() because it searches a
 	 * different section and takes no version or loader filter. */
 	static QUrl modpackSearchUrl(const QString& term, int sortIndex,
