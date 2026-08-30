@@ -54,9 +54,32 @@
 
 #include "BuildConfig.h"
 #include "modplatform/flame/FlameApi.h"
+#include "modplatform/modrinth/ModrinthApi.h"
+
+#include <QJsonDocument>
+#include <QJsonObject>
 
 namespace Net
 {
+
+	QByteArray ModrinthDownloadMeta::toJson() const
+	{
+		QJsonObject obj;
+		obj[QStringLiteral("reason")] = reason;
+		/* Each of these is omitted rather than sent empty: the header is
+		 * a statement about the download, and "loader: nothing" is a
+		 * claim we would be making up. */
+		if (!gameVersion.isEmpty()) {
+			obj[QStringLiteral("game_version")] = gameVersion;
+		}
+		if (!loader.isEmpty()) {
+			obj[QStringLiteral("loader")] = loader;
+		}
+		if (!dependentOn.isEmpty()) {
+			obj[QStringLiteral("dependent_on")] = dependentOn;
+		}
+		return QJsonDocument(obj).toJson(QJsonDocument::Compact);
+	}
 
 	Download::Download() : NetAction()
 	{
@@ -136,6 +159,14 @@ namespace Net
 			request.setRawHeader("x-api-key",
 								 BuildConfig.CURSEFORGE_API_KEY.toUtf8());
 			request.setRawHeader("Accept", "application/json");
+		}
+
+		/* Attribution for the file being fetched, when the caller said
+		 * what it is for and this is a host that understands it. */
+		if (!m_modrinthMeta.isEmpty() &&
+			m_url.host() == ModrinthApi::cdnHost()) {
+			request.setRawHeader("modrinth-download-meta",
+								 m_modrinthMeta.toJson());
 		}
 
 		QNetworkReply* rep = m_network->get(request);
