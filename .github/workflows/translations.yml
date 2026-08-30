@@ -34,12 +34,11 @@ jobs:
           cache: false
 
       - name: Build translations
-        working-directory: locale
         run: ./launcher/locale/release.sh
 
       - name: Move directory
         run: |
-          mv locale/build _site
+          mv build-translations _site
           cp .github/CNAME _site/CNAME
 
       - name: Deploy
