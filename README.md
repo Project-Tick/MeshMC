@@ -4,7 +4,7 @@
 
 # MeshMC
 
-[![LICENSE](https://img.shields.io/badge/license-GPL--3.0--or--later-blue?logo=GNU)](https://www.gnu.org/licenses/gpl-3.0.html) [![Crowdin](https://badges.crowdin.net/projtlauncher/localized.svg)](https://crowdin.com/project/projtlauncher)
+[![LICENSE](https://img.shields.io/badge/license-Apache--2.0-blue?logo=Apache)](http://www.apache.org/licenses/LICENSE-2.0) [![Crowdin](https://badges.crowdin.net/projtlauncher/localized.svg)](https://crowdin.com/project/projtlauncher)
 
 MeshMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity.
 
@@ -41,20 +41,8 @@ Translations can be done [on crowdin](https://crowdin.com/project/projtlauncher)
 
 ## License
 
-MeshMC - A Custom Launcher for Minecraft<br>
-Copyright &copy; 2026 Project Tick
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version, with the additional permission described in the MeshMC MMCO Module Exception 1.0.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-You should have received a copy of the MeshMC MMCO Module Exception 1.0 along with this program.  If not, see <https://projecttick.org/licenses/>.
-
-This file incorporates work covered by the following copyright and permission notice:
-
 Copyright &copy; 2012-2022 MultiMC Contributors
+Copyright &copy; 2026 Project Tick
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this program except in compliance with the License. You may obtain a copy of the License at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
 

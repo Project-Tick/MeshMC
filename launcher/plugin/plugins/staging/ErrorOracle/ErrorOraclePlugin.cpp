@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  *
  * ErrorOraclePlugin — MMCO entry point. Loads the built-in rule pack
  * + any user rules at init, exposes a per-instance "Error Analysis"
@@ -18,7 +18,7 @@
 
 MMCO_DEFINE_MODULE("ErrorOracle", "1.0.0", "Project Tick",
 				   "LLM-free crash/log analyser with a learning feedback loop.",
-				   "GPL-3.0-or-later");
+				   "Apache-2.0");
 
 namespace
 {

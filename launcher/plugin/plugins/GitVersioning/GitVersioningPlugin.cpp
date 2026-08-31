@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  *
  * GitVersioningPlugin — MMCO entry point.
  *
@@ -32,7 +32,7 @@
 MMCO_DEFINE_MODULE("GitVersioning", "1.0.0", "Project Tick",
 				   "Track instance changes as Git commits — snapshot, restore, "
 				   "per-file history, tags.",
-				   "GPL-3.0-or-later");
+				   "Apache-2.0");
 
 static MMCOContext* g_ctx = nullptr;
 static constexpr const char SETTING_AUTO_SNAPSHOT[] =

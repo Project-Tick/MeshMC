@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  *
  * WikiRepoBundle — the one and only wiki backend: a cloned Git wiki
  * repository, in the flat layout GitLab/GitHub wikis use:

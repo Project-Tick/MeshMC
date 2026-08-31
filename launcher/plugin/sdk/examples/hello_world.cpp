@@ -16,7 +16,7 @@ MMCO_DEFINE_MODULE(
 	"1.0.0",											  /* version */
 	"Project Tick",										  /* author */
 	"Example plugin that logs instance info on app init", /* description */
-	"GPL-3.0-or-later"									  /* license */
+	"Apache-2.0"									  /* license */
 );
 
 /* State */

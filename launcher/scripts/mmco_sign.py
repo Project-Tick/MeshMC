@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Project Tick
-# SPDX-License-Identifier: GPL-3.0-or-later WITH LicenseRef-MeshMC-MMCO-Module-Exception-1.0
+# SPDX-License-Identifier: Apache-2.0
 """
 mmco_sign.py — append a GPG signature trailer to a built .mmco module.
 

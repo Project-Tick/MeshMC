@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Project Tick
 # SPDX-FileContributor: Project Tick
-# SPDX-License-Identifier: GPL-3.0-or-later WITH LicenseRef-MeshMC-MMCO-Module-Exception-1.0
+# SPDX-License-Identifier: Apache-2.0
 
 [workspace]
 resolver = "2"
@@ -10,7 +10,7 @@ members = [
 
 [workspace.package]
 edition = "2021"
-license = "GPL-3.0-or-later"
+license = "Apache-2.0"
 authors = ["Project Tick <https://projecttick.org>"]
 rust-version = "1.74"
 

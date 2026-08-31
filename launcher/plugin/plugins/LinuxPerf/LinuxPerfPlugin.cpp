@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
@@ -10,7 +10,7 @@
 MMCO_DEFINE_MODULE("Linux Performance Tools", "1.2.0", "Project Tick",
 				   "MangoHud FPS overlay and GameMode performance integration "
 				   "for Minecraft on Linux",
-				   "GPL-3.0-or-later");
+				   "Apache-2.0");
 
 static constexpr const char SETTING_MANGOHUD[] =
 	"plugin.linuxperf.mangohud.enabled";

@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  *
  * LogIngester — pulls the latest log + crash-report text out of an
  * instance for the analysis engine to chew on.

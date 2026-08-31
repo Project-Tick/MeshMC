@@ -1,31 +1,9 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later WITH LicenseRef-MeshMC-MMCO-Module-Exception-1.0
- *
- *   MeshMC - A Custom Launcher for Minecraft
- *   Copyright (C) 2026 Project Tick
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version, with the additional permission
- *   described in the MeshMC MMCO Module Exception 1.0.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- *   You should have received a copy of the MeshMC MMCO Module Exception 1.0
- *   along with this program.  If not, see <https://projecttick.org/licenses/>.
- *
- *  This file incorporates work covered by the following copyright and
- *  permission notice:
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Copyright 2013-2021 MultiMC Contributors
+ * Copyright (C) 2026 Project Tick
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,6 +116,16 @@ AboutDialog::AboutDialog(QWidget* parent)
 								  BuildConfig.UPDATE_CHANNEL);
 	else
 		ui->updatechannelLabel->setVisible(false);
+
+	
+    ui->redistributionText->setHtml(tr(
+"<p>We keep <b>MeshMC</b> open source because we believe it's important to be able to see the source code of a project like this, and we do this using the Apache license.</p>\n"
+"<p>One reason we use the Apache license is that we don't want people using the name <b>MeshMC</b> when they fork the project. "
+"This means people should examine the source code and remove all references to <b>MeshMC</b>, including the project icon and window titles (the title should not contain the phrase <b>MeshMC-fork</b>). "
+"The Apache license covers reasonable use of the name; mentioning the project's origins in the About dialog and license is acceptable. However, it must be explicitly stated that the project is a fork, "
+"which does not mean you have our approval.</p>\n<p>However, we give you the freedom to distribute this project as you wish, in any non-exclusive way, without changing its functionality, on a voluntary "
+"basis to package managers, without expecting any financial gain. Take the project and distribute it wherever people can reach it. But abide by our restrictions."
+    ));
 
 	QString urlText(
 		"<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");

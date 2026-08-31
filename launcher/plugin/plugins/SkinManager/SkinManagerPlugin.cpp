@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
- * SPDX-License-Identifier: LGPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  *
  *  SkinManager — MMCO plugin entry point.
  *
@@ -42,7 +42,7 @@ MMCO_DEFINE_MODULE("SkinManager", "1.0.0", "Project Tick",
 				   "3D skin preview integrated into the Upload Skin dialog. "
 				   "Replaces the launcher's stock skin-upload window with "
 				   "a richer, viewer-equipped version.",
-				   "LGPL-3.0-or-later");
+				   "Apache-2.0");
 
 static MMCOContext* g_ctx = nullptr;
 static QObject* g_guard = nullptr;

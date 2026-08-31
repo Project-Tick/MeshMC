@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  *
  * MercurialVersioning - MMCO plugin written in PLAIN C.
  *
@@ -36,7 +36,7 @@ MMCO_DEFINE_MODULE(
 	"1.0.0",                                            /* version */
 	"Project Tick",                                     /* author */
 	"Snapshot instance content as Mercurial commits",   /* description */
-	"GPL-3.0-or-later"                                  /* license */
+	"Apache-2.0"                                  /* license */
 );
 
 /* ── State ──────────────────────────────────────────────────────────── */

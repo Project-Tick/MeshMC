@@ -23,7 +23,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 endif()
 
 # SPDX-FileCopyrightText: 2026 Project Tick
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: Apache-2.0
 #
 # GitVersioning — MeshMC plugin (.mmco)
 # Snapshots instance content as Git commits so users can roll back to

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Project Tick
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: Apache-2.0
 #
 # Flite plugin bridge — builds the bundled flite submodule using
 # upstream's own autoconf + Makefile build, and exposes the resulting

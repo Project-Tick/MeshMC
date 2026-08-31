@@ -23,8 +23,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with libnbt++.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef NBT_TAGS_H_INCLUDED
+#define NBT_TAGS_H_INCLUDED
+
 #include "tag_primitive.h"
 #include "tag_string.h"
 #include "tag_array.h"
 #include "tag_list.h"
 #include "tag_compound.h"
+
+#endif // NBT_TAGS_H_INCLUDED

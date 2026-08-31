@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  * SPDX-FileCopyrightText: Project Tick
  *
  * mangohud_detect.h — Compile-time / runtime detection helpers for MangoHud.

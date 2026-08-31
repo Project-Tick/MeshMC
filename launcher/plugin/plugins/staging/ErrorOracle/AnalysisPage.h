@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Project Tick
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: Apache-2.0
  *
  * AnalysisPage — instance page that runs the rule engine over the
  * instance's most recent log, shows ranked suggestions, and lets the
