@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
-"PO-Revision-Date: 2026-09-01 20:25\n"
+"PO-Revision-Date: 2026-09-01 21:52\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -64,7 +64,7 @@ msgstr "מוריד הגדרות..."
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:463
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Config download"
-msgstr "הורדת הגדרות"
+msgstr "הגדר הורדה"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:510
 msgctxt "ATLauncher::PackInstallTask|"
@@ -101,7 +101,7 @@ msgstr "סוג הורדה לא מוכר: %1"
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:710
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to extract mods..."
-msgstr "חילוץ המודים נכשל..."
+msgstr "נכשל בחילוץ המודים..."
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:722
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "רישיון"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr ""
+msgstr "זיוף / חלוקה מחדש"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -4808,13 +4808,13 @@ msgstr "בדוק האם ישנם עדכונים חדשים עבור %1."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr ""
+msgstr "תמיכה %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr ""
+msgstr "פתח את דף ה-Patreon של %1."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4849,13 +4849,13 @@ msgstr "סרגל החדשות"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr ""
+msgstr "עוד חדשות..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr ""
+msgstr "פתח את בלוג הפיתוח כדי לקרוא עוד חדשות אודות %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -5096,7 +5096,7 @@ msgstr "העתק את המופע הנבחר."
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr ""
+msgstr "צור קיצור דרך"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
@@ -6719,17 +6719,17 @@ msgstr ""
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "גרסה שנבחרה:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr ""
+msgstr "חפש"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "חפש וסנן..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
