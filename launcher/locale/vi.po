@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
-"PO-Revision-Date: 2026-09-01 20:26\n"
+"PO-Revision-Date: 2026-09-01 21:52\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "Giấy phép"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr ""
+msgstr "Forking/Phân phối lại"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -2281,7 +2281,7 @@ msgstr "Phiên bản JProfiler có vẻ đã hoạt động đúng"
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:127
 msgctxt "ExternalToolsPage|"
 msgid "JVisualVM Executable"
-msgstr "Chương trình JVisualVM"
+msgstr "JVisualVM thực thi"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:136
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:151
@@ -3918,7 +3918,7 @@ msgstr ""
 #: launcher/LaunchController.cpp:92
 msgctxt "LaunchController|"
 msgid "No Accounts"
-msgstr "Không Có Tài Khoản"
+msgstr "Không Tài khoản"
 
 #: launcher/LaunchController.cpp:93
 msgctxt "LaunchController|"
@@ -4042,7 +4042,7 @@ msgstr "Lỗi!"
 #: launcher/LaunchController.cpp:396 launcher/LaunchController.cpp:397
 msgctxt "LaunchController|"
 msgid "Couldn't load the instance profile."
-msgstr "Không thể tải hồ sơ phiên bản."
+msgstr "Không thể tải lên hồ sơ phiên bản."
 
 #: launcher/LaunchController.cpp:403
 msgctxt "LaunchController|"
@@ -4171,13 +4171,13 @@ msgstr "Không thể tải về một số danh sách pack: %1"
 #, qt-format
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Downloading zip for %1"
-msgstr "Đang tải tệp nén %1"
+msgstr "Đang tải zip %1"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:105
 #, qt-format
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Downloading zip for %1 (%2%)"
-msgstr "Đang tải tệp nén %1 (%2%)"
+msgstr "Đang tải zip %1 (%2%)"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:113
 msgctxt "LegacyFTB::PackInstallTask|"
@@ -4808,13 +4808,13 @@ msgstr "Kiểm tra bản cập nhật mới cho %1."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr ""
+msgstr "Hỗ trợ %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr ""
+msgstr "Mở trang Patreon %1."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4824,7 +4824,7 @@ msgstr "Meo"
 #: launcher/ui/MainWindow.cpp:716
 msgctxt "MainWindow|"
 msgid "It's a fluffy kitty :3"
-msgstr "Mèo con lông xù đáng yêu :3"
+msgstr "Mèo kitty :3"
 
 #: launcher/ui/MainWindow.cpp:726
 msgctxt "MainWindow|"
@@ -4849,13 +4849,13 @@ msgstr "Thanh công cụ mới"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr ""
+msgstr "Nhiều bản tin khác..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr ""
+msgstr "Mở blog nhà phát triển để đọc nhiều thông tin về %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -5096,7 +5096,7 @@ msgstr "Sao chép phiên bản đã chọn."
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr ""
+msgstr "Tạo Lối tắt"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
@@ -6183,12 +6183,12 @@ msgstr "Giải pháp thư viện gốc"
 #: launcher/ui/pages/global/MinecraftPage.ui:123
 msgctxt "MinecraftPage|"
 msgid "Use system installation of GLFW"
-msgstr "Sử dụng bản cài đặt hệ thống của GLFW"
+msgstr "Sử dụng hệ thống cài đặt của GLFW"
 
 #: launcher/ui/pages/global/MinecraftPage.ui:130
 msgctxt "MinecraftPage|"
 msgid "Use system installation of OpenAL"
-msgstr "Sử dụng bản cài đặt hệ thống của OpenAL"
+msgstr "Sử dụng hệ thống cài đặt của OpenAL"
 
 #: launcher/ui/pages/global/MinecraftPage.ui:140
 msgctxt "MinecraftPage|"
@@ -6717,17 +6717,17 @@ msgstr ""
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "Phiên bản đã chọn:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr ""
+msgstr "Tìm kiếm"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "Tìm kiếm và lọc..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
@@ -9133,7 +9133,7 @@ msgid "%1:\n"
 "%4 total"
 msgstr "%1:\n"
 "%2 đã dịch\n"
-"%3 không chính xác\n"
+"%3 fuzzy\n"
 "%4 tổng cộng"
 
 #: launcher/translations/TranslationsModel.cpp:356
@@ -10177,7 +10177,7 @@ msgstr "XBox Live không khả dụng ở quốc gia của bạn. Bạn đã b�
 msgctxt "XboxAuthorizationStep|"
 msgid "This Microsoft account is underaged and is not linked to a family.\n\n"
 "Please set up your account according to %1."
-msgstr "Tài khoản Microsoft này chưa đủ tuổi và không được liên kết với một gia đình.\n\n"
+msgstr "Tài khoản Microsoft này không được phân cấp và không được liên kết với một gia đình.\n\n"
 "Vui lòng thiết lập tài khoản của bạn theo %1."
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:181
