@@ -200,6 +200,30 @@ MinecraftInstance::MinecraftInstance(SettingsObjectPtr globalSettings,
 	connect(dataPacksPath.get(), &Setting::SettingChanged, this,
 			[this] { m_data_pack_list.reset(); });
 
+	/* What the pack export dialogs were last told about this instance.
+	 *
+	 * Remembered per instance rather than per launcher: exporting a pack
+	 * is something people do repeatedly to the same instance as they
+	 * publish new versions of it, and retyping the name, the summary and
+	 * the author every time - only to have one typo ship in the manifest
+	 * - is the whole reason these are stored at all.
+	 *
+	 * `ExportName` is empty by default, which the dialog reads as "use
+	 * the instance's own name": storing a copy of it up front would
+	 * silently freeze the old name into every future export after a
+	 * rename.
+	 *
+	 * `ExportRecommendedRAM` is 0 for "do not say", which is not the
+	 * same as any allocation the user might pick, so the CurseForge
+	 * manifest can leave the field out entirely rather than assert a
+	 * requirement nobody asked for. */
+	m_settings->registerSetting("ExportName", "");
+	m_settings->registerSetting("ExportVersion", "1.0.0");
+	m_settings->registerSetting("ExportSummary", "");
+	m_settings->registerSetting("ExportAuthor", "");
+	m_settings->registerSetting("ExportOptionalFiles", true);
+	m_settings->registerSetting("ExportRecommendedRAM", 0);
+
 	// DEPRECATED: Read what versions the user configuration thinks should be
 	// used
 	m_settings->registerSetting({"IntendedVersion", "MinecraftVersion"}, "");

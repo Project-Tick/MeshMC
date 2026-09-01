@@ -40,6 +40,31 @@ class ModrinthApi final : public ModPlatform::ContentApi
 	 * header means anything to. */
 	static QString cdnHost();
 
+	/*
+	 * Every host an `.mrpack` manifest is allowed to name a download
+	 * from.
+	 *
+	 * Wider than cdnHost() on purpose, and not a matter of taste: the
+	 * Modrinth modpack format permits these four, and Modrinth's own
+	 * validation accepts a pack that names them. Treating the CDN as the
+	 * only one has consequences in both directions - a conformant pack
+	 * that points at a GitHub release gets flagged as untrusted on
+	 * import, and on export a mod installed from one gets bundled into
+	 * `overrides/` instead of being named, which is both larger and
+	 * something Modrinth rejects for a published pack.
+	 *
+	 * Kept here rather than beside either user because the two have to
+	 * agree: naming a URL we would then refuse to install would be
+	 * worse than either mistake on its own.
+	 */
+	static const QStringList& mrpackHosts();
+
+	/* Whether @p url is served from one of mrpackHosts(). Host-only -
+	 * callers that care about the scheme check it themselves, because
+	 * what counts as acceptable there differs between installing a file
+	 * and merely naming one. */
+	static bool isMrpackHost(const QUrl& url);
+
 	QString id() const override;
 	QString displayName() const override;
 	int searchPageSize() const override;

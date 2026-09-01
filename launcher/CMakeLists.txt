@@ -31,6 +31,14 @@ set(CORE_SOURCES
     MMCStrings.h
     MMCStrings.cpp
 
+    # The long-running halves of MMCZip, as tasks: an archive big enough to
+    # need a progress bar is an archive big enough to need a way out, and
+    # neither is possible from inside a single blocking call.
+    archive/ExportToZipTask.h
+    archive/ExportToZipTask.cpp
+    archive/ExtractZipTask.h
+    archive/ExtractZipTask.cpp
+
     # Basic instance manipulation tasks (derived from InstanceTask)
     InstanceCreationTask.h
     InstanceCreationTask.cpp
@@ -44,6 +52,14 @@ set(CORE_SOURCES
 
     # Prefix tree where node names are strings between separators
     SeparatorPrefixTree.h
+
+    # The checkable file tree the export dialogs are built around, and the
+    # icon provider that keeps pointing it at an entire instance directory
+    # from costing a per-file platform lookup.
+    FileIgnoreProxy.h
+    FileIgnoreProxy.cpp
+    FastFileIconProvider.h
+    FastFileIconProvider.cpp
 
     # String filters
     Filter.h
@@ -127,6 +143,10 @@ set(NET_SOURCES
     net/NetAction.h
     net/NetJob.cpp
     net/NetJob.h
+    # The one API question that does not fit in a URL, and so cannot be a
+    # Net::Download. See net/JsonPost.h.
+    net/JsonPost.cpp
+    net/JsonPost.h
     net/PasteUpload.cpp
     net/PasteUpload.h
     net/Sink.h
@@ -542,6 +562,12 @@ set(FLAME_SOURCES
     modplatform/flame/FlameContentModel.cpp
     modplatform/flame/FlameApi.h
     modplatform/flame/FlameApi.cpp
+    # The file identifier CurseForge looks files up by, and the export
+    # that has to compute it to name a mod instead of shipping it.
+    modplatform/flame/FlameFingerprint.h
+    modplatform/flame/FlameFingerprint.cpp
+    modplatform/flame/FlamePackExportTask.h
+    modplatform/flame/FlamePackExportTask.cpp
 )
 
 set(MODPACKSCH_SOURCES
@@ -578,6 +604,8 @@ set(MODRINTH_SOURCES
     modplatform/modrinth/ModrinthContentModel.cpp
     modplatform/modrinth/ModrinthApi.h
     modplatform/modrinth/ModrinthApi.cpp
+    modplatform/modrinth/ModrinthPackExportTask.h
+    modplatform/modrinth/ModrinthPackExportTask.cpp
 )
 
 set(CONTENT_DOWNLOAD_SOURCES
@@ -894,6 +922,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/EditAccountDialog.h
     ui/dialogs/ExportInstanceDialog.cpp
     ui/dialogs/ExportInstanceDialog.h
+    ui/dialogs/ExportPackDialog.cpp
+    ui/dialogs/ExportPackDialog.h
     ui/dialogs/IconPickerDialog.cpp
     ui/dialogs/IconPickerDialog.h
     ui/dialogs/MSALoginDialog.cpp
@@ -1044,6 +1074,7 @@ qt6_wrap_ui(MESHMC_UI
     ui/dialogs/SkinUploadDialog.ui
     ui/dialogs/CreateShortcutDialog.ui
     ui/dialogs/ExportInstanceDialog.ui
+    ui/dialogs/ExportPackDialog.ui
     ui/dialogs/IconPickerDialog.ui
     ui/dialogs/MSALoginDialog.ui
     ui/dialogs/AboutDialog.ui

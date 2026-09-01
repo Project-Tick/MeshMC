@@ -229,6 +229,190 @@ bool MMCZip::compressDir(QString zipFile, QString dir,
 	return success;
 }
 
+bool MMCZip::collectFileListRecursively(const QString& rootDir,
+									   const QString& subDir,
+									   QFileInfoList* files,
+									   FilterFileFunction excludeFilter)
+{
+	QDir rootDirectory(rootDir);
+	if (!rootDirectory.exists())
+		return false;
+
+	QDir directory = subDir.isNull() ? rootDirectory : QDir(subDir);
+	if (!directory.exists())
+		return false; // shouldn't ever happen
+
+	// recurse into subdirectories first, so the list comes out in a
+	// stable, depth-first order rather than in readdir order
+	const QFileInfoList dirs = directory.entryInfoList(
+		QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
+	for (const auto& dir : dirs) {
+		/* A directory the user unchecked is not walked at all: the
+		 * filter already answers "no" for everything inside it, and
+		 * descending into a blocked `.minecraft/logs` only to throw
+		 * every entry away is the slow way of doing nothing. */
+		if (excludeFilter && excludeFilter(dir))
+			continue;
+		if (!collectFileListRecursively(rootDir, dir.filePath(), files,
+										excludeFilter))
+			return false;
+	}
+
+	const QFileInfoList entries =
+		directory.entryInfoList(QDir::Files | QDir::Hidden | QDir::System);
+	for (const auto& entry : entries) {
+		if (excludeFilter && excludeFilter(entry)) {
+			qDebug() << "Skipping file"
+					 << rootDirectory.relativeFilePath(
+							entry.absoluteFilePath());
+			continue;
+		}
+		files->append(entry);
+	}
+	return true;
+}
+
+MMCZip::ZipWriter::ZipWriter(QString path) : m_path(std::move(path)) {}
+
+MMCZip::ZipWriter::~ZipWriter()
+{
+	(void)close();
+}
+
+bool MMCZip::ZipWriter::open()
+{
+	if (m_archive) {
+		return true;
+	}
+	if (m_path.isEmpty()) {
+		m_error = QStringLiteral("no output path was given");
+		return false;
+	}
+
+	m_archive = archive_write_new();
+	if (!m_archive) {
+		m_error = QStringLiteral("could not allocate an archive writer");
+		return false;
+	}
+	archive_write_set_format_zip(m_archive);
+	/* Names go in as UTF-8 and are flagged as such, so that a pack with
+	 * non-Latin file names survives the round trip through other tools. */
+	if (archive_write_set_options(m_archive, "hdrcharset=UTF-8") !=
+		ARCHIVE_OK) {
+		qWarning() << "Could not set archive options for" << m_path << ":"
+				   << archive_error_string(m_archive);
+	}
+
+	if (archive_write_open_filename(m_archive, m_path.toUtf8().constData()) !=
+		ARCHIVE_OK) {
+		m_error = QString::fromUtf8(archive_error_string(m_archive));
+		qWarning() << "Could not create archive:" << m_path << m_error;
+		archive_write_free(m_archive);
+		m_archive = nullptr;
+		return false;
+	}
+	return true;
+}
+
+bool MMCZip::ZipWriter::close()
+{
+	if (!m_archive) {
+		return true;
+	}
+	bool success = true;
+	if (archive_write_close(m_archive) != ARCHIVE_OK) {
+		m_error = QString::fromUtf8(archive_error_string(m_archive));
+		qWarning() << "Could not close archive" << m_path << m_error;
+		success = false;
+	}
+	archive_write_free(m_archive);
+	m_archive = nullptr;
+	return success;
+}
+
+bool MMCZip::ZipWriter::addFile(const QString& entryName,
+								const QByteArray& data)
+{
+	if (!m_archive) {
+		m_error = QStringLiteral("archive is not open");
+		return false;
+	}
+	if (!writeFileToArchive(m_archive, entryName, data)) {
+		m_error = QString::fromUtf8(archive_error_string(m_archive));
+		return false;
+	}
+	return true;
+}
+
+bool MMCZip::ZipWriter::addFile(const QString& sourcePath,
+								const QString& entryName)
+{
+	if (!m_archive) {
+		m_error = QStringLiteral("archive is not open");
+		return false;
+	}
+
+	QFile file(sourcePath);
+	if (!file.open(QIODevice::ReadOnly)) {
+		m_error = QStringLiteral("could not read '%1': %2")
+					  .arg(sourcePath, file.errorString());
+		return false;
+	}
+
+	const QFileInfo info(sourcePath);
+	const qint64 size = file.size();
+
+	struct archive_entry* entry = archive_entry_new();
+	archive_entry_set_pathname(entry, entryName.toUtf8().constData());
+	archive_entry_set_size(entry, size);
+	archive_entry_set_filetype(entry, AE_IFREG);
+	archive_entry_set_perm(entry, info.isExecutable() ? 0755 : 0644);
+	/* Kept so that an exported instance still shows when its files were
+	 * last touched; a zip full of entries dated "now" makes every diff
+	 * against the original look like a change. */
+	const QDateTime modified = info.lastModified();
+	if (modified.isValid()) {
+		archive_entry_set_mtime(entry, modified.toSecsSinceEpoch(), 0);
+	}
+
+	if (archive_write_header(m_archive, entry) != ARCHIVE_OK) {
+		m_error = QString::fromUtf8(archive_error_string(m_archive));
+		archive_entry_free(entry);
+		return false;
+	}
+	archive_entry_free(entry);
+
+	/* Streamed rather than read whole: worlds and resource packs are
+	 * routinely bigger than it is reasonable to hold in memory, and an
+	 * export walks all of them. */
+	QByteArray buffer(64 * 1024, Qt::Uninitialized);
+	qint64 written = 0;
+	while (written < size) {
+		const qint64 read = file.read(buffer.data(), buffer.size());
+		if (read < 0) {
+			m_error = QStringLiteral("could not read '%1': %2")
+						  .arg(sourcePath, file.errorString());
+			return false;
+		}
+		if (read == 0) {
+			/* The file shrank while we were reading it. The header
+			 * already promised `size` bytes, so the entry cannot be
+			 * completed - better to fail loudly than to write an
+			 * archive libarchive itself considers malformed. */
+			m_error = QStringLiteral("'%1' changed size while being read")
+						  .arg(sourcePath);
+			return false;
+		}
+		if (archive_write_data(m_archive, buffer.constData(), read) < 0) {
+			m_error = QString::fromUtf8(archive_error_string(m_archive));
+			return false;
+		}
+		written += read;
+	}
+
+	return true;
+}
+
 bool MMCZip::mergeZipFiles(const QString& intoPath, QFileInfo from,
 						   QSet<QString>& contained,
 						   const FilterFunction filter)
@@ -497,11 +681,32 @@ nonstd::optional<QStringList> MMCZip::extractSubDir(const QString& zipPath,
 													const QString& subdir,
 													const QString& target)
 {
+	return MMCZip::extractSubDir(zipPath, subdir, target, ExtractReporting{});
+}
+
+nonstd::optional<QStringList>
+MMCZip::extractSubDir(const QString& zipPath, const QString& subdir,
+					  const QString& target,
+					  const ExtractReporting& reporting)
+{
 	QDir directory(target);
 	QStringList extracted;
 
 	qDebug() << "Extracting subdir" << subdir << "from" << zipPath << "to"
 			 << target;
+
+	/* One extra pass over the entry list, with no file data read, is
+	 * what turns the progress bar from a sweeping animation into a
+	 * percentage. Only paid for when somebody is watching. */
+	qint64 total = 0;
+	qint64 done = 0;
+	if (reporting.progress) {
+		for (const QString& name : listEntries(zipPath)) {
+			if (name.startsWith(subdir))
+				total++;
+		}
+		reporting.progress(0, total);
+	}
 
 	auto ar = openZipForReading(zipPath);
 	if (!ar) {
@@ -519,6 +724,16 @@ nonstd::optional<QStringList> MMCZip::extractSubDir(const QString& zipPath,
 	int readRet;
 	while ((readRet = archive_read_next_header(ar.get(), &entry)) ==
 		   ARCHIVE_OK) {
+		/* Between entries rather than inside one: a half-written file is
+		 * worse than one more file, and the wait is bounded by the
+		 * largest entry in the archive. */
+		if (reporting.isCancelled && reporting.isCancelled()) {
+			qDebug() << "Extraction of" << zipPath << "cancelled";
+			for (const auto& f : extracted)
+				(void)QFile::remove(f);
+			return nonstd::nullopt;
+		}
+
 		hasEntries = true;
 		QString name = QString::fromUtf8(archive_entry_pathname(entry));
 		if (!name.startsWith(subdir)) {
@@ -531,6 +746,10 @@ nonstd::optional<QStringList> MMCZip::extractSubDir(const QString& zipPath,
 			absFilePath += "/";
 		}
 
+		if (reporting.entryStarted) {
+			reporting.entryStarted(relName);
+		}
+
 		if (!writeDiskEntry(ar.get(), absFilePath)) {
 			qWarning() << "Failed to extract file" << name << "to"
 					   << absFilePath;
@@ -540,6 +759,9 @@ nonstd::optional<QStringList> MMCZip::extractSubDir(const QString& zipPath,
 			return nonstd::nullopt;
 		}
 		extracted.append(absFilePath);
+		if (reporting.progress) {
+			reporting.progress(++done, total);
+		}
 		qDebug() << "Extracted file" << relName;
 	}
 

@@ -22,6 +22,7 @@
 
 #include <QString>
 #include <QFileInfo>
+#include <QFileInfoList>
 #include <QDir>
 #include <QSet>
 #include <QDateTime>
@@ -30,9 +31,24 @@
 
 #include <nonstd/optional>
 
+struct archive;
+
 namespace MMCZip
 {
 	using FilterFunction = std::function<bool(const QString&)>;
+
+	/**
+	 * Same question as FilterFunction - "leave this one out?" - asked
+	 * about a file rather than about a path.
+	 *
+	 * The export side works from a list of QFileInfo it has already
+	 * walked, and the models that decide what to exclude (see
+	 * FileIgnoreProxy) need more than the name: whether an entry is a
+	 * symlink, where it actually sits, how big it is. Reconstructing a
+	 * QFileInfo from a relative path inside the filter would mean the
+	 * caller stat()s every file twice.
+	 */
+	using FilterFileFunction = std::function<bool(const QFileInfo&)>;
 
 	/**
 	 * Merge two zip files, using a filter function.
@@ -86,11 +102,111 @@ namespace MMCZip
 					 ProgressFunction progress = nullptr);
 
 	/**
+	 * Walk `rootDir` and collect every file into `files`, skipping what
+	 * `excludeFilter` rejects.
+	 *
+	 * The counterpart of compressDir() for callers that want to know what
+	 * they are about to write before they start writing it - a progress
+	 * bar with a real total, a manifest that has to list the same files
+	 * the archive will carry, an export that leaves some of them out
+	 * because they are being downloaded instead.
+	 *
+	 * \param subDir Recursion state. Pass a null QString at the top.
+	 * \return false when a directory could not be read, which means the
+	 * collected list is incomplete and must not be treated as the whole
+	 * tree.
+	 */
+	bool collectFileListRecursively(const QString& rootDir,
+									const QString& subDir,
+									QFileInfoList* files,
+									FilterFileFunction excludeFilter);
+
+	/**
+	 * A zip being written to, one entry at a time.
+	 *
+	 * compressDir() is the whole job in one call, which is all a backup
+	 * needs. An export is not that: it writes a generated manifest
+	 * beside files taken from disk, in an order the caller decides, and
+	 * it has to be able to stop in the middle when the user says so.
+	 * None of that fits behind a single call, so the archive is held
+	 * open here instead.
+	 *
+	 * File contents are streamed in fixed-size blocks rather than read
+	 * whole, because an instance's worth of files includes worlds and
+	 * resource packs that are gigabytes on their own.
+	 *
+	 * Not copyable: two owners of one archive handle would close it
+	 * twice.
+	 */
+	class ZipWriter
+	{
+	  public:
+		explicit ZipWriter(QString path);
+		~ZipWriter();
+
+		ZipWriter(const ZipWriter&) = delete;
+		ZipWriter& operator=(const ZipWriter&) = delete;
+
+		bool open();
+
+		/**
+		 * Finish the archive. Safe to call twice; the destructor calls it
+		 * for the paths that bail out early.
+		 */
+		bool close();
+
+		/** Add a file from disk, stored in the archive as `entryName`. */
+		bool addFile(const QString& sourcePath, const QString& entryName);
+
+		/** Add `data` as `entryName`. For generated manifests. */
+		bool addFile(const QString& entryName, const QByteArray& data);
+
+		/** Human readable reason the last failed call failed. */
+		QString errorString() const
+		{
+			return m_error;
+		}
+
+	  private:
+		QString m_path;
+		struct archive* m_archive = nullptr;
+		QString m_error;
+	};
+
+	/**
+	 * What a long-running extraction reports back, and how it is asked
+	 * to stop.
+	 *
+	 * Every member is optional. `progress` is called once before the
+	 * first entry and once per entry written; asking for it costs one
+	 * extra pass over the archive's entry list up front, which is what
+	 * makes a total - and therefore a percentage - possible at all.
+	 *
+	 * `isCancelled` is polled between entries. When it answers true the
+	 * extraction stops, removes what it has already written and returns
+	 * nullopt, exactly as it would for a damaged archive: the caller
+	 * knows which of the two happened because it owns the flag.
+	 */
+	struct ExtractReporting {
+		ProgressFunction progress = nullptr;
+		std::function<bool()> isCancelled = nullptr;
+		std::function<void(const QString&)> entryStarted = nullptr;
+	};
+
+	/**
 	 * Extract a subdirectory from an archive.
 	 */
 	nonstd::optional<QStringList> extractSubDir(const QString& zipPath,
 												const QString& subdir,
 												const QString& target);
+
+	/**
+	 * Extract a subdirectory from an archive, reporting progress and
+	 * honouring cancellation. See ExtractReporting.
+	 */
+	nonstd::optional<QStringList> extractSubDir(
+		const QString& zipPath, const QString& subdir, const QString& target,
+		const ExtractReporting& reporting);
 
 	/**
 	 * Extract a single file relative to the zip root.

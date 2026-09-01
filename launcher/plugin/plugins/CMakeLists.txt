@@ -37,6 +37,7 @@ endif()
 # stale .mmco files in users' mmcmodules/ directories are refused
 # instead of doubling up on the core feature.
 #   - Filelink: moved into core
+#   - PackPortal: moved into core
 #   - BackupSystem: moved into core (launcher/backup + BackupPage)
 #   - NewsViewer:   moved into core (launcher/ui/dialogs/NewsViewerDialog,
 #                   multi-feed support folded into news/NewsChecker)
@@ -45,7 +46,6 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
     DesktopNotifier
     DiscordRPC
     SkinManager
-    PackPortal
     GitVersioning
     OfflineWiki
 )
@@ -54,7 +54,6 @@ add_subdirectory(SystemTray)
 add_subdirectory(DesktopNotifier)
 add_subdirectory(DiscordRPC)
 add_subdirectory(SkinManager)
-add_subdirectory(PackPortal)
 add_subdirectory(GitVersioning)
 add_subdirectory(OfflineWiki)
 

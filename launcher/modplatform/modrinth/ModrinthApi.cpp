@@ -146,6 +146,29 @@ QString ModrinthApi::cdnHost()
 	return QStringLiteral("cdn.modrinth.com");
 }
 
+const QStringList& ModrinthApi::mrpackHosts()
+{
+	/* The format's own allowlist, in the order the specification lists
+	 * it. The CDN is where anything installed through the launcher's own
+	 * browser comes from; the other three are where a pack author points
+	 * at a mod that is not on Modrinth at all. */
+	static const QStringList hosts = {QStringLiteral("cdn.modrinth.com"),
+									  QStringLiteral("github.com"),
+									  QStringLiteral("raw.githubusercontent.com"),
+									  QStringLiteral("gitlab.com")};
+	return hosts;
+}
+
+bool ModrinthApi::isMrpackHost(const QUrl& url)
+{
+	if (!url.isValid()) {
+		return false;
+	}
+	/* Case-folded: host names are not case sensitive, and a manifest is
+	 * a text file somebody may well have hand-edited. */
+	return mrpackHosts().contains(url.host().toLower());
+}
+
 QString ModrinthApi::id() const
 {
 	return QStringLiteral("modrinth");

@@ -62,6 +62,8 @@
 #include <java/JavaInstallList.h>
 #include <launch/LaunchTask.h>
 #include <minecraft/MinecraftInstance.h>
+#include <minecraft/PackProfile.h>
+#include <minecraft/VersionFile.h>
 #include <minecraft/auth/AccountList.h>
 #include <SkinUtils.h>
 #include <BuildConfig.h>
@@ -98,6 +100,7 @@
 #include "ui/dialogs/EditAccountDialog.h"
 #include "ui/dialogs/NotificationDialog.h"
 #include "ui/dialogs/ExportInstanceDialog.h"
+#include "ui/dialogs/ExportPackDialog.h"
 #include "ui/dialogs/CreateShortcutDialog.h"
 
 #include "UpdateController.h"
@@ -202,6 +205,20 @@ template <typename T> class Translated
 	{
 		m_text = text;
 	}
+	/* The label a tool button shows, when that wants to differ from the
+	 * one a menu shows.
+	 *
+	 * Qt derives a tool button's label from the action's text by
+	 * stripping the mnemonic and any trailing ellipsis, which is right
+	 * for "&Open..." but leaves a menu entry phrased as an abbreviation
+	 * showing up on a button as one bare word. Setting it explicitly
+	 * takes that derivation out of the picture; going through here
+	 * rather than QAction::setIconText() directly is what keeps it
+	 * following a language change like the other two. */
+	void setIconTextId(const char* iconText)
+	{
+		m_iconText = iconText;
+	}
 	operator T*()
 	{
 		return m_contained;
@@ -220,6 +237,21 @@ template <typename T> class Translated
 			}
 			m_contained->setText(result);
 		}
+		/* Guarded on the type rather than on the pointer alone: this
+		 * template is also instantiated for QToolButton, which has no
+		 * icon text of its own to set - and instantiating the call for
+		 * it would not compile. Nothing sets an id for one either, so
+		 * the branch simply does not exist there. */
+		if constexpr (requires(T* target) { target->setIconText(QString()); }) {
+			if (m_iconText) {
+				QString result;
+				result = QApplication::translate("MainWindow", m_iconText);
+				if (result.contains("%1")) {
+					result = result.arg(BuildConfig.MESHMC_NAME);
+				}
+				m_contained->setIconText(result);
+			}
+		}
 		if (m_tooltip) {
 			QString result;
 			result = QApplication::translate("MainWindow", m_tooltip);
@@ -233,6 +265,7 @@ template <typename T> class Translated
   private:
 	T* m_contained = nullptr;
 	const char* m_text = nullptr;
+	const char* m_iconText = nullptr;
 	const char* m_tooltip = nullptr;
 };
 using TranslatedAction = Translated<QAction>;
@@ -302,9 +335,16 @@ class MainWindow::Ui
 	TranslatedAction actionLaunchInstanceOffline;
 	TranslatedAction actionScreenshots;
 	TranslatedAction actionExportInstance;
+	/* The formats behind actionExportInstance, which carries a submenu
+	 * rather than doing anything when triggered itself. */
+	TranslatedAction actionExportInstanceZip;
+	TranslatedAction actionExportInstanceMrPack;
+	TranslatedAction actionExportInstanceFlamePack;
 	TranslatedAction actionCreateInstanceShortcut;
 	TranslatedAction actionLockToolbars;
 	QVector<TranslatedAction*> all_actions;
+
+	QMenu* exportInstanceMenu = nullptr;
 
 	LabeledToolButton* renameButton = nullptr;
 	LabeledToolButton* changeIconButton = nullptr;
@@ -1072,10 +1112,67 @@ class MainWindow::Ui
 		actionExportInstance->setObjectName(
 			QStringLiteral("actionExportInstance"));
 		actionExportInstance->setIcon(APPLICATION->getThemedIcon("export"));
+		/* Spelled the way the launcher this feature was modelled on
+		 * spells it, down to the mnemonic and the ellipsis, so that the
+		 * entry a user arrives here already knowing is the entry they
+		 * find. Note that no other action in this window carries a
+		 * mnemonic. */
 		actionExportInstance.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "E&xport..."));
+		/* The sidebar reads as a column of instance verbs - "Edit
+		 * Instance", "Copy Instance", "Create Shortcut" - and Qt would
+		 * otherwise put a lone "Export" there, having stripped the
+		 * mnemonic and the ellipsis off the menu wording above. */
+		actionExportInstance.setIconTextId(
 			QT_TRANSLATE_NOOP("MainWindow", "Export Instance"));
-		// FIXME: missing tooltip
+		actionExportInstance.setTooltipId(QT_TRANSLATE_NOOP(
+			"MainWindow",
+			"Export the selected instance to supported formats."));
 		all_actions.append(&actionExportInstance);
+
+		/* One entry per format the launcher can write. Kept behind the
+		 * existing export entry rather than added beside it: they are
+		 * the same errand, and three top-level buttons for it would
+		 * crowd out everything else on the instance toolbar.
+		 *
+		 * "%1" is the launcher's own name, which Translated fills in -
+		 * the plain zip is our format, and the other two are named after
+		 * whose format they are. Each carries the mark of whose format
+		 * it is, so the menu can be read at a glance rather than word by
+		 * word. */
+		actionExportInstanceZip = TranslatedAction(MainWindow);
+		actionExportInstanceZip->setObjectName(
+			QStringLiteral("actionExportInstanceZip"));
+		actionExportInstanceZip->setIcon(
+			APPLICATION->getThemedIcon("launcher"));
+		actionExportInstanceZip.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "%1 (zip)"));
+		all_actions.append(&actionExportInstanceZip);
+
+		actionExportInstanceMrPack = TranslatedAction(MainWindow);
+		actionExportInstanceMrPack->setObjectName(
+			QStringLiteral("actionExportInstanceMrPack"));
+		actionExportInstanceMrPack->setIcon(
+			APPLICATION->getThemedIcon("modrinth"));
+		actionExportInstanceMrPack.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "Modrinth (mrpack)"));
+		all_actions.append(&actionExportInstanceMrPack);
+
+		actionExportInstanceFlamePack = TranslatedAction(MainWindow);
+		actionExportInstanceFlamePack->setObjectName(
+			QStringLiteral("actionExportInstanceFlamePack"));
+		actionExportInstanceFlamePack->setIcon(
+			APPLICATION->getThemedIcon("flame"));
+		actionExportInstanceFlamePack.setTextId(
+			QT_TRANSLATE_NOOP("MainWindow", "CurseForge (zip)"));
+		all_actions.append(&actionExportInstanceFlamePack);
+
+		exportInstanceMenu = new QMenu(MainWindow);
+		exportInstanceMenu->setToolTipsVisible(true);
+		exportInstanceMenu->addAction(actionExportInstanceZip);
+		exportInstanceMenu->addAction(actionExportInstanceMrPack);
+		exportInstanceMenu->addAction(actionExportInstanceFlamePack);
+		actionExportInstance->setMenu(exportInstanceMenu);
 
 		actionDeleteInstance = TranslatedAction(MainWindow);
 		actionDeleteInstance->setObjectName(
@@ -1127,6 +1224,27 @@ class MainWindow::Ui
 		instanceToolBar->addAction(actionCopyInstance);
 		instanceToolBar->addAction(actionDeleteInstance);
 		instanceToolBar->addAction(actionCreateInstanceShortcut);
+
+		/* Export carries a submenu, and a sidebar button built from such
+		 * an action needs to be told how to show it.
+		 *
+		 * Left at Qt's default it is DelayedPopup: a small arrow in the
+		 * button's corner, the menu only if the press is held, and on a
+		 * normal click nothing but triggered() - which this action has
+		 * no handler for, so the button looked broken. MenuButtonPopup
+		 * gives it the separated drop-down section instead, which is
+		 * what the launcher this sidebar is modelled on does for every
+		 * action with a menu.
+		 *
+		 * Set here rather than in makeSidebarButton(), which would be
+		 * the general home for it: that runs again whenever the sidebar
+		 * is re-measured, and Launch has its own popup mode chosen per
+		 * selection - a blanket rule here would undo that choice on the
+		 * next rename. */
+		if (auto* exportButton = qobject_cast<QToolButton*>(
+				instanceToolBar->widgetForAction(actionExportInstance))) {
+			exportButton->setPopupMode(QToolButton::MenuButtonPopup);
+		}
 
 		syncSidebarWidths();
 
@@ -2772,10 +2890,66 @@ void MainWindow::restoreTrashedInstance()
 
 void MainWindow::on_actionExportInstance_triggered()
 {
+	/* The body of the split button. Deliberately the same errand as the
+	 * Zip entry rather than a fourth thing: the arrow beside it lists
+	 * the formats, so what is left for the button itself is the default
+	 * one, not a choice of its own. */
+	on_actionExportInstanceZip_triggered();
+}
+
+void MainWindow::on_actionExportInstanceZip_triggered()
+{
 	if (m_selectedInstance) {
 		ExportInstanceDialog dlg(m_selectedInstance, this);
 		dlg.exec();
 	}
+}
+
+void MainWindow::on_actionExportInstanceMrPack_triggered()
+{
+	/* The pack exporters read the component list and the game directory,
+	 * so they need more than a BaseInstance. Nothing else can currently
+	 * be selected, but a cast that fails is a reason to do nothing
+	 * rather than to crash. */
+	auto instance =
+		std::dynamic_pointer_cast<MinecraftInstance>(m_selectedInstance);
+	if (!instance) {
+		return;
+	}
+
+	ExportPackDialog dlg(instance.get(), this,
+						 ExportPackDialog::Format::ModrinthPack);
+	dlg.exec();
+}
+
+void MainWindow::on_actionExportInstanceFlamePack_triggered()
+{
+	auto instance =
+		std::dynamic_pointer_cast<MinecraftInstance>(m_selectedInstance);
+	if (!instance) {
+		return;
+	}
+
+	/* CurseForge modpacks cannot name a snapshot: its manifest carries a
+	 * Minecraft version the platform has to recognise, and it does not
+	 * recognise snapshots. Said before the dialog rather than after it,
+	 * so nobody fills in a description and picks a filename for a pack
+	 * that was never going to be accepted. */
+	auto component = instance->getPackProfile()->getComponent("net.minecraft");
+	if (component && component->getVersionFile() &&
+		component->getVersionFile()->type == QStringLiteral("snapshot")) {
+		CustomMessageBox::selectable(
+			this, tr("Cannot export"),
+			tr("CurseForge modpacks cannot be made from a snapshot version "
+			   "of Minecraft."),
+			QMessageBox::Warning)
+			->exec();
+		return;
+	}
+
+	ExportPackDialog dlg(instance.get(), this,
+						 ExportPackDialog::Format::CurseForgePack);
+	dlg.exec();
 }
 
 void MainWindow::on_actionCreateInstanceShortcut_triggered()

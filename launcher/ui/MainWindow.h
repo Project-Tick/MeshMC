@@ -181,7 +181,20 @@ class MainWindow : public QMainWindow
 
 	void deleteGroup();
 
+	/* The entry that carries the submenu, and one handler per format
+	 * behind it.
+	 *
+	 * On the sidebar the parent is a split button: the arrow opens the
+	 * list of formats, and the body needs something to do, or clicking
+	 * the thing labelled "Export Instance" does nothing at all. It does
+	 * the launcher's own zip - the format that needs no account, no
+	 * catalogue and no network, and the one an export is most often
+	 * wanted for. In a menu the parent only unfolds the submenu, so this
+	 * never fires from there. */
 	void on_actionExportInstance_triggered();
+	void on_actionExportInstanceZip_triggered();
+	void on_actionExportInstanceMrPack_triggered();
+	void on_actionExportInstanceFlamePack_triggered();
 
 	void on_actionCreateInstanceShortcut_triggered();
 
