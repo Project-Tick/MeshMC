@@ -17,6 +17,9 @@
  * limitations under the License.
  */
 
+#include "FileSystem.h"
+#include "BuildConfig.h"
+
 #include "plugin/PluginLoader.h"
 #include "plugin/PluginSignature.h"
 #include "plugin/CoreSupersededPlugins.h"
@@ -78,6 +81,9 @@ QStringList PluginLoader::defaultSearchPaths()
 		paths << bundleDir.filePath("PlugIns/mmcmodules"); // legacy
 	}
 	paths << QDir(appDir).filePath("mmcmodules"); // legacy
+#elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
+	auto path = FS::PathCombine(appDir, "..", "share", BuildConfig.MESHMC_NAME);
+	paths << FS::PathCombine(path, "mmcmodules");
 #else
 	paths << QDir(appDir).filePath("mmcmodules");
 #endif

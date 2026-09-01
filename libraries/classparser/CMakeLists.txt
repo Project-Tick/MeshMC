@@ -15,8 +15,9 @@ endif(${BIGENDIAN})
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
 
-# When built as part of the MeshMC tree, libarchive is a sibling subproject and
-# there is nothing installed to find.
+# When built as part of the MeshMC tree the top-level build has already
+# resolved libarchive (from vcpkg, or from the system package), so only a
+# standalone build has to look for it.
 if(NOT TARGET LibArchive::LibArchive)
     find_package(LibArchive REQUIRED)
 endif()
@@ -46,31 +47,3 @@ target_include_directories(classparser
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/classparser>)
 target_link_libraries(classparser PRIVATE LibArchive::LibArchive Qt6::Core)
-
-# Only publish a consumable package when this is the project being built.
-# In-tree, classparser links the sibling archive_static target, which is not
-# part of any export set, and install(EXPORT) rejects that with a hard error.
-if(NOT PROJECT_IS_TOP_LEVEL)
-    return()
-endif()
-
-install(TARGETS classparser
-    EXPORT classparser-targets
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/classparser)
-install(EXPORT classparser-targets
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/classparser)
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/classparserConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/classparser-config.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/classparser)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/classparser-config-version.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/classparser-config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/classparser-config-version.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/classparser)

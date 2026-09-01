@@ -35,25 +35,3 @@ target_include_directories(LocalPeer
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/LocalPeer>)
 target_link_libraries(LocalPeer PUBLIC Qt6::Core Qt6::Network)
-
-install(TARGETS LocalPeer
-    EXPORT LocalPeer-targets
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES include/LocalPeer.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/LocalPeer)
-install(EXPORT LocalPeer-targets
-    NAMESPACE LocalPeer::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LocalPeer)
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/LocalPeerConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/LocalPeerConfig.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LocalPeer)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/LocalPeerConfigVersion.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/LocalPeerConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/LocalPeerConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LocalPeer)

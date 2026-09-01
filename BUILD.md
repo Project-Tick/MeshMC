@@ -5,7 +5,6 @@ This document explains how to build MeshMC from source on all supported platform
 ## Table of Contents
 
 - [Requirements](#requirements)
-- [Quick Start (Bootstrap)](#quick-start-bootstrap)
 - [Dependencies](#dependencies)
 - [Cloning the Repository](#cloning-the-repository)
 - [CMake Presets](#cmake-presets)
@@ -25,29 +24,12 @@ This document explains how to build MeshMC from source on all supported platform
 - **C++ compiler** with C++23 support (GCC >= 13, Clang >= 17, MSVC >= 19.36)
 - **Qt 6** (Core, Widgets, Concurrent, Network, NetworkAuth, Test, Xml)
 - **Java Development Kit** (JDK 17) — for building Java launcher components
-- **Git** — for submodule management
+- **Git** — required at configure time: vcpkg is a submodule, and it fetches
+  the port versions it resolves through git
 
-## Quick Start (Bootstrap)
-
-The fastest way to get started is to use the bootstrap script. It automatically
-detects your platform, installs missing dependencies, initializes submodules,
-and sets up lefthook git hooks.
-
-### Linux / macOS
-
-```bash
-../bootstrap.sh
-```
-
-Supported distributions: Debian, Ubuntu, Fedora, RHEL/CentOS, openSUSE, Arch Linux, macOS (via Homebrew).
-
-### Windows
-
-```cmd
-..\bootstrap.cmd
-```
-
-Uses [Scoop](https://scoop.sh) for CLI tools and system libraries.
+Everything else (libarchive, cmark, toml++, zlib, libqrencode, ECM) is installed
+by vcpkg when you configure with a preset — see
+[Dependencies](#dependencies).
 
 ## Dependencies
 
@@ -61,37 +43,85 @@ Uses [Scoop](https://scoop.sh) for CLI tools and system libraries.
 | libqrencode            | QR code generation              | —                  |
 | scdoc                  | Man page generation (optional)  | —                  |
 
+### Dependencies Managed by vcpkg
+
+vcpkg is vendored as a submodule at `cmake/vcpkg`, and the CMake presets point
+their toolchain file at it. Configuring with a preset therefore installs
+everything listed in `vcpkg.json` first, into `build/vcpkg_installed/`:
+
+| Dependency   | Notes                                                    |
+|--------------|----------------------------------------------------------|
+| ECM          | host dependency — CMake modules only, nothing is linked   |
+| cmark        | Markdown rendering                                        |
+| gpgmepp      | plugin signature verification — **not on MSVC**, see below |
+| libarchive   | features: `bzip2`, `lz4`, `lzma`, `zstd`                  |
+| libqrencode  | optional; the QR code in the crash reporter               |
+| tomlplusplus | TOML parsing                                              |
+| zlib         | the plain zlib API, for nbt++ and the launcher            |
+
+`gpgmepp` (which pulls in `gpgme`, `libassuan` and `libgpg-error`) carries the
+platform expression `!windows`, so on Linux and macOS it comes from vcpkg like
+everything else. Windows is split:
+
+- **MinGW** takes it from MSYS2 instead, through `gpgme:p` in the CI's pacboy
+  list. That package is gpgme 1.23.x, i.e. from before the 2.0 split, so it
+  still bundles the C++ binding — `include/gpgme++`, `lib/cmake/Gpgmepp` and
+  `libgpgmepp` are all in it, and `find_package(Gpgmepp)` finds them with no
+  help. Building the same chain through vcpkg is not merely slower there:
+  gpgme's `make all` fails under clang64.
+- **MSVC** gets nothing, because upstream gpgme is autotools and does not
+  support MSVC — the vcpkg port declares as much. This is the only platform
+  where `MeshMC_PLUGIN_SIGNATURES` defaults to `OFF` and the verifier compiles
+  into a stub.
+
+Only the C++ binding is used (`gpgme++/` headers, the `GpgME::` namespace);
+QGpgME is not needed, and has no vcpkg port anyway.
+
+Those three are also the only autotools packages in the dependency set, which
+is why `cmake/vcpkg-triplets/universal-osx.cmake` sets `VCPKG_MAKE_BUILD_TRIPLET`:
+vcpkg would otherwise configure them with `--host=universal-apple-darwin`, a
+name `config.sub` rejects. The triplet pins a real GNU triplet instead, matching
+the build machine, and the universal binary keeps coming from the
+`-arch arm64 -arch x86_64` flags vcpkg already passes to the compiler.
+
+Note that with the static triplets used here, gpgmepp exports its target as
+`GpgmeppStatic` rather than `Gpgmepp`; the top-level `CMakeLists.txt` accepts
+either.
+
+Two files drive this:
+
+- **`vcpkg.json`** — the dependency list and the features asked of each one.
+- **`vcpkg-configuration.json`** — pins the registry to a single upstream vcpkg
+  commit (`baseline`), so everyone resolves the same versions, and points at two
+  overlay directories:
+  - `cmake/vcpkg-triplets/` — static libraries, dynamic CRT, release-only
+    dependencies. The README there explains why, including the autotools
+    `--host` pin the universal macOS triplet needs.
+  - `cmake/vcpkg-ports/` — currently one port, `vcpkg-tool-meson`: upstream's,
+    plus a patch that stops meson's compiler detection from choking on
+    `-arch arm64 -arch x86_64`. Without it `tomlplusplus` (the one meson-built
+    dependency) cannot configure for `universal-osx`. Again, see the README in
+    that directory.
+
+Qt is deliberately **not** in the manifest. It stays a system dependency,
+because nobody wants to build Qt from source.
+
+The first configure of a fresh build tree needs network access, and takes a
+while: vcpkg builds each dependency from source once, then reuses its binary
+cache (`~/.cache/vcpkg` on Linux/macOS) for every later build tree.
+
+**Building without vcpkg is supported**, and is what distro packaging does:
+configure without the presets (or override `CMAKE_TOOLCHAIN_FILE`) and the same
+`find_package()` calls resolve against system packages instead — with
+`pkg-config` as an additional fallback for libarchive and toml++, which distros
+often ship without CMake package files. Install the libraries in the table above
+through your package manager in that case.
+
 ### In-Tree Dependencies
 
-These are **not** system packages — do not install distro versions of them and
-do not expect `CMAKE_PREFIX_PATH` to supply them:
-
-| Dependency                        | How it is obtained                |
-|-----------------------------------|-----------------------------------|
-| zlib-ng (`libraries/zlib-ng`)     | git submodule, `ZLIB_COMPAT=ON`   |
-| libarchive (`libraries/libarchive`)| git submodule                    |
-| cmark                             | FetchContent, pinned to `0.31.1`  |
-| tomlplusplus                      | FetchContent, pinned to `v3.4.0`  |
-| nbt++, systeminfo, iconfix, …      | git subtrees under `libraries/`   |
-
-libarchive is deliberately built against the bundled zlib-ng (in `ZLIB_COMPAT`
-mode) rather than a system zlib, and is linked statically. The top-level
-`CMakeLists.txt` seeds the `ZLIB_INCLUDE_DIR` / `ZLIB_LIBRARY_RELEASE` cache
-entries so that libarchive's own `find_package(ZLIB)` resolves to it; if that
-handoff breaks, libarchive configures itself *without* DEFLATE support and the
-launcher can no longer read any `.jar`. Configure fails loudly in that case —
-read the comments there before changing any of it.
-
-Because two dependencies are submodules, a plain `git clone` is not enough:
-
-```bash
-git submodule update --init --recursive
-```
-
-The first configure of a fresh build directory also needs network access for
-the two FetchContent dependencies. To build offline, point
-`FETCHCONTENT_SOURCE_DIR_CMARK` / `FETCHCONTENT_SOURCE_DIR_TOMLPLUSPLUS` at
-local checkouts.
+nbt++, systeminfo, iconfix, rainbow, classparser and the other libraries under
+`libraries/` are git subtrees, built as part of this tree. These are **not**
+system packages — do not install distro versions of them.
 
 ### Distro-Specific Package Names
 
@@ -114,8 +144,13 @@ sudo apt-get install \
 sudo dnf install \
     cmake ninja-build extra-cmake-modules pkgconf \
     qt6-qtbase-devel qrencode-devel \
+    gpgmepp-devel \
     scdoc
 ```
+
+`gpgmepp-devel` is only needed for the non-vcpkg path (it is what
+`MeshMC_PLUGIN_SIGNATURES` links against); `qgpgme-qt6-devel` is **not**
+required — the code never uses QGpgME.
 
 </details>
 
@@ -170,7 +205,9 @@ These are **not required** to build, but are used for development:
 
 ## Cloning the Repository
 
-MeshMC uses git submodules. Make sure to clone recursively:
+MeshMC uses one git submodule — vcpkg, at `cmake/vcpkg`. It is the CMake
+toolchain the presets use, so a non-recursive clone cannot configure. Clone
+recursively:
 
 ```bash
 git clone --recursive https://github.com/Project-Tick/Project-Tick.git
@@ -297,9 +334,10 @@ Install dependencies via Homebrew:
 brew install cmake ninja extra-cmake-modules qt@6 qrencode pkg-config
 ```
 
-libarchive is **not** installed from Homebrew: it is built in-tree from
-`libraries/libarchive` against the bundled zlib-ng, so no `CMAKE_PREFIX_PATH`
-juggling for a keg-only formula is needed. Do check out the submodules first:
+libarchive is **not** installed from Homebrew: vcpkg provides it, along with
+cmark, toml++, zlib and libqrencode — so there is no `CMAKE_PREFIX_PATH`
+juggling for keg-only formulae. Do check the submodule out first, since vcpkg
+itself is one:
 
 ```bash
 git submodule update --init --recursive
@@ -333,21 +371,18 @@ cmake --install build --config Release
 
 Requires Visual Studio with C++ workload.
 
-The only external dependency the `build-deps.ps1` script still fetches is
-`extra-cmake-modules`. zlib-ng, libarchive, cmark, toml++ and the monorepo
-libraries are all part of this repository (submodules, subtrees and
-FetchContent), so no package manager installation is required for them —
-just make sure the submodules are checked out:
+No external dependency has to be installed by hand: ECM, libarchive, cmark,
+toml++, zlib and libqrencode all come from vcpkg during configure, and the
+libraries under `libraries/` are part of this repository. Just make sure the
+submodule is checked out, since vcpkg is one:
 
 ```cmd
 git submodule update --init --recursive
 ```
 
-Optionally install `pkg-config` via Chocolatey:
-
-```cmd
-choco install pkgconfiglite -y
-```
+`pkg-config` is **not** needed for an MSVC build — libqrencode is looked up
+directly there (`find_path` / `find_library`), precisely because MSVC has no
+usable pkg-config.
 
 Then configure and build:
 
@@ -435,6 +470,10 @@ cmake --build build
 
 The container comes with Qt 6.10.2 (installed via `aqtinstall`), Clang, LLD,
 Ninja, CMake, and all required dependencies pre-installed.
+
+Note that this invocation configures without a preset, so it does **not** use
+the vcpkg toolchain: the dependencies are resolved against the packages already
+present in the image.
 
 ## Running Tests
 
@@ -543,7 +582,11 @@ cmake --preset linux -DCMAKE_PREFIX_PATH=/path/to/qt6
 
 ### Missing ECM (Extra CMake Modules)
 
-ECM is required. Install it via your package manager:
+With a preset, vcpkg installs ECM as a host dependency and this should not
+happen — check that `cmake/vcpkg` is actually checked out.
+
+When configuring **without** the vcpkg toolchain, ECM has to come from your
+package manager:
 
 - **Debian/Ubuntu:** `sudo apt-get install extra-cmake-modules`
 - **Fedora:** `sudo dnf install extra-cmake-modules`
@@ -552,8 +595,9 @@ ECM is required. Install it via your package manager:
 
 ### Submodule Errors
 
-If you see errors about missing files in `libraries/`, ensure submodules are
-initialized:
+If CMake cannot find the vcpkg toolchain file
+(`cmake/vcpkg/scripts/buildsystems/vcpkg.cmake`), or complains about missing
+files under `libraries/`, the submodule is not checked out:
 
 ```bash
 git submodule update --init --recursive
