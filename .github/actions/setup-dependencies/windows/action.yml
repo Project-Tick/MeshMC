@@ -62,7 +62,6 @@ runs:
           tomlplusplus:p
           libarchive:p
           gpgme:p
-          rust:p
 
     - name: List pacman packages (MinGW)
       if: ${{ inputs.msystem != '' }}

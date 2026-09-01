@@ -125,7 +125,6 @@ namespace
 		kDivider,
 		"actionMoreNews",
 		"actionMeshMCLogs",
-		"actionFeatureFlags",
 		"actionPlugins",
 		kDivider,
 		"actionCheckUpdate",

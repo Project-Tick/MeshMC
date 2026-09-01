@@ -96,8 +96,6 @@ class MainWindow : public QMainWindow
 
 	void on_actionMeshMCLogs_triggered();
 
-	void on_actionFeatureFlags_triggered();
-
 	void on_actionAddInstance_triggered();
 
 	void on_actionREDDIT_triggered();
