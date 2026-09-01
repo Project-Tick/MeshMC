@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "dependencies": [
+    {
+      "name": "ecm",
+      "host": true
+    },
+    "cmark",
+    {
+      "name": "gpgmepp",
+      "platform": "!windows"
+    },
+    {
+      "name": "libarchive",
+      "default-features": false,
+      "features": [
+        "bzip2",
+        "lz4",
+        "lzma",
+        "zstd"
+      ]
+    },
+    {
+      "name": "libqrencode",
+      "default-features": false
+    },
+    "tomlplusplus",
+    "zlib"
+  ]
+}

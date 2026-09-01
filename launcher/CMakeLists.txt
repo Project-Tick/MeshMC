@@ -663,9 +663,10 @@ add_unit_test(Index
 
 ################################ COMPILE ################################
 
-# zlib-ng, libarchive, cmark, toml++ and nbt++ all come from the top-level
-# CMakeLists.txt: the first two as submodules under libraries/, the next two
-# via FetchContent, nbt++ as a subtree.
+# zlib, libarchive, cmark and toml++ are resolved in the top-level
+# CMakeLists.txt -- from vcpkg under the presets, from the system package when
+# configured without the vcpkg toolchain. nbt++ is a subtree under libraries/
+# and is built here. Either way the imported target names below are the same.
 
 set(LOGIC_SOURCES
     ${CORE_SOURCES}
@@ -1130,14 +1131,14 @@ add_unit_test(CustomTheme
     )
 
 target_link_libraries(MeshMC_logic
-    systeminfo::systeminfo
+    systeminfo
     classparser
-    nbt++::nbt++
+    nbt++
     ZLIB::ZLIB
-    optional-bare::optional-bare
+    optional-bare
     tomlplusplus::tomlplusplus
     BuildConfig
-    Katabasis::Katabasis
+    Katabasis
 )
 
 if(MeshMC_DISABLE_JAVA_DOWNLOADER)
@@ -1181,7 +1182,9 @@ endif()
 # PluginSignature.cpp compiles into a stub that reports every module
 # as unsigned and never tries to include any gpgme++ headers.
 if(MeshMC_PLUGIN_SIGNATURES)
-    target_link_libraries(MeshMC_logic Gpgmepp)
+    # Gpgmepp or GpgmeppStatic, depending on the linkage of the installation
+    # that was found; resolved in the top-level CMakeLists.
+    target_link_libraries(MeshMC_logic ${MeshMC_GpgmeppTarget})
     target_compile_definitions(MeshMC_logic PRIVATE MESHMC_PLUGIN_SIGNATURES=1)
 else()
     target_compile_definitions(MeshMC_logic PRIVATE MESHMC_PLUGIN_SIGNATURES=0)
@@ -1217,12 +1220,63 @@ if(DEFINED MeshMC_APP_BINARY_DEFS)
     target_compile_definitions(MeshMC_logic PRIVATE ${MeshMC_APP_BINARY_DEFS})
 endif()
 
-install(TARGETS ${MeshMC_Name}
-    RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
-    BUNDLE DESTINATION ${BUNDLE_DEST_DIR}
-    LIBRARY DESTINATION ${LIBRARY_DEST_DIR}
-    RUNTIME DESTINATION ${BINARY_DEST_DIR}
-)
+if(APPLE)
+    # CMake derives an app bundle's *directory* name from the target's
+    # OUTPUT_NAME, and there is no property to decouple the two: with
+    # OUTPUT_NAME "meshmc" the only thing install(TARGETS ... BUNDLE) can
+    # produce is "meshmc.app" (RUNTIME DESTINATION is silently ignored for
+    # bundle targets, and omitting BUNDLE DESTINATION is a hard error).
+    #
+    # Everything else, however, installs into "MeshMC.app": BINARY_DEST_DIR,
+    # FRAMEWORK_DEST_DIR, RESOURCES_DEST_DIR, JARS_DEST_DIR, the MMCO_*
+    # directories, the .icns/Assets.car rules in the top-level CMakeLists,
+    # the qt_deploy_runtime_dependencies() call below and the macOS
+    # packaging action. On a case-insensitive volume the two spellings
+    # collapse into whichever directory is created first, so the mismatch
+    # only shows up as odd casing; on a case-sensitive one the install
+    # splits in half — a bundle without a binary next to a binary without
+    # a bundle.
+    #
+    # Install the bundle into a staging directory (a name that cannot
+    # collide with MeshMC.app under either casing rule) and merge it into
+    # place. The staging hop is not cosmetic: install(TARGETS) is what
+    # rewrites the build RPATH into INSTALL_RPATH via install_name_tool,
+    # and it only does that for the copy it makes itself. Copying the
+    # build-tree bundle directly would ship a binary still pointing at the
+    # build directory.
+    set(MeshMC_BundleStagingDir "_meshmc_bundle_staging")
+
+    install(TARGETS ${MeshMC_Name}
+        RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
+        BUNDLE DESTINATION "${MeshMC_BundleStagingDir}"
+        LIBRARY DESTINATION ${LIBRARY_DEST_DIR}
+    )
+
+    # Runs before the qt_deploy_runtime_dependencies() script registered
+    # below, which expects the binary to already sit at
+    # ${BINARY_DEST_DIR}/$<TARGET_FILE_NAME>.
+    install(CODE "
+        set(_meshmc_prefix \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}\")
+        set(_meshmc_staging \"\${_meshmc_prefix}/${MeshMC_BundleStagingDir}\")
+        set(_meshmc_staged_bundle \"\${_meshmc_staging}/$<TARGET_BUNDLE_DIR_NAME:${MeshMC_Name}>\")
+        set(_meshmc_bundle \"\${_meshmc_prefix}/${MeshMC_Name}.app\")
+        if(NOT IS_DIRECTORY \"\${_meshmc_staged_bundle}\")
+            message(FATAL_ERROR
+                \"Staged app bundle '\${_meshmc_staged_bundle}' is missing; \"
+                \"cannot assemble ${MeshMC_Name}.app\")
+        endif()
+        message(STATUS \"Merging \${_meshmc_staged_bundle} into \${_meshmc_bundle}\")
+        file(COPY \"\${_meshmc_staged_bundle}/\" DESTINATION \"\${_meshmc_bundle}\")
+        file(REMOVE_RECURSE \"\${_meshmc_staging}\")
+    ")
+else()
+    install(TARGETS ${MeshMC_Name}
+        RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
+        BUNDLE DESTINATION ${BUNDLE_DEST_DIR}
+        LIBRARY DESTINATION ${LIBRARY_DEST_DIR}
+        RUNTIME DESTINATION ${BINARY_DEST_DIR}
+    )
+endif()
 
 #### The bundle mess! ####
 # Bundle utilities are used to complete the portable packages - they add all the libraries that would otherwise be missing on the target system.
@@ -1371,36 +1425,6 @@ if(WIN32 OR (UNIX AND APPLE))
     install(
         FILES "qtlogging.ini"
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}
-    )
-elseif(UNIX AND NOT APPLE)
-    # Third-party shared libraries from a dependency prefix. The monorepo ones
-    # (nbt++, iconfix, rainbow) are installed directly by the top-level
-    # CMakeLists.txt into LIBRARY_DEST_DIR, which the binary's RPATH
-    # ($ORIGIN/../lib) already covers.
-    set(_prefix_path_libs "")
-    foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
-        list(APPEND _prefix_path_libs "${_prefix}/lib" "${_prefix}/lib64")
-    endforeach()
-    if(DEFINED ENV{CMAKE_PREFIX_PATH})
-        file(TO_CMAKE_PATH "$ENV{CMAKE_PREFIX_PATH}" _env_prefixes)
-        foreach(_prefix IN LISTS _env_prefixes)
-            list(APPEND _prefix_path_libs "${_prefix}/lib" "${_prefix}/lib64")
-        endforeach()
-    endif()
-    list(REMOVE_DUPLICATES _prefix_path_libs)
-    install(
-        RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
-        DIRECTORIES
-            ${_prefix_path_libs}
-        PRE_EXCLUDE_REGEXES
-            "^ld-linux"
-        POST_EXCLUDE_REGEXES
-            "^/lib/"
-            "^/lib64/"
-            "^/usr/lib/"
-            "^/usr/lib64/"
-        LIBRARY DESTINATION ${LIBRARY_DEST_DIR}
-        RUNTIME DESTINATION ${BINARY_DEST_DIR}
     )
 endif()
 

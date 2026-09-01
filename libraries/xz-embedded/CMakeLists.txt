@@ -22,28 +22,6 @@ target_include_directories(xz-embedded
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/xz-embedded>)
 set_property(TARGET xz-embedded PROPERTY C_STANDARD 99)
 
-install(TARGETS xz-embedded
-    EXPORT xz-embedded-targets
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/xz-embedded)
-install(EXPORT xz-embedded-targets
-    NAMESPACE xz-embedded::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/xz-embedded)
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/xz-embeddedConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/xz-embedded-config.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/xz-embedded)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/xz-embedded-config-version.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/xz-embedded-config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/xz-embedded-config-version.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/xz-embedded)
-
 if(${XZ_BUILD_MINIDEC})
     add_executable(xzminidec xzminidec.c)
     target_link_libraries(xzminidec xz-embedded)

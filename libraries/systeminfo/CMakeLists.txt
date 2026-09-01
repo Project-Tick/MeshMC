@@ -30,35 +30,3 @@ target_include_directories(systeminfo
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/systeminfo>)
-
-install(TARGETS systeminfo
-    EXPORT systeminfo-targets
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/systeminfo)
-install(EXPORT systeminfo-targets
-    NAMESPACE systeminfo::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/systeminfo)
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/systeminfoConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/systeminfo-config.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/systeminfo)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/systeminfo-config-version.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/systeminfo-config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/systeminfo-config-version.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/systeminfo)
-
-if(PROJECT_IS_TOP_LEVEL AND BUILD_TESTING)
-    include(CTest)
-    include(ECMAddTests)
-    enable_testing()
-    add_unit_test(sys
-        SOURCES src/sys_test.cpp
-        LIBS systeminfo
-    )
-endif()

@@ -44,8 +44,8 @@ target_include_directories(MeshMC_sdk_c INTERFACE
 target_link_libraries(MeshMC_sdk INTERFACE MeshMC_sdk_c)
 
 # Resolve include directories from imported targets (these are installed externally)
-get_target_property(_OPTIONAL_BARE_INCLUDE_DIRS optional-bare::optional-bare INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(_KATABASIS_INCLUDE_DIRS Katabasis::Katabasis INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(_OPTIONAL_BARE_INCLUDE_DIRS optional-bare INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(_KATABASIS_INCLUDE_DIRS Katabasis INTERFACE_INCLUDE_DIRECTORIES)
 
 target_include_directories(MeshMC_sdk INTERFACE
     # Build-tree consumers (in-tree plugins)
@@ -62,8 +62,6 @@ target_link_libraries(MeshMC_sdk INTERFACE
     Qt6::Widgets
     Qt6::Gui
     Qt6::Network
-    optional-bare::optional-bare
-    Katabasis::Katabasis
 )
 
 # ---------------------------------------------------------------------------

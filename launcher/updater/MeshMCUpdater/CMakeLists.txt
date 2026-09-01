@@ -19,7 +19,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # nothing in lock contention.
 find_package(Qt6 REQUIRED COMPONENTS Core Network Widgets)
 
-# Provided by the top-level build as the in-tree libraries/libarchive subproject.
+# Normally already resolved by the top-level build (from vcpkg, or from the
+# system package); looked up here too so this directory still configures alone.
 if(NOT TARGET LibArchive::LibArchive)
     find_package(LibArchive REQUIRED)
 endif()

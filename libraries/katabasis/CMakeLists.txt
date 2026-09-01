@@ -39,25 +39,3 @@ target_include_directories(Katabasis
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     PRIVATE src include/katabasis)
-
-install(TARGETS Katabasis
-    EXPORT Katabasis-targets
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY include/katabasis DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(EXPORT Katabasis-targets
-    NAMESPACE Katabasis::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Katabasis)
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/KatabasisConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/KatabasisConfig.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Katabasis)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/KatabasisConfigVersion.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/KatabasisConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/KatabasisConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Katabasis)

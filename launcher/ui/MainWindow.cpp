@@ -704,6 +704,7 @@ class MainWindow::Ui
             actionPatreon.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Support %1"));
             actionPatreon.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the %1 Patreon page."));
             all_actions.append(&actionPatreon);
+			mainToolBar->addAction(actionPatreon);
         }
 
 		actionCAT = TranslatedAction(MainWindow);
@@ -876,9 +877,6 @@ class MainWindow::Ui
 		helpMenu->addSeparator();
 		if (actionCheckUpdate.operator->()) {
 			helpMenu->addAction(actionCheckUpdate);
-		}
-		if (actionPatreon.operator->()) {
-			helpMenu->addAction(actionPatreon);
 		}
 #endif
 	}

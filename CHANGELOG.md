@@ -1,4 +1,75 @@
-# MeshMC 9.0.0
+# MeshMC 10.0.0 (!DRAFT!)
+
+## Highlights
+
+* It was heartbreaking, I'm not lying.
+* Being alone is tough, but I like to persevere.
+* This release is really full of emotion, no offense to anyone.
+
+## Added
+
+* Shortcut system added.
+* A world selection feature has been added to the Shortcut system.
+* Patreon link added.
+* Title bar theming added for macOS.
+* A setting to edit the Skins and Java folders has been added.
+* The "Folder" tab in the top toolbar now includes a list of multiple useful folders.
+* The mod installation and update system has been completely redesigned.
+* Datapack installation and update system added.
+* ShaderPack installation and update system has been completely redesigned.
+* ResourcePack installation and update system has been completely redesigned.
+* The ability to throw the instance in the trash has been added.
+* Detailed logging feature added.
+* Demo mode support has been added.
+* The number of entries in the Instance Toolbar has been reduced and icons have been added.
+* News display system added.
+* Discord URL added.
+* The ability to blacklist the plugin has been added.
+* Backup system added.
+* The "More News" tab has been added back.
+* Toolbar locking system added.
+* The ability to move two toolbars other than the instance toolbar has been added.
+* A toolbar that works with the <ALT> key has been added, except for macOS.
+* The backup process now shows a progress bar.
+* Mod Pack management support added.
+* Multiple instance folder support has been added.
+* Export via MRPack and Curseforge ZIP has been added.
+* A separate screen was created for loaders.
+* vcpkg build has been added.
+* RPM Spec has been added.
+
+## Changed
+
+* GreenDark theme palette updated.
+* The macOS ToolBar code has been rewritten.
+* The repository structure has been rebuilt.
+* Minecraft is now downloaded every time an instance is created.
+* vcpkg automates bootstrap and package management.
+
+## Fixed
+
+* The problem of Minecraft not closing when trying to kill an instance on Windows has been solved.
+* The error of not adding version entries in NSIS has been fixed.
+
+## Removed
+
+* The ability to directly delete instances has been removed.
+* The Filelink plugin has been removed.
+* MinGW aarch64 test and packaging removed.
+* The NewsViewer plugin has been removed.
+* The BackupSystem plugin has been removed.
+* PackUpdater plugin has been removed
+* PackPortal plugin has been removed
+* The Feature Flag feature has been completely removed.
+* All Rust code has been removed.
+
+## Deprecated
+
+* MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.
+
+## Previous versions
+
+## MeshMC 9.0.0
 
 ## Highlights
 
@@ -23,8 +94,6 @@
 * Icon rendering issues have been resolved.
 * The issue of adding installed mods back to the mod upload list has been resolved.
 * The issue of downloading mods simultaneously due to addiction problems has been resolved.
-
-## Previous versions
 
 ## MeshMC 8.2.0 (2026-07-15)
 
