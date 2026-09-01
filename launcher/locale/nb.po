@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Norwegian Bokmal\n"
 "Language: nb_NO\n"
-"PO-Revision-Date: 2026-09-01 12:50\n"
+"PO-Revision-Date: 2026-09-01 20:27\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -4634,7 +4634,7 @@ msgctxt "MainWindow|"
 msgid "Undo Last Instance Deletion"
 msgstr "Angre siste instans Sletting"
 
-#: launcher/ui/MainWindow.cpp:438 launcher/ui/MainWindow.cpp:1885
+#: launcher/ui/MainWindow.cpp:438 launcher/ui/MainWindow.cpp:1883
 msgctxt "MainWindow|"
 msgid "Bring the instance you last sent to the trash back, along with its shortcuts."
 msgstr "Hent forekomsten du sist sendt til papirkurven tilbake, sammen med sine snarveier."
@@ -4739,7 +4739,7 @@ msgctxt "MainWindow|"
 msgid "Open the logs folder in a file browser."
 msgstr "Åpne loggmappen i en fil nettleser."
 
-#: launcher/ui/MainWindow.cpp:577 launcher/ui/MainWindow.cpp:1401
+#: launcher/ui/MainWindow.cpp:577 launcher/ui/MainWindow.cpp:1399
 msgctxt "MainWindow|"
 msgid "Folders"
 msgstr "Mapper"
@@ -4824,7 +4824,7 @@ msgctxt "MainWindow|"
 msgid "View information about %1."
 msgstr "Vis informasjon om %1."
 
-#: launcher/ui/MainWindow.cpp:669 launcher/ui/MainWindow.cpp:1402
+#: launcher/ui/MainWindow.cpp:669 launcher/ui/MainWindow.cpp:1400
 msgctxt "MainWindow|"
 msgid "Help"
 msgstr "Hjelp"
@@ -4858,450 +4858,450 @@ msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
 msgstr "Åpne %1 Patreon-siden."
 
-#: launcher/ui/MainWindow.cpp:713
+#: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
 msgid "Meow"
 msgstr "Mjau"
 
-#: launcher/ui/MainWindow.cpp:715
+#: launcher/ui/MainWindow.cpp:716
 msgctxt "MainWindow|"
 msgid "It's a fluffy kitty :3"
 msgstr "Det er en fluffy katt :3"
 
-#: launcher/ui/MainWindow.cpp:725
+#: launcher/ui/MainWindow.cpp:726
 msgctxt "MainWindow|"
 msgid "Manage Accounts"
 msgstr "Behandle kontoer"
 
-#: launcher/ui/MainWindow.cpp:737
+#: launcher/ui/MainWindow.cpp:738
 msgctxt "MainWindow|"
 msgid "Lock Toolbars"
 msgstr "Lås verktøylinjer"
 
-#: launcher/ui/MainWindow.cpp:738
+#: launcher/ui/MainWindow.cpp:739
 msgctxt "MainWindow|"
 msgid "Prevent the toolbars from being dragged around."
 msgstr "Forhindre at verktøylinjene blir flyttet rundt."
 
-#: launcher/ui/MainWindow.cpp:765
+#: launcher/ui/MainWindow.cpp:766
 msgctxt "MainWindow|"
 msgid "News Toolbar"
 msgstr "Verktøylinje for nyheter"
 
-#: launcher/ui/MainWindow.cpp:771
+#: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
 msgstr "Flere nyheter..."
 
-#: launcher/ui/MainWindow.cpp:772
+#: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
 msgstr "Åpne utviklingsbloggen for å lese flere nyheter om %1."
 
-#: launcher/ui/MainWindow.cpp:861
+#: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
 msgid "Menu Bar Instead of Tool Bar"
 msgstr "Menylinje i stedet for verktøylinje"
 
-#: launcher/ui/MainWindow.cpp:862
+#: launcher/ui/MainWindow.cpp:863
 msgctxt "MainWindow|"
 msgid "Keep this menu bar and hide the main toolbar. Without it, tap Alt to show the menu bar for a moment."
 msgstr "Hold denne menylinjen og skjul hovedverktøylinjen. Uten den, trykk alt for å vise menylinjen et øyeblikk."
 
-#: launcher/ui/MainWindow.cpp:908
+#: launcher/ui/MainWindow.cpp:906
 msgctxt "MainWindow|"
 msgid "Instance Toolbar"
 msgstr "Verktøylinje for instans"
 
-#: launcher/ui/MainWindow.cpp:918
+#: launcher/ui/MainWindow.cpp:916
 msgctxt "MainWindow|"
 msgid "Change Icon"
 msgstr "Endre ikon"
 
-#: launcher/ui/MainWindow.cpp:919
+#: launcher/ui/MainWindow.cpp:917
 msgctxt "MainWindow|"
 msgid "Change the selected instance's icon."
 msgstr "Endre den valgte instansens ikon."
 
-#: launcher/ui/MainWindow.cpp:939
+#: launcher/ui/MainWindow.cpp:937
 msgctxt "MainWindow|"
 msgid "Rename"
 msgstr "Gi nytt navn"
 
-#: launcher/ui/MainWindow.cpp:941
+#: launcher/ui/MainWindow.cpp:939
 msgctxt "MainWindow|"
 msgid "Rename the selected instance."
 msgstr "Gi nytt navn på valgt forekomst."
 
-#: launcher/ui/MainWindow.cpp:957 launcher/ui/MainWindow.cpp:1958
+#: launcher/ui/MainWindow.cpp:955 launcher/ui/MainWindow.cpp:1956
 msgctxt "MainWindow|"
 msgid "Launch"
 msgstr "Kjør"
 
-#: launcher/ui/MainWindow.cpp:959
+#: launcher/ui/MainWindow.cpp:957
 msgctxt "MainWindow|"
 msgid "Launch the selected instance."
 msgstr "Start den valgte instansen."
 
-#: launcher/ui/MainWindow.cpp:967
+#: launcher/ui/MainWindow.cpp:965
 msgctxt "MainWindow|"
 msgid "Kill"
 msgstr "Drep"
 
-#: launcher/ui/MainWindow.cpp:969
+#: launcher/ui/MainWindow.cpp:967
 msgctxt "MainWindow|"
 msgid "Kill the running instance."
 msgstr "Drep den rennende forekomsten."
 
-#: launcher/ui/MainWindow.cpp:978 launcher/ui/MainWindow.cpp:1963
+#: launcher/ui/MainWindow.cpp:976 launcher/ui/MainWindow.cpp:1961
 msgctxt "MainWindow|"
 msgid "Launch Offline"
 msgstr "Start frakoblet"
 
-#: launcher/ui/MainWindow.cpp:979
+#: launcher/ui/MainWindow.cpp:977
 msgctxt "MainWindow|"
 msgid "Launch the selected instance in offline mode."
 msgstr "Kjør den valgte instansen i frakoblet modus."
 
-#: launcher/ui/MainWindow.cpp:988
+#: launcher/ui/MainWindow.cpp:986
 msgctxt "MainWindow|"
 msgid "Edit Instance"
 msgstr "Rediger instans"
 
-#: launcher/ui/MainWindow.cpp:989
+#: launcher/ui/MainWindow.cpp:987
 msgctxt "MainWindow|"
 msgid "Change the instance settings, mods and versions."
 msgstr "Endre instansinnstillinger, mods og versjoner."
 
-#: launcher/ui/MainWindow.cpp:999
+#: launcher/ui/MainWindow.cpp:997
 msgctxt "MainWindow|"
 msgid "Instance Settings"
 msgstr "Innstillinger for instans"
 
-#: launcher/ui/MainWindow.cpp:1000
+#: launcher/ui/MainWindow.cpp:998
 msgctxt "MainWindow|"
 msgid "Open the settings for the selected instance."
 msgstr "Åpne innstillingene for den valgte forekomsten."
 
-#: launcher/ui/MainWindow.cpp:1009
+#: launcher/ui/MainWindow.cpp:1007
 msgctxt "MainWindow|"
 msgid "Edit Notes"
 msgstr "Rediger notater"
 
-#: launcher/ui/MainWindow.cpp:1010
+#: launcher/ui/MainWindow.cpp:1008
 msgctxt "MainWindow|"
 msgid "Edit the notes for the selected instance."
 msgstr "Rediger notatene for den valgte instansen."
 
-#: launcher/ui/MainWindow.cpp:1017
+#: launcher/ui/MainWindow.cpp:1015
 msgctxt "MainWindow|"
 msgid "View Mods"
 msgstr "Se modifikasjoner"
 
-#: launcher/ui/MainWindow.cpp:1019
+#: launcher/ui/MainWindow.cpp:1017
 msgctxt "MainWindow|"
 msgid "View the mods of this instance."
 msgstr "Se mods i denne forekomsten."
 
-#: launcher/ui/MainWindow.cpp:1025
+#: launcher/ui/MainWindow.cpp:1023
 msgctxt "MainWindow|"
 msgid "View Worlds"
 msgstr "Vis verdener"
 
-#: launcher/ui/MainWindow.cpp:1026
+#: launcher/ui/MainWindow.cpp:1024
 msgctxt "MainWindow|"
 msgid "View the worlds of this instance."
 msgstr "Vis verdenene i denne instansen."
 
-#: launcher/ui/MainWindow.cpp:1034
+#: launcher/ui/MainWindow.cpp:1032
 msgctxt "MainWindow|"
 msgid "Manage Screenshots"
 msgstr "Administrer skjermbilder"
 
-#: launcher/ui/MainWindow.cpp:1035
+#: launcher/ui/MainWindow.cpp:1033
 msgctxt "MainWindow|"
 msgid "View and upload screenshots for this instance."
 msgstr "Vis og last opp skjermbilder fra denne instansen."
 
-#: launcher/ui/MainWindow.cpp:1044
+#: launcher/ui/MainWindow.cpp:1042
 msgctxt "MainWindow|"
 msgid "Change Group"
 msgstr "Endre gruppe"
 
-#: launcher/ui/MainWindow.cpp:1045
+#: launcher/ui/MainWindow.cpp:1043
 msgctxt "MainWindow|"
 msgid "Change the selected instance's group."
 msgstr "Endre den valgte instansens gruppe."
 
-#: launcher/ui/MainWindow.cpp:1057
+#: launcher/ui/MainWindow.cpp:1055
 msgctxt "MainWindow|"
 msgid "View Backups"
 msgstr "Vis sikkerhetskopier"
 
-#: launcher/ui/MainWindow.cpp:1058
+#: launcher/ui/MainWindow.cpp:1056
 msgctxt "MainWindow|"
 msgid "View and manage backups for this instance."
 msgstr "Vis og administrer sikkerhetskopier i denne forekomsten."
 
-#: launcher/ui/MainWindow.cpp:1069
+#: launcher/ui/MainWindow.cpp:1067
 msgctxt "MainWindow|"
 msgid "Minecraft Folder"
 msgstr "Minecraft-mappe"
 
-#: launcher/ui/MainWindow.cpp:1070
+#: launcher/ui/MainWindow.cpp:1068
 msgctxt "MainWindow|"
 msgid "Open the selected instance's minecraft folder in a file browser."
 msgstr "Åpne den valgte instansens Minecraft-mappe i en filutforsker."
 
-#: launcher/ui/MainWindow.cpp:1081
+#: launcher/ui/MainWindow.cpp:1079
 msgctxt "MainWindow|"
 msgid "Mods Folder"
 msgstr "Mønster mappe"
 
-#: launcher/ui/MainWindow.cpp:1082
+#: launcher/ui/MainWindow.cpp:1080
 msgctxt "MainWindow|"
 msgid "Open the selected instance's mods folder in a file browser."
 msgstr "Åpne den valgte instansens mods-mappe i en filleser."
 
-#: launcher/ui/MainWindow.cpp:1093
+#: launcher/ui/MainWindow.cpp:1091
 msgctxt "MainWindow|"
 msgid "Config Folder"
 msgstr "Config-mappe"
 
-#: launcher/ui/MainWindow.cpp:1094
+#: launcher/ui/MainWindow.cpp:1092
 msgctxt "MainWindow|"
 msgid "Open the instance's config folder."
 msgstr "Åpne instansens config-mappe."
 
-#: launcher/ui/MainWindow.cpp:1104
+#: launcher/ui/MainWindow.cpp:1102
 msgctxt "MainWindow|"
 msgid "Instance Folder"
 msgstr "Instans-mappe"
 
-#: launcher/ui/MainWindow.cpp:1105
+#: launcher/ui/MainWindow.cpp:1103
 msgctxt "MainWindow|"
 msgid "Open the selected instance's root folder in a file browser."
 msgstr "Åpne den valgte instansens rotmappe i en filutforsker."
 
-#: launcher/ui/MainWindow.cpp:1121
+#: launcher/ui/MainWindow.cpp:1119
 msgctxt "MainWindow|"
 msgid "E&xport..."
 msgstr "&Avslutt..."
 
-#: launcher/ui/MainWindow.cpp:1127
+#: launcher/ui/MainWindow.cpp:1125
 msgctxt "MainWindow|"
 msgid "Export Instance"
 msgstr "Eksporter instans"
 
-#: launcher/ui/MainWindow.cpp:1128
+#: launcher/ui/MainWindow.cpp:1126
 msgctxt "MainWindow|"
 msgid "Export the selected instance to supported formats."
 msgstr "Eksporter den valgte forekomsten til støttede formater."
 
-#: launcher/ui/MainWindow.cpp:1149
+#: launcher/ui/MainWindow.cpp:1147
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
 msgstr "%1 (zip)"
 
-#: launcher/ui/MainWindow.cpp:1158
+#: launcher/ui/MainWindow.cpp:1156
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
 msgstr "Modrytme (mrpack)"
 
-#: launcher/ui/MainWindow.cpp:1167
+#: launcher/ui/MainWindow.cpp:1165
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
 msgstr "CurseForge (zip)"
 
-#: launcher/ui/MainWindow.cpp:1182
+#: launcher/ui/MainWindow.cpp:1180
 msgctxt "MainWindow|"
 msgid "Delete"
 msgstr "Slett"
 
-#: launcher/ui/MainWindow.cpp:1184
+#: launcher/ui/MainWindow.cpp:1182
 msgctxt "MainWindow|"
 msgid "Delete the selected instance."
 msgstr "Slett den valgte instansen."
 
-#: launcher/ui/MainWindow.cpp:1191
+#: launcher/ui/MainWindow.cpp:1189
 msgctxt "MainWindow|"
 msgid "Copy Instance"
 msgstr "Kopier instans"
 
-#: launcher/ui/MainWindow.cpp:1193
+#: launcher/ui/MainWindow.cpp:1191
 msgctxt "MainWindow|"
 msgid "Copy the selected instance."
 msgstr "Kopier den valgte instansen."
 
-#: launcher/ui/MainWindow.cpp:1202
+#: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
 msgstr "Opprett snarvei"
 
-#: launcher/ui/MainWindow.cpp:1203
+#: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
 msgid "Create a shortcut in a folder of your choosing that launches the selected instance."
 msgstr "Opprett snarvei i en mappe for å velge en hvilken instans du har valgt."
 
-#: launcher/ui/MainWindow.cpp:1382
+#: launcher/ui/MainWindow.cpp:1380
 #, qt-format
 msgctxt "MainWindow|MeshMC - Version X"
 msgid "%1 - Version %2"
 msgstr "%1 - Versjon %2"
 
-#: launcher/ui/MainWindow.cpp:1386
+#: launcher/ui/MainWindow.cpp:1384
 #, qt-format
 msgctxt "MainWindow|on platform, as in operating system"
 msgid " on %1"
 msgstr " på %1"
 
-#: launcher/ui/MainWindow.cpp:1409
+#: launcher/ui/MainWindow.cpp:1407
 msgctxt "MainWindow|"
 msgid "&File"
 msgstr "&Fil"
 
-#: launcher/ui/MainWindow.cpp:1410
+#: launcher/ui/MainWindow.cpp:1408
 msgctxt "MainWindow|"
 msgid "&Edit"
 msgstr "&Rediger"
 
-#: launcher/ui/MainWindow.cpp:1411
+#: launcher/ui/MainWindow.cpp:1409
 msgctxt "MainWindow|"
 msgid "&Instance"
 msgstr "&Forekomst"
 
-#: launcher/ui/MainWindow.cpp:1412
+#: launcher/ui/MainWindow.cpp:1410
 msgctxt "MainWindow|"
 msgid "&View"
 msgstr "&Vis"
 
-#: launcher/ui/MainWindow.cpp:1413
+#: launcher/ui/MainWindow.cpp:1411
 msgctxt "MainWindow|"
 msgid "F&olders"
 msgstr "Farger"
 
-#: launcher/ui/MainWindow.cpp:1414
+#: launcher/ui/MainWindow.cpp:1412
 msgctxt "MainWindow|"
 msgid "&Help"
 msgstr "&Hjelp"
 
-#: launcher/ui/MainWindow.cpp:1552 launcher/ui/MainWindow.cpp:1720
+#: launcher/ui/MainWindow.cpp:1550 launcher/ui/MainWindow.cpp:1718
 msgctxt "MainWindow|"
 msgid "No instance selected"
 msgstr "Ingen instans er valgt"
 
-#: launcher/ui/MainWindow.cpp:1553
+#: launcher/ui/MainWindow.cpp:1551
 msgctxt "MainWindow|"
 msgid "Total playtime: 0s"
 msgstr "Total spilletid: 0s"
 
-#: launcher/ui/MainWindow.cpp:1590
+#: launcher/ui/MainWindow.cpp:1588
 msgctxt "MainWindow|"
 msgid "&Accounts"
 msgstr "&Kontoer"
 
-#: launcher/ui/MainWindow.cpp:1714 launcher/ui/MainWindow.cpp:2148
+#: launcher/ui/MainWindow.cpp:1712 launcher/ui/MainWindow.cpp:2146
 msgctxt "MainWindow|"
 msgid "Profiles"
 msgstr "Profiles"
 
-#: launcher/ui/MainWindow.cpp:1833
+#: launcher/ui/MainWindow.cpp:1831
 msgctxt "MainWindow|"
 msgid "Create instance"
 msgstr "Opprett instans"
 
-#: launcher/ui/MainWindow.cpp:1849
+#: launcher/ui/MainWindow.cpp:1847
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Delete group '%1'"
 msgstr "Slett gruppe «%1»"
 
-#: launcher/ui/MainWindow.cpp:1882
+#: launcher/ui/MainWindow.cpp:1880
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Undo Deletion of \"%1\""
 msgstr "Angre sletting av \"%1\""
 
-#: launcher/ui/MainWindow.cpp:1971
+#: launcher/ui/MainWindow.cpp:1969
 msgctxt "MainWindow|"
 msgid "Launch &Demo"
 msgstr "Start &Demo"
 
-#: launcher/ui/MainWindow.cpp:1979
+#: launcher/ui/MainWindow.cpp:1977
 msgctxt "MainWindow|"
 msgid "This Minecraft version has no demo mode. It was added in 1.3.1."
 msgstr "Denne Minecraft-versjonen har ingen demomodus. Den ble lagt til i 1.3.1."
 
-#: launcher/ui/MainWindow.cpp:1986
+#: launcher/ui/MainWindow.cpp:1984
 msgctxt "MainWindow|"
 msgid "Profilers"
 msgstr "Profilerere"
 
-#: launcher/ui/MainWindow.cpp:1993
+#: launcher/ui/MainWindow.cpp:1991
 msgctxt "MainWindow|"
 msgid "No Profiler"
 msgstr "Ingen Profiler"
 
-#: launcher/ui/MainWindow.cpp:2012
+#: launcher/ui/MainWindow.cpp:2010
 msgctxt "MainWindow|"
 msgid "Profiler not setup correctly. Go into settings, \"External Tools\"."
 msgstr "Profilerer er ikke riktig konfigurert. Gå til innstillingene, og «Eksterne verktøy»."
 
-#: launcher/ui/MainWindow.cpp:2050
+#: launcher/ui/MainWindow.cpp:2048
 msgctxt "MainWindow|"
 msgid "No accounts added!"
 msgstr "Ingen kontoer er lagt til!"
 
-#: launcher/ui/MainWindow.cpp:2080
+#: launcher/ui/MainWindow.cpp:2078
 msgctxt "MainWindow|"
 msgid "No Default Account"
 msgstr "Ingen standardkonto"
 
-#: launcher/ui/MainWindow.cpp:2189
+#: launcher/ui/MainWindow.cpp:2187
 msgctxt "MainWindow|"
 msgid "Loading news..."
 msgstr "Laster nyheter..."
 
-#: launcher/ui/MainWindow.cpp:2197
+#: launcher/ui/MainWindow.cpp:2195
 msgctxt "MainWindow|"
 msgid "No news available."
 msgstr "Ingen nyheter tilgjengelig."
 
-#: launcher/ui/MainWindow.cpp:2219
+#: launcher/ui/MainWindow.cpp:2217
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Preparing update to version %1..."
 msgstr "Forbereder oppdatering til versjon %1..."
 
-#: launcher/ui/MainWindow.cpp:2222
+#: launcher/ui/MainWindow.cpp:2220
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Download URL: %1"
 msgstr "Last ned URL: %1"
 
-#: launcher/ui/MainWindow.cpp:2226
+#: launcher/ui/MainWindow.cpp:2224
 msgctxt "MainWindow|"
 msgid "Launching updater..."
 msgstr "Starter oppdatering..."
 
-#: launcher/ui/MainWindow.cpp:2232
+#: launcher/ui/MainWindow.cpp:2230
 msgctxt "MainWindow|"
 msgid "Updater launched. MeshMC will now close."
 msgstr "Oppdateringen lansert. MesMC avsluttes nå."
 
-#: launcher/ui/MainWindow.cpp:2239
+#: launcher/ui/MainWindow.cpp:2237
 msgctxt "MainWindow|"
 msgid "Failed to launch the updater."
 msgstr "Kunne ikke starte oppdateringen."
 
-#: launcher/ui/MainWindow.cpp:2244
+#: launcher/ui/MainWindow.cpp:2242
 msgctxt "MainWindow|"
 msgid "No Download URL"
 msgstr "Ingen nettadresse for nedlasting"
 
-#: launcher/ui/MainWindow.cpp:2245
+#: launcher/ui/MainWindow.cpp:2243
 #, qt-format
 msgctxt "MainWindow|"
 msgid "An update to version %1 is available, but no download URL was found for your platform (%2).\n"
@@ -5309,67 +5309,67 @@ msgid "An update to version %1 is available, but no download URL was found for y
 msgstr "En oppdatering av %1 er tilgjengelig, men ingen nedlastings-URL funnet for din plattform (%2).\n"
 "Vennligst besøk prosjektets nettside for å laste den ned manuelt."
 
-#: launcher/ui/MainWindow.cpp:2336 launcher/ui/MainWindow.cpp:2389
-#: launcher/ui/MainWindow.cpp:2399
+#: launcher/ui/MainWindow.cpp:2334 launcher/ui/MainWindow.cpp:2387
+#: launcher/ui/MainWindow.cpp:2397
 msgctxt "MainWindow|"
 msgid "Error"
 msgstr "Feil"
 
-#: launcher/ui/MainWindow.cpp:2344
+#: launcher/ui/MainWindow.cpp:2342
 msgctxt "MainWindow|"
 msgid "Warnings"
 msgstr "Advarsler"
 
-#: launcher/ui/MainWindow.cpp:2349 launcher/ui/MainWindow.cpp:2394
+#: launcher/ui/MainWindow.cpp:2347 launcher/ui/MainWindow.cpp:2392
 msgctxt "MainWindow|"
 msgid "Abort"
 msgstr "Avbryt"
 
-#: launcher/ui/MainWindow.cpp:2400
+#: launcher/ui/MainWindow.cpp:2398
 msgctxt "MainWindow|"
 msgid "MeshMC cannot download Minecraft or update instances unless you have at least one account added.\n"
 "Please add your Mojang or Minecraft account."
 msgstr "MeshMC kan ikke laste ned Minecraft eller oppdatere tilfeller med mindre du har lagt til minst én konto til.\n"
 "Vennligst legg til din Mojang eller Minecraft-konto."
 
-#: launcher/ui/MainWindow.cpp:2545
+#: launcher/ui/MainWindow.cpp:2543
 msgctxt "MainWindow|"
 msgid "Group name"
 msgstr "Gruppe navn"
 
-#: launcher/ui/MainWindow.cpp:2546
+#: launcher/ui/MainWindow.cpp:2544
 msgctxt "MainWindow|"
 msgid "Enter a new group name."
 msgstr "Skriv inn et nytt gruppenavn."
 
-#: launcher/ui/MainWindow.cpp:2568
+#: launcher/ui/MainWindow.cpp:2566
 msgctxt "MainWindow|"
 msgid "Delete group"
 msgstr "Slett gruppe"
 
-#: launcher/ui/MainWindow.cpp:2569
+#: launcher/ui/MainWindow.cpp:2567
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Are you sure you want to delete the group %1"
 msgstr "Er du sikker på at du vil slette gruppen %1"
 
-#: launcher/ui/MainWindow.cpp:2653
+#: launcher/ui/MainWindow.cpp:2651
 msgctxt "MainWindow|"
 msgid "Checking for updates..."
 msgstr "Ser etter oppdateringer..."
 
-#: launcher/ui/MainWindow.cpp:2808
+#: launcher/ui/MainWindow.cpp:2806
 msgctxt "MainWindow|"
 msgid "Instance is running"
 msgstr "Instansen kjører"
 
-#: launcher/ui/MainWindow.cpp:2809
+#: launcher/ui/MainWindow.cpp:2807
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\"%1\" is running. Stop it first -- deleting an instance while the game has its files open would leave both in a mess."
 msgstr "\"%1\" kjører. Stopp den først - slette en forekomst mens spillet har sine filer åpne, vil la begge stå i en mess."
 
-#: launcher/ui/MainWindow.cpp:2825
+#: launcher/ui/MainWindow.cpp:2823
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\n\n"
@@ -5381,22 +5381,22 @@ msgstr[0] "\n\n"
 msgstr[1] "\n\n"
 "%n snarveier til det vil gå på samme måte."
 
-#: launcher/ui/MainWindow.cpp:2835
+#: launcher/ui/MainWindow.cpp:2833
 msgctxt "MainWindow|"
 msgid "It will be moved to the trash. To bring it back, right-click the instance list and pick Restore."
 msgstr "Den blir flyttet til papirkurven. For å ta den tilbake, klikk på instanslisten og velg Gjenoppretting."
 
-#: launcher/ui/MainWindow.cpp:2837
+#: launcher/ui/MainWindow.cpp:2835
 msgctxt "MainWindow|"
 msgid "There is no usable trash on this system, so this is permanent."
 msgstr "Det er ingen brukbar søppel på dette systemet, så dette er permanent."
 
-#: launcher/ui/MainWindow.cpp:2845
+#: launcher/ui/MainWindow.cpp:2843
 msgctxt "MainWindow|"
 msgid "Delete instance?"
 msgstr "Slette instans?"
 
-#: launcher/ui/MainWindow.cpp:2846
+#: launcher/ui/MainWindow.cpp:2844
 #, qt-format
 msgctxt "MainWindow|"
 msgid "About to delete: %1\n"
@@ -5404,61 +5404,61 @@ msgid "About to delete: %1\n"
 "Are you sure?"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2883
+#: launcher/ui/MainWindow.cpp:2881
 msgctxt "MainWindow|"
 msgid "Restore Instance"
 msgstr "Gjenopprett Instanse"
 
-#: launcher/ui/MainWindow.cpp:2884
+#: launcher/ui/MainWindow.cpp:2882
 msgctxt "MainWindow|"
 msgid "Not everything could be put back. Check your trash to recover the rest by hand."
 msgstr "Ikke alt kan du sette tilbake. Sjekk papirkassen din for å gjenopprette resten for hånd."
 
-#: launcher/ui/MainWindow.cpp:2942
+#: launcher/ui/MainWindow.cpp:2940
 msgctxt "MainWindow|"
 msgid "Cannot export"
 msgstr "Kan ikke eksportere"
 
-#: launcher/ui/MainWindow.cpp:2943
+#: launcher/ui/MainWindow.cpp:2941
 msgctxt "MainWindow|"
 msgid "CurseForge modpacks cannot be made from a snapshot version of Minecraft."
 msgstr "CurseForge modpacks kan ikke lages av en bildeversjon av Minecraft."
 
-#: launcher/ui/MainWindow.cpp:3189
+#: launcher/ui/MainWindow.cpp:3187
 msgctxt "MainWindow|"
 msgid "Rename Instance"
 msgstr "Omdøp Instanse"
 
-#: launcher/ui/MainWindow.cpp:3211
+#: launcher/ui/MainWindow.cpp:3209
 msgctxt "MainWindow|"
 msgid "This is a problem: <br/> - MeshMC will likely be deleted without warning by the operating system <br/> - close MeshMC now and extract it to a real location, not a temporary folder"
 msgstr "Dette er et problem: <br/> - MeshMC vil sannsynligvis bli slettet uten varsel fra operativsystemet <br/> - nær MeshMC nå og hente det ut til en virkelig lokasjon. ikke en midlertidig mappe"
 
-#: launcher/ui/MainWindow.cpp:3223
+#: launcher/ui/MainWindow.cpp:3221
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains '!' and this is known to cause Java problems!"
 msgstr "Din instansmappe '%1' inneholder '!' og dette er kjent for å forårsake Java problemer!"
 
-#: launcher/ui/MainWindow.cpp:3227
+#: launcher/ui/MainWindow.cpp:3225
 #, qt-format
 msgctxt "MainWindow|"
 msgid "You have now two options: <br/> - change the instance folder in the settings <br/> - move this installation of %1 to a different folder"
 msgstr "Nå har du to valg: <br/> - endre forekomstmappen i innstillingene <br/> - flytte denne installasjonen av %1 til en annen mappe"
 
-#: launcher/ui/MainWindow.cpp:3239
+#: launcher/ui/MainWindow.cpp:3237
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains 'Rar$' - that means you haven't extracted MeshMC archive!"
 msgstr "Din instans mappe '%1' inneholder 'Rar$' - det betyr at du ikke har hentet ut MeshMC arkiv!"
 
-#: launcher/ui/MainWindow.cpp:3249
+#: launcher/ui/MainWindow.cpp:3247
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' is in a temporary folder: '%2'!"
 msgstr "Din instansmappe '%1' er i en midlertidig mappe: '%2'!"
 
-#: launcher/ui/MainWindow.cpp:3267
+#: launcher/ui/MainWindow.cpp:3265
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Total playtime: %1"
@@ -8172,19 +8172,19 @@ msgctxt "QObject|"
 msgid "%1 (in use)"
 msgstr "%1 (i bruk)"
 
-#: launcher/ui/MainWindow.cpp:2660
+#: launcher/ui/MainWindow.cpp:2658
 #, qt-format
 msgctxt "QObject|"
 msgid "Update check failed: %1"
 msgstr "Oppdateringskontroll mislyktes: %1"
 
-#: launcher/ui/MainWindow.cpp:2668
+#: launcher/ui/MainWindow.cpp:2666
 #, qt-format
 msgctxt "QObject|"
 msgid "Update available: version %1"
 msgstr "Oppdatering tilgjengelig: versjon %1"
 
-#: launcher/ui/MainWindow.cpp:2677
+#: launcher/ui/MainWindow.cpp:2675
 msgctxt "QObject|"
 msgid "You are running the latest version."
 msgstr "Du kjører den nyeste versjonen."
