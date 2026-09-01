@@ -1161,6 +1161,33 @@ QString PackProfile::getComponentVersion(const QString& uid) const
 	return QString();
 }
 
+QStringList PackProfile::getModLoaders()
+{
+	QStringList result;
+	for (const auto& component : d->components) {
+		if (!component->isEnabled()) {
+			continue;
+		}
+		const ModLoaderInfo* loader = modLoaderForUid(component->getID());
+		if (loader == nullptr || loader->platformId.isEmpty()) {
+			continue;
+		}
+		result.append(loader->platformId);
+	}
+	return result;
+}
+
+QString PackProfile::primaryModLoader()
+{
+	const auto loaders = getModLoaders();
+	return loaders.isEmpty() ? QString() : loaders.first();
+}
+
+bool PackProfile::hasModLoader()
+{
+	return !getModLoaders().isEmpty();
+}
+
 void PackProfile::disableInteraction(bool disable)
 {
 	if (d->interactionDisabled != disable) {

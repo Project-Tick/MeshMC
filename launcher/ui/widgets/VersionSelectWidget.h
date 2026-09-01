@@ -47,10 +47,21 @@ class VersionSelectWidget : public QWidget
 	BaseVersionPtr selectedVersion() const;
 	void selectRecommended();
 	void selectCurrent();
+	//! The list view itself, for callers that need to react to the view
+	//! rather than to the selection - a double click meaning "accept".
+	VersionListView* view();
+
+	//! Draw the empty-list message over the (empty) list without loading
+	//! anything. For pickers that can tell in advance that there is
+	//! nothing to show, so they can say why instead of leaving a blank
+	//! panel and spending a download to reach the same conclusion.
+	void showEmptyMessage();
 
 	void setCurrentVersion(const QString& version);
 	void setFuzzyFilter(BaseVersionList::ModelRoles role, QString filter);
 	void setExactFilter(BaseVersionList::ModelRoles role, QString filter);
+	void setExactIfPresentFilter(BaseVersionList::ModelRoles role,
+								 QString filter);
 	void setFilter(BaseVersionList::ModelRoles role, Filter* filter);
 	void setEmptyString(QString emptyString);
 	void setEmptyErrorString(QString emptyErrorString);

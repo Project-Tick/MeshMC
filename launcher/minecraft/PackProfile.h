@@ -108,6 +108,30 @@ class PackProfile : public QAbstractListModel
 
 	QString patchFilePathForUid(const QString& uid) const;
 
+	/* The mod loaders this instance actually has, named the way the mod
+	 * platforms name them ("forge", "fabric", ...), in the order the
+	 * components appear in the instance.
+	 *
+	 * Only enabled components count. A component that has been switched
+	 * off contributes nothing to the launch, so counting it as an
+	 * installed loader would have the content browser search for mods
+	 * the instance cannot run. Components with no platform name - which
+	 * today means LiteLoader - are left out; see ModLoaderInfo. */
+	QStringList getModLoaders();
+
+	/* The single loader to search content with, or empty if there is
+	 * none. With conflicts resolved at install time there is at most one
+	 * anyway; taking the first in instance order rather than in some
+	 * hardcoded preference means the answer matches what the user sees
+	 * in the version list should an older instance still carry two. */
+	QString primaryModLoader();
+
+	/* Whether anything the content browser can search with is installed.
+	 * Not the same question as "is this instance modded": a
+	 * LiteLoader-only instance is modded but answers false here, because
+	 * there is no loader facet to search either platform with. */
+	bool hasModLoader();
+
 	/// if there is a save scheduled, do it now.
 	void saveNow();
 

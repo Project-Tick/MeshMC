@@ -926,6 +926,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/ExportPackDialog.h
     ui/dialogs/IconPickerDialog.cpp
     ui/dialogs/IconPickerDialog.h
+    ui/dialogs/InstallLoaderDialog.cpp
+    ui/dialogs/InstallLoaderDialog.h
     ui/dialogs/MSALoginDialog.cpp
     ui/dialogs/MSALoginDialog.h
     ui/dialogs/NewComponentDialog.cpp

@@ -160,19 +160,18 @@ void DownloadContentDialog::detectInstanceProfile()
 
 	m_mcVersion = profile->getComponentVersion("net.minecraft");
 
-	if (profile->getComponent("net.minecraftforge")) {
-		m_loaderType = "forge";
-	} else if (profile->getComponent("net.fabricmc.fabric-loader")) {
-		m_loaderType = "fabric";
-	} else if (profile->getComponent("org.quiltmc.quilt-loader")) {
-		m_loaderType = "quilt";
-	} else if (profile->getComponent("net.neoforged")) {
-		/* NeoForge's component uid is "net.neoforged" - what
-		 * InstanceImportTask / FTB / ATL / Technic write and what
-		 * VersionPage reads. The longer "net.neoforged.neoforge" never
-		 * matched, which left the loader filter empty here. */
-		m_loaderType = "neoforge";
-	}
+	/* The uid-to-platform-name mapping lives in the loader table now
+	 * (see ModLoaderInfo). This was an if-chain in forge/fabric/quilt/
+	 * neoforge order; ModFolderPage carried the same chain in a
+	 * different order, and neither asked whether the component was
+	 * enabled - so an instance whose loader had been switched off still
+	 * searched as though it were there.
+	 *
+	 * The table also settles the NeoForge uid for good: "net.neoforged",
+	 * not the longer "net.neoforged.neoforge" that used to be tried
+	 * here and matched nothing, silently leaving this search with no
+	 * loader filter at all. */
+	m_loaderType = profile->primaryModLoader();
 }
 
 void DownloadContentDialog::buildPages()
