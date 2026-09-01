@@ -29,8 +29,6 @@
 #include "minecraft/mod/Mod.h"
 #include <functional>
 
-#include <nonstd/optional>
-
 struct archive;
 
 namespace MMCZip
@@ -196,7 +194,7 @@ namespace MMCZip
 	/**
 	 * Extract a subdirectory from an archive.
 	 */
-	nonstd::optional<QStringList> extractSubDir(const QString& zipPath,
+	std::optional<QStringList> extractSubDir(const QString& zipPath,
 												const QString& subdir,
 												const QString& target);
 
@@ -204,7 +202,7 @@ namespace MMCZip
 	 * Extract a subdirectory from an archive, reporting progress and
 	 * honouring cancellation. See ExtractReporting.
 	 */
-	nonstd::optional<QStringList> extractSubDir(
+	std::optional<QStringList> extractSubDir(
 		const QString& zipPath, const QString& subdir, const QString& target,
 		const ExtractReporting& reporting);
 
@@ -229,7 +227,7 @@ namespace MMCZip
 	 * \return The list of the full paths of the files extracted, empty on
 	 * failure.
 	 */
-	nonstd::optional<QStringList> extractDir(QString fileCompressed,
+	std::optional<QStringList> extractDir(QString fileCompressed,
 											 QString dir);
 
 	/**
@@ -242,7 +240,7 @@ namespace MMCZip
 	 * \return The list of the full paths of the files extracted, empty on
 	 * failure.
 	 */
-	nonstd::optional<QStringList> extractDir(QString fileCompressed,
+	std::optional<QStringList> extractDir(QString fileCompressed,
 											 QString subdir, QString dir);
 
 	/**

@@ -1133,7 +1133,6 @@ target_link_libraries(MeshMC_logic
     classparser
     nbt++
     ZLIB::ZLIB
-    optional-bare
     tomlplusplus::tomlplusplus
     BuildConfig
     Katabasis

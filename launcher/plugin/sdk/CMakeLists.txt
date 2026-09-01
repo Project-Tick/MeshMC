@@ -44,7 +44,6 @@ target_include_directories(MeshMC_sdk_c INTERFACE
 target_link_libraries(MeshMC_sdk INTERFACE MeshMC_sdk_c)
 
 # Resolve include directories from imported targets (these are installed externally)
-get_target_property(_OPTIONAL_BARE_INCLUDE_DIRS optional-bare INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(_KATABASIS_INCLUDE_DIRS Katabasis INTERFACE_INCLUDE_DIRECTORIES)
 
 target_include_directories(MeshMC_sdk INTERFACE
@@ -307,12 +306,6 @@ install(FILES
 )
 
 # Library headers — resolve from installed package include directories
-foreach(_dir ${_OPTIONAL_BARE_INCLUDE_DIRS})
-    if(EXISTS "${_dir}/nonstd/optional")
-        install(FILES "${_dir}/nonstd/optional" DESTINATION "${SDK_INSTALL_DIR}/nonstd")
-        break()
-    endif()
-endforeach()
 foreach(_dir ${_KATABASIS_INCLUDE_DIRS})
     if(EXISTS "${_dir}/katabasis/Bits.h")
         install(FILES "${_dir}/katabasis/Bits.h" DESTINATION "${SDK_INSTALL_DIR}/katabasis")

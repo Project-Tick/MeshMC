@@ -34,12 +34,7 @@
 
 #include <QCoreApplication>
 
-#include <nonstd/optional>
-
-using nonstd::nullopt;
-using nonstd::optional;
-
-GameType::GameType(nonstd::optional<int> original) : original(original)
+GameType::GameType(std::optional<int> original) : original(original)
 {
 	if (!original) {
 		return;
@@ -307,65 +302,65 @@ bool World::rename(const QString& newName)
 namespace
 {
 
-	optional<QString> read_string(nbt::value& parent, const char* name)
+	std::optional<QString> read_string(nbt::value& parent, const char* name)
 	{
 		try {
 			auto& namedValue = parent.at(name);
 			if (namedValue.get_type() != nbt::tag_type::String) {
-				return nullopt;
+				return std::nullopt;
 			}
 			auto& tag_str = namedValue.as<nbt::tag_string>();
 			return QString::fromStdString(tag_str.get());
 		} catch (const std::out_of_range& e) {
 			// fallback for old world formats
 			qWarning() << "String NBT tag" << name << "could not be found.";
-			return nullopt;
+			return std::nullopt;
 		} catch (const std::bad_cast& e) {
 			// type mismatch
 			qWarning() << "NBT tag" << name
 					   << "could not be converted to string.";
-			return nullopt;
+			return std::nullopt;
 		}
 	}
 
-	optional<int64_t> read_long(nbt::value& parent, const char* name)
+	std::optional<int64_t> read_long(nbt::value& parent, const char* name)
 	{
 		try {
 			auto& namedValue = parent.at(name);
 			if (namedValue.get_type() != nbt::tag_type::Long) {
-				return nullopt;
+				return std::nullopt;
 			}
 			auto& tag_str = namedValue.as<nbt::tag_long>();
 			return tag_str.get();
 		} catch (const std::out_of_range& e) {
 			// fallback for old world formats
 			qWarning() << "Long NBT tag" << name << "could not be found.";
-			return nullopt;
+			return std::nullopt;
 		} catch (const std::bad_cast& e) {
 			// type mismatch
 			qWarning() << "NBT tag" << name
 					   << "could not be converted to long.";
-			return nullopt;
+			return std::nullopt;
 		}
 	}
 
-	optional<int> read_int(nbt::value& parent, const char* name)
+	std::optional<int> read_int(nbt::value& parent, const char* name)
 	{
 		try {
 			auto& namedValue = parent.at(name);
 			if (namedValue.get_type() != nbt::tag_type::Int) {
-				return nullopt;
+				return std::nullopt;
 			}
 			auto& tag_str = namedValue.as<nbt::tag_int>();
 			return tag_str.get();
 		} catch (const std::out_of_range& e) {
 			// fallback for old world formats
 			qWarning() << "Int NBT tag" << name << "could not be found.";
-			return nullopt;
+			return std::nullopt;
 		} catch (const std::bad_cast& e) {
 			// type mismatch
 			qWarning() << "NBT tag" << name << "could not be converted to int.";
-			return nullopt;
+			return std::nullopt;
 		}
 	}
 
@@ -408,7 +403,7 @@ void World::loadFromLevelDat(QByteArray data)
 
 	m_gameType = read_gametype(val, "GameType");
 
-	optional<int64_t> randomSeed;
+	std::optional<int64_t> randomSeed;
 	try {
 		auto& WorldGen_val = val.at("WorldGenSettings");
 		randomSeed = read_long(WorldGen_val, "seed");

@@ -628,7 +628,6 @@ add_subdirectory(libraries/rainbow) # Qt extension for colors
 add_subdirectory(libraries/iconfix) # fork of Qt's QIcon loader
 add_subdirectory(libraries/localpeer) # fork of a library from Qt solutions
 add_subdirectory(libraries/classparser) # Java class file parser
-add_subdirectory(libraries/optional-bare)
 add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too much
 
 # Three libraries under libraries/ build as shared objects (iconfix and rainbow

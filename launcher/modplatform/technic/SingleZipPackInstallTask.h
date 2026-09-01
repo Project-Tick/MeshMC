@@ -28,8 +28,6 @@
 #include <QStringList>
 #include <QUrl>
 
-#include <nonstd/optional>
-
 namespace Technic
 {
 
@@ -69,8 +67,8 @@ namespace Technic
 		 * fresh means every retry unpacks the same broken bytes. */
 		MetaEntryPtr m_archiveEntry;
 		NetJob::Ptr m_filesNetJob;
-		QFuture<nonstd::optional<QStringList>> m_extractFuture;
-		QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
+		QFuture<std::optional<QStringList>> m_extractFuture;
+		QFutureWatcher<std::optional<QStringList>> m_extractFutureWatcher;
 	};
 
 } // namespace Technic

@@ -677,14 +677,14 @@ bool MMCZip::findFilesInZip(const QString& zipPath, const QString& what,
 	return !result.isEmpty();
 }
 
-nonstd::optional<QStringList> MMCZip::extractSubDir(const QString& zipPath,
+std::optional<QStringList> MMCZip::extractSubDir(const QString& zipPath,
 													const QString& subdir,
 													const QString& target)
 {
 	return MMCZip::extractSubDir(zipPath, subdir, target, ExtractReporting{});
 }
 
-nonstd::optional<QStringList>
+std::optional<QStringList>
 MMCZip::extractSubDir(const QString& zipPath, const QString& subdir,
 					  const QString& target,
 					  const ExtractReporting& reporting)
@@ -716,7 +716,7 @@ MMCZip::extractSubDir(const QString& zipPath, const QString& subdir,
 			return extracted;
 		}
 		qWarning() << "Failed to open archive:" << zipPath;
-		return nonstd::nullopt;
+		return std::nullopt;
 	}
 
 	struct archive_entry* entry;
@@ -731,7 +731,7 @@ MMCZip::extractSubDir(const QString& zipPath, const QString& subdir,
 			qDebug() << "Extraction of" << zipPath << "cancelled";
 			for (const auto& f : extracted)
 				(void)QFile::remove(f);
-			return nonstd::nullopt;
+			return std::nullopt;
 		}
 
 		hasEntries = true;
@@ -756,7 +756,7 @@ MMCZip::extractSubDir(const QString& zipPath, const QString& subdir,
 			// Clean up extracted files
 			for (const auto& f : extracted)
 				(void)QFile::remove(f);
-			return nonstd::nullopt;
+			return std::nullopt;
 		}
 		extracted.append(absFilePath);
 		if (reporting.progress) {
@@ -770,7 +770,7 @@ MMCZip::extractSubDir(const QString& zipPath, const QString& subdir,
 				   << "Error:" << archive_error_string(ar.get());
 		for (const auto& f : extracted)
 			(void)QFile::remove(f);
-		return nonstd::nullopt;
+		return std::nullopt;
 	}
 
 	if (!hasEntries) {
@@ -805,13 +805,13 @@ bool MMCZip::extractRelFile(const QString& zipPath, const QString& file,
 	return false;
 }
 
-nonstd::optional<QStringList> MMCZip::extractDir(QString fileCompressed,
+std::optional<QStringList> MMCZip::extractDir(QString fileCompressed,
 												 QString dir)
 {
 	return MMCZip::extractSubDir(fileCompressed, "", dir);
 }
 
-nonstd::optional<QStringList> MMCZip::extractDir(QString fileCompressed,
+std::optional<QStringList> MMCZip::extractDir(QString fileCompressed,
 												 QString subdir, QString dir)
 {
 	return MMCZip::extractSubDir(fileCompressed, subdir, dir);
