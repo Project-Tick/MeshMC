@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Lithuanian\n"
 "Language: lt_LT\n"
-"PO-Revision-Date: 2026-09-01 20:26\n"
+"PO-Revision-Date: 2026-09-01 21:52\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "Licencija"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr ""
+msgstr "Perdarymas"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -4801,7 +4801,7 @@ msgstr ""
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr ""
+msgstr "Paremti %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
@@ -4842,7 +4842,7 @@ msgstr "Naujienų juosta"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr ""
+msgstr "Daugiau naujienų..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
@@ -5089,7 +5089,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr ""
+msgstr "Sukurti nuorodą"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
@@ -6713,17 +6713,17 @@ msgstr ""
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "Pasirinkta versija:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr ""
+msgstr "Paieška"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "Eiškoti ir filtruoti..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
