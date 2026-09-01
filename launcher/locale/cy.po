@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Welsh\n"
 "Language: cy_GB\n"
-"PO-Revision-Date: 2026-09-01 20:27\n"
+"PO-Revision-Date: 2026-09-01 21:53\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "Trwydded"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr ""
+msgstr "Fforio/Ailddosbarthu"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -4813,13 +4813,13 @@ msgstr "Chwilio am ddiweddarai i %1."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr ""
+msgstr "Cefnogi %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr ""
+msgstr "Agor y %1 safle Patreon."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4854,13 +4854,13 @@ msgstr "Bar-Offer Newyddion"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr ""
+msgstr "Fwy o newyddion..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr ""
+msgstr "Agor y blog datblygiadau i ddarllen mwy o newyddion amdan %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -5101,7 +5101,7 @@ msgstr "Copïo'r enghraifft gêm sydd wedi ei ddewis."
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr ""
+msgstr "Creu Shortcut"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
