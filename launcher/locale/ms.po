@@ -13,12 +13,12 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Malay\n"
 "Language: ms_MY\n"
-"PO-Revision-Date: 2026-09-01 20:27\n"
+"PO-Revision-Date: 2026-09-01 21:53\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Could not understand pack manifest:\n"
-msgstr "Tidak dapat memahami manifest pek:\n"
+msgstr "Tidak dapat memahami pek manifest:\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:119
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:204
@@ -136,7 +136,7 @@ msgstr "Tentang"
 #: launcher/ui/dialogs/AboutDialog.ui:116
 msgctxt "AboutDialog|"
 msgid "<html><head/><body><p>A custom launcher that makes managing Minecraft easier by allowing you to have multiple instances of Minecraft at once.</p></body></html>"
-msgstr "<html><head/><body><p>Pelancar tersuai yang memudahkan pengurusan Minecraft dengan membenarkan anda mempunyai berbilang pemasangan Minecraft sekaligus.</p></body></html>"
+msgstr "<html><head/><body><p>Pelancar tersuai yang memudahkan pengurusan Minecraft dengan membenarkan anda mempunyai berbilang instance Minecraft sekaligus.</p></body></html>"
 
 #: launcher/ui/dialogs/AboutDialog.ui:173
 msgctxt "AboutDialog|"
@@ -176,7 +176,7 @@ msgstr "Lesen"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr ""
+msgstr "Pencabangan/Pengagihan Demula"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -1473,7 +1473,7 @@ msgstr ""
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:17
 msgctxt "CopyInstanceDialog|"
 msgid "Copy Instance"
-msgstr "Salin Pemasangan"
+msgstr "Salin Instance"
 
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:74
 msgctxt "CopyInstanceDialog|"
@@ -1933,7 +1933,7 @@ msgstr "Mendapat kelayakan"
 #: launcher/ui/dialogs/ExportInstanceDialog.ui:14
 msgctxt "ExportInstanceDialog|"
 msgid "Export Instance"
-msgstr "Eksport Pemasangan"
+msgstr "Eksport Instance"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:136
 #, qt-format
@@ -1950,7 +1950,7 @@ msgstr "Ralat"
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:156
 msgctxt "ExportInstanceDialog|"
 msgid "Unable to export instance"
-msgstr "Tidak dapat mengeksport pemasangan"
+msgstr "Tidak dapat mengeksport instance"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:184
 msgctxt "ExportInstanceDialog|"
@@ -2376,12 +2376,12 @@ msgstr "Memuat turun pustaka FML..."
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:105
 msgctxt "FMLLibrariesTask|"
 msgid "Copying FML libraries into the instance..."
-msgstr "Menyalin pustaka FML ke dalam pemasangan..."
+msgstr "Menyalin pustaka FML ke dalam instance..."
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:114
 msgctxt "FMLLibrariesTask|"
 msgid "Failed creating FML library folder inside the instance."
-msgstr "Gagal untuk mencipta folder pustaka FML di dalam pemasangan."
+msgstr "Gagal untuk mencipta folder pustaka FML di dalam instance."
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:120
 #, qt-format
@@ -2822,23 +2822,23 @@ msgstr "Kumpulan:"
 #, qt-format
 msgctxt "InstanceCopyTask|"
 msgid "Copying instance %1"
-msgstr "Menyalin pemasangan %1"
+msgstr "Menyalin instance %1"
 
 #: launcher/InstanceCopyTask.cpp:60
 msgctxt "InstanceCopyTask|"
 msgid "Instance folder copy failed."
-msgstr "Penyalinan folder pemasangan gagal."
+msgstr "Penyalinan folder instance gagal."
 
 #: launcher/InstanceCopyTask.cpp:80
 msgctxt "InstanceCopyTask|"
 msgid "Instance folder copy has been aborted."
-msgstr "Penyalinan folder pemasangan telah dibatalkan."
+msgstr "Penyalinan folder instance telah dibatalkan."
 
 #: launcher/InstanceCreationTask.cpp:35
 #, qt-format
 msgctxt "InstanceCreationTask|"
 msgid "Creating instance from version %1"
-msgstr "Mencipta pemasangan dari versi %1"
+msgstr "Mencipta instance dari versi %1"
 
 #: launcher/InstanceImportTask.cpp:74
 #, qt-format
@@ -3096,7 +3096,7 @@ msgstr "Mod teras"
 #, qt-format
 msgctxt "InstancePageProvider|"
 msgid "Edit Instance (%1)"
-msgstr "Sunting Pemasangan (%1)"
+msgstr "Sunting Instance (%1)"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:29
 msgctxt "InstanceSettingsPage|"
@@ -3261,12 +3261,12 @@ msgstr "Menggantikan tetapan masa permainan global"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:470
 msgctxt "InstanceSettingsPage|"
 msgid "Show time spent playing this instance"
-msgstr "Tunjukkan masa yang dihabiskan untuk memainkan pemasangan ini"
+msgstr "Tunjukkan masa yang dihabiskan untuk memainkan instance ini"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:477
 msgctxt "InstanceSettingsPage|"
 msgid "Record time spent playing this instance"
-msgstr "Catat masa yang dihabiskan untuk memainkan pemasangan ini"
+msgstr "Catat masa yang dihabiskan untuk memainkan instance ini"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:487
 msgctxt "InstanceSettingsPage|"
@@ -3316,7 +3316,7 @@ msgstr "Tetapan"
 #: launcher/InstanceList.cpp:1255
 msgctxt "InstanceStaging|"
 msgid "Failed to commit instance, even after multiple retries. It is being blocked by something."
-msgstr "Gagal untuk melakukan pemasangan, walaupun selepas beberapa percubaan semula. Ia sedang disekat oleh sesuatu."
+msgstr "Gagal untuk melakukan instance, walaupun selepas beberapa percubaan semula. Ia sedang disekat oleh sesuatu."
 
 #: launcher/InstanceTask.cpp:77
 msgctxt "InstanceTask|"
@@ -3363,7 +3363,7 @@ msgstr "Matikan"
 #: launcher/ui/InstanceWindow.cpp:157
 msgctxt "InstanceWindow|"
 msgid "Kill the running instance"
-msgstr "Matikan pemasangan yang sedang berjalan"
+msgstr "Matikan instance yang sedang berjalan"
 
 #: launcher/ui/InstanceWindow.cpp:160 launcher/ui/InstanceWindow.cpp:166
 msgctxt "InstanceWindow|"
@@ -3373,7 +3373,7 @@ msgstr "Lancarkan"
 #: launcher/ui/InstanceWindow.cpp:162 launcher/ui/InstanceWindow.cpp:168
 msgctxt "InstanceWindow|"
 msgid "Launch the instance"
-msgstr "Lancarkan pemasangan"
+msgstr "Lancarkan instance"
 
 #: launcher/tools/JProfiler.cpp:54
 #, qt-format
@@ -3906,7 +3906,7 @@ msgstr "Pilih bahasa untuk digunakan dalam %1"
 #: launcher/LaunchController.cpp:54
 msgctxt "LaunchController|"
 msgid "No instance specified!"
-msgstr "Tiada pemasangan ditentukan!"
+msgstr "Tiada instance ditentukan!"
 
 #: launcher/LaunchController.cpp:77 launcher/LaunchController.cpp:133
 #: launcher/LaunchController.cpp:141
@@ -4041,7 +4041,7 @@ msgstr "Ralat!"
 #: launcher/LaunchController.cpp:396 launcher/LaunchController.cpp:397
 msgctxt "LaunchController|"
 msgid "Couldn't load the instance profile."
-msgstr "Tidak dapat memuatkan profil pemasangan."
+msgstr "Tidak dapat memuatkan profil instance."
 
 #: launcher/LaunchController.cpp:403
 msgctxt "LaunchController|"
@@ -4116,7 +4116,7 @@ msgstr "Matikan Minecraft?"
 #: launcher/LaunchController.cpp:644
 msgctxt "LaunchController|"
 msgid "This can cause the instance to get corrupted and should only be used if Minecraft is frozen for some reason"
-msgstr "Ini boleh menyebabkan pemasangan untuk menjadi rosak dan sepatutunya hanya digunakan jika Minecraft membeku atas sesuatu sebab"
+msgstr "Ini boleh menyebabkan instance untuk menjadi rosak dan sepatutunya hanya digunakan jika Minecraft membeku atas sesuatu sebab"
 
 #: launcher/launch/LaunchTask.cpp:201
 #, qt-format
@@ -4280,7 +4280,7 @@ msgstr "Legasi"
 #: launcher/minecraft/legacy/LegacyInstance.cpp:223
 msgctxt "LegacyInstance|"
 msgid "Instance from previous versions."
-msgstr "Pemasangan daripada versi sebelumnya."
+msgstr "Instance daripada versi sebelumnya."
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:29
 msgctxt "LegacyUpgradePage|"
@@ -4290,7 +4290,7 @@ msgstr ""
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:39
 msgctxt "LegacyUpgradePage|"
 msgid "Upgrade the instance"
-msgstr "Naik taraf pemasangan"
+msgstr "Naik taraf instance"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:45
 msgctxt "LegacyUpgradePage|"
@@ -4317,12 +4317,12 @@ msgstr "Naik Taraf"
 #, qt-format
 msgctxt "LegacyUpgradeTask|"
 msgid "Copying instance %1"
-msgstr "Menyalin pemasangan %1"
+msgstr "Menyalin instance %1"
 
 #: launcher/minecraft/legacy/LegacyUpgradeTask.cpp:73
 msgctxt "LegacyUpgradeTask|"
 msgid "Instance folder copy failed."
-msgstr "Penyalinan folder pemasangan gagal."
+msgstr "Penyalinan folder instance gagal."
 
 #: launcher/minecraft/legacy/LegacyUpgradeTask.cpp:99
 msgctxt "LegacyUpgradeTask|"
@@ -4332,7 +4332,7 @@ msgstr "Tidak dapat menentukan versi Minecraft."
 #: launcher/minecraft/legacy/LegacyUpgradeTask.cpp:147
 msgctxt "LegacyUpgradeTask|"
 msgid "Instance folder copy has been aborted."
-msgstr "Penyalinan folder pemasangan telah dibatalkan."
+msgstr "Penyalinan folder instance telah dibatalkan."
 
 #: launcher/minecraft/update/LibrariesTask.cpp:34
 msgctxt "LibrariesTask|"
@@ -4343,7 +4343,7 @@ msgstr "Mendapatkan fail pustaka dari Mojang..."
 #, qt-format
 msgctxt "LibrariesTask|"
 msgid "Libraries for instance %1"
-msgstr "Pustaka untuk pemasangan %1"
+msgstr "Pustaka untuk instance %1"
 
 #: launcher/minecraft/update/LibrariesTask.cpp:54
 msgctxt "LibrariesTask|"
@@ -4579,12 +4579,12 @@ msgstr "Palang Alat Utama"
 #: launcher/ui/MainWindow.cpp:427
 msgctxt "MainWindow|"
 msgid "Add Instance"
-msgstr "Tambah Pemasangan"
+msgstr "Tambah Instance"
 
 #: launcher/ui/MainWindow.cpp:429
 msgctxt "MainWindow|"
 msgid "Add a new instance."
-msgstr "Tambah pemasangan baharu."
+msgstr "Tambah instance baharu."
 
 #: launcher/ui/MainWindow.cpp:437
 msgctxt "MainWindow|"
@@ -4614,7 +4614,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:471
 msgctxt "MainWindow|"
 msgid "Open the instance folder in a file browser."
-msgstr "Buka folder pemasangan dalam pelayar fail."
+msgstr "Buka folder instance dalam pelayar fail."
 
 #: launcher/ui/MainWindow.cpp:482
 msgctxt "MainWindow|"
@@ -4704,7 +4704,7 @@ msgstr "Folder"
 #: launcher/ui/MainWindow.cpp:578
 msgctxt "MainWindow|"
 msgid "Open one of the folders shared between instances."
-msgstr "Buka salah satu folder yang dikongsi antara pemasangan."
+msgstr "Buka salah satu folder yang dikongsi antara instance."
 
 #: launcher/ui/MainWindow.cpp:594
 msgctxt "MainWindow|"
@@ -4807,13 +4807,13 @@ msgstr "Semak kemas kini baharu %1."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr ""
+msgstr "Sokong %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr ""
+msgstr "Buka halaman Patreon %1."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4848,7 +4848,7 @@ msgstr "Palang Alat Berita"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr ""
+msgstr "Lebih lagi berita..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
@@ -4869,7 +4869,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:906
 msgctxt "MainWindow|"
 msgid "Instance Toolbar"
-msgstr "Palang Alat Pemasangan"
+msgstr "Palang Alat Instance"
 
 #: launcher/ui/MainWindow.cpp:916
 msgctxt "MainWindow|"
@@ -4879,7 +4879,7 @@ msgstr "Ubah Ikon"
 #: launcher/ui/MainWindow.cpp:917
 msgctxt "MainWindow|"
 msgid "Change the selected instance's icon."
-msgstr "Ubah ikon untuk pemasangan yang dipilih."
+msgstr "Ubah ikon untuk instance yang dipilih."
 
 #: launcher/ui/MainWindow.cpp:937
 msgctxt "MainWindow|"
@@ -4889,7 +4889,7 @@ msgstr "Namakan Semula"
 #: launcher/ui/MainWindow.cpp:939
 msgctxt "MainWindow|"
 msgid "Rename the selected instance."
-msgstr "Namakan semula pemasangan yang dipilih."
+msgstr "Namakan semula instance yang dipilih."
 
 #: launcher/ui/MainWindow.cpp:955 launcher/ui/MainWindow.cpp:1956
 msgctxt "MainWindow|"
@@ -4899,7 +4899,7 @@ msgstr "Lancarkan"
 #: launcher/ui/MainWindow.cpp:957
 msgctxt "MainWindow|"
 msgid "Launch the selected instance."
-msgstr "Lancarkan pemasangan yang dipilih."
+msgstr "Lancarkan instance yang dipilih."
 
 #: launcher/ui/MainWindow.cpp:965
 msgctxt "MainWindow|"
@@ -4919,17 +4919,17 @@ msgstr "Lancarkan di Luar Talian"
 #: launcher/ui/MainWindow.cpp:977
 msgctxt "MainWindow|"
 msgid "Launch the selected instance in offline mode."
-msgstr "Lancarkan pemasangan yang dipilih dalam mod luar talian."
+msgstr "Lancarkan instance yang dipilih dalam mod luar talian."
 
 #: launcher/ui/MainWindow.cpp:986
 msgctxt "MainWindow|"
 msgid "Edit Instance"
-msgstr "Sunting Pemasangan"
+msgstr "Sunting Instance"
 
 #: launcher/ui/MainWindow.cpp:987
 msgctxt "MainWindow|"
 msgid "Change the instance settings, mods and versions."
-msgstr "Ubah tetapan, mod dan versi pemasangan."
+msgstr "Ubah tetapan, mod dan versi instance."
 
 #: launcher/ui/MainWindow.cpp:997
 msgctxt "MainWindow|"
@@ -4949,7 +4949,7 @@ msgstr "Sunting Nota"
 #: launcher/ui/MainWindow.cpp:1008
 msgctxt "MainWindow|"
 msgid "Edit the notes for the selected instance."
-msgstr "Sunting nota untuk pemasangan yang dipilih."
+msgstr "Sunting nota untuk instance yang dipilih."
 
 #: launcher/ui/MainWindow.cpp:1015
 msgctxt "MainWindow|"
@@ -4959,7 +4959,7 @@ msgstr "Lihat Mod"
 #: launcher/ui/MainWindow.cpp:1017
 msgctxt "MainWindow|"
 msgid "View the mods of this instance."
-msgstr "Lihat mod untuk pemasangan ini."
+msgstr "Lihat mod untuk instance ini."
 
 #: launcher/ui/MainWindow.cpp:1023
 msgctxt "MainWindow|"
@@ -4969,7 +4969,7 @@ msgstr "Lihat Dunia"
 #: launcher/ui/MainWindow.cpp:1024
 msgctxt "MainWindow|"
 msgid "View the worlds of this instance."
-msgstr "Lihat dunia untuk pemasangan ini."
+msgstr "Lihat dunia untuk instance ini."
 
 #: launcher/ui/MainWindow.cpp:1032
 msgctxt "MainWindow|"
@@ -4979,7 +4979,7 @@ msgstr "Urus Tangkap Layar"
 #: launcher/ui/MainWindow.cpp:1033
 msgctxt "MainWindow|"
 msgid "View and upload screenshots for this instance."
-msgstr "Lihat dan muat naik tangkap layar untuk pemasangan ini."
+msgstr "Lihat dan muat naik tangkap layar untuk instance ini."
 
 #: launcher/ui/MainWindow.cpp:1042
 msgctxt "MainWindow|"
@@ -4989,7 +4989,7 @@ msgstr "Ubah Kumpulan"
 #: launcher/ui/MainWindow.cpp:1043
 msgctxt "MainWindow|"
 msgid "Change the selected instance's group."
-msgstr "Ubah kumpulan untuk pemasangan yang dipilih."
+msgstr "Ubah kumpulan untuk instance yang dipilih."
 
 #: launcher/ui/MainWindow.cpp:1055
 msgctxt "MainWindow|"
@@ -5009,7 +5009,7 @@ msgstr "Folder Minecraft"
 #: launcher/ui/MainWindow.cpp:1068
 msgctxt "MainWindow|"
 msgid "Open the selected instance's minecraft folder in a file browser."
-msgstr "Buka folder minecraft pemasangan yang dipilih dalam penyemak imbas fail."
+msgstr "Buka folder minecraft instance yang dipilih dalam penyemak imbas fail."
 
 #: launcher/ui/MainWindow.cpp:1079
 msgctxt "MainWindow|"
@@ -5029,17 +5029,17 @@ msgstr "Folder Konfigurasi"
 #: launcher/ui/MainWindow.cpp:1092
 msgctxt "MainWindow|"
 msgid "Open the instance's config folder."
-msgstr "Buka folder konfigurasi pemasangan ini."
+msgstr "Buka folder konfigurasi instance ini."
 
 #: launcher/ui/MainWindow.cpp:1102
 msgctxt "MainWindow|"
 msgid "Instance Folder"
-msgstr "Folder Pemasangan"
+msgstr "Folder Instance"
 
 #: launcher/ui/MainWindow.cpp:1103
 msgctxt "MainWindow|"
 msgid "Open the selected instance's root folder in a file browser."
-msgstr "Buka folder akar pemasangan yang dipilih dalam penyemak imbas fail."
+msgstr "Buka folder akar instance yang dipilih dalam penyemak imbas fail."
 
 #: launcher/ui/MainWindow.cpp:1119
 msgctxt "MainWindow|"
@@ -5049,7 +5049,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:1125
 msgctxt "MainWindow|"
 msgid "Export Instance"
-msgstr "Eksport Pemasangan"
+msgstr "Eksport Instance"
 
 #: launcher/ui/MainWindow.cpp:1126
 msgctxt "MainWindow|"
@@ -5080,22 +5080,22 @@ msgstr "Hapus"
 #: launcher/ui/MainWindow.cpp:1182
 msgctxt "MainWindow|"
 msgid "Delete the selected instance."
-msgstr "Padam pemasangan yang dipilih."
+msgstr "Padam instance yang dipilih."
 
 #: launcher/ui/MainWindow.cpp:1189
 msgctxt "MainWindow|"
 msgid "Copy Instance"
-msgstr "Salin Pemasangan"
+msgstr "Salin Instance"
 
 #: launcher/ui/MainWindow.cpp:1191
 msgctxt "MainWindow|"
 msgid "Copy the selected instance."
-msgstr "Salin pemasangan yang dipilih."
+msgstr "Salin instance yang dipilih."
 
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr ""
+msgstr "Cipta Pintasan"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
@@ -5147,7 +5147,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:1550 launcher/ui/MainWindow.cpp:1718
 msgctxt "MainWindow|"
 msgid "No instance selected"
-msgstr "Tiada pemasangan dipilih"
+msgstr "Tiada instance dipilih"
 
 #: launcher/ui/MainWindow.cpp:1551
 msgctxt "MainWindow|"
@@ -5167,7 +5167,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:1831
 msgctxt "MainWindow|"
 msgid "Create instance"
-msgstr "Cipta pemasangan"
+msgstr "Cipta instance"
 
 #: launcher/ui/MainWindow.cpp:1847
 #, qt-format
@@ -6197,17 +6197,17 @@ msgstr "Masa permainan"
 #: launcher/ui/pages/global/MinecraftPage.ui:146
 msgctxt "MinecraftPage|"
 msgid "Show time spent playing instances"
-msgstr "Tunjukkan masa yang dihabiskan untuk bermain pemasangan"
+msgstr "Tunjukkan masa yang dihabiskan untuk bermain instance"
 
 #: launcher/ui/pages/global/MinecraftPage.ui:153
 msgctxt "MinecraftPage|"
 msgid "Show time spent playing across all instances"
-msgstr "Tunjukkan masa yang dihabiskan untuk bermain merentasi semua pemasangan"
+msgstr "Tunjukkan masa yang dihabiskan untuk bermain merentasi semua instance"
 
 #: launcher/ui/pages/global/MinecraftPage.ui:160
 msgctxt "MinecraftPage|"
 msgid "Record time spent playing instances"
-msgstr "Catat masa yang dihabiskan untuk bermain pemasangan"
+msgstr "Catat masa yang dihabiskan untuk bermain instance"
 
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
@@ -6716,17 +6716,17 @@ msgstr ""
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "Versi dipilih:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr ""
+msgstr "Cari"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "Cari dan tapis ..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
@@ -6782,7 +6782,7 @@ msgstr ""
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:163
 msgctxt "NewInstanceDialog|"
 msgid "New Instance"
-msgstr "Pemasangan Baharu"
+msgstr "Instance Baharu"
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:39
 msgctxt "NewInstanceDialog|"
@@ -6906,7 +6906,7 @@ msgstr "Tutup"
 #: launcher/NullInstance.h:39
 msgctxt "NullInstance|"
 msgid "Unknown instance type"
-msgstr "Jenis pemasangan tidak diketahui"
+msgstr "Jenis instance tidak diketahui"
 
 #: launcher/ui/pages/instance/OtherLogsPage.ui:42
 msgctxt "OtherLogsPage|"
@@ -8602,7 +8602,7 @@ msgstr "Alih Keluar"
 #: launcher/ui/pages/instance/ServersPage.ui:165
 msgctxt "ServersPage|"
 msgid "Move Up"
-msgstr "Pindah Ke Atas"
+msgstr "Pindah Keatas"
 
 #: launcher/ui/pages/instance/ServersPage.ui:170
 msgctxt "ServersPage|"
@@ -8974,7 +8974,7 @@ msgstr "Tidak boleh memperbaiki keizinan untuk %1"
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:191
 msgctxt "Technic::SingleZipPackInstallTask|"
 msgid "Instance import has been aborted."
-msgstr "Pengimportan pemasangan telah dibatalkan."
+msgstr "Pengimportan instance telah dibatalkan."
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:50
 #, qt-format
@@ -9029,7 +9029,7 @@ msgstr "Tidak boleh memperbaiki keizinan untuk %1"
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:251
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Instance import has been aborted."
-msgstr "Pengimportan pemasangan telah dibatalkan."
+msgstr "Pengimportan instance telah dibatalkan."
 
 #: launcher/modplatform/technic/TechnicPackProcessor.cpp:67
 msgctxt "Technic::TechnicPackProcessor|"
@@ -9185,7 +9185,7 @@ msgstr "Tugasan dibatalkan."
 #, qt-format
 msgctxt "Update|"
 msgid "Instance update failed because: %1\n\n"
-msgstr "Kemas kini pemasangan gagal kerana: %1\n\n"
+msgstr "Kemas kini instance gagal kerana: %1\n\n"
 
 #: launcher/updater/UpdateChecker.cpp:408
 #, qt-format
@@ -9671,7 +9671,7 @@ msgstr "Muat Turun Semua"
 #: launcher/ui/pages/instance/VersionPage.ui:227
 msgctxt "VersionPage|"
 msgid "Download the files needed to launch the instance now."
-msgstr "Muat turun fail yang diperlukan untuk melancarkan pemasangan ini sekarang."
+msgstr "Muat turun fail yang diperlukan untuk melancarkan instance ini sekarang."
 
 #: launcher/ui/pages/instance/VersionPage.ui:232
 msgctxt "VersionPage|"
@@ -9681,7 +9681,7 @@ msgstr "Buka .minecraft"
 #: launcher/ui/pages/instance/VersionPage.ui:235
 msgctxt "VersionPage|"
 msgid "Open the instance's .minecraft folder."
-msgstr "Buka folder .minecraft pemasangan ini."
+msgstr "Buka folder .minecraft instance ini."
 
 #: launcher/ui/pages/instance/VersionPage.ui:240
 msgctxt "VersionPage|"
@@ -9691,7 +9691,7 @@ msgstr "Buka pustaka"
 #: launcher/ui/pages/instance/VersionPage.ui:243
 msgctxt "VersionPage|"
 msgid "Open the instance's local libraries folder."
-msgstr "Buka folder pustaka tempatan pemasangan ini."
+msgstr "Buka folder pustaka tempatan instance ini."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:164
 msgctxt "VersionPage|"
@@ -9733,7 +9733,7 @@ msgstr "Ralat"
 #: launcher/ui/pages/instance/VersionPage.cpp:270
 msgctxt "VersionPage|"
 msgid "Couldn't load the instance profile."
-msgstr "Tidak dapat memuatkan profil pemasangan."
+msgstr "Tidak dapat memuatkan profil instance."
 
 #: launcher/ui/pages/instance/VersionPage.cpp:287
 msgctxt "VersionPage|"
@@ -9785,7 +9785,7 @@ msgstr ""
 #: launcher/ui/pages/instance/VersionPage.cpp:511
 msgctxt "VersionPage|"
 msgid "Error updating instance"
-msgstr "Ralat dalam mengemas kini pemasangan"
+msgstr "Ralat dalam mengemas kini instance"
 
 #: launcher/ui/pages/instance/VersionPage.h:43
 msgctxt "VersionPage|"
