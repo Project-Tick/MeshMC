@@ -67,6 +67,8 @@ findCoreSupersededPlugin(const QString& name)
 		{QLatin1String("NewsViewer"),
 		 QLatin1String("The news viewer is now part of MeshMC itself "
 					   "(the news bar headline and \"More news\")")},
+		{QLatin1String("PackPortal"),
+		 QLatin1String("The pack portal is now part of MeshMC itself")},
 		{QLatin1String("PackUpdater"),
 		 QLatin1String("The pack updater is now part of MeshMC itself")},
 	};

@@ -74,6 +74,23 @@ class FlameApi final : public ModPlatform::ContentApi
 	/* Every file of a project, with no version or loader filter. */
 	static QUrl allProjectFilesUrl(const QString& projectId);
 
+	/* The versions owning a set of file fingerprints.
+	 *
+	 * A POST, unlike everything else here, because the question is a
+	 * list - see Net::JsonPost. There is no per-file equivalent to fall
+	 * back on: CurseForge indexes files by FlameFingerprint and by
+	 * nothing else, so an export that wants to name mods in a manifest
+	 * rather than ship them has no other route. Answers with
+	 * `data.exactMatches`, each entry carrying the `file` it matched. */
+	static QUrl matchFingerprintsUrl();
+
+	/* Several projects at once, by id. Also a POST, for the same reason.
+	 *
+	 * Used after a fingerprint match, which names a project by number
+	 * only: the slug and the author list that a mod list has to print
+	 * are not in that answer. Answers with `data` as an array. */
+	static QUrl projectsUrl();
+
 	/* Changelog for one file, as HTML wrapped in a `data` string.
 	 *
 	 * A request per file, unlike Modrinth which ships changelogs with

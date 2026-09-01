@@ -92,6 +92,18 @@ class Task : public QObject
 	bool wasSuccessful() const;
 
 	/*!
+	 * Whether the task stopped because someone called abort().
+	 *
+	 * Stopping on request is reported through the same failed() signal as
+	 * a genuine failure - there is no separate signal for it - so code
+	 * that turns failed() into a message in front of the user has no
+	 * other way to tell the two apart, and ends up announcing "Aborted."
+	 * as though something had gone wrong. The state was always recorded;
+	 * it was simply not readable from outside.
+	 */
+	bool wasAborted() const;
+
+	/*!
 	 * A multi step task is a task that is made up of several other tasks.
 	 * Such a task reports the state of each of its steps through the
 	 * stepProgress signal, on top of its own overall progress.

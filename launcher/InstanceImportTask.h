@@ -30,7 +30,6 @@
 #include "settings/SettingsObject.h"
 #include "QObjectPtr.h"
 
-#include <nonstd/optional>
 #include <memory>
 
 namespace Flame
@@ -146,6 +145,28 @@ class InstanceImportTask : public InstanceTask
 		m_packHint = hint;
 	}
 
+	/*
+	 * An import is always abortable.
+	 *
+	 * Every step of it is either a download, an extraction or a lookup,
+	 * and none of those is a step that has to be seen through: nothing
+	 * is written outside the staging directory until the whole pack is
+	 * in place, so stopping halfway leaves nothing behind to clean up
+	 * by hand.
+	 *
+	 * This used to answer false - inherited, never overridden - which
+	 * greyed out the progress dialog's own abort button and left a
+	 * multi-gigabyte extraction with no way out but killing the
+	 * launcher.
+	 */
+	bool canAbort() const override
+	{
+		return true;
+	}
+
+  public slots:
+	bool abort() override;
+
   protected:
 	//! Entry point for tasks.
 	virtual void executeTask() override;
@@ -165,7 +186,9 @@ class InstanceImportTask : public InstanceTask
 	void downloadProgressChanged(qint64 current, qint64 total);
 	void detectFinished();
 	void extractFinished();
-	void extractAborted();
+	/* The archive could not be unpacked. Decides whether the file is
+	 * ours to discard before reporting. */
+	void extractFailed();
 
   private: /* data */
 	NetJob::Ptr m_filesNetJob;
@@ -179,8 +202,23 @@ class InstanceImportTask : public InstanceTask
 	 * unpacks the same broken bytes. */
 	MetaEntryPtr m_archiveEntry;
 	bool m_downloadRequired = false;
-	QFuture<nonstd::optional<QStringList>> m_extractFuture;
-	QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
+
+	/* The extraction, while it runs.
+	 *
+	 * Used to be a QFuture over MMCZip::extractSubDir(): the work did
+	 * happen off the UI thread, but nothing came back until it was over,
+	 * so a large pack showed a frozen "Extracting modpack" with a bar
+	 * that never moved. Worse, the future QtConcurrent::run() hands back
+	 * cannot be cancelled, so the watcher's canceled() signal - which
+	 * this class connected to an abort handler - could never fire.
+	 * MMCZip::ExtractZipTask reports entry by entry and can be told to
+	 * stop. */
+	Task::Ptr m_extractTask;
+
+	/* Latched by abort(), so the handler of whichever step was in flight
+	 * reports the user's decision rather than the failure that stopping
+	 * looked like from inside. */
+	bool m_aborted = false;
 	enum class ModpackType {
 		Unknown,
 		MeshMC,

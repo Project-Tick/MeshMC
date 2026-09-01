@@ -24,8 +24,10 @@
 #include <QModelIndex>
 #include <memory>
 
+#include "FastFileIconProvider.h"
+
 class BaseInstance;
-class PackIgnoreProxy;
+class FileIgnoreProxy;
 typedef std::shared_ptr<BaseInstance> InstancePtr;
 
 namespace Ui
@@ -33,26 +35,42 @@ namespace Ui
 	class ExportInstanceDialog;
 }
 
+/*
+ * Exporting an instance as a plain zip.
+ *
+ * The tree is the instance directory with a checkbox on every entry;
+ * what the user unchecks is remembered in the instance's `.packignore`
+ * so the next export starts where the last one left off. Files nobody
+ * would want in an export - logs, caches, `.DS_Store` - are not offered
+ * as a choice at all; see FileIgnoreProxy for why the two kinds of
+ * exclusion are kept apart.
+ *
+ * The writing itself is a task (MMCZip::ExportToZipTask) shown in a
+ * progress dialog: it used to run inline, which froze the window for as
+ * long as the instance took to compress and left no way to stop it.
+ */
 class ExportInstanceDialog : public QDialog
 {
 	Q_OBJECT
 
   public:
-	explicit ExportInstanceDialog(InstancePtr instance, QWidget* parent = 0);
-	~ExportInstanceDialog();
+	explicit ExportInstanceDialog(InstancePtr instance,
+								  QWidget* parent = nullptr);
+	~ExportInstanceDialog() override;
 
-	virtual void done(int result);
+	void done(int result) override;
 
   private:
-	bool doExport();
-	void loadPackIgnore();
-	void savePackIgnore();
+	/* Runs the export and closes the dialog with the result. Never
+	 * leaves the dialog open on failure without saying why. */
+	void doExport();
 	QString ignoreFileName();
 
   private:
 	Ui::ExportInstanceDialog* ui;
 	InstancePtr m_instance;
-	PackIgnoreProxy* proxyModel;
+	FileIgnoreProxy* m_proxyModel;
+	FastFileIconProvider m_icons;
 
   private slots:
 	void rowsInserted(QModelIndex parent, int top, int bottom);

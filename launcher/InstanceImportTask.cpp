@@ -24,6 +24,7 @@
 #include "Application.h"
 #include "InstanceList.h"
 #include "MMCZip.h"
+#include "archive/ExtractZipTask.h"
 #include "NullInstance.h"
 #include "settings/INISettingsObject.h"
 #include "icons/IconUtils.h"
@@ -44,6 +45,7 @@
 #include "icons/IconList.h"
 #include "Application.h"
 #include "modplatform/flame/FlameApi.h"
+#include "modplatform/modrinth/ModrinthApi.h"
 #include "ui/dialogs/BlockedModsDialog.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/UntrustedModsDialog.h"
@@ -102,8 +104,14 @@ void InstanceImportTask::downloadSucceeded()
 
 void InstanceImportTask::downloadFailed(QString reason)
 {
-	emitFailed(reason);
 	m_filesNetJob.reset();
+	if (m_aborted) {
+		/* Stopping on request arrives here too: a NetJob told to abort
+		 * reports it as a failure. */
+		emitAborted();
+		return;
+	}
+	emitFailed(reason);
 }
 
 void InstanceImportTask::downloadProgressChanged(qint64 current, qint64 total)
@@ -175,6 +183,14 @@ void InstanceImportTask::processZipPack()
 
 void InstanceImportTask::detectFinished()
 {
+	if (m_aborted) {
+		/* Inspecting the archive cannot be interrupted, so an abort
+		 * during it is reported here, once the scan has run itself
+		 * out. */
+		emitAborted();
+		return;
+	}
+
 	const DetectResult r = m_detectFuture.result();
 
 	// Determine pack type (same priority order as before).
@@ -190,7 +206,9 @@ void InstanceImportTask::detectFinished()
 	} else if (r.technicFound) {
 		qDebug() << "Technic";
 		m_modpackType = ModpackType::Technic;
-		// root stays empty — extractSubDir extracts everything
+		/* root stays empty — an empty prefix means the whole archive,
+		 * which is what a Technic pack needs: it ships its files at the
+		 * root. */
 	} else if (!r.flameRoot.isNull()) {
 		qDebug() << "Flame:" << r.flameRoot;
 		m_modpackType = ModpackType::Flame;
@@ -210,46 +228,112 @@ void InstanceImportTask::detectFinished()
 	}
 
 	setStatus(tr("Extracting modpack"));
-	const QString archivePath = m_archivePath;
-	m_extractFuture =
-		QtConcurrent::run(QThreadPool::globalInstance(), MMCZip::extractSubDir,
-						  archivePath, root, r.extractTarget);
-	connect(&m_extractFutureWatcher,
-			&QFutureWatcher<nonstd::optional<QStringList>>::finished, this,
+
+	auto* extract =
+		new MMCZip::ExtractZipTask(m_archivePath, QDir(r.extractTarget), root);
+	m_extractTask.reset(extract);
+
+	/* There is no separate "aborted" signal to listen for: a task that
+	 * stops on request reports it as a failure whose reason says so. The
+	 * flag latched in abort() is what tells the two apart. */
+	connect(extract, &Task::succeeded, this,
 			&InstanceImportTask::extractFinished);
-	connect(&m_extractFutureWatcher,
-			&QFutureWatcher<nonstd::optional<QStringList>>::canceled, this,
-			&InstanceImportTask::extractAborted);
-	m_extractFutureWatcher.setFuture(m_extractFuture);
+	connect(extract, &Task::failed, this, [this](const QString& reason) {
+		m_extractTask.reset();
+		if (m_aborted) {
+			emitAborted();
+			return;
+		}
+		/* Logged rather than shown: extractFailed() has a better thing
+		 * to say to the user than "Unsupported ZIP compression method",
+		 * and it also has to decide what to do with the archive. */
+		qWarning() << "Extracting" << m_archivePath << "failed:" << reason;
+		extractFailed();
+	});
+
+	connect(extract, &Task::progress, this, &Task::setProgress);
+	connect(extract, &Task::status, this, &Task::setStatus);
+	propagateStepsFrom(extract);
+
+	extract->start();
+}
+
+bool InstanceImportTask::abort()
+{
+	if (m_aborted) {
+		/* Already stopping. The verdict is on its way from whichever
+		 * step is in flight; a second one would be a second finished()
+		 * for the same task. */
+		return true;
+	}
+	m_aborted = true;
+
+	/* Whichever step is running is told to stop, and its own handler
+	 * reports the abort. Only one of them can be live at a time, but all
+	 * are checked rather than funnelled through a single "current task"
+	 * pointer: a step added later that forgot to register itself there
+	 * would be a step during which aborting silently did nothing, which
+	 * is the bug this whole change is here to fix. */
+	if (m_filesNetJob) {
+		m_filesNetJob->abort();
+		return true;
+	}
+	if (m_extractTask) {
+		m_extractTask->abort();
+		return true;
+	}
+	if (m_modIdResolver) {
+		m_modIdResolver->abort();
+		return true;
+	}
+
+	if (m_detectFutureWatcher.isRunning()) {
+		/* Inspecting the archive is one pass over its entry list and
+		 * cannot be interrupted, but it is seconds at worst.
+		 * detectFinished() sees the flag and stops there. */
+		return true;
+	}
+
+	emitAborted();
+	return true;
+}
+
+/* The archive could not be unpacked. Not reachable by aborting - that is
+ * handled where the flag is checked - so this is always a real failure. */
+void InstanceImportTask::extractFailed()
+{
+	/* Only a download we cached is ours to throw away - a file the user
+	 * dragged in belongs to them, and deleting it because we could not
+	 * read it would be unforgivable. */
+	if (m_archiveEntry) {
+		qWarning() << "Discarding unusable cached archive" << m_archivePath;
+		/* The file itself, not just the entry's freshness: a stale entry
+		 * whose file still exists makes the next request conditional,
+		 * the server answers 304, and we are back to the same damaged
+		 * bytes. */
+		if (!QFile::remove(m_archivePath)) {
+			qWarning() << "Could not remove" << m_archivePath;
+		}
+		APPLICATION->metacache()->evictEntry(m_archiveEntry);
+		m_archiveEntry.reset();
+		emitFailed(tr("Failed to extract modpack. The downloaded archive is "
+					  "damaged; it has been discarded, so trying again will "
+					  "download it afresh."));
+		return;
+	}
+	emitFailed(tr("Failed to extract modpack. The archive appears to be "
+				  "damaged."));
 }
 
 void InstanceImportTask::extractFinished()
 {
-	if (!m_extractFuture.result()) {
-		/* Only a download we cached is ours to throw away - a file the
-		 * user dragged in belongs to them, and deleting it because we
-		 * could not read it would be unforgivable. */
-		if (m_archiveEntry) {
-			qWarning() << "Discarding unusable cached archive" << m_archivePath;
-			/* The file itself, not just the entry's freshness: a stale
-			 * entry whose file still exists makes the next request
-			 * conditional, the server answers 304, and we are back to
-			 * the same damaged bytes. */
-			if (!QFile::remove(m_archivePath)) {
-				qWarning() << "Could not remove" << m_archivePath;
-			}
-			APPLICATION->metacache()->evictEntry(m_archiveEntry);
-			m_archiveEntry.reset();
-			emitFailed(
-				tr("Failed to extract modpack. The downloaded archive is "
-				   "damaged; it has been discarded, so trying again will "
-				   "download it afresh."));
-			return;
-		}
-		emitFailed(tr("Failed to extract modpack. The archive appears to be "
-					  "damaged."));
+	m_extractTask.reset();
+
+	if (m_aborted) {
+		emitAborted();
 		return;
 	}
+
 	QDir extractDir(m_stagingPath);
 
 	qDebug() << "Fixing permissions for extracted pack files...";
@@ -299,11 +383,6 @@ void InstanceImportTask::extractFinished()
 	}
 }
 
-void InstanceImportTask::extractAborted()
-{
-	emitFailed(tr("Instance import has been aborted."));
-	return;
-}
 
 namespace
 {
@@ -375,6 +454,17 @@ namespace
 	{
 		const QDateTime now = QDateTime::currentDateTimeUtc();
 		for (const auto& f : files) {
+			if (!f.clientSupported) {
+				/* Never installed on a client - see processModrinth - so
+				 * there is no file here for a sidecar to describe. Worth
+				 * skipping explicitly rather than leaving to chance:
+				 * orphaned `.pw.toml` files are deliberately never
+				 * pruned, because in a packwiz pack the sidecar is the
+				 * definition and the file beside it may simply not have
+				 * been downloaded yet. One written here would stay for
+				 * good, claiming a mod the instance does not have. */
+				continue;
+			}
 			const QString folder = sidecarFolderForPath(minecraftDir, f.path);
 			if (folder.isEmpty())
 				continue;
@@ -1037,6 +1127,13 @@ void InstanceImportTask::processModrinth()
 	{
 		QStringList suspect;
 		for (const auto& file : pack.files) {
+			/* Files the pack marks unsupported on the client are never
+			 * fetched, so they are nothing to warn about: asking the
+			 * user to vouch for a download that is not going to happen
+			 * teaches them to wave the prompt through. */
+			if (!file.clientSupported) {
+				continue;
+			}
 			if (!isKnownContentHost(file.downloadUrl,
 									ContentSource::Modrinth)) {
 				suspect.append(file.path);
@@ -1180,7 +1277,30 @@ void InstanceImportTask::processModrinth()
 					   << file.path;
 			continue;
 		}
-		auto path = FS::PathCombine(minecraftDir, file.path);
+		if (!file.clientSupported) {
+			/* The pack says this file has no business on a client, and a
+			 * client is what we are installing. Left out entirely rather
+			 * than installed disabled: a server-only jar sitting in
+			 * mods/ under a ".disabled" name is a file the user never
+			 * asked for and would have to work out for themselves. */
+			qDebug() << "Skipping file the pack marks unsupported on the "
+						"client:"
+					 << file.path;
+			continue;
+		}
+
+		/* A file the pack offers rather than requires is installed
+		 * turned off, under the name this launcher uses to mean that.
+		 * The same treatment the CurseForge path gives a file its
+		 * manifest marks not-required, so a pack that travels through
+		 * either importer arrives the same way - and so an instance
+		 * exported with disabled mods and imported again still has them
+		 * disabled. */
+		const QString targetPath =
+			file.required ? file.path
+						  : file.path + QLatin1String(".disabled");
+
+		auto path = FS::PathCombine(minecraftDir, targetPath);
 		auto canonicalDir = QFileInfo(path).absolutePath();
 		if (!canonicalDir.startsWith(canonicalBase)) {
 			qWarning() << "Skipping file path that escapes staging directory:"
@@ -1220,7 +1340,7 @@ void InstanceImportTask::processModrinth()
 		auto dl = Net::Download::makeFile(file.downloadUrl, path);
 		dl->setModrinthDownloadMeta(downloadMeta);
 		m_filesNetJob->addNetAction(dl);
-		contentPaths.append(file.path);
+		contentPaths.append(targetPath);
 	}
 
 	if (reusedCount > 0) {
@@ -1407,10 +1527,14 @@ static bool isKnownContentHost(const QUrl& url, ContentSource source)
 	const QString host = url.host().toLower();
 	switch (source) {
 		case ContentSource::Modrinth:
-			/* Modrinth serves every version file from this one host, and
-			 * a mrpack is only allowed to name files it hosts, so there
-			 * is nothing else to accept. */
-			return host == QLatin1String("cdn.modrinth.com");
+			/* Not just Modrinth's own CDN: the mrpack format allows a
+			 * manifest to name downloads from a small set of hosts, and
+			 * a pack that points at a GitHub release is conformant
+			 * rather than suspect. Refusing them here would raise an
+			 * untrusted-content warning on packs Modrinth itself
+			 * accepts, which teaches the user that the warning means
+			 * nothing. See ModrinthApi::mrpackHosts(). */
+			return ModrinthApi::mrpackHosts().contains(host);
 
 		case ContentSource::CurseForge:
 			/* CurseForge serves files from several numbered edge nodes
