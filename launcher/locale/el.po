@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
-"PO-Revision-Date: 2026-09-01 20:25\n"
+"PO-Revision-Date: 2026-09-01 21:52\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -4850,7 +4850,7 @@ msgstr "Υποστήριξη %1"
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr "Ανοίξτε τη σελίδα %1 Patreon."
+msgstr "Άνοιγμα %1 σελίδας Patreon."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4891,7 +4891,7 @@ msgstr "Περισσότερα νέα..."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr "Ανοίξτε το blog ανάπτυξης για να διαβάσετε περισσότερα νέα σχετικά με το %1."
+msgstr "Άνοιγμα του blog ανάπτυξης MultiMC για περισσότερα νέα για %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -5132,7 +5132,7 @@ msgstr "Αντιγράφει την επιλεγμένη εγκατάσταση.
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr "Δημιουργία Συντόμευσης"
+msgstr "Δημιουργία συντόμευσης"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
