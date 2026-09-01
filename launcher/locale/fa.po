@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
-"PO-Revision-Date: 2026-09-01 12:50\n"
+"PO-Revision-Date: 2026-09-01 20:26\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -4593,7 +4593,7 @@ msgctxt "MainWindow|"
 msgid "Undo Last Instance Deletion"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:438 launcher/ui/MainWindow.cpp:1885
+#: launcher/ui/MainWindow.cpp:438 launcher/ui/MainWindow.cpp:1883
 msgctxt "MainWindow|"
 msgid "Bring the instance you last sent to the trash back, along with its shortcuts."
 msgstr ""
@@ -4698,7 +4698,7 @@ msgctxt "MainWindow|"
 msgid "Open the logs folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:577 launcher/ui/MainWindow.cpp:1401
+#: launcher/ui/MainWindow.cpp:577 launcher/ui/MainWindow.cpp:1399
 msgctxt "MainWindow|"
 msgid "Folders"
 msgstr "پوشه ها"
@@ -4783,7 +4783,7 @@ msgctxt "MainWindow|"
 msgid "View information about %1."
 msgstr "نمایش اطلاعات درباره %1."
 
-#: launcher/ui/MainWindow.cpp:669 launcher/ui/MainWindow.cpp:1402
+#: launcher/ui/MainWindow.cpp:669 launcher/ui/MainWindow.cpp:1400
 msgctxt "MainWindow|"
 msgid "Help"
 msgstr "راهنما"
@@ -4817,516 +4817,516 @@ msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:713
+#: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
 msgid "Meow"
 msgstr "میو"
 
-#: launcher/ui/MainWindow.cpp:715
+#: launcher/ui/MainWindow.cpp:716
 msgctxt "MainWindow|"
 msgid "It's a fluffy kitty :3"
 msgstr "این یه گربه گوگولی هستش 3:"
 
-#: launcher/ui/MainWindow.cpp:725
+#: launcher/ui/MainWindow.cpp:726
 msgctxt "MainWindow|"
 msgid "Manage Accounts"
 msgstr "مدیریت حساب‌ها"
 
-#: launcher/ui/MainWindow.cpp:737
+#: launcher/ui/MainWindow.cpp:738
 msgctxt "MainWindow|"
 msgid "Lock Toolbars"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:738
+#: launcher/ui/MainWindow.cpp:739
 msgctxt "MainWindow|"
 msgid "Prevent the toolbars from being dragged around."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:765
+#: launcher/ui/MainWindow.cpp:766
 msgctxt "MainWindow|"
 msgid "News Toolbar"
 msgstr "نوارابزار اخبار"
 
-#: launcher/ui/MainWindow.cpp:771
+#: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:772
+#: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:861
+#: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
 msgid "Menu Bar Instead of Tool Bar"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:862
+#: launcher/ui/MainWindow.cpp:863
 msgctxt "MainWindow|"
 msgid "Keep this menu bar and hide the main toolbar. Without it, tap Alt to show the menu bar for a moment."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:908
+#: launcher/ui/MainWindow.cpp:906
 msgctxt "MainWindow|"
 msgid "Instance Toolbar"
 msgstr "نوارابزار نمایه"
 
-#: launcher/ui/MainWindow.cpp:918
+#: launcher/ui/MainWindow.cpp:916
 msgctxt "MainWindow|"
 msgid "Change Icon"
 msgstr "تغییر آیکن"
 
-#: launcher/ui/MainWindow.cpp:919
+#: launcher/ui/MainWindow.cpp:917
 msgctxt "MainWindow|"
 msgid "Change the selected instance's icon."
 msgstr "تغییر آیکن نمایه انتخاب شده."
 
-#: launcher/ui/MainWindow.cpp:939
+#: launcher/ui/MainWindow.cpp:937
 msgctxt "MainWindow|"
 msgid "Rename"
 msgstr "تغییرنام"
 
-#: launcher/ui/MainWindow.cpp:941
+#: launcher/ui/MainWindow.cpp:939
 msgctxt "MainWindow|"
 msgid "Rename the selected instance."
 msgstr "تغییر نام نمایه انتخاب شده."
 
-#: launcher/ui/MainWindow.cpp:957 launcher/ui/MainWindow.cpp:1958
+#: launcher/ui/MainWindow.cpp:955 launcher/ui/MainWindow.cpp:1956
 msgctxt "MainWindow|"
 msgid "Launch"
 msgstr "اجرا"
 
-#: launcher/ui/MainWindow.cpp:959
+#: launcher/ui/MainWindow.cpp:957
 msgctxt "MainWindow|"
 msgid "Launch the selected instance."
 msgstr "اجرای نمایه انتخاب شده."
 
-#: launcher/ui/MainWindow.cpp:967
+#: launcher/ui/MainWindow.cpp:965
 msgctxt "MainWindow|"
 msgid "Kill"
 msgstr "به اتمام رساندن"
 
-#: launcher/ui/MainWindow.cpp:969
+#: launcher/ui/MainWindow.cpp:967
 msgctxt "MainWindow|"
 msgid "Kill the running instance."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:978 launcher/ui/MainWindow.cpp:1963
+#: launcher/ui/MainWindow.cpp:976 launcher/ui/MainWindow.cpp:1961
 msgctxt "MainWindow|"
 msgid "Launch Offline"
 msgstr "اجرای آفلاین"
 
-#: launcher/ui/MainWindow.cpp:979
+#: launcher/ui/MainWindow.cpp:977
 msgctxt "MainWindow|"
 msgid "Launch the selected instance in offline mode."
 msgstr "اجرای نمایه انتخاب شده در حالت آفلاین."
 
-#: launcher/ui/MainWindow.cpp:988
+#: launcher/ui/MainWindow.cpp:986
 msgctxt "MainWindow|"
 msgid "Edit Instance"
 msgstr "ویرایش نمایه"
 
-#: launcher/ui/MainWindow.cpp:989
+#: launcher/ui/MainWindow.cpp:987
 msgctxt "MainWindow|"
 msgid "Change the instance settings, mods and versions."
 msgstr "تغییر تنظیمات، مود ها و نسخه نمایه."
 
-#: launcher/ui/MainWindow.cpp:999
+#: launcher/ui/MainWindow.cpp:997
 msgctxt "MainWindow|"
 msgid "Instance Settings"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1000
+#: launcher/ui/MainWindow.cpp:998
 msgctxt "MainWindow|"
 msgid "Open the settings for the selected instance."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1009
+#: launcher/ui/MainWindow.cpp:1007
 msgctxt "MainWindow|"
 msgid "Edit Notes"
 msgstr "ویرایش یادداشت‌ها"
 
-#: launcher/ui/MainWindow.cpp:1010
+#: launcher/ui/MainWindow.cpp:1008
 msgctxt "MainWindow|"
 msgid "Edit the notes for the selected instance."
 msgstr "ویرایش یادداشت‌ها برای نمایه انتخاب شده."
 
-#: launcher/ui/MainWindow.cpp:1017
+#: launcher/ui/MainWindow.cpp:1015
 msgctxt "MainWindow|"
 msgid "View Mods"
 msgstr "مشاهده مود ها"
 
-#: launcher/ui/MainWindow.cpp:1019
+#: launcher/ui/MainWindow.cpp:1017
 msgctxt "MainWindow|"
 msgid "View the mods of this instance."
 msgstr "مشاهده مود های این نمایه."
 
-#: launcher/ui/MainWindow.cpp:1025
+#: launcher/ui/MainWindow.cpp:1023
 msgctxt "MainWindow|"
 msgid "View Worlds"
 msgstr "نمایش دنیا‌ها"
 
-#: launcher/ui/MainWindow.cpp:1026
+#: launcher/ui/MainWindow.cpp:1024
 msgctxt "MainWindow|"
 msgid "View the worlds of this instance."
 msgstr "نمایش دنیا های این نمایه."
 
-#: launcher/ui/MainWindow.cpp:1034
+#: launcher/ui/MainWindow.cpp:1032
 msgctxt "MainWindow|"
 msgid "Manage Screenshots"
 msgstr "مدیریت عکس‌های صفحه"
 
-#: launcher/ui/MainWindow.cpp:1035
+#: launcher/ui/MainWindow.cpp:1033
 msgctxt "MainWindow|"
 msgid "View and upload screenshots for this instance."
 msgstr "نمایش و آپلود عکس‌های صفحه برای این نمایه."
 
-#: launcher/ui/MainWindow.cpp:1044
+#: launcher/ui/MainWindow.cpp:1042
 msgctxt "MainWindow|"
 msgid "Change Group"
 msgstr "تغییر گروه"
 
-#: launcher/ui/MainWindow.cpp:1045
+#: launcher/ui/MainWindow.cpp:1043
 msgctxt "MainWindow|"
 msgid "Change the selected instance's group."
 msgstr "تغییر گروه نمایه انتخاب شده."
 
-#: launcher/ui/MainWindow.cpp:1057
+#: launcher/ui/MainWindow.cpp:1055
 msgctxt "MainWindow|"
 msgid "View Backups"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1058
+#: launcher/ui/MainWindow.cpp:1056
 msgctxt "MainWindow|"
 msgid "View and manage backups for this instance."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1069
+#: launcher/ui/MainWindow.cpp:1067
 msgctxt "MainWindow|"
 msgid "Minecraft Folder"
 msgstr "پوشه ماینکرافت"
 
-#: launcher/ui/MainWindow.cpp:1070
+#: launcher/ui/MainWindow.cpp:1068
 msgctxt "MainWindow|"
 msgid "Open the selected instance's minecraft folder in a file browser."
 msgstr "بازکردن پوشه ماینکرافت نمایه انتخاب شده در یک مرورگر فایل."
 
-#: launcher/ui/MainWindow.cpp:1081
+#: launcher/ui/MainWindow.cpp:1079
 msgctxt "MainWindow|"
 msgid "Mods Folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1082
+#: launcher/ui/MainWindow.cpp:1080
 msgctxt "MainWindow|"
 msgid "Open the selected instance's mods folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1093
+#: launcher/ui/MainWindow.cpp:1091
 msgctxt "MainWindow|"
 msgid "Config Folder"
 msgstr "پوشه پیکربندی"
 
-#: launcher/ui/MainWindow.cpp:1094
+#: launcher/ui/MainWindow.cpp:1092
 msgctxt "MainWindow|"
 msgid "Open the instance's config folder."
 msgstr "بازکردن پوشه تنظیمات نمایه."
 
-#: launcher/ui/MainWindow.cpp:1104
+#: launcher/ui/MainWindow.cpp:1102
 msgctxt "MainWindow|"
 msgid "Instance Folder"
 msgstr "پوشه نمایه"
 
-#: launcher/ui/MainWindow.cpp:1105
+#: launcher/ui/MainWindow.cpp:1103
 msgctxt "MainWindow|"
 msgid "Open the selected instance's root folder in a file browser."
 msgstr "بازکردن پوشه ریشه(Root) نمایه انتخاب شده در یک مرورگر فایل."
 
-#: launcher/ui/MainWindow.cpp:1121
+#: launcher/ui/MainWindow.cpp:1119
 msgctxt "MainWindow|"
 msgid "E&xport..."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1127
+#: launcher/ui/MainWindow.cpp:1125
 msgctxt "MainWindow|"
 msgid "Export Instance"
 msgstr "استخراج نمایه"
 
-#: launcher/ui/MainWindow.cpp:1128
+#: launcher/ui/MainWindow.cpp:1126
 msgctxt "MainWindow|"
 msgid "Export the selected instance to supported formats."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1149
+#: launcher/ui/MainWindow.cpp:1147
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1158
+#: launcher/ui/MainWindow.cpp:1156
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1167
+#: launcher/ui/MainWindow.cpp:1165
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1182
+#: launcher/ui/MainWindow.cpp:1180
 msgctxt "MainWindow|"
 msgid "Delete"
 msgstr "حذف"
 
-#: launcher/ui/MainWindow.cpp:1184
+#: launcher/ui/MainWindow.cpp:1182
 msgctxt "MainWindow|"
 msgid "Delete the selected instance."
 msgstr "حذف نمایه انتخاب شده."
 
-#: launcher/ui/MainWindow.cpp:1191
+#: launcher/ui/MainWindow.cpp:1189
 msgctxt "MainWindow|"
 msgid "Copy Instance"
 msgstr "کپی نمایه"
 
-#: launcher/ui/MainWindow.cpp:1193
+#: launcher/ui/MainWindow.cpp:1191
 msgctxt "MainWindow|"
 msgid "Copy the selected instance."
 msgstr "کپی نمایه انتخاب شده."
 
-#: launcher/ui/MainWindow.cpp:1202
+#: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1203
+#: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
 msgid "Create a shortcut in a folder of your choosing that launches the selected instance."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1382
+#: launcher/ui/MainWindow.cpp:1380
 #, qt-format
 msgctxt "MainWindow|MeshMC - Version X"
 msgid "%1 - Version %2"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1386
+#: launcher/ui/MainWindow.cpp:1384
 #, qt-format
 msgctxt "MainWindow|on platform, as in operating system"
 msgid " on %1"
 msgstr " روی %1"
 
-#: launcher/ui/MainWindow.cpp:1409
+#: launcher/ui/MainWindow.cpp:1407
 msgctxt "MainWindow|"
 msgid "&File"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1410
+#: launcher/ui/MainWindow.cpp:1408
 msgctxt "MainWindow|"
 msgid "&Edit"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1411
+#: launcher/ui/MainWindow.cpp:1409
 msgctxt "MainWindow|"
 msgid "&Instance"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1412
+#: launcher/ui/MainWindow.cpp:1410
 msgctxt "MainWindow|"
 msgid "&View"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1413
+#: launcher/ui/MainWindow.cpp:1411
 msgctxt "MainWindow|"
 msgid "F&olders"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1414
+#: launcher/ui/MainWindow.cpp:1412
 msgctxt "MainWindow|"
 msgid "&Help"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1552 launcher/ui/MainWindow.cpp:1720
+#: launcher/ui/MainWindow.cpp:1550 launcher/ui/MainWindow.cpp:1718
 msgctxt "MainWindow|"
 msgid "No instance selected"
 msgstr "هیچ نمایه ای انتخاب نشده"
 
-#: launcher/ui/MainWindow.cpp:1553
+#: launcher/ui/MainWindow.cpp:1551
 msgctxt "MainWindow|"
 msgid "Total playtime: 0s"
 msgstr "کل زمان بازی کردن: ۰ثانیه"
 
-#: launcher/ui/MainWindow.cpp:1590
+#: launcher/ui/MainWindow.cpp:1588
 msgctxt "MainWindow|"
 msgid "&Accounts"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1714 launcher/ui/MainWindow.cpp:2148
+#: launcher/ui/MainWindow.cpp:1712 launcher/ui/MainWindow.cpp:2146
 msgctxt "MainWindow|"
 msgid "Profiles"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1833
+#: launcher/ui/MainWindow.cpp:1831
 msgctxt "MainWindow|"
 msgid "Create instance"
 msgstr "ساخت نمایه"
 
-#: launcher/ui/MainWindow.cpp:1849
+#: launcher/ui/MainWindow.cpp:1847
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Delete group '%1'"
 msgstr "حذف گروه '%1'"
 
-#: launcher/ui/MainWindow.cpp:1882
+#: launcher/ui/MainWindow.cpp:1880
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Undo Deletion of \"%1\""
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1971
+#: launcher/ui/MainWindow.cpp:1969
 msgctxt "MainWindow|"
 msgid "Launch &Demo"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1979
+#: launcher/ui/MainWindow.cpp:1977
 msgctxt "MainWindow|"
 msgid "This Minecraft version has no demo mode. It was added in 1.3.1."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1986
+#: launcher/ui/MainWindow.cpp:1984
 msgctxt "MainWindow|"
 msgid "Profilers"
 msgstr "پروفیلر ها"
 
-#: launcher/ui/MainWindow.cpp:1993
+#: launcher/ui/MainWindow.cpp:1991
 msgctxt "MainWindow|"
 msgid "No Profiler"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2012
+#: launcher/ui/MainWindow.cpp:2010
 msgctxt "MainWindow|"
 msgid "Profiler not setup correctly. Go into settings, \"External Tools\"."
 msgstr "پروفیلر به طور صحیح راه‌اندازی نشده. به تنظیمات قسمت \"ابزار های خارجی\" بروید."
 
-#: launcher/ui/MainWindow.cpp:2050
+#: launcher/ui/MainWindow.cpp:2048
 msgctxt "MainWindow|"
 msgid "No accounts added!"
 msgstr "هیچ حسابی اضافه نشده!"
 
-#: launcher/ui/MainWindow.cpp:2080
+#: launcher/ui/MainWindow.cpp:2078
 msgctxt "MainWindow|"
 msgid "No Default Account"
 msgstr "بدون حساب پیشفرض"
 
-#: launcher/ui/MainWindow.cpp:2189
+#: launcher/ui/MainWindow.cpp:2187
 msgctxt "MainWindow|"
 msgid "Loading news..."
 msgstr "بارگذاری اخبار..."
 
-#: launcher/ui/MainWindow.cpp:2197
+#: launcher/ui/MainWindow.cpp:2195
 msgctxt "MainWindow|"
 msgid "No news available."
 msgstr "هیچ خبری در دسترس نیست."
 
-#: launcher/ui/MainWindow.cpp:2219
+#: launcher/ui/MainWindow.cpp:2217
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Preparing update to version %1..."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2222
+#: launcher/ui/MainWindow.cpp:2220
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Download URL: %1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2226
+#: launcher/ui/MainWindow.cpp:2224
 msgctxt "MainWindow|"
 msgid "Launching updater..."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2232
+#: launcher/ui/MainWindow.cpp:2230
 msgctxt "MainWindow|"
 msgid "Updater launched. MeshMC will now close."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2239
+#: launcher/ui/MainWindow.cpp:2237
 msgctxt "MainWindow|"
 msgid "Failed to launch the updater."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2244
+#: launcher/ui/MainWindow.cpp:2242
 msgctxt "MainWindow|"
 msgid "No Download URL"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2245
+#: launcher/ui/MainWindow.cpp:2243
 #, qt-format
 msgctxt "MainWindow|"
 msgid "An update to version %1 is available, but no download URL was found for your platform (%2).\n"
 "Please visit the project website to download it manually."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2336 launcher/ui/MainWindow.cpp:2389
-#: launcher/ui/MainWindow.cpp:2399
+#: launcher/ui/MainWindow.cpp:2334 launcher/ui/MainWindow.cpp:2387
+#: launcher/ui/MainWindow.cpp:2397
 msgctxt "MainWindow|"
 msgid "Error"
 msgstr "خطا"
 
-#: launcher/ui/MainWindow.cpp:2344
+#: launcher/ui/MainWindow.cpp:2342
 msgctxt "MainWindow|"
 msgid "Warnings"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2349 launcher/ui/MainWindow.cpp:2394
+#: launcher/ui/MainWindow.cpp:2347 launcher/ui/MainWindow.cpp:2392
 msgctxt "MainWindow|"
 msgid "Abort"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2400
+#: launcher/ui/MainWindow.cpp:2398
 msgctxt "MainWindow|"
 msgid "MeshMC cannot download Minecraft or update instances unless you have at least one account added.\n"
 "Please add your Mojang or Minecraft account."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2545
+#: launcher/ui/MainWindow.cpp:2543
 msgctxt "MainWindow|"
 msgid "Group name"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2546
+#: launcher/ui/MainWindow.cpp:2544
 msgctxt "MainWindow|"
 msgid "Enter a new group name."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2568
+#: launcher/ui/MainWindow.cpp:2566
 msgctxt "MainWindow|"
 msgid "Delete group"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2569
+#: launcher/ui/MainWindow.cpp:2567
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Are you sure you want to delete the group %1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2653
+#: launcher/ui/MainWindow.cpp:2651
 msgctxt "MainWindow|"
 msgid "Checking for updates..."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2808
+#: launcher/ui/MainWindow.cpp:2806
 msgctxt "MainWindow|"
 msgid "Instance is running"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2809
+#: launcher/ui/MainWindow.cpp:2807
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\"%1\" is running. Stop it first -- deleting an instance while the game has its files open would leave both in a mess."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2825
+#: launcher/ui/MainWindow.cpp:2823
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\n\n"
@@ -5336,22 +5336,22 @@ msgid_plural "\n\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: launcher/ui/MainWindow.cpp:2835
+#: launcher/ui/MainWindow.cpp:2833
 msgctxt "MainWindow|"
 msgid "It will be moved to the trash. To bring it back, right-click the instance list and pick Restore."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2837
+#: launcher/ui/MainWindow.cpp:2835
 msgctxt "MainWindow|"
 msgid "There is no usable trash on this system, so this is permanent."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2845
+#: launcher/ui/MainWindow.cpp:2843
 msgctxt "MainWindow|"
 msgid "Delete instance?"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2846
+#: launcher/ui/MainWindow.cpp:2844
 #, qt-format
 msgctxt "MainWindow|"
 msgid "About to delete: %1\n"
@@ -5359,61 +5359,61 @@ msgid "About to delete: %1\n"
 "Are you sure?"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2883
+#: launcher/ui/MainWindow.cpp:2881
 msgctxt "MainWindow|"
 msgid "Restore Instance"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2884
+#: launcher/ui/MainWindow.cpp:2882
 msgctxt "MainWindow|"
 msgid "Not everything could be put back. Check your trash to recover the rest by hand."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2942
+#: launcher/ui/MainWindow.cpp:2940
 msgctxt "MainWindow|"
 msgid "Cannot export"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2943
+#: launcher/ui/MainWindow.cpp:2941
 msgctxt "MainWindow|"
 msgid "CurseForge modpacks cannot be made from a snapshot version of Minecraft."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3189
+#: launcher/ui/MainWindow.cpp:3187
 msgctxt "MainWindow|"
 msgid "Rename Instance"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3211
+#: launcher/ui/MainWindow.cpp:3209
 msgctxt "MainWindow|"
 msgid "This is a problem: <br/> - MeshMC will likely be deleted without warning by the operating system <br/> - close MeshMC now and extract it to a real location, not a temporary folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3223
+#: launcher/ui/MainWindow.cpp:3221
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains '!' and this is known to cause Java problems!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3227
+#: launcher/ui/MainWindow.cpp:3225
 #, qt-format
 msgctxt "MainWindow|"
 msgid "You have now two options: <br/> - change the instance folder in the settings <br/> - move this installation of %1 to a different folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3239
+#: launcher/ui/MainWindow.cpp:3237
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains 'Rar$' - that means you haven't extracted MeshMC archive!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3249
+#: launcher/ui/MainWindow.cpp:3247
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' is in a temporary folder: '%2'!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3267
+#: launcher/ui/MainWindow.cpp:3265
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Total playtime: %1"
@@ -8083,19 +8083,19 @@ msgctxt "QObject|"
 msgid "%1 (in use)"
 msgstr "%1 (در حال استفاده)"
 
-#: launcher/ui/MainWindow.cpp:2660
+#: launcher/ui/MainWindow.cpp:2658
 #, qt-format
 msgctxt "QObject|"
 msgid "Update check failed: %1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2668
+#: launcher/ui/MainWindow.cpp:2666
 #, qt-format
 msgctxt "QObject|"
 msgid "Update available: version %1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2677
+#: launcher/ui/MainWindow.cpp:2675
 msgctxt "QObject|"
 msgid "You are running the latest version."
 msgstr ""
