@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
-"PO-Revision-Date: 2026-09-01 12:49\n"
+"PO-Revision-Date: 2026-09-01 13:50\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -1979,7 +1979,7 @@ msgstr "Kon de instantie niet exporteren"
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:184
 msgctxt "ExportInstanceDialog|"
 msgid "Abort"
-msgstr ""
+msgstr "Annuleren"
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:82
 msgctxt "ExportListDialog|"
@@ -2114,144 +2114,144 @@ msgstr "Bestand"
 #: launcher/ui/dialogs/ExportPackDialog.ui:20
 msgctxt "ExportPackDialog|"
 msgid "&Description"
-msgstr ""
+msgstr "&Beschrijving"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:31
 msgctxt "ExportPackDialog|"
 msgid "&Name:"
-msgstr ""
+msgstr "&naam:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:44
 msgctxt "ExportPackDialog|"
 msgid "&Version:"
-msgstr ""
+msgstr "&Versie:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr ""
+msgstr "1.0.0"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
 msgid "&Author:"
-msgstr ""
+msgstr "&Auteur:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:76
 msgctxt "ExportPackDialog|"
 msgid "&Summary"
-msgstr ""
+msgstr "&Samenvatting"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:114
 msgctxt "ExportPackDialog|"
 msgid "&Options"
-msgstr ""
+msgstr "&Opties"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:135
 msgctxt "ExportPackDialog|"
 msgid "&Recommended Memory:"
-msgstr ""
+msgstr "&Aanbevolen geheugen:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr ""
+msgstr " MiB"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
 msgid "&Files"
-msgstr ""
+msgstr "&Bestanden"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:209
 msgctxt "ExportPackDialog|"
 msgid "&Mark disabled files as optional"
-msgstr ""
+msgstr "&Uitgeschakelde bestanden als optioneel markeren"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:78
 msgctxt "ExportPackDialog|"
 msgid "Export Modrinth Pack"
-msgstr ""
+msgstr "Modrine-pakket exporteren"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:86
 msgctxt "ExportPackDialog|"
 msgid "Export CurseForge Pack"
-msgstr ""
+msgstr "CurseForge Pakket exporteren"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:177
 msgctxt "ExportPackDialog|"
 msgid "OK"
-msgstr ""
+msgstr "Ok"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:178
 msgctxt "ExportPackDialog|"
 msgid "Cancel"
-msgstr ""
+msgstr "annuleren"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:228
 #: launcher/ui/dialogs/ExportPackDialog.cpp:244
 #, qt-format
 msgctxt "ExportPackDialog|"
 msgid "Export %1"
-msgstr ""
+msgstr "Exporteren %1"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:230
 msgctxt "ExportPackDialog|"
 msgid "Modrinth pack"
-msgstr ""
+msgstr "Modrine-pakket"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:246
 msgctxt "ExportPackDialog|"
 msgid "CurseForge pack"
-msgstr ""
+msgstr "CurseForge pakket"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:324
 msgctxt "ExportPackDialog|"
 msgid "Error"
-msgstr ""
+msgstr "Foutmelding"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:330
 msgctxt "ExportPackDialog|"
 msgid "Abort"
-msgstr ""
+msgstr "Annuleren"
 
 #: launcher/archive/ExportToZipTask.cpp:54
 msgctxt "ExportToZipTask|"
 msgid "Adding files..."
-msgstr ""
+msgstr "Bestanden toevoegen..."
 
 #: launcher/archive/ExportToZipTask.cpp:93
 msgctxt "ExportToZipTask|"
 msgid "The folder to export does not exist."
-msgstr ""
+msgstr "De te exporteren map bestaat niet."
 
 #: launcher/archive/ExportToZipTask.cpp:98
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Could not create '%1': %2"
-msgstr ""
+msgstr "Kan '%1niet aanmaken: %2"
 
 #: launcher/archive/ExportToZipTask.cpp:113
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Could not add %1: %2"
-msgstr ""
+msgstr "Kan niet toevoegen %1: %2"
 
 #: launcher/archive/ExportToZipTask.cpp:131
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Compressing: %1"
-msgstr ""
+msgstr "Comprimeren: %1"
 
 #: launcher/archive/ExportToZipTask.cpp:148
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Could not read and compress %1: %2"
-msgstr ""
+msgstr "Kan niet lezen en comprimeren %1: %2"
 
 #: launcher/archive/ExportToZipTask.cpp:155
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Could not finish '%1': %2"
-msgstr ""
+msgstr "Kan '%1' niet voltooien: %2"
 
 #: launcher/ui/pages/global/ExternalToolsPage.ui:59
 #: launcher/ui/pages/global/ExternalToolsPage.ui:96
@@ -2378,19 +2378,19 @@ msgstr "Kon native jar '%1' niet extraheren naar bestemming '%2': %3"
 #: launcher/archive/ExtractZipTask.cpp:41
 msgctxt "ExtractZipTask|"
 msgid "Extracting files..."
-msgstr ""
+msgstr "Bestanden uitpakken..."
 
 #: launcher/archive/ExtractZipTask.cpp:86
 #, qt-format
 msgctxt "ExtractZipTask|"
 msgid "Unpacking: %1"
-msgstr ""
+msgstr "Uitpakken: %1"
 
 #: launcher/archive/ExtractZipTask.cpp:100
 #, qt-format
 msgctxt "ExtractZipTask|"
 msgid "Failed to unpack %1. The archive appears to be damaged."
-msgstr ""
+msgstr "Uitpakken van %1mislukt. Het archief lijkt beschadigd te zijn."
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:56
 msgctxt "FMLLibrariesTask|"
@@ -2438,29 +2438,29 @@ msgstr "mod ID's oplossen..."
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:140
 msgctxt "FlamePackExportTask|"
 msgid "Searching for files..."
-msgstr ""
+msgstr "Zoeken naar bestanden..."
 
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:270
 msgctxt "FlamePackExportTask|"
 msgid "Could not read the instance's files."
-msgstr ""
+msgstr "Kan de instantiebestanden niet lezen."
 
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:288
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:308
 msgctxt "FlamePackExportTask|"
 msgid "Identifying files on CurseForge..."
-msgstr ""
+msgstr "Bestanden identificeren op CurseForge..."
 
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:425
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:432
 msgctxt "FlamePackExportTask|"
 msgid "Fetching project details from CurseForge..."
-msgstr ""
+msgstr "Ophalen van projectdetails van CurseForge..."
 
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:515
 msgctxt "FlamePackExportTask|"
 msgid "Adding files..."
-msgstr ""
+msgstr "Bestanden toevoegen..."
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.ui:52
 msgctxt "FlamePage|"
@@ -2816,27 +2816,27 @@ msgstr "Importeren van zip"
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:257
 msgctxt "InstallLoaderDialog|"
 msgid "Filter builds"
-msgstr ""
+msgstr "builds filteren"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:262
 msgctxt "InstallLoaderDialog|"
 msgid "&Refresh"
-msgstr ""
+msgstr "Vernieuwen"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:263
 msgctxt "InstallLoaderDialog|"
 msgid "Download this loader's version list again."
-msgstr ""
+msgstr "Download de lijst met versies van deze loader."
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:267
 msgctxt "InstallLoaderDialog|"
 msgid "Install"
-msgstr ""
+msgstr "Installeren"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:311
 msgctxt "InstallLoaderDialog|"
 msgid "Install Loader"
-msgstr ""
+msgstr "Installeer Loader"
 
 #: launcher/ui/widgets/InstanceCardWidget.ui:27
 msgctxt "InstanceCardWidget|"
@@ -3359,19 +3359,20 @@ msgstr "Kan instantie niet wegschrijven, zelfs niet na meerdere pogingen. Het wo
 #: launcher/InstanceTask.cpp:77
 msgctxt "InstanceTask|"
 msgid "Skip"
-msgstr ""
+msgstr "Overslaan"
 
 #: launcher/InstanceTask.cpp:101
 #, qt-format
 msgctxt "InstanceTask|"
 msgid "The instance was installed, but its game files could not be downloaded yet: %1\n"
 "They will be downloaded when you launch it."
-msgstr ""
+msgstr "De server is geïnstalleerd, maar de spelbestanden konden niet worden gedownload: %1\n"
+"Ze zullen worden gedownload wanneer je opstart."
 
 #: launcher/InstanceTask.cpp:117
 msgctxt "InstanceTask|"
 msgid "Downloading the game's files..."
-msgstr ""
+msgstr "Downloaden van de spelbestanden..."
 
 #: launcher/ui/InstanceWindow.cpp:45
 msgctxt "InstanceWindow|"
@@ -4424,19 +4425,19 @@ msgstr "Spelupdate mislukt: het was niet mogelijk om de vereiste bibliotheken op
 #, qt-format
 msgctxt "LoaderVersionPage|"
 msgid "%1 does not run on Minecraft %2. The earliest version it supports is %3."
-msgstr ""
+msgstr "%1 werkt niet op Minecraft %2. De eerste versie die het ondersteunt, is %3."
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:52
 #, qt-format
 msgctxt "LoaderVersionPage|"
 msgid "No %1 builds are published for Minecraft %2."
-msgstr ""
+msgstr "Er zijn geen %1 builds gepubliceerd voor Minecraft %2."
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:55
 #, qt-format
 msgctxt "LoaderVersionPage|"
 msgid "The %1 version list could not be downloaded."
-msgstr ""
+msgstr "De %1 versielijst kon niet worden gedownload."
 
 #: launcher/ui/pages/instance/LogPage.ui:60
 msgctxt "LogPage|"
@@ -5092,7 +5093,7 @@ msgstr "Open de hoofdmap van de geselecteerde instantie in een bestandsbrowser."
 #: launcher/ui/MainWindow.cpp:1121
 msgctxt "MainWindow|"
 msgid "E&xport..."
-msgstr ""
+msgstr "&Afsluiten..."
 
 #: launcher/ui/MainWindow.cpp:1127
 msgctxt "MainWindow|"
@@ -5102,23 +5103,23 @@ msgstr "Instantie exporteren"
 #: launcher/ui/MainWindow.cpp:1128
 msgctxt "MainWindow|"
 msgid "Export the selected instance to supported formats."
-msgstr ""
+msgstr "De geselecteerde instantie exporteren naar ondersteunde indelingen."
 
 #: launcher/ui/MainWindow.cpp:1149
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr ""
+msgstr "%1 (zip)"
 
 #: launcher/ui/MainWindow.cpp:1158
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
-msgstr ""
+msgstr "Modrint (mrpack)"
 
 #: launcher/ui/MainWindow.cpp:1167
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr ""
+msgstr "CurseForge (zip)"
 
 #: launcher/ui/MainWindow.cpp:1182
 msgctxt "MainWindow|"
@@ -5424,12 +5425,12 @@ msgstr "Niet alles kon worden teruggezet. Controleer je prullenbak om de rest me
 #: launcher/ui/MainWindow.cpp:2942
 msgctxt "MainWindow|"
 msgid "Cannot export"
-msgstr ""
+msgstr "Kan niet exporteren"
 
 #: launcher/ui/MainWindow.cpp:2943
 msgctxt "MainWindow|"
 msgid "CurseForge modpacks cannot be made from a snapshot version of Minecraft."
-msgstr ""
+msgstr "CurseForge modpacks kunnen niet gemaakt worden met een snapshot versie van Minecraft."
 
 #: launcher/ui/MainWindow.cpp:3189
 msgctxt "MainWindow|"
@@ -5918,7 +5919,7 @@ msgstr "Automatische back-up van instanties voor het starten"
 #: launcher/ui/pages/global/MeshMCPage.ui:266
 msgctxt "MeshMCPage|"
 msgid "Instance creation"
-msgstr ""
+msgstr "Instance creatie"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:272
 msgctxt "MeshMCPage|"
@@ -5933,12 +5934,12 @@ msgstr "Voorstellen om een bestaande instantie bij te werken tijdens modpack ins
 #: launcher/ui/pages/global/MeshMCPage.ui:282
 msgctxt "MeshMCPage|"
 msgid "Download the game's libraries and assets while the instance is being created, instead of waiting until the first time it is launched."
-msgstr ""
+msgstr "Download de bibliotheken en assets van het spel terwijl de instantie wordt gemaakt in plaats van te wachten tot de eerste keer dat het wordt gestart."
 
 #: launcher/ui/pages/global/MeshMCPage.ui:285
 msgctxt "MeshMCPage|"
 msgid "&Download the game's files while creating an instance"
-msgstr ""
+msgstr "&Download de bestanden van het spel tijdens het maken van een instantie"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:309
 msgctxt "MeshMCPage|"
@@ -6521,17 +6522,17 @@ msgstr "No Mod Loader"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
 msgid "This instance's component list could not be read, so it is not possible to tell which mod loader it uses."
-msgstr ""
+msgstr "De componentlijst van deze instantie kon niet worden gelezen, dus het is niet mogelijk te vertellen welke mod het gebruikt."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:555
 msgctxt "ModFolderPage|"
 msgid "Mods need a loader to run, and this instance has none. Would you like to install one now?"
-msgstr ""
+msgstr "Mods hebben een lader nodig om te draaien, maar deze instantie heeft geen lader. Wil je er nu een installeren?"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:584
 msgctxt "ModFolderPage|"
 msgid "This instance still has no loader that CurseForge or Modrinth can be searched by, so there is nothing to browse."
-msgstr ""
+msgstr "Deze instantie heeft nog geen lader waar CurseForge of Modrinth doorzocht kunnen worden, dus er is niets om te bladeren."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:773
 #: launcher/ui/pages/instance/ModFolderPage.cpp:795
@@ -6773,22 +6774,22 @@ msgstr "Installing modpack"
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
 msgid "Searching for files..."
-msgstr ""
+msgstr "Zoeken naar bestanden..."
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:300
 msgctxt "ModrinthPackExportTask|"
 msgid "Could not read the instance's files."
-msgstr ""
+msgstr "Kan de instantiebestanden niet lezen."
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:318
 msgctxt "ModrinthPackExportTask|"
 msgid "Looking up files on Modrinth..."
-msgstr ""
+msgstr "Bestanden opzoeken op Modrinth..."
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:435
 msgctxt "ModrinthPackExportTask|"
 msgid "Adding files..."
-msgstr ""
+msgstr "Bestanden toevoegen..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
@@ -8225,29 +8226,30 @@ msgstr "MultiMC Ontwikkelaars"
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:165
 msgctxt "QObject|"
 msgid "Two mod loaders"
-msgstr ""
+msgstr "Twee mod laaders"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:167
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 is already installed and switched on here. It and %2 hook into the same parts of the game, and an instance carrying both will usually fail to start.\n\n"
 "What should happen to %1?"
-msgstr ""
+msgstr "%1 is hier al geïnstalleerd en ingeschakeld. Het en %2 haak in dezelfde delen van het spel, en een instantie met beide partijen zal meestal niet starten.\n\n"
+"Wat moet er gebeuren met %1?"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:175
 msgctxt "QObject|"
 msgid "Leave it alone"
-msgstr ""
+msgstr "Laat het met rust"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:178
 msgctxt "QObject|"
 msgid "Turn it off"
-msgstr ""
+msgstr "Zet het uit"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:182
 msgctxt "QObject|"
 msgid "Remove it"
-msgstr ""
+msgstr "Verwijder het"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:45
 msgctxt "QObject|"
@@ -9743,12 +9745,12 @@ msgstr "Het geselecteerde pakket in originele staat terugbrengen."
 #: launcher/ui/pages/instance/VersionPage.ui:179
 msgctxt "VersionPage|"
 msgid "Install Loader"
-msgstr ""
+msgstr "Installeer Loader"
 
 #: launcher/ui/pages/instance/VersionPage.ui:182
 msgctxt "VersionPage|"
 msgid "Install a mod loader - Forge, NeoForge, Fabric, Quilt or LiteLoader."
-msgstr ""
+msgstr "Installeer een mod lader - Forge, NeoForge, Fabric, Quilt of LiteLoader."
 
 #: launcher/ui/pages/instance/VersionPage.ui:187
 msgctxt "VersionPage|"
