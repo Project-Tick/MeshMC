@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
-"PO-Revision-Date: 2026-09-01 20:25\n"
+"PO-Revision-Date: 2026-09-01 21:51\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "Лиценз"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr ""
+msgstr "Форкване/Редистрибутиране"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -4806,13 +4806,13 @@ msgstr "Провери за нови актуализации за %1."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr ""
+msgstr "Поддръжка %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr ""
+msgstr "Отваряне на %1 Patrean страницата."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4847,13 +4847,13 @@ msgstr "Лента за новини"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr ""
+msgstr "Още новини..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr ""
+msgstr "Отворете блога за разработка, за да прочетете повече за %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -6716,12 +6716,12 @@ msgstr ""
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "Избрана версия:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr ""
+msgstr "Търсене"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
