@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
-"PO-Revision-Date: 2026-09-01 20:25\n"
+"PO-Revision-Date: 2026-09-01 21:51\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "الترخيص"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr "التصنيع/إعادة التوزيع"
+msgstr "التفرّع/إعادة النشر"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -4863,7 +4863,7 @@ msgstr "دعم %1"
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr "افتح صفحة %1 Patreon."
+msgstr "افتح صفحة %1 على Patreon."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4904,7 +4904,7 @@ msgstr "المزيد من الأخبار..."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr "افتح مدونة التطوير لقراءة المزيد من الأخبار حول %1."
+msgstr "افتح المدونة لقراءة المزيد من الأخبار حول %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -6801,12 +6801,12 @@ msgstr "الإصدار المحدد:"
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr "البحث"
+msgstr "بحث"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr "البحث والتصفية ..."
+msgstr "بحث وتصفية ..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
