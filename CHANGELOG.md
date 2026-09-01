@@ -45,6 +45,7 @@
 * The repository structure has been rebuilt.
 * Minecraft is now downloaded every time an instance is created.
 * vcpkg automates bootstrap and package management.
+* The `std::optional` feature, introduced in the C++17 standard, is now in use.
 
 ## Fixed
 
@@ -62,6 +63,7 @@
 * PackPortal plugin has been removed
 * The Feature Flag feature has been completely removed.
 * All Rust code has been removed.
+* Optional Bare library has been removed.
 
 ## Deprecated
 

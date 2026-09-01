@@ -31,8 +31,6 @@
 #include "minecraft/PackProfile.h"
 #include "meta/Version.h"
 
-#include <nonstd/optional>
-
 namespace ATLauncher
 {
 
@@ -124,8 +122,8 @@ namespace ATLauncher
 		Meta::VersionPtr minecraftVersion;
 		QMap<QString, Meta::VersionPtr> componentsToInstall;
 
-		QFuture<nonstd::optional<QStringList>> m_extractFuture;
-		QFutureWatcher<nonstd::optional<QStringList>> m_extractFutureWatcher;
+		QFuture<std::optional<QStringList>> m_extractFuture;
+		QFutureWatcher<std::optional<QStringList>> m_extractFutureWatcher;
 
 		QFuture<bool> m_modExtractFuture;
 		QFutureWatcher<bool> m_modExtractFutureWatcher;
