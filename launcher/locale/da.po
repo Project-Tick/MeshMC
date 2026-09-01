@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
-"PO-Revision-Date: 2026-09-01 20:25\n"
+"PO-Revision-Date: 2026-09-01 21:52\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "Licens"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr "Forking/Omfordeling"
+msgstr "Forgrening/Deling"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -4856,7 +4856,7 @@ msgstr "Tjek for nye opdateringer af %1."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr "Støt %1"
+msgstr "Hjælp %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format

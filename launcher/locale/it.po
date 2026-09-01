@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
-"PO-Revision-Date: 2026-09-01 20:25\n"
+"PO-Revision-Date: 2026-09-01 21:52\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "Licenza"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr "Forking/Redistribution"
+msgstr "Forking/Ridistribuzione"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -4856,13 +4856,13 @@ msgstr "Verifica la presenza di nuovi aggiornamenti per %1."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr "Supporto %1"
+msgstr "Sostieni %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr "Apri la pagina Patreon %1."
+msgstr "Apri la pagina Patreon di %1."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4897,13 +4897,13 @@ msgstr "Barra delle Novità"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr "Altre notizie..."
+msgstr "Più novità..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr "Aprire il blog di sviluppo per leggere ulteriori notizie su %1."
+msgstr "Apri il blog di sviluppo per leggere ulteriori notizie su %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -5144,7 +5144,7 @@ msgstr "Copia l'istanza selezionata."
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr "Crea Scorciatoia"
+msgstr "Crea collegamento"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"

@@ -13,95 +13,95 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
-"PO-Revision-Date: 2026-09-01 20:26\n"
+"PO-Revision-Date: 2026-09-01 21:52\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Could not understand pack manifest:\n"
-msgstr "パック マニフェストを解析できませんでした：\n"
+msgstr "整合包の Mod 声明文件の解析に失敗しました: \n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:119
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:204
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to get local metadata index for %1"
-msgstr "ローカルメタデータインデックスが取得できませんでした: %1"
+msgstr "これらの本機の上位数元の索引の取得に失敗しました: %1"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:126
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to get local metadata index for '%1' v%2"
-msgstr "これらのローカルメタデータインデックスが取得できませんでした: '%1' v%2"
+msgstr "これらの本機の上位数元の索引の取得に失敗しました: '%1' v%2"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:190
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unknown mod type: %1"
-msgstr "不明なMODの種類:%1"
+msgstr "不明なmodの種類: %1"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:242
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to find version for %1 loader"
-msgstr "%1ローダーのバージョンを見つけられませんでした"
+msgstr "Mod 装載器 %1 の指定した版次が見つかりませんでした"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:257
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "No loader version set for modpack!"
-msgstr "Modパックのローダーのバージョンが設定されていません"
+msgstr "Mod 装載器の版次がまだ設定していません!"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:365
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unknown or unsupported download type: %1"
-msgstr "不明または非対応なダウンロードのタイプです:%1"
+msgstr "不明または非対応な受信形式です: %1"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:462
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Downloading configs..."
-msgstr "構成データをダウンロードしています…"
+msgstr "配置情報を受信しています…"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:463
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Config download"
-msgstr "構成データのダウンロード"
+msgstr "配置情報の受信"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:510
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Extracting configs..."
-msgstr "構成データを展開しています…"
+msgstr "配置情報を展開しています…"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:542
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Selecting optional mods..."
-msgstr "オプションのModを選択してください…"
+msgstr "追加の Mod を選択してください…"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:546
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Downloading mods..."
-msgstr "Mod をダウンロードしています…"
+msgstr "Mod を受信しています..."
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:549
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Mod download"
-msgstr "Mod のダウンロード"
+msgstr "Mod の受信"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:565
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unsupported download type: %1"
-msgstr "対応していないダウンロードのタイプです:%1"
+msgstr "非対応な受信形式です: %1"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:573
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unknown download type: %1"
-msgstr "不明なダウンロードのタイプです:%1"
+msgstr "不明な受信形式です: %1"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:710
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to extract mods..."
-msgstr "Mod の展開に失敗しました"
+msgstr "Mod の展開に失敗しました…"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:722
 msgctxt "ATLauncher::PackInstallTask|"
@@ -111,37 +111,37 @@ msgstr "Mod を展開しています…"
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:787
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Mod パックをインストールしています…"
+msgstr "Mod 整合包を装入中..."
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:810
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to create libraries component"
-msgstr "ライブラリコンポーネントの作成に失敗しました"
+msgstr "庫部品の作成に失敗しました"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:847
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unknown loader type: "
-msgstr "不明なローダータイプです: "
+msgstr "不明な Mod 装載器種類です: "
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:861
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to create pack component"
-msgstr "パックコンポーネントの作成に失敗しました"
+msgstr "整合包部品の作成に失敗しました"
 
 #: launcher/ui/dialogs/AboutDialog.ui:107
 msgctxt "AboutDialog|"
 msgid "About"
-msgstr "情報"
+msgstr "MultiMC について"
 
 #: launcher/ui/dialogs/AboutDialog.ui:116
 msgctxt "AboutDialog|"
 msgid "<html><head/><body><p>A custom launcher that makes managing Minecraft easier by allowing you to have multiple instances of Minecraft at once.</p></body></html>"
-msgstr "<html><head/><body><p>MultiMCは一度に複数の起動構成を、より簡単に管理できるMinecraftのカスタムランチャーです</p></body></html>"
+msgstr "<html><head/><body><p>一度に複数の Minecraft 構成実例を，より簡単に管理できる第三者起動器です。</p></body></html>"
 
 #: launcher/ui/dialogs/AboutDialog.ui:173
 msgctxt "AboutDialog|"
 msgid "Platform:"
-msgstr "プラットフォーム："
+msgstr "対応機種:"
 
 #: launcher/ui/dialogs/AboutDialog.ui:189
 msgctxt "AboutDialog|"
@@ -166,17 +166,17 @@ msgstr "チャンネルを更新:"
 #: launcher/ui/dialogs/AboutDialog.ui:264
 msgctxt "AboutDialog|"
 msgid "Credits"
-msgstr "クレジット"
+msgstr "謝辞"
 
 #: launcher/ui/dialogs/AboutDialog.ui:278
 msgctxt "AboutDialog|"
 msgid "License"
-msgstr "ライセンス"
+msgstr "使用許諾契約"
 
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr "フォーク/再配布"
+msgstr "フォーク・再配布"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -197,7 +197,7 @@ msgstr "%1について"
 #: launcher/ui/dialogs/AboutDialog.cpp:91
 msgctxt "AboutDialog|"
 msgid "Platform"
-msgstr "プラットフォーム"
+msgstr "対応機種"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:98
 #, qt-format
@@ -460,32 +460,32 @@ msgstr "アカウント"
 #: launcher/minecraft/auth/AccountTask.cpp:45
 msgctxt "AccountTask|"
 msgid "Sending request to auth servers..."
-msgstr "認証サーバーにリクエスト中…"
+msgstr "伺伝機に認証要求を送信しています..."
 
 #: launcher/minecraft/auth/AccountTask.cpp:47
 msgctxt "AccountTask|"
 msgid "Authentication task succeeded."
-msgstr "認証に成功しました。"
+msgstr "認証処理が成功しました。"
 
 #: launcher/minecraft/auth/AccountTask.cpp:49
 msgctxt "AccountTask|"
 msgid "Failed to contact the authentication server."
-msgstr "認証サーバーへの接続に失敗しました。"
+msgstr "認証伺伝機に接続できませんでした。"
 
 #: launcher/minecraft/auth/AccountTask.cpp:51
 msgctxt "AccountTask|"
 msgid "Encountered an error during authentication."
-msgstr "認証中にエラーが発生しました。"
+msgstr "認証中に錯誤が発生しました。"
 
 #: launcher/minecraft/auth/AccountTask.cpp:53
 msgctxt "AccountTask|"
 msgid "Failed to authenticate. The session has expired."
-msgstr "認証に失敗しました。セッションの有効期限が切れています。"
+msgstr "認証に失敗しました。会話有効期限切れです。"
 
 #: launcher/minecraft/auth/AccountTask.cpp:55
 msgctxt "AccountTask|"
 msgid "Failed to authenticate. The account no longer exists."
-msgstr "認証に失敗しました。このアカウントは存在しません。"
+msgstr "認証に失敗しました。この帳戸は存在しません。"
 
 #: launcher/minecraft/auth/AccountTask.cpp:57
 msgctxt "AccountTask|"
@@ -496,7 +496,7 @@ msgstr "…"
 #, qt-format
 msgctxt "AccountTask|"
 msgid "Unknown account task state: %1"
-msgstr "アカウントが不明です タスクの状態: %1"
+msgstr "不明な帳戸作動状態: %1"
 
 #: launcher/plugin/plugins/staging/ErrorOracle/AnalysisPage.cpp:49
 msgctxt "AnalysisPage|"
@@ -763,30 +763,30 @@ msgstr "(バックアップが作成されていません)"
 #: launcher/minecraft/update/AssetUpdateTask.cpp:38
 msgctxt "AssetUpdateTask|"
 msgid "Updating assets index..."
-msgstr "assetsインデックスを更新しています..."
+msgstr "資源文件(assets)を更新しています..."
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:44
 #, qt-format
 msgctxt "AssetUpdateTask|"
 msgid "Asset index for %1"
-msgstr "%1 のassetインデックス"
+msgstr "%1 の資源文件(asset)の索引"
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:94
 msgctxt "AssetUpdateTask|"
 msgid "Failed to read the assets index!"
-msgstr "assetsインデックスの読み込みに失敗しました"
+msgstr "資源文件(asset)索引の読込が失敗した!"
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:99
 msgctxt "AssetUpdateTask|"
 msgid "Getting the assets files from Mojang..."
-msgstr "Mojangからassetsファイルを取得しています..."
+msgstr "Mojang から資源文件 (assets) を取得しています..."
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:120
 #, qt-format
 msgctxt "AssetUpdateTask|"
 msgid "Failed to download the assets index:\n"
 "%1"
-msgstr "assetsインデックスのダウンロードに失敗しました! :\n"
+msgstr "資源文件索引の受信が失敗しました:\n"
 "%1"
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:125
@@ -794,79 +794,79 @@ msgstr "assetsインデックスのダウンロードに失敗しました! :\n"
 msgctxt "AssetUpdateTask|"
 msgid "Failed to download assets:\n"
 "%1"
-msgstr "assetsのダウンロードに失敗しました! :\n"
+msgstr "資源文件の受信が失敗しました:\n"
 "%1"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlFilterModel.cpp:35
 msgctxt "Atl::FilterModel|"
 msgid "Sort by popularity"
-msgstr "人気順"
+msgstr "人気順で並び替え"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlFilterModel.cpp:36
 msgctxt "Atl::FilterModel|"
 msgid "Sort by name"
-msgstr "名前順"
+msgstr "名前順で並べ替え"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlFilterModel.cpp:37
 msgctxt "Atl::FilterModel|"
 msgid "Sort by game version"
-msgstr "ゲームバージョン順"
+msgstr "遊戯版次順で並べ替え"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui:14
 msgctxt "AtlOptionalModDialog|"
 msgid "Select Mods To Install"
-msgstr "インストールするModを選択します"
+msgstr "装入したい Mod を選択してください"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui:20
 msgctxt "AtlOptionalModDialog|"
 msgid "Install"
-msgstr "インストール"
+msgstr "装入する"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui:30
 msgctxt "AtlOptionalModDialog|"
 msgid "Select Recommended"
-msgstr "推奨を選択"
+msgstr "推奨 Mod を選択"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui:40
 msgctxt "AtlOptionalModDialog|"
 msgid "Use Share Code"
-msgstr "共有コードの使用"
+msgstr "共有用文を使う"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui:47
 msgctxt "AtlOptionalModDialog|"
 msgid "Clear All"
-msgstr "全てをクリア"
+msgstr "全てを非選択"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.ui:42
 msgctxt "AtlPage|"
 msgid "Warning: This is still a work in progress. If you run into issues with the imported modpack, it may be a bug."
-msgstr "警告：これはまだ開発中の機能です。インポートしたmodpackで問題が発生した場合、バグの可能性があります。"
+msgstr "警告: これはまだ開発中の機能です。導入した modpack で問題が発生した場合は，不具合である可能性があります。"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.ui:59
 msgctxt "AtlPage|"
 msgid "Version selected:"
-msgstr "バージョン:"
+msgstr "選択された版次:"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.ui:74
 msgctxt "AtlPage|"
 msgid "Search and filter ..."
-msgstr "検索..."
+msgstr "検索と濾過..."
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.cpp:174
 #, qt-format
 msgctxt "AtlPage|"
 msgid "No versions are currently available for Minecraft %1"
-msgstr "現在、Minecraft %1 で利用可能なバージョンはありません"
+msgstr "現在利用可能な Minecraft %1 の版次情報がありません"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.cpp:177
 msgctxt "AtlPage|"
 msgid "No versions are currently available"
-msgstr "現在利用可能なバージョンはありません"
+msgstr "現在利用可能な版次情報はありません"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.cpp:180
 msgctxt "AtlPage|"
 msgid "Couldn't load or download the version lists!"
-msgstr "バージョン一覧を読み込みまたはダウンロードできませんでした！"
+msgstr "版次情報一覧の読込・受信に失敗しました!"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
@@ -876,12 +876,12 @@ msgstr "ATLauncher"
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:39
 msgctxt "AuthFlow|"
 msgid "Finished all authentication steps"
-msgstr "すべての認証が完了…"
+msgstr "すべての認証が完了しました"
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:47
 msgctxt "AuthFlow|"
 msgid "Initializing"
-msgstr "初期化中…"
+msgstr "初期化しています"
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:77
 msgctxt "AuthFlow|"
@@ -1129,7 +1129,7 @@ msgstr "バックアップを作成できませんでした。詳細はランチ
 #: launcher/tools/BaseProfiler.cpp:49
 msgctxt "BaseProfiler|"
 msgid "Profiler aborted"
-msgstr "プロファイラは中断されました"
+msgstr "性能解析器が中止されました"
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
@@ -1175,29 +1175,29 @@ msgstr "マントを削除中"
 #: launcher/minecraft/ComponentUpdateTask.cpp:275
 msgctxt "ComponentUpdateTask|"
 msgid "Some component metadata load tasks failed."
-msgstr "一部のコンポーネントのメタデータの読み込みに失敗しました。"
+msgstr "一部の部品の上位数元の読込に失敗しました。"
 
 #: launcher/minecraft/ComponentUpdateTask.cpp:511
 msgctxt "ComponentUpdateTask|"
 msgid "Conflicting requirements detected during dependency checking!"
-msgstr "依存関係の確認中にコンフリクトが見つかりました。"
+msgstr "依存関係の確認中に競合した必要依存項が見つかりました!"
 
 #: launcher/minecraft/ComponentUpdateTask.cpp:529
 msgctxt "ComponentUpdateTask|"
 msgid "Instance has conflicting dependencies."
-msgstr "起動構成の依存関係に競合があります。"
+msgstr "構成実例の依存関係に競合があります。"
 
 #: launcher/minecraft/ComponentUpdateTask.cpp:534
 msgctxt "ComponentUpdateTask|"
 msgid "Instance has unresolved dependencies while loading/checking for launch."
-msgstr "この起動構成の起動のための読み込みと確認中に、未解決の依存関係が見つかりました。"
+msgstr "構成実例の起動のための読込・確認中に未解決の依存関係が見つかりました。"
 
 #: launcher/minecraft/ComponentUpdateTask.cpp:664
 #, qt-format
 msgctxt "ComponentUpdateTask|"
 msgid "Component metadata update task failed while downloading from remote server:\n"
 "%1"
-msgstr "リモートサーバーからコンポーネントのメタデータをダウンロードするタスクが失敗しました:\n"
+msgstr "部品の上位数元の受信が失敗しました，伺伝機から受信できません:\n"
 "%1"
 
 #: launcher/tasks/ConcurrentTask.cpp:184
@@ -1491,7 +1491,7 @@ msgstr "すべてのバージョンの '%1' は、フィルタが現在非表示
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:17
 msgctxt "CopyInstanceDialog|"
 msgid "Copy Instance"
-msgstr "起動構成のコピー"
+msgstr "構成実例の複製"
 
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:74
 msgctxt "CopyInstanceDialog|"
@@ -1501,22 +1501,22 @@ msgstr "名前"
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:90
 msgctxt "CopyInstanceDialog|"
 msgid "&Group"
-msgstr "グループ名"
+msgstr "構成実例の組 (&G)"
 
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:115
 msgctxt "CopyInstanceDialog|"
 msgid "Copy saves"
-msgstr "ワールドをコピー"
+msgstr "存録を複製する"
 
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:122
 msgctxt "CopyInstanceDialog|"
 msgid "Keep play time"
-msgstr "プレイ時間をコピー"
+msgstr "遊んだ時間記録を維持する"
 
 #: launcher/ui/dialogs/CopyInstanceDialog.cpp:59
 msgctxt "CopyInstanceDialog|"
 msgid "No group"
-msgstr "グループがありません"
+msgstr "組所属なし"
 
 #: launcher/crashreporter/CrashReportDialog.cpp:39
 msgctxt "CrashReportDialog|"
@@ -1595,7 +1595,7 @@ msgstr "起動前のバックアップに失敗しました: %1"
 #: launcher/minecraft/launch/CreateGameFolders.cpp:36
 msgctxt "CreateGameFolders|"
 msgid "Couldn't create the main game folder"
-msgstr "メインゲームフォルダを作成できませんでした"
+msgstr "主遊戯の文件集の作成に失敗しました"
 
 #: launcher/ui/dialogs/CreateShortcutDialog.ui:14
 msgctxt "CreateShortcutDialog|"
@@ -1725,22 +1725,22 @@ msgstr "サーバー"
 #: launcher/ui/widgets/CustomCommands.ui:32
 msgctxt "CustomCommands|"
 msgid "Cus&tom Commands"
-msgstr "カスタムコマンド"
+msgstr "自定指令設定 (&T)"
 
 #: launcher/ui/widgets/CustomCommands.ui:44
 msgctxt "CustomCommands|"
 msgid "Post-exit command:"
-msgstr "Post-exit コマンド:"
+msgstr "終了後指令:"
 
 #: launcher/ui/widgets/CustomCommands.ui:54
 msgctxt "CustomCommands|"
 msgid "Pre-launch command:"
-msgstr "Pre-launch コマンド:"
+msgstr "起動前指令:"
 
 #: launcher/ui/widgets/CustomCommands.ui:64
 msgctxt "CustomCommands|"
 msgid "Wrapper command:"
-msgstr "Wrapper コマンド："
+msgstr "包装器指令:"
 
 #: launcher/ui/widgets/CustomCommands.ui:77
 msgctxt "CustomCommands|"
@@ -1750,7 +1750,7 @@ msgstr ""
 #: launcher/ui/pages/global/CustomCommandsPage.h:40
 msgctxt "CustomCommandsPage|"
 msgid "Custom Commands"
-msgstr "カスタムコマンド"
+msgstr "自定指令管理"
 
 #: launcher/minecraft/mod/DataPackFolderModel.cpp:38
 msgctxt "DataPackFolderModel|"
@@ -1786,19 +1786,19 @@ msgstr "依存関係を解決しています..."
 #, qt-format
 msgctxt "DirectJavaLaunch|"
 msgid "The wrapper command \"%1\" couldn't be found."
-msgstr "Wrapperのコマンド \"%1\" は見つかりませんでした。"
+msgstr "包装器指令 \"%1\" が見つかりませんでした。"
 
 #. Error message displayed if instance can't start
 #: launcher/minecraft/launch/DirectJavaLaunch.cpp:101
 msgctxt "DirectJavaLaunch|"
 msgid "Could not launch minecraft!"
-msgstr "Minecraftを起動できませんでした!"
+msgstr "Minecraft を起動不能でした!"
 
 #: launcher/minecraft/launch/DirectJavaLaunch.cpp:109
 #: launcher/minecraft/launch/DirectJavaLaunch.cpp:117
 msgctxt "DirectJavaLaunch|"
 msgid "Game crashed."
-msgstr "ゲームがクラッシュしました。"
+msgstr "遊戯が崩れた。"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:118
 msgctxt "DownloadContentDialog|"
@@ -1941,34 +1941,34 @@ msgstr "パスワード"
 #: launcher/minecraft/auth/steps/EntitlementsStep.cpp:34
 msgctxt "EntitlementsStep|"
 msgid "Determining game ownership."
-msgstr "ゲームの所有者を決定します。"
+msgstr "遊戯の購入状況を検査しています。"
 
 #: launcher/minecraft/auth/steps/EntitlementsStep.cpp:77
 msgctxt "EntitlementsStep|"
 msgid "Got entitlements"
-msgstr "資格を得る"
+msgstr "既に遊戯を購入した"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.ui:14
 msgctxt "ExportInstanceDialog|"
 msgid "Export Instance"
-msgstr "起動構成をエクスポート"
+msgstr "構成実例の配置情報を導出します。"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:136
 #, qt-format
 msgctxt "ExportInstanceDialog|"
 msgid "Export %1"
-msgstr "%1 をエクスポート"
+msgstr "%1 を導出する"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:155
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:178
 msgctxt "ExportInstanceDialog|"
 msgid "Error"
-msgstr "エラー"
+msgstr "錯誤"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:156
 msgctxt "ExportInstanceDialog|"
 msgid "Unable to export instance"
-msgstr "起動構成をエクスポートできません"
+msgstr "構成実例を導出できません"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:184
 msgctxt "ExportInstanceDialog|"
@@ -2252,22 +2252,22 @@ msgstr "完了できませんでした '%1': %2"
 #: launcher/ui/pages/global/ExternalToolsPage.ui:133
 msgctxt "ExternalToolsPage|"
 msgid "Check"
-msgstr "チェック"
+msgstr "有効性認証"
 
 #: launcher/ui/pages/global/ExternalToolsPage.ui:150
 msgctxt "ExternalToolsPage|"
 msgid "External Editors (leave empty for system default)"
-msgstr "外部エディタ（システムのデフォルトの場合は空のまま）"
+msgstr "外部編集器 (未指定の場合は系統既定の編集器を使う)"
 
 #: launcher/ui/pages/global/ExternalToolsPage.ui:159
 msgctxt "ExternalToolsPage|"
 msgid "Text Editor:"
-msgstr "テキストエディタ:"
+msgstr "文字編集器の場所:"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:92
 msgctxt "ExternalToolsPage|"
 msgid "JProfiler Folder"
-msgstr "JProfiler フォルダー"
+msgstr "JProriler 文件集"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:99
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:114
@@ -2277,7 +2277,7 @@ msgstr "JProfiler フォルダー"
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:190
 msgctxt "ExternalToolsPage|"
 msgid "Error"
-msgstr "エラー"
+msgstr "錯誤"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:100
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:115
@@ -2285,7 +2285,7 @@ msgstr "エラー"
 msgctxt "ExternalToolsPage|"
 msgid "Error while checking JProfiler install:\n"
 "%1"
-msgstr "エラー: JProfilerのインストールが確認できません:\n"
+msgstr "JProfiler の装入状況検査中に錯誤が出ました:\n"
 "%1"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:117
@@ -2293,17 +2293,17 @@ msgstr "エラー: JProfilerのインストールが確認できません:\n"
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:193
 msgctxt "ExternalToolsPage|"
 msgid "OK"
-msgstr "OK"
+msgstr "検査終了"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:118
 msgctxt "ExternalToolsPage|"
 msgid "JProfiler setup seems to be OK"
-msgstr "JProfilerのセットアップが完了しました"
+msgstr "JProfilerの設定は問題なさそうです。"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:127
 msgctxt "ExternalToolsPage|"
 msgid "JVisualVM Executable"
-msgstr "JVisualVM　実行ファイル"
+msgstr "JVisualVMが作動中です。"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:136
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:151
@@ -2311,23 +2311,23 @@ msgstr "JVisualVM　実行ファイル"
 msgctxt "ExternalToolsPage|"
 msgid "Error while checking JVisualVM install:\n"
 "%1"
-msgstr "エラー: JVisualVMのインストールが確認できません:\n"
+msgstr "JVisualVM の装入状況検査中に錯誤が出ました:\n"
 "%1"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:154
 msgctxt "ExternalToolsPage|"
 msgid "JVisualVM setup seems to be OK"
-msgstr "JVisualVMのセットアップが完了しました"
+msgstr "JVisualVM の設定は問題なさそうです"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:164
 msgctxt "ExternalToolsPage|"
 msgid "MCEdit Application"
-msgstr "MCEdit アプリケーション"
+msgstr "MCEdit 程式"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:167
 msgctxt "ExternalToolsPage|"
 msgid "MCEdit Folder"
-msgstr "MCEdit フォルダー"
+msgstr "MCEdit 文件集"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:177
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:191
@@ -2335,33 +2335,33 @@ msgstr "MCEdit フォルダー"
 msgctxt "ExternalToolsPage|"
 msgid "Error while checking MCEdit install:\n"
 "%1"
-msgstr "エラー: MCEditのインストールが確認できません:\n"
+msgstr "MCEdit の装入状況検査中に錯誤が出ました:\n"
 "%1"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:194
 msgctxt "ExternalToolsPage|"
 msgid "MCEdit setup seems to be OK"
-msgstr "MCEditのセットアップが完了しました"
+msgstr "MCEdit の設定は問題なさそうです"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:201
 msgctxt "ExternalToolsPage|"
 msgid "JSON Editor"
-msgstr "JSON エディター"
+msgstr "JSON 編集器"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:224
 msgctxt "ExternalToolsPage|"
 msgid "Invalid"
-msgstr "無効"
+msgstr "無効です。"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:225
 msgctxt "ExternalToolsPage|"
 msgid "The file chosen does not seem to be an executable"
-msgstr "選択したファイルは実行可能ではないようです"
+msgstr "選択した文件は実行可能ではないようです"
 
 #: launcher/ui/pages/global/ExternalToolsPage.h:43
 msgctxt "ExternalToolsPage|"
 msgid "External Tools"
-msgstr "外部ツール"
+msgstr "外部工具管理"
 
 #: launcher/minecraft/launch/ExtractNatives.cpp:103
 #, qt-format
@@ -2389,28 +2389,28 @@ msgstr "%1の解凍に失敗しました。アーカイブが破損している�
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:56
 msgctxt "FMLLibrariesTask|"
 msgid "Checking for FML libraries..."
-msgstr "FMLライブラリをチェックしています..."
+msgstr "FML 庫を検査中..."
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:77
 msgctxt "FMLLibrariesTask|"
 msgid "Downloading FML libraries..."
-msgstr "FML ライブラリをダウンロード中..."
+msgstr "FML 庫を受信中..."
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:105
 msgctxt "FMLLibrariesTask|"
 msgid "Copying FML libraries into the instance..."
-msgstr "起動構成にFMLライブラリをコピーしています..."
+msgstr "FML 庫を構成実例に複製中..."
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:114
 msgctxt "FMLLibrariesTask|"
 msgid "Failed creating FML library folder inside the instance."
-msgstr "起動構成内にFMLライブラリフォルダを作成することができませんでした。"
+msgstr "構成実例の文件集に庫文件集の作成に失敗しました。"
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:120
 #, qt-format
 msgctxt "FMLLibrariesTask|"
 msgid "Failed copying Forge/FML library: %1."
-msgstr "失敗: Forge/FMLライブラリのコピー : %1."
+msgstr "Forge/FML 庫の複製に失敗しました: %1。"
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:134
 #, qt-format
@@ -2419,7 +2419,7 @@ msgid "Failed to download the following files:\n"
 "%1\n\n"
 "Reason:%2\n"
 "Please try again."
-msgstr "以下のファイルのダウンロードに失敗しました:\n"
+msgstr "以下の文件の受信に失敗しました:\n"
 "%1\n\n"
 "理由: %2\n"
 "もう一度やり直してください。"
@@ -2484,7 +2484,7 @@ msgstr "CurseForge"
 #: launcher/minecraft/update/FoldersTask.cpp:34
 msgctxt "FoldersTask|"
 msgid "Failed to create folder for minecraft binaries."
-msgstr "Minecraftのバイナリのフォルダの作成に失敗しました。"
+msgstr "Minecraft の二進文件の文件集の作成に失敗しました。"
 
 #: launcher/ui/pages/modplatform/ftb/FtbFilterModel.cpp:34
 msgctxt "Ftb::FilterModel|"
@@ -2519,7 +2519,7 @@ msgstr "FTB"
 #: launcher/minecraft/gameoptions/GameOptions.cpp:95
 msgctxt "GameOptions|"
 msgid "Key"
-msgstr "キー"
+msgstr "鍵"
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:97
 msgctxt "GameOptions|"
@@ -2529,33 +2529,33 @@ msgstr "値"
 #: launcher/ui/pages/instance/GameOptionsPage.h:50
 msgctxt "GameOptionsPage|"
 msgid "Game Options"
-msgstr "ゲーム設定"
+msgstr "遊戯の設定"
 
 #: launcher/minecraft/World.cpp:69
 msgctxt "GameType|"
 msgid "Survival"
-msgstr "サバイバル"
+msgstr "生存模式"
 
 #: launcher/minecraft/World.cpp:71
 msgctxt "GameType|"
 msgid "Creative"
-msgstr "クリエイティブ"
+msgstr "創造模式"
 
 #: launcher/minecraft/World.cpp:73
 msgctxt "GameType|"
 msgid "Adventure"
-msgstr "アドベンチャー"
+msgstr "冒険模式"
 
 #: launcher/minecraft/World.cpp:75
 msgctxt "GameType|"
 msgid "Spectator"
-msgstr "スペクテイター"
+msgstr "観察模式"
 
 #: launcher/minecraft/World.cpp:80
 #, qt-format
 msgctxt "GameType|"
 msgid "Unknown (%1)"
-msgstr "不明 (%1)"
+msgstr "不明な遊戯模式 (%1)"
 
 #: launcher/minecraft/World.cpp:83
 msgctxt "GameType|"
@@ -2565,12 +2565,12 @@ msgstr "未定義"
 #: launcher/minecraft/auth/steps/GetSkinStep.cpp:33
 msgctxt "GetSkinStep|"
 msgid "Getting skin."
-msgstr "スキンを取得"
+msgstr "外見相の取得中。"
 
 #: launcher/minecraft/auth/steps/GetSkinStep.cpp:62
 msgctxt "GetSkinStep|"
 msgid "Got skin"
-msgstr "スキンを取得"
+msgstr "外見相が取得した"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:66
 msgctxt "GitVersioningPage|"
@@ -2752,34 +2752,34 @@ msgstr "データパック"
 #: launcher/ui/dialogs/IconPickerDialog.ui:14
 msgctxt "IconPickerDialog|"
 msgid "Pick icon"
-msgstr "アイコンを選択"
+msgstr "図標を選択"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:72
 msgctxt "IconPickerDialog|"
 msgid "Add Icon"
-msgstr "アイコンを追加"
+msgstr "図標を追加"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:73
 msgctxt "IconPickerDialog|"
 msgid "Remove Icon"
-msgstr "アイコンを削除"
+msgstr "図標を削除"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:88
 msgctxt "IconPickerDialog|"
 msgid "Open Folder"
-msgstr "フォルダーを開く"
+msgstr "文件集を開く"
 
 #. The title of the select icons open file dialog
 #: launcher/ui/dialogs/IconPickerDialog.cpp:118
 msgctxt "IconPickerDialog|"
 msgid "Select Icons"
-msgstr "アイコンの選択"
+msgstr "図標を選択する"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:122
 #, qt-format
 msgctxt "IconPickerDialog|"
 msgid "Icons %1"
-msgstr "アイコン %1"
+msgstr "図標 %1"
 
 #: launcher/ui/pages/modplatform/ImportPage.ui:17
 msgctxt "ImportPage|"
@@ -2789,7 +2789,7 @@ msgstr "参照"
 #: launcher/ui/pages/modplatform/ImportPage.ui:31
 msgctxt "ImportPage|"
 msgid "Local file or link to a direct download:"
-msgstr "ローカルファイルへのパスあるいは直接ダウンロードのリンク:"
+msgstr "本機にある文件，まだは文件直接受信可能の連結 (情報提供頁ではない):"
 
 #: launcher/ui/pages/modplatform/ImportPage.cpp:125
 msgctxt "ImportPage|"
@@ -2799,12 +2799,12 @@ msgstr "Modpack archives (*.zip *.mrpack);;Modrinth packs (*.mrpack);;Zip archiv
 #: launcher/ui/pages/modplatform/ImportPage.cpp:129
 msgctxt "ImportPage|"
 msgid "Choose modpack"
-msgstr "Modパックを選択"
+msgstr "Mod 整合包を選択する"
 
 #: launcher/ui/pages/modplatform/ImportPage.h:45
 msgctxt "ImportPage|"
 msgid "Import from zip"
-msgstr "Zipからインポート"
+msgstr "Zip 圧縮文件から導入"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:257
 msgctxt "InstallLoaderDialog|"
@@ -2834,47 +2834,47 @@ msgstr "ローダーをインストール"
 #: launcher/ui/widgets/InstanceCardWidget.ui:27
 msgctxt "InstanceCardWidget|"
 msgid "&Name:"
-msgstr "名前:"
+msgstr "名前 (&N):"
 
 #: launcher/ui/widgets/InstanceCardWidget.ui:40
 msgctxt "InstanceCardWidget|"
 msgid "&Group:"
-msgstr "グループ:"
+msgstr "組 (&G):"
 
 #: launcher/InstanceCopyTask.cpp:43
 #, qt-format
 msgctxt "InstanceCopyTask|"
 msgid "Copying instance %1"
-msgstr "起動構成 %1 をコピー中"
+msgstr "構成実例 %1 を複製中"
 
 #: launcher/InstanceCopyTask.cpp:60
 msgctxt "InstanceCopyTask|"
 msgid "Instance folder copy failed."
-msgstr "起動構成フォルダーのコピーに失敗しました。"
+msgstr "構成実例の文件集の複製に失敗しました。"
 
 #: launcher/InstanceCopyTask.cpp:80
 msgctxt "InstanceCopyTask|"
 msgid "Instance folder copy has been aborted."
-msgstr "起動構成フォルダーのコピーは中断されました。"
+msgstr "構成実例の文件集の複製は中止されました。"
 
 #: launcher/InstanceCreationTask.cpp:35
 #, qt-format
 msgctxt "InstanceCreationTask|"
 msgid "Creating instance from version %1"
-msgstr "バージョン %1 から起動構成を作成中"
+msgstr "版次 %1 から構成実例を作成中"
 
 #: launcher/InstanceImportTask.cpp:74
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Downloading modpack:\n"
 "%1"
-msgstr "Modパックをダウンロード中:\n"
+msgstr "Mod 整合包を受信中:\n"
 "%1"
 
 #: launcher/InstanceImportTask.cpp:82
 msgctxt "InstanceImportTask|"
 msgid "Modpack download"
-msgstr "Modパックをダウンロード"
+msgstr "Mod 整合包の受信"
 
 #: launcher/InstanceImportTask.cpp:124
 msgctxt "InstanceImportTask|"
@@ -2892,12 +2892,12 @@ msgstr "Modpack archive is missing or empty:\n"
 #: launcher/InstanceImportTask.cpp:225 launcher/InstanceImportTask.cpp:381
 msgctxt "InstanceImportTask|"
 msgid "Archive does not contain a recognized modpack type."
-msgstr "アーカイブにはModパックが含まれていないようです。"
+msgstr "圧縮包には型識別不能な Mod 整合包が含まれていようです。"
 
 #: launcher/InstanceImportTask.cpp:230
 msgctxt "InstanceImportTask|"
 msgid "Extracting modpack"
-msgstr "Modパックを展開中"
+msgstr "Mod 整合包を展開中"
 
 #: launcher/InstanceImportTask.cpp:319
 msgctxt "InstanceImportTask|"
@@ -2913,7 +2913,7 @@ msgstr "modpackの抽出に失敗しました。アーカイブが破損して�
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Could not fix permissions for %1"
-msgstr "%1 の権限を修正できませんでした"
+msgstr "%1 の権限の修正に失敗しました"
 
 #: launcher/InstanceImportTask.cpp:596 launcher/InstanceImportTask.cpp:1091
 #: launcher/InstanceImportTask.cpp:1432 launcher/InstanceImportTask.cpp:1491
@@ -2929,7 +2929,7 @@ msgstr "パック マニフェストが理解できませんでした:\n"
 #: launcher/InstanceImportTask.cpp:616
 msgctxt "InstanceImportTask|"
 msgid "Could not rename the overrides folder:\n"
-msgstr "上書きフォルダの名前を変更できませんでした:\n"
+msgstr "上書き文件集の名前変更に失敗しました:\n"
 
 #: launcher/InstanceImportTask.cpp:621
 #, qt-format
@@ -2967,7 +2967,7 @@ msgstr "インストールがキャンセルされました: modpackの信頼で
 #: launcher/InstanceImportTask.cpp:831
 msgctxt "InstanceImportTask|"
 msgid "Mod download"
-msgstr "Modのダウンロード"
+msgstr "Mod 受信"
 
 #: launcher/InstanceImportTask.cpp:862 launcher/InstanceImportTask.cpp:1269
 msgctxt "InstanceImportTask|"
@@ -3030,7 +3030,7 @@ msgstr "更新がキャンセルされました。"
 #: launcher/InstanceImportTask.cpp:1048 launcher/InstanceImportTask.cpp:1385
 msgctxt "InstanceImportTask|"
 msgid "Downloading mods..."
-msgstr "Modをダウンロードしています..."
+msgstr "Mod を受信中..."
 
 #: launcher/InstanceImportTask.cpp:1104
 msgctxt "InstanceImportTask|"
@@ -3098,7 +3098,7 @@ msgstr ""
 #, qt-format
 msgctxt "InstanceList|"
 msgid "%1 Instance"
-msgstr "起動構成 %1"
+msgstr "構成実例 %1"
 
 #: launcher/InstanceList.cpp:1455
 #, qt-format
@@ -3109,33 +3109,33 @@ msgstr "更新されたパックが含まれないファイルを削除できま
 #: launcher/InstancePageProvider.h:75
 msgctxt "InstancePageProvider|"
 msgid "Loader mods"
-msgstr "Loader mod"
+msgstr "Mod 管理 (装載器経由)"
 
 #: launcher/InstancePageProvider.h:80
 msgctxt "InstancePageProvider|"
 msgid "Core mods"
-msgstr "Core mod"
+msgstr "核心 Mod"
 
 #: launcher/InstancePageProvider.h:136
 #, qt-format
 msgctxt "InstancePageProvider|"
 msgid "Edit Instance (%1)"
-msgstr "起動構成の編集 (%1)"
+msgstr "構成実例の編集 (%1)"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:29
 msgctxt "InstanceSettingsPage|"
 msgid "Open Global Settings"
-msgstr "グローバル設定を開く"
+msgstr "全般設定を開く"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:32
 msgctxt "InstanceSettingsPage|"
 msgid "The settings here are overrides for global settings."
-msgstr "グローバル設定はここにある設定で上書きされます。"
+msgstr "ここの設定は全般設定を上書きます。"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:55
 msgctxt "InstanceSettingsPage|"
 msgid "Java insta&llation"
-msgstr "Javaのインストール"
+msgstr "使う Java を個別指定 (&L)"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:70
 msgctxt "InstanceSettingsPage|"
@@ -3150,47 +3150,47 @@ msgstr "参照..."
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:84
 msgctxt "InstanceSettingsPage|"
 msgid "Test"
-msgstr "テスト"
+msgstr "有効性認証"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:97
 msgctxt "InstanceSettingsPage|"
 msgid "Memor&y"
-msgstr "メモリ"
+msgstr "実行域の量を個別指定 (&Y)"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:109
 msgctxt "InstanceSettingsPage|"
 msgid "Minimum memory allocation:"
-msgstr "最少メモリ割り当て："
+msgstr "最小実行域割り当て:"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:116
 msgctxt "InstanceSettingsPage|"
 msgid "The maximum amount of memory Minecraft is allowed to use."
-msgstr "Minecraftが使用する最大メモリの値です。"
+msgstr "Minecraft が使用できる最大実行域量です。"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:138
 msgctxt "InstanceSettingsPage|"
 msgid "The amount of memory Minecraft is started with."
-msgstr "Minecraftが開始するときに使用される最少メモリの値です。"
+msgstr "Minecraft 起動時に割り当てた実行域量です。"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:160
 msgctxt "InstanceSettingsPage|"
 msgid "The amount of memory available to store loaded Java classes."
-msgstr "Javaクラスのロードに使われる使用可能なメモリの値です。"
+msgstr "読み込めた Java 類の格納用に割り当てた実行域量です。"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:189
 msgctxt "InstanceSettingsPage|"
 msgid "Maximum memory allocation:"
-msgstr "最大メモリ割り当て："
+msgstr "最大実行域割り当て："
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:196
 msgctxt "InstanceSettingsPage|"
 msgid "Note: Permgen is set automatically by Java 8 and later"
-msgstr "メモ: Java8以降では Permgen は自動でセットされます"
+msgstr "注意: Java 8以降では，PermGen は自動的に設定されます。"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:209
 msgctxt "InstanceSettingsPage|"
 msgid "Java argumen&ts"
-msgstr "Javaの引数"
+msgstr "Java 起動引数 (&T)"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:230
 msgctxt "InstanceSettingsPage|"
@@ -3205,52 +3205,52 @@ msgstr "以下からJavaをダウンロード："
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:256
 msgctxt "InstanceSettingsPage|"
 msgid "Game windows"
-msgstr "ゲームウィンドウ"
+msgstr "遊戯窓口設定"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:265
 msgctxt "InstanceSettingsPage|"
 msgid "Game Window"
-msgstr "ゲームウィンドウ"
+msgstr "遊戯窓口を個別設定"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:277
 msgctxt "InstanceSettingsPage|"
 msgid "Start Minecraft maximized?"
-msgstr "Minecraft起動時に最大化"
+msgstr "Minecraft 起動時に最大化"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:286
 msgctxt "InstanceSettingsPage|"
 msgid "Window height:"
-msgstr "ウィンドウの高さ:"
+msgstr "窓口の高さ:"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:293
 msgctxt "InstanceSettingsPage|"
 msgid "Window width:"
-msgstr "ウィンドウの幅:"
+msgstr "窓口の幅:"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:337
 msgctxt "InstanceSettingsPage|"
 msgid "Conso&le Settings"
-msgstr "コンソールの設定"
+msgstr "制御盤(console)の表示設定"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:349
 msgctxt "InstanceSettingsPage|"
 msgid "Show console while the game is running?"
-msgstr "ゲームの実行中にコンソールを表示"
+msgstr "遊戯実行中に制御盤を表示する"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:356
 msgctxt "InstanceSettingsPage|"
 msgid "Automatically close console when the game quits?"
-msgstr "ゲーム終了時にコンソールも自動的に閉じる"
+msgstr "遊戯終了時に制御盤も自動的に閉じる"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:363
 msgctxt "InstanceSettingsPage|"
 msgid "Show console when the game crashes?"
-msgstr "ゲームがクラッシュしたときにコンソールを表示"
+msgstr "遊戯が崩れた時に制御盤を表示する"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:387
 msgctxt "InstanceSettingsPage|"
 msgid "Custom commands"
-msgstr "カスタムコマンド"
+msgstr "自定指令管理"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:397
 msgctxt "InstanceSettingsPage|"
@@ -3260,37 +3260,37 @@ msgstr "不具合回避"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:406
 msgctxt "InstanceSettingsPage|"
 msgid "Native libraries"
-msgstr "ネイティブライブラリ"
+msgstr "原生庫を使う"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:418
 msgctxt "InstanceSettingsPage|"
 msgid "Use system installation of GLFW"
-msgstr "システムにインストールされたGLFWを使用"
+msgstr "系統にある GLFW を使う"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:425
 msgctxt "InstanceSettingsPage|"
 msgid "Use system installation of OpenAL"
-msgstr "システムにインストールされたOpenALを使用"
+msgstr "系統にある OpenAL を使う"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:449
 msgctxt "InstanceSettingsPage|"
 msgid "Miscellaneous"
-msgstr "その他"
+msgstr "その他の設定"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:458
 msgctxt "InstanceSettingsPage|"
 msgid "Override global game time settings"
-msgstr "グローバル設定のゲーム時間設定を上書き"
+msgstr "遊んだ時間の記録を個別設定"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:470
 msgctxt "InstanceSettingsPage|"
 msgid "Show time spent playing this instance"
-msgstr "この起動構成のプレイ時間を表示する"
+msgstr "この構成実例の遊んだ時間を表示する"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:477
 msgctxt "InstanceSettingsPage|"
 msgid "Record time spent playing this instance"
-msgstr "この起動構成のプレイ時間を記録"
+msgstr "この構成実例の遊んだ時間を記録する"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:487
 msgctxt "InstanceSettingsPage|"
@@ -3300,7 +3300,7 @@ msgstr "起動時にサーバーを設定する"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:507
 msgctxt "InstanceSettingsPage|"
 msgid "Server address:"
-msgstr "サーバーアドレス："
+msgstr "伺伝の番址:"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:522
 msgctxt "InstanceSettingsPage|"
@@ -3325,22 +3325,22 @@ msgstr "datapacks"
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:341
 msgctxt "InstanceSettingsPage|"
 msgid "Select a Java version"
-msgstr "Javaのバージョンを選択"
+msgstr "Java の版次を選択してください"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:361
 msgctxt "InstanceSettingsPage|"
 msgid "Find Java executable"
-msgstr "Java実行可能ファイルを検索"
+msgstr "Java の実行可能文件を探す"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.h:47
 msgctxt "InstanceSettingsPage|"
 msgid "Settings"
-msgstr "設定"
+msgstr "本実例の個別設定"
 
 #: launcher/InstanceList.cpp:1255
 msgctxt "InstanceStaging|"
 msgid "Failed to commit instance, even after multiple retries. It is being blocked by something."
-msgstr "複数回試しましたが、この起動構成を起動出来ませんでした。なにかがブロックしているようです。"
+msgstr "複数回施行しましたが，構成実例の提出(commit)に失敗しました，何かによって封鎖されたようです。"
 
 #: launcher/InstanceTask.cpp:77
 msgctxt "InstanceTask|"
@@ -3363,17 +3363,17 @@ msgstr "ゲームのファイルをダウンロードしています..."
 #: launcher/ui/InstanceWindow.cpp:45
 msgctxt "InstanceWindow|"
 msgid "Console window for "
-msgstr "コンソールウィンドウ "
+msgstr "制御盤窓口 - "
 
 #: launcher/ui/InstanceWindow.cpp:85
 msgctxt "InstanceWindow|"
 msgid "Help"
-msgstr "ヘルプ"
+msgstr "情報・手伝"
 
 #: launcher/ui/InstanceWindow.cpp:101
 msgctxt "InstanceWindow|"
 msgid "Launch Offline"
-msgstr "オフラインプレイ"
+msgstr "脱機状態で起動"
 
 #: launcher/ui/InstanceWindow.cpp:107
 msgctxt "InstanceWindow|"
@@ -3388,7 +3388,7 @@ msgstr "強制終了"
 #: launcher/ui/InstanceWindow.cpp:157
 msgctxt "InstanceWindow|"
 msgid "Kill the running instance"
-msgstr "実行中の起動構成を強制終了します"
+msgstr "実行中の構成実例を強制終了する"
 
 #: launcher/ui/InstanceWindow.cpp:160 launcher/ui/InstanceWindow.cpp:166
 msgctxt "InstanceWindow|"
@@ -3398,28 +3398,28 @@ msgstr "起動"
 #: launcher/ui/InstanceWindow.cpp:162 launcher/ui/InstanceWindow.cpp:168
 msgctxt "InstanceWindow|"
 msgid "Launch the instance"
-msgstr "選択した起動構成を起動します"
+msgstr "選択した構成実例を起動する"
 
 #: launcher/tools/JProfiler.cpp:54
 #, qt-format
 msgctxt "JProfiler|"
 msgid "Listening on port: %1"
-msgstr "ポート転送: %1"
+msgstr "通口 %1 を聴いています"
 
 #: launcher/tools/JProfiler.cpp:60
 msgctxt "JProfiler|"
 msgid "Profiler aborted"
-msgstr "プロファイラ 中断"
+msgstr "性能解析器が中止されました"
 
 #: launcher/tools/JVisualVM.cpp:52
 msgctxt "JVisualVM|"
 msgid "JVisualVM started"
-msgstr "JVisualVMを開始"
+msgstr "JVisualVM が起動しました"
 
 #: launcher/tools/JVisualVM.cpp:58
 msgctxt "JVisualVM|"
 msgid "Profiler aborted"
-msgstr "プロファイラ 中断"
+msgstr "性能解析器 JVisualVM が中止されました"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:43
 msgctxt "JavaDownloadDialog|"
@@ -3695,7 +3695,7 @@ msgstr "ダウンロードされたランタイムでJavaバイナリが見つ�
 #: launcher/java/JavaInstallList.cpp:143
 msgctxt "JavaListLoadTask|"
 msgid "Detecting Java installations..."
-msgstr "Javaのインストールを検出中..."
+msgstr "Java の装入状況を検出中..."
 
 #: launcher/ui/pages/global/JavaPage.ui:39
 msgctxt "JavaPage|"
@@ -3705,42 +3705,42 @@ msgstr "設定"
 #: launcher/ui/pages/global/JavaPage.ui:45
 msgctxt "JavaPage|"
 msgid "Memory"
-msgstr "メモリ"
+msgstr "実行域の量を指定"
 
 #: launcher/ui/pages/global/JavaPage.ui:51
 msgctxt "JavaPage|"
 msgid "The maximum amount of memory Minecraft is allowed to use."
-msgstr "Minecraftが使用する最大メモリの値です。"
+msgstr "Minecraft が使用できる最大実行域量です。"
 
 #: launcher/ui/pages/global/JavaPage.ui:73
 msgctxt "JavaPage|"
 msgid "Minimum memory allocation:"
-msgstr "最少メモリ割り当て："
+msgstr "最小実行域割り当て:"
 
 #: launcher/ui/pages/global/JavaPage.ui:80
 msgctxt "JavaPage|"
 msgid "Maximum memory allocation:"
-msgstr "最大メモリ割り当て："
+msgstr "最大実行域割り当て:"
 
 #: launcher/ui/pages/global/JavaPage.ui:87
 msgctxt "JavaPage|"
 msgid "The amount of memory Minecraft is started with."
-msgstr "Minecraftが開始するときに使用される最少メモリの値です。"
+msgstr "Minecraft 起動時に割り当てた実行域量です。"
 
 #: launcher/ui/pages/global/JavaPage.ui:116
 msgctxt "JavaPage|"
 msgid "The amount of memory available to store loaded Java classes."
-msgstr "Javaクラスのロードに使われる使用可能なメモリの値です。"
+msgstr "読み込めた Java 類の格納用に割り当てた実行域量です。"
 
 #: launcher/ui/pages/global/JavaPage.ui:141
 msgctxt "JavaPage|"
 msgid "Java Runtime"
-msgstr "Javaランタイム"
+msgstr "Java 実行環境"
 
 #: launcher/ui/pages/global/JavaPage.ui:153
 msgctxt "JavaPage|"
 msgid "Java path:"
-msgstr "Javaのパス："
+msgstr "Java の位置:"
 
 #: launcher/ui/pages/global/JavaPage.ui:195
 msgctxt "JavaPage|"
@@ -3765,7 +3765,7 @@ msgstr "自動検出..."
 #: launcher/ui/pages/global/JavaPage.ui:244
 msgctxt "JavaPage|"
 msgid "Test"
-msgstr "テスト"
+msgstr "有効性認証"
 
 #: launcher/ui/pages/global/JavaPage.ui:268
 msgctxt "JavaPage|"
@@ -3815,12 +3815,12 @@ msgstr "選択したものを使用"
 #: launcher/ui/pages/global/JavaPage.cpp:145
 msgctxt "JavaPage|"
 msgid "Select a Java version"
-msgstr "Javaのバージョンを選択します"
+msgstr "Java の版次を選択してください"
 
 #: launcher/ui/pages/global/JavaPage.cpp:159
 msgctxt "JavaPage|"
 msgid "Find Java executable"
-msgstr "Java実行可能ファイルを探します"
+msgstr "Java の実行可能文件を探す"
 
 #: launcher/ui/pages/global/JavaPage.cpp:225
 msgctxt "JavaPage|"
@@ -3837,12 +3837,12 @@ msgstr ""
 #: launcher/ui/pages/global/JavaPage.h:47
 msgctxt "JavaPage|"
 msgid "Java"
-msgstr "Java"
+msgstr "Java の設定"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:175
 msgctxt "JavaSettingsWidget|"
 msgid "No Java version selected"
-msgstr "Javaのバージョンが選択されていません"
+msgstr "Javaの版次が未選択"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:176
 #, qt-format
@@ -3851,45 +3851,45 @@ msgid "You didn't select a Java version or selected something that doesn't work.
 "%1 will not be able to start Minecraft.\n"
 "Do you wish to proceed without any Java?\n\n"
 "You can change the Java version in the settings later.\n"
-msgstr "Javaのバージョンが選択されていないか、動作しないものが選択されています。\n"
-"%1 は Minecraft を起動することができません。\n"
-"Javaを使用せずに続行しますか？\n\n"
-"Java のバージョンは後から設定で変更することができます。\n"
+msgstr "Java の版次は未選択しています，まだは無効な版次・文件が選択されました。\n"
+"Minecraft は %1 で起動不能です。\n"
+"Java 未指定状態で続行しますか?\n\n"
+"Java の版次設定は何時でも，\"設定\"で変更できます。\n"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:278
 msgctxt "JavaSettingsWidget|"
 msgid "Find Java executable"
-msgstr "Javaランタイムを探します"
+msgstr "Java の実行可能文件を探す"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:426
 msgctxt "JavaSettingsWidget|"
 msgid "Memory"
-msgstr "メモリ"
+msgstr "実行域"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:428
 msgctxt "JavaSettingsWidget|"
 msgid "The maximum amount of memory Minecraft is allowed to use."
-msgstr "Minecraftが使用する最大メモリの値です。"
+msgstr "Minecraft が使用できる最大実行域量です。"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:429
 msgctxt "JavaSettingsWidget|"
 msgid "Minimum memory allocation:"
-msgstr "最少メモリ割り当て："
+msgstr "最小実行域割り当て:"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:430
 msgctxt "JavaSettingsWidget|"
 msgid "Maximum memory allocation:"
-msgstr "最大メモリ割り当て："
+msgstr "最大実行域割り当て:"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:432
 msgctxt "JavaSettingsWidget|"
 msgid "The amount of memory Minecraft is started with."
-msgstr "Minecraftが開始するときに使用される最少メモリの値です。"
+msgstr "Minecraft 起動時に割り当てた実行域量です。"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:434
 msgctxt "JavaSettingsWidget|"
 msgid "The amount of memory available to store loaded Java classes."
-msgstr "Javaクラスのロードに使われる使用可能なメモリの値です。"
+msgstr "読み込めた Java 類の格納用に割り当てた実行域量です。"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:435
 msgctxt "JavaSettingsWidget|"
@@ -3916,18 +3916,18 @@ msgstr "Java を以下から自動的にダウンロード:"
 #: launcher/ui/pages/global/LanguagePage.h:40
 msgctxt "LanguagePage|"
 msgid "Language"
-msgstr "言語"
+msgstr "言語設定"
 
 #: launcher/ui/widgets/LanguageSelectionWidget.cpp:72
 #, qt-format
 msgctxt "LanguageSelectionWidget|"
 msgid "Don't see your language or the quality is poor?<br/><a href=\"%1\">Help us with translations!</a>"
-msgstr "あなたの言語が見つからないか、質が低いですか？<br/><a href=\"%1\">翻訳を手伝ってください！</a>"
+msgstr "あなたの言語が見つからないか、質が低いですか? <br/><a href=\"%1\">翻訳を手伝ってください!</a>"
 
 #: launcher/ui/setupwizard/LanguageWizardPage.cpp:62
 msgctxt "LanguageWizardPage|"
 msgid "Language"
-msgstr "言語"
+msgstr "言語設定"
 
 #: launcher/ui/setupwizard/LanguageWizardPage.cpp:64
 #, qt-format
@@ -3938,7 +3938,7 @@ msgstr "%1 で使用する言語を選択"
 #: launcher/LaunchController.cpp:54
 msgctxt "LaunchController|"
 msgid "No instance specified!"
-msgstr "起動構成が選択されていません!"
+msgstr "構成実例が選択されていません!"
 
 #: launcher/LaunchController.cpp:77 launcher/LaunchController.cpp:133
 #: launcher/LaunchController.cpp:141
@@ -3949,7 +3949,7 @@ msgstr "ユーザー"
 #: launcher/LaunchController.cpp:92
 msgctxt "LaunchController|"
 msgid "No Accounts"
-msgstr "アカウントがありません"
+msgstr "帳戸無し"
 
 #: launcher/LaunchController.cpp:93
 msgctxt "LaunchController|"
@@ -3969,12 +3969,12 @@ msgstr ""
 #: launcher/LaunchController.cpp:122 launcher/LaunchController.cpp:320
 msgctxt "LaunchController|"
 msgid "Play Demo"
-msgstr "デモで遊ぶ"
+msgstr "体験版で遊ぶ"
 
 #: launcher/LaunchController.cpp:124 launcher/LaunchController.cpp:322
 msgctxt "LaunchController|"
 msgid "Cancel"
-msgstr "キャンセル"
+msgstr "取消"
 
 #: launcher/LaunchController.cpp:131
 msgctxt "LaunchController|"
@@ -3989,12 +3989,12 @@ msgstr "デモモードで使用するユーザー名を入力:"
 #: launcher/LaunchController.cpp:165
 msgctxt "LaunchController|"
 msgid "Which account would you like to use?"
-msgstr "どのアカウントを利用しますか？"
+msgstr "どの帳戸を利用しますか?"
 
 #: launcher/LaunchController.cpp:198
 msgctxt "LaunchController|"
 msgid "No account selected for launch."
-msgstr "起動用のアカウントが選択されていません。"
+msgstr "起動用の帳戸が未選択しています。"
 
 #: launcher/LaunchController.cpp:208
 msgctxt "LaunchController|"
@@ -4019,26 +4019,24 @@ msgstr "ログイン中に未確定セッションのステータスを受信し
 #: launcher/LaunchController.cpp:314
 msgctxt "LaunchController|"
 msgid "Play demo?"
-msgstr "デモをプレイしますか？"
+msgstr "デモで遊びますか？"
 
 #: launcher/LaunchController.cpp:315
 msgctxt "LaunchController|"
 msgid "This account does not own Minecraft.\n"
 "You need to purchase the game first to play it.\n\n"
 "Do you want to play the demo?"
-msgstr "このアカウントは Minecraft を所有していません。\n"
-"ゲームをプレイするにはゲームを購入する必要があります。\n\n"
-"デモをプレイしますか?"
+msgstr "この帳戸はまだ Minecraft が未所有しています。遊ぶには，Minecraft を購入する必要があります。体験版で遊びますか?"
 
 #: launcher/LaunchController.cpp:331
 msgctxt "LaunchController|"
 msgid "Launch cancelled - account does not own Minecraft."
-msgstr "起動がキャンセルされました - アカウントは Minecraft を所有していません。"
+msgstr "起動が取り消された - この帳戸はまだ Minecraft が未所有しています。"
 
 #: launcher/LaunchController.cpp:349
 msgctxt "LaunchController|"
 msgid "Play Offline"
-msgstr "オフラインプレイ"
+msgstr "脱機状態で遊ぶ"
 
 #: launcher/LaunchController.cpp:363
 msgctxt "LaunchController|"
@@ -4048,17 +4046,17 @@ msgstr "アカウントの有効期限が切れているため、手動で再度
 #: launcher/LaunchController.cpp:366
 msgctxt "LaunchController|"
 msgid "Account refresh failed"
-msgstr "アカウントの更新に失敗しました"
+msgstr "帳戸状態の更新に失敗しました"
 
 #: launcher/LaunchController.cpp:374
 msgctxt "LaunchController|"
 msgid "The account no longer exists on the servers. It may have been migrated, in which case please add the new account you migrated this one to."
-msgstr "このアカウントはもうサーバーに存在しません。 移行された可能性があります。この場合、移行したアカウントを追加してください。"
+msgstr "この帳戸はもう伺伝機から消えました，移行された可能性があります。この場合は，移行先の新しい帳戸を追加してください。"
 
 #: launcher/LaunchController.cpp:377
 msgctxt "LaunchController|"
 msgid "Account gone"
-msgstr "アカウントが削除されました"
+msgstr "帳戸が消去されました"
 
 #: launcher/LaunchController.cpp:386
 msgctxt "LaunchController|"
@@ -4068,30 +4066,31 @@ msgstr "起動に失敗しました。"
 #: launcher/LaunchController.cpp:395 launcher/LaunchController.cpp:541
 msgctxt "LaunchController|"
 msgid "Error!"
-msgstr "エラー!"
+msgstr "錯誤発生!"
 
 #: launcher/LaunchController.cpp:396 launcher/LaunchController.cpp:397
 msgctxt "LaunchController|"
 msgid "Couldn't load the instance profile."
-msgstr "起動構成の設定をロードできませんでした。"
+msgstr "構成実例の配置情報の読込に失敗しました。"
 
 #: launcher/LaunchController.cpp:403
 msgctxt "LaunchController|"
 msgid "Couldn't instantiate a launcher."
-msgstr "ランチャーをインスタンス化できませんでした。"
+msgstr "起動器の実例化に失敗しました。"
 
 #: launcher/LaunchController.cpp:542
 #, qt-format
 msgctxt "LaunchController|"
 msgid "Couldn't start profiler: %1"
-msgstr "プロファイラを開始できませんでした: %1"
+msgstr "性能解析器の起動に失敗しました: %1"
 
 #: launcher/LaunchController.cpp:552
 #, qt-format
 msgctxt "LaunchController|"
 msgid "The game launch is delayed until you press the button. This is the right time to setup the profiler, as the profiler server is running now.\n\n"
 "%1"
-msgstr "ボタンを押すまで、ゲームの開始は遅れます。プロファイラサーバーが実行中なので、これはプロファイラを設定するのに適切なタイミングです。%1"
+msgstr "押鈕を押すまで，遊戯の起動は延期されます。今，性能解析器は実行中のため，この機会に解析器を設定しましょう。\n\n"
+"%1"
 
 #: launcher/LaunchController.cpp:557
 msgctxt "LaunchController|"
@@ -4107,12 +4106,12 @@ msgstr "起動"
 #, qt-format
 msgctxt "LaunchController|"
 msgid "Couldn't start the profiler: %1"
-msgstr "プロファイラを開始できませんでした: %1"
+msgstr "性能解析器が起動不能でした: %1"
 
 #: launcher/LaunchController.cpp:568
 msgctxt "LaunchController|"
 msgid "Error"
-msgstr "エラー"
+msgstr "錯誤"
 
 #: launcher/LaunchController.cpp:609
 msgctxt "LaunchController|"
@@ -4147,7 +4146,7 @@ msgstr "Minecraftを強制終了しますか?"
 #: launcher/LaunchController.cpp:644
 msgctxt "LaunchController|"
 msgid "This can cause the instance to get corrupted and should only be used if Minecraft is frozen for some reason"
-msgstr "これは起動構成の破損を引き起こす可能性があるので、Minecraftがフリーズした場合にのみ使用してください"
+msgstr "これは構成実例の破損を引き起こす可能性があるので、Minecraftが動作不能の場合にのみ使用してください"
 
 #: launcher/launch/LaunchTask.cpp:201
 #, qt-format
@@ -4159,70 +4158,70 @@ msgstr ""
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:39
 msgctxt "LegacyFTB::FilterModel|"
 msgid "Sort by name"
-msgstr "名前順"
+msgstr "名前で並べ替え"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:40
 msgctxt "LegacyFTB::FilterModel|"
 msgid "Sort by game version"
-msgstr "ゲームバージョン順"
+msgstr "版次順で並べ替え"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:102
 msgctxt "LegacyFTB::ListModel|"
 msgid "Public Modpack"
-msgstr "公開Modpack"
+msgstr "公開な Mod 整合包"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:104
 msgctxt "LegacyFTB::ListModel|"
 msgid "Third Party Modpack"
-msgstr "サードパーティModpack"
+msgstr "第三者 Mod 整合包"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:106
 msgctxt "LegacyFTB::ListModel|"
 msgid "Private Modpack"
-msgstr "プライベートModパック"
+msgstr "私有な Mod 整合包"
 
 #: launcher/modplatform/legacy_ftb/PackFetchTask.cpp:107
 msgctxt "LegacyFTB::PackFetchTask|"
 msgid "Public Packs"
-msgstr "公開パック"
+msgstr "公開 Mod 包"
 
 #: launcher/modplatform/legacy_ftb/PackFetchTask.cpp:112
 msgctxt "LegacyFTB::PackFetchTask|"
 msgid "Third Party Packs"
-msgstr "サードパーティパック"
+msgstr "第三者 Mod 包"
 
 #: launcher/modplatform/legacy_ftb/PackFetchTask.cpp:116
 #, qt-format
 msgctxt "LegacyFTB::PackFetchTask|"
 msgid "Failed to download some pack lists: %1"
-msgstr "いくつかのModパックリストのダウンロードが失敗しました: %1"
+msgstr "一部の Mod 包の列表の読込に失敗しました: %1"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:54
 #, qt-format
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Downloading zip for %1"
-msgstr "%1 のzipをダウンロードしています"
+msgstr "Mod 包 %1 の zip 圧縮文件を受信中"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:105
 #, qt-format
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Downloading zip for %1 (%2%)"
-msgstr "%1 のzipをダウンロードしています (%2%)"
+msgstr "Mod 包 %1 の zip 圧縮文件を受信中 (進捗率 %2%)"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:113
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Extracting modpack"
-msgstr "Modパックを展開中"
+msgstr "Mod 整合包を展開中"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:142
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Modパックをインストール中"
+msgstr "Mod 整合包を装入中"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:148
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Failed to move unzipped minecraft!"
-msgstr "解凍した Minecraft を移動できませんでした。"
+msgstr "解凍した Minecraft の文件の移動に失敗しました!"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:181
 msgctxt "LegacyFTB::PackInstallTask|"
@@ -4232,76 +4231,76 @@ msgstr "pack.json を開けませんでした。"
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:227
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "No installation method found!"
-msgstr "インストール方法が見つかりませんでした。"
+msgstr "装入方式が未発見!"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.ui:21
 msgctxt "LegacyFTB::Page|"
 msgid "Public"
-msgstr "公開パック"
+msgstr "公開 Mod 包"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.ui:44
 msgctxt "LegacyFTB::Page|"
 msgid "3rd Party"
-msgstr "サードパーティ"
+msgstr "第三者 Mod 包"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.ui:67
 msgctxt "LegacyFTB::Page|"
 msgid "Private"
-msgstr "プライベートパック"
+msgstr "私有 Mod 包"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.ui:86
 msgctxt "LegacyFTB::Page|"
 msgid "Add pack"
-msgstr "パックを追加"
+msgstr "Mod 包を追加"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.ui:93
 msgctxt "LegacyFTB::Page|"
 msgid "Remove selected pack"
-msgstr "選択したパックを除去"
+msgstr "選択した Mod 包を除去"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.ui:109
 msgctxt "LegacyFTB::Page|"
 msgid "Version selected:"
-msgstr "バージョン:"
+msgstr "選択された版次:"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:230
 msgctxt "LegacyFTB::Page|"
 msgid "FTB private packs"
-msgstr "FTB プライベートパック"
+msgstr "FTB 私有包"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:231
 #, qt-format
 msgctxt "LegacyFTB::Page|"
 msgid "Failed to download pack information for code %1.\n"
 "Should it be removed now?"
-msgstr "コード %1のパック情報のダウンロードに失敗しました。\n"
-"今すぐ削除しますか？"
+msgstr "受信用文 %1 は受信不能です。\n"
+"今すぐ受信列表から消去しますか?"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:355
 msgctxt "LegacyFTB::Page|"
 msgid "Add FTB pack"
-msgstr "FTB Modパックを追加"
+msgstr "FTB Mod 包を追加"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:356
 msgctxt "LegacyFTB::Page|"
 msgid "Enter pack code:"
-msgstr "パックのコードを入力:"
+msgstr "Mod 包の受信用文 (pack code) を入力してください:"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:373
 msgctxt "LegacyFTB::Page|"
 msgid "Remove pack"
-msgstr "パックを削除"
+msgstr "Mod 包の削除"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:374
 #, qt-format
 msgctxt "LegacyFTB::Page|"
 msgid "Are you sure you want to remove pack %1?"
-msgstr "本当にパック %1 を削除しますか？"
+msgstr "本当に Mod包 %1 を削除しますか?"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.h:59
 msgctxt "LegacyFTB::Page|"
 msgid "FTB Legacy"
-msgstr "FTB Legacy"
+msgstr "FTB (旧式)"
 
 #: launcher/minecraft/legacy/LegacyInstance.cpp:218
 msgctxt "LegacyInstance|"
@@ -4311,7 +4310,7 @@ msgstr "旧式"
 #: launcher/minecraft/legacy/LegacyInstance.cpp:223
 msgctxt "LegacyInstance|"
 msgid "Instance from previous versions."
-msgstr "以前のバージョンの起動構成を読み込んでいます..."
+msgstr "以前の版次の構成実例。"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:29
 msgctxt "LegacyUpgradePage|"
@@ -4321,65 +4320,65 @@ msgstr ""
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:39
 msgctxt "LegacyUpgradePage|"
 msgid "Upgrade the instance"
-msgstr "起動構成をアップグレード"
+msgstr "構成実例の拡張更新"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:45
 msgctxt "LegacyUpgradePage|"
 msgid "Error"
-msgstr "エラー"
+msgstr "錯誤"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:50
 msgctxt "LegacyUpgradePage|"
 msgid "Abort"
-msgstr "中断"
+msgstr "中止"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:58
 #, qt-format
 msgctxt "LegacyUpgradePage|"
 msgid "%1 (Migrated)"
-msgstr "%1 (変換済み)"
+msgstr "%1 (移行済)"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.h:44
 msgctxt "LegacyUpgradePage|"
 msgid "Upgrade"
-msgstr "アップグレード"
+msgstr "拡張更新"
 
 #: launcher/minecraft/legacy/LegacyUpgradeTask.cpp:39
 #, qt-format
 msgctxt "LegacyUpgradeTask|"
 msgid "Copying instance %1"
-msgstr "起動構成のコピー中: %1"
+msgstr "構成実例 %1 を複製中"
 
 #: launcher/minecraft/legacy/LegacyUpgradeTask.cpp:73
 msgctxt "LegacyUpgradeTask|"
 msgid "Instance folder copy failed."
-msgstr "起動構成のフォルダーのコピーに失敗しました。"
+msgstr "構成実例の文件集の複製に失敗しました。"
 
 #: launcher/minecraft/legacy/LegacyUpgradeTask.cpp:99
 msgctxt "LegacyUpgradeTask|"
 msgid "Could not decide Minecraft version."
-msgstr "Minecraftのバージョンを決定できませんでした。"
+msgstr "Minecraft の版次が決定不能です。"
 
 #: launcher/minecraft/legacy/LegacyUpgradeTask.cpp:147
 msgctxt "LegacyUpgradeTask|"
 msgid "Instance folder copy has been aborted."
-msgstr "起動構成のフォルダーのコピーは中断されました。"
+msgstr "構成実例の文件集の複製は中止されました。"
 
 #: launcher/minecraft/update/LibrariesTask.cpp:34
 msgctxt "LibrariesTask|"
 msgid "Getting the library files from Mojang..."
-msgstr "Mojangからライブラリファイルを取得しています..."
+msgstr "Mojang から依存庫 (library) を取得しています..."
 
 #: launcher/minecraft/update/LibrariesTask.cpp:42
 #, qt-format
 msgctxt "LibrariesTask|"
 msgid "Libraries for instance %1"
-msgstr "起動構成 %1 のライブラリ"
+msgstr "構成実例 %1 の依存庫文件"
 
 #: launcher/minecraft/update/LibrariesTask.cpp:54
 msgctxt "LibrariesTask|"
 msgid "Null jar is specified in the metadata, aborting."
-msgstr "メタデータにnull jarが指定されています。中断します。"
+msgstr "上位数元は空白・異常な .jar 文件を指定されていますので，中止します。"
 
 #: launcher/minecraft/update/LibrariesTask.cpp:83
 #, qt-format
@@ -4388,7 +4387,10 @@ msgid "Some artifacts marked as 'local' are missing their files:\n"
 "%1\n\n"
 "You need to either add the files, or removed the packages that require them.\n"
 "You'll have to correct this problem manually."
-msgstr "'local'とマークされたアーティファクトのファイルがありません: %1 ファイルを追加するか、それらを必要とするパッケージを削除する必要があります。この問題は手動で修正する必要があります。"
+msgstr "\"本機にいる\"と印付けたの一部の Mod 包は実際，文件が欠落しています:\n"
+"%1\n\n"
+"必要な文件を追加するか，それらを必要とするの Mod 包を列表から消去してください。\n"
+"この問題は手動で修正する必要があります。"
 
 #: launcher/minecraft/update/LibrariesTask.cpp:111
 #, qt-format
@@ -4396,7 +4398,9 @@ msgctxt "LibrariesTask|"
 msgid "Game update failed: it was impossible to fetch the required libraries.\n"
 "Reason:\n"
 "%1"
-msgstr "ゲームの更新に失敗しました: 必要なライブラリを取得できませんでした。理由: %1"
+msgstr "遊戯の更新に失敗しました: 必要な依存庫文件を取得不能でした。\n"
+"理由:\n"
+"%1"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:45
 #, qt-format
@@ -4419,7 +4423,7 @@ msgstr "%1 バージョンリストをダウンロードできませんでした
 #: launcher/ui/pages/instance/LogPage.ui:60
 msgctxt "LogPage|"
 msgid "Keep updating"
-msgstr "最新の状態を維持"
+msgstr "更新し続ける"
 
 #: launcher/ui/pages/instance/LogPage.ui:70
 msgctxt "LogPage|"
@@ -4429,32 +4433,32 @@ msgstr "行を折り返し"
 #: launcher/ui/pages/instance/LogPage.ui:93
 msgctxt "LogPage|"
 msgid "Copy the whole log into the clipboard"
-msgstr "クリップボードにログ全体をコピー"
+msgstr "貼付板に履録全体を複製します"
 
 #: launcher/ui/pages/instance/LogPage.ui:96
 msgctxt "LogPage|"
 msgid "&Copy"
-msgstr "コピー"
+msgstr "複製 (&C)"
 
 #: launcher/ui/pages/instance/LogPage.ui:103
 msgctxt "LogPage|"
 msgid "Upload the log to paste.ee - it will stay online for a month"
-msgstr "paste.eeにログをアップロードする - １か月間閲覧可能です"
+msgstr "履録を paste.ee (線上にある貼付板) に複製する - 1か月間の保存期限があります"
 
 #: launcher/ui/pages/instance/LogPage.ui:106
 msgctxt "LogPage|"
 msgid "Upload"
-msgstr "アップロード"
+msgstr "送信"
 
 #: launcher/ui/pages/instance/LogPage.ui:113
 msgctxt "LogPage|"
 msgid "Clear the log"
-msgstr "ログをクリア"
+msgstr "履録を消去する"
 
 #: launcher/ui/pages/instance/LogPage.ui:116
 msgctxt "LogPage|"
 msgid "Clear"
-msgstr "クリア"
+msgstr "消去"
 
 #: launcher/ui/pages/instance/LogPage.ui:125
 msgctxt "LogPage|"
@@ -4469,7 +4473,7 @@ msgstr "次を検索"
 #: launcher/ui/pages/instance/LogPage.ui:142
 msgctxt "LogPage|"
 msgid "Scroll all the way to bottom"
-msgstr "一番下までスクロール"
+msgstr "一番下まで頁巻く"
 
 #: launcher/ui/pages/instance/LogPage.ui:145
 msgctxt "LogPage|"
@@ -4479,7 +4483,7 @@ msgstr "一番下へ"
 #: launcher/ui/pages/instance/LogPage.h:46
 msgctxt "LogPage|"
 msgid "Minecraft Log"
-msgstr "Minecraftのログ"
+msgstr "Minecraft の履録"
 
 #. Message displayed on instance exit
 #: launcher/LoggedProcess.cpp:108
@@ -4492,7 +4496,7 @@ msgstr "プロセスはコード %1で終了しました。"
 #: launcher/LoggedProcess.cpp:114
 msgctxt "LoggedProcess|"
 msgid "Process crashed."
-msgstr "プロセスがクラッシュしました。"
+msgstr "程務が崩れた。"
 
 #: launcher/LoggedProcess.cpp:117
 #, qt-format
@@ -4504,12 +4508,12 @@ msgstr "プロセスが終了コード %1でクラッシュしました。"
 #: launcher/LoggedProcess.cpp:123
 msgctxt "LoggedProcess|"
 msgid "Process was killed by user."
-msgstr "Minecraftはユーザーによって強制終了されました。"
+msgstr "程務は使用者によって中止されました。"
 
 #: launcher/LoggedProcess.cpp:132
 msgctxt "LoggedProcess|"
 msgid "The process failed to start."
-msgstr "プロセスの起動に失敗しました。"
+msgstr "程務の起動に失敗しました。"
 
 #: launcher/ui/dialogs/MSALoginDialog.ui:20
 msgctxt "MSALoginDialog|"
@@ -4540,7 +4544,7 @@ msgstr "ログインに成功しました！このページを閉じてMeshMCに
 #: launcher/minecraft/auth/steps/MSAStep.cpp:59
 msgctxt "MSAStep|"
 msgid "Logging in with Microsoft account."
-msgstr "マイクロソフトアカウントでログイン"
+msgstr "Microsoft 帳戸で登入しています。"
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:90
 msgctxt "MSAStep|"
@@ -4600,17 +4604,17 @@ msgstr "ヘルプ (&H)"
 #: launcher/ui/MainWindow.cpp:421
 msgctxt "MainWindow|"
 msgid "Main Toolbar"
-msgstr "メインツールバー"
+msgstr "主要工具列"
 
 #: launcher/ui/MainWindow.cpp:427
 msgctxt "MainWindow|"
 msgid "Add Instance"
-msgstr "起動構成の追加"
+msgstr "構成実例の追加"
 
 #: launcher/ui/MainWindow.cpp:429
 msgctxt "MainWindow|"
 msgid "Add a new instance."
-msgstr "新しい起動構成を追加します。"
+msgstr "新しい構成実例を追加します。"
 
 #: launcher/ui/MainWindow.cpp:437
 msgctxt "MainWindow|"
@@ -4640,7 +4644,7 @@ msgstr "インスタンス"
 #: launcher/ui/MainWindow.cpp:471
 msgctxt "MainWindow|"
 msgid "Open the instance folder in a file browser."
-msgstr "ファイルブラウザで起動構成のフォルダを開きます。"
+msgstr "文件閲覧器で構成実例の格納用文件集を開きます。"
 
 #: launcher/ui/MainWindow.cpp:482
 msgctxt "MainWindow|"
@@ -4650,7 +4654,7 @@ msgstr "Central Mods"
 #: launcher/ui/MainWindow.cpp:483
 msgctxt "MainWindow|"
 msgid "Open the central mods folder in a file browser."
-msgstr "ファイルブラウザでCentral Modsフォルダを開きます。"
+msgstr "文件閲覧器で Mod の共有格納用文件集を開きます。"
 
 #: launcher/ui/MainWindow.cpp:494
 msgctxt "MainWindow|"
@@ -4725,12 +4729,12 @@ msgstr "logsフォルダをファイルブラウザで開きます。"
 #: launcher/ui/MainWindow.cpp:577 launcher/ui/MainWindow.cpp:1399
 msgctxt "MainWindow|"
 msgid "Folders"
-msgstr "フォルダ"
+msgstr "格納用文件集を開く"
 
 #: launcher/ui/MainWindow.cpp:578
 msgctxt "MainWindow|"
 msgid "Open one of the folders shared between instances."
-msgstr "起動構成間で共有されているフォルダの1つを開きます。"
+msgstr "各構成実例の共有している格納用文件集を開きます。"
 
 #: launcher/ui/MainWindow.cpp:594
 msgctxt "MainWindow|"
@@ -4745,35 +4749,35 @@ msgstr "設定を変更します。"
 #: launcher/ui/MainWindow.cpp:608
 msgctxt "MainWindow|"
 msgid "Report a Bug"
-msgstr "バグを報告"
+msgstr "不具合を報告"
 
 #: launcher/ui/MainWindow.cpp:609
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the bug tracker to report a bug with %1."
-msgstr "バグトラッカーを開いて、 %1 のバグを報告してください。"
+msgstr "不具合追跡器を開いて，%1 の不具合を報告します。"
 
 #: launcher/ui/MainWindow.cpp:619
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr "Discord"
+msgstr "Discord 頁"
 
 #: launcher/ui/MainWindow.cpp:621
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open %1 discord voice chat."
-msgstr "%1 のDiscordボイスチャットを開く"
+msgstr "%1 のDiscord音声交流室を開く。"
 
 #: launcher/ui/MainWindow.cpp:630
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr "Reddit"
+msgstr "Reddit 頁"
 
 #: launcher/ui/MainWindow.cpp:632
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open %1 subreddit."
-msgstr "%1 のsubredditを開きます。"
+msgstr "%1 の subreddit を開きます。"
 
 #: launcher/ui/MainWindow.cpp:641
 msgctxt "MainWindow|"
@@ -4810,51 +4814,51 @@ msgstr "%1 についての情報を表示します。"
 #: launcher/ui/MainWindow.cpp:669 launcher/ui/MainWindow.cpp:1400
 msgctxt "MainWindow|"
 msgid "Help"
-msgstr "ヘルプ"
+msgstr "情報・手伝"
 
 #: launcher/ui/MainWindow.cpp:671
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Get help with %1 or Minecraft."
-msgstr "%1 またはMinecraftについてのヘルプを見る。"
+msgstr "%1 または Minecraft についての手伝情報を見る。"
 
 #: launcher/ui/MainWindow.cpp:690
 msgctxt "MainWindow|"
 msgid "Update"
-msgstr "今すぐアップデート"
+msgstr "今すぐ更新する"
 
 #: launcher/ui/MainWindow.cpp:691
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Check for new updates for %1."
-msgstr "%1 のアップデートを確認します。"
+msgstr "%1 の更新情報を確認します。"
 
 #: launcher/ui/MainWindow.cpp:704
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr "サポート %1"
+msgstr "%1 をサポート"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr "%1 Patreon ページを開きます。"
+msgstr "%1 のPatreonページを開きます。"
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
 msgid "Meow"
-msgstr "ニャー"
+msgstr "にゃう~"
 
 #: launcher/ui/MainWindow.cpp:716
 msgctxt "MainWindow|"
 msgid "It's a fluffy kitty :3"
-msgstr "ふわふわの猫ちゃん :3"
+msgstr "ふわふわの猫ちゃんでーすww   ฅ•ω•ฅ"
 
 #: launcher/ui/MainWindow.cpp:726
 msgctxt "MainWindow|"
 msgid "Manage Accounts"
-msgstr "アカウントの管理"
+msgstr "帳戸の管理"
 
 #: launcher/ui/MainWindow.cpp:738
 msgctxt "MainWindow|"
@@ -4869,18 +4873,18 @@ msgstr "ツールバーがドラッグされないようにします。"
 #: launcher/ui/MainWindow.cpp:766
 msgctxt "MainWindow|"
 msgid "News Toolbar"
-msgstr "ニュースツールバー"
+msgstr "お知らせ工具列"
 
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr "追加のニュース..."
+msgstr "その他のニュース..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr "%1 についての詳細を読むために開発ブログを開きます。"
+msgstr "%1 についてもっとニュースを読むために %1 開発ブログを開きます。"
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -4895,27 +4899,27 @@ msgstr "このメニューバーを維持し、メインツールバーを非表
 #: launcher/ui/MainWindow.cpp:906
 msgctxt "MainWindow|"
 msgid "Instance Toolbar"
-msgstr "起動構成ツールバー"
+msgstr "構成実例工具列"
 
 #: launcher/ui/MainWindow.cpp:916
 msgctxt "MainWindow|"
 msgid "Change Icon"
-msgstr "アイコンの変更"
+msgstr "図標変更"
 
 #: launcher/ui/MainWindow.cpp:917
 msgctxt "MainWindow|"
 msgid "Change the selected instance's icon."
-msgstr "選択した起動構成のアイコンを変更します。"
+msgstr "選択した構成実例の図標を変更します。"
 
 #: launcher/ui/MainWindow.cpp:937
 msgctxt "MainWindow|"
 msgid "Rename"
-msgstr "名前を変更"
+msgstr "名前変更"
 
 #: launcher/ui/MainWindow.cpp:939
 msgctxt "MainWindow|"
 msgid "Rename the selected instance."
-msgstr "選択した起動構成の名前を変更します。"
+msgstr "選択した構成実例の名前を変更します。"
 
 #: launcher/ui/MainWindow.cpp:955 launcher/ui/MainWindow.cpp:1956
 msgctxt "MainWindow|"
@@ -4925,7 +4929,7 @@ msgstr "起動"
 #: launcher/ui/MainWindow.cpp:957
 msgctxt "MainWindow|"
 msgid "Launch the selected instance."
-msgstr "選択した起動構成を起動します。"
+msgstr "選択した構成実例を起動します。"
 
 #: launcher/ui/MainWindow.cpp:965
 msgctxt "MainWindow|"
@@ -4940,22 +4944,22 @@ msgstr "実行中のインスタンスを終了します。"
 #: launcher/ui/MainWindow.cpp:976 launcher/ui/MainWindow.cpp:1961
 msgctxt "MainWindow|"
 msgid "Launch Offline"
-msgstr "オフラインプレイ"
+msgstr "脱機状態で起動"
 
 #: launcher/ui/MainWindow.cpp:977
 msgctxt "MainWindow|"
 msgid "Launch the selected instance in offline mode."
-msgstr "オフラインモードで選択した起動構成を起動します。"
+msgstr "脱機状態で選択した構成実例を起動します。"
 
 #: launcher/ui/MainWindow.cpp:986
 msgctxt "MainWindow|"
 msgid "Edit Instance"
-msgstr "起動構成の編集"
+msgstr "構成実例の編集"
 
 #: launcher/ui/MainWindow.cpp:987
 msgctxt "MainWindow|"
 msgid "Change the instance settings, mods and versions."
-msgstr "起動構成の設定、Modやバージョンを変更します。"
+msgstr "構成実例の通常設定と，Mod や版次の設定を変更します。"
 
 #: launcher/ui/MainWindow.cpp:997
 msgctxt "MainWindow|"
@@ -4970,32 +4974,32 @@ msgstr "選択したインスタンスの設定を開きます。"
 #: launcher/ui/MainWindow.cpp:1007
 msgctxt "MainWindow|"
 msgid "Edit Notes"
-msgstr "メモの編集"
+msgstr "備忘録の編集"
 
 #: launcher/ui/MainWindow.cpp:1008
 msgctxt "MainWindow|"
 msgid "Edit the notes for the selected instance."
-msgstr "選択した起動構成のメモを編集します。"
+msgstr "選択した構成実例に関する備忘録を編集します。"
 
 #: launcher/ui/MainWindow.cpp:1015
 msgctxt "MainWindow|"
 msgid "View Mods"
-msgstr "Mod を見る"
+msgstr "Mod の総覧"
 
 #: launcher/ui/MainWindow.cpp:1017
 msgctxt "MainWindow|"
 msgid "View the mods of this instance."
-msgstr "選択したインスタンスの Mod を表示します。"
+msgstr "選択した構成実例の Mod を表示します。"
 
 #: launcher/ui/MainWindow.cpp:1023
 msgctxt "MainWindow|"
 msgid "View Worlds"
-msgstr "ワールドを表示"
+msgstr "世界の総覧"
 
 #: launcher/ui/MainWindow.cpp:1024
 msgctxt "MainWindow|"
 msgid "View the worlds of this instance."
-msgstr "選択した起動構成のワールドを表示します。"
+msgstr "選択した構成実例で作れた世界を表示します。"
 
 #: launcher/ui/MainWindow.cpp:1032
 msgctxt "MainWindow|"
@@ -5005,17 +5009,17 @@ msgstr "スクリーンショットの管理"
 #: launcher/ui/MainWindow.cpp:1033
 msgctxt "MainWindow|"
 msgid "View and upload screenshots for this instance."
-msgstr "この起動構成のスクリーンショットの表示およびアップロード"
+msgstr "この構成実例の画面撮りの表示と送信"
 
 #: launcher/ui/MainWindow.cpp:1042
 msgctxt "MainWindow|"
 msgid "Change Group"
-msgstr "グループ変更"
+msgstr "所有組の変更"
 
 #: launcher/ui/MainWindow.cpp:1043
 msgctxt "MainWindow|"
 msgid "Change the selected instance's group."
-msgstr "選択した起動構成のグループを変更します。"
+msgstr "選択した構成実例の所有組を変更します。"
 
 #: launcher/ui/MainWindow.cpp:1055
 msgctxt "MainWindow|"
@@ -5030,12 +5034,12 @@ msgstr "このインスタンスのバックアップを表示・管理します
 #: launcher/ui/MainWindow.cpp:1067
 msgctxt "MainWindow|"
 msgid "Minecraft Folder"
-msgstr "Minecraft フォルダー"
+msgstr "Minecraft 文件集"
 
 #: launcher/ui/MainWindow.cpp:1068
 msgctxt "MainWindow|"
 msgid "Open the selected instance's minecraft folder in a file browser."
-msgstr "ファイルブラウザで選択した起動構成の .minecraftフォルダを開きます。"
+msgstr "文件閲覧器で選択したの構成実例の .minecraft 文件集を開きます。"
 
 #: launcher/ui/MainWindow.cpp:1079
 msgctxt "MainWindow|"
@@ -5050,22 +5054,22 @@ msgstr "選択したインスタンスの Mod フォルダをファイルブラ�
 #: launcher/ui/MainWindow.cpp:1091
 msgctxt "MainWindow|"
 msgid "Config Folder"
-msgstr "Config フォルダ"
+msgstr "Config 文件集"
 
 #: launcher/ui/MainWindow.cpp:1092
 msgctxt "MainWindow|"
 msgid "Open the instance's config folder."
-msgstr "起動構成のconfigフォルダを開きます。"
+msgstr "起動構成の .minecraft/config フォルダを開きます。"
 
 #: launcher/ui/MainWindow.cpp:1102
 msgctxt "MainWindow|"
 msgid "Instance Folder"
-msgstr "起動構成のフォルダ"
+msgstr "構成実例文件集"
 
 #: launcher/ui/MainWindow.cpp:1103
 msgctxt "MainWindow|"
 msgid "Open the selected instance's root folder in a file browser."
-msgstr "ファイルブラウザで選択した起動構成のルートフォルダを開きます。"
+msgstr "文件閲覧器で選択したの構成実例の根文件集を開きます。"
 
 #: launcher/ui/MainWindow.cpp:1119
 msgctxt "MainWindow|"
@@ -5075,7 +5079,7 @@ msgstr "エクスポート(&X)..."
 #: launcher/ui/MainWindow.cpp:1125
 msgctxt "MainWindow|"
 msgid "Export Instance"
-msgstr "起動構成をエクスポート"
+msgstr "構成実例の導出"
 
 #: launcher/ui/MainWindow.cpp:1126
 msgctxt "MainWindow|"
@@ -5101,22 +5105,22 @@ msgstr "CurseForge (zip)"
 #: launcher/ui/MainWindow.cpp:1180
 msgctxt "MainWindow|"
 msgid "Delete"
-msgstr "削除"
+msgstr "構成実例の削除"
 
 #: launcher/ui/MainWindow.cpp:1182
 msgctxt "MainWindow|"
 msgid "Delete the selected instance."
-msgstr "選択した起動構成を削除します。"
+msgstr "選択した構成実例を削除します。"
 
 #: launcher/ui/MainWindow.cpp:1189
 msgctxt "MainWindow|"
 msgid "Copy Instance"
-msgstr "起動構成をコピー"
+msgstr "構成実例の複製"
 
 #: launcher/ui/MainWindow.cpp:1191
 msgctxt "MainWindow|"
 msgid "Copy the selected instance."
-msgstr "選択した起動構成をコピーします。"
+msgstr "選択した構成実例を複製します。"
 
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
@@ -5138,7 +5142,7 @@ msgstr "%1 - バージョン %2"
 #, qt-format
 msgctxt "MainWindow|on platform, as in operating system"
 msgid " on %1"
-msgstr " %1"
+msgstr " (%1)"
 
 #: launcher/ui/MainWindow.cpp:1407
 msgctxt "MainWindow|"
@@ -5173,7 +5177,7 @@ msgstr "ヘルプ (&H)"
 #: launcher/ui/MainWindow.cpp:1550 launcher/ui/MainWindow.cpp:1718
 msgctxt "MainWindow|"
 msgid "No instance selected"
-msgstr "起動構成が選択されていません"
+msgstr "構成実例が選択されていません"
 
 #: launcher/ui/MainWindow.cpp:1551
 msgctxt "MainWindow|"
@@ -5193,7 +5197,7 @@ msgstr "Profiles"
 #: launcher/ui/MainWindow.cpp:1831
 msgctxt "MainWindow|"
 msgid "Create instance"
-msgstr "起動構成の作成"
+msgstr "構成実例の作成"
 
 #: launcher/ui/MainWindow.cpp:1847
 #, qt-format
@@ -6244,7 +6248,7 @@ msgstr "起動構成のプレイ時間を記録する"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr "Minecraft の設定"
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:35
 msgctxt "MinecraftProfileStep|"
@@ -6750,7 +6754,7 @@ msgstr "ファイルを追加しています..."
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr "選択したバージョン:"
+msgstr "選択されたバージョン:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
@@ -6760,7 +6764,7 @@ msgstr "検索"
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr "検索してフィルター..."
+msgstr "検索とフィルタ ..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
@@ -7499,7 +7503,7 @@ msgstr "ユーザー名:"
 #: launcher/ui/pages/global/ProxyPage.ui:155
 msgctxt "ProxyPage|"
 msgid "Password:"
-msgstr "パスワード:"
+msgstr "暗証文:"
 
 #: launcher/ui/pages/global/ProxyPage.ui:169
 msgctxt "ProxyPage|"
@@ -7712,7 +7716,7 @@ msgstr "バージョンファイル %1を処理できません: %2 at line %3 co
 #, qt-format
 msgctxt "QObject|"
 msgid "Unable to process the version file %1."
-msgstr "バージョンファイル %1を処理できません。"
+msgstr "版次文件 %1 を処理できません。"
 
 #: launcher/minecraft/ShortcutUtils.cpp:44
 msgctxt "QObject|"
@@ -8085,7 +8089,7 @@ msgstr "空のパス"
 #: launcher/tools/JProfiler.cpp:119 launcher/tools/MCEditTool.cpp:54
 msgctxt "QObject|"
 msgid "Path does not exist"
-msgstr "パスは存在しません"
+msgstr "経路は存在しません"
 
 #: launcher/tools/JProfiler.cpp:125
 msgctxt "QObject|"
@@ -8100,7 +8104,7 @@ msgstr "JVisualVMへのパスが無効です"
 #: launcher/tools/MCEditTool.cpp:49
 msgctxt "QObject|"
 msgid "Path is empty"
-msgstr "パスは空です"
+msgstr "経路は空です"
 
 #: launcher/tools/MCEditTool.cpp:60
 msgctxt "QObject|"
@@ -9149,7 +9153,7 @@ msgstr "検索"
 #: launcher/ui/pages/modplatform/technic/TechnicPage.cpp:194
 msgctxt "TechnicPage|"
 msgid " by "
-msgstr " 作成: "
+msgstr " 作成者: "
 
 #: launcher/ui/pages/modplatform/technic/TechnicPage.h:51
 msgctxt "TechnicPage|"
@@ -9673,7 +9677,7 @@ msgstr "選択したパッケージを編集します"
 #: launcher/ui/pages/instance/VersionPage.ui:171
 msgctxt "VersionPage|"
 msgid "Revert"
-msgstr "リセット"
+msgstr "元に戻す"
 
 #: launcher/ui/pages/instance/VersionPage.ui:174
 msgctxt "VersionPage|"
@@ -9858,17 +9862,17 @@ msgstr "少なくとも1つのアカウントを追加しない限り、MeshMC�
 #: launcher/ui/pages/instance/VersionPage.cpp:511
 msgctxt "VersionPage|"
 msgid "Error updating instance"
-msgstr "起動構成のアップデート中にエラーが発生しました"
+msgstr "構成実例の更新中に失敗しました"
 
 #: launcher/ui/pages/instance/VersionPage.h:43
 msgctxt "VersionPage|"
 msgid "Version"
-msgstr "バージョン"
+msgstr "版次"
 
 #: launcher/VersionProxyModel.cpp:106
 msgctxt "VersionProxyModel|"
 msgid "Version"
-msgstr "バージョン"
+msgstr "版次"
 
 #: launcher/VersionProxyModel.cpp:108
 msgctxt "VersionProxyModel|"
@@ -9883,17 +9887,17 @@ msgstr "ブランチ"
 #: launcher/VersionProxyModel.cpp:112
 msgctxt "VersionProxyModel|"
 msgid "Type"
-msgstr "タイプ"
+msgstr "種類"
 
 #: launcher/VersionProxyModel.cpp:114
 msgctxt "VersionProxyModel|"
 msgid "Architecture"
-msgstr "アーキテクチャ"
+msgstr "CPU構造情報"
 
 #: launcher/VersionProxyModel.cpp:116
 msgctxt "VersionProxyModel|"
 msgid "Path"
-msgstr "パス"
+msgstr "位置"
 
 #: launcher/VersionProxyModel.cpp:118
 msgctxt "VersionProxyModel|"
@@ -10033,7 +10037,7 @@ msgstr "ワールドを最後にプレイした日時"
 #: launcher/ui/pages/instance/WorldListPage.ui:65
 msgctxt "WorldListPage|"
 msgid "Actions"
-msgstr "アクション"
+msgstr "操作"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:97
 msgctxt "WorldListPage|"
@@ -10043,12 +10047,12 @@ msgstr "追加"
 #: launcher/ui/pages/instance/WorldListPage.ui:102
 msgctxt "WorldListPage|"
 msgid "Rename"
-msgstr "名前を変更"
+msgstr "改名"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:107
 msgctxt "WorldListPage|"
 msgid "Copy"
-msgstr "コピー"
+msgstr "複製"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:112
 msgctxt "WorldListPage|"
@@ -10134,14 +10138,14 @@ msgstr "MCEditが設定されていないか、移動されたようです。\n"
 #: launcher/ui/pages/instance/WorldListPage.cpp:351
 msgctxt "WorldListPage|"
 msgid "MCEdit failed to start!"
-msgstr "MCEditの起動に失敗しました"
+msgstr "MCEditの起動に失敗しました!"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:352
 msgctxt "WorldListPage|"
 msgid "MCEdit failed to start.\n"
 "It may be necessary to reinstall it."
 msgstr "MCEditの起動に失敗しました。\n"
-"MCEditの再インストールが必要なようです。"
+"MCEditの再装入が必要なようです。"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:396
 msgctxt "WorldListPage|"

@@ -13,42 +13,42 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
-"PO-Revision-Date: 2026-09-01 20:25\n"
+"PO-Revision-Date: 2026-09-01 21:52\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Could not understand pack manifest:\n"
-msgstr "Nem sikerült értelmezni a csomag leírófájlját:\n"
+msgstr "Nem sikerült megérteni a csomag manifesztet:\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:119
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:204
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to get local metadata index for %1"
-msgstr "Nem sikerült lekérni a helyi metaadat-indexet a(z) %1-hez/hoz"
+msgstr "Nem sikerült betölteni helyi metadata indexét %1-hez/hoz"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:126
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to get local metadata index for '%1' v%2"
-msgstr "Nem sikerült lekérni a helyi metaadat-indexet a(z) '%1' v%2-hez/hoz"
+msgstr "Nem sikerült betölteni helyi metdatát az index '%1' v%2"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:190
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unknown mod type: %1"
-msgstr "Ismeretlen mod típus: %1"
+msgstr "Ismeretlen mod típús: %1"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:242
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to find version for %1 loader"
-msgstr "Nem sikerült megtalálni a verziót a(z) %1 modbetöltőhöz"
+msgstr "Nem sikerült verziót találni a %1 loaderhez"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:257
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "No loader version set for modpack!"
-msgstr "A modcsomaghoz nincs beállítva modbetöltő verzió!"
+msgstr "Nincs mod töltő verzió beállítva ehhez a modpackhez!"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:365
 #, qt-format
@@ -96,7 +96,7 @@ msgstr "Nem támogatott letöltési típus: %1"
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unknown download type: %1"
-msgstr "Ismeretlen letöltési típus: %1"
+msgstr "Ismeretlen letöltési típús: %1"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:710
 msgctxt "ATLauncher::PackInstallTask|"
@@ -111,17 +111,17 @@ msgstr "Modok kicsomagolása..."
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:787
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Modcsomag telepítése"
+msgstr "Modpack telepítése"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:810
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to create libraries component"
-msgstr "Nem sikerült létrehozni a könyvtárak komponenst"
+msgstr "Nem sikerült létrehozni könyvtár összetevőt"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:847
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unknown loader type: "
-msgstr "Ismeretlen modbetöltő típus: "
+msgstr "Ismeretlen betöltő típus: "
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:861
 msgctxt "ATLauncher::PackInstallTask|"
@@ -136,7 +136,7 @@ msgstr "Névjegy"
 #: launcher/ui/dialogs/AboutDialog.ui:116
 msgctxt "AboutDialog|"
 msgid "<html><head/><body><p>A custom launcher that makes managing Minecraft easier by allowing you to have multiple instances of Minecraft at once.</p></body></html>"
-msgstr "<html><head/><body><p>Egy egyedi indító, amely megkönnyíti a Minecraft kezelését, mivel egyszerre több Minecraft példányt is használhatsz.</p></body></html>"
+msgstr "<html><head/><body><p>Egy egyéni launcher ami könnyebbé teszi a minecraft kezelését úgy, hogy különböző minecraft típúsokat, verziókat tárolhatsz egyszerre.</p></body></html>"
 
 #: launcher/ui/dialogs/AboutDialog.ui:173
 msgctxt "AboutDialog|"
@@ -176,7 +176,7 @@ msgstr "Licensz"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr ""
+msgstr "Fork-olás/Újraelosztás"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -2544,12 +2544,12 @@ msgstr "Nem definiált"
 #: launcher/minecraft/auth/steps/GetSkinStep.cpp:33
 msgctxt "GetSkinStep|"
 msgid "Getting skin."
-msgstr "Kinézet beszerzése."
+msgstr "Skin beszerzése."
 
 #: launcher/minecraft/auth/steps/GetSkinStep.cpp:62
 msgctxt "GetSkinStep|"
 msgid "Got skin"
-msgstr "Kinézet beszerezve"
+msgstr "Skin beszerezve"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:66
 msgctxt "GitVersioningPage|"
@@ -2778,7 +2778,7 @@ msgstr ""
 #: launcher/ui/pages/modplatform/ImportPage.cpp:129
 msgctxt "ImportPage|"
 msgid "Choose modpack"
-msgstr "Modcsomag választása"
+msgstr "Modpack választása"
 
 #: launcher/ui/pages/modplatform/ImportPage.h:45
 msgctxt "ImportPage|"
@@ -2853,7 +2853,7 @@ msgstr "Modpack letöltése:\n"
 #: launcher/InstanceImportTask.cpp:82
 msgctxt "InstanceImportTask|"
 msgid "Modpack download"
-msgstr "Modcsomag letöltés"
+msgstr "Modpack letöltés"
 
 #: launcher/InstanceImportTask.cpp:124
 msgctxt "InstanceImportTask|"
@@ -2870,12 +2870,12 @@ msgstr ""
 #: launcher/InstanceImportTask.cpp:225 launcher/InstanceImportTask.cpp:381
 msgctxt "InstanceImportTask|"
 msgid "Archive does not contain a recognized modpack type."
-msgstr "Az archívum nem tartalmaz felismert modcsomagot."
+msgstr "Az archívum nem tartalmaz felismert modulcsomagot."
 
 #: launcher/InstanceImportTask.cpp:230
 msgctxt "InstanceImportTask|"
 msgid "Extracting modpack"
-msgstr "Modcsomag kicsomagolása"
+msgstr "Modpack kicsomagolása"
 
 #: launcher/InstanceImportTask.cpp:319
 msgctxt "InstanceImportTask|"
@@ -3118,7 +3118,7 @@ msgstr "Java &telepítés"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:70
 msgctxt "InstanceSettingsPage|"
 msgid "Auto-detect..."
-msgstr "Automatikus felismerés..."
+msgstr "Auto felismerés..."
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:77
 msgctxt "InstanceSettingsPage|"
@@ -3715,7 +3715,7 @@ msgstr "Java útvonal:"
 #: launcher/ui/pages/global/JavaPage.ui:195
 msgctxt "JavaPage|"
 msgid "JVM arguments:"
-msgstr "JVM paraméterek:"
+msgstr "JVM argumentumok:"
 
 #: launcher/ui/pages/global/JavaPage.ui:202
 msgctxt "JavaPage|"
@@ -3730,7 +3730,7 @@ msgstr ""
 #: launcher/ui/pages/global/JavaPage.ui:231
 msgctxt "JavaPage|"
 msgid "Auto-detect..."
-msgstr "Automatikus felismerés..."
+msgstr "Auto felismerés..."
 
 #: launcher/ui/pages/global/JavaPage.ui:244
 msgctxt "JavaPage|"
@@ -3785,12 +3785,12 @@ msgstr ""
 #: launcher/ui/pages/global/JavaPage.cpp:145
 msgctxt "JavaPage|"
 msgid "Select a Java version"
-msgstr "Java verzió kiválasztása"
+msgstr "Java verzió választása"
 
 #: launcher/ui/pages/global/JavaPage.cpp:159
 msgctxt "JavaPage|"
 msgid "Find Java executable"
-msgstr "Java keresése"
+msgstr "Java futtatható keresése"
 
 #: launcher/ui/pages/global/JavaPage.cpp:225
 msgctxt "JavaPage|"
@@ -3821,15 +3821,15 @@ msgid "You didn't select a Java version or selected something that doesn't work.
 "%1 will not be able to start Minecraft.\n"
 "Do you wish to proceed without any Java?\n\n"
 "You can change the Java version in the settings later.\n"
-msgstr "Nem választottál Java-verziót, vagy olyat választottál, ami nem működik.\n"
-"A(z) %1 nem fogja tudni elindítani a Minecraftot.\n"
-"Szeretnél Java nélkül folytatni?\n\n"
-"Később a beállításokban megváltoztathatod a Java-verziót.\n"
+msgstr "Nem választottál Java verziót, vagy olyat választottál, ami nem működik\n"
+"%1 nem tudja elindítani a Minecraft-ot.\n"
+"Szeretnéd folytatni Java nélkül?\n\n"
+"A továbbiakban meg tudod változtatni a Java verziót a beállításokban.\n"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:278
 msgctxt "JavaSettingsWidget|"
 msgid "Find Java executable"
-msgstr "Java keresése"
+msgstr "Java futtatható keresése"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:426
 msgctxt "JavaSettingsWidget|"
@@ -3892,7 +3892,7 @@ msgstr "Nyelv"
 #, qt-format
 msgctxt "LanguageSelectionWidget|"
 msgid "Don't see your language or the quality is poor?<br/><a href=\"%1\">Help us with translations!</a>"
-msgstr "Nem találod a nyelved, vagy gyenge a minőség?<br/><a href=\"%1\">Segíts a fordításokban!</a>"
+msgstr "Nem látod a nyelved vagy gyenge minőségű?<br/><a href=\"%1\">Segíts nekünk fordítani!</a>"
 
 #: launcher/ui/setupwizard/LanguageWizardPage.cpp:62
 msgctxt "LanguageWizardPage|"
@@ -3903,7 +3903,7 @@ msgstr "Nyelv"
 #, qt-format
 msgctxt "LanguageWizardPage|"
 msgid "Select the language to use in %1"
-msgstr "Válaszd ki a %1-ben használandó nyelvet"
+msgstr "Válaszd ki a nyelvet a használathoz a következőben: %1"
 
 #: launcher/LaunchController.cpp:54
 msgctxt "LaunchController|"
@@ -4008,7 +4008,7 @@ msgstr "Indítás megszakítva - a fiók nem rendelkezik Minecraft licensszel."
 #: launcher/LaunchController.cpp:349
 msgctxt "LaunchController|"
 msgid "Play Offline"
-msgstr "Játék offline"
+msgstr "Játszás offline"
 
 #: launcher/LaunchController.cpp:363
 msgctxt "LaunchController|"
@@ -4033,7 +4033,7 @@ msgstr "Fiók elveszett"
 #: launcher/LaunchController.cpp:386
 msgctxt "LaunchController|"
 msgid "Failed to launch."
-msgstr "Az indítás sikertelen volt."
+msgstr "Indítás sikertelen."
 
 #: launcher/LaunchController.cpp:395 launcher/LaunchController.cpp:541
 msgctxt "LaunchController|"
@@ -4061,7 +4061,7 @@ msgstr "Nem sikerült elindítani a profilert: %1"
 msgctxt "LaunchController|"
 msgid "The game launch is delayed until you press the button. This is the right time to setup the profiler, as the profiler server is running now.\n\n"
 "%1"
-msgstr "A játék indítása késleltetve van, amíg meg nem nyomod a gombot. Ez a megfelelő idő a profiler beállítására, mivel a profiler szerver most fut.\n\n"
+msgstr "A játék elindítása késtetve, amíg meg nem nyomja a gombot. Ez a helyes idő a profiler beállításához, mivel a profiler szerver most fut.\n\n"
 "%1"
 
 #: launcher/LaunchController.cpp:557
@@ -4113,12 +4113,12 @@ msgstr ""
 #: launcher/LaunchController.cpp:643
 msgctxt "LaunchController|"
 msgid "Kill Minecraft?"
-msgstr "Minecraft kilövése?"
+msgstr "Minecarft kilövése?"
 
 #: launcher/LaunchController.cpp:644
 msgctxt "LaunchController|"
 msgid "This can cause the instance to get corrupted and should only be used if Minecraft is frozen for some reason"
-msgstr "Ez a példány sérülését okozhatja, ezért csak akkor használd, ha valamiért a Minecraft lefagyott"
+msgstr "Ez okozhatja a példány sérülését, és csak akkor használható fel, ha a Minecraft valamilyen okból megfagyott"
 
 #: launcher/launch/LaunchTask.cpp:201
 #, qt-format
@@ -4140,17 +4140,17 @@ msgstr "Rendezés verzió szerint"
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:102
 msgctxt "LegacyFTB::ListModel|"
 msgid "Public Modpack"
-msgstr "Nyilvános modcsomag"
+msgstr "Nyilvános Modpack"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:104
 msgctxt "LegacyFTB::ListModel|"
 msgid "Third Party Modpack"
-msgstr "Harmadik fél modcsomagja"
+msgstr "Harmadik Fél Modpack"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:106
 msgctxt "LegacyFTB::ListModel|"
 msgid "Private Modpack"
-msgstr "Privát modcsomag"
+msgstr "Privát modpack"
 
 #: launcher/modplatform/legacy_ftb/PackFetchTask.cpp:107
 msgctxt "LegacyFTB::PackFetchTask|"
@@ -4183,12 +4183,12 @@ msgstr "%1 zip letöltése (%2%)"
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:113
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Extracting modpack"
-msgstr "Modcsomag kibontása"
+msgstr "Modpack kicsomagolása"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:142
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Modcsomag telepítése"
+msgstr "Modpack telepítése"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:148
 msgctxt "LegacyFTB::PackInstallTask|"
@@ -4238,7 +4238,7 @@ msgstr "Kiválasztott verzió:"
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:230
 msgctxt "LegacyFTB::Page|"
 msgid "FTB private packs"
-msgstr "FTB privát csomagok"
+msgstr "FTB privát pack-ek"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:231
 #, qt-format
@@ -4292,7 +4292,7 @@ msgstr ""
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:39
 msgctxt "LegacyUpgradePage|"
 msgid "Upgrade the instance"
-msgstr "Példány frissítése"
+msgstr "Frissítse a példányt"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:45
 msgctxt "LegacyUpgradePage|"
@@ -4359,10 +4359,10 @@ msgid "Some artifacts marked as 'local' are missing their files:\n"
 "%1\n\n"
 "You need to either add the files, or removed the packages that require them.\n"
 "You'll have to correct this problem manually."
-msgstr "Néhány, 'helyi'-ként megjelölt fájl hiányzik:\n"
+msgstr "Néhány „helyi” jelzésű műtárgy hiányzik a fájljairól:\n"
 "%1\n\n"
-"Vagy hozzá kell adnod a fájlokat, vagy el kell távolítanod a hozzájuk tartozó csomagokat.\n"
-"Ezt a problémát manuálisan kell kijavítanod."
+"Meg kell adnia a fájlokat, vagy el kell távolítania azokat a csomagokat amiknek szüksége van rájuk.\n"
+"Ezt a problémát kézzel kell javítania."
 
 #: launcher/minecraft/update/LibrariesTask.cpp:111
 #, qt-format
@@ -4415,7 +4415,7 @@ msgstr "&Másolás"
 #: launcher/ui/pages/instance/LogPage.ui:103
 msgctxt "LogPage|"
 msgid "Upload the log to paste.ee - it will stay online for a month"
-msgstr "Töltsd fel a naplót a paste.ee oldalra – egy hónapig lesz elérhető online"
+msgstr "Töltsd fel a naplót a paste.ee-ra - online marad egy hónapig"
 
 #: launcher/ui/pages/instance/LogPage.ui:106
 msgctxt "LogPage|"
@@ -4425,12 +4425,12 @@ msgstr "Feltöltés"
 #: launcher/ui/pages/instance/LogPage.ui:113
 msgctxt "LogPage|"
 msgid "Clear the log"
-msgstr "Napló törlése"
+msgstr "Törölje a naplót"
 
 #: launcher/ui/pages/instance/LogPage.ui:116
 msgctxt "LogPage|"
 msgid "Clear"
-msgstr "Törlés"
+msgstr "Tisztítás"
 
 #: launcher/ui/pages/instance/LogPage.ui:125
 msgctxt "LogPage|"
@@ -4626,7 +4626,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:483
 msgctxt "MainWindow|"
 msgid "Open the central mods folder in a file browser."
-msgstr "Központi modok mappájának megnyitása fájlkezelőben."
+msgstr "Közép modok mappájának megnyitása fájlkezelőben."
 
 #: launcher/ui/MainWindow.cpp:494
 msgctxt "MainWindow|"
@@ -4716,7 +4716,7 @@ msgstr "Beállítások"
 #: launcher/ui/MainWindow.cpp:596
 msgctxt "MainWindow|"
 msgid "Change settings."
-msgstr "Beállítások módosítása."
+msgstr "Beállítások változtatása."
 
 #: launcher/ui/MainWindow.cpp:608
 msgctxt "MainWindow|"
@@ -4738,7 +4738,7 @@ msgstr ""
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open %1 discord voice chat."
-msgstr "Nyisd meg a %1 Discord hangcsatornát."
+msgstr "Nyissa meg a(z) %1 discord élőhangos csevegést."
 
 #: launcher/ui/MainWindow.cpp:630
 msgctxt "MainWindow|"
@@ -4809,13 +4809,13 @@ msgstr "Ellenőrizze a(z) %1 új frissítéseit."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr ""
+msgstr "Támogasd %1-t"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr ""
+msgstr "%1 Patreon oldal megnyitása."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4850,13 +4850,13 @@ msgstr "Hírek eszköztár"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr ""
+msgstr "Több hír..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr ""
+msgstr "Nyissa meg a fejlesztői blogot, hogy további híreket olvasjon a következőről: %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -4966,7 +4966,7 @@ msgstr "Tekintse meg ennek a példánynak a modjait."
 #: launcher/ui/MainWindow.cpp:1023
 msgctxt "MainWindow|"
 msgid "View Worlds"
-msgstr "Világok megtekintése"
+msgstr "Világok megnézése"
 
 #: launcher/ui/MainWindow.cpp:1024
 msgctxt "MainWindow|"
@@ -5097,7 +5097,7 @@ msgstr "Kiválasztott példány másolása."
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr ""
+msgstr "Parancsikon létrehozása"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
@@ -6132,7 +6132,7 @@ msgstr ""
 #: launcher/minecraft/MinecraftInstance.cpp:935
 msgctxt "MinecraftInstance|"
 msgid "broken"
-msgstr "hibás"
+msgstr "törött"
 
 #: launcher/minecraft/MinecraftInstance.cpp:942
 #, qt-format
@@ -6144,13 +6144,13 @@ msgstr ""
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid ", last played for %1"
-msgstr ", utoljára játszva: %1"
+msgstr ", legutóbb játszott ennyit: %1"
 
 #: launcher/minecraft/MinecraftInstance.cpp:952
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid ", total played for %1"
-msgstr ", összesen játszva: %1"
+msgstr ", összesen játszva ennyi ideig: %1"
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 msgctxt "MinecraftInstance|"
@@ -6160,7 +6160,7 @@ msgstr ", összeomlott."
 #: launcher/ui/pages/global/MinecraftPage.ui:48
 msgctxt "MinecraftPage|"
 msgid "Window Size"
-msgstr "Ablak mérete"
+msgstr "Ablak méret"
 
 #: launcher/ui/pages/global/MinecraftPage.ui:54
 msgctxt "MinecraftPage|"
@@ -6265,7 +6265,7 @@ msgstr "Verzió"
 #: launcher/minecraft/mod/ModFolderModel.cpp:549
 msgctxt "ModFolderModel|"
 msgid "Last changed"
-msgstr "Utoljára módosítva"
+msgstr "Utoljára változtatva"
 
 #: launcher/minecraft/mod/ModFolderModel.cpp:557
 msgctxt "ModFolderModel|"
@@ -6295,7 +6295,7 @@ msgstr "Szűrés:"
 #: launcher/ui/pages/instance/ModFolderPage.ui:75
 msgctxt "ModFolderPage|"
 msgid "Actions"
-msgstr "Műveletek"
+msgstr "Kiválasztás"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:101
 msgctxt "ModFolderPage|"
@@ -6719,17 +6719,17 @@ msgstr ""
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "Kiválasztott verzió:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr ""
+msgstr "Keresés"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "Keresés és szűrés..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
@@ -7579,7 +7579,7 @@ msgstr "Ismeretlen verzióformátumú!"
 #, qt-format
 msgctxt "QObject|"
 msgid "Assets for %1"
-msgstr "Források a követlezőhöz: %1"
+msgstr "Assetek a követlezőhöz: %1"
 
 #: launcher/minecraft/Component.cpp:320
 msgctxt "QObject|"
@@ -8443,27 +8443,27 @@ msgstr "A Java teszt sikerült!<br />Platform jelentve: %1<br />Jelentett Java v
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:34
 msgctxt "ResourcePackFolderModel|"
 msgid "Is the resource pack enabled?"
-msgstr "A forráscsomag engedélyezve van?"
+msgstr "Az erőforrás csomag engedélyezve van?"
 
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:36
 msgctxt "ResourcePackFolderModel|"
 msgid "The name of the resource pack."
-msgstr "A forráscsomag neve."
+msgstr "Az erőforrás csomag neve."
 
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:38
 msgctxt "ResourcePackFolderModel|"
 msgid "The version of the resource pack."
-msgstr "A forráscsomag verziója."
+msgstr "Az erőforrás csomag verziója."
 
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:40
 msgctxt "ResourcePackFolderModel|"
 msgid "The date and time this resource pack was last changed (or added)."
-msgstr "A dátum és az idő, amikor ez a forráscsomag utoljára módosult (vagy amikor hozzá lett adva)."
+msgstr "A dátum és az idő, amikor ez az erőforrás csomag utoljára módosult (vagy amikor hozzá lett adva)."
 
 #: launcher/ui/pages/instance/ResourcePackPage.h:31
 msgctxt "ResourcePackPage|"
 msgid "Resource packs"
-msgstr "Forráscsomagok"
+msgstr "Erőforrás csomagok"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.ui:41
 msgctxt "ScreenshotsPage|"
@@ -8680,7 +8680,7 @@ msgstr ""
 #: launcher/ui/pages/instance/ShaderPackPage.h:31
 msgctxt "ShaderPackPage|"
 msgid "Shader packs"
-msgstr "Shaderek"
+msgstr "Árnyékoló csomagok"
 
 #: launcher/minecraft/services/SkinDelete.cpp:41
 msgctxt "SkinDelete|"
@@ -8947,17 +8947,18 @@ msgstr ""
 msgctxt "Technic::SingleZipPackInstallTask|"
 msgid "Downloading modpack:\n"
 "%1"
-msgstr "%1 modcsomag letöltése"
+msgstr "Modpack letöltődik:\n"
+"%1"
 
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:54
 msgctxt "Technic::SingleZipPackInstallTask|"
 msgid "Modpack download"
-msgstr "Modcsomag letöltés"
+msgstr "Modpack letöltés"
 
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:73
 msgctxt "Technic::SingleZipPackInstallTask|"
 msgid "Extracting modpack"
-msgstr "Modcsomag kibontása"
+msgstr "Modpack kicsomagolása"
 
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:85
 #, qt-format
@@ -9004,7 +9005,7 @@ msgstr ""
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:77
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Resolving modpack files"
-msgstr "Modcsomag fájljainak feloldása"
+msgstr "Modpack fájlok megoldása"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:90
 msgctxt "Technic::SolderPackInstallTask|"
@@ -9014,17 +9015,17 @@ msgstr ""
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:124
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Downloading modpack"
-msgstr "Modcsomag letöltése"
+msgstr "Modpack letöltődik"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:166
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Extracting modpack"
-msgstr "Modcsomag kibontása"
+msgstr "Modpack kicsomagolása"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:207
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Failed to extract modpack"
-msgstr "Nem sikerült kibontani a modcsomagot"
+msgstr "Nem sikerült kicsomagolni a modpackot"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:232
 #, qt-format
@@ -9051,7 +9052,7 @@ msgstr "Nem sikerült \"version.json\" fájl megnyitása!"
 #: launcher/modplatform/technic/TechnicPackProcessor.cpp:82
 msgctxt "Technic::TechnicPackProcessor|"
 msgid "Could not find \"version.json\" inside \"bin/modpack.jar\", but minecraft version is unknown"
-msgstr "Nem sikerült \"version.json\" találása \"bin/modpack.jar\" fájlban, de Minecraft ismeretlen"
+msgstr "Nem sikerült \"version.json\" találása \"bin/modpack.jar\" fájlban, de minecraft verziója ismeretlen"
 
 #: launcher/modplatform/technic/TechnicPackProcessor.cpp:99
 msgctxt "Technic::TechnicPackProcessor|"
@@ -9103,17 +9104,17 @@ msgstr ""
 #: launcher/minecraft/mod/TexturePackFolderModel.cpp:34
 msgctxt "TexturePackFolderModel|"
 msgid "Is the texture pack enabled?"
-msgstr "A textúracsomag engedélyezve van?"
+msgstr "Az textúra csomag engedélyezve van?"
 
 #: launcher/minecraft/mod/TexturePackFolderModel.cpp:36
 msgctxt "TexturePackFolderModel|"
 msgid "The name of the texture pack."
-msgstr "A textúracsomag csomag neve."
+msgstr "Az textúra csomag neve."
 
 #: launcher/minecraft/mod/TexturePackFolderModel.cpp:38
 msgctxt "TexturePackFolderModel|"
 msgid "The version of the texture pack."
-msgstr "A textúracsomag verziója."
+msgstr "Az textúra csomag verziója."
 
 #: launcher/minecraft/mod/TexturePackFolderModel.cpp:40
 msgctxt "TexturePackFolderModel|"
@@ -9667,12 +9668,12 @@ msgstr "Újratöltés"
 #: launcher/ui/pages/instance/VersionPage.ui:219
 msgctxt "VersionPage|"
 msgid "Reload all packages."
-msgstr "Összes csomag újratöltése."
+msgstr "Az összes csomag újratöltése."
 
 #: launcher/ui/pages/instance/VersionPage.ui:224
 msgctxt "VersionPage|"
 msgid "Download All"
-msgstr "Összes letöltése"
+msgstr "Mind letöltése"
 
 #: launcher/ui/pages/instance/VersionPage.ui:227
 msgctxt "VersionPage|"
@@ -9682,7 +9683,7 @@ msgstr "Töltse le a példány indításához szükséges fájlokat most."
 #: launcher/ui/pages/instance/VersionPage.ui:232
 msgctxt "VersionPage|"
 msgid "Open .minecraft"
-msgstr ".minecraft mappa megnyitása"
+msgstr ".minecraft megnyitása"
 
 #: launcher/ui/pages/instance/VersionPage.ui:235
 msgctxt "VersionPage|"
@@ -10171,7 +10172,7 @@ msgstr "Ez a Microsoft-fiók nem rendelkezik XBox Live profillal. Először vás
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:163
 msgctxt "XboxAuthorizationStep|"
 msgid "XBox Live is not available in your country. You've been blocked."
-msgstr "Az Xbox Live nem érhető el az Ön országában. Letiltottak téged."
+msgstr "Az XBox Live nem érhető el az Ön országában. Letiltották."
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:170
 #, qt-format
@@ -10212,12 +10213,12 @@ msgstr "Bejelentkezés Xbox felhasználóként."
 #: launcher/minecraft/auth/steps/XboxUserStep.cpp:77
 msgctxt "XboxUserStep|"
 msgid "XBox user authentication failed."
-msgstr "Az Xbox felhasználó hitelesítése nem sikerült."
+msgstr "Az XBox felhasználó hitelesítése nem sikerült."
 
 #: launcher/minecraft/auth/steps/XboxUserStep.cpp:86
 msgctxt "XboxUserStep|"
 msgid "XBox user authentication response could not be understood."
-msgstr "Az Xbox felhasználói hitelesítési válasza nem értelmezhető."
+msgstr "Az XBox felhasználói hitelesítési válasza nem értelmezhető."
 
 #: launcher/minecraft/auth/steps/XboxUserStep.cpp:90
 msgctxt "XboxUserStep|"
