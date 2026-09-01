@@ -2,42 +2,32 @@
   <img src="https://github.com/Project-Tick/MeshMC/raw/develop/branding/org.projecttick.MeshMC_256.png" alt="MultiMC logo"/>
 </p>
 
-# MeshMC
-
-[![LICENSE](https://img.shields.io/badge/license-Apache--2.0-blue?logo=Apache)](http://www.apache.org/licenses/LICENSE-2.0) [![Crowdin](https://badges.crowdin.net/projtlauncher/localized.svg)](https://crowdin.com/project/projtlauncher)
+MeshMC
+======
 
 MeshMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity.
 
-## Package Status
+## Development
 
-<a href="https://repology.org/project/meshmc/versions">
-    <img src="https://repology.org/badge/vertical-allrepos/meshmc.svg" alt="Packaging status" align="right">
-</a>
+If you want to contribute, talk to us on [Discord](https://discord.gg/PMxPTqwEwj) first.
 
-Currently, MeshMC Packaged on AUR and Flathub.
+While blindly submitting PRs is definitely possible, they're not necessarily going to get accepted.
 
-## Download on Flathub
+We aren't looking for flashy features, but expanding upon the existing feature set without disruption or endangering the future viability of the project is OK.
 
-Firstly, please add flathub repo with this command:
+### Building
 
-```bash
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-```
+If you want to build the launcher yourself, check [BUILD.md](BUILD.md) for build instructions.
 
-and install MeshMC with Flatpak
+### Code formatting
+Just follow the existing formatting.
 
-```bash
-flatpak install flathub org.projecttick.MeshMC
-```
-
-Lastly, run with flatpak
-
-```bash
-flatpak run org.projecttick.MeshMC
-```
-
-## Translations
-Translations can be done [on crowdin](https://crowdin.com/project/projtlauncher). Please avoid making direct pull requests to the translations repository.
+In general, in order of importance:
+* Make sure your IDE is not messing up line endings or whitespace and avoid using linters.
+* Prefer readability over dogma.
+* Keep to the existing formatting.
+* Indent with 4 space unless it's in a submodule.
+* Keep lists (of arguments, parameters, initializers...) as lists, not paragraphs. It should either read from top to bottom, or left to right. Not both.
 
 ## License
 

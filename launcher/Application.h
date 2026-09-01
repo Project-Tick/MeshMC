@@ -55,7 +55,6 @@ class TranslationsModel;
 class ITheme;
 class ThemeManager;
 class MCEditTool;
-class GAnalytics;
 class PluginManager;
 class BasePage;
 
@@ -97,11 +96,6 @@ class Application : public QApplication
   public:
 	Application(int& argc, char** argv);
 	~Application() override;
-
-	GAnalytics* analytics() const
-	{
-		return m_analytics;
-	}
 
 	PluginManager* pluginManager() const
 	{
@@ -235,7 +229,6 @@ class Application : public QApplication
 	void messageReceived(const QByteArray& message);
 	void controllerSucceeded();
 	void controllerFailed(const QString& error);
-	void analyticsSettingChanged(const Setting& setting, QVariant value);
 	void setupWizardFinished(int status);
 
   private:
@@ -258,7 +251,6 @@ class Application : public QApplication
 					const QString& adjustedBy);
 	void initSettings();
 	void initSubsystems();
-	void initAnalytics();
 
   private:
 	void addRunningInstance();
@@ -316,7 +308,6 @@ class Application : public QApplication
 	// launcher and signalling
 	LocalPeer* m_peerInstance = nullptr;
 
-	GAnalytics* m_analytics = nullptr;
 	SetupWizard* m_setupWizard = nullptr;
 	std::unique_ptr<PluginManager> m_pluginManager;
 

@@ -757,8 +757,6 @@ SET(MESHMC_SOURCES
     # GUI - setup wizard
     ui/setupwizard/SetupWizard.h
     ui/setupwizard/SetupWizard.cpp
-    ui/setupwizard/AnalyticsWizardPage.cpp
-    ui/setupwizard/AnalyticsWizardPage.h
     ui/setupwizard/BaseWizardPage.h
     ui/setupwizard/JavaWizardPage.cpp
     ui/setupwizard/JavaWizardPage.h
@@ -1167,7 +1165,6 @@ target_link_libraries(MeshMC_logic
     cmark::cmark
     rainbow
     LocalPeer::LocalPeer
-    ganalytics::ganalytics
 )
 
 # Plugin system needs dlopen/dlsym on Unix
