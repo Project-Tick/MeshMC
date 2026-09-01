@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
-"PO-Revision-Date: 2026-09-01 20:25\n"
+"PO-Revision-Date: 2026-09-01 21:51\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -176,7 +176,7 @@ msgstr "Llicència"
 #: launcher/ui/dialogs/AboutDialog.ui:306
 msgctxt "AboutDialog|"
 msgid "Forking/Redistribution"
-msgstr ""
+msgstr "Bifurcació/Redistribució"
 
 #: launcher/ui/dialogs/AboutDialog.ui:328
 msgctxt "AboutDialog|"
@@ -4806,13 +4806,13 @@ msgstr "Comprova si hi ha actualitzacions per a %1."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Support %1"
-msgstr ""
+msgstr "Dona suport a %1"
 
 #: launcher/ui/MainWindow.cpp:705
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
-msgstr ""
+msgstr "Obre la pàgina de Patreon de %1."
 
 #: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
@@ -4847,13 +4847,13 @@ msgstr "Barra de Notícies"
 #: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
-msgstr ""
+msgstr "Més notícies..."
 
 #: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
-msgstr ""
+msgstr "Obri el blog de desenvolupament per a saber més sobre %1."
 
 #: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
@@ -5094,7 +5094,7 @@ msgstr "Copiar la instància seleccionada."
 #: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
-msgstr ""
+msgstr "Crear drecera"
 
 #: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
@@ -6716,17 +6716,17 @@ msgstr ""
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
 msgid "Version selected:"
-msgstr ""
+msgstr "Versió seleccionada:"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr ""
+msgstr "Cerca"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
 msgid "Search and filter ..."
-msgstr ""
+msgstr "Cerca i filtra..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
