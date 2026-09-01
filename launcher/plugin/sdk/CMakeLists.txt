@@ -156,6 +156,14 @@ set(SDK_LIBRARY_HEADERS
 # ---------------------------------------------------------------------------
 # Install rules
 # ---------------------------------------------------------------------------
+# Distributions disagree on the library directory ("lib64" on Fedora,
+# "lib/<arch>-linux-gnu" under Debian multiarch), so the CMake package files
+# below go to ${CMAKE_INSTALL_LIBDIR} rather than a hardcoded "lib". Included
+# here as well as in the top-level CMakeLists so this directory still works if
+# it is ever configured on its own. The header directory needs no such care:
+# "include" is "include" everywhere.
+include(GNUInstallDirs)
+
 set(SDK_INSTALL_DIR "include/meshmc-sdk")
 
 # SDK own headers → include/meshmc-sdk/plugin/sdk/
@@ -320,7 +328,7 @@ include(CMakePackageConfigHelpers)
 configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/MeshMC_SDKConfig.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/MeshMC_SDKConfig.cmake"
-    INSTALL_DESTINATION "lib/cmake/MeshMC_SDK"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MeshMC_SDK"
 )
 
 write_basic_package_version_file(
@@ -332,7 +340,7 @@ write_basic_package_version_file(
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/MeshMC_SDKConfig.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/MeshMC_SDKConfigVersion.cmake"
-    DESTINATION "lib/cmake/MeshMC_SDK"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MeshMC_SDK"
 )
 
 install(TARGETS MeshMC_sdk MeshMC_sdk_c
@@ -342,5 +350,5 @@ install(TARGETS MeshMC_sdk MeshMC_sdk_c
 install(EXPORT MeshMC_SDKTargets
     FILE MeshMC_SDKTargets.cmake
     NAMESPACE MeshMC::
-    DESTINATION "lib/cmake/MeshMC_SDK"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MeshMC_SDK"
 )

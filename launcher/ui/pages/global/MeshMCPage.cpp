@@ -73,10 +73,6 @@ MeshMCPage::MeshMCPage(QWidget* parent)
 	} else {
 		ui->updateSettingsBox->setHidden(true);
 	}
-	// Analytics
-	if (BuildConfig.ANALYTICS_ID.isEmpty()) {
-		ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->analyticsTab));
-	}
 	connect(ui->fontSizeBox, &QSpinBox::valueChanged, this,
 			&MeshMCPage::refreshFontPreview);
 	connect(ui->consoleFont, &QFontComboBox::currentFontChanged, this,
@@ -351,11 +347,6 @@ void MeshMCPage::applySettings()
 			s->set("InstSortMode", "Name");
 			break;
 	}
-
-	// Analytics
-	if (!BuildConfig.ANALYTICS_ID.isEmpty()) {
-		s->set("Analytics", ui->analyticsCheck->isChecked());
-	}
 }
 void MeshMCPage::loadSettings()
 {
@@ -410,11 +401,6 @@ void MeshMCPage::loadSettings()
 		ui->sortLastLaunchedBtn->setChecked(true);
 	} else {
 		ui->sortByNameBtn->setChecked(true);
-	}
-
-	// Analytics
-	if (!BuildConfig.ANALYTICS_ID.isEmpty()) {
-		ui->analyticsCheck->setChecked(s->get("Analytics").toBool());
 	}
 }
 

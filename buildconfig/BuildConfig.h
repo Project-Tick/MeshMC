@@ -127,12 +127,6 @@ class Config
 	/// Target system processor (e.g. "x86_64")
 	QString COMPILER_TARGET_SYSTEM_PROCESSOR;
 
-	/// Google analytics ID
-	QString ANALYTICS_ID;
-
-	/// Google Analytics 4 API secret
-	QString ANALYTICS_SECRET;
-
 	/// URL for notifications
 	QString NOTIFICATION_URL;
 
