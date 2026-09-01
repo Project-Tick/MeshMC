@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
-"PO-Revision-Date: 2026-09-01 13:49\n"
+"PO-Revision-Date: 2026-09-01 20:25\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -4641,7 +4641,7 @@ msgctxt "MainWindow|"
 msgid "Undo Last Instance Deletion"
 msgstr "Vrátit zpět odstranění poslední instance"
 
-#: launcher/ui/MainWindow.cpp:438 launcher/ui/MainWindow.cpp:1885
+#: launcher/ui/MainWindow.cpp:438 launcher/ui/MainWindow.cpp:1883
 msgctxt "MainWindow|"
 msgid "Bring the instance you last sent to the trash back, along with its shortcuts."
 msgstr "Přineste instanci, kterou jste naposledy odeslali zpět do koše, spolu s jejími zkratkami."
@@ -4746,7 +4746,7 @@ msgctxt "MainWindow|"
 msgid "Open the logs folder in a file browser."
 msgstr "Otevřete složku protokolů v prohlížeči souborů."
 
-#: launcher/ui/MainWindow.cpp:577 launcher/ui/MainWindow.cpp:1401
+#: launcher/ui/MainWindow.cpp:577 launcher/ui/MainWindow.cpp:1399
 msgctxt "MainWindow|"
 msgid "Folders"
 msgstr "Složky"
@@ -4831,7 +4831,7 @@ msgctxt "MainWindow|"
 msgid "View information about %1."
 msgstr "Zobrazit informace o %1."
 
-#: launcher/ui/MainWindow.cpp:669 launcher/ui/MainWindow.cpp:1402
+#: launcher/ui/MainWindow.cpp:669 launcher/ui/MainWindow.cpp:1400
 msgctxt "MainWindow|"
 msgid "Help"
 msgstr "Nápověda"
@@ -4865,450 +4865,450 @@ msgctxt "MainWindow|"
 msgid "Open the %1 Patreon page."
 msgstr "Otevřete stránku %1 Patreon."
 
-#: launcher/ui/MainWindow.cpp:713
+#: launcher/ui/MainWindow.cpp:714
 msgctxt "MainWindow|"
 msgid "Meow"
 msgstr "Mňau"
 
-#: launcher/ui/MainWindow.cpp:715
+#: launcher/ui/MainWindow.cpp:716
 msgctxt "MainWindow|"
 msgid "It's a fluffy kitty :3"
 msgstr "Jedna načechraná kočička :3"
 
-#: launcher/ui/MainWindow.cpp:725
+#: launcher/ui/MainWindow.cpp:726
 msgctxt "MainWindow|"
 msgid "Manage Accounts"
 msgstr "Správa účtů"
 
-#: launcher/ui/MainWindow.cpp:737
+#: launcher/ui/MainWindow.cpp:738
 msgctxt "MainWindow|"
 msgid "Lock Toolbars"
 msgstr "Zamknout lišty nástrojů"
 
-#: launcher/ui/MainWindow.cpp:738
+#: launcher/ui/MainWindow.cpp:739
 msgctxt "MainWindow|"
 msgid "Prevent the toolbars from being dragged around."
 msgstr "Zabránit přetažení nástrojových lišt."
 
-#: launcher/ui/MainWindow.cpp:765
+#: launcher/ui/MainWindow.cpp:766
 msgctxt "MainWindow|"
 msgid "News Toolbar"
 msgstr "Panel s novinkami"
 
-#: launcher/ui/MainWindow.cpp:771
+#: launcher/ui/MainWindow.cpp:772
 msgctxt "MainWindow|"
 msgid "More news..."
 msgstr "Další novinky..."
 
-#: launcher/ui/MainWindow.cpp:772
+#: launcher/ui/MainWindow.cpp:773
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
 msgstr "Otevřete vývojový blog a přečtěte si více zpráv o %1."
 
-#: launcher/ui/MainWindow.cpp:861
+#: launcher/ui/MainWindow.cpp:862
 msgctxt "MainWindow|"
 msgid "Menu Bar Instead of Tool Bar"
 msgstr "Lišta nabídky místo panelu nástrojů"
 
-#: launcher/ui/MainWindow.cpp:862
+#: launcher/ui/MainWindow.cpp:863
 msgctxt "MainWindow|"
 msgid "Keep this menu bar and hide the main toolbar. Without it, tap Alt to show the menu bar for a moment."
 msgstr "Zachovejte tento panel nabídek a skryjte hlavní panel nástrojů. Bez něj klepněte na tlačítko Alt pro zobrazení panelu nabídek."
 
-#: launcher/ui/MainWindow.cpp:908
+#: launcher/ui/MainWindow.cpp:906
 msgctxt "MainWindow|"
 msgid "Instance Toolbar"
 msgstr "Panel Instancí"
 
-#: launcher/ui/MainWindow.cpp:918
+#: launcher/ui/MainWindow.cpp:916
 msgctxt "MainWindow|"
 msgid "Change Icon"
 msgstr "Změnit ikonu"
 
-#: launcher/ui/MainWindow.cpp:919
+#: launcher/ui/MainWindow.cpp:917
 msgctxt "MainWindow|"
 msgid "Change the selected instance's icon."
 msgstr ".Změnit ikonu vybrané instance."
 
-#: launcher/ui/MainWindow.cpp:939
+#: launcher/ui/MainWindow.cpp:937
 msgctxt "MainWindow|"
 msgid "Rename"
 msgstr "Přejmenovat"
 
-#: launcher/ui/MainWindow.cpp:941
+#: launcher/ui/MainWindow.cpp:939
 msgctxt "MainWindow|"
 msgid "Rename the selected instance."
 msgstr "Přejmenovat vybranou instanci."
 
-#: launcher/ui/MainWindow.cpp:957 launcher/ui/MainWindow.cpp:1958
+#: launcher/ui/MainWindow.cpp:955 launcher/ui/MainWindow.cpp:1956
 msgctxt "MainWindow|"
 msgid "Launch"
 msgstr "Spustit"
 
-#: launcher/ui/MainWindow.cpp:959
+#: launcher/ui/MainWindow.cpp:957
 msgctxt "MainWindow|"
 msgid "Launch the selected instance."
 msgstr "Spustit vybranou instanci."
 
-#: launcher/ui/MainWindow.cpp:967
+#: launcher/ui/MainWindow.cpp:965
 msgctxt "MainWindow|"
 msgid "Kill"
 msgstr "Vynuceně usmrtit"
 
-#: launcher/ui/MainWindow.cpp:969
+#: launcher/ui/MainWindow.cpp:967
 msgctxt "MainWindow|"
 msgid "Kill the running instance."
 msgstr "Ukončit běžící instanci."
 
-#: launcher/ui/MainWindow.cpp:978 launcher/ui/MainWindow.cpp:1963
+#: launcher/ui/MainWindow.cpp:976 launcher/ui/MainWindow.cpp:1961
 msgctxt "MainWindow|"
 msgid "Launch Offline"
 msgstr "Hrát offline"
 
-#: launcher/ui/MainWindow.cpp:979
+#: launcher/ui/MainWindow.cpp:977
 msgctxt "MainWindow|"
 msgid "Launch the selected instance in offline mode."
 msgstr "Spustí vybranou instanci v offline modu."
 
-#: launcher/ui/MainWindow.cpp:988
+#: launcher/ui/MainWindow.cpp:986
 msgctxt "MainWindow|"
 msgid "Edit Instance"
 msgstr "Upravit instanci"
 
-#: launcher/ui/MainWindow.cpp:989
+#: launcher/ui/MainWindow.cpp:987
 msgctxt "MainWindow|"
 msgid "Change the instance settings, mods and versions."
 msgstr "Změnit nastavení, módy a verzi instance."
 
-#: launcher/ui/MainWindow.cpp:999
+#: launcher/ui/MainWindow.cpp:997
 msgctxt "MainWindow|"
 msgid "Instance Settings"
 msgstr "Nastavení instance"
 
-#: launcher/ui/MainWindow.cpp:1000
+#: launcher/ui/MainWindow.cpp:998
 msgctxt "MainWindow|"
 msgid "Open the settings for the selected instance."
 msgstr "Otevřít nastavení pro vybranou instanci."
 
-#: launcher/ui/MainWindow.cpp:1009
+#: launcher/ui/MainWindow.cpp:1007
 msgctxt "MainWindow|"
 msgid "Edit Notes"
 msgstr "Upravit poznámky"
 
-#: launcher/ui/MainWindow.cpp:1010
+#: launcher/ui/MainWindow.cpp:1008
 msgctxt "MainWindow|"
 msgid "Edit the notes for the selected instance."
 msgstr "Upravuje poznámky vybrané instance."
 
-#: launcher/ui/MainWindow.cpp:1017
+#: launcher/ui/MainWindow.cpp:1015
 msgctxt "MainWindow|"
 msgid "View Mods"
 msgstr "Zobrazit módy"
 
-#: launcher/ui/MainWindow.cpp:1019
+#: launcher/ui/MainWindow.cpp:1017
 msgctxt "MainWindow|"
 msgid "View the mods of this instance."
 msgstr "Zobrazit módy této instance."
 
-#: launcher/ui/MainWindow.cpp:1025
+#: launcher/ui/MainWindow.cpp:1023
 msgctxt "MainWindow|"
 msgid "View Worlds"
 msgstr "Zobrazit světy"
 
-#: launcher/ui/MainWindow.cpp:1026
+#: launcher/ui/MainWindow.cpp:1024
 msgctxt "MainWindow|"
 msgid "View the worlds of this instance."
 msgstr "Prohlížet světy této instance."
 
-#: launcher/ui/MainWindow.cpp:1034
+#: launcher/ui/MainWindow.cpp:1032
 msgctxt "MainWindow|"
 msgid "Manage Screenshots"
 msgstr "Správa screenshotů"
 
-#: launcher/ui/MainWindow.cpp:1035
+#: launcher/ui/MainWindow.cpp:1033
 msgctxt "MainWindow|"
 msgid "View and upload screenshots for this instance."
 msgstr "Zobrazit a nahrát screenshoty v této instanci."
 
-#: launcher/ui/MainWindow.cpp:1044
+#: launcher/ui/MainWindow.cpp:1042
 msgctxt "MainWindow|"
 msgid "Change Group"
 msgstr "Změnit skupinu"
 
-#: launcher/ui/MainWindow.cpp:1045
+#: launcher/ui/MainWindow.cpp:1043
 msgctxt "MainWindow|"
 msgid "Change the selected instance's group."
 msgstr "Změní skupinu vybrané instance."
 
-#: launcher/ui/MainWindow.cpp:1057
+#: launcher/ui/MainWindow.cpp:1055
 msgctxt "MainWindow|"
 msgid "View Backups"
 msgstr "Zobrazit zálohy"
 
-#: launcher/ui/MainWindow.cpp:1058
+#: launcher/ui/MainWindow.cpp:1056
 msgctxt "MainWindow|"
 msgid "View and manage backups for this instance."
 msgstr "Zobrazit a spravovat zálohy pro tuto instanci."
 
-#: launcher/ui/MainWindow.cpp:1069
+#: launcher/ui/MainWindow.cpp:1067
 msgctxt "MainWindow|"
 msgid "Minecraft Folder"
 msgstr "Složka Minecraftu"
 
-#: launcher/ui/MainWindow.cpp:1070
+#: launcher/ui/MainWindow.cpp:1068
 msgctxt "MainWindow|"
 msgid "Open the selected instance's minecraft folder in a file browser."
 msgstr "Otevře vybranou minecraft složku instance v souborovém prohlížeči."
 
-#: launcher/ui/MainWindow.cpp:1081
+#: launcher/ui/MainWindow.cpp:1079
 msgctxt "MainWindow|"
 msgid "Mods Folder"
 msgstr "Složka modifikací"
 
-#: launcher/ui/MainWindow.cpp:1082
+#: launcher/ui/MainWindow.cpp:1080
 msgctxt "MainWindow|"
 msgid "Open the selected instance's mods folder in a file browser."
 msgstr "Otevřete složku modů vybrané instance v prohlížeči souborů."
 
-#: launcher/ui/MainWindow.cpp:1093
+#: launcher/ui/MainWindow.cpp:1091
 msgctxt "MainWindow|"
 msgid "Config Folder"
 msgstr "Složka konfigurace"
 
-#: launcher/ui/MainWindow.cpp:1094
+#: launcher/ui/MainWindow.cpp:1092
 msgctxt "MainWindow|"
 msgid "Open the instance's config folder."
 msgstr "Otevřít složku konfigurace."
 
-#: launcher/ui/MainWindow.cpp:1104
+#: launcher/ui/MainWindow.cpp:1102
 msgctxt "MainWindow|"
 msgid "Instance Folder"
 msgstr "Složka instance"
 
-#: launcher/ui/MainWindow.cpp:1105
+#: launcher/ui/MainWindow.cpp:1103
 msgctxt "MainWindow|"
 msgid "Open the selected instance's root folder in a file browser."
 msgstr "Otevře vybranou kořenovou složku instance v souborovém prohlížeči."
 
-#: launcher/ui/MainWindow.cpp:1121
+#: launcher/ui/MainWindow.cpp:1119
 msgctxt "MainWindow|"
 msgid "E&xport..."
 msgstr "&Exportovat..."
 
-#: launcher/ui/MainWindow.cpp:1127
+#: launcher/ui/MainWindow.cpp:1125
 msgctxt "MainWindow|"
 msgid "Export Instance"
 msgstr "Exportovat instanci"
 
-#: launcher/ui/MainWindow.cpp:1128
+#: launcher/ui/MainWindow.cpp:1126
 msgctxt "MainWindow|"
 msgid "Export the selected instance to supported formats."
 msgstr "Exportovat vybranou instanci do podporovaných formátů."
 
-#: launcher/ui/MainWindow.cpp:1149
+#: launcher/ui/MainWindow.cpp:1147
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
 msgstr "%1 (zip)"
 
-#: launcher/ui/MainWindow.cpp:1158
+#: launcher/ui/MainWindow.cpp:1156
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
 msgstr "Modrý (mrpack)"
 
-#: launcher/ui/MainWindow.cpp:1167
+#: launcher/ui/MainWindow.cpp:1165
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
 msgstr "CurseForge (zip)"
 
-#: launcher/ui/MainWindow.cpp:1182
+#: launcher/ui/MainWindow.cpp:1180
 msgctxt "MainWindow|"
 msgid "Delete"
 msgstr "Smazat"
 
-#: launcher/ui/MainWindow.cpp:1184
+#: launcher/ui/MainWindow.cpp:1182
 msgctxt "MainWindow|"
 msgid "Delete the selected instance."
 msgstr "Smaže vybranou instanci."
 
-#: launcher/ui/MainWindow.cpp:1191
+#: launcher/ui/MainWindow.cpp:1189
 msgctxt "MainWindow|"
 msgid "Copy Instance"
 msgstr "Kopírovat instanci"
 
-#: launcher/ui/MainWindow.cpp:1193
+#: launcher/ui/MainWindow.cpp:1191
 msgctxt "MainWindow|"
 msgid "Copy the selected instance."
 msgstr "Kopíruje vybranou instanci."
 
-#: launcher/ui/MainWindow.cpp:1202
+#: launcher/ui/MainWindow.cpp:1200
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
 msgstr "Vytvořit zástupce"
 
-#: launcher/ui/MainWindow.cpp:1203
+#: launcher/ui/MainWindow.cpp:1201
 msgctxt "MainWindow|"
 msgid "Create a shortcut in a folder of your choosing that launches the selected instance."
 msgstr "Vytvořte zástupce ve složce dle vašeho výběru, která spustí vybranou instanci."
 
-#: launcher/ui/MainWindow.cpp:1382
+#: launcher/ui/MainWindow.cpp:1380
 #, qt-format
 msgctxt "MainWindow|MeshMC - Version X"
 msgid "%1 - Version %2"
 msgstr "%1 - Verze %2"
 
-#: launcher/ui/MainWindow.cpp:1386
+#: launcher/ui/MainWindow.cpp:1384
 #, qt-format
 msgctxt "MainWindow|on platform, as in operating system"
 msgid " on %1"
 msgstr " na %1"
 
-#: launcher/ui/MainWindow.cpp:1409
+#: launcher/ui/MainWindow.cpp:1407
 msgctxt "MainWindow|"
 msgid "&File"
 msgstr "&Soubor"
 
-#: launcher/ui/MainWindow.cpp:1410
+#: launcher/ui/MainWindow.cpp:1408
 msgctxt "MainWindow|"
 msgid "&Edit"
 msgstr "&Upravit"
 
-#: launcher/ui/MainWindow.cpp:1411
+#: launcher/ui/MainWindow.cpp:1409
 msgctxt "MainWindow|"
 msgid "&Instance"
 msgstr "&Instance"
 
-#: launcher/ui/MainWindow.cpp:1412
+#: launcher/ui/MainWindow.cpp:1410
 msgctxt "MainWindow|"
 msgid "&View"
 msgstr "&Zobrazit"
 
-#: launcher/ui/MainWindow.cpp:1413
+#: launcher/ui/MainWindow.cpp:1411
 msgctxt "MainWindow|"
 msgid "F&olders"
 msgstr "&Žebříčky"
 
-#: launcher/ui/MainWindow.cpp:1414
+#: launcher/ui/MainWindow.cpp:1412
 msgctxt "MainWindow|"
 msgid "&Help"
 msgstr "&Nápověda"
 
-#: launcher/ui/MainWindow.cpp:1552 launcher/ui/MainWindow.cpp:1720
+#: launcher/ui/MainWindow.cpp:1550 launcher/ui/MainWindow.cpp:1718
 msgctxt "MainWindow|"
 msgid "No instance selected"
 msgstr "Nebyla vybrána žádná instance"
 
-#: launcher/ui/MainWindow.cpp:1553
+#: launcher/ui/MainWindow.cpp:1551
 msgctxt "MainWindow|"
 msgid "Total playtime: 0s"
 msgstr "Celkem odehráno: 0s"
 
-#: launcher/ui/MainWindow.cpp:1590
+#: launcher/ui/MainWindow.cpp:1588
 msgctxt "MainWindow|"
 msgid "&Accounts"
 msgstr "&Účty"
 
-#: launcher/ui/MainWindow.cpp:1714 launcher/ui/MainWindow.cpp:2148
+#: launcher/ui/MainWindow.cpp:1712 launcher/ui/MainWindow.cpp:2146
 msgctxt "MainWindow|"
 msgid "Profiles"
 msgstr "Profiles"
 
-#: launcher/ui/MainWindow.cpp:1833
+#: launcher/ui/MainWindow.cpp:1831
 msgctxt "MainWindow|"
 msgid "Create instance"
 msgstr "Vytvořit instanci"
 
-#: launcher/ui/MainWindow.cpp:1849
+#: launcher/ui/MainWindow.cpp:1847
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Delete group '%1'"
 msgstr "Vymazat skupinu '%1'"
 
-#: launcher/ui/MainWindow.cpp:1882
+#: launcher/ui/MainWindow.cpp:1880
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Undo Deletion of \"%1\""
 msgstr "Vrátit zpět smazání \"%1\""
 
-#: launcher/ui/MainWindow.cpp:1971
+#: launcher/ui/MainWindow.cpp:1969
 msgctxt "MainWindow|"
 msgid "Launch &Demo"
 msgstr "Spustit &Demo"
 
-#: launcher/ui/MainWindow.cpp:1979
+#: launcher/ui/MainWindow.cpp:1977
 msgctxt "MainWindow|"
 msgid "This Minecraft version has no demo mode. It was added in 1.3.1."
 msgstr "Tato verze Minecraftu nemá žádný ukázkový režim. Byla přidána do 1.3.1."
 
-#: launcher/ui/MainWindow.cpp:1986
+#: launcher/ui/MainWindow.cpp:1984
 msgctxt "MainWindow|"
 msgid "Profilers"
 msgstr "Profilery"
 
-#: launcher/ui/MainWindow.cpp:1993
+#: launcher/ui/MainWindow.cpp:1991
 msgctxt "MainWindow|"
 msgid "No Profiler"
 msgstr "Žádný profilník"
 
-#: launcher/ui/MainWindow.cpp:2012
+#: launcher/ui/MainWindow.cpp:2010
 msgctxt "MainWindow|"
 msgid "Profiler not setup correctly. Go into settings, \"External Tools\"."
 msgstr "Profiler nebyl nastaven správně. Jdi do nastavení, \"Externí nástroje\"."
 
-#: launcher/ui/MainWindow.cpp:2050
+#: launcher/ui/MainWindow.cpp:2048
 msgctxt "MainWindow|"
 msgid "No accounts added!"
 msgstr "Nebyly přidány žádné účty!"
 
-#: launcher/ui/MainWindow.cpp:2080
+#: launcher/ui/MainWindow.cpp:2078
 msgctxt "MainWindow|"
 msgid "No Default Account"
 msgstr "Žádný výchozí učet"
 
-#: launcher/ui/MainWindow.cpp:2189
+#: launcher/ui/MainWindow.cpp:2187
 msgctxt "MainWindow|"
 msgid "Loading news..."
 msgstr "Načítání novinek..."
 
-#: launcher/ui/MainWindow.cpp:2197
+#: launcher/ui/MainWindow.cpp:2195
 msgctxt "MainWindow|"
 msgid "No news available."
 msgstr "Žádné novinky k dispozici."
 
-#: launcher/ui/MainWindow.cpp:2219
+#: launcher/ui/MainWindow.cpp:2217
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Preparing update to version %1..."
 msgstr "Příprava aktualizace na verzi %1..."
 
-#: launcher/ui/MainWindow.cpp:2222
+#: launcher/ui/MainWindow.cpp:2220
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Download URL: %1"
 msgstr "Stáhnout URL: %1"
 
-#: launcher/ui/MainWindow.cpp:2226
+#: launcher/ui/MainWindow.cpp:2224
 msgctxt "MainWindow|"
 msgid "Launching updater..."
 msgstr "Spouštím aktualizátor..."
 
-#: launcher/ui/MainWindow.cpp:2232
+#: launcher/ui/MainWindow.cpp:2230
 msgctxt "MainWindow|"
 msgid "Updater launched. MeshMC will now close."
 msgstr "Updater spuštěn. MeshMC bude nyní ukončen."
 
-#: launcher/ui/MainWindow.cpp:2239
+#: launcher/ui/MainWindow.cpp:2237
 msgctxt "MainWindow|"
 msgid "Failed to launch the updater."
 msgstr "Nepodařilo se spustit aktualizaci."
 
-#: launcher/ui/MainWindow.cpp:2244
+#: launcher/ui/MainWindow.cpp:2242
 msgctxt "MainWindow|"
 msgid "No Download URL"
 msgstr "Žádná URL adresa ke stažení"
 
-#: launcher/ui/MainWindow.cpp:2245
+#: launcher/ui/MainWindow.cpp:2243
 #, qt-format
 msgctxt "MainWindow|"
 msgid "An update to version %1 is available, but no download URL was found for your platform (%2).\n"
@@ -5316,67 +5316,67 @@ msgid "An update to version %1 is available, but no download URL was found for y
 msgstr "Aktualizace verze %1 je k dispozici, ale pro vaši platformu nebyla nalezena žádná URL adresa ke stažení (%2).\n"
 "Prosím navštivte webové stránky projektu a stáhněte si je ručně."
 
-#: launcher/ui/MainWindow.cpp:2336 launcher/ui/MainWindow.cpp:2389
-#: launcher/ui/MainWindow.cpp:2399
+#: launcher/ui/MainWindow.cpp:2334 launcher/ui/MainWindow.cpp:2387
+#: launcher/ui/MainWindow.cpp:2397
 msgctxt "MainWindow|"
 msgid "Error"
 msgstr "Chyba"
 
-#: launcher/ui/MainWindow.cpp:2344
+#: launcher/ui/MainWindow.cpp:2342
 msgctxt "MainWindow|"
 msgid "Warnings"
 msgstr "Upozornění"
 
-#: launcher/ui/MainWindow.cpp:2349 launcher/ui/MainWindow.cpp:2394
+#: launcher/ui/MainWindow.cpp:2347 launcher/ui/MainWindow.cpp:2392
 msgctxt "MainWindow|"
 msgid "Abort"
 msgstr "Zrušit"
 
-#: launcher/ui/MainWindow.cpp:2400
+#: launcher/ui/MainWindow.cpp:2398
 msgctxt "MainWindow|"
 msgid "MeshMC cannot download Minecraft or update instances unless you have at least one account added.\n"
 "Please add your Mojang or Minecraft account."
 msgstr "MeshMC nemůže stáhnout Minecraft nebo aktualizovat instance, pokud nemáte alespoň jeden účet.\n"
 "Prosím, přidejte svůj Mojang nebo Minecraft účet."
 
-#: launcher/ui/MainWindow.cpp:2545
+#: launcher/ui/MainWindow.cpp:2543
 msgctxt "MainWindow|"
 msgid "Group name"
 msgstr "Název skupiny"
 
-#: launcher/ui/MainWindow.cpp:2546
+#: launcher/ui/MainWindow.cpp:2544
 msgctxt "MainWindow|"
 msgid "Enter a new group name."
 msgstr "Zadejte nový název skupiny."
 
-#: launcher/ui/MainWindow.cpp:2568
+#: launcher/ui/MainWindow.cpp:2566
 msgctxt "MainWindow|"
 msgid "Delete group"
 msgstr "Odstranit skupinu"
 
-#: launcher/ui/MainWindow.cpp:2569
+#: launcher/ui/MainWindow.cpp:2567
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Are you sure you want to delete the group %1"
 msgstr "Jste si jisti, že chcete odstranit skupinu %1"
 
-#: launcher/ui/MainWindow.cpp:2653
+#: launcher/ui/MainWindow.cpp:2651
 msgctxt "MainWindow|"
 msgid "Checking for updates..."
 msgstr "Kontrola aktualizací..."
 
-#: launcher/ui/MainWindow.cpp:2808
+#: launcher/ui/MainWindow.cpp:2806
 msgctxt "MainWindow|"
 msgid "Instance is running"
 msgstr "Instance je spuštěna"
 
-#: launcher/ui/MainWindow.cpp:2809
+#: launcher/ui/MainWindow.cpp:2807
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\"%1\" is running. Stop it first -- deleting an instance while the game has its files open would leave both in a mess."
 msgstr "\"%1\" běží. Zastavte ho nejprve -- smazání instance, zatímco hra má otevřené soubory, by zanechalo obojí v nepořádku."
 
-#: launcher/ui/MainWindow.cpp:2825
+#: launcher/ui/MainWindow.cpp:2823
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\n\n"
@@ -5392,22 +5392,22 @@ msgstr[2] "\n\n"
 msgstr[3] "\n\n"
 "%n zkratky na to budou stejné."
 
-#: launcher/ui/MainWindow.cpp:2835
+#: launcher/ui/MainWindow.cpp:2833
 msgctxt "MainWindow|"
 msgid "It will be moved to the trash. To bring it back, right-click the instance list and pick Restore."
 msgstr "Bude přesunut do koše. Chcete-li jej vrátit zpět, klepněte pravým tlačítkem myši na seznam instance a vyberte Obnovit."
 
-#: launcher/ui/MainWindow.cpp:2837
+#: launcher/ui/MainWindow.cpp:2835
 msgctxt "MainWindow|"
 msgid "There is no usable trash on this system, so this is permanent."
 msgstr "Na tomto systému není žádný použitelný koš, takže je to trvalé."
 
-#: launcher/ui/MainWindow.cpp:2845
+#: launcher/ui/MainWindow.cpp:2843
 msgctxt "MainWindow|"
 msgid "Delete instance?"
 msgstr "Odstranit instanci?"
 
-#: launcher/ui/MainWindow.cpp:2846
+#: launcher/ui/MainWindow.cpp:2844
 #, qt-format
 msgctxt "MainWindow|"
 msgid "About to delete: %1\n"
@@ -5417,61 +5417,61 @@ msgstr "O smazání: %1\n"
 "%2%3\n\n"
 "Jste si jisti?"
 
-#: launcher/ui/MainWindow.cpp:2883
+#: launcher/ui/MainWindow.cpp:2881
 msgctxt "MainWindow|"
 msgid "Restore Instance"
 msgstr "Obnovit instanci"
 
-#: launcher/ui/MainWindow.cpp:2884
+#: launcher/ui/MainWindow.cpp:2882
 msgctxt "MainWindow|"
 msgid "Not everything could be put back. Check your trash to recover the rest by hand."
 msgstr "Ne vše se dá vrátit zpět. Zkontrolujte svůj koš a obnovte zbytek ručně."
 
-#: launcher/ui/MainWindow.cpp:2942
+#: launcher/ui/MainWindow.cpp:2940
 msgctxt "MainWindow|"
 msgid "Cannot export"
 msgstr "Nelze exportovat"
 
-#: launcher/ui/MainWindow.cpp:2943
+#: launcher/ui/MainWindow.cpp:2941
 msgctxt "MainWindow|"
 msgid "CurseForge modpacks cannot be made from a snapshot version of Minecraft."
 msgstr "Modpacky CurseForge nelze vyrobit z verze snapshotu Minecraftu."
 
-#: launcher/ui/MainWindow.cpp:3189
+#: launcher/ui/MainWindow.cpp:3187
 msgctxt "MainWindow|"
 msgid "Rename Instance"
 msgstr "Přejmenovat instanci"
 
-#: launcher/ui/MainWindow.cpp:3211
+#: launcher/ui/MainWindow.cpp:3209
 msgctxt "MainWindow|"
 msgid "This is a problem: <br/> - MeshMC will likely be deleted without warning by the operating system <br/> - close MeshMC now and extract it to a real location, not a temporary folder"
 msgstr "Toto je problém: <br/> - MeshMC bude pravděpodobně smazána bez varování operačním systémem <br/> - zavřete MeshMC nyní a rozbalte jej na skutečnou polohu, není dočasná složka"
 
-#: launcher/ui/MainWindow.cpp:3223
+#: launcher/ui/MainWindow.cpp:3221
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains '!' and this is known to cause Java problems!"
 msgstr "Vaše složka instance '%1' obsahuje '!' a je známo, že to způsobuje problémy s Javou!"
 
-#: launcher/ui/MainWindow.cpp:3227
+#: launcher/ui/MainWindow.cpp:3225
 #, qt-format
 msgctxt "MainWindow|"
 msgid "You have now two options: <br/> - change the instance folder in the settings <br/> - move this installation of %1 to a different folder"
 msgstr "Nyní máte dvě možnosti: <br/> - změňte složku instance v nastavení <br/> - přesuňte tuto instalaci %1 do jiné složky"
 
-#: launcher/ui/MainWindow.cpp:3239
+#: launcher/ui/MainWindow.cpp:3237
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains 'Rar$' - that means you haven't extracted MeshMC archive!"
 msgstr "Složka instance '%1' obsahuje 'Rar$' - to znamená, že jste neextrahovali MeshMC archiv!"
 
-#: launcher/ui/MainWindow.cpp:3249
+#: launcher/ui/MainWindow.cpp:3247
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' is in a temporary folder: '%2'!"
 msgstr "Složka instance '%1' je v dočasné složce: '%2'!"
 
-#: launcher/ui/MainWindow.cpp:3267
+#: launcher/ui/MainWindow.cpp:3265
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Total playtime: %1"
@@ -8197,19 +8197,19 @@ msgctxt "QObject|"
 msgid "%1 (in use)"
 msgstr "%1 (používáno)"
 
-#: launcher/ui/MainWindow.cpp:2660
+#: launcher/ui/MainWindow.cpp:2658
 #, qt-format
 msgctxt "QObject|"
 msgid "Update check failed: %1"
 msgstr "Kontrola aktualizací se nezdařila: %1"
 
-#: launcher/ui/MainWindow.cpp:2668
+#: launcher/ui/MainWindow.cpp:2666
 #, qt-format
 msgctxt "QObject|"
 msgid "Update available: version %1"
 msgstr "Dostupná aktualizace: verze %1"
 
-#: launcher/ui/MainWindow.cpp:2677
+#: launcher/ui/MainWindow.cpp:2675
 msgctxt "QObject|"
 msgid "You are running the latest version."
 msgstr "Používáte nejnovější verzi."
