@@ -32,6 +32,78 @@
 
 #include <assert.h>
 
+namespace
+{
+	/* The uids are what the metadata server publishes and what the pack
+	 * importers write, so they are not ours to pick. Note that NeoForge
+	 * is "net.neoforged", not the longer "net.neoforged.neoforge": the
+	 * long form matches nothing here and had already caused the download
+	 * dialog to search with no loader filter at all.
+	 *
+	 * Forge, NeoForge, Fabric and Quilt each patch the game in ways the
+	 * others do not expect, so any two of them together is a broken
+	 * instance. Quilt is listed against Fabric even though Quilt runs
+	 * Fabric mods, because the clash is between two loader components
+	 * both claiming to be the entry point, not between the mods.
+	 *
+	 * LiteLoader conflicts with nothing. It predates the rest and was
+	 * built to sit alongside Forge, a pairing people still legitimately
+	 * run on 1.12 and earlier; refusing it would break working setups to
+	 * enforce a rule that does not apply to it. */
+	const QList<ModLoaderInfo>& loaderTable()
+	{
+		static const QList<ModLoaderInfo> table = {
+			{QStringLiteral("net.neoforged"), QStringLiteral("neoforge"),
+			 QStringLiteral("NeoForge"), QStringLiteral("neoforged"),
+			 QString(),
+			 {QStringLiteral("net.minecraftforge"),
+			  QStringLiteral("net.fabricmc.fabric-loader"),
+			  QStringLiteral("org.quiltmc.quilt-loader")}},
+
+			{QStringLiteral("net.minecraftforge"), QStringLiteral("forge"),
+			 QStringLiteral("Forge"), QStringLiteral("forge"), QString(),
+			 {QStringLiteral("net.neoforged"),
+			  QStringLiteral("net.fabricmc.fabric-loader"),
+			  QStringLiteral("org.quiltmc.quilt-loader")}},
+
+			{QStringLiteral("net.fabricmc.fabric-loader"),
+			 QStringLiteral("fabric"), QStringLiteral("Fabric"),
+			 QStringLiteral("fabricmc"), QStringLiteral("1.14"),
+			 {QStringLiteral("net.minecraftforge"),
+			  QStringLiteral("net.neoforged"),
+			  QStringLiteral("org.quiltmc.quilt-loader")}},
+
+			{QStringLiteral("org.quiltmc.quilt-loader"),
+			 QStringLiteral("quilt"), QStringLiteral("Quilt"),
+			 QStringLiteral("quiltmc"), QStringLiteral("1.14"),
+			 {QStringLiteral("net.minecraftforge"),
+			  QStringLiteral("net.neoforged"),
+			  QStringLiteral("net.fabricmc.fabric-loader")}},
+
+			{QStringLiteral("com.mumfrey.liteloader"), QString(),
+			 QStringLiteral("LiteLoader"), QStringLiteral("liteloader"),
+			 QString(),
+			 {}},
+		};
+		return table;
+	}
+} // namespace
+
+const QList<ModLoaderInfo>& knownModLoaders()
+{
+	return loaderTable();
+}
+
+const ModLoaderInfo* modLoaderForUid(const QString& uid)
+{
+	for (const auto& loader : loaderTable()) {
+		if (loader.uid == uid) {
+			return &loader;
+		}
+	}
+	return nullptr;
+}
+
 Component::Component(PackProfile* parent, const QString& uid)
 {
 	assert(parent);

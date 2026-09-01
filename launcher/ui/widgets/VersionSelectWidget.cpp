@@ -60,6 +60,16 @@ VersionSelectWidget::VersionSelectWidget(QWidget* parent) : QWidget(parent)
 	QMetaObject::connectSlotsByName(this);
 }
 
+VersionListView* VersionSelectWidget::view()
+{
+	return listView;
+}
+
+void VersionSelectWidget::showEmptyMessage()
+{
+	listView->setEmptyMode(VersionListView::String);
+}
+
 void VersionSelectWidget::setCurrentVersion(const QString& version)
 {
 	m_currentVersion = version;
@@ -221,6 +231,12 @@ void VersionSelectWidget::setFuzzyFilter(BaseVersionList::ModelRoles role,
 										 QString filter)
 {
 	m_proxyModel->setFilter(role, new ContainsFilter(filter));
+}
+
+void VersionSelectWidget::setExactIfPresentFilter(
+	BaseVersionList::ModelRoles role, QString filter)
+{
+	m_proxyModel->setFilter(role, new ExactIfPresentFilter(filter));
 }
 
 void VersionSelectWidget::setFilter(BaseVersionList::ModelRoles role,

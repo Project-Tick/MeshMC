@@ -105,11 +105,7 @@
    <addaction name="actionEdit"/>
    <addaction name="actionRevert"/>
    <addaction name="separator"/>
-   <addaction name="actionInstall_Forge"/>
-   <addaction name="actionInstall_Fabric"/>
-   <addaction name="actionInstall_NeoForge"/>
-   <addaction name="actionInstall_Quilt"/>
-   <addaction name="actionInstall_LiteLoader"/>
+   <addaction name="actionInstall_Loader"/>
    <addaction name="actionInstall_mods"/>
    <addaction name="separator"/>
    <addaction name="actionAdd_to_Minecraft_jar"/>
@@ -178,44 +174,12 @@
     <string>Revert the selected package to default.</string>
    </property>
   </action>
-  <action name="actionInstall_Forge">
+  <action name="actionInstall_Loader">
    <property name="text">
-    <string>Install Forge</string>
+    <string>Install Loader</string>
    </property>
    <property name="toolTip">
-    <string>Install the Minecraft Forge package.</string>
-   </property>
-  </action>
-  <action name="actionInstall_Fabric">
-   <property name="text">
-    <string>Install Fabric</string>
-   </property>
-   <property name="toolTip">
-    <string>Install the Fabric Loader package.</string>
-   </property>
-  </action>
-  <action name="actionInstall_LiteLoader">
-   <property name="text">
-    <string>Install LiteLoader</string>
-   </property>
-   <property name="toolTip">
-    <string>Install the LiteLoader package.</string>
-   </property>
-  </action>
-  <action name="actionInstall_NeoForge">
-   <property name="text">
-    <string>Install NeoForge</string>
-   </property>
-   <property name="toolTip">
-    <string>Install the NeoForge mod loader.</string>
-   </property>
-  </action>
-  <action name="actionInstall_Quilt">
-   <property name="text">
-    <string>Install Quilt</string>
-   </property>
-   <property name="toolTip">
-    <string>Install the Quilt Loader package.</string>
+    <string>Install a mod loader - Forge, NeoForge, Fabric, Quilt or LiteLoader.</string>
    </property>
   </action>
   <action name="actionInstall_mods">

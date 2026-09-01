@@ -21,7 +21,7 @@ REPO=$(git -C "$ROOT" rev-parse --show-toplevel)
 
 # Directories scanned for translatable strings, relative to the repository root.
 # Override with e.g. SRC_DIRS="launcher" ./update.sh
-SRC_DIRS=${SRC_DIRS:-"$REPO/launcher $REPO/plugins $REPO/launcher/crashreporter $REPO/launcher/updater"}
+SRC_DIRS=${SRC_DIRS:-"$REPO/launcher $REPO/launcher/plugin/plugins $REPO/launcher/crashreporter $REPO/launcher/updater"}
 
 # plugins/staging/ is gated behind the MeshMC_STAGING_PLUGINS option (off by
 # default), so those strings are not shipped and must not reach translators.

@@ -51,6 +51,28 @@ class ExactFilter : public Filter
 	QString pattern;
 };
 
+/* ExactFilter, except that a row which has nothing to say on the role is
+ * let through instead of being dropped.
+ *
+ * The version lists are filtered on ParentVersionRole, which Meta derives
+ * from a component's hard "equals" requirement on another component. Some
+ * components have no such requirement at all - Fabric Loader and Quilt
+ * Loader are version-independent, LWJGL is pulled in by Minecraft rather
+ * than pinned to it - and for those the role comes back empty. Filtering
+ * them with a plain ExactFilter empties the list, which reads to the user
+ * as "there are no versions" when the truth is "this one is not tied to a
+ * Minecraft version in the first place". */
+class ExactIfPresentFilter : public Filter
+{
+  public:
+	ExactIfPresentFilter(const QString& pattern);
+	virtual ~ExactIfPresentFilter();
+	bool accepts(const QString& value) override;
+
+  private:
+	QString pattern;
+};
+
 class RegexpFilter : public Filter
 {
   public:

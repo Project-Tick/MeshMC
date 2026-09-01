@@ -40,6 +40,7 @@
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/DownloadContentDialog.h"
 #include "ui/dialogs/DownloadSummaryDialog.h"
+#include "ui/dialogs/InstallLoaderDialog.h"
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/GuiUtil.h"
 
@@ -531,24 +532,62 @@ bool ModFolderPage::ensureModLoaderPresent()
 
 	auto* mcInst = dynamic_cast<MinecraftInstance*>(m_inst);
 	auto profile = mcInst ? mcInst->getPackProfile() : nullptr;
-	bool hasLoader = false;
-	if (profile) {
-		hasLoader = profile->getComponent("net.minecraftforge") ||
-					profile->getComponent("net.fabricmc.fabric-loader") ||
-					profile->getComponent("org.quiltmc.quilt-loader") ||
-					profile->getComponent("net.neoforged");
+	if (!profile) {
+		/* Nothing to inspect and nothing to install into, so say so
+		 * rather than failing silently and leaving a click that appears
+		 * to do nothing. */
+		QMessageBox::warning(
+			this->parentWidget(), tr("No Mod Loader"),
+			tr("This instance's component list could not be read, so it is "
+			   "not possible to tell which mod loader it uses."));
+		return false;
 	}
-	if (hasLoader) {
+	if (profile->hasModLoader()) {
 		return true;
 	}
 
-	QMessageBox::warning(
+	/* This used to be a warning and nothing more, which handed the user
+	 * an instruction - "install a mod loader first" - and no way to act
+	 * on it without going and finding the version page. Offer to do it
+	 * from here instead. */
+	const auto answer = QMessageBox::question(
 		this->parentWidget(), tr("No Mod Loader"),
-		tr("No mod loader (Forge, Fabric, Quilt, or NeoForge) is "
-		   "installed "
-		   "in this instance. Please install a mod loader first before "
-		   "downloading mods."));
-	return false;
+		tr("Mods need a loader to run, and this instance has none. Would "
+		   "you like to install one now?"),
+		QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+	if (answer != QMessageBox::Yes) {
+		/* Declined. Still no loader, so the caller must not go on into a
+		 * download dialog it has nothing to filter with. */
+		return false;
+	}
+
+	InstallLoaderDialog dialog(profile.get(), QString(),
+							   this->parentWidget());
+	const bool installed = dialog.exec() != 0;
+
+	/* The version page has to be told a component may have appeared,
+	 * whether or not this page goes on to open a browser. */
+	if (m_container) {
+		m_container->refreshContainer();
+	}
+
+	if (!installed) {
+		return false;
+	}
+	if (!profile->hasModLoader()) {
+		/* The dialog was accepted but left nothing searchable behind. A
+		 * LiteLoader-only instance lands here: it is modded, but neither
+		 * platform offers a LiteLoader filter, so there is no browse to
+		 * open. */
+		CustomMessageBox::selectable(
+			this->parentWidget(), tr("No Mod Loader"),
+			tr("This instance still has no loader that CurseForge or "
+			   "Modrinth can be searched by, so there is nothing to browse."),
+			QMessageBox::Warning)
+			->show();
+		return false;
+	}
+	return true;
 }
 
 QList<int> ModFolderPage::selectedSourceRows() const
@@ -1243,19 +1282,10 @@ QString ModFolderPage::instanceLoader() const
 	if (!profile) {
 		return QString();
 	}
-	if (profile->getComponent("net.fabricmc.fabric-loader")) {
-		return QStringLiteral("fabric");
-	}
-	if (profile->getComponent("org.quiltmc.quilt-loader")) {
-		return QStringLiteral("quilt");
-	}
-	if (profile->getComponent("net.neoforged")) {
-		return QStringLiteral("neoforge");
-	}
-	if (profile->getComponent("net.minecraftforge")) {
-		return QStringLiteral("forge");
-	}
-	return QString();
+	/* Was an if-chain over component uids in fabric/quilt/neoforge/forge
+	 * order, which disagreed with the one in DownloadContentDialog and,
+	 * like it, counted a disabled component as installed. */
+	return profile->primaryModLoader();
 }
 
 void ModFolderPage::on_actionUpdate_triggered()

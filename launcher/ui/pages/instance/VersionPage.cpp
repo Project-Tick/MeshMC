@@ -35,6 +35,7 @@
 #include "ui_VersionPage.h"
 
 #include "ui/dialogs/CustomMessageBox.h"
+#include "ui/dialogs/InstallLoaderDialog.h"
 #include "ui/dialogs/VersionSelectDialog.h"
 #include "ui/dialogs/NewComponentDialog.h"
 #include "ui/dialogs/ProgressDialog.h"
@@ -211,25 +212,17 @@ void VersionPage::updateRunningStatus(bool running)
 	}
 }
 
+/* There is nothing version-specific left to decide here.
+ *
+ * This used to enable or disable one toolbar button per loader against
+ * hardcoded Minecraft version arithmetic - and admitted as much with a
+ * "dirty hack" comment. The install dialog now answers the same question
+ * from the metadata, per page, so a loader that has nothing to offer for
+ * this Minecraft version shows an empty list with a reason instead of a
+ * greyed-out button with none. The function stays because
+ * PackProfile::minecraftChanged is wired to it. */
 void VersionPage::updateVersionControls()
 {
-	// FIXME: this is a dirty hack
-	auto minecraftVersion =
-		Version(m_profile->getComponentVersion("net.minecraft"));
-
-	bool supportsFabric = minecraftVersion >= Version("1.14");
-	ui->actionInstall_Fabric->setEnabled(controlsEnabled && supportsFabric);
-
-	bool supportsNeoForge = minecraftVersion >= Version("1.20.1");
-	ui->actionInstall_NeoForge->setEnabled(controlsEnabled && supportsNeoForge);
-
-	bool supportsQuilt = minecraftVersion >= Version("1.14");
-	ui->actionInstall_Quilt->setEnabled(controlsEnabled && supportsQuilt);
-
-	bool supportsLiteLoader = minecraftVersion <= Version("1.12.2");
-	ui->actionInstall_LiteLoader->setEnabled(controlsEnabled &&
-											 supportsLiteLoader);
-
 	updateButtons();
 }
 
@@ -254,6 +247,11 @@ void VersionPage::updateButtons(int row)
 	ui->actionDownload_All->setEnabled(controlsEnabled);
 	ui->actionAdd_Empty->setEnabled(controlsEnabled);
 	ui->actionReload->setEnabled(controlsEnabled);
+	/* Listed here with the rest so it follows the running state. The old
+	 * per-loader buttons were set from updateVersionControls() instead,
+	 * and Forge's was missed entirely - it stayed clickable while the
+	 * instance was running, unlike every other control on this page. */
+	ui->actionInstall_Loader->setEnabled(controlsEnabled);
 	ui->actionInstall_mods->setEnabled(controlsEnabled);
 	ui->actionReplace_Minecraft_jar->setEnabled(controlsEnabled);
 	ui->actionAdd_to_Minecraft_jar->setEnabled(controlsEnabled);
@@ -358,28 +356,40 @@ void VersionPage::on_actionChange_version_triggered()
 		return;
 	}
 	auto uid = list->uid();
-	// FIXME: this is a horrible HACK. Get version filtering information from
-	// the actual metadata...
-	if (uid == "net.minecraftforge") {
-		on_actionInstall_Forge_triggered();
-		return;
-	} else if (uid == "net.neoforged") {
-		on_actionInstall_NeoForge_triggered();
-		return;
-	} else if (uid == "com.mumfrey.liteloader") {
-		on_actionInstall_LiteLoader_triggered();
+
+	/* Changing a loader's version is the same act as installing it, so
+	 * it goes through the same dialog, opened on that loader's page.
+	 * It also means the conflict handling is not something the user can
+	 * step around by choosing "change version" instead of "install".
+	 *
+	 * What used to be here was a hardcoded redirect to the per-loader
+	 * install handlers for three of the five uids, under a comment
+	 * calling itself a horrible hack. The loader table answers the
+	 * question now, so there is nothing left to hardcode. */
+	if (modLoaderForUid(uid) != nullptr) {
+		InstallLoaderDialog dialog(m_profile.get(), uid, this);
+		dialog.exec();
+		m_container->refreshContainer();
 		return;
 	}
+
 	VersionSelectDialog vselect(list.get(), tr("Change %1 version").arg(name),
 								this);
-	if (uid == "net.fabricmc.intermediary") {
+	if (uid == "net.fabricmc.intermediary" || uid == "org.quiltmc.hashed") {
 		vselect.setEmptyString(
 			tr("No intermediary mappings versions are currently available."));
 		vselect.setEmptyErrorString(tr("Couldn't load or download the "
 									   "intermediary mappings version lists!"));
-		vselect.setExactFilter(BaseVersionList::ParentVersionRole,
-							   m_profile->getComponentVersion("net.minecraft"));
 	}
+
+	/* Applied to every component, not just the mappings: anything whose
+	 * metadata pins it to a Minecraft version should only offer builds
+	 * for the one installed. "If present" leaves components that are not
+	 * pinned - LWJGL, say - showing their full list rather than none. */
+	vselect.setExactIfPresentFilter(
+		BaseVersionList::ParentVersionRole,
+		m_profile->getComponentVersion("net.minecraft"));
+
 	auto currentVersion = patch->getVersion();
 	if (!currentVersion.isEmpty()) {
 		vselect.setCurrentVersion(currentVersion);
@@ -426,206 +436,23 @@ void VersionPage::on_actionDownload_All_triggered()
 	m_container->refreshContainer();
 }
 
-void VersionPage::on_actionInstall_Forge_triggered()
+void VersionPage::on_actionInstall_Loader_triggered()
 {
-	// Forge conflicts with Fabric, NeoForge, and Quilt
-	if (!m_profile->getComponentVersion("net.fabricmc.fabric-loader")
-			 .isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Forge is incompatible with Fabric Loader. "
-								 "Please remove Fabric Loader first."));
-		return;
-	}
-	if (!m_profile->getComponentVersion("net.neoforged").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Forge is incompatible with NeoForge. Please "
-								 "remove NeoForge first."));
-		return;
-	}
-	if (!m_profile->getComponentVersion("org.quiltmc.quilt-loader").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Forge is incompatible with Quilt Loader. "
-								 "Please remove Quilt Loader first."));
-		return;
-	}
+	/* No page preselected: arriving from the toolbar there is no loader
+	 * in mind yet, so the dialog opens on its own first page. Arriving
+	 * from "change version" on an installed loader is the other entry
+	 * point, and that one does pass a uid. */
+	InstallLoaderDialog dialog(m_profile.get(), QString(), this);
+	dialog.exec();
 
-	auto vlist = APPLICATION->metadataIndex()->get("net.minecraftforge");
-	if (!vlist) {
-		return;
-	}
-	VersionSelectDialog vselect(vlist.get(), tr("Select Forge version"), this);
-	vselect.setExactFilter(BaseVersionList::ParentVersionRole,
-						   m_profile->getComponentVersion("net.minecraft"));
-	vselect.setEmptyString(
-		tr("No Forge versions are currently available for Minecraft ") +
-		m_profile->getComponentVersion("net.minecraft"));
-	vselect.setEmptyErrorString(
-		tr("Couldn't load or download the Forge version lists!"));
-
-	auto currentVersion = m_profile->getComponentVersion("net.minecraftforge");
-	if (!currentVersion.isEmpty()) {
-		vselect.setCurrentVersion(currentVersion);
-	}
-
-	if (vselect.exec() && vselect.selectedVersion()) {
-		auto vsn = vselect.selectedVersion();
-		m_profile->setComponentVersion("net.minecraftforge", vsn->descriptor());
-		m_profile->resolve(Net::Mode::Online);
-		// m_profile->installVersion();
-		preselect(m_profile->rowCount(QModelIndex()) - 1);
-		m_container->refreshContainer();
-	}
-}
-
-void VersionPage::on_actionInstall_Fabric_triggered()
-{
-	// Fabric conflicts with Forge, NeoForge, and Quilt
-	if (!m_profile->getComponentVersion("net.minecraftforge").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Fabric Loader is incompatible with Forge. "
-								 "Please remove Forge first."));
-		return;
-	}
-	if (!m_profile->getComponentVersion("net.neoforged").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Fabric Loader is incompatible with NeoForge. "
-								 "Please remove NeoForge first."));
-		return;
-	}
-	if (!m_profile->getComponentVersion("org.quiltmc.quilt-loader").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Fabric Loader is incompatible with Quilt "
-								 "Loader. Please remove Quilt Loader first."));
-		return;
-	}
-
-	auto vlist =
-		APPLICATION->metadataIndex()->get("net.fabricmc.fabric-loader");
-	if (!vlist) {
-		return;
-	}
-	VersionSelectDialog vselect(vlist.get(), tr("Select Fabric Loader version"),
-								this);
-	vselect.setEmptyString(
-		tr("No Fabric Loader versions are currently available."));
-	vselect.setEmptyErrorString(
-		tr("Couldn't load or download the Fabric Loader version lists!"));
-
-	auto currentVersion =
-		m_profile->getComponentVersion("net.fabricmc.fabric-loader");
-	if (!currentVersion.isEmpty()) {
-		vselect.setCurrentVersion(currentVersion);
-	}
-
-	if (vselect.exec() && vselect.selectedVersion()) {
-		auto vsn = vselect.selectedVersion();
-		m_profile->setComponentVersion("net.fabricmc.fabric-loader",
-									   vsn->descriptor());
-		m_profile->resolve(Net::Mode::Online);
-		preselect(m_profile->rowCount(QModelIndex()) - 1);
-		m_container->refreshContainer();
-	}
-}
-
-void VersionPage::on_actionInstall_NeoForge_triggered()
-{
-	// NeoForge conflicts with Forge, Fabric, and Quilt
-	if (!m_profile->getComponentVersion("net.minecraftforge").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("NeoForge is incompatible with Forge. Please "
-								 "remove Forge first."));
-		return;
-	}
-	if (!m_profile->getComponentVersion("net.fabricmc.fabric-loader")
-			 .isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("NeoForge is incompatible with Fabric Loader. "
-								 "Please remove Fabric Loader first."));
-		return;
-	}
-	if (!m_profile->getComponentVersion("org.quiltmc.quilt-loader").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("NeoForge is incompatible with Quilt Loader. "
-								 "Please remove Quilt Loader first."));
-		return;
-	}
-
-	auto vlist = APPLICATION->metadataIndex()->get("net.neoforged");
-	if (!vlist) {
-		return;
-	}
-	VersionSelectDialog vselect(vlist.get(), tr("Select NeoForge version"),
-								this);
-	vselect.setExactFilter(BaseVersionList::ParentVersionRole,
-						   m_profile->getComponentVersion("net.minecraft"));
-	vselect.setEmptyString(
-		tr("No NeoForge versions are currently available for Minecraft ") +
-		m_profile->getComponentVersion("net.minecraft"));
-	vselect.setEmptyErrorString(
-		tr("Couldn't load or download the NeoForge version lists!"));
-
-	auto currentVersion = m_profile->getComponentVersion("net.neoforged");
-	if (!currentVersion.isEmpty()) {
-		vselect.setCurrentVersion(currentVersion);
-	}
-
-	if (vselect.exec() && vselect.selectedVersion()) {
-		auto vsn = vselect.selectedVersion();
-		m_profile->setComponentVersion("net.neoforged", vsn->descriptor());
-		m_profile->resolve(Net::Mode::Online);
-		preselect(m_profile->rowCount(QModelIndex()) - 1);
-		m_container->refreshContainer();
-	}
-}
-
-void VersionPage::on_actionInstall_Quilt_triggered()
-{
-	// Quilt conflicts with Forge, Fabric, and NeoForge
-	if (!m_profile->getComponentVersion("net.minecraftforge").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Quilt Loader is incompatible with Forge. "
-								 "Please remove Forge first."));
-		return;
-	}
-	if (!m_profile->getComponentVersion("net.fabricmc.fabric-loader")
-			 .isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Quilt Loader is incompatible with Fabric "
-								 "Loader. Please remove Fabric Loader first."));
-		return;
-	}
-	if (!m_profile->getComponentVersion("net.neoforged").isEmpty()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Quilt Loader is incompatible with NeoForge. "
-								 "Please remove NeoForge first."));
-		return;
-	}
-
-	auto vlist = APPLICATION->metadataIndex()->get("org.quiltmc.quilt-loader");
-	if (!vlist) {
-		return;
-	}
-	VersionSelectDialog vselect(vlist.get(), tr("Select Quilt Loader version"),
-								this);
-	vselect.setEmptyString(
-		tr("No Quilt Loader versions are currently available."));
-	vselect.setEmptyErrorString(
-		tr("Couldn't load or download the Quilt Loader version lists!"));
-
-	auto currentVersion =
-		m_profile->getComponentVersion("org.quiltmc.quilt-loader");
-	if (!currentVersion.isEmpty()) {
-		vselect.setCurrentVersion(currentVersion);
-	}
-
-	if (vselect.exec() && vselect.selectedVersion()) {
-		auto vsn = vselect.selectedVersion();
-		m_profile->setComponentVersion("org.quiltmc.quilt-loader",
-									   vsn->descriptor());
-		m_profile->resolve(Net::Mode::Online);
-		preselect(m_profile->rowCount(QModelIndex()) - 1);
-		m_container->refreshContainer();
-	}
+	/* The dialog writes into the profile itself, so there is nothing to
+	 * read back - but a component may have been added, removed or
+	 * disabled, and both the row selection and the sidebar have to catch
+	 * up with that. Reselecting the current row rather than the last one
+	 * matters because "uninstall it" on a conflict can have shortened
+	 * the list underneath us. */
+	preselect(currentRow());
+	m_container->refreshContainer();
 }
 
 void VersionPage::on_actionAdd_Empty_triggered()
@@ -641,39 +468,6 @@ void VersionPage::on_actionAdd_Empty_triggered()
 		qDebug() << "name:" << compdialog.name();
 		qDebug() << "uid:" << compdialog.uid();
 		m_profile->installEmpty(compdialog.uid(), compdialog.name());
-	}
-}
-
-void VersionPage::on_actionInstall_LiteLoader_triggered()
-{
-	auto vlist = APPLICATION->metadataIndex()->get("com.mumfrey.liteloader");
-	if (!vlist) {
-		return;
-	}
-	VersionSelectDialog vselect(vlist.get(), tr("Select LiteLoader version"),
-								this);
-	vselect.setExactFilter(BaseVersionList::ParentVersionRole,
-						   m_profile->getComponentVersion("net.minecraft"));
-	vselect.setEmptyString(
-		tr("No LiteLoader versions are currently available for Minecraft ") +
-		m_profile->getComponentVersion("net.minecraft"));
-	vselect.setEmptyErrorString(
-		tr("Couldn't load or download the LiteLoader version lists!"));
-
-	auto currentVersion =
-		m_profile->getComponentVersion("com.mumfrey.liteloader");
-	if (!currentVersion.isEmpty()) {
-		vselect.setCurrentVersion(currentVersion);
-	}
-
-	if (vselect.exec() && vselect.selectedVersion()) {
-		auto vsn = vselect.selectedVersion();
-		m_profile->setComponentVersion("com.mumfrey.liteloader",
-									   vsn->descriptor());
-		m_profile->resolve(Net::Mode::Online);
-		// m_profile->installVersion(vselect.selectedVersion());
-		preselect(m_profile->rowCount(QModelIndex()) - 1);
-		m_container->refreshContainer();
 	}
 }
 
