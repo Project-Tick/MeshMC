@@ -5382,10 +5382,10 @@ msgid "\n\n"
 "%n shortcut(s) to it will go the same way."
 msgid_plural "\n\n"
 "%n shortcut(s) to it will go the same way."
-msgstr[0] "Le scorciatoie \n\n"
-"%n andranno allo stesso modo."
-msgstr[1] "Le scorciatoie \n\n"
-"%n andranno allo stesso modo."
+msgstr[0] "\n\n"
+"%n scorciatoia ad essa verrà reindirizzata allo stesso modo."
+msgstr[1] "\n\n"
+"%n scorciatoie ad essa verranno reindirizzate allo stesso modo."
 
 #: launcher/ui/MainWindow.cpp:2833
 msgctxt "MainWindow|"
@@ -7312,7 +7312,7 @@ msgstr "Impossibile scaricare l'aggiornamento.\n\n"
 msgctxt "PrepareStage|"
 msgid "\n"
 "HTTP status: %1"
-msgstr "Stato \n"
+msgstr "\n"
 "HTTP: %1"
 
 #: launcher/updater/MeshMCUpdater/PrepareStage.cpp:196
