@@ -21,6 +21,15 @@
 
 #include <AppKit/AppKit.h>
 
+namespace {
+
+bool isStatusBarWindow(NSWindow* window)
+{
+    return window && window.level == NSStatusWindowLevel;
+}
+
+} // namespace
+
 void ThemeManager::setTitlebarColorOnMac(WId windowId, QColor color)
 {
     if (!windowId) {
@@ -30,7 +39,7 @@ void ThemeManager::setTitlebarColorOnMac(WId windowId, QColor color)
     auto* nativeView = reinterpret_cast<NSView*>(windowId);
     NSWindow* nativeWindow = nativeView.window;
 
-    if (!nativeWindow) {
+    if (!nativeWindow || isStatusBarWindow(nativeWindow)) {
         return;
     }
 
@@ -44,6 +53,10 @@ void ThemeManager::setTitlebarColorOnMac(WId windowId, QColor color)
 void ThemeManager::setTitlebarColorOfAllWindowsOnMac(QColor color)
 {
     for (NSWindow* nativeWindow in NSApp.windows) {
+        if (isStatusBarWindow(nativeWindow)) {
+            continue;
+        }
+
         setTitlebarColorOnMac(
             reinterpret_cast<WId>(nativeWindow.contentView),
             color
@@ -62,6 +75,10 @@ void ThemeManager::setTitlebarColorOfAllWindowsOnMac(QColor color)
                                     usingBlock:^(NSNotification* notification) {
                                         NSWindow* nativeWindow =
                                             notification.object;
+
+                                        if (isStatusBarWindow(nativeWindow)) {
+                                            return;
+                                        }
 
                                         setTitlebarColorOnMac(
                                             reinterpret_cast<WId>(nativeWindow.contentView),
