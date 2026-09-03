@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2026-09-01 21:52\n"
+"PO-Revision-Date: 2026-09-02 09:47\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -5076,7 +5076,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:1125
 msgctxt "MainWindow|"
 msgid "Export Instance"
-msgstr "Profili İçe Aktar"
+msgstr "Profili Dışa Aktar"
 
 #: launcher/ui/MainWindow.cpp:1126
 msgctxt "MainWindow|"
