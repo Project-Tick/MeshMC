@@ -3,7 +3,7 @@
 <component type="desktop">
   <id>org.projecttick.MeshMC</id>
   <name>MeshMC</name>
-  <summary>Custom Minecraft Launcher to easily manage multiple Minecraft installations at once with MMCO Plugins</summary>
+  <summary>Custom Minecraft Launcher to easily manage multiple Minecraft installations at once</summary>
   <developer id="org.projecttick">
     <name>Project Tick</name>
   </developer>
@@ -32,37 +32,123 @@
   <screenshots>
     <screenshot type="default">
       <caption>The main MeshMC window</caption>
-      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/MeshMC-7.11.0-dark-MainWindow.png</image>
+      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/LauncherDark.png</image>
     </screenshot>
     <screenshot>
-      <caption>View MeshMC with your cats</caption>
-      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/MeshMC-7.11.0-dark-MainWindow-With-Catpack.png</image>
+      <caption>Modpack installation</caption>
+      <image type="source" width="1126" height="850">https://projecttick.org/img/screenshots/ModpackInstallDark.png</image>
     </screenshot>
     <screenshot>
-      <caption>Manage instance version, modloaders and more</caption>
-      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/MeshMC-7.11.0-dark-InstanceSettings-Version.png</image>
+      <caption>Modpack updating</caption>
+      <image type="source" width="930" height="677">https://projecttick.org/img/screenshots/ModpackUpdateDark.png</image>
     </screenshot>
     <screenshot>
-      <caption>Create your new vanilla instance with MeshMC</caption>
-      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/MeshMC-7.11.0-dark-NewInstance-Vanilla.png</image>
+      <caption>Mod installation</caption>
+      <image type="source" width="848" height="558">https://projecttick.org/img/screenshots/ModInstallDark.png</image>
     </screenshot>
     <screenshot>
-      <caption>Manage your instance backups</caption>
-      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/MeshMC-7.11.0-dark-InstanceSettings-Backups.png</image>
+      <caption>Mod updating</caption>
+      <image type="source" width="860" height="748">https://projecttick.org/img/screenshots/ModUpdateDark.png</image>
     </screenshot>
     <screenshot>
-      <caption>Language selection</caption>
-      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/MeshMC-7.11.0-dark-Settings-Language.png</image>
+      <caption>Instance management</caption>
+      <image type="source" width="960" height="659">https://projecttick.org/img/screenshots/PropertiesDark.png</image>
     </screenshot>
     <screenshot>
-      <caption>Download java from vendors</caption>
-      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/MeshMC-7.11.0-dark-Settings-Java-Installations.png</image>
+      <caption>Cat :3</caption>
+      <image type="source" width="1042" height="754">https://projecttick.org/img/screenshots/LauncherCatDark.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Customization</caption>
+      <image type="source" width="1040" height="752">https://projecttick.org/img/screenshots/CustomizeDark.png</image>
     </screenshot>
   </screenshots>
   <recommends>
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="10.0.0" date="2026-09-03">
+      <description>
+        <p><em>A Big Change</em></p>
+        <ul>
+          <li>MeshMC is now offered under the Apache 2.0 license.</li>
+        </ul>
+        <p><em>Highlights</em></p>
+        <ul>
+          <li>It was heartbreaking, I'm not lying.</li>
+          <li>Being alone is tough, but I like to persevere.</li>
+          <li>This release is really full of emotion, no offense to anyone.</li>
+          <li>Joking aside, this is the first time I'm releasing such a massive release.</li>
+          <li>Everyone, calm down. Take a breath. Because if you try to hold it, you might choke, as I don't think you'll be able to read this release in one breath.</li>
+        </ul>
+        <p><em>Added</em></p>
+        <ul>
+          <li>Shortcut system has been added.</li>
+          <li>A world selection feature has been added to the Shortcut system.</li>
+          <li>Patreon link has been added.</li>
+          <li>Title bar theming added for macOS.</li>
+          <li>A setting to edit the Skins and Java folders has been added.</li>
+          <li>The "Folder" tab in the top toolbar now includes a list of multiple useful folders.</li>
+          <li>The mod installation and update system has been completely redesigned.</li>
+          <li>Datapack installation and update system has been added.</li>
+          <li>ShaderPack installation and update system has been completely redesigned.</li>
+          <li>ResourcePack installation and update system has been completely redesigned.</li>
+          <li>The ability to throw the instance in the trash has been added.</li>
+          <li>Detailed logging feature has been added.</li>
+          <li>Demo mode support has been added.</li>
+          <li>The number of entries in the Instance Toolbar has been reduced and icons have been added.</li>
+          <li>News display system has been added.</li>
+          <li>Discord URL has been added.</li>
+          <li>The ability to blacklist the plugin has been added.</li>
+          <li>Backup system has been added.</li>
+          <li>The "More News" tab has been added back.</li>
+          <li>Toolbar locking system added.</li>
+          <li>The ability to move two toolbars other than the instance toolbar has been added.</li>
+          <li>A toolbar that works with the &lt;ALT&gt; key has been added, except for macOS.</li>
+          <li>The backup process now shows a progress bar.</li>
+          <li>ModPack management support has been added.</li>
+          <li>Multiple instance folder support has been added.</li>
+          <li>Export via MRPack and Curseforge ZIP has been added.</li>
+          <li>A separate screen was created for loaders.</li>
+          <li>vcpkg build system has been added.</li>
+          <li>RPM Spec has been added.</li>
+        </ul>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>GreenDark theme palette updated.</li>
+          <li>The macOS ToolBar code has been rewritten.</li>
+          <li>The repository structure has been rebuilt.</li>
+          <li>Minecraft is now downloaded every time an instance is created.</li>
+          <li>vcpkg automates bootstrap and package management.</li>
+          <li>The <code>std::optional</code> feature, introduced in the C++17 standard, is now in use.</li>
+          <li>Path corrections have been added for UNIX installations (excluding macOS), especially for Linux; compatibility with Debian and RedHat policies has been ensured.</li>
+          <li>Crowdin translations have been updated.</li>
+        </ul>
+        <p><em>Fixed</em></p>
+        <ul>
+          <li>The problem of Minecraft not closing when trying to kill an instance on Windows has been solved.</li>
+          <li>The error of not adding version entries in NSIS has been fixed.</li>
+        </ul>
+        <p><em>Removed</em></p>
+        <ul>
+          <li>The ability to directly delete instances has been removed.</li>
+          <li>The Filelink plugin has been removed.</li>
+          <li>MinGW aarch64 test and packaging removed.</li>
+          <li>The NewsViewer plugin has been removed.</li>
+          <li>The BackupSystem plugin has been removed.</li>
+          <li>PackUpdater plugin has been removed.</li>
+          <li>PackPortal plugin has been removed.</li>
+          <li>The Feature Flag feature has been completely removed.</li>
+          <li>All Rust code has been removed.</li>
+          <li>Optional Bare library has been removed.</li>
+          <li>Analysis collection has been removed.</li>
+        </ul>
+        <p><em>Deprecated</em></p>
+        <ul>
+          <li>MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.</li>
+        </ul>
+      </description>
+    </release>
     <release version="9.0.0" date="2026-08-28">
       <description>
         <p><em>Highlights</em></p>
@@ -667,14 +753,14 @@
   <categories>
     <category>Game</category>
   </categories>
-  <url type="homepage">https://projecttick.org/p/meshmc</url>
-  <url type="faq">https://projecttick.org/handbook</url>
-  <url type="help">https://projecttick.org/handbook/</url>
+  <url type="homepage">https://projecttick.org</url>
+  <url type="faq">https://projecttick.org/wiki/overview/faq/</url>
+  <url type="help">https://projecttick.org/wiki</url>
   <url type="bugtracker">https://github.com/Project-Tick/MeshMC/issues</url>
   <url type="translate">https://crowdin.com/project/projtlauncher</url>
-  <url type="contact">https://projecttick.org/project-tick/projects/meshmc</url>
+  <url type="contact">https://github.com/Project-Tick/MeshMC/issues</url>
   <url type="vcs-browser">https://github.com/Project-Tick/MeshMC/</url>
-  <url type="contribute">https://github.com/Project-Tick/governance/blob/master/GOVERNANCE.md</url>
+  <url type="contribute">https://github.com/Project-Tick/MeshMC/blob/develop/.github/CONTRIBUTING.md</url>
   <url type="donation">https://www.patreon.com/meshmc</url>
   <content_rating type="oars-1.1">
     <content_attribute id="violence-fantasy">moderate</content_attribute>
