@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2026-09-02 09:47\n"
+"PO-Revision-Date: 2026-09-04 21:34\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -226,7 +226,9 @@ msgctxt "AboutDialog|"
 msgid "<p>We keep <b>MeshMC</b> open source because we believe it's important to be able to see the source code of a project like this, and we do this using the Apache license.</p>\n"
 "<p>One reason we use the Apache license is that we don't want people using the name <b>MeshMC</b> when they fork the project. This means people should examine the source code and remove all references to <b>MeshMC</b>, including the project icon and window titles (the title should not contain the phrase <b>MeshMC-fork</b>). The Apache license covers reasonable use of the name; mentioning the project's origins in the About dialog and license is acceptable. However, it must be explicitly stated that the project is a fork, which does not mean you have our approval.</p>\n"
 "<p>However, we give you the freedom to distribute this project as you wish, in any non-exclusive way, without changing its functionality, on a voluntary basis to package managers, without expecting any financial gain. Take the project and distribute it wherever people can reach it. But abide by our restrictions."
-msgstr ""
+msgstr "<p>MeshMC'yi açık kaynak olarak tutuyoruz çünkü bu tür bir projenin kaynak kodunu görebilmenin önemli olduğuna inanıyoruz ve bunu Apache lisansını kullanarak yapıyoruz.</p>\n"
+"<p>Apache lisansını kullanmamızın bir nedeni, insanların projeyi çatalladıklarında <b>MeshMC</b> adını kullanmalarını istemememizdir. Bu, insanların kaynak kodunu incelemeleri ve proje simgesi ve pencere başlıkları da dahil olmak üzere <b>MeshMC</b>'ye yapılan tüm referansları kaldırmaları gerektiği anlamına gelir (başlıkta <b>MeshMC-fork</b> ifadesi bulunmamalıdır). Apache lisansı, adın makul kullanımını kapsar; Hakkında iletişim kutusunda ve lisansta projenin kökenlerinden bahsetmek kabul edilebilir. Ancak, projenin bir çatal olduğu açıkça belirtilmelidir, bu da bizim onayımızı aldığınız anlamına gelmez.</p>\n"
+"<p>Ancak, bu projeyi istediğiniz gibi, işlevselliğini değiştirmeden, paket yöneticilerine gönüllü olarak ve herhangi bir mali kazanç beklemeksizin, istediğiniz şekilde dağıtma özgürlüğünü size veriyoruz. Projeyi alın ve insanların ulaşabileceği her yere dağıtın. Ancak kısıtlamalarımıza uyun.</p>"
 
 #: launcher/minecraft/auth/AccountList.cpp:333
 msgctxt "AccountList|Account status"
@@ -1977,7 +1979,7 @@ msgstr "Profil dışa aktarılamıyor"
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:184
 msgctxt "ExportInstanceDialog|"
 msgid "Abort"
-msgstr ""
+msgstr "İptal Et"
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:82
 msgctxt "ExportListDialog|"
@@ -2112,144 +2114,144 @@ msgstr "Dosya"
 #: launcher/ui/dialogs/ExportPackDialog.ui:20
 msgctxt "ExportPackDialog|"
 msgid "&Description"
-msgstr ""
+msgstr "&Açıklama"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:31
 msgctxt "ExportPackDialog|"
 msgid "&Name:"
-msgstr ""
+msgstr "&İsim:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:44
 msgctxt "ExportPackDialog|"
 msgid "&Version:"
-msgstr ""
+msgstr "&Sürüm:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr ""
+msgstr "1.0.0"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
 msgid "&Author:"
-msgstr ""
+msgstr "&Yazar:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:76
 msgctxt "ExportPackDialog|"
 msgid "&Summary"
-msgstr ""
+msgstr "&Özet:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:114
 msgctxt "ExportPackDialog|"
 msgid "&Options"
-msgstr ""
+msgstr "&Seçenekler"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:135
 msgctxt "ExportPackDialog|"
 msgid "&Recommended Memory:"
-msgstr ""
+msgstr "&Önerilen Bellek:"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr ""
+msgstr " MiB"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
 msgid "&Files"
-msgstr ""
+msgstr "&Dosyalar"
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:209
 msgctxt "ExportPackDialog|"
 msgid "&Mark disabled files as optional"
-msgstr ""
+msgstr "Devre dışı bırakılmış dosyaları isteğe bağlı olarak işaretle"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:78
 msgctxt "ExportPackDialog|"
 msgid "Export Modrinth Pack"
-msgstr ""
+msgstr "Modrinth Paketini Dışa Aktar"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:86
 msgctxt "ExportPackDialog|"
 msgid "Export CurseForge Pack"
-msgstr ""
+msgstr "CurseForge Paketini Dışa Aktar"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:177
 msgctxt "ExportPackDialog|"
 msgid "OK"
-msgstr ""
+msgstr "Tamam"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:178
 msgctxt "ExportPackDialog|"
 msgid "Cancel"
-msgstr ""
+msgstr "İptal Et"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:228
 #: launcher/ui/dialogs/ExportPackDialog.cpp:244
 #, qt-format
 msgctxt "ExportPackDialog|"
 msgid "Export %1"
-msgstr ""
+msgstr "Dışa Aktar %1"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:230
 msgctxt "ExportPackDialog|"
 msgid "Modrinth pack"
-msgstr ""
+msgstr "Modrinth paketi"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:246
 msgctxt "ExportPackDialog|"
 msgid "CurseForge pack"
-msgstr ""
+msgstr "CurseForge paketi"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:324
 msgctxt "ExportPackDialog|"
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:330
 msgctxt "ExportPackDialog|"
 msgid "Abort"
-msgstr ""
+msgstr "İptal Et"
 
 #: launcher/archive/ExportToZipTask.cpp:54
 msgctxt "ExportToZipTask|"
 msgid "Adding files..."
-msgstr ""
+msgstr "Dosyalar ekleniyor..."
 
 #: launcher/archive/ExportToZipTask.cpp:93
 msgctxt "ExportToZipTask|"
 msgid "The folder to export does not exist."
-msgstr ""
+msgstr "Dışa aktarılacak klasör mevcut değil."
 
 #: launcher/archive/ExportToZipTask.cpp:98
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Could not create '%1': %2"
-msgstr ""
+msgstr "'%1' oluşturulamadı: %2"
 
 #: launcher/archive/ExportToZipTask.cpp:113
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Could not add %1: %2"
-msgstr ""
+msgstr "%1 eklenemedi: %2"
 
 #: launcher/archive/ExportToZipTask.cpp:131
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Compressing: %1"
-msgstr ""
+msgstr "Sıkıştırılıyor: %1"
 
 #: launcher/archive/ExportToZipTask.cpp:148
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Could not read and compress %1: %2"
-msgstr ""
+msgstr "%1 okunamadı ve sıkıştırılamadı: %2"
 
 #: launcher/archive/ExportToZipTask.cpp:155
 #, qt-format
 msgctxt "ExportToZipTask|"
 msgid "Could not finish '%1': %2"
-msgstr ""
+msgstr "'%1' işlemi tamamlanamadı: %2"
 
 #: launcher/ui/pages/global/ExternalToolsPage.ui:59
 #: launcher/ui/pages/global/ExternalToolsPage.ui:96
@@ -2376,19 +2378,19 @@ msgstr "'%1' yerel jar dosyasını '%2' hedefine çıkarılamadı: %3"
 #: launcher/archive/ExtractZipTask.cpp:41
 msgctxt "ExtractZipTask|"
 msgid "Extracting files..."
-msgstr ""
+msgstr "Dosyalar çıkarılıyor..."
 
 #: launcher/archive/ExtractZipTask.cpp:86
 #, qt-format
 msgctxt "ExtractZipTask|"
 msgid "Unpacking: %1"
-msgstr ""
+msgstr "Paket açılıyor: %1"
 
 #: launcher/archive/ExtractZipTask.cpp:100
 #, qt-format
 msgctxt "ExtractZipTask|"
 msgid "Failed to unpack %1. The archive appears to be damaged."
-msgstr ""
+msgstr "%1 paketinin açılması başarısız oldu. Arşiv hasar görmüş gibi görünüyor."
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:56
 msgctxt "FMLLibrariesTask|"
@@ -2436,29 +2438,29 @@ msgstr "Mod ID'leri çözümleniyor..."
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:140
 msgctxt "FlamePackExportTask|"
 msgid "Searching for files..."
-msgstr ""
+msgstr "Dosyalar aranıyor..."
 
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:270
 msgctxt "FlamePackExportTask|"
 msgid "Could not read the instance's files."
-msgstr ""
+msgstr "Örnek dosyalarından okuma yapılamadı."
 
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:288
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:308
 msgctxt "FlamePackExportTask|"
 msgid "Identifying files on CurseForge..."
-msgstr ""
+msgstr "CurseForge'daki dosyalar tanımlanıyor..."
 
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:425
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:432
 msgctxt "FlamePackExportTask|"
 msgid "Fetching project details from CurseForge..."
-msgstr ""
+msgstr "CurseForge'dan proje detayları alınıyor..."
 
 #: launcher/modplatform/flame/FlamePackExportTask.cpp:515
 msgctxt "FlamePackExportTask|"
 msgid "Adding files..."
-msgstr ""
+msgstr "Dosyalar ekleniyor..."
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.ui:52
 msgctxt "FlamePage|"
@@ -2478,12 +2480,12 @@ msgstr "Ara ve filtrele ..."
 #: launcher/ui/pages/modplatform/flame/FlamePage.cpp:128
 msgctxt "FlamePage|"
 msgid " by "
-msgstr ""
+msgstr " tarafından "
 
 #: launcher/ui/pages/modplatform/flame/FlamePage.h:51
 msgctxt "FlamePage|"
 msgid "CurseForge"
-msgstr ""
+msgstr "CurseForge"
 
 #: launcher/minecraft/update/FoldersTask.cpp:34
 msgctxt "FoldersTask|"
@@ -2518,7 +2520,7 @@ msgstr "Ara ve filtrele ..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr ""
+msgstr "FTB"
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:95
 msgctxt "GameOptions|"
@@ -2584,7 +2586,7 @@ msgstr "Ne zaman"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:66
 msgctxt "GitVersioningPage|"
 msgid "Commit"
-msgstr ""
+msgstr "Revizyon"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:66
 msgctxt "GitVersioningPage|"
@@ -2599,22 +2601,22 @@ msgstr "Dosyalar"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr ""
+msgstr "+"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
 msgid "Snapshot now"
-msgstr ""
+msgstr "Şimdi anlık görüntü al"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:80
 msgctxt "GitVersioningPage|"
 msgid "Commit the current state of the instance"
-msgstr ""
+msgstr "Profilin mevcut durumunu kaydedin"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:85
 msgctxt "GitVersioningPage|"
@@ -2629,12 +2631,12 @@ msgstr "Etiket..."
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:97
 msgctxt "GitVersioningPage|"
 msgid "Drop last commit"
-msgstr ""
+msgstr "Son commit'i sil"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:98
 msgctxt "GitVersioningPage|"
 msgid "Hard-reset HEAD by one commit. The dropped commit is unreachable but reachable again via the reflog for ~30 days."
-msgstr ""
+msgstr "HEAD'i bir revizyon kadar sıfırlayın. Silinen revizyon'a erişilemez, ancak yaklaşık 30 gün boyunca reflog aracılığıyla tekrar erişilebilir."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:107
 msgctxt "GitVersioningPage|"
@@ -2644,114 +2646,115 @@ msgstr "Yenile"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:119
 msgctxt "GitVersioningPage|"
 msgid "<b>git</b> is not installed on your system. Install Git and reopen this page."
-msgstr ""
+msgstr "<b>Git</b> sisteminizde yüklü değil. Git'i yükleyin ve bu sayfayı tekrar açın."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:130
 msgctxt "GitVersioningPage|"
 msgid "No version history yet. Snapshot now to start tracking changes to this instance."
-msgstr ""
+msgstr "Henüz sürüm geçmişi yok. Bu profildeki değişiklikleri izlemeye başlamak için şimdi bir anlık görüntü alın."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:134
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "HEAD: <b>%1</b>"
-msgstr ""
+msgstr "HEAD: <b>%1</b>"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:136
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "Modified: %1, Deleted: %2, Untracked: %3"
-msgstr ""
+msgstr "Değiştirildi: %1, Silindi: %2, Takip Edilmiyor: %3"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:141
 msgctxt "GitVersioningPage|"
 msgid "Clean working tree"
-msgstr ""
+msgstr "Temiz çalışma ağacı"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:143
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr ""
+msgstr "git %1"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr ""
+msgstr "Anlık görüntü"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
 msgid "Describe the changes you're snapshotting (leave blank for an auto-generated message):"
-msgstr ""
+msgstr "Kaydettiğiniz değişiklikleri açıklayın (otomatik mesaj oluşturulması için boş bırakın):"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:199
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "Manual snapshot %1"
-msgstr ""
+msgstr "Manuel anlık görüntü %1"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:208
 msgctxt "GitVersioningPage|"
 msgid "Snapshot failed"
-msgstr ""
+msgstr "Anlık görüntü alma işlemi başarısız oldu"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:212
 msgctxt "GitVersioningPage|"
 msgid "Nothing to commit — the working tree was clean."
-msgstr ""
+msgstr "Herhangi bir revizyon yoktu; çalışma ağacı temizdi."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:222
 msgctxt "GitVersioningPage|"
 msgid "Restore?"
-msgstr ""
+msgstr "Eski haline getir?"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:223
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "Restore the instance to commit %1 (%2)?\n\n"
 "An auto-snapshot of the current state is taken first, so this can be undone by restoring the previous snapshot."
-msgstr ""
+msgstr "Profili %1 (%2) commit'ine geri yükle?\n\n"
+"Önce mevcut durumun otomatik anlık görüntüsü alınır, bu nedenle önceki anlık görüntüyü geri yükleyerek bu işlem geri alınabilir."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:231
 msgctxt "GitVersioningPage|"
 msgid "Restore failed"
-msgstr ""
+msgstr "Geri yükleme başarısız oldu"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:242
 msgctxt "GitVersioningPage|"
 msgid "Tag commit"
-msgstr ""
+msgstr "Etiket revizyonu"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:242
 msgctxt "GitVersioningPage|"
 msgid "Tag name:"
-msgstr ""
+msgstr "Etiket adı:"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:250
 msgctxt "GitVersioningPage|"
 msgid "Tag failed"
-msgstr ""
+msgstr "Etiket başarısız oldu"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:255
 msgctxt "GitVersioningPage|"
 msgid "Drop last commit?"
-msgstr ""
+msgstr "Son revizyon'u silelim mi?"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:256
 msgctxt "GitVersioningPage|"
 msgid "This hard-resets HEAD by one commit. The working tree is reset to the parent commit too. Continue?"
-msgstr ""
+msgstr "Bu işlem, HEAD'i bir commit kadar sıfırlar. Çalışma ağacı da üst commit'e sıfırlanır. Devam edilsin mi?"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:261
 msgctxt "GitVersioningPage|"
 msgid "Drop failed"
-msgstr ""
+msgstr "Bırakma başarısız oldu"
 
 #: launcher/ui/pages/instance/DataPackPage.cpp:63
 msgctxt "GlobalDataPackPage|"
 msgid "Data packs"
-msgstr ""
+msgstr "Veri paketleri"
 
 #: launcher/ui/dialogs/IconPickerDialog.ui:14
 msgctxt "IconPickerDialog|"
@@ -2798,7 +2801,7 @@ msgstr "Direkt indirme için yerel dosya veya bağlantı:"
 #: launcher/ui/pages/modplatform/ImportPage.cpp:125
 msgctxt "ImportPage|"
 msgid "Modpack archives (*.zip *.mrpack);;Modrinth packs (*.mrpack);;Zip archives (*.zip);;All files (*)"
-msgstr ""
+msgstr "Mod paketi arşivleri (*.zip *.mrpack);;Modrinth paketleri (*.mrpack);;Zip arşivleri (*.zip);;Tüm dosyalar (*)"
 
 #: launcher/ui/pages/modplatform/ImportPage.cpp:129
 msgctxt "ImportPage|"
@@ -2813,27 +2816,27 @@ msgstr "ZIP'ten içeri aktar"
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:257
 msgctxt "InstallLoaderDialog|"
 msgid "Filter builds"
-msgstr ""
+msgstr "Yapıları filtrele"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:262
 msgctxt "InstallLoaderDialog|"
 msgid "&Refresh"
-msgstr ""
+msgstr "&Yenile"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:263
 msgctxt "InstallLoaderDialog|"
 msgid "Download this loader's version list again."
-msgstr ""
+msgstr "Bu yükleyicinin sürüm listesini tekrar indirin."
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:267
 msgctxt "InstallLoaderDialog|"
 msgid "Install"
-msgstr ""
+msgstr "Yükle"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:311
 msgctxt "InstallLoaderDialog|"
 msgid "Install Loader"
-msgstr ""
+msgstr "Yükleyiciyi Yükle"
 
 #: launcher/ui/widgets/InstanceCardWidget.ui:27
 msgctxt "InstanceCardWidget|"
@@ -2883,7 +2886,7 @@ msgstr "Mod paketi indir"
 #: launcher/InstanceImportTask.cpp:124
 msgctxt "InstanceImportTask|"
 msgid "Inspecting modpack archive"
-msgstr ""
+msgstr "Mod paketi arşivini inceleme"
 
 #: launcher/InstanceImportTask.cpp:221
 #, qt-format
