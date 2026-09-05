@@ -129,18 +129,27 @@ QByteArray serializeLevelDat(nbt::tag_compound* levelInfo)
 	return val;
 }
 
-QString getLevelDatFromFS(const QFileInfo& file)
+namespace
+{
+	/* Newer Minecraft versions keep the world generation settings, and with
+	 * them the world seed, in a saved data file of their own instead of
+	 * level.dat. */
+	const QLatin1String worldGenSettingsPath(
+		"data/minecraft/world_gen_settings.dat");
+} // namespace
+
+QString getDatFileFromFS(const QFileInfo& file, const QString& relativePath)
 {
 	QDir worldDir(file.filePath());
-	if (!file.isDir() || !worldDir.exists("level.dat")) {
+	if (!file.isDir() || !worldDir.exists(relativePath)) {
 		return QString();
 	}
-	return worldDir.absoluteFilePath("level.dat");
+	return worldDir.absoluteFilePath(relativePath);
 }
 
-QByteArray getLevelDatDataFromFS(const QFileInfo& file)
+QByteArray getDatDataFromFS(const QFileInfo& file, const QString& relativePath)
 {
-	auto fullFilePath = getLevelDatFromFS(file);
+	auto fullFilePath = getDatFileFromFS(file, relativePath);
 	if (fullFilePath.isNull()) {
 		return QByteArray();
 	}
@@ -149,6 +158,16 @@ QByteArray getLevelDatDataFromFS(const QFileInfo& file)
 		return QByteArray();
 	}
 	return f.readAll();
+}
+
+QString getLevelDatFromFS(const QFileInfo& file)
+{
+	return getDatFileFromFS(file, QStringLiteral("level.dat"));
+}
+
+QByteArray getLevelDatDataFromFS(const QFileInfo& file)
+{
+	return getDatDataFromFS(file, QStringLiteral("level.dat"));
 }
 
 bool putLevelDatDataToFS(const QFileInfo& file, QByteArray& data)
@@ -205,6 +224,9 @@ bool World::resetIcon()
 	return false;
 }
 
+/* Defined further down, next to the other NBT reading helpers. */
+static std::optional<int64_t> readWorldGenSettingsSeed(const QByteArray& data);
+
 void World::readFromFS(const QFileInfo& file)
 {
 	auto bytes = getLevelDatDataFromFS(file);
@@ -214,6 +236,13 @@ void World::readFromFS(const QFileInfo& file)
 	}
 	loadFromLevelDat(bytes);
 	levelDatTime = file.lastModified();
+
+	if (is_valid && m_randomSeed == 0) {
+		auto worldGenBytes = getDatDataFromFS(file, worldGenSettingsPath);
+		if (!worldGenBytes.isEmpty()) {
+			m_randomSeed = readWorldGenSettingsSeed(worldGenBytes).value_or(0);
+		}
+	}
 }
 
 void World::readFromZip(const QFileInfo& file)
@@ -233,6 +262,14 @@ void World::readFromZip(const QFileInfo& file)
 	}
 	levelDatTime = MMCZip::getEntryModTime(zipPath, location + "level.dat");
 	loadFromLevelDat(levelDatData);
+
+	if (is_valid && m_randomSeed == 0) {
+		auto worldGenBytes =
+			MMCZip::readFileFromZip(zipPath, location + worldGenSettingsPath);
+		if (!worldGenBytes.isEmpty()) {
+			m_randomSeed = readWorldGenSettingsSeed(worldGenBytes).value_or(0);
+		}
+	}
 }
 
 bool World::install(const QString& to, const QString& name)
@@ -370,6 +407,35 @@ namespace
 	}
 
 } // namespace
+
+static std::optional<int64_t> readWorldGenSettingsSeed(const QByteArray& data)
+{
+	auto worldGenData = parseLevelDat(data);
+	if (!worldGenData) {
+		return std::nullopt;
+	}
+
+	nbt::value* valPtr = nullptr;
+	try {
+		/* Saved data files wrap their payload in a "data" compound. */
+		valPtr = &worldGenData->at("data");
+	} catch (const std::out_of_range&) {
+		qWarning() << "Unable to read the \"data\" compound from"
+				   << worldGenSettingsPath;
+		return std::nullopt;
+	}
+	nbt::value& val = *valPtr;
+
+	if (val.get_type() != nbt::tag_type::Compound) {
+		return std::nullopt;
+	}
+
+	auto seed = read_long(val, "seed");
+	if (seed) {
+		qDebug() << "Seed:" << *seed;
+	}
+	return seed;
+}
 
 void World::loadFromLevelDat(QByteArray data)
 {
