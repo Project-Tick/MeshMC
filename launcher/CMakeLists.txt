@@ -25,6 +25,8 @@ set(CORE_SOURCES
     BaseVersion.h
     BaseInstance.h
     BaseInstance.cpp
+    Sys.cpp
+    Sys.h
     NullInstance.h
     MMCZip.h
     MMCZip.cpp
@@ -1129,7 +1131,6 @@ add_unit_test(CustomTheme
     )
 
 target_link_libraries(MeshMC_logic
-    systeminfo
     classparser
     nbt++
     ZLIB::ZLIB

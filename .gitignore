@@ -58,3 +58,7 @@ base_lst_file*
 *.mo
 
 *.ts
+
+# Qt
+
+.qtcreator/

@@ -30,7 +30,7 @@
 #include <QFileDialog>
 #include <QComboBox>
 
-#include <sys.h>
+#include "Sys.h"
 
 #include "FileSystem.h"
 #include "java/JavaInstall.h"
