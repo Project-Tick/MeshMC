@@ -80,6 +80,21 @@
 
 ## Previous versions
 
+## MeshMC 9.1.0
+
+## Highlights
+
+* A classic backport release.
+* It won't affect you much, but it can be a boon for package managers who value stability.
+
+## Changed
+
+Updater has been completely revamped. [BACKPORT FROM 10.0.0]
+
+## Fixed
+
+Manifest.txt generation has been fixed. [BACKPORT FROM 10.0.0]
+
 ## MeshMC 9.0.0
 
 ## Highlights

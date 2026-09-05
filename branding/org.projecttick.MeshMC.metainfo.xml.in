@@ -149,6 +149,23 @@
         </ul>
       </description>
     </release>
+    <release version="9.1.0" date="2026-09-05">
+      <description>
+        <p><em>Highlights</em></p>
+        <ul>
+          <li>A classic backport release.</li>
+          <li>It won't affect you much, but it can be a boon for package managers who value stability.</li>
+        </ul>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>Updater has been completely revamped. [BACKPORT FROM 10.0.0]</li>
+        </ul>
+        <p><em>Fixed</em></p>
+        <ul>
+          <li>Manifest.txt generation has been fixed. [BACKPORT FROM 10.0.0]</li>
+        </ul>
+      </description>
+    </release>
     <release version="9.0.0" date="2026-08-28">
       <description>
         <p><em>Highlights</em></p>
