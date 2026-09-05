@@ -124,20 +124,56 @@ namespace
 		return root;
 	}
 
+	/*
+	 * Newer Minecraft versions store the seed in a saved data file of its
+	 * own: <world>/data/minecraft/world_gen_settings.dat, whose payload sits
+	 * in a "data" compound.
+	 */
+	QByteArray makeWorldGenSettings(qint64 seed)
+	{
+		QByteArray dataPayload;
+		putLongTag(dataPayload, "seed", seed);
+		putU8(dataPayload, TAG_END);
+
+		QByteArray root;
+		putTagHeader(root, TAG_COMPOUND, ""); // unnamed root compound
+		putTagHeader(root, TAG_COMPOUND, "data");
+		root.append(dataPayload);
+		putIntTag(root, "DataVersion", 4771);
+		putU8(root, TAG_END);
+		return root;
+	}
+
+	bool writeDat(const QString& worldPath, const QString& relativePath,
+				  const QByteArray& nbt)
+	{
+		QDir worldDir(worldPath);
+		if (!worldDir.mkpath(QFileInfo(relativePath).path())) {
+			return false;
+		}
+		QByteArray compressed;
+		if (!GZip::zip(nbt, compressed)) {
+			return false;
+		}
+		QFile file(worldDir.absoluteFilePath(relativePath));
+		if (!file.open(QIODevice::WriteOnly)) {
+			return false;
+		}
+		return file.write(compressed) == compressed.size();
+	}
+
 	bool writeWorld(const QString& worldPath, const QByteArray& levelDat)
 	{
 		if (!QDir().mkpath(worldPath)) {
 			return false;
 		}
-		QByteArray compressed;
-		if (!GZip::zip(levelDat, compressed)) {
-			return false;
-		}
-		QFile file(QDir(worldPath).absoluteFilePath("level.dat"));
-		if (!file.open(QIODevice::WriteOnly)) {
-			return false;
-		}
-		return file.write(compressed) == compressed.size();
+		return writeDat(worldPath, "level.dat", levelDat);
+	}
+
+	bool writeWorldGenSettings(const QString& worldPath, const QByteArray& nbt)
+	{
+		return writeDat(worldPath, "data/minecraft/world_gen_settings.dat",
+						nbt);
 	}
 } // namespace
 
@@ -198,6 +234,62 @@ class WorldTest : public QObject
 		World world{QFileInfo(worldPath)};
 		QVERIFY(world.isValid());
 		QCOMPARE(world.seed(), Q_INT64_C(42));
+	}
+
+	// Newer Minecraft: the seed lives in world_gen_settings.dat
+	void test_ReadSeedFromWorldGenSettingsFile()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("split");
+
+		QVERIFY(writeWorld(worldPath, makeLevelDat(LevelDatSpec())));
+		QVERIFY(writeWorldGenSettings(
+			worldPath, makeWorldGenSettings(Q_INT64_C(-8974235917123456))));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.name(), QString("Test World"));
+		QCOMPARE(world.seed(), Q_INT64_C(-8974235917123456));
+	}
+
+	// A seed inside level.dat is authoritative, the extra file is not read
+	void test_LevelDatSeedTakesPrecedenceOverWorldGenSettingsFile()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("mixed");
+
+		LevelDatSpec spec;
+		spec.worldGenSettingsSeed = true;
+		spec.worldGenSettingsSeedValue = Q_INT64_C(99);
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+		QVERIFY(writeWorldGenSettings(worldPath,
+									  makeWorldGenSettings(Q_INT64_C(1337))));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.seed(), Q_INT64_C(99));
+	}
+
+	// A corrupt world_gen_settings.dat must not break loading the world
+	void test_CorruptWorldGenSettingsFileIsIgnored()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("corrupt");
+
+		QVERIFY(writeWorld(worldPath, makeLevelDat(LevelDatSpec())));
+		QVERIFY(QDir(worldPath).mkpath("data/minecraft"));
+		QFile garbage(QDir(worldPath).absoluteFilePath(
+			"data/minecraft/world_gen_settings.dat"));
+		QVERIFY(garbage.open(QIODevice::WriteOnly));
+		QVERIFY(garbage.write("not a gzipped nbt file") > 0);
+		garbage.close();
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.seed(), Q_INT64_C(0));
 	}
 
 	// No seed anywhere: the world still loads, the seed is just unknown
