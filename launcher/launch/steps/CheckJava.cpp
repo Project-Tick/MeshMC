@@ -23,7 +23,7 @@
 #include <FileSystem.h>
 #include <QStandardPaths>
 #include <QFileInfo>
-#include <sys.h>
+#include "Sys.h"
 
 void CheckJava::executeTask()
 {

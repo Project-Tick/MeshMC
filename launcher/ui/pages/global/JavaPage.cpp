@@ -41,7 +41,7 @@
 #include "settings/SettingsObject.h"
 #include <FileSystem.h>
 #include "Application.h"
-#include <sys.h>
+#include "Sys.h"
 
 JavaPage::JavaPage(QWidget* parent) : QWidget(parent), ui(new Ui::JavaPage)
 {

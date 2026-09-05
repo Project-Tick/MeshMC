@@ -320,10 +320,10 @@ set(MeshMC_BUILD_KIND        "" CACHE STRING "Updater asset kind: archive | appi
 set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
 
 # Channel list URL (legacy - kept for compatibility)
-set(MeshMC_UPDATER_BASE "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "Base URL for the legacy GoUpdate system (unused).")
+set(MeshMC_UPDATER_BASE "https://projecttick.org/feed/feed.xml" CACHE STRING "Base URL for the legacy GoUpdate system (unused).")
 
 # Updater: authoritative product feed URL (projt: namespace).
-set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/product/meshmc/feed.xml" CACHE STRING "RSS product feed URL for the updater (projt: namespace).")
+set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/feed/feed.xml" CACHE STRING "RSS product feed URL for the updater (projt: namespace).")
 
 # Updater: latest.json mirror URL (used as a cross-check; empty disables it).
 set(MeshMC_UPDATER_LATEST_JSON_URL "https://ftp.projecttick.org/Project-Tick/latest.json" CACHE STRING "Project Tick latest.json mirror used as a sanity check against the feed.")
@@ -487,7 +487,7 @@ if(UNIX AND APPLE)
     set(MACOSX_BUNDLE_ICON_FILE ${MeshMC_AppID}.icns)
     set(MACOSX_BUNDLE_COPYRIGHT "${MeshMC_Copyright_Mac}")
     set(MACOSX_SPARKLE_UPDATE_PUBLIC_KEY "C0eBoyDSoZbzgCMxQH9wH6kmjU2mPRmvhZZd9mHgqZQ=" CACHE STRING "Public key for Sparkle update feed")
-    set(MACOSX_SPARKLE_UPDATE_FEED_URL "https://projecttick.org/product/meshmc/appcast.xml" CACHE STRING "URL for Sparkle update feed")
+    set(MACOSX_SPARKLE_UPDATE_FEED_URL "https://projecttick.org/feed/appcast.xml" CACHE STRING "URL for Sparkle update feed")
 
     set(MACOSX_SPARKLE_DOWNLOAD_URL "https://github.com/sparkle-project/Sparkle/releases/download/2.8.0/Sparkle-2.8.0.tar.xz" CACHE STRING "URL to Sparkle release archive")
     set(MACOSX_SPARKLE_SHA256 "fd5681ee92bf238aaac2d08214ceaf0cc8976e452d7f882d80bac1e61581f3b1" CACHE STRING "SHA256 checksum for Sparkle release archive")
@@ -620,7 +620,6 @@ option(NBT_BUILD_TESTS "Build NBT library tests" OFF) #FIXME: fix unit tests.
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/libnbtplusplus libnbtplusplus)
 
-add_subdirectory(libraries/systeminfo) # system information library
 add_subdirectory(libraries/launcher) # java based launcher part for Minecraft
 add_subdirectory(libraries/javacheck) # java compatibility checker
 add_subdirectory(libraries/xz-embedded) # xz compression

@@ -24,7 +24,7 @@
 #include <QDialog>
 #include <QMessageBox>
 
-#include <sys.h>
+#include "Sys.h"
 
 #include "ui/dialogs/VersionSelectDialog.h"
 #include "ui/widgets/CustomCommands.h"

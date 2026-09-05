@@ -28,7 +28,7 @@
 #include <QToolButton>
 #include <QFileDialog>
 
-#include <sys.h>
+#include "Sys.h"
 
 #include "java/JavaInstall.h"
 #include "java/JavaUtils.h"

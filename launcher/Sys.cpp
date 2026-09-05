@@ -1,33 +1,23 @@
-/*
+/* SPDX-FileCopyrightText: 2026 Project Tick
+ * SPDX-FileContributor: Project Tick
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright (C) 2026 Project Tick
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-Code has been taken from https://github.com/natefoo/lionshead and loosely
-translated to C++ laced with Qt.
-
-MIT License
-
-Copyright (c) 2017 Nate Coraor
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-*/
-
-#include "distroutils.h"
+#include "Sys.h"
 
 #include <QStringList>
 #include <QMap>
@@ -37,8 +27,158 @@ SOFTWARE.
 #include <QDebug>
 #include <QDir>
 #include <QRegularExpression>
+#include <QString>
 
 #include <functional>
+#include <fstream>
+#include <limits>
+
+#ifdef Q_OS_WINDOWS
+#include <QOperatingSystemVersion>
+#include <windows.h>
+#elif defined(Q_OS_UNIX)
+#include <sys/utsname.h>
+#endif
+
+Sys::KernelInfo Sys::getKernelInfo()
+{
+	Sys::KernelInfo out;
+#ifdef Q_OS_UNIX
+	struct utsname buf;
+	uname(&buf);
+    out.kernelName = buf.sysname;
+	QString release = out.kernelVersion = buf.release;
+	out.kernelMajor = 0;
+	out.kernelMinor = 0;
+	out.kernelPatch = 0;
+#ifdef Q_OS_MACOS
+	out.kernelType = KernelType::Darwin;
+	out.isCursed = false;
+#elif defined(Q_OS_LINUX)
+	out.kernelType = KernelType::Linux;
+	out.isCursed = release.contains("WSL", Qt::CaseInsensitive) ||
+				   release.contains("Microsoft", Qt::CaseInsensitive);
+#endif
+	auto sections = release.split('-');
+	if (sections.size() >= 1) {
+		auto versionParts = sections[0].split('.');
+		if (versionParts.size() >= 3) {
+			out.kernelMajor = versionParts[0].toInt();
+			out.kernelMinor = versionParts[1].toInt();
+			out.kernelPatch = versionParts[2].toInt();
+		} else {
+			qWarning() << "Not enough version numbers in " << sections[0]
+					   << " found " << versionParts.size();
+		}
+	} else {
+		qWarning() << "Not enough '-' sections in " << release << " found "
+				   << sections.size();
+	}
+	return out;
+#elif defined(Q_OS_WINDOWS)
+	out.kernelType = KernelType::Windows;
+	out.kernelName = "Windows";
+	const auto osVersion = QOperatingSystemVersion::current();
+	out.kernelMajor = osVersion.majorVersion();
+	out.kernelMinor = osVersion.minorVersion();
+	out.kernelPatch = osVersion.microVersion();
+	out.kernelVersion = QString("%1.%2.%3")
+							.arg(out.kernelMajor)
+							.arg(out.kernelMinor)
+							.arg(out.kernelPatch);
+	return out;
+#endif
+}
+
+#ifdef Q_OS_MACOS
+#include <sys/sysctl.h>
+#endif
+
+uint64_t Sys::getSystemRam()
+{
+#ifdef Q_OS_WINDOWS
+	MEMORYSTATUSEX status;
+	status.dwLength = sizeof(status);
+	GlobalMemoryStatusEx(&status);
+	// bytes
+	return (uint64_t)status.ullTotalPhys;
+#elif defined(Q_OS_UNIX)
+	std::string token;
+#ifdef Q_OS_LINUX
+	std::ifstream file("/proc/meminfo");
+	while (file >> token) {
+		if (token == "MemTotal:") {
+			uint64_t mem;
+			if (file >> mem) {
+				return mem * 1024ull;
+			} else {
+				return 0;
+			}
+		}
+		// ignore rest of the line
+		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	}
+#elif defined(Q_OS_FREEBSD)
+	char buff[512];
+	FILE* fp = popen("sysctl hw.physmem", "r");
+	if (fp != NULL) {
+		while (fgets(buff, 512, fp) != NULL) {
+			std::string str(buff);
+			uint64_t mem = std::stoull(str.substr(12, std::string::npos));
+			return mem * 1024ull;
+		}
+	}
+#elif defined(Q_OS_MACOS)
+	uint64_t memsize;
+	size_t memsizesize = sizeof(memsize);
+	if (!sysctlbyname("hw.memsize", &memsize, &memsizesize, NULL, 0)) {
+		return memsize;
+	} else {
+		return 0;
+	}
+#endif
+#endif
+	return 0; // nothing found
+}
+
+bool Sys::isCPU64bit()
+{
+#ifdef Q_OS_MACOS
+	// not even going to pretend I'm going to support anything else
+	return true;
+#elif defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+	return isSystem64bit();
+#elif defined(Q_OS_WINDOWS)
+	SYSTEM_INFO info;
+	ZeroMemory(&info, sizeof(SYSTEM_INFO));
+	GetNativeSystemInfo(&info);
+	auto arch = info.wProcessorArchitecture;
+	return arch == PROCESSOR_ARCHITECTURE_AMD64 ||
+		   arch == PROCESSOR_ARCHITECTURE_IA64;
+#endif
+}
+
+bool Sys::isSystem64bit()
+{
+#ifdef Q_OS_MACOS
+	// yep. maybe when we have 128bit CPUs on consumer devices.
+	return true;
+#elif defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+	// kernel build arch on linux
+	return QSysInfo::currentCpuArchitecture() == "x86_64";
+#elif defined(_WIN64)
+	return true;
+#elif defined(_WIN32)
+	BOOL f64 = false;
+	return IsWow64Process(GetCurrentProcess(), &f64) && f64;
+#else
+	// it's some other kind of system...
+	return false;
+#endif
+}
+
+// The code from this point onwards is licensed under the
+// MIT Expat license. See the COPYING.md file, # lionshed section.
 
 Sys::DistributionInfo Sys::read_os_release()
 {

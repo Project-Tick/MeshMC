@@ -101,7 +101,7 @@
 #include "minecraft/PackProfile.h"
 #include "minecraft/Component.h"
 
-#include <sys.h>
+#include "Sys.h"
 #include "Logging.h"
 #include "MMCStrings.h"
 

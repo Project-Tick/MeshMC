@@ -119,7 +119,7 @@ through your package manager in that case.
 
 ### In-Tree Dependencies
 
-nbt++, systeminfo, iconfix, rainbow, classparser and the other libraries under
+nbt++, iconfix, rainbow, classparser and the other libraries under
 `libraries/` are git subtrees, built as part of this tree. These are **not**
 system packages — do not install distro versions of them.
 
