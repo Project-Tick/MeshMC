@@ -76,8 +76,8 @@ set(CMAKE_JAVA_TARGET_OUTPUT_DIR ${PROJECT_BINARY_DIR}/jars)
 ######## Set compiler flags ########
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_C_STANDARD_REQUIRED true)
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_C_STANDARD 23)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 11)
 
 include(GenerateExportHeader)
 if(MSVC)
@@ -154,6 +154,18 @@ if(NOT MeshMC_QT_VERSION_MAJOR STREQUAL "5" AND NOT MeshMC_QT_VERSION_MAJOR STRE
 endif()
 
 set(QT_VERSION_MAJOR "${MeshMC_QT_VERSION_MAJOR}")
+
+# OpenSSL libraries to copy into the package (Windows). Qt loads OpenSSL at
+# runtime instead of linking it, so nothing in the normal deployment chain
+# picks it up; see the "OpenSSL runtime (Windows)" block in
+# launcher/CMakeLists.txt for why this is spelled out by hand.
+#
+# Which files are correct depends on the Qt build: the official Qt 5.15
+# binaries need the 1.1.1 ABI (libssl-1_1-x64.dll, libcrypto-1_1-x64.dll),
+# MSYS2's Qt needs 3.x (libssl-3-x64.dll, libcrypto-3-x64.dll). CI fills this
+# in; leaving it empty only affects packaging, not the build.
+set(MeshMC_BUNDLE_OPENSSL_LIBS "" CACHE STRING
+    "Semicolon-separated list of OpenSSL runtime libraries to ship inside the package")
 
 set(MeshMC_QT_COMPONENTS
     Core
