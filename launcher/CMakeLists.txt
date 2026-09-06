@@ -28,6 +28,7 @@ set(CORE_SOURCES
     Sys.cpp
     Sys.h
     NullInstance.h
+    QtCompat.h
     MMCZip.h
     MMCZip.cpp
     MMCStrings.h
@@ -399,7 +400,7 @@ add_executable(PackageManifest
 )
 target_link_libraries(PackageManifest
     MeshMC_logic
-    Qt6::Test
+    Qt${QT_VERSION_MAJOR}::Test
 )
 target_include_directories(PackageManifest
     PRIVATE ../cmake/UnitTest/
@@ -1028,7 +1029,7 @@ SET(MESHMC_SOURCES
     ui/instanceview/VisualGroup.h
 )
 
-qt6_wrap_ui(MESHMC_UI
+set(MESHMC_UI_FILES
     ui/pages/global/AccountListPage.ui
     ui/pages/global/AppearancePage.ui
     ui/pages/global/JavaPage.ui
@@ -1085,6 +1086,15 @@ qt6_wrap_ui(MESHMC_UI
     ui/dialogs/UntrustedModsDialog.ui
 )
 
+# Dispatch explicitly on the major version instead of using the versionless
+# qt_wrap_ui: on Qt 5 that wrapper is a no-op unless QT_DEFAULT_MAJOR_VERSION
+# happens to be set, which would silently generate no ui_*.h headers at all.
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt6_wrap_ui(MESHMC_UI ${MESHMC_UI_FILES})
+else()
+    qt5_wrap_ui(MESHMC_UI ${MESHMC_UI_FILES})
+endif()
+
 if(NOT MeshMC_DISABLE_JAVA_DOWNLOADER)
     list(APPEND MESHMC_SOURCES
         ui/dialogs/JavaDownloadDialog.cpp
@@ -1099,7 +1109,7 @@ if (APPLE)
     )
 endif()
 
-qt6_add_resources(MESHMC_RESOURCES
+set(MESHMC_QRC_FILES
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
     resources/pe_dark/pe_dark.qrc
@@ -1115,6 +1125,13 @@ qt6_add_resources(MESHMC_RESOURCES
     resources/breeze_light/breeze_light.qrc
     ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
 )
+
+# Same reasoning as MESHMC_UI above: never rely on the versionless wrapper.
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt6_add_resources(MESHMC_RESOURCES ${MESHMC_QRC_FILES})
+else()
+    qt5_add_resources(MESHMC_RESOURCES ${MESHMC_QRC_FILES})
+endif()
 
 ######## Windows resource files ########
 if(WIN32)
@@ -1153,12 +1170,12 @@ endif()
 # translation unit that logs, so the binary grows and carries build paths.
 target_compile_definitions(MeshMC_logic PUBLIC QT_MESSAGELOGCONTEXT)
 target_link_libraries(MeshMC_logic
-    Qt6::Core
-    Qt6::Xml
-    Qt6::Network
-    Qt6::NetworkAuth
-    Qt6::Concurrent
-    Qt6::Gui
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Xml
+    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::NetworkAuth
+    Qt${QT_VERSION_MAJOR}::Concurrent
+    Qt${QT_VERSION_MAJOR}::Gui
     LibArchive::LibArchive
 )
 target_link_libraries(MeshMC_logic
@@ -1188,6 +1205,11 @@ else()
 endif()
 
 if(APPLE)
+    target_link_libraries(MeshMC_logic
+        "-framework AppKit"
+        "-framework Foundation"
+        objc
+    )
     set(CMAKE_MACOSX_RPATH 1)
     set(CMAKE_INSTALL_RPATH "@loader_path/../Frameworks/")
 endif()
@@ -1282,33 +1304,212 @@ if(WIN32 OR (UNIX AND APPLE))
     if(WIN32)
         # Find windeployqt directly — Qt's qt_generate_deploy_script tries to find
         # windeployqt.debug.bat for Debug builds, which may not be available.
-        get_target_property(_qt_qmake_loc Qt6::qmake IMPORTED_LOCATION)
+        #
+        # Deriving the directory from the qmake target alone is not enough:
+        # depending on how Qt was packaged the host tools can sit somewhere
+        # other than next to qmake, so qmake is asked directly as well. And
+        # packagings that carry Qt 5 and Qt 6 side by side suffix the tool
+        # name to keep the two apart, hence the name list.
+        get_target_property(_qt_qmake_loc Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
         get_filename_component(_qt_bin_dir "${_qt_qmake_loc}" DIRECTORY)
-        find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
+
+        QUERY_QMAKE(QT_INSTALL_BINS _qt_install_bins)
+        QUERY_QMAKE(QT_HOST_BINS _qt_host_bins)
+
+        find_program(WINDEPLOYQT_EXECUTABLE
+            NAMES
+                windeployqt
+                windeployqt-qt${QT_VERSION_MAJOR}
+                windeployqt${QT_VERSION_MAJOR}
+            HINTS
+                "${_qt_bin_dir}"
+                "${_qt_install_bins}"
+                "${_qt_host_bins}"
+                "${Qt${QT_VERSION_MAJOR}_DIR}/../../../bin"
+        )
+
         if(NOT WINDEPLOYQT_EXECUTABLE)
-            message(FATAL_ERROR "windeployqt not found")
+            # Report what was actually searched. The bare "not found" this
+            # used to print gave nothing to act on, which is expensive when
+            # the only place it reproduces is a CI runner.
+            message(FATAL_ERROR
+                "windeployqt not found.\n"
+                "  Names searched      : windeployqt, "
+                "windeployqt-qt${QT_VERSION_MAJOR}, windeployqt${QT_VERSION_MAJOR}\n"
+                "  qmake executable    : ${_qt_qmake_loc}\n"
+                "  qmake directory     : ${_qt_bin_dir}\n"
+                "  QT_INSTALL_BINS     : ${_qt_install_bins}\n"
+                "  QT_HOST_BINS        : ${_qt_host_bins}\n"
+                "  Qt CMake dir + /bin : ${Qt${QT_VERSION_MAJOR}_DIR}/../../../bin\n"
+                "windeployqt ships with Qt's qtbase tools; make sure they are "
+                "installed for this Qt and that the directories above look right.")
         endif()
+
+        message(STATUS "windeployqt: ${WINDEPLOYQT_EXECUTABLE}")
+
+        # windeployqt's option set is not stable across Qt releases:
+        # --skip-plugin-types and --no-system-dxc-compiler are Qt 6 additions
+        # (and the latter only appeared partway through the Qt 6 series). Qt 5's
+        # windeployqt does not merely ignore them, it bails out with
+        # "Unknown options: ..." and a non-zero exit code, which fails install.
+        #
+        # Deriving the option list from the Qt version would mean encoding which
+        # release added what, so the tool is asked directly instead: anything it
+        # does not advertise in its help output is left off the command line.
+        execute_process(
+            COMMAND "${WINDEPLOYQT_EXECUTABLE}" --help
+            OUTPUT_VARIABLE _windeployqt_help_out
+            ERROR_VARIABLE _windeployqt_help_err
+            RESULT_VARIABLE _windeployqt_help_result
+        )
+        # Some builds print the usage text on stderr, so consider both streams.
+        set(_windeployqt_help "${_windeployqt_help_out}${_windeployqt_help_err}")
+        if(NOT _windeployqt_help_result EQUAL 0)
+            # Not fatal: the optional switches below are optimisations, and
+            # dropping them only means a slightly larger deployment.
+            message(WARNING
+                "Could not query '${WINDEPLOYQT_EXECUTABLE} --help' "
+                "(exit code: ${_windeployqt_help_result}). Deploying with the "
+                "baseline option set; the package may contain plugins that "
+                "would otherwise have been skipped.")
+            set(_windeployqt_help "")
+        endif()
+
+        # Understood by both Qt 5 and Qt 6 windeployqt.
+        # install-qt-action and MSYS2 only provide release Qt, so always use
+        # --release even when the app itself is built in Debug mode.
+        set(WINDEPLOYQT_OPTIONS
+            --release
+            --no-opengl-sw
+            --no-quick-import
+            --no-system-d3d-compiler
+            --no-translations
+            --no-compiler-runtime
+        )
+        if(_windeployqt_help MATCHES "no-system-dxc-compiler")
+            list(APPEND WINDEPLOYQT_OPTIONS --no-system-dxc-compiler)
+        else()
+            message(STATUS "windeployqt: --no-system-dxc-compiler unsupported, skipping it")
+        endif()
+        if(_windeployqt_help MATCHES "skip-plugin-types")
+            list(APPEND WINDEPLOYQT_OPTIONS --skip-plugin-types generic,networkinformation)
+        else()
+            message(STATUS "windeployqt: --skip-plugin-types unsupported, skipping it")
+        endif()
+
+        if(_windeployqt_help MATCHES "no-angle")
+            set(_qt_angle_dll "")
+            foreach(_qt_angle_dir IN ITEMS
+                "${_qt_bin_dir}" "${_qt_install_bins}" "${_qt_host_bins}")
+                if(_qt_angle_dir AND EXISTS "${_qt_angle_dir}/libGLESv2.dll")
+                    set(_qt_angle_dll "${_qt_angle_dir}/libGLESv2.dll")
+                    break()
+                endif()
+            endforeach()
+            if(_qt_angle_dll)
+                message(STATUS "windeployqt: ANGLE present (${_qt_angle_dll}), deploying it")
+            else()
+                message(STATUS
+                    "windeployqt: no libGLESv2.dll alongside Qt, passing --no-angle")
+                list(APPEND WINDEPLOYQT_OPTIONS --no-angle)
+            endif()
+        endif()
+
+        message(STATUS "windeployqt options: ${WINDEPLOYQT_OPTIONS}")
+
+        # Pre-render the options as one quoted argument per line. Expanding the
+        # list directly into the install(CODE) string would paste it in
+        # semicolon-separated, i.e. as a single bogus argument.
+        set(WINDEPLOYQT_OPTIONS_CODE "")
+        foreach(_windeployqt_opt IN LISTS WINDEPLOYQT_OPTIONS)
+            string(APPEND WINDEPLOYQT_OPTIONS_CODE "\n                    \"${_windeployqt_opt}\"")
+        endforeach()
     endif()
 
     if(UNIX AND APPLE)
-        qt_generate_deploy_script(
-            TARGET ${MeshMC_Name}
-            OUTPUT_SCRIPT QT_DEPLOY_SCRIPT
-            CONTENT "
-            qt_deploy_runtime_dependencies(
-                EXECUTABLE ${BINARY_DEST_DIR}/$<TARGET_FILE_NAME:${MeshMC_Name}>
-                BIN_DIR ${BINARY_DEST_DIR}
-                LIBEXEC_DIR ${BINARY_DEST_DIR}
-                LIB_DIR ${LIBRARY_DEST_DIR}
-                PLUGINS_DIR ${PLUGIN_DEST_DIR}
-                NO_OVERWRITE
-                NO_TRANSLATIONS
-                NO_COMPILER_RUNTIME
-            )"
-        )
-        install(
-            SCRIPT ${QT_DEPLOY_SCRIPT}
-        )
+        # qt_generate_deploy_script/qt_deploy_runtime_dependencies are Qt 6.3+
+        # only. Qt 5 has no CMake equivalent, but it ships macdeployqt, which
+        # is the supported way to do the same job, so the Qt 5 branch below
+        # shells out to it.
+        if(QT_VERSION_MAJOR EQUAL 6)
+            qt_generate_deploy_script(
+                TARGET ${MeshMC_Name}
+                OUTPUT_SCRIPT QT_DEPLOY_SCRIPT
+                CONTENT "
+                qt_deploy_runtime_dependencies(
+                    EXECUTABLE ${BINARY_DEST_DIR}/$<TARGET_FILE_NAME:${MeshMC_Name}>
+                    BIN_DIR ${BINARY_DEST_DIR}
+                    LIBEXEC_DIR ${BINARY_DEST_DIR}
+                    LIB_DIR ${LIBRARY_DEST_DIR}
+                    PLUGINS_DIR ${PLUGIN_DEST_DIR}
+                    NO_OVERWRITE
+                    NO_TRANSLATIONS
+                    NO_COMPILER_RUNTIME
+                )"
+            )
+            install(
+                SCRIPT ${QT_DEPLOY_SCRIPT}
+            )
+        else()
+            # Qt 5: deploy with macdeployqt. Located the same way windeployqt
+            # is above, via the qmake target's directory.
+            #
+            # Deliberately not a configure-time hard error when the tool is
+            # missing: configuring and building a Qt 5 macOS tree has to keep
+            # working even where the deploy step will never run (a
+            # compile-only CI job, for instance). The tool is only genuinely
+            # required by `install`, so that is where it is enforced.
+            get_target_property(_qt_macdeploy_qmake
+                Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
+            get_filename_component(_qt_macdeploy_bin_dir
+                "${_qt_macdeploy_qmake}" DIRECTORY)
+            find_program(MACDEPLOYQT_EXECUTABLE macdeployqt
+                HINTS "${_qt_macdeploy_bin_dir}")
+
+            if(NOT MACDEPLOYQT_EXECUTABLE)
+                message(WARNING
+                    "macdeployqt was not found next to qmake "
+                    "(${_qt_macdeploy_bin_dir}). Building will work, but "
+                    "installing will fail: the .app would be missing its Qt "
+                    "frameworks and plugins. It ships with Qt 5's qtbase.")
+            endif()
+
+            # Runs after the install(CODE) further up that merges the staged
+            # bundle into ${CMAKE_INSTALL_PREFIX}/${MeshMC_Name}.app, so the
+            # bundle macdeployqt is pointed at already exists. This sits at
+            # the same point in the install order as the Qt 6 branch's
+            # install(SCRIPT) above.
+            #
+            # Only the main executable is handed over, matching what the Qt 6
+            # branch passes as EXECUTABLE. Helper binaries in the bundle (the
+            # updater, the crash reporter) and the .mmco plugins are therefore
+            # not rewritten by macdeployqt on either branch.
+            install(CODE "
+                set(_meshmc_macdeployqt \"${MACDEPLOYQT_EXECUTABLE}\")
+                set(_meshmc_bundle \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${MeshMC_Name}.app\")
+
+                if(NOT _meshmc_macdeployqt)
+                    message(FATAL_ERROR
+                        \"macdeployqt was not found, so '\${_meshmc_bundle}' \"
+                        \"cannot be completed. It ships with Qt 5's qtbase; \"
+                        \"make sure Qt's bin directory is available.\")
+                endif()
+                if(NOT IS_DIRECTORY \"\${_meshmc_bundle}\")
+                    message(FATAL_ERROR
+                        \"App bundle '\${_meshmc_bundle}' is missing; \"
+                        \"cannot run macdeployqt on it.\")
+                endif()
+
+                message(STATUS \"Deploying Qt into \${_meshmc_bundle}\")
+                execute_process(
+                    COMMAND \"\${_meshmc_macdeployqt}\" \"\${_meshmc_bundle}\"
+                    RESULT_VARIABLE _deploy_result
+                )
+                if(NOT _deploy_result EQUAL 0)
+                    message(FATAL_ERROR \"macdeployqt failed with exit code: \${_deploy_result}\")
+                endif()
+            ")
+        endif()
     endif()
 
     # Bundle our linked dependencies
@@ -1349,20 +1550,11 @@ if(WIN32 OR (UNIX AND APPLE))
     )
 
     if(WIN32)
-        # Deploy Qt plugins and DLLs using windeployqt.
-        # install-qt-action and MSYS2 only provide release Qt, so always use --release
-        # even when the app itself is built in Debug mode.
+        # Deploy Qt plugins and DLLs using windeployqt. WINDEPLOYQT_OPTIONS is
+        # assembled above from the switches this windeployqt actually supports.
         install(CODE "
             execute_process(
-                COMMAND \"${WINDEPLOYQT_EXECUTABLE}\"
-                    --release
-                    --no-opengl-sw
-                    --no-quick-import
-                    --no-system-d3d-compiler
-                    --no-system-dxc-compiler
-                    --skip-plugin-types generic,networkinformation
-                    --no-translations
-                    --no-compiler-runtime
+                COMMAND \"${WINDEPLOYQT_EXECUTABLE}\"${WINDEPLOYQT_OPTIONS_CODE}
                     --dir \"\${CMAKE_INSTALL_PREFIX}/${BINARY_DEST_DIR}\"
                     --libdir \"\${CMAKE_INSTALL_PREFIX}/${LIBRARY_DEST_DIR}\"
                     --plugindir \"\${CMAKE_INSTALL_PREFIX}/${PLUGIN_DEST_DIR}\"
@@ -1373,6 +1565,45 @@ if(WIN32 OR (UNIX AND APPLE))
                 message(FATAL_ERROR \"windeployqt failed with exit code: \${_deploy_result}\")
             endif()
         ")
+
+        #################### OpenSSL runtime (Windows) ####################
+        #
+        # Qt resolves OpenSSL with dlopen/LoadLibrary rather than linking it,
+        # so neither windeployqt nor install(RUNTIME_DEPENDENCY_SET) ever sees
+        # it and the package ships without a TLS backend. Qt 6 hides this on
+        # Windows by falling back to its Schannel plugin; Qt 5 has no such
+        # fallback, so every https:// request fails with
+        # QNetworkReply::SslHandshakeFailedError.
+        #
+        # The libraries are named rather than searched for on purpose: which
+        # OpenSSL is correct depends on the *Qt build*, not on the machine
+        # (official Qt 5.15 wants the 1.1.1 ABI, MSYS2's Qt wants 3.x), and
+        # picking up whatever happens to sit in a bin directory is how you end
+        # up shipping a DLL Qt cannot use. CI passes the exact files.
+        if(MeshMC_BUNDLE_OPENSSL_LIBS)
+            foreach(_openssl_lib IN LISTS MeshMC_BUNDLE_OPENSSL_LIBS)
+                if(NOT EXISTS "${_openssl_lib}")
+                    message(FATAL_ERROR
+                        "MeshMC_BUNDLE_OPENSSL_LIBS lists '${_openssl_lib}', "
+                        "which does not exist. Shipping the package without it "
+                        "would leave the launcher unable to make any HTTPS "
+                        "request, so this is a hard error rather than a warning.")
+                endif()
+                message(STATUS "Bundling OpenSSL runtime: ${_openssl_lib}")
+            endforeach()
+            install(FILES ${MeshMC_BUNDLE_OPENSSL_LIBS} DESTINATION ${BINARY_DEST_DIR})
+        elseif(QT_VERSION_MAJOR EQUAL 5)
+            # Warning, not an error: a developer build that is never packaged
+            # is perfectly usable as long as an OpenSSL 1.1 happens to be on
+            # PATH. It is the redistributable package that must not go out
+            # like this.
+            message(WARNING
+                "No OpenSSL runtime is being bundled (MeshMC_BUNDLE_OPENSSL_LIBS "
+                "is empty) and this is a Qt 5 build. Qt 5 on Windows has no "
+                "Schannel fallback, so the resulting package will fail every "
+                "HTTPS request unless a matching OpenSSL 1.1 is already on the "
+                "user's PATH.")
+        endif()
     endif()
 
     # FIXME: remove this crap once we stop using msys2
@@ -1423,33 +1654,4 @@ if(WIN32 OR (UNIX AND APPLE))
         FILES "qtlogging.ini"
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}
     )
-endif()
-
-find_program(CLANG_FORMAT clang-format OPTIONAL)
-if(CLANG_FORMAT)
-    message(STATUS "Creating clang-format target")
-    add_custom_target(
-        clang-format
-        COMMAND ${CLANG_FORMAT} -i --style=file:${CMAKE_SOURCE_DIR}/.clang-format ${LOGIC_SOURCES} ${MESHMC_SOURCES}
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    )
-else()
-    message(WARNING "Unable to find `clang-format`. Not creating custom target")
-endif()
-
-find_program(CLANG_TIDY clang-tidy OPTIONAL)
-find_program(RUN_CLANG_TIDY NAMES run-clang-tidy run-clang-tidy.py OPTIONAL)
-if(CLANG_TIDY AND RUN_CLANG_TIDY)
-    message(STATUS "Creating clang-tidy target")
-    add_custom_target(
-        clang-tidy
-        COMMAND ${RUN_CLANG_TIDY}
-            -p ${PROJECT_BINARY_DIR}
-            -clang-tidy-binary ${CLANG_TIDY}
-            -config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        USES_TERMINAL
-    )
-elseif(CLANG_TIDY)
-    message(WARNING "Unable to find `run-clang-tidy`. Not creating custom target")
 endif()

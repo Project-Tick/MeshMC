@@ -16,6 +16,10 @@ inputs:
   qt-version:
     description: Version of Qt to use
     required: true
+  qt-major:
+    description: Major version of Qt used, to keep artifact names distinct
+    required: false
+    default: "6"
   gpg-private-key:
     description: Private key for AppImage signing
     required: false
@@ -80,11 +84,23 @@ runs:
           echo ":warning: Skipped code signing for Linux AppImage, as gpg key was not present." >> $GITHUB_STEP_SUMMARY
         fi
 
+        # Qt dlopen()s OpenSSL rather than linking it, so lib4bin cannot
+        # discover it from the binaries and has to be handed the files. Only
+        # set for the Qt 5 builds, whose Qt speaks the 1.1.1 API that no
+        # current distribution ships; see .github/actions/setup-openssl.
+        openssl_libs=()
+        if [[ -n "${MESHMC_OPENSSL_LIB_DIR:-}" ]]; then
+          openssl_libs=(
+            "$MESHMC_OPENSSL_LIB_DIR"/libssl.so.1.1
+            "$MESHMC_OPENSSL_LIB_DIR"/libcrypto.so.1.1
+          )
+        fi
+
         sharun lib4bin \
           --hard-links \
           --with-hooks \
           --dst-dir "$INSTALL_APPIMAGE_DIR" \
-          "$INSTALL_APPIMAGE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so
+          "$INSTALL_APPIMAGE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so "${openssl_libs[@]}"
 
         cp ~/bin/AppImageUpdate.AppImage "$INSTALL_APPIMAGE_DIR"/bin/
         # FIXME(@YongDo-Hyun): gamemode doesn't seem to be very portable with DBus. Find a way to make it work!
@@ -121,11 +137,21 @@ runs:
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }}
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }} --component portable
 
+        # Same as the AppImage above: the portable tarball carries its own Qt,
+        # so it also has to carry the OpenSSL that Qt is able to load.
+        openssl_libs=()
+        if [[ -n "${MESHMC_OPENSSL_LIB_DIR:-}" ]]; then
+          openssl_libs=(
+            "$MESHMC_OPENSSL_LIB_DIR"/libssl.so.1.1
+            "$MESHMC_OPENSSL_LIB_DIR"/libcrypto.so.1.1
+          )
+        fi
+
         sharun lib4bin \
           --with-hooks \
           --hard-links \
           --dst-dir "$INSTALL_PORTABLE_DIR" \
-          "$INSTALL_PORTABLE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so
+          "$INSTALL_PORTABLE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so "${openssl_libs[@]}"
 
         # FIXME(@YongDo-Hyun): gamemode doesn't seem to be very portable with DBus. Find a way to make it work!
         find "$INSTALL_PORTABLE_DIR" -name '*gamemode*' -exec rm {} +
@@ -134,20 +160,20 @@ runs:
         cd ${{ env.INSTALL_PORTABLE_DIR }}
         tar -czf ../MeshMC-portable.tar.gz *
 
-    - name: Upload binary tarball
+    - name: Upload portable tarball
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-${{ inputs.artifact-name }}-Qt6-Portable-${{ inputs.version }}-${{ inputs.build-type }}
+        name: MeshMC-${{ inputs.artifact-name }}-Qt${{ inputs.qt-major }}-Portable-${{ inputs.version }}-${{ inputs.build-type }}
         path: MeshMC-portable.tar.gz
 
     - name: Upload AppImage
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-${{ runner.os }}-${{ inputs.version }}-${{ inputs.build-type }}-${{ env.APPIMAGE_ARCH }}.AppImage
+        name: MeshMC-${{ runner.os }}-Qt${{ inputs.qt-major }}-${{ inputs.version }}-${{ inputs.build-type }}-${{ env.APPIMAGE_ARCH }}.AppImage
         path: MeshMC-${{ runner.os }}-*${{ env.APPIMAGE_ARCH }}.AppImage
 
     - name: Upload AppImage Zsync
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-${{ runner.os }}-${{ inputs.version }}-${{ inputs.build-type }}-${{ env.APPIMAGE_ARCH }}.AppImage.zsync
+        name: MeshMC-${{ runner.os }}-Qt${{ inputs.qt-major }}-${{ inputs.version }}-${{ inputs.build-type }}-${{ env.APPIMAGE_ARCH }}.AppImage.zsync
         path: MeshMC-${{ runner.os }}-*${{ env.APPIMAGE_ARCH }}.AppImage.zsync

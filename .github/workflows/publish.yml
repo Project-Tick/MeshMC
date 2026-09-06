@@ -21,5 +21,14 @@ jobs:
         with:
           identifier: ProjectTick.MeshMC
           version: ${{ github.event.release.tag_name }}
-          installers-regex: 'MeshMC-Windows-MSVC(:?-arm64|-Legacy)?-Setup-.+\.exe$'
+          # Qt6 only, and deliberately: winget takes one installer per
+          # architecture for a package version, so matching the Qt5 build as
+          # well would offer two x64 installers for the same version.
+          #
+          # The Qt part is not optional either. It used to be absent from the
+          # release names, so a pattern anchored straight after "MSVC" matched
+          # everything; now that "-Qt6-" sits in the middle, an unanchored
+          # pattern matches nothing at all and winget silently gets no
+          # installers.
+          installers-regex: 'MeshMC-Windows-MSVC-Qt6(?:-arm64|-Legacy)?-Setup-.+\.exe$'
           token: ${{ secrets.WINGET_TOKEN }}
