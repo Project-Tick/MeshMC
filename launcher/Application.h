@@ -28,7 +28,6 @@
 #include <QDateTime>
 #include <QUrl>
 #include <QHash>
-#include <updater/UpdateChecker.h>
 
 #include <BaseInstance.h>
 
@@ -57,6 +56,7 @@ class ThemeManager;
 class MCEditTool;
 class PluginManager;
 class BasePage;
+class ExternalUpdater;
 
 namespace Meta
 {
@@ -122,10 +122,17 @@ class Application : public QApplication
 
 	ThemeManager* themeManager() const;
 
-	shared_qobject_ptr<UpdateChecker> updateChecker()
+	ExternalUpdater* updater()
 	{
-		return m_updateChecker;
+		return m_updater.get();
 	}
+
+	bool updaterEnabled();
+
+	/// Where the updater binary sits, relative to the installation root.
+	QString updaterBinaryName();
+
+	void triggerUpdateCheck();
 
 	std::shared_ptr<TranslationsModel> translations();
 
@@ -253,6 +260,8 @@ class Application : public QApplication
 	void initSubsystems();
 
   private:
+	bool reportUpdateMarkers();
+
 	void addRunningInstance();
 	void subRunningInstance();
 	bool shouldExitNow() const;
@@ -262,7 +271,7 @@ class Application : public QApplication
 
 	shared_qobject_ptr<QNetworkAccessManager> m_network;
 
-	shared_qobject_ptr<UpdateChecker> m_updateChecker;
+	std::unique_ptr<ExternalUpdater> m_updater;
 	shared_qobject_ptr<AccountList> m_accounts;
 
 	shared_qobject_ptr<HttpMetaCache> m_metacache;
@@ -282,6 +291,9 @@ class Application : public QApplication
 	QMap<QString, std::shared_ptr<BaseProfilerFactory>> m_profilers;
 
 	QString m_rootPath;
+
+	QString m_dataPath;
+
 	Status m_status = Application::StartingUp;
 
 #if defined Q_OS_WIN32

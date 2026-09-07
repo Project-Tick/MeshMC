@@ -32,6 +32,7 @@ Config::Config()
 	MESHMC_DOMAIN = "@MeshMC_Domain@";
 	MESHMC_CONFIGFILE = "@MeshMC_ConfigFile@";
 	MESHMC_GIT = "@MeshMC_Git@";
+	MESHMC_APPID = "@MeshMC_AppID@";
 
 	USER_AGENT = "@MeshMC_UserAgent@";
 	USER_AGENT_UNCACHED = USER_AGENT + " (Uncached)";
@@ -44,19 +45,13 @@ Config::Config()
 
 	BUILD_PLATFORM = "@MeshMC_BUILD_PLATFORM@";
 	BUILD_ARTIFACT = "@MeshMC_BUILD_ARTIFACT@";
-	BUILD_PLATFORM_ID = "@MeshMC_BUILD_PLATFORM_ID@";
-	BUILD_ARCH = "@MeshMC_BUILD_ARCH@";
-	BUILD_PORTABLE = "@MeshMC_BUILD_PORTABLE@";
-	BUILD_KIND = "@MeshMC_BUILD_KIND@";
 	BUILD_DATE = "@MeshMC_BUILD_TIMESTAMP@";
 	COMPILER_NAME = "@MeshMC_COMPILER_NAME@";
 	COMPILER_VERSION = "@MeshMC_COMPILER_VERSION@";
 	COMPILER_TARGET_SYSTEM = "@MeshMC_COMPILER_TARGET_SYSTEM@";
 	COMPILER_TARGET_SYSTEM_VERSION = "@MeshMC_COMPILER_TARGET_SYSTEM_VERSION@";
 	COMPILER_TARGET_SYSTEM_PROCESSOR = "@MeshMC_COMPILER_TARGET_PROCESSOR@";
-	UPDATER_BASE = "@MeshMC_UPDATER_BASE@";
-	UPDATER_FEED_URL = "@MeshMC_UPDATER_FEED_URL@";
-	UPDATER_LATEST_JSON_URL = "@MeshMC_UPDATER_LATEST_JSON_URL@";
+	UPDATER_GITHUB_REPO = "@MeshMC_UPDATER_GITHUB_REPO@";
 	UPDATE_CHANNEL = "@MeshMC_UPDATE_CHANNEL_EFFECTIVE@";
 	NOTIFICATION_URL = "@MeshMC_NOTIFICATION_URL@";
 	FULL_VERSION_STR =
@@ -66,22 +61,8 @@ Config::Config()
 	GIT_REFSPEC = "@MeshMC_GIT_REFSPEC@";
 	GIT_TAG = "@MeshMC_GIT_TAG@";
 
-	// Updater is enabled when the authoritative product feed URL is
-	// configured and the build knows which artifact it is.
-	//
-	// The update *check* itself only needs the feed (version + channel), but
-	// the build identity is what separates an official CI build from a local
-	// developer build -- and it is what will pick the right file out of the
-	// GitHub release once the download side lands. A build that cannot say
-	// what it is must not try to replace itself.
-	const bool hasStructuredIdentity = !BUILD_PLATFORM_ID.isEmpty() &&
-									   !BUILD_ARCH.isEmpty() &&
-									   !BUILD_KIND.isEmpty();
-	const bool hasLegacyIdentity = !BUILD_ARTIFACT.isEmpty();
-	if (!UPDATER_FEED_URL.isEmpty() &&
-		(hasStructuredIdentity || hasLegacyIdentity)) {
-		UPDATER_ENABLED = true;
-	}
+	UPDATER_ENABLED =
+		!UPDATER_GITHUB_REPO.isEmpty() && !BUILD_ARTIFACT.isEmpty();
 
 	// VERSION_CHANNEL is still populated from the git branch for informational
 	// use.

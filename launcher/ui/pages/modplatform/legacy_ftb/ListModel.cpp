@@ -20,6 +20,9 @@
 #include "ListModel.h"
 #include "Application.h"
 
+#include "net/HttpMetaCache.h"
+#include "net/NetJob.h"
+
 #include <MMCStrings.h>
 #include <Version.h>
 

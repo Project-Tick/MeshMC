@@ -58,7 +58,9 @@
 
 #include <QAccessible>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
+#include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QProcessEnvironment>
 #include <QStandardPaths>
@@ -78,7 +80,15 @@
 
 #include "java/JavaUtils.h"
 
-#include "updater/UpdateChecker.h"
+#include "updater/ExternalUpdater.h"
+#include "updater/UpdateLockFile.h"
+#if defined(Q_OS_MAC)
+#if defined(MESHMC_SPARKLE_ENABLED)
+#include "updater/MacSparkleUpdater.h"
+#endif
+#else
+#include "updater/MeshMCExternalUpdater.h"
+#endif
 
 #include "tools/JProfiler.h"
 #include "tools/JVisualVM.h"
@@ -329,6 +339,7 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 	QString origcwdPath, adjustedBy, dataPath;
 	if (!resolveDataPath(args, dataPath, adjustedBy, origcwdPath))
 		return;
+	m_dataPath = dataPath;
 
 	if (m_instanceIdToLaunch.isEmpty() && !m_serverToJoin.isEmpty()) {
 		qWarning() << "--server can only be used in combination with --launch!";
@@ -379,6 +390,11 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 	setupPaths(binPath, origcwdPath, adjustedBy);
 
 	initSettings();
+
+	if (!reportUpdateMarkers()) {
+		m_status = Application::Failed;
+		return;
+	}
 
 #ifndef QT_NO_ACCESSIBILITY
 	QAccessible::installFactory(groupViewAccessibleFactory);
@@ -1056,7 +1072,6 @@ void Application::initSettings()
 
 	m_settings->registerSetting("NewInstanceGeometry", "");
 
-	m_settings->registerSetting("UpdateDialogGeometry", "");
 
 	m_settings->registerSetting("DataPackManagerGeometry", "");
 
@@ -1112,17 +1127,33 @@ void Application::initSubsystems()
 		qDebug() << "<> Translations loaded.";
 	}
 
-	// initialize the updater
-	if (BuildConfig.UPDATER_ENABLED && UpdateChecker::isUpdaterSupported()) {
-		m_updateChecker.reset(new UpdateChecker(m_network));
-		qDebug() << "<> Updater initialized (feed:"
-				 << BuildConfig.UPDATER_FEED_URL << "| latest.json:"
-				 << (BuildConfig.UPDATER_LATEST_JSON_URL.isEmpty()
-						 ? QStringLiteral("(disabled)")
-						 : BuildConfig.UPDATER_LATEST_JSON_URL)
-				 << ").";
-	} else if (BuildConfig.UPDATER_ENABLED) {
-		qDebug() << "<> Updater disabled on this platform/mode.";
+	// The updater is created before the main window on purpose: MainWindow's
+	// constructor connects to it, so an updater made afterwards would be one
+	// nothing is listening to. Its dialogs therefore have no parent yet,
+	// which only matters for the "On Launch" check below.
+	if (updaterEnabled()) {
+		qDebug() << "Initializing the updater";
+#if defined(Q_OS_MAC)
+#if defined(MESHMC_SPARKLE_ENABLED)
+		m_updater.reset(new MacSparkleUpdater());
+#endif
+#else
+		m_updater.reset(new MeshMCExternalUpdater(
+			m_mainWindow, m_rootPath, m_dataPath,
+			// Migrates the launcher's old "check on start" setting into the
+			// updater's config, once. See the constructor.
+			m_settings->get("AutoUpdate").toBool()));
+#endif
+		if (m_updater) {
+			// A build follows the channel it was published on unless the user
+			// has said otherwise, so a stable install is never handed a
+			// pre-release by default.
+			m_updater->setBetaAllowed(BuildConfig.UPDATE_CHANNEL ==
+									  QLatin1String("beta"));
+			qDebug() << "<> Updater started.";
+		}
+	} else {
+		qDebug() << "<> Updater not available for this build.";
 	}
 
 	// Instance icons
@@ -1742,6 +1773,163 @@ bool Application::shouldExitNow() const
 bool Application::updatesAreAllowed()
 {
 	return m_runningInstances == 0;
+}
+
+QString Application::updaterBinaryName()
+{
+	// Kept in step with MeshMCExternalUpdater::updaterBinaryRelativePath();
+	// that is the one that actually launches it. Duplicated only because the
+	// macOS build does not compile that class at all.
+#if defined(Q_OS_WIN32)
+	return QStringLiteral("meshmc-updater.exe");
+#else
+	return QStringLiteral("bin/meshmc-updater");
+#endif
+}
+
+bool Application::updaterEnabled()
+{
+#if defined(Q_OS_MAC)
+	// Sparkle is linked in, so there is no separate binary to look for.
+#if defined(MESHMC_SPARKLE_ENABLED)
+	return BuildConfig.UPDATER_ENABLED;
+#else
+	return false;
+#endif
+#else
+	// A distribution package takes over updating and simply does not ship the
+	// updater; offering updates in that case would produce a menu entry that
+	// can only ever fail.
+	return BuildConfig.UPDATER_ENABLED &&
+		   QFileInfo(FS::PathCombine(m_rootPath, updaterBinaryName())).isFile();
+#endif
+}
+
+void Application::triggerUpdateCheck()
+{
+	if (!m_updater) {
+		qWarning() << "The updater is not available; cannot check for "
+					  "updates.";
+		return;
+	}
+
+	// The channel is not re-applied here: it is a property of the build, set
+	// once when the updater is created. Writing it again on every check would
+	// keep overwriting the config for no reason.
+	qDebug() << "Checking for updates.";
+	m_updater->checkForUpdates();
+}
+
+bool Application::reportUpdateMarkers()
+{
+	const QString updateLog = UpdateLockFile::updateLogPath(m_dataPath);
+
+	const auto logContents = [&updateLog]() -> QString {
+		QFile file(updateLog);
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			return {};
+		const QString contents = QString::fromUtf8(file.readAll());
+		file.close();
+		return contents;
+	};
+
+	// A lock left behind means an update started and never finished, so this
+	// installation may be a mix of two versions. That is not something to
+	// carry on from silently.
+	const QString lockPath = UpdateLockFile::lockPath(m_dataPath);
+	if (QFileInfo::exists(lockPath)) {
+		UpdateLockFile::Contents lock;
+		UpdateLockFile::read(lockPath, &lock);
+
+		QMessageBox box(QMessageBox::Warning, tr("Update In Progress"),
+						tr("This installation has an update lock file at: %1\n"
+						   "\n"
+						   "Timestamp: %2\n"
+						   "Updating from version %3 to %4\n"
+						   "Target install path: %5\n"
+						   "Data path: %6\n"
+						   "\n"
+						   "This usually means an update attempt failed. "
+						   "Please make sure your installation still works "
+						   "before continuing.\n"
+						   "The updater log at:\n"
+						   "%7\n"
+						   "has the details of the last attempt.\n"
+						   "\n"
+						   "To delete this lock and continue, choose "
+						   "\"Ignore\".")
+							.arg(QDir::toNativeSeparators(lockPath),
+								 lock.timestamp.toString(Qt::ISODate),
+								 lock.from, lock.to, lock.target,
+								 lock.dataPath,
+								 QDir::toNativeSeparators(updateLog)),
+						QMessageBox::Ignore | QMessageBox::Abort);
+		box.setDefaultButton(QMessageBox::Abort);
+		box.setModal(true);
+		box.setDetailedText(logContents());
+		box.setMinimumWidth(460);
+		box.adjustSize();
+
+		if (box.exec() != QMessageBox::Ignore) {
+			qDebug() << "Exiting because an update lock file is present.";
+			return false;
+		}
+		QFile::remove(lockPath);
+	}
+
+	const QString failMarker = UpdateLockFile::markerPath(
+		m_dataPath, QLatin1String(UpdateLockFile::kFailMarkerName));
+	if (QFileInfo::exists(failMarker)) {
+		QMessageBox box(QMessageBox::Warning, tr("Update Failed"),
+						tr("An update attempt failed.\n"
+						   "\n"
+						   "Please make sure your installation still works "
+						   "before continuing.\n"
+						   "The updater log at:\n"
+						   "%1\n"
+						   "has the details of the last attempt.")
+							.arg(QDir::toNativeSeparators(updateLog)),
+						QMessageBox::Ignore | QMessageBox::Abort);
+		box.setDefaultButton(QMessageBox::Abort);
+		box.setModal(true);
+		box.setDetailedText(logContents());
+		box.setMinimumWidth(460);
+		box.adjustSize();
+
+		if (box.exec() != QMessageBox::Ignore) {
+			qDebug() << "Exiting because the last update failed.";
+			return false;
+		}
+		QFile::remove(failMarker);
+	}
+
+	const QString successMarker = UpdateLockFile::markerPath(
+		m_dataPath, QLatin1String(UpdateLockFile::kSuccessMarkerName));
+	if (QFileInfo::exists(successMarker)) {
+		// Shown without blocking startup: the news is good, and the details
+		// are there for anyone who wants them.
+		auto* box = new QMessageBox(
+			QMessageBox::Information, tr("Update Succeeded"),
+			tr("The update succeeded.\n"
+			   "\n"
+			   "You are now running %1.\n"
+			   "The updater log at:\n"
+			   "%2\n"
+			   "has the details.")
+				.arg(BuildConfig.printableVersionString(),
+					 QDir::toNativeSeparators(updateLog)),
+			QMessageBox::Ok);
+		box->setDefaultButton(QMessageBox::Ok);
+		box->setDetailedText(logContents());
+		box->setAttribute(Qt::WA_DeleteOnClose);
+		box->setMinimumWidth(460);
+		box->adjustSize();
+		box->open();
+
+		QFile::remove(successMarker);
+	}
+
+	return true;
 }
 
 void Application::updateIsRunning(bool running)

@@ -67,25 +67,58 @@ runs:
 
         cd ${{ env.INSTALL_DIR }}
 
-        BUNDLE_BINARIES="meshmc-updater meshmc-crashreporter meshmc"
-
         if [ -n '${{ inputs.apple-codesign-id }}' ]; then
           APPLE_CODESIGN_ID='${{ inputs.apple-codesign-id }}'
           ENTITLEMENTS_FILE='../branding/App.entitlements'
+          TIMESTAMP_FLAG='--timestamp'
         else
           APPLE_CODESIGN_ID='-'
           ENTITLEMENTS_FILE='../branding/AdhocSignedApp.entitlements'
+          TIMESTAMP_FLAG='--timestamp=none'
         fi
 
-        for binary in $BUNDLE_BINARIES; do
+        sign_nested() {
+          [ -e "$1" ] || return 0
+          echo "Signing $1"
+          codesign --sign "$APPLE_CODESIGN_ID" --force --options runtime $TIMESTAMP_FLAG "$1"
+        }
+
+        for framework in MeshMC.app/Contents/Frameworks/*.framework; do
+          [ -d "$framework" ] || continue
+          for xpc in "$framework"/Versions/*/XPCServices/*.xpc; do
+            sign_nested "$xpc"
+          done
+          for helper in "$framework"/Versions/*/Autoupdate "$framework"/Versions/*/Updater.app; do
+            sign_nested "$helper"
+          done
+        done
+
+        for framework in MeshMC.app/Contents/Frameworks/*.framework; do
+          sign_nested "$framework"
+        done
+
+        find MeshMC.app/Contents -type f \( -name '*.dylib' -o -name '*.so' -o -name '*.mmco' \) -print0 |
+          while IFS= read -r -d '' lib; do
+            sign_nested "$lib"
+          done
+
+        for binary in meshmc-updater meshmc-crashreporter; do
           path="MeshMC.app/Contents/MacOS/$binary"
           if [ ! -f "$path" ]; then
-            echo "::warning::$path not found, neither chmod'ed nor signed."
+            echo "::notice::$path not present, nothing to sign."
             continue
           fi
           chmod +x "$path"
-          sudo codesign --sign "$APPLE_CODESIGN_ID" --deep --force --entitlements "$ENTITLEMENTS_FILE" --options runtime "$path"
+          sign_nested "$path"
         done
+
+        chmod +x MeshMC.app/Contents/MacOS/meshmc
+        echo "Signing MeshMC.app"
+        codesign --sign "$APPLE_CODESIGN_ID" --force \
+          --entitlements "$ENTITLEMENTS_FILE" --options runtime $TIMESTAMP_FLAG \
+          MeshMC.app
+
+        codesign --verify --deep --strict --verbose=2 MeshMC.app
 
     - name: Notarize
       shell: bash

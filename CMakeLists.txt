@@ -343,36 +343,19 @@ set(MeshMC_NEWS_EXTRA_FEEDS "https://projecttick.org/feed/feed.xml;" CACHE STRIN
 # Build number
 set(MeshMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
 
-# Legacy substring artifact name (e.g. "MeshMC-Linux-Portable"). Used as a
-# last-resort fallback when the product feed's assets do not carry the new
-# structured attributes. Prefer setting the four structured cache vars below
-# instead.
-set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Legacy substring used to match a feed asset when structured attributes are unavailable.")
-
-# Structured build identity. Matched directly against the feed asset's
-# `platform`, `arch`, `portable` and `kind` attributes.
-set(MeshMC_BUILD_PLATFORM_ID "" CACHE STRING "Updater asset platform id: linux | windows | macos.")
-set(MeshMC_BUILD_ARCH        "" CACHE STRING "Updater asset arch: x86_64 | aarch64.")
-set(MeshMC_BUILD_PORTABLE    "" CACHE STRING "Updater asset portable flag: true | false.")
-set(MeshMC_BUILD_KIND        "" CACHE STRING "Updater asset kind: archive | appimage | installer.")
+set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Name of the CI build this is, matched against release asset names.")
 
 # Build platform.
 set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
 
-# Channel list URL (legacy - kept for compatibility)
-set(MeshMC_UPDATER_BASE "https://projecttick.org/feed/feed.xml" CACHE STRING "Base URL for the legacy GoUpdate system (unused).")
-
-# Updater: authoritative product feed URL (projt: namespace).
-set(MeshMC_UPDATER_FEED_URL "https://projecttick.org/feed/feed.xml" CACHE STRING "RSS product feed URL for the updater (projt: namespace).")
-
-# Updater: latest.json mirror URL (used as a cross-check; empty disables it).
-set(MeshMC_UPDATER_LATEST_JSON_URL "https://ftp.projecttick.org/Project-Tick/latest.json" CACHE STRING "Project Tick latest.json mirror used as a sanity check against the feed.")
+# Updater: the repository releases are read from.
+set(MeshMC_UPDATER_GITHUB_REPO "" CACHE STRING "GitHub repository the updater reads releases from. Defaults to MeshMC_Git.")
 
 # Updater: the release channel this build subscribes to.
 #
-# A "stable" build is only ever offered <projt:channel>stable</projt:channel>
-# feed entries; a "beta" build is offered beta *and* stable ones, so a beta
-# user never gets stranded on an older version than the stable line.
+# A "beta" build has pre-releases enabled by default, so a beta user is never
+# stranded on an older version than the stable line. Users can change this
+# afterwards; this only sets the default.
 #
 # This is deliberately NOT MeshMC_VERSION_CHANNEL / BuildConfig.VERSION_CHANNEL,
 # which is just the git branch name and purely informational.
@@ -438,6 +421,13 @@ set(MeshMC_UserAgent "${MeshMC_CommonName}/${MeshMC_RELEASE_TWO_NAME}")
 set(MeshMC_ConfigFile "meshmc.cfg")
 set(MeshMC_Git "https://github.com/Project-Tick/MeshMC")
 set(MeshMC_Patreon_Url "https://www.patreon.com/meshmc")
+
+# Releases are published on the source repository, so that is where the
+# updater looks unless a build says otherwise.
+if(MeshMC_UPDATER_GITHUB_REPO STREQUAL "")
+    set(MeshMC_UPDATER_GITHUB_REPO "${MeshMC_Git}")
+endif()
+message(STATUS "Updater repository: ${MeshMC_UPDATER_GITHUB_REPO}")
 set(MeshMC_Authors "Copyright (C) 2026 Project Tick <https://projecttick.org>, All rights reserved. This Project Licensed under GNU GENERAL PUBLIC LICENSE, either version 3 of the License, or any later version. ")
 
 ######## Lastly, configure placeholders
@@ -704,18 +694,6 @@ install(FILES "${NEWLAUNCH_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "NewLaunc
 ############################### Built Artifacts ###############################
 
 add_subdirectory(buildconfig)
-
-# The standalone meshmc-updater binary is built whenever the updater feed URL
-# is configured. It takes the artifact URL on the command line (--url), so it
-# needs no build identity of its own -- gating it behind one only meant that
-# developer builds silently shipped without an updater and that the binary
-# could rot unnoticed between releases.
-#
-# Whether the *launcher* offers updates is a separate decision, made by
-# BuildConfig.UPDATER_ENABLED (see buildconfig/BuildConfig.cpp.in).
-if(NOT MeshMC_UPDATER_FEED_URL STREQUAL "")
-    add_subdirectory(launcher/updater/MeshMCUpdater)
-endif()
 
 add_subdirectory(launcher/crashreporter)
 

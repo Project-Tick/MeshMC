@@ -2,7 +2,6 @@
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2013-2021 MultiMC Contributors
  * Copyright (C) 2026 Project Tick
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,42 +20,34 @@
 #pragma once
 
 #include <QDialog>
-#include "updater/UpdateChecker.h"
 
 namespace Ui
 {
-	class UpdateDialog;
+	class UpdateAvailableDialog;
 }
 
-enum UpdateAction {
-	UPDATE_LATER = QDialog::Rejected,
-	UPDATE_NOW = QDialog::Accepted,
-};
-
-class UpdateDialog : public QDialog
+class UpdateAvailableDialog : public QDialog
 {
 	Q_OBJECT
 
   public:
+	enum ResultCode {
+		Install = 10,
+		DontInstall = 11,
+		Skip = 12,
+	};
+
 	/*!
-	 * Constructs the update dialog.
-	 * \a hasUpdate    - true when an update is available (shows "Update now"
-	 * button).
-	 * \a status       - update information (version, release notes); ignored
-	 * when hasUpdate is false.
+	 * \a currentVersion  version the user is running, as displayed.
+	 * \a availableVersion version being offered, as displayed.
+	 * \a releaseNotes    release notes in Markdown, as published.
 	 */
-	explicit UpdateDialog(bool hasUpdate,
-						  const UpdateAvailableStatus& status = {},
-						  QWidget* parent = nullptr);
-	~UpdateDialog();
-
-  public slots:
-	void on_btnUpdateNow_clicked();
-	void on_btnUpdateLater_clicked();
-
-  protected:
-	void closeEvent(QCloseEvent*) override;
+	explicit UpdateAvailableDialog(const QString& currentVersion,
+								   const QString& availableVersion,
+								   const QString& releaseNotes,
+								   QWidget* parent = nullptr);
+	~UpdateAvailableDialog() override;
 
   private:
-	Ui::UpdateDialog* ui;
+	Ui::UpdateAvailableDialog* ui;
 };

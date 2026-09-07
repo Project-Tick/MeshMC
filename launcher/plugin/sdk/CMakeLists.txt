@@ -146,7 +146,7 @@ set(SDK_MISC_HEADERS
     ${CMAKE_SOURCE_DIR}/launcher/tasks/Task.h
     ${CMAKE_SOURCE_DIR}/launcher/ui/pages/BasePage.h
     ${CMAKE_SOURCE_DIR}/launcher/ui/pages/BasePageContainer.h
-    ${CMAKE_SOURCE_DIR}/launcher/updater/UpdateChecker.h
+    ${CMAKE_SOURCE_DIR}/launcher/updater/ExternalUpdater.h
 )
 
 set(SDK_LIBRARY_HEADERS
@@ -301,7 +301,7 @@ install(FILES
 
 # updater/
 install(FILES
-    ${CMAKE_SOURCE_DIR}/launcher/updater/UpdateChecker.h
+    ${CMAKE_SOURCE_DIR}/launcher/updater/ExternalUpdater.h
     DESTINATION "${SDK_INSTALL_DIR}/updater"
 )
 

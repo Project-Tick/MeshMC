@@ -26,7 +26,7 @@
 #include <QDir>
 #include <QTextCharFormat>
 
-#include "updater/UpdateChecker.h"
+#include "updater/ExternalUpdater.h"
 
 #include "settings/SettingsObject.h"
 #include <FileSystem.h>
@@ -64,15 +64,7 @@ MeshMCPage::MeshMCPage(QWidget* parent)
 	m_languageModel = APPLICATION->translations();
 	loadSettings();
 
-	if (BuildConfig.UPDATER_ENABLED && UpdateChecker::isUpdaterSupported()) {
-		// New updater: hide the legacy channel selector (no channel selection
-		// in the new system).
-		ui->updateChannelComboBox->setVisible(false);
-		ui->updateChannelLabel->setVisible(false);
-		ui->updateChannelDescLabel->setVisible(false);
-	} else {
-		ui->updateSettingsBox->setHidden(true);
-	}
+	ui->updateSettingsBox->setHidden(!APPLICATION->updater());
 	connect(ui->fontSizeBox, qOverload<int>(&QSpinBox::valueChanged), this,
 			&MeshMCPage::refreshFontPreview);
 	connect(ui->consoleFont, &QFontComboBox::currentFontChanged, this,
@@ -278,16 +270,6 @@ void MeshMCPage::refreshUpdateChannelList()
 	// No-op: the new updater does not use named channels.
 }
 
-void MeshMCPage::updateChannelSelectionChanged(int)
-{
-	// No-op.
-}
-
-void MeshMCPage::refreshUpdateChannelDesc()
-{
-	// No-op.
-}
-
 void MeshMCPage::applySettings()
 {
 	auto s = APPLICATION->settings();
@@ -296,10 +278,12 @@ void MeshMCPage::applySettings()
 		s->set("ShownNotifications", QString());
 	}
 
-	// Updates
-	s->set("AutoUpdate", ui->autoUpdateCheckBox->isChecked());
-	// (UpdateChannel setting removed - the new updater always checks the stable
-	// feed)
+	if (auto* updater = APPLICATION->updater()) {
+		updater->setAutomaticallyChecksForUpdates(
+			ui->autoUpdateCheckBox->isChecked());
+		updater->setUpdateCheckInterval(ui->updateIntervalSpinBox->value() *
+										3600);
+	}
 
 	// Instance backups
 	s->set("BackupBeforeLaunch", ui->backupBeforeLaunchCheck->isChecked());
@@ -351,9 +335,14 @@ void MeshMCPage::applySettings()
 void MeshMCPage::loadSettings()
 {
 	auto s = APPLICATION->settings();
-	// Updates
-	ui->autoUpdateCheckBox->setChecked(s->get("AutoUpdate").toBool());
-	// (no channel to read in the new updater system)
+	// Updates. See applySettings() for why these do not come from the
+	// launcher's settings.
+	if (auto* updater = APPLICATION->updater()) {
+		ui->autoUpdateCheckBox->setChecked(
+			updater->getAutomaticallyChecksForUpdates());
+		ui->updateIntervalSpinBox->setValue(
+			static_cast<int>(updater->getUpdateCheckInterval() / 3600));
+	}
 
 	// Instance backups
 	ui->backupBeforeLaunchCheck->setChecked(

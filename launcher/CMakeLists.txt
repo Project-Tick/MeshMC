@@ -185,16 +185,60 @@ set(LAUNCH_SOURCES
     launch/LogModel.h
 )
 
-# New updater system (replaces the old GoUpdate-based system)
+# macOS updates go through Sparkle, which replaces the whole signed .app
+# bundle. Sparkle is not packaged in vcpkg, so the upstream release archive is
+# fetched and hash-checked here.
+#
+# Detected before the source list below, because whether MacSparkleUpdater can
+# be compiled at all depends on the framework being present -- and a source
+# file that needs headers we do not have is a build failure, not a fallback.
+set(MeshMC_SPARKLE_ENABLED OFF)
+if(APPLE AND NOT "${MACOSX_SPARKLE_UPDATE_PUBLIC_KEY}" STREQUAL "" AND NOT "${MACOSX_SPARKLE_UPDATE_FEED_URL}" STREQUAL "")
+    if(NOT EXISTS "${MACOSX_SPARKLE_DIR}/Sparkle.framework")
+        message(STATUS "Downloading Sparkle from ${MACOSX_SPARKLE_DOWNLOAD_URL}")
+        file(DOWNLOAD "${MACOSX_SPARKLE_DOWNLOAD_URL}" "${CMAKE_BINARY_DIR}/Sparkle.tar.xz"
+            EXPECTED_HASH SHA256=${MACOSX_SPARKLE_SHA256})
+        file(ARCHIVE_EXTRACT INPUT "${CMAKE_BINARY_DIR}/Sparkle.tar.xz"
+            DESTINATION "${MACOSX_SPARKLE_DIR}")
+    endif()
+
+    find_library(SPARKLE_FRAMEWORK Sparkle PATHS "${MACOSX_SPARKLE_DIR}" NO_DEFAULT_PATH)
+    if(SPARKLE_FRAMEWORK)
+        set(MeshMC_SPARKLE_ENABLED ON)
+        message(STATUS "Sparkle updater: ${SPARKLE_FRAMEWORK}")
+    else()
+        # Not fatal: a build without Sparkle simply has no updater on macOS,
+        # which is better than not building at all.
+        message(WARNING "Sparkle.framework was not found under ${MACOSX_SPARKLE_DIR}; macOS updates will be disabled.")
+    endif()
+endif()
+
+# Updater, launcher side.
+#
+# The launcher never checks for updates itself: it drives the standalone
+# meshmc-updater executable (built below) so that there is exactly one
+# implementation of "which release applies to this install". macOS is the
+# exception -- there Sparkle replaces the whole .app bundle, signature check
+# included, and reimplementing that would mean reimplementing code signing.
 set(UPDATE_SOURCES
-    updater/UpdateChecker.h
-    updater/UpdateChecker.cpp
+    updater/ExternalUpdater.h
+    updater/UpdateLockFile.h
+    updater/UpdateLockFile.cpp
 )
 
-add_unit_test(UpdateChecker
-    SOURCES updater/UpdateChecker_test.cpp updater/UpdateChecker_test.h
-    LIBS MeshMC_logic
+if(APPLE)
+    if(MeshMC_SPARKLE_ENABLED)
+        list(APPEND UPDATE_SOURCES
+            updater/MacSparkleUpdater.h
+            updater/MacSparkleUpdater.mm
+        )
+    endif()
+else()
+    list(APPEND UPDATE_SOURCES
+        updater/MeshMCExternalUpdater.h
+        updater/MeshMCExternalUpdater.cpp
     )
+endif()
 
 # Rarely used notifications
 set(NOTIFICATIONS_SOURCES
@@ -703,8 +747,6 @@ SET(MESHMC_SOURCES
     # Application base
     Application.h
     Application.cpp
-    UpdateController.cpp
-    UpdateController.h
     ApplicationMessage.h
     ApplicationMessage.cpp
 
@@ -946,8 +988,8 @@ SET(MESHMC_SOURCES
     ui/dialogs/PluginsDialog.h
     ui/dialogs/ProgressDialog.cpp
     ui/dialogs/ProgressDialog.h
-    ui/dialogs/UpdateDialog.cpp
-    ui/dialogs/UpdateDialog.h
+    ui/dialogs/UpdateAvailableDialog.cpp
+    ui/dialogs/UpdateAvailableDialog.h
     ui/dialogs/VersionSelectDialog.cpp
     ui/dialogs/VersionSelectDialog.h
     ui/dialogs/SkinUploadDialog.cpp
@@ -962,8 +1004,6 @@ SET(MESHMC_SOURCES
     ui/dialogs/ExportListDialog.h
     ui/dialogs/MeshMCLogsDialog.cpp
     ui/dialogs/MeshMCLogsDialog.h
-    ui/dialogs/UpdateProgressDialog.cpp
-    ui/dialogs/UpdateProgressDialog.h
     ui/dialogs/UntrustedModsDialog.cpp
     ui/dialogs/UntrustedModsDialog.h
 
@@ -1064,13 +1104,11 @@ set(MESHMC_UI_FILES
     ui/widgets/InstanceCardWidget.ui
     ui/widgets/CustomCommands.ui
     ui/widgets/MCModInfoFrame.ui
-    ui/widgets/TaskStepProgressBar.ui
     ui/dialogs/CopyInstanceDialog.ui
     ui/dialogs/ProfileSetupDialog.ui
-    ui/dialogs/ProgressDialog.ui
     ui/dialogs/NewInstanceDialog.ui
     ui/dialogs/NotificationDialog.ui
-    ui/dialogs/UpdateDialog.ui
+    ui/dialogs/UpdateAvailableDialog.ui
     ui/dialogs/MeshMCLogsDialog.ui
     ui/dialogs/PluginsDialog.ui
     ui/dialogs/NewComponentDialog.ui
@@ -1086,13 +1124,26 @@ set(MESHMC_UI_FILES
     ui/dialogs/UntrustedModsDialog.ui
 )
 
+# Forms used by *both* the launcher and the standalone updater.
+#
+# They have to be wrapped exactly once: two qt_wrap_ui calls for the same
+# form in the same directory would declare two rules generating the same
+# ui_*.h, which CMake rejects. Listing the generated sources in both targets
+# is fine -- the rule stays single, and each target simply depends on it.
+set(MESHMC_SHARED_UI_FILES
+    ui/dialogs/ProgressDialog.ui
+    ui/widgets/TaskStepProgressBar.ui
+)
+
 # Dispatch explicitly on the major version instead of using the versionless
 # qt_wrap_ui: on Qt 5 that wrapper is a no-op unless QT_DEFAULT_MAJOR_VERSION
 # happens to be set, which would silently generate no ui_*.h headers at all.
 if(QT_VERSION_MAJOR EQUAL 6)
     qt6_wrap_ui(MESHMC_UI ${MESHMC_UI_FILES})
+    qt6_wrap_ui(MESHMC_SHARED_UI ${MESHMC_SHARED_UI_FILES})
 else()
     qt5_wrap_ui(MESHMC_UI ${MESHMC_UI_FILES})
+    qt5_wrap_ui(MESHMC_SHARED_UI ${MESHMC_SHARED_UI_FILES})
 endif()
 
 if(NOT MeshMC_DISABLE_JAVA_DOWNLOADER)
@@ -1139,7 +1190,7 @@ if(WIN32)
 endif()
 
 # Add executable
-add_library(MeshMC_logic STATIC ${LOGIC_SOURCES} ${MESHMC_SOURCES} ${MESHMC_UI} ${MESHMC_RESOURCES})
+add_library(MeshMC_logic STATIC ${LOGIC_SOURCES} ${MESHMC_SOURCES} ${MESHMC_UI} ${MESHMC_SHARED_UI} ${MESHMC_RESOURCES})
 
 # Declared after MeshMC_logic because it links against it.
 add_unit_test(CustomTheme
@@ -1212,6 +1263,21 @@ if(APPLE)
     )
     set(CMAKE_MACOSX_RPATH 1)
     set(CMAKE_INSTALL_RPATH "@loader_path/../Frameworks/")
+endif()
+
+if(MeshMC_SPARKLE_ENABLED)
+    # PUBLIC: Application.cpp decides which updater to construct on the
+    # strength of this define, and it is compiled into the application target
+    # as well as into the logic library.
+    target_compile_definitions(MeshMC_logic PUBLIC MESHMC_SPARKLE_ENABLED)
+    target_include_directories(MeshMC_logic PRIVATE "${MACOSX_SPARKLE_DIR}")
+    target_link_libraries(MeshMC_logic ${SPARKLE_FRAMEWORK})
+
+    # Sparkle has to ship inside the bundle: it is loaded at runtime, and it
+    # is what checks the signature of the update it installs.
+    install(DIRECTORY "${MACOSX_SPARKLE_DIR}/Sparkle.framework"
+        DESTINATION "${FRAMEWORK_DEST_DIR}"
+        USE_SOURCE_PERMISSIONS)
 endif()
 
 add_executable(${MeshMC_Name} MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
@@ -1295,6 +1361,121 @@ else()
         LIBRARY DESTINATION ${LIBRARY_DEST_DIR}
         RUNTIME DESTINATION ${BINARY_DEST_DIR}
     )
+endif()
+
+
+############################## Standalone updater ##############################
+
+# The updater is a separate executable on purpose. It has to replace the very
+# libraries the launcher runs from, and a process cannot delete an image it
+# has mapped -- so the code that does the replacing must not be part of the
+# launcher. macOS is excluded: there Sparkle does the job from inside the
+# launcher (see MacSparkleUpdater).
+if(NOT APPLE)
+    set(MESHUPDATER_UI_FILES
+        updater/meshupdater/SelectReleaseDialog.ui
+    )
+
+    # Never the versionless wrapper, for the same reason as MESHMC_UI above.
+    if(QT_VERSION_MAJOR EQUAL 6)
+        qt6_wrap_ui(MESHUPDATER_UI ${MESHUPDATER_UI_FILES})
+    else()
+        qt5_wrap_ui(MESHUPDATER_UI ${MESHUPDATER_UI_FILES})
+    endif()
+
+    set(MESHUPDATER_SOURCES
+        updater/meshupdater/MeshUpdaterApp.h
+        updater/meshupdater/MeshUpdaterApp.cpp
+        updater/meshupdater/AssetMatcher.h
+        updater/meshupdater/AssetMatcher.cpp
+        updater/meshupdater/GitHubRelease.h
+        updater/meshupdater/GitHubRelease.cpp
+        updater/meshupdater/ReleaseArchive.h
+        updater/meshupdater/ReleaseArchive.cpp
+        updater/meshupdater/ReleaseDownload.h
+        updater/meshupdater/ReleaseDownload.cpp
+        updater/meshupdater/UpdaterDialogs.h
+        updater/meshupdater/UpdaterDialogs.cpp
+
+        # Shared with the launcher: the marker files are an interface between
+        # the two, so there is one definition of them and not two.
+        updater/UpdateLockFile.h
+        updater/UpdateLockFile.cpp
+
+        # Borrowed from the launcher, all free of Application dependencies.
+        Version.h
+        Version.cpp
+        MMCStrings.h
+        MMCStrings.cpp
+        HoeDown.h
+        DesktopServices.h
+        DesktopServices.cpp
+        QObjectPtr.h
+
+        tasks/Task.h
+        tasks/Task.cpp
+
+        # The download uses the launcher's own progress dialog, so it looks
+        # like every other download MeshMC does.
+        ui/dialogs/ProgressDialog.h
+        ui/dialogs/ProgressDialog.cpp
+        ui/widgets/TaskStepProgressBar.h
+        ui/widgets/TaskStepProgressBar.cpp
+    )
+
+    add_library(meshmc_updater_logic STATIC ${MESHUPDATER_SOURCES} ${MESHUPDATER_UI} ${MESHMC_SHARED_UI})
+    target_include_directories(meshmc_updater_logic PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+    target_compile_definitions(meshmc_updater_logic PUBLIC QT_MESSAGELOGCONTEXT)
+    target_link_libraries(meshmc_updater_logic
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Network
+        LibArchive::LibArchive
+        cmark::cmark
+        BuildConfig
+    )
+
+    # WIN32: no console window while updating. Diagnostics go to the log file,
+    # and --debug borrows the parent console when there is one.
+    add_executable(meshmc-updater WIN32 updater/meshupdater/updater_main.cpp)
+    if(WIN32)
+        target_sources(meshmc-updater PRIVATE updater/meshupdater/updater.exe.manifest)
+    endif()
+    target_link_libraries(meshmc-updater meshmc_updater_logic)
+
+    if(MSVC)
+        # The manifest above is embedded explicitly; letting the linker
+        # generate one as well is an error.
+        target_link_options(meshmc-updater PRIVATE "/MANIFEST:NO")
+    endif()
+
+    if(DEFINED MeshMC_BINARY_RPATH)
+        set_target_properties(meshmc-updater PROPERTIES INSTALL_RPATH "${MeshMC_BINARY_RPATH}")
+    endif()
+
+    # Next to the launcher, which is where MeshMCExternalUpdater looks for it
+    # -- and where Application::updaterEnabled() checks before offering
+    # updates at all.
+    install(TARGETS meshmc-updater
+        RUNTIME DESTINATION "${BINARY_DEST_DIR}"
+    )
+
+    add_unit_test(AssetMatcher
+        SOURCES updater/meshupdater/AssetMatcher_test.cpp
+        LIBS meshmc_updater_logic
+        )
+
+    add_unit_test(ReleaseArchive
+        SOURCES updater/meshupdater/ReleaseArchive_test.cpp
+        LIBS meshmc_updater_logic LibArchive::LibArchive
+        )
+
+    # The file the two passes of an install hand over through.
+    add_unit_test(UpdateLockFile
+        SOURCES updater/UpdateLockFile_test.cpp
+        LIBS meshmc_updater_logic
+        )
 endif()
 
 #### The bundle mess! ####

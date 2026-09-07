@@ -77,7 +77,7 @@
 #include <notifications/NotificationChecker.h>
 #include <tools/BaseProfiler.h>
 
-#include <updater/UpdateChecker.h>
+#include <updater/ExternalUpdater.h>
 #include <DesktopServices.h>
 #include <FileSystem.h>
 #include "InstanceWindow.h"
@@ -95,19 +95,16 @@
 #include "ui/dialogs/NewsViewerDialog.h"
 #include "ui/dialogs/MeshMCLogsDialog.h"
 #include "ui/dialogs/PluginsDialog.h"
-#include "ui/dialogs/UpdateProgressDialog.h"
 #include "ui/dialogs/VersionSelectDialog.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/IconPickerDialog.h"
 #include "ui/dialogs/CopyInstanceDialog.h"
-#include "ui/dialogs/UpdateDialog.h"
 #include "ui/dialogs/EditAccountDialog.h"
 #include "ui/dialogs/NotificationDialog.h"
 #include "ui/dialogs/ExportInstanceDialog.h"
 #include "ui/dialogs/ExportPackDialog.h"
 #include "ui/dialogs/CreateShortcutDialog.h"
 
-#include "UpdateController.h"
 #include "KonamiCode.h"
 
 #include "InstanceImportTask.h"
@@ -691,8 +688,7 @@ class MainWindow::Ui
 		helpButtonAction->setDefaultWidget(helpMenuButton);
 		mainToolBar->addAction(helpButtonAction);
 
-		if (BuildConfig.UPDATER_ENABLED &&
-			UpdateChecker::isUpdaterSupported()) {
+		if (APPLICATION->updaterEnabled()) {
 			actionCheckUpdate = TranslatedAction(MainWindow);
 			actionCheckUpdate->setObjectName(
 				QStringLiteral("actionCheckUpdate"));
@@ -1636,25 +1632,21 @@ MainWindow::MainWindow(QWidget* parent)
 		updateNewsLabel();
 	}
 
-	if (BuildConfig.UPDATER_ENABLED && UpdateChecker::isUpdaterSupported()) {
-		bool updatesAllowed = APPLICATION->updatesAreAllowed();
-		updatesAllowedChanged(updatesAllowed);
+	if (APPLICATION->updaterEnabled()) {
+		updatesAllowedChanged(APPLICATION->updatesAreAllowed());
 
 		// NOTE: calling the operator like that is an ugly hack to appease
 		// ancient gcc...
 		connect(ui->actionCheckUpdate.operator->(), &QAction::triggered, this,
 				&MainWindow::checkForUpdates);
 
-		// set up the updater object.
-		auto updater = APPLICATION->updateChecker();
-		connect(updater.get(), &UpdateChecker::updateAvailable, this,
-				&MainWindow::updateAvailable);
-		connect(updater.get(), &UpdateChecker::noUpdateFound, this,
-				&MainWindow::updateNotAvailable);
-		// if automatic update checks are allowed, start one.
-		if (APPLICATION->settings()->get("AutoUpdate").toBool() &&
-			updatesAllowed) {
-			updater->checkForUpdate(false);
+		// Automatic checks are the updater's own business now: it keeps the
+		// schedule, the interval and the last-checked time in its config, so
+		// that they survive a restart and apply even when this window is not
+		// the thing that started the launcher.
+		if (auto* updater = APPLICATION->updater()) {
+			connect(updater, &ExternalUpdater::canCheckForUpdatesChanged, this,
+					&MainWindow::updatesAllowedChanged);
 		}
 	}
 
@@ -2105,7 +2097,7 @@ void MainWindow::repopulateAccountsMenu()
 
 void MainWindow::updatesAllowedChanged(bool allowed)
 {
-	if (!BuildConfig.UPDATER_ENABLED || !UpdateChecker::isUpdaterSupported()) {
+	if (!APPLICATION->updaterEnabled()) {
 		return;
 	}
 	ui->actionCheckUpdate->setEnabled(allowed);
@@ -2210,67 +2202,6 @@ void MainWindow::updateNewsLabel()
 	}
 }
 
-void MainWindow::updateAvailable(UpdateAvailableStatus status)
-{
-	if (!APPLICATION->updatesAreAllowed()) {
-		updateNotAvailable();
-		return;
-	}
-	UpdateDialog dlg(true, status, this);
-	UpdateAction action = (UpdateAction)dlg.exec();
-	switch (action) {
-		case UPDATE_LATER:
-			qDebug() << "Update will be installed later.";
-			break;
-		case UPDATE_NOW:
-			if (!status.downloadUrl.isEmpty()) {
-				// Show progress dialog while launching the updater
-				auto* progressDlg = new UpdateProgressDialog(this);
-				progressDlg->setStatus(tr("Preparing update to version %1...")
-										   .arg(status.version));
-				progressDlg->appendLog(
-					tr("Download URL: %1").arg(status.downloadUrl));
-				progressDlg->show();
-
-				APPLICATION->updateIsRunning(true);
-				progressDlg->setStatus(tr("Launching updater..."));
-
-				UpdateController controller(this, APPLICATION->root(),
-											status.downloadUrl);
-				if (controller.startUpdate()) {
-					progressDlg->setFinished(
-						true, tr("Updater launched. MeshMC will now close."));
-					// The updater binary has been launched; quit the main app
-					// so the updater can overwrite its files.
-					QMetaObject::invokeMethod(qApp, &QCoreApplication::quit,
-											  Qt::QueuedConnection);
-				} else {
-					progressDlg->setFinished(
-						false, tr("Failed to launch the updater."));
-				}
-				APPLICATION->updateIsRunning(false);
-			} else {
-				CustomMessageBox::selectable(
-					this, tr("No Download URL"),
-					tr("An update to version %1 is available, but no download "
-					   "URL "
-					   "was found for your platform (%2).\n"
-					   "Please visit the project website to download it "
-					   "manually.")
-						.arg(status.version, BuildConfig.BUILD_ARTIFACT),
-					QMessageBox::Information)
-					->show();
-			}
-			break;
-	}
-}
-
-void MainWindow::updateNotAvailable()
-{
-	UpdateDialog dlg(false, {}, this);
-	dlg.exec();
-}
-
 QList<int> stringToIntList(const QString& string)
 {
 	QStringList split = string.split(',', Qt::SkipEmptyParts);
@@ -2305,13 +2236,6 @@ void MainWindow::notificationsChanged()
 	}
 	APPLICATION->settings()->set("ShownNotifications",
 								 intListToString(shownNotifications));
-}
-
-void MainWindow::downloadUpdates(UpdateAvailableStatus status)
-{
-	// Kept as a stub — actual update installation is now done by the separate
-	// meshmc-updater binary launched from updateAvailable().
-	Q_UNUSED(status)
 }
 
 void MainWindow::onCatToggled(bool state)
@@ -2655,42 +2579,12 @@ void MainWindow::on_actionConfig_Folder_triggered()
 
 void MainWindow::checkForUpdates()
 {
-	if (BuildConfig.UPDATER_ENABLED && UpdateChecker::isUpdaterSupported()) {
-		auto updater = APPLICATION->updateChecker();
-
-		// Show the update progress dialog
-		auto* progressDlg = new UpdateProgressDialog(this);
-		progressDlg->setStatus(tr("Checking for updates..."));
-		progressDlg->setAttribute(Qt::WA_DeleteOnClose);
-
-		QtCompat::connectOnce(
-			updater.get(), &UpdateChecker::checkFailed, progressDlg,
-			[progressDlg](QString reason) {
-				progressDlg->setFinished(
-					false, QObject::tr("Update check failed: %1").arg(reason));
-			});
-
-		QtCompat::connectOnce(
-			updater.get(), &UpdateChecker::updateAvailable, progressDlg,
-			[progressDlg](UpdateAvailableStatus status) {
-				progressDlg->setFinished(
-					true, QObject::tr("Update available: version %1")
-							  .arg(status.version));
-			});
-
-		QtCompat::connectOnce(
-			updater.get(), &UpdateChecker::noUpdateFound, progressDlg,
-			[progressDlg]() {
-				progressDlg->setFinished(
-					true, QObject::tr("You are running the latest version."));
-			});
-
-		progressDlg->show();
-		updater->checkForUpdate(true);
-	} else {
-		qWarning() << "Updater not set up or not supported on this platform. "
-					  "Cannot check for updates.";
+	if (!APPLICATION->updaterEnabled()) {
+		qWarning() << "The updater is not set up; cannot check for updates.";
+		return;
 	}
+
+	APPLICATION->triggerUpdateCheck();
 }
 
 void MainWindow::on_actionSettings_triggered()
