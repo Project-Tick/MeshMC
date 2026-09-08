@@ -34,6 +34,9 @@ if command -v "inkscape" && command -v "icotool" && command -v "oxipng"; then
         "$d/MeshMC_32.png"   \
         "$d/MeshMC_24.png"   \
         "$d/MeshMC_16.png"
+    
+    svg2png org.projecttick.MeshMC.svg org.projecttick.MeshMC_256.png 256 256
+
 else
     echo "ERROR: Windows icons were NOT generated!" >&2
     echo "ERROR: requires inkscape, icotool and oxipng in PATH"
@@ -68,4 +71,5 @@ else
 fi
 
 # replace icon in themes
-cp -v org.projecttick.MeshMC.svg "../launcher/resources/multimc/scalable/instances/logo.svg"
+cp -v org.projecttick.MeshMC.svg "../launcher/resources/multimc/scalable/instances/meshmc.svg"
+cp -v org.projecttick.MeshMC.svg "../launcher/resources/multimc/scalable/launcher.svg"
