@@ -105,8 +105,6 @@ class MainWindow : public QMainWindow
 
 	void on_actionCopyInstance_triggered();
 
-	void on_actionViewBackups_triggered();
-
 	void on_actionChangeInstGroup_triggered();
 
 	void on_actionChangeInstIcon_triggered();
@@ -297,8 +295,6 @@ class MainWindow : public QMainWindow
 	QToolButton* newsLabel = nullptr;
 	QLabel* m_statusLeft = nullptr;
 	QLabel* m_statusCenter = nullptr;
-	QMenu* accountMenu = nullptr;
-	QToolButton* accountMenuButton = nullptr;
 	/* Exclusive group behind the profiler entries of the launch menu. It
 	 * has to outlive updateToolsMenu(), and the menu's own clear() takes
 	 * the actions but not the group, so the group is tracked here and

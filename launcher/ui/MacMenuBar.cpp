@@ -90,7 +90,6 @@ namespace
 		"actionMods",
 		"actionWorlds",
 		"actionScreenshots",
-		"actionViewBackups",
 		kDivider,
 		"actionRenameInstance",
 		"actionChangeInstIcon",
@@ -159,7 +158,7 @@ namespace
 		bool anyAdded = false;
 
 		for (QAction* action : actions) {
-			if (!action || action->isSeparator()) {
+			if (!action || action->isSeparator() || !action->isVisible()) {
 				dividerPending = anyAdded;
 				continue;
 			}
