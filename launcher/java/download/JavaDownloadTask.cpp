@@ -18,6 +18,7 @@
  */
 
 #include "JavaDownloadTask.h"
+#include "Logging.h"
 
 #include <QDir>
 #include <QProcess>
@@ -172,7 +173,7 @@ void JavaDownloadTask::extractArchive()
 				 QFileDevice::ExeOther;
 	QFile::setPermissions(m_installedJavaPath, perms);
 
-	qDebug() << "Java installed successfully at:" << m_installedJavaPath;
+	qCDebug(javaLog) << "Java installed successfully at:" << m_installedJavaPath;
 	emitSucceeded();
 }
 
@@ -311,7 +312,7 @@ void JavaDownloadTask::manifestFilesDownloaded()
 		return;
 	}
 
-	qDebug() << "Java installed successfully at:" << m_installedJavaPath;
+	qCDebug(javaLog) << "Java installed successfully at:" << m_installedJavaPath;
 	emitSucceeded();
 }
 

@@ -18,6 +18,7 @@
  */
 
 #include "backup/BackupManager.h"
+#include "Logging.h"
 
 #include <QDir>
 #include <QFile>
@@ -66,7 +67,7 @@ QString BackupManager::backupDir() const
 bool BackupManager::ensureBackupDir()
 {
 	if (!FS::ensureFolderPathExists(m_backupDir)) {
-		qWarning() << "[Backup] Could not create backup directory"
+		qCWarning(backupLog) << "Could not create backup directory"
 				   << m_backupDir;
 		return false;
 	}
@@ -99,7 +100,7 @@ BackupEntry BackupManager::createBackup(const QString& label,
 	const QString fileName = generateFileName(label);
 	const QString zipPath = QDir(m_backupDir).filePath(fileName);
 
-	qDebug() << "[Backup] Creating backup of instance" << m_instanceId << "->"
+	qCDebug(backupLog) << "Creating backup of instance" << m_instanceId << "->"
 			 << zipPath;
 
 	MMCZip::ProgressFunction zipProgress;
@@ -123,25 +124,25 @@ BackupEntry BackupManager::createBackup(const QString& label,
 
 	if (!MMCZip::compressDir(zipPath, m_instanceRoot, &isExcludedFromBackup,
 							 zipProgress)) {
-		qWarning() << "[Backup] Failed to create backup:" << zipPath;
+		qCWarning(backupLog) << "Failed to create backup:" << zipPath;
 		// A half-written zip is worse than no zip: it would show up in
 		// the list as a restorable snapshot.
 		QFile::remove(zipPath);
 		return {};
 	}
 
-	qDebug() << "[Backup] Backup created:" << zipPath;
+	qCDebug(backupLog) << "Backup created:" << zipPath;
 	return entryFromFile(zipPath);
 }
 
 bool BackupManager::restoreBackup(const BackupEntry& entry)
 {
 	if (!QFile::exists(entry.fullPath)) {
-		qWarning() << "[Backup] Backup file not found:" << entry.fullPath;
+		qCWarning(backupLog) << "Backup file not found:" << entry.fullPath;
 		return false;
 	}
 
-	qDebug() << "[Backup] Restoring" << entry.fullPath << "into"
+	qCDebug(backupLog) << "Restoring" << entry.fullPath << "into"
 			 << m_instanceRoot;
 
 	// Clear the instance root, keeping the archive directory itself —
@@ -154,18 +155,18 @@ bool BackupManager::restoreBackup(const BackupEntry& entry)
 		if (fi.fileName() == kBackupDirName)
 			continue;
 		if (!FS::deletePath(fi.absoluteFilePath())) {
-			qWarning() << "[Backup] Could not remove" << fi.absoluteFilePath()
+			qCWarning(backupLog) << "Could not remove" << fi.absoluteFilePath()
 					   << "- aborting restore to avoid a half-wiped instance";
 			return false;
 		}
 	}
 
 	if (!MMCZip::extractDir(entry.fullPath, m_instanceRoot).has_value()) {
-		qWarning() << "[Backup] Failed to extract backup:" << entry.fullPath;
+		qCWarning(backupLog) << "Failed to extract backup:" << entry.fullPath;
 		return false;
 	}
 
-	qDebug() << "[Backup] Restore complete.";
+	qCDebug(backupLog) << "Restore complete.";
 	return true;
 }
 
@@ -194,12 +195,12 @@ BackupEntry BackupManager::importBackup(const QString& srcZipPath,
 		QDir(m_backupDir).filePath(generateFileName(label));
 
 	if (!QFile::copy(srcZipPath, destPath)) {
-		qWarning() << "[Backup] Could not copy" << srcZipPath << "to"
+		qCWarning(backupLog) << "Could not copy" << srcZipPath << "to"
 				   << destPath;
 		return {};
 	}
 
-	qDebug() << "[Backup] Imported" << srcZipPath << "as" << destPath;
+	qCDebug(backupLog) << "Imported" << srcZipPath << "as" << destPath;
 	return entryFromFile(destPath);
 }
 

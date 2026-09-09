@@ -29,6 +29,7 @@
 #include <settings/Setting.h>
 
 #include <QDebug>
+#include "Logging.h"
 #include "java/JavaUtils.h"
 #include "java/JavaInstallList.h"
 #include "FileSystem.h"
@@ -145,7 +146,7 @@ static QString processLD_LIBRARY_PATH(const QString& LD_LIBRARY_PATH)
 	for (auto& item : items) {
 		QDir test(item);
 		if (test == mmcBin) {
-			qDebug() << "Env:LD_LIBRARY_PATH ignoring path" << item;
+			qCDebug(javaLog) << "Env:LD_LIBRARY_PATH ignoring path" << item;
 			continue;
 		}
 		final.append(item);
@@ -167,18 +168,18 @@ QProcessEnvironment CleanEnviroment()
 		auto value = rawenv.value(key);
 		// filter out dangerous java crap
 		if (ignored.contains(key)) {
-			qDebug() << "Env: ignoring" << key << value;
+			qCDebug(javaLog) << "Env: ignoring" << key << value;
 			continue;
 		}
 		// filter MeshMC-related things
 		if (key.startsWith("QT_")) {
-			qDebug() << "Env: ignoring" << key << value;
+			qCDebug(javaLog) << "Env: ignoring" << key << value;
 			continue;
 		}
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
 		// Do not pass LD_* variables to java. They were intended for MeshMC
 		if (key.startsWith("LD_")) {
-			qDebug() << "Env: ignoring" << key << value;
+			qCDebug(javaLog) << "Env: ignoring" << key << value;
 			continue;
 		}
 		// Strip IBus
@@ -186,7 +187,7 @@ QProcessEnvironment CleanEnviroment()
 		if (key == "XMODIFIERS" && value.contains(IBUS)) {
 			QString save = value;
 			value.replace(IBUS, "");
-			qDebug() << "Env: stripped" << IBUS << "from" << save << ":"
+			qCDebug(javaLog) << "Env: stripped" << IBUS << "from" << save << ":"
 					 << value;
 		}
 		if (key == "GAME_PRELOAD") {
@@ -510,7 +511,7 @@ QList<QString> JavaUtils::FindJavaPaths()
 #elif defined(Q_OS_LINUX)
 QList<QString> JavaUtils::FindJavaPaths()
 {
-	qDebug() << "Linux Java detection incomplete - defaulting to \"java\"";
+	qCDebug(javaLog) << "Linux Java detection incomplete - defaulting to \"java\"";
 
 	QList<QString> javas;
 	javas.append(this->GetDefaultJava()->path);
@@ -566,7 +567,7 @@ QList<QString> JavaUtils::FindJavaPaths()
 #else
 QList<QString> JavaUtils::FindJavaPaths()
 {
-	qDebug() << "Unknown operating system build - defaulting to \"java\"";
+	qCDebug(javaLog) << "Unknown operating system build - defaulting to \"java\"";
 
 	QList<QString> javas;
 	javas.append(this->GetDefaultJava()->path);

@@ -1,4 +1,38 @@
-# MeshMC 10.0.0
+# MeshMC 11.0.0 (DRAFT)
+
+## Highlights
+
+
+
+## Added
+
+
+
+## Changed
+
+* The logging system has been updated. We now use categorical logging. You can disable unwanted categories using qtlogging.ini.
+* We have revised the update system. Updates are handled via Sparkle for macOS and ZSync for AppImage. A setup.exe installation package is used for Windows, while a two-stage update mechanism is employed for portable Windows and Linux versions.
+* The MainWindow used to have its UI drawn via .cpp code; now, Designer UI is used.
+* The XDGIcon structure has been removed, and the system has switched to the internal Qt icon infrastructure.
+* The logo has been revised to better align with standards for macOS Big Sur and other platforms.
+
+
+## Fixed
+
+
+
+## Removed
+
+* The iconfix library has been removed because it is no longer in use.
+
+
+## Deprecated
+
+
+
+## Previous versions
+
+## MeshMC 10.0.0
 
 ## A Big Change
 
@@ -77,8 +111,6 @@
 ## Deprecated
 
 * MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.
-
-## Previous versions
 
 ## MeshMC 9.1.0
 

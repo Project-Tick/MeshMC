@@ -19,6 +19,7 @@
  */
 
 #include "IconList.h"
+#include "Logging.h"
 #include <FileSystem.h>
 #include <QMap>
 #include <QEventLoop>
@@ -94,7 +95,7 @@ void IconList::directoryChanged(const QString& path)
 	to_add -= current_set;
 
 	for (auto remove : to_remove) {
-		qDebug() << "Removing " << remove;
+		qCDebug(iconsLog) << "Removing " << remove;
 		QFileInfo rmfile(remove);
 		QString key = rmfile.baseName();
 		int idx = getIconIndex(key);
@@ -114,7 +115,7 @@ void IconList::directoryChanged(const QString& path)
 	}
 
 	for (auto add : to_add) {
-		qDebug() << "Adding " << add;
+		qCDebug(iconsLog) << "Adding " << add;
 		QFileInfo addfile(add);
 		QString key = addfile.baseName();
 		if (addIcon(key, QString(), addfile.filePath(), IconType::FileBased)) {
@@ -126,7 +127,7 @@ void IconList::directoryChanged(const QString& path)
 
 void IconList::fileChanged(const QString& path)
 {
-	qDebug() << "Checking " << path;
+	qCDebug(iconsLog) << "Checking " << path;
 	QFileInfo checkfile(path);
 	if (!checkfile.exists())
 		return;
@@ -157,9 +158,9 @@ void IconList::startWatching()
 	FS::ensureFolderPathExists(abs_path);
 	is_watching = m_watcher->addPath(abs_path);
 	if (is_watching) {
-		qDebug() << "Started watching " << abs_path;
+		qCDebug(iconsLog) << "Started watching " << abs_path;
 	} else {
-		qDebug() << "Failed to start watching " << abs_path;
+		qCDebug(iconsLog) << "Failed to start watching " << abs_path;
 	}
 }
 

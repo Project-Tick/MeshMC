@@ -47,7 +47,7 @@
 #include "java/JavaInstallList.h"
 #include "java/JavaInstall.h"
 #include "settings/SettingsObject.h"
-
+#include "Logging.h"
 #include <QDateTime>
 #include <QDir>
 #include <QDirIterator>
@@ -109,7 +109,7 @@ PluginManager::~PluginManager()
 
 void PluginManager::initializeAll()
 {
-	qDebug() << "[PluginManager] Discovering modules...";
+	qCDebug(pluginsLog) << "Discovering modules...";
 
 	// Configure GPG keyring location and the verification-result cache
 	// before discovery — the loader's signature pre-flight runs inside
@@ -144,7 +144,7 @@ void PluginManager::initializeAll()
 	PluginSignature::flushCache();
 
 	if (m_modules.isEmpty()) {
-		qDebug() << "[PluginManager] No modules found.";
+		qCDebug(pluginsLog) << "No modules found.";
 		return;
 	}
 
@@ -162,7 +162,7 @@ void PluginManager::initializeAll()
 
 		if (meta.disabled) {
 			// Defensive — resolver should have excluded these already.
-			qDebug() << "[PluginManager] Skipping disabled module:" << meta.name
+			qCDebug(pluginsLog) << "Skipping disabled module:" << meta.name
 					 << "-" << meta.disableDetail;
 			continue;
 		}
@@ -178,10 +178,10 @@ void PluginManager::initializeAll()
 		m_contexts[i] = buildContext(meta);
 		m_contexts[i].module_handle = m_runtimes[i].get();
 
-		qDebug() << "[PluginManager] Initializing module:" << meta.name;
+		qCDebug(pluginsLog) << "Initializing module:" << meta.name;
 		int rc = meta.initFunc(&m_contexts[i]);
 		if (rc != 0) {
-			qWarning() << "[PluginManager] Module" << meta.name
+			qCWarning(pluginsLog) << "Module" << meta.name
 					   << "mmco_init() returned" << rc << "- skipping";
 			emit moduleError(meta.name,
 							 QString("mmco_init returned %1").arg(rc));
@@ -190,7 +190,7 @@ void PluginManager::initializeAll()
 		}
 
 		meta.initialized = true;
-		qDebug() << "[PluginManager] Module" << meta.name
+		qCDebug(pluginsLog) << "Module" << meta.name
 				 << "initialized successfully";
 		emit moduleLoaded(meta.name);
 	}
@@ -199,7 +199,7 @@ void PluginManager::initializeAll()
 	// can find them in the launcher logs.
 	for (const auto& meta : m_modules) {
 		if (meta.disabled) {
-			qInfo().noquote() << "[PluginManager] Module" << meta.name
+			qCInfo(pluginsLog).noquote() << "Module" << meta.name
 							  << "not loaded:" << meta.disableDetail;
 		}
 	}
@@ -287,7 +287,7 @@ void PluginManager::shutdownAll()
 		if (!meta.initialized)
 			continue;
 
-		qDebug().noquote() << "[PluginManager] Unloading module:" << meta.name;
+		qCDebug(pluginsLog).noquote() << "Unloading module:" << meta.name;
 		/* Tear down tray icons, menus, actions and close filters owned by
 		 * this module *before* invoking mmco_unload(). The plugin may
 		 * still hold raw pointers to these QObjects in its C state, but
@@ -777,14 +777,14 @@ void PluginManager::api_log_error(void* mh, const char* msg)
 {
 	auto* r = rt(mh);
 	auto& meta = r->manager->m_modules[r->moduleIndex];
-	qCritical().noquote() << "[Plugin:" << meta.name << "]" << msg;
+	qCCritical(pluginsLog).noquote() << meta.name << msg;
 }
 
 void PluginManager::api_log_debug(void* mh, const char* msg)
 {
 	auto* r = rt(mh);
 	auto& meta = r->manager->m_modules[r->moduleIndex];
-	qDebug().noquote() << "[Plugin:" << meta.name << "]" << msg;
+	qCDebug(pluginsLog).noquote() << meta.name << msg;
 }
 
 int PluginManager::api_hook_register(void* mh, uint32_t hook_id,

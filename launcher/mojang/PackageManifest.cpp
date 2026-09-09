@@ -18,6 +18,7 @@
  */
 
 #include "PackageManifest.h"
+#include "Logging.h"
 #include <Json.h>
 #include <QDir>
 #include <QDirIterator>
@@ -184,7 +185,7 @@ namespace mojang_files
 			fromJson(doc, out);
 			return out;
 		} catch (const Exception& e) {
-			qDebug() << QString("Unable to parse manifest: %1").arg(e.cause());
+			qCDebug(mojangLog) << QString("Unable to parse manifest: %1").arg(e.cause());
 			out.valid = false;
 			return out;
 		}
@@ -198,7 +199,7 @@ namespace mojang_files
 			fromJson(doc, out);
 			return out;
 		} catch (const Exception& e) {
-			qDebug() << QString("Unable to parse manifest file %1: %2")
+			qCDebug(mojangLog) << QString("Unable to parse manifest file %1: %2")
 							.arg(filename, e.cause());
 			out.valid = false;
 			return out;

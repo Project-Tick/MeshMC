@@ -21,6 +21,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QDebug>
+#include "Logging.h"
 
 #include "AuthFlow.h"
 #include "katabasis/Globals.h"
@@ -57,7 +58,7 @@ void AuthFlow::nextStep()
 		return;
 	}
 	m_currentStep = m_steps.front();
-	qDebug() << "AuthFlow:" << m_currentStep->describe();
+	qCDebug(minecraftauthLog) << "AuthFlow:" << m_currentStep->describe();
 	m_steps.pop_front();
 	connect(m_currentStep.get(), &AuthStep::finished, this,
 			&AuthFlow::stepFinished);

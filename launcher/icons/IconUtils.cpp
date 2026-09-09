@@ -18,6 +18,7 @@
  */
 
 #include "IconUtils.h"
+#include "Logging.h"
 
 #include "FileSystem.h"
 #include <QDirIterator>
@@ -52,7 +53,7 @@ namespace IconUtils
 			for (int i = 0; i < best_found; i++) {
 				if (extension == validIconExtensions[i]) {
 					best_found = i;
-					qDebug() << i << " : " << fileInfo.fileName();
+					qCDebug(iconsLog) << i << " : " << fileInfo.fileName();
 					best_filename = fileInfo.fileName();
 				}
 			}

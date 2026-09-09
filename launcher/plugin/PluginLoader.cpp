@@ -24,6 +24,8 @@
 #include "plugin/PluginSignature.h"
 #include "plugin/CoreSupersededPlugins.h"
 
+#include "Logging.h"
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QDirIterator>
@@ -135,7 +137,7 @@ PluginLoader::discoverModules(const QSet<QString>& disabledNames) const
 		for (auto& meta : scanDirectory(dir, disabledNames)) {
 			QString id = meta.moduleId();
 			if (seen.contains(id)) {
-				qDebug() << "[PluginLoader] Skipping duplicate module" << id
+				qCDebug(pluginsLog) << "Skipping duplicate module" << id
 						 << "from" << meta.filePath;
 				if (meta.libraryHandle)
 					unloadModule(meta);
@@ -146,7 +148,7 @@ PluginLoader::discoverModules(const QSet<QString>& disabledNames) const
 		}
 	}
 
-	qDebug() << "[PluginLoader] Discovered" << result.size() << "module(s)";
+	qCDebug(pluginsLog) << "Discovered" << result.size() << "module(s)";
 	return result;
 }
 
@@ -160,7 +162,7 @@ PluginLoader::scanDirectory(const QString& dir,
 		return result;
 	}
 
-	qDebug() << "[PluginLoader] Scanning" << dir;
+	qCDebug(pluginsLog) << "Scanning" << dir;
 
 	QDirIterator it(dir, {"*" MMCO_EXTENSION}, QDir::Files,
 					QDirIterator::NoIteratorFlags);
@@ -210,7 +212,7 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 	PluginMetadata meta;
 	meta.filePath = path;
 
-	qDebug() << "[PluginLoader] Loading module:" << path;
+	qCDebug(pluginsLog) << "Loading module:" << path;
 
 	// Open the shared library.
 	//
@@ -342,8 +344,8 @@ PluginMetadata PluginLoader::loadModule(const QString& path) const
 	}
 
 	meta.loaded = true;
-	qDebug().noquote().nospace()
-		<< "[PluginLoader] Loaded module: " << meta.name << " v" << meta.version
+	qCDebug(pluginsLog).noquote().nospace()
+		<< "Loaded module: " << meta.name << " v" << meta.version
 		<< " by " << meta.author;
 
 	// Trust pre-flight — sets meta.signatureState and may set meta.disabled.

@@ -43,8 +43,20 @@
  * is a promise about where messages come from that nothing keeps.
  */
 
-/// Downloads, HTTP caching, network jobs.
+/// Downloads, HTTP caching, network jobs. And more.
 Q_DECLARE_LOGGING_CATEGORY(netLog)
+Q_DECLARE_LOGGING_CATEGORY(mojangLog)
+Q_DECLARE_LOGGING_CATEGORY(metaLog)
+Q_DECLARE_LOGGING_CATEGORY(archiveLog)
+Q_DECLARE_LOGGING_CATEGORY(backupLog)
+Q_DECLARE_LOGGING_CATEGORY(iconsLog)
+Q_DECLARE_LOGGING_CATEGORY(javaLog)
+Q_DECLARE_LOGGING_CATEGORY(launchLog)
+Q_DECLARE_LOGGING_CATEGORY(newsLog)
+Q_DECLARE_LOGGING_CATEGORY(pluginsLog)
+Q_DECLARE_LOGGING_CATEGORY(minecraftauthLog)
+Q_DECLARE_LOGGING_CATEGORY(minecraftgoptionsLog)
+Q_DECLARE_LOGGING_CATEGORY(minecraftlaunchLog)
 
 namespace Logging
 {

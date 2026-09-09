@@ -23,6 +23,7 @@
 
 #include <QDebug>
 
+#include "Logging.h"
 #include "java/JavaInstallList.h"
 #include "java/JavaCheckerJob.h"
 #include "java/JavaUtils.h"
@@ -150,10 +151,10 @@ void JavaListLoadTask::executeTask()
 			&JavaListLoadTask::javaCheckerFinished);
 	connect(m_job.get(), &Task::progress, this, &Task::setProgress);
 
-	qDebug() << "Probing the following Java paths: ";
+	qCDebug(javaLog) << "Probing the following Java paths: ";
 	int id = 0;
 	for (QString candidate : candidate_paths) {
-		qDebug() << " " << candidate;
+		qCDebug(javaLog) << " " << candidate;
 
 		auto candidate_checker = new JavaChecker();
 		candidate_checker->m_path = candidate;
@@ -171,7 +172,7 @@ void JavaListLoadTask::javaCheckerFinished()
 	QList<JavaInstallPtr> candidates;
 	auto results = m_job->getResults();
 
-	qDebug() << "Found the following valid Java installations:";
+	qCDebug(javaLog) << "Found the following valid Java installations:";
 	for (JavaCheckResult result : results) {
 		if (result.validity == JavaCheckResult::Validity::Valid) {
 			JavaInstallPtr javaVersion(new JavaInstall());
@@ -181,7 +182,7 @@ void JavaListLoadTask::javaCheckerFinished()
 			javaVersion->path = result.path;
 			candidates.append(javaVersion);
 
-			qDebug() << " " << javaVersion->id.toString() << javaVersion->arch
+			qCDebug(javaLog) << " " << javaVersion->id.toString() << javaVersion->arch
 					 << javaVersion->path;
 		}
 	}

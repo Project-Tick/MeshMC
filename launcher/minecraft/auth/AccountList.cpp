@@ -39,6 +39,8 @@
 
 #include <chrono>
 
+#include "Logging.h"
+
 enum AccountListVersion { MojangOnly = 2, MojangMSA = 3 };
 
 AccountList::AccountList(QObject* parent) : QAbstractListModel(parent)
@@ -580,16 +582,16 @@ bool AccountList::saveList()
 		badDir.removeRecursively();
 	}
 
-	qDebug() << "Writing account list to" << m_listFilePath;
+	qCDebug(minecraftauthLog) << "Writing account list to" << m_listFilePath;
 
-	qDebug() << "Building JSON data structure.";
+	qCDebug(minecraftauthLog) << "Building JSON data structure.";
 	// Build the JSON document to write to the list file.
 	QJsonObject root;
 
 	root.insert("formatVersion", AccountListVersion::MojangMSA);
 
 	// Build a list of accounts.
-	qDebug() << "Building account array.";
+	qCDebug(minecraftauthLog) << "Building account array.";
 	QJsonArray accounts;
 	for (MinecraftAccountPtr account : m_accounts) {
 		QJsonObject accountObj = account->saveToJson();
@@ -607,7 +609,7 @@ bool AccountList::saveList()
 
 	// Now that we're done building the JSON object, we can write it to the
 	// file.
-	qDebug() << "Writing account list to file.";
+	qCDebug(minecraftauthLog) << "Writing account list to file.";
 	QSaveFile file(m_listFilePath);
 
 	// Try to open the file and fail if we can't.
@@ -624,10 +626,10 @@ bool AccountList::saveList()
 	file.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadUser |
 						QFile::WriteUser);
 	if (file.commit()) {
-		qDebug() << "Saved account list to" << m_listFilePath;
+		qCDebug(minecraftauthLog) << "Saved account list to" << m_listFilePath;
 		return true;
 	} else {
-		qDebug() << "Failed to save accounts to" << m_listFilePath;
+		qCDebug(minecraftauthLog) << "Failed to save accounts to" << m_listFilePath;
 		return false;
 	}
 }
@@ -654,7 +656,7 @@ void AccountList::fillQueue()
 	if (m_defaultAccount && m_defaultAccount->shouldRefresh()) {
 		auto idToRefresh = m_defaultAccount->internalId();
 		m_refreshQueue.push_back(idToRefresh);
-		qDebug() << "AccountList: Queued default account with internal ID "
+		qCDebug(minecraftauthLog) << "AccountList: Queued default account with internal ID "
 				 << idToRefresh << " to refresh first";
 	}
 
@@ -679,7 +681,7 @@ void AccountList::requestRefresh(QString accountId)
 		m_refreshQueue.removeAt(index);
 	}
 	m_refreshQueue.push_front(accountId);
-	qDebug() << "AccountList: Pushed account with internal ID " << accountId
+	qCDebug(minecraftauthLog) << "AccountList: Pushed account with internal ID " << accountId
 			 << " to the front of the queue";
 	if (!isActive()) {
 		tryNext();
@@ -692,7 +694,7 @@ void AccountList::queueRefresh(QString accountId)
 		return;
 	}
 	m_refreshQueue.push_back(accountId);
-	qDebug() << "AccountList: Queued account with internal ID " << accountId
+	qCDebug(minecraftauthLog) << "AccountList: Queued account with internal ID " << accountId
 			 << " to refresh";
 }
 
@@ -711,14 +713,14 @@ void AccountList::tryNext()
 					connect(m_currentTask.get(), &AccountTask::failed, this,
 							&AccountList::authFailed);
 					m_currentTask->start();
-					qDebug() << "RefreshSchedule: Processing account "
+					qCDebug(minecraftauthLog) << "RefreshSchedule: Processing account "
 							 << account->accountDisplayString()
 							 << " with internal ID " << accountId;
 					return;
 				}
 			}
 		}
-		qDebug() << "RefreshSchedule: Account with with internal ID "
+		qCDebug(minecraftauthLog) << "RefreshSchedule: Account with with internal ID "
 				 << accountId << " not found.";
 	}
 	// if we get here, no account needed refreshing. Schedule refresh in an
@@ -728,14 +730,14 @@ void AccountList::tryNext()
 
 void AccountList::authSucceeded()
 {
-	qDebug() << "RefreshSchedule: Background account refresh succeeded";
+	qCDebug(minecraftauthLog) << "RefreshSchedule: Background account refresh succeeded";
 	m_currentTask.reset();
 	m_nextTimer->start(1000 * 20);
 }
 
 void AccountList::authFailed(QString reason)
 {
-	qDebug() << "RefreshSchedule: Background account refresh failed: "
+	qCDebug(minecraftauthLog) << "RefreshSchedule: Background account refresh failed: "
 			 << reason;
 	m_currentTask.reset();
 	m_nextTimer->start(1000 * 20);

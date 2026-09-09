@@ -22,6 +22,8 @@
 #include <QNetworkRequest>
 #include <QUuid>
 
+#include "Logging.h"
+
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
 
@@ -51,7 +53,7 @@ void EntitlementsStep::perform()
 	connect(requestor, &AuthRequest::finished, this,
 			&EntitlementsStep::onRequestDone);
 	requestor->get(request);
-	qDebug() << "Getting entitlements...";
+	qCDebug(minecraftauthLog) << "Getting entitlements...";
 }
 
 void EntitlementsStep::rehydrate()
@@ -67,7 +69,7 @@ void EntitlementsStep::onRequestDone(QNetworkReply::NetworkError,
 	requestor->deleteLater();
 
 #ifndef NDEBUG
-	qDebug() << data;
+	qCDebug(minecraftauthLog) << data;
 #endif
 
 	// TODO: check presence of same entitlementsRequestId?

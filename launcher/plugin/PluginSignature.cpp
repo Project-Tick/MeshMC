@@ -19,7 +19,7 @@
 
 #include "plugin/PluginSignature.h"
 #include "plugin/MMCOFormat.h"
-
+#include "Logging.h"
 #include <QByteArray>
 #include <QDateTime>
 #include <QDebug>
