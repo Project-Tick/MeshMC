@@ -20,6 +20,7 @@
 #include "GuiUtil.h"
 
 #include <QClipboard>
+#include <QStandardPaths>
 #include <QApplication>
 #include <QFileDialog>
 

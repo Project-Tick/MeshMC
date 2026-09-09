@@ -21,6 +21,7 @@
 #include "BuildConfig.h"
 #include "Application.h"
 
+#include <QDir>
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonArray>

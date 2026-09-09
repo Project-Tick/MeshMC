@@ -104,16 +104,10 @@ class MeshMCPage : public QWidget, public BasePage
 	void refreshUpdateChannelList();
 
 	/*!
-	 * Updates the channel description label.
-	 */
-	void refreshUpdateChannelDesc();
-
-	/*!
 	 * Updates the font preview
 	 */
 	void refreshFontPreview();
 
-	void updateChannelSelectionChanged(int index);
 
   private:
 	Ui::MeshMCPage* ui;

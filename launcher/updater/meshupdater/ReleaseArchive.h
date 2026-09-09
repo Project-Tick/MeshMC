@@ -19,27 +19,26 @@
 
 #pragma once
 
-#include <QDialog>
-#include <QLabel>
-#include <QPlainTextEdit>
-#include <QProgressBar>
-#include <QPushButton>
+#include <QString>
+#include <QStringList>
 
-class UpdateProgressDialog : public QDialog
+namespace ReleaseArchive
 {
-	Q_OBJECT
 
-  public:
-	explicit UpdateProgressDialog(QWidget* parent = nullptr);
+	struct Result {
+		bool ok = false;
+		QString error; //!< Set when ok is false.
+		int fileCount = 0;
+		qint64 byteCount = 0;
 
-	void setStatus(const QString& status);
-	void appendLog(const QString& line);
-	void setProgress(int value, int maximum);
-	void setFinished(bool success, const QString& message);
+		int linkCount = 0;
 
-  private:
-	QLabel* m_statusLabel;
-	QProgressBar* m_progressBar;
-	QPlainTextEdit* m_logView;
-	QPushButton* m_closeButton;
-};
+		//! Everything extracted, links included, relative to the destination.
+		QStringList paths;
+	};
+
+	Result extract(const QString& archivePath, const QString& destDir);
+
+	QString descendIntoSingleRoot(const QString& dir);
+
+} // namespace ReleaseArchive

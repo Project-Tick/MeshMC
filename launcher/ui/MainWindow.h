@@ -30,7 +30,6 @@
 #include "BaseInstance.h"
 #include "minecraft/auth/MinecraftAccount.h"
 #include "net/NetJob.h"
-#include "updater/UpdateChecker.h"
 
 class LaunchController;
 class NewsChecker;
@@ -242,10 +241,6 @@ class MainWindow : public QMainWindow
 
 	void startTask(Task* task);
 
-	void updateAvailable(UpdateAvailableStatus status);
-
-	void updateNotAvailable();
-
 	void notificationsChanged();
 
 	void defaultAccountChanged();
@@ -255,12 +250,6 @@ class MainWindow : public QMainWindow
 	void repopulateAccountsMenu();
 
 	void updateNewsLabel();
-
-	/*!
-	 * Stub kept for source compatibility; actual installation is delegated to
-	 * the meshmc-updater binary via UpdateController.
-	 */
-	void downloadUpdates(UpdateAvailableStatus status);
 
 	void konamiTriggered();
 
