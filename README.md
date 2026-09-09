@@ -17,7 +17,7 @@ We aren't looking for flashy features, but expanding upon the existing feature s
 
 ### Building
 
-If you want to build the launcher yourself, check [BUILD.md](BUILD.md) for build instructions.
+If you want to build the launcher yourself, check [this wiki page](https://projecttick.org/wiki/development/build-instructions) for build instructions.
 
 ### Code formatting
 Just follow the existing formatting.

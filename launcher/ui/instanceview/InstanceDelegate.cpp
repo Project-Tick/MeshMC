@@ -29,7 +29,7 @@
 #include "InstanceView.h"
 #include "BaseInstance.h"
 #include "InstanceList.h"
-#include <xdgicon.h>
+#include <QIcon>
 #include <QTextEdit>
 
 // Origin: Qt
@@ -145,7 +145,7 @@ void drawBadges(QPainter* painter, const QStyleOptionViewItem& option,
 				return;
 			}
 			// FIXME: inject this.
-			auto icon = XdgIcon::fromTheme(it.next());
+			auto icon = QIcon::fromTheme(it.next());
 			// opt.icon.paint(painter, iconbox, Qt::AlignCenter, mode, state);
 			const QPixmap pixmap;
 			// itemSide

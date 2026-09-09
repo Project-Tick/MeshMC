@@ -198,336 +198,187 @@ struct has_setIconText<T, std::void_t<
     decltype(std::declval<T*>()->setIconText(QString()))
 >> : std::true_type {};
 
-class MainWindow::Ui : public ::Ui::MainWindow
+void MainWindow::applyThemedIcons()
 {
-  public:
-	QMenu* exportInstanceMenu = nullptr;
-
-	LabeledToolButton* renameButton = nullptr;
-	LabeledToolButton* changeIconButton = nullptr;
-
-	QList<QAction*> instance_actions;
-
-	void createMainToolbar(QMainWindow* MainWindow)
-	{
-		actionAddInstance->setIcon(APPLICATION->getThemedIcon("new"));
-
-		actionViewLauncherRootFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionViewInstanceFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionViewCentralModsFolder->setIcon(
-			APPLICATION->getThemedIcon("centralmods"));
-
-		actionViewSkinsFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionViewJavaFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionViewIconThemeFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionViewWidgetThemeFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionViewCatPackFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionViewIconsFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionViewLogsFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionFoldersButton->setIcon(APPLICATION->getThemedIcon("viewfolder"));
-		actionFoldersButton->setMenu(foldersMenu);
-		if (auto* button = qobject_cast<QToolButton*>(
-				mainToolBar->widgetForAction(actionFoldersButton))) {
-			button->setPopupMode(QToolButton::InstantPopup);
-			button->setFocusPolicy(Qt::NoFocus);
+	for (QAction* action : findChildren<QAction*>()) {
+		const QString iconName = action->property("meshmcIcon").toString();
+		if (iconName.isEmpty()) {
+			continue;
 		}
 
-		actionSettings->setIcon(APPLICATION->getThemedIcon("settings"));
-
-		actionReportBug->setIcon(APPLICATION->getThemedIcon("bug"));
-		actionReportBug->setVisible(!BuildConfig.BUG_TRACKER_URL.isEmpty());
-
-		actionDISCORD->setIcon(APPLICATION->getThemedIcon("discord"));
-		actionDISCORD->setVisible(!BuildConfig.DISCORD_URL.isEmpty());
-
-		actionREDDIT->setIcon(APPLICATION->getThemedIcon("reddit-alien"));
-		actionREDDIT->setVisible(!BuildConfig.SUBREDDIT_URL.isEmpty());
-
-		actionPlugins->setIcon(APPLICATION->getThemedIcon("plugins"));
-		actionPlugins->setVisible(APPLICATION->pluginManager()->moduleCount() >= 1);
-
-		actionMeshMCLogs->setIcon(APPLICATION->getThemedIcon("log"));
-
-		actionAbout->setIcon(APPLICATION->getThemedIcon("about"));
-
-		actionHelpButton->setIcon(APPLICATION->getThemedIcon("help"));
-		actionHelpButton->setMenu(helpMenu);
-		if (auto* button = qobject_cast<QToolButton*>(
-				mainToolBar->widgetForAction(actionHelpButton))) {
-			button->setPopupMode(QToolButton::InstantPopup);
-			button->setFocusPolicy(Qt::NoFocus);
+		const QIcon icon = APPLICATION->getThemedIcon(iconName);
+		if (icon.isNull()) {
+			qWarning() << "No icon named" << iconName
+					   << "in the current icon theme, so"
+					   << action->objectName() << "has none";
 		}
+		action->setIcon(icon);
+	}
+}
 
-		actionCheckUpdate->setIcon(APPLICATION->getThemedIcon("checkupdate"));
-		actionCheckUpdate->setVisible(APPLICATION->updaterEnabled());
-
-		actionPatreon->setIcon(APPLICATION->getThemedIcon("patreon"));
-		actionPatreon->setVisible(!BuildConfig.PATREON_URL.isEmpty());
-
-		actionCAT->setIcon(APPLICATION->getThemedIcon("cat"));
-
-		actionManageAccounts->setIcon(APPLICATION->getThemedIcon("accounts"));
-
+void MainWindow::createMainToolbar()
+{
+	ui->actionFoldersButton->setMenu(ui->foldersMenu);
+	if (auto* button = qobject_cast<QToolButton*>(
+			ui->mainToolBar->widgetForAction(ui->actionFoldersButton))) {
+		button->setPopupMode(QToolButton::InstantPopup);
+		button->setFocusPolicy(Qt::NoFocus);
 	}
 
-	void createInstanceToolbar(QMainWindow* MainWindow)
-	{
-		// NOTE: not added to toolbar, but used for instance context menu (right
-		// click)
-		actionChangeInstIcon->setIcon(QIcon(":/icons/instances/grass"));
-		actionChangeInstIcon->setIconVisibleInMenu(true);
+	ui->actionReportBug->setVisible(!BuildConfig.BUG_TRACKER_URL.isEmpty());
 
-		changeIconButton->setIcon(APPLICATION->getThemedIcon("news"));
-		changeIconButton->setToolTip(actionChangeInstIcon->toolTip());
-		changeIconButton->setSizePolicy(QSizePolicy::Expanding,
-										QSizePolicy::Preferred);
+	ui->actionDISCORD->setVisible(!BuildConfig.DISCORD_URL.isEmpty());
 
-		renameButton->setToolTip(actionRenameInstance->toolTip());
-		renameButton->setSizePolicy(QSizePolicy::Expanding,
+	ui->actionREDDIT->setVisible(!BuildConfig.SUBREDDIT_URL.isEmpty());
+
+	ui->actionPlugins->setVisible(
+		APPLICATION->pluginManager()->moduleCount() >= 1);
+
+	ui->actionHelpButton->setMenu(ui->helpMenu);
+	if (auto* button = qobject_cast<QToolButton*>(
+			ui->mainToolBar->widgetForAction(ui->actionHelpButton))) {
+		button->setPopupMode(QToolButton::InstantPopup);
+		button->setFocusPolicy(Qt::NoFocus);
+	}
+
+	ui->actionCheckUpdate->setVisible(APPLICATION->updaterEnabled());
+
+	ui->actionPatreon->setVisible(!BuildConfig.PATREON_URL.isEmpty());
+}
+
+void MainWindow::createInstanceToolbar()
+{
+	// NOTE: not added to toolbar, but used for instance context menu (right
+	// click)
+	ui->actionChangeInstIcon->setIcon(QIcon(":/icons/instances/grass"));
+	ui->actionChangeInstIcon->setIconVisibleInMenu(true);
+
+	changeIconButton->setIcon(APPLICATION->getThemedIcon("news"));
+	changeIconButton->setToolTip(ui->actionChangeInstIcon->toolTip());
+	changeIconButton->setSizePolicy(QSizePolicy::Expanding,
 									QSizePolicy::Preferred);
 
-		actionRenameInstance->setIcon(APPLICATION->getThemedIcon("rename"));
+	renameButton->setToolTip(ui->actionRenameInstance->toolTip());
+	renameButton->setSizePolicy(QSizePolicy::Expanding,
+								QSizePolicy::Preferred);
 
-		actionLaunchInstance->setIcon(APPLICATION->getThemedIcon("launch"));
+	auto* exportInstanceMenu = new QMenu(this);
+	exportInstanceMenu->setToolTipsVisible(true);
+	exportInstanceMenu->addAction(ui->actionExportInstanceZip);
+	exportInstanceMenu->addAction(ui->actionExportInstanceMrPack);
+	exportInstanceMenu->addAction(ui->actionExportInstanceFlamePack);
+	ui->actionExportInstance->setMenu(exportInstanceMenu);
 
-		actionKillInstance->setIcon(APPLICATION->getThemedIcon("status-bad"));
+	ui->instanceToolBar->insertWidget(ui->actionLaunchInstance,
+									  changeIconButton);
+	ui->instanceToolBar->insertWidget(ui->actionLaunchInstance, renameButton);
+	ui->instanceToolBar->insertSeparator(ui->actionLaunchInstance);
 
-		actionLaunchInstanceOffline->setIcon(
-			APPLICATION->getThemedIcon("launch"));
-
-		actionEditInstance->setIcon(APPLICATION->getThemedIcon("settings"));
-
-		actionInstanceSettings->setIcon(
-			APPLICATION->getThemedIcon("instance-settings"));
-
-		actionEditInstNotes->setIcon(APPLICATION->getThemedIcon("notes"));
-
-		actionMods->setIcon(APPLICATION->getThemedIcon("loadermods"));
-
-		actionWorlds->setIcon(APPLICATION->getThemedIcon("worlds"));
-
-		actionScreenshots->setIcon(APPLICATION->getThemedIcon("screenshots"));
-
-		actionChangeInstGroup->setIcon(APPLICATION->getThemedIcon("tag"));
-
-		actionViewSelectedMCFolder->setIcon(
-			APPLICATION->getThemedIcon("minecraft"));
-
-		actionViewSelectedModsFolder->setIcon(
-			APPLICATION->getThemedIcon("loadermods"));
-
-		actionConfig_Folder->setIcon(
-			APPLICATION->getThemedIcon("custom-commands"));
-
-		actionViewSelectedInstFolder->setIcon(
-			APPLICATION->getThemedIcon("viewfolder"));
-
-		actionExportInstance->setIcon(APPLICATION->getThemedIcon("export"));
-
-		actionExportInstanceZip->setIcon(
-			APPLICATION->getThemedIcon("launcher"));
-
-		actionExportInstanceMrPack->setIcon(
-			APPLICATION->getThemedIcon("modrinth"));
-
-		actionExportInstanceFlamePack->setIcon(
-			APPLICATION->getThemedIcon("flame"));
-
-		exportInstanceMenu = new QMenu(MainWindow);
-		exportInstanceMenu->setToolTipsVisible(true);
-		exportInstanceMenu->addAction(actionExportInstanceZip);
-		exportInstanceMenu->addAction(actionExportInstanceMrPack);
-		exportInstanceMenu->addAction(actionExportInstanceFlamePack);
-		actionExportInstance->setMenu(exportInstanceMenu);
-
-		actionDeleteInstance->setIcon(APPLICATION->getThemedIcon("delete"));
-
-		actionCopyInstance->setIcon(APPLICATION->getThemedIcon("copy"));
-
-		actionCreateInstanceShortcut->setIcon(
-			APPLICATION->getThemedIcon("shortcut"));
-
-		instanceToolBar->insertWidget(actionLaunchInstance, changeIconButton);
-		instanceToolBar->insertWidget(actionLaunchInstance, renameButton);
-		instanceToolBar->insertSeparator(actionLaunchInstance);
-
-		/* Export carries a submenu, and a sidebar button built from such
-		 * an action needs to be told how to show it.
-		 *
-		 * Left at Qt's default it is DelayedPopup: a small arrow in the
-		 * button's corner, the menu only if the press is held, and on a
-		 * normal click nothing but triggered() - which this action has
-		 * no handler for, so the button looked broken. MenuButtonPopup
-		 * gives it the separated drop-down section instead, which is
-		 * what the launcher this sidebar is modelled on does for every
-		 * action with a menu.
-		 *
-		 * Set here rather than in makeSidebarButton(), which would be
-		 * the general home for it: that runs again whenever the sidebar
-		 * is re-measured, and Launch has its own popup mode chosen per
-		 * selection - a blanket rule here would undo that choice on the
-		 * next rename. */
-		if (auto* exportButton = qobject_cast<QToolButton*>(
-				instanceToolBar->widgetForAction(actionExportInstance))) {
-			exportButton->setPopupMode(QToolButton::MenuButtonPopup);
-		}
-
-		syncSidebarWidths();
+	/* Qt's default for an action carrying a menu is DelayedPopup, which
+	 * leaves a plain click on this button doing nothing at all. Not in
+	 * makeSidebarButton(), which runs again on every re-measure and would
+	 * undo the popup mode Launch picks per selection. */
+	if (auto* exportButton = qobject_cast<QToolButton*>(
+			ui->instanceToolBar->widgetForAction(ui->actionExportInstance))) {
+		exportButton->setPopupMode(QToolButton::MenuButtonPopup);
 	}
 
-	/**
-	 * Keeps the instance sidebar reading as one column: every action button
-	 * is widened to the widest entry in the bar, so short labels line up
-	 * flush left with the long ones instead of floating in the middle.
-	 *
-	 * This is needed because QToolBarLayout only stretches widgets that
-	 * were handed to addWidget(); the buttons it builds itself for an
-	 * action keep their own sizeHint and get centred, and a size policy of
-	 * Expanding on them is ignored. Matching the widths by hand reaches the
-	 * same layout without giving up addAction(), which widgetForAction(),
-	 * actions() and insertAction() all still depend on -- respectively the
-	 * launch popup, the instance context menu, and plugin entries.
-	 *
-	 * Idempotent: the target width is read from the untouched sizeHints and
-	 * never from the bar's current size, so calling this repeatedly settles
-	 * instead of ratcheting the sidebar wider, and the bar is still free to
-	 * narrow again when a long instance name goes away.
-	 */
-	void syncSidebarWidths()
-	{
-		QList<QToolButton*> buttons;
-		int widest = 0;
+	syncSidebarWidths();
+}
 
-		for (QAction* action : instanceToolBar->actions()) {
-			QWidget* widget = instanceToolBar->widgetForAction(action);
-			if (!widget) {
-				continue;
-			}
-			widest = qMax(widest, widget->sizeHint().width());
+void MainWindow::syncSidebarWidths()
+{
+	QList<QToolButton*> buttons;
+	int widest = 0;
 
-			/* The two LabeledToolButtons already stretch on their own and
-			 * place their own label, so they get a say in the width but are
-			 * not resized here. Separators are not tool buttons and fall
-			 * out of the cast. */
-			auto* button = qobject_cast<QToolButton*>(widget);
-			if (button && button != changeIconButton &&
-				button != renameButton) {
-				buttons.append(button);
-			}
+	for (QAction* action : ui->instanceToolBar->actions()) {
+		QWidget* widget = ui->instanceToolBar->widgetForAction(action);
+		if (!widget) {
+			continue;
 		}
+		widest = qMax(widest, widget->sizeHint().width());
 
-		for (QToolButton* button : buttons) {
-			makeSidebarButton(button);
-			button->setMinimumWidth(widest);
+		/* The two LabeledToolButtons place their own label and already
+		 * stretch, so they get a say in the width but are not resized. */
+		auto* button = qobject_cast<QToolButton*>(widget);
+		if (button && button != changeIconButton && button != renameButton) {
+			buttons.append(button);
 		}
 	}
 
-	void setupUi(QMainWindow* MainWindow)
-	{
-		changeIconButton = new LabeledToolButton(MainWindow);
-		changeIconButton->setObjectName(QStringLiteral("changeIconButton"));
+	for (QToolButton* button : buttons) {
+		makeSidebarButton(button);
+		button->setMinimumWidth(widest);
+	}
+}
 
-		renameButton = new LabeledToolButton(MainWindow);
-		renameButton->setObjectName(QStringLiteral("renameButton"));
+void MainWindow::setupUi()
+{
+	/* Before ui->setupUi(), which ends in connectSlotsByName(): these two
+	 * have to exist under their final object names by then, or
+	 * on_renameButton_clicked and on_changeIconButton_clicked never get
+	 * connected. */
+	changeIconButton = new LabeledToolButton(this);
+	changeIconButton->setObjectName(QStringLiteral("changeIconButton"));
 
-		::Ui::MainWindow::setupUi(MainWindow);
+	renameButton = new LabeledToolButton(this);
+	renameButton->setObjectName(QStringLiteral("renameButton"));
+
+	ui->setupUi(this);
 
 #ifdef Q_OS_MACOS
-		foldersMenu->setParent(MainWindow);
-		helpMenu->setParent(MainWindow);
-		accountMenu->setParent(MainWindow);
-		MainWindow->setMenuBar(nullptr);
-		menuBar = nullptr;
+	/* Reparented before the menu bar goes, because they outlive it: the
+	 * toolbar buttons pop them up and MacMenuBar reuses them. */
+	ui->foldersMenu->setParent(this);
+	ui->helpMenu->setParent(this);
+	ui->accountMenu->setParent(this);
+	setMenuBar(nullptr);
+	ui->menuBar = nullptr;
 #endif
 
-		MainWindow->setWindowIcon(APPLICATION->getThemedIcon("logo"));
-		MainWindow->setWindowTitle(BuildConfig.MESHMC_DISPLAYNAME);
+	setWindowIcon(APPLICATION->getThemedIcon("logo"));
+	setWindowTitle(BuildConfig.MESHMC_DISPLAYNAME);
 #ifndef QT_NO_ACCESSIBILITY
-		MainWindow->setAccessibleName(BuildConfig.MESHMC_NAME);
+	setAccessibleName(BuildConfig.MESHMC_NAME);
 #endif
+	applyThemedIcons();
 
-		createMainToolbar(MainWindow);
-		actionMoreNews->setIcon(APPLICATION->getThemedIcon("news"));
-		createInstanceToolbar(MainWindow);
+	createMainToolbar();
+	createInstanceToolbar();
 
-		/* One list, written out once, so that it can be audited against
-		 * the menus above instead of being collected in three places. */
-		instance_actions = {actionLaunchInstance,
-							actionLaunchInstanceOffline,
-							actionKillInstance,
-							actionEditInstance,
-							actionInstanceSettings,
-							actionEditInstNotes,
-							actionMods,
-							actionWorlds,
-							actionScreenshots,
-							actionChangeInstGroup,
-							actionChangeInstIcon,
-							actionRenameInstance,
-							actionViewSelectedInstFolder,
-							actionViewSelectedMCFolder,
-							actionViewSelectedModsFolder,
-							actionConfig_Folder,
-							actionExportInstance,
-							actionCopyInstance,
-							actionDeleteInstance,
-							actionCreateInstanceShortcut};
-		// Nothing is selected yet, and the menus are reachable before
-		// anything is.
-		for (QAction* action : instance_actions) {
-			action->setEnabled(false);
-		}
-
-		retranslateUi(MainWindow);
-	} // setupUi
-
-	void retranslateUi(QMainWindow* MainWindow)
-	{
-		::Ui::MainWindow::retranslateUi(MainWindow);
-		const QString appName = BuildConfig.MESHMC_NAME;
-		for (QAction* action : MainWindow->findChildren<QAction*>()) {
-			if (action->text().contains(QLatin1String("%1")))
-				action->setText(action->text().arg(appName));
-			if (action->toolTip().contains(QLatin1String("%1")))
-				action->setToolTip(action->toolTip().arg(appName));
-		}
-
-		QString winTitle = tr("%1 - Version %2", "MeshMC - Version X")
-							   .arg(BuildConfig.MESHMC_DISPLAYNAME,
-									BuildConfig.printableVersionString());
-		if (!BuildConfig.BUILD_PLATFORM.isEmpty()) {
-			winTitle += tr(" on %1", "on platform, as in operating system")
-							.arg(BuildConfig.BUILD_PLATFORM);
-		}
-		MainWindow->setWindowTitle(APPLICATION->applicationDisplayName());
-
-		// New labels mean new widths for the sidebar to line up against.
-		syncSidebarWidths();
-	} // retranslateUi
-};
+	/* One list, written out once, so that it can be audited against
+	 * the menus above instead of being collected in three places. */
+	instance_actions = {ui->actionLaunchInstance,
+						ui->actionLaunchInstanceOffline,
+						ui->actionKillInstance,
+						ui->actionEditInstance,
+						ui->actionInstanceSettings,
+						ui->actionEditInstNotes,
+						ui->actionMods,
+						ui->actionWorlds,
+						ui->actionScreenshots,
+						ui->actionChangeInstGroup,
+						ui->actionChangeInstIcon,
+						ui->actionRenameInstance,
+						ui->actionViewSelectedInstFolder,
+						ui->actionViewSelectedMCFolder,
+						ui->actionViewSelectedModsFolder,
+						ui->actionConfig_Folder,
+						ui->actionExportInstance,
+						ui->actionCopyInstance,
+						ui->actionDeleteInstance,
+						ui->actionCreateInstanceShortcut};
+	// Nothing is selected yet, and the menus are reachable before
+	// anything is.
+	for (QAction* action : instance_actions) {
+		action->setEnabled(false);
+	}
+}
 
 MainWindow::MainWindow(QWidget* parent)
-	: QMainWindow(parent), ui(new MainWindow::Ui)
+	: QMainWindow(parent), ui(new Ui::MainWindow)
 {
-	ui->setupUi(this);
+	setupUi();
 
 	// OSX magic.
 	setUnifiedTitleAndToolBarOnMac(true);
@@ -793,6 +644,26 @@ MainWindow::MainWindow(QWidget* parent)
 void MainWindow::retranslateUi()
 {
 	ui->retranslateUi(this);
+
+	const QString appName = BuildConfig.MESHMC_NAME;
+	for (QAction* action : findChildren<QAction*>()) {
+		if (action->text().contains(QLatin1String("%1")))
+			action->setText(action->text().arg(appName));
+		if (action->toolTip().contains(QLatin1String("%1")))
+			action->setToolTip(action->toolTip().arg(appName));
+	}
+
+	QString winTitle = tr("%1 - Version %2", "MeshMC - Version X")
+						   .arg(BuildConfig.MESHMC_DISPLAYNAME,
+								BuildConfig.printableVersionString());
+	if (!BuildConfig.BUILD_PLATFORM.isEmpty()) {
+		winTitle += tr(" on %1", "on platform, as in operating system")
+						.arg(BuildConfig.BUILD_PLATFORM);
+	}
+	setWindowTitle(APPLICATION->applicationDisplayName());
+
+	// New labels mean new widths for the sidebar to line up against.
+	syncSidebarWidths();
 
 	auto accounts = APPLICATION->accounts();
 	MinecraftAccountPtr defaultAccount = accounts->defaultAccount();
@@ -1503,7 +1374,7 @@ void MainWindow::on_actionChangeInstIcon_triggered()
 		m_selectedInstance->setIconKey(dlg.selectedIconKey);
 		auto icon = APPLICATION->icons()->getIcon(dlg.selectedIconKey);
 		ui->actionChangeInstIcon->setIcon(icon);
-		ui->changeIconButton->setIcon(icon);
+		changeIconButton->setIcon(icon);
 	}
 }
 
@@ -1512,7 +1383,7 @@ void MainWindow::iconUpdated(QString icon)
 	if (icon == m_currentInstIcon) {
 		auto icon = APPLICATION->icons()->getIcon(m_currentInstIcon);
 		ui->actionChangeInstIcon->setIcon(icon);
-		ui->changeIconButton->setIcon(icon);
+		changeIconButton->setIcon(icon);
 	}
 }
 
@@ -1521,7 +1392,7 @@ void MainWindow::updateInstanceToolIcon(QString new_icon)
 	m_currentInstIcon = new_icon;
 	auto icon = APPLICATION->icons()->getIcon(m_currentInstIcon);
 	ui->actionChangeInstIcon->setIcon(icon);
-	ui->changeIconButton->setIcon(icon);
+	changeIconButton->setIcon(icon);
 }
 
 void MainWindow::setSelectedInstanceById(const QString& id)
@@ -2095,7 +1966,7 @@ void MainWindow::instanceChanged(const QModelIndex& current,
 		ui->instanceToolBar->setEnabled(true);
 		/* Baseline: there is an instance to act on. The rules below then
 		 * refine the few that need more than that. */
-		for (QAction* action : ui->instance_actions) {
+		for (QAction* action : instance_actions) {
 			action->setEnabled(true);
 		}
 		/* Launch and Kill are separate buttons now, so each one just
@@ -2109,9 +1980,9 @@ void MainWindow::instanceChanged(const QModelIndex& current,
 		ui->actionLaunchInstanceOffline->setEnabled(
 			m_selectedInstance->canLaunch());
 		ui->actionExportInstance->setEnabled(m_selectedInstance->canExport());
-		ui->renameButton->setText(m_selectedInstance->name());
+		renameButton->setText(m_selectedInstance->name());
 		// The name drives how wide the sidebar wants to be.
-		ui->syncSidebarWidths();
+		syncSidebarWidths();
 		m_statusLeft->setText(m_selectedInstance->getStatusbarDescription());
 		updateStatusCenter();
 		updateInstanceToolIcon(m_selectedInstance->iconKey());
@@ -2159,11 +2030,11 @@ void MainWindow::selectionBad()
 	/* Greying out the toolbar hides its buttons' state, but the same
 	 * actions are in the menu bar, where nothing else would stop them
 	 * being clicked with no instance to act on. */
-	for (QAction* action : ui->instance_actions) {
+	for (QAction* action : instance_actions) {
 		action->setEnabled(false);
 	}
-	ui->renameButton->setText(tr("Rename Instance"));
-	ui->syncSidebarWidths();
+	renameButton->setText(tr("Rename Instance"));
+	syncSidebarWidths();
 	updateInstanceToolIcon("grass");
 
 	// ...and then see if we can enable the previously selected instance

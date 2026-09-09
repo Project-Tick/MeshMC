@@ -254,6 +254,9 @@
    <addaction name="helpMenu"/>
   </widget>
   <action name="actionAddInstance">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">new</string>
+   </property>
    <property name="text">
     <string>Add Instance</string>
    </property>
@@ -279,6 +282,9 @@
    </property>
   </action>
   <action name="actionViewLauncherRootFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Launcher Root</string>
    </property>
@@ -290,6 +296,9 @@
    </property>
   </action>
   <action name="actionViewInstanceFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Instances</string>
    </property>
@@ -301,6 +310,9 @@
    </property>
   </action>
   <action name="actionViewCentralModsFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">centralmods</string>
+   </property>
    <property name="text">
     <string>Central Mods</string>
    </property>
@@ -312,6 +324,9 @@
    </property>
   </action>
   <action name="actionViewSkinsFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Skins</string>
    </property>
@@ -323,6 +338,9 @@
    </property>
   </action>
   <action name="actionViewJavaFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Java</string>
    </property>
@@ -334,6 +352,9 @@
    </property>
   </action>
   <action name="actionViewIconThemeFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Icon Theme</string>
    </property>
@@ -345,6 +366,9 @@
    </property>
   </action>
   <action name="actionViewWidgetThemeFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Widget Themes</string>
    </property>
@@ -356,6 +380,9 @@
    </property>
   </action>
   <action name="actionViewCatPackFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Cat Packs</string>
    </property>
@@ -367,6 +394,9 @@
    </property>
   </action>
   <action name="actionViewIconsFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Instance Icons</string>
    </property>
@@ -378,6 +408,9 @@
    </property>
   </action>
   <action name="actionViewLogsFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Logs</string>
    </property>
@@ -389,6 +422,9 @@
    </property>
   </action>
   <action name="actionSettings">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">settings</string>
+   </property>
    <property name="text">
     <string>Settings</string>
    </property>
@@ -400,6 +436,9 @@
    </property>
   </action>
   <action name="actionMeshMCLogs">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">log</string>
+   </property>
    <property name="text">
     <string>MeshMC Logs</string>
    </property>
@@ -411,6 +450,9 @@
    </property>
   </action>
   <action name="actionAbout">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">about</string>
+   </property>
    <property name="text">
     <string>About %1</string>
    </property>
@@ -422,6 +464,9 @@
    </property>
   </action>
   <action name="actionCAT">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">cat</string>
+   </property>
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -439,6 +484,9 @@
    </property>
   </action>
   <action name="actionManageAccounts">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">accounts</string>
+   </property>
    <property name="text">
     <string>Manage Accounts</string>
    </property>
@@ -464,6 +512,9 @@
    </property>
   </action>
   <action name="actionMoreNews">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">news</string>
+   </property>
    <property name="text">
     <string>More news...</string>
    </property>
@@ -500,6 +551,9 @@
    </property>
   </action>
   <action name="actionRenameInstance">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">rename</string>
+   </property>
    <property name="text">
     <string>Rename</string>
    </property>
@@ -511,6 +565,9 @@
    </property>
   </action>
   <action name="actionLaunchInstance">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">launch</string>
+   </property>
    <property name="text">
     <string>Launch</string>
    </property>
@@ -522,6 +579,9 @@
    </property>
   </action>
   <action name="actionKillInstance">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">status-bad</string>
+   </property>
    <property name="text">
     <string>Kill</string>
    </property>
@@ -536,6 +596,9 @@
    </property>
   </action>
   <action name="actionLaunchInstanceOffline">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">launch</string>
+   </property>
    <property name="text">
     <string>Launch Offline</string>
    </property>
@@ -547,6 +610,9 @@
    </property>
   </action>
   <action name="actionEditInstance">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">settings</string>
+   </property>
    <property name="text">
     <string>Edit Instance</string>
    </property>
@@ -558,6 +624,9 @@
    </property>
   </action>
   <action name="actionInstanceSettings">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">instance-settings</string>
+   </property>
    <property name="text">
     <string>Instance Settings</string>
    </property>
@@ -569,6 +638,9 @@
    </property>
   </action>
   <action name="actionEditInstNotes">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">notes</string>
+   </property>
    <property name="text">
     <string>Edit Notes</string>
    </property>
@@ -580,6 +652,9 @@
    </property>
   </action>
   <action name="actionMods">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">loadermods</string>
+   </property>
    <property name="text">
     <string>View Mods</string>
    </property>
@@ -591,6 +666,9 @@
    </property>
   </action>
   <action name="actionWorlds">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">worlds</string>
+   </property>
    <property name="text">
     <string>View Worlds</string>
    </property>
@@ -602,6 +680,9 @@
    </property>
   </action>
   <action name="actionScreenshots">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">screenshots</string>
+   </property>
    <property name="text">
     <string>Manage Screenshots</string>
    </property>
@@ -613,6 +694,9 @@
    </property>
   </action>
   <action name="actionChangeInstGroup">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">tag</string>
+   </property>
    <property name="text">
     <string>Change Group</string>
    </property>
@@ -624,6 +708,9 @@
    </property>
   </action>
   <action name="actionViewSelectedMCFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">minecraft</string>
+   </property>
    <property name="text">
     <string>Minecraft Folder</string>
    </property>
@@ -635,6 +722,9 @@
    </property>
   </action>
   <action name="actionViewSelectedModsFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">loadermods</string>
+   </property>
    <property name="text">
     <string>Mods Folder</string>
    </property>
@@ -646,6 +736,9 @@
    </property>
   </action>
   <action name="actionConfig_Folder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">custom-commands</string>
+   </property>
    <property name="text">
     <string>Config Folder</string>
    </property>
@@ -657,6 +750,9 @@
    </property>
   </action>
   <action name="actionViewSelectedInstFolder">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Instance Folder</string>
    </property>
@@ -668,6 +764,9 @@
    </property>
   </action>
   <action name="actionExportInstance">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">export</string>
+   </property>
    <property name="text">
     <string>E&amp;xport...</string>
    </property>
@@ -682,6 +781,9 @@
    </property>
   </action>
   <action name="actionExportInstanceZip">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">launcher</string>
+   </property>
    <property name="text">
     <string>%1 (zip)</string>
    </property>
@@ -690,6 +792,9 @@
    </property>
   </action>
   <action name="actionExportInstanceMrPack">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">modrinth</string>
+   </property>
    <property name="text">
     <string>Modrinth (mrpack)</string>
    </property>
@@ -698,6 +803,9 @@
    </property>
   </action>
   <action name="actionExportInstanceFlamePack">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">flame</string>
+   </property>
    <property name="text">
     <string>CurseForge (zip)</string>
    </property>
@@ -706,6 +814,9 @@
    </property>
   </action>
   <action name="actionDeleteInstance">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">delete</string>
+   </property>
    <property name="text">
     <string>Delete</string>
    </property>
@@ -717,6 +828,9 @@
    </property>
   </action>
   <action name="actionCopyInstance">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">copy</string>
+   </property>
    <property name="text">
     <string>Copy Instance</string>
    </property>
@@ -728,6 +842,9 @@
    </property>
   </action>
   <action name="actionCreateInstanceShortcut">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">shortcut</string>
+   </property>
    <property name="text">
     <string>Create Shortcut</string>
    </property>
@@ -739,6 +856,9 @@
    </property>
   </action>
   <action name="actionReportBug">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">bug</string>
+   </property>
    <property name="text">
     <string>Report a Bug</string>
    </property>
@@ -750,6 +870,9 @@
    </property>
   </action>
   <action name="actionDISCORD">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">discord</string>
+   </property>
    <property name="text">
     <string>Discord</string>
    </property>
@@ -761,6 +884,9 @@
    </property>
   </action>
   <action name="actionREDDIT">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">reddit-alien</string>
+   </property>
    <property name="text">
     <string>Reddit</string>
    </property>
@@ -772,6 +898,9 @@
    </property>
   </action>
   <action name="actionPlugins">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">plugins</string>
+   </property>
    <property name="text">
     <string>Plugins</string>
    </property>
@@ -783,6 +912,9 @@
    </property>
   </action>
   <action name="actionCheckUpdate">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">checkupdate</string>
+   </property>
    <property name="text">
     <string>Update</string>
    </property>
@@ -794,6 +926,9 @@
    </property>
   </action>
   <action name="actionPatreon">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">patreon</string>
+   </property>
    <property name="text">
     <string>Support %1</string>
    </property>
@@ -805,6 +940,9 @@
    </property>
   </action>
   <action name="actionFoldersButton">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">viewfolder</string>
+   </property>
    <property name="text">
     <string>Folders</string>
    </property>
@@ -816,6 +954,9 @@
    </property>
   </action>
   <action name="actionHelpButton">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">help</string>
+   </property>
    <property name="text">
     <string>Help</string>
    </property>

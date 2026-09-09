@@ -32,13 +32,13 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QFileInfo>
+#include <QIcon>
 #include <QImageReader>
 #include <QSet>
 #include <QSettings>
 #include <QStyle>
 #include <QStyleFactory>
 #include <QSysInfo>
-#include <xdgicon.h>
 
 #ifndef Q_OS_MACOS
 
@@ -185,7 +185,7 @@ void ThemeManager::setApplicationTheme(const QString& id, bool initial)
 
 void ThemeManager::setIconTheme(const QString& name)
 {
-	XdgIcon::setThemeName(name);
+	QIcon::setThemeName(name);
 	QIcon::setFallbackThemeName(name);
 }
 

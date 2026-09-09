@@ -94,7 +94,8 @@
 #include "tools/JVisualVM.h"
 #include "tools/MCEditTool.h"
 
-#include <xdgicon.h>
+#include <QIcon>
+
 #include "settings/INISettingsObject.h"
 #include "settings/Setting.h"
 
@@ -797,31 +798,31 @@ void Application::setupPaths(const QString& binPath, const QString& origcwdPath,
 	FS::updateTimestamp(m_rootPath);
 #endif
 
-	qInfo() << BuildConfig.MESHMC_DISPLAYNAME << ", (c) 2026 "
-			<< BuildConfig.MESHMC_COPYRIGHT;
-	qInfo() << "Version                    : "
-			<< BuildConfig.printableVersionString();
-	qInfo() << "Git commit                 : " << BuildConfig.GIT_COMMIT;
-	qInfo() << "Git refspec                : " << BuildConfig.GIT_REFSPEC;
-	qInfo() << "Compiled for               : " << BuildConfig.systemID();
-	qInfo() << "Compiled by                : " << BuildConfig.compilerID();
-	qInfo() << "Build Artifact             : " << BuildConfig.BUILD_ARTIFACT;
+	qInfo().noquote() << BuildConfig.MESHMC_DISPLAYNAME << ", (c) 2026"
+					  << BuildConfig.MESHMC_COPYRIGHT;
+	qInfo().noquote() << "Version                    : "
+					  << BuildConfig.printableVersionString();
+	qInfo().noquote() << "Git commit                 : " << BuildConfig.GIT_COMMIT;
+	qInfo().noquote() << "Git refspec                : " << BuildConfig.GIT_REFSPEC;
+	qInfo().noquote() << "Compiled for               : " << BuildConfig.systemID();
+	qInfo().noquote() << "Compiled by                : " << BuildConfig.compilerID();
+	qInfo().noquote() << "Build Artifact             : " << BuildConfig.BUILD_ARTIFACT;
 	if (adjustedBy.size()) {
-		qInfo() << "Work dir before adjustment : " << origcwdPath;
-		qInfo() << "Work dir after adjustment  : " << QDir::currentPath();
-		qInfo() << "Adjusted by                : " << adjustedBy;
+		qInfo().noquote() << "Work dir before adjustment : " << origcwdPath;
+		qInfo().noquote() << "Work dir after adjustment  : " << QDir::currentPath();
+		qInfo().noquote() << "Adjusted by                : " << adjustedBy;
 	} else {
-		qInfo() << "Work dir                   : " << QDir::currentPath();
+		qInfo().noquote() << "Work dir                   : " << QDir::currentPath();
 	}
-	qInfo() << "Binary path                : " << binPath;
-	qInfo() << "Application root path      : " << m_rootPath;
+	qInfo().noquote() << "Binary path                : " << binPath;
+	qInfo().noquote() << "Application root path      : " << m_rootPath;
 	if (!m_instanceIdToLaunch.isEmpty()) {
-		qInfo() << "ID of instance to launch   : " << m_instanceIdToLaunch;
+		qInfo().noquote() << "ID of instance to launch   : " << m_instanceIdToLaunch;
 	}
 	if (!m_serverToJoin.isEmpty()) {
-		qInfo() << "Address of server to join  :" << m_serverToJoin;
+		qInfo().noquote() << "Address of server to join  :" << m_serverToJoin;
 	}
-	qInfo() << "<> Paths set.";
+	qInfo().noquote() << "<> Paths set.";
 
 	if (m_liveCheck) {
 		auto appID = ApplicationId::fromPathAndVersion(
@@ -1651,7 +1652,7 @@ QIcon Application::getThemedIcon(const QString& name)
 	if (name == "logo") {
 		return QIcon(":/org.projecttick.MeshMC.svg");
 	}
-	return XdgIcon::fromTheme(name);
+	return QIcon::fromTheme(name);
 }
 
 bool Application::openJsonEditor(const QString& filename)
