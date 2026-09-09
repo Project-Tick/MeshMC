@@ -1122,6 +1122,7 @@ set(MESHMC_UI_FILES
     ui/dialogs/AboutDialog.ui
     ui/dialogs/EditAccountDialog.ui
     ui/dialogs/UntrustedModsDialog.ui
+    ui/MainWindow.ui
 )
 
 # Forms used by *both* the launcher and the standalone updater.
