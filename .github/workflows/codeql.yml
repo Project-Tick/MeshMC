@@ -39,6 +39,7 @@ jobs:
         with:
           build-type: Debug
           qt-version: 6.9.3
+          qt-major: 6
 
       - name: Configure and Build
         run: |
