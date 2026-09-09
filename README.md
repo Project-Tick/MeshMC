@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/Project-Tick/MeshMC/raw/develop/branding/org.projecttick.MeshMC_256.png" alt="MultiMC logo"/>
+  <img src="https://github.com/Project-Tick/MeshMC/raw/develop/branding/org.projecttick.MeshMC_256.png" alt="MeshMC logo"/>
 </p>
 
 MeshMC
