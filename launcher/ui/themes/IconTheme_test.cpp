@@ -32,6 +32,7 @@
 #include <QSet>
 #include <QString>
 #include <QStringList>
+#include <QXmlStreamReader>
 
 /*
  * Can Qt's own icon engine serve the icon themes MeshMC ships inside qrc?
@@ -68,6 +69,16 @@
  *      questions of each: is there an image behind the name, and is it the
  *      image that was asked for. The second matters because of
  *      dashedNamesFallBackToTheirPrefix, below.
+ *  - mainWindowUiIconNamesWereRead / mainWindowUiIconNamesAreAudited /
+ *    mainWindowUiIconsResolveInEveryTheme /
+ *    mainWindowOptionalIconsThatGoBlank
+ *      the same coverage question asked of MainWindow.ui instead of a list
+ *      kept by hand here. MainWindow::applyThemedIcons() takes its icon
+ *      names from a "meshmcIcon" dynamic property in the XML, so the
+ *      compiler never sees them and a misspelling costs one blank button
+ *      and one qWarning. These read the .ui back and make it a test
+ *      failure instead. They need MESHMC_MAINWINDOW_UI_PATH, which
+ *      launcher/CMakeLists.txt passes in.
  *  - missingIconIsNull
  *      a handful of pages ask for an icon and ask for a different one if
  *      that came back empty. This is the contract those branches rest on,
@@ -102,6 +113,10 @@
  * initTestCase() prints which of the two it got, so a passing run can be
  * told apart from a passing run that measured nothing.
  */
+
+#ifndef MESHMC_MAINWINDOW_UI_PATH
+#error "MESHMC_MAINWINDOW_UI_PATH is not set; see add_unit_test(IconTheme) in launcher/CMakeLists.txt"
+#endif
 
 namespace
 {
@@ -272,6 +287,96 @@ QStringList discoverInstanceIconNames()
 	QStringList sorted = names.values();
 	sorted.sort();
 	return sorted;
+}
+
+/// One "meshmcIcon" property found in a .ui file: the icon name, and the
+/// object that asked for it, so a failure names something greppable.
+struct UiIconRequest {
+	QString objectName;
+	QString iconName;
+};
+
+/* Read every "meshmcIcon" dynamic property out of a Designer .ui file.
+ *
+ * MainWindow::applyThemedIcons() walks its own children looking for exactly
+ * this property and assigns whatever the name resolves to, so this is the
+ * complete list of icon names MainWindow asks for by way of the .ui -- and
+ * the list the compiler cannot check, since the names are XML text.
+ *
+ * Parsed with QXmlStreamReader rather than matched with a regular
+ * expression, so that the structure the reader is relying on (the value is a
+ * <string> child of the property element) is the structure that is actually
+ * required, and a .ui that stops having it fails loudly instead of quietly
+ * yielding nothing.
+ */
+QList<UiIconRequest> readUiIconRequests(const QString& uiPath, QString* error)
+{
+	QList<UiIconRequest> found;
+
+	QFile file(uiPath);
+	if (!file.open(QIODevice::ReadOnly)) {
+		*error = uiPath + QStringLiteral(": ") + file.errorString();
+		return found;
+	}
+
+	QXmlStreamReader xml(&file);
+
+	/* The nearest enclosing named element. Designer nests a property inside
+	 * the <action> or <widget> it belongs to, and nothing else carries a
+	 * name we would want in a failure message. */
+	QString owner;
+
+	while (!xml.atEnd()) {
+		if (xml.readNext() != QXmlStreamReader::StartElement) {
+			continue;
+		}
+
+		const QString element = xml.name().toString();
+		if (element == QStringLiteral("action") ||
+			element == QStringLiteral("widget")) {
+			owner = xml.attributes()
+						.value(QStringLiteral("name"))
+						.toString();
+			continue;
+		}
+		if (element != QStringLiteral("property")) {
+			continue;
+		}
+		if (xml.attributes().value(QStringLiteral("name")).toString() !=
+			QStringLiteral("meshmcIcon")) {
+			continue;
+		}
+
+		QString value;
+		while (!xml.atEnd()) {
+			const QXmlStreamReader::TokenType token = xml.readNext();
+			if (token == QXmlStreamReader::StartElement &&
+				xml.name().toString() == QStringLiteral("string")) {
+				value = xml.readElementText();
+				break;
+			}
+			if (token == QXmlStreamReader::EndElement &&
+				xml.name().toString() == QStringLiteral("property")) {
+				break;
+			}
+		}
+
+		if (value.isEmpty()) {
+			*error = QStringLiteral("%1: the meshmcIcon property on '%2' has "
+									"no <string> value")
+						 .arg(uiPath, owner);
+			return found;
+		}
+		found.append({owner, value});
+	}
+
+	if (xml.hasError()) {
+		*error = QStringLiteral("%1:%2: %3")
+					 .arg(uiPath)
+					 .arg(xml.lineNumber())
+					 .arg(xml.errorString());
+	}
+	return found;
 }
 
 /// One rendered frame of an icon, for comparing "is this the same icon?"
@@ -568,6 +673,213 @@ class IconThemeTest : public QObject
 										   "icon: %2")
 								.arg(substituted.size())
 								.arg(substituted.join(QStringLiteral(", ")))));
+	}
+
+	// -----------------------------------------------------------------
+	// The names in MainWindow.ui
+	// -----------------------------------------------------------------
+
+	/// The .ui is readable and really does name icons, so the two cases
+	/// below cannot pass by measuring an empty list.
+	void mainWindowUiIconNamesWereRead()
+	{
+		QString error;
+		const QList<UiIconRequest> requests =
+			readUiIconRequests(QStringLiteral(MESHMC_MAINWINDOW_UI_PATH),
+							   &error);
+
+		QVERIFY2(error.isEmpty(), qPrintable(error));
+		QVERIFY2(!requests.isEmpty(),
+				 "no meshmcIcon properties found in MainWindow.ui, so "
+				 "MainWindow::applyThemedIcons() has nothing to do -- either "
+				 "the property was renamed or the .ui moved");
+
+		QSet<QString> names;
+		for (const UiIconRequest& request : requests) {
+			QVERIFY2(!request.objectName.isEmpty(),
+					 qPrintable(QStringLiteral(
+									"a meshmcIcon property ('%1') is not "
+									"inside a named action or widget")
+									.arg(request.iconName)));
+			names.insert(request.iconName);
+		}
+
+		qInfo().noquote() << ".ui icon requests:" << requests.size()
+						  << "distinct names:" << names.size();
+	}
+
+	/*!
+	 * Every icon name in MainWindow.ui is one this file already audits.
+	 *
+	 * This is the case that turns a .ui typo from a log line into a test
+	 * failure. applyThemedIcons() finds its icons by walking children for a
+	 * dynamic property, so the names live in XML and the compiler never
+	 * sees them: "setttings" would build, link, ship, and leave one blank
+	 * toolbar button plus a qWarning nobody reads. Here it fails with the
+	 * name and the action in the message.
+	 *
+	 * It holds the reverse too, which matters more over time: kUiIconNames
+	 * is maintained by hand from a grep of getThemedIcon() calls, and that
+	 * grep cannot see the .ui at all. Anything moved from C++ into the .ui
+	 * would silently drop out of the coverage cases above without this.
+	 */
+	void mainWindowUiIconNamesAreAudited()
+	{
+		QString error;
+		const QList<UiIconRequest> requests =
+			readUiIconRequests(QStringLiteral(MESHMC_MAINWINDOW_UI_PATH),
+							   &error);
+		QVERIFY2(error.isEmpty(), qPrintable(error));
+		QVERIFY(!requests.isEmpty());
+
+		QStringList unaudited;
+		for (const UiIconRequest& request : requests) {
+			if (kUiIconNames.contains(request.iconName) ||
+				kOptionalUiIconNames.contains(request.iconName)) {
+				continue;
+			}
+			unaudited << (request.objectName + QStringLiteral("/") +
+						  request.iconName);
+		}
+
+		QVERIFY2(unaudited.isEmpty(),
+				 qPrintable(QStringLiteral(
+								"MainWindow.ui asks for %1 icon name(s) that "
+								"this test does not cover -- add them to "
+								"kUiIconNames, or fix the typo: %2")
+								.arg(unaudited.size())
+								.arg(unaudited.join(QStringLiteral(", ")))));
+	}
+
+	/*!
+	 * Every mandatory name in MainWindow.ui draws something, in every
+	 * bundled theme, and draws the icon it asked for.
+	 *
+	 * Overlaps uiIconsResolveInEveryTheme() by design. That case measures a
+	 * hand-maintained list; this one measures the file MainWindow actually
+	 * reads, so the .ui is the source of truth for its own icons and the
+	 * two cannot drift apart silently.
+	 *
+	 * The kOptionalUiIconNames entries are excluded, and that exclusion is
+	 * NOT free here the way it is for the page icons: the pages that ask
+	 * for "notes" and "accounts" test the result and ask for something else
+	 * when it comes back null, whereas applyThemedIcons() assigns whatever
+	 * it got. So a MainWindow action naming an optional icon really is
+	 * blank in a theme that lacks it -- see
+	 * mainWindowOptionalIconsThatGoBlank(), which reports exactly where.
+	 */
+	void mainWindowUiIconsResolveInEveryTheme()
+	{
+		QString error;
+		const QList<UiIconRequest> requests =
+			readUiIconRequests(QStringLiteral(MESHMC_MAINWINDOW_UI_PATH),
+							   &error);
+		QVERIFY2(error.isEmpty(), qPrintable(error));
+		QVERIFY(!requests.isEmpty());
+
+		QStringList notDrawable;
+		QStringList substituted;
+
+		for (const QString& theme : kBundledThemes) {
+			QIcon::setThemeName(theme);
+
+			for (const UiIconRequest& request : requests) {
+				if (kOptionalUiIconNames.contains(request.iconName)) {
+					continue;
+				}
+
+				const Resolution got = resolve(request.iconName);
+				const QString where = theme + QStringLiteral("/") +
+									  request.objectName +
+									  QStringLiteral("/") + request.iconName;
+				if (!got.drawable) {
+					notDrawable << where;
+				} else if (got.substituted(request.iconName)) {
+					substituted << (where + QStringLiteral(" -> ") +
+									got.resolvedName);
+				}
+			}
+		}
+
+		QVERIFY2(notDrawable.isEmpty(),
+				 qPrintable(QStringLiteral("%1 MainWindow.ui icon(s) have no "
+										   "image behind them: %2")
+								.arg(notDrawable.size())
+								.arg(notDrawable.join(QStringLiteral(", ")))));
+		QVERIFY2(substituted.isEmpty(),
+				 qPrintable(QStringLiteral("%1 MainWindow.ui icon(s) silently "
+										   "resolved to a DIFFERENT icon: %2")
+								.arg(substituted.size())
+								.arg(substituted.join(QStringLiteral(", ")))));
+	}
+
+	/*!
+	 * Reports, without failing, which MainWindow actions are left blank by
+	 * which theme.
+	 *
+	 * kOptionalUiIconNames exists because three *pages* fall back when an
+	 * icon is missing. MainWindow does not: applyThemedIcons() assigns the
+	 * null QIcon and logs. So an action in the .ui naming one of those
+	 * icons is genuinely blank wherever the theme lacks it, and the comment
+	 * on kOptionalUiIconNames -- "nothing is ever drawn blank" -- is not
+	 * true of MainWindow.
+	 *
+	 * Deliberately not a QVERIFY. Whether those actions should get icons
+	 * added to the theme, or a fallback like the pages have, is a decision
+	 * about the product and not one this test gets to make; failing here
+	 * would only mean the finding gets silenced. What it does do is keep
+	 * the situation measured and in the run output, so it cannot quietly
+	 * get worse.
+	 *
+	 * The one case here that narrows the search path to ":/icons" alone.
+	 * initTestCase() only prepends it, matching the launcher, so the
+	 * bundled themes' "Inherits=default" can still reach whatever icon
+	 * themes the build machine happens to have installed -- and then this
+	 * case would report a different answer on a KDE box than on a bare CI
+	 * runner or a fresh Windows install, which is the situation a user
+	 * actually gets. Asking only the themes MeshMC ships is the question
+	 * with one answer.
+	 */
+	void mainWindowOptionalIconsThatGoBlank()
+	{
+		QString error;
+		const QList<UiIconRequest> requests =
+			readUiIconRequests(QStringLiteral(MESHMC_MAINWINDOW_UI_PATH),
+							   &error);
+		QVERIFY2(error.isEmpty(), qPrintable(error));
+
+		const QStringList hostSearchPaths = QIcon::themeSearchPaths();
+		QIcon::setThemeSearchPaths({QStringLiteral(":/icons")});
+
+		QStringList blank;
+		for (const QString& theme : kBundledThemes) {
+			QIcon::setThemeName(theme);
+			for (const UiIconRequest& request : requests) {
+				if (!kOptionalUiIconNames.contains(request.iconName)) {
+					continue;
+				}
+				if (!resolve(request.iconName).drawable) {
+					blank << (theme + QStringLiteral("/") +
+							  request.objectName + QStringLiteral(" (") +
+							  request.iconName + QStringLiteral(")"));
+				}
+			}
+		}
+
+		// Before any QVERIFY below, so a failure cannot leave the rest of
+		// the run measuring a search path this case set up.
+		QIcon::setThemeSearchPaths(hostSearchPaths);
+
+		if (blank.isEmpty()) {
+			qInfo("every MainWindow.ui icon resolves in every theme, "
+				  "optional ones included");
+		} else {
+			qWarning().noquote()
+				<< QStringLiteral("%1 MainWindow action(s) have no icon in "
+								  "some theme, and no fallback: %2")
+					   .arg(blank.size())
+					   .arg(blank.join(QStringLiteral(", ")));
+		}
 	}
 
 	// -----------------------------------------------------------------

@@ -187,6 +187,7 @@ void ThemeManager::setIconTheme(const QString& name)
 {
 	QIcon::setThemeName(name);
 	QIcon::setFallbackThemeName(name);
+	emit iconThemeChanged();
 }
 
 void ThemeManager::applyCurrentlySelectedTheme(bool initial)

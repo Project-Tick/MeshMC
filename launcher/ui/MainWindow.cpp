@@ -30,9 +30,6 @@
 #include "ui/MacMenuBar.h"
 #include "ui/themes/ThemeManager.h"
 
-#include <type_traits>
-#include <utility>
-
 #include <QtCore/QVariant>
 #include <QtCore/QUrl>
 #include <QtCore/QDir>
@@ -190,14 +187,6 @@ namespace
 	}
 } // namespace
 
-template <typename T, typename = void>
-struct has_setIconText : std::false_type {};
-
-template <typename T>
-struct has_setIconText<T, std::void_t<
-    decltype(std::declval<T*>()->setIconText(QString()))
->> : std::true_type {};
-
 void MainWindow::applyThemedIcons()
 {
 	for (QAction* action : findChildren<QAction*>()) {
@@ -214,6 +203,31 @@ void MainWindow::applyThemedIcons()
 		}
 		action->setIcon(icon);
 	}
+}
+
+void MainWindow::refreshThemedIcons()
+{
+	applyThemedIcons();
+
+	if (newsLabel) {
+		newsLabel->setIcon(APPLICATION->getThemedIcon("news"));
+	}
+
+	if (changeIconButton) {
+		if (m_currentInstIcon.isEmpty()) {
+			// Nothing selected: createInstanceToolbar()'s placeholder.
+			changeIconButton->setIcon(APPLICATION->getThemedIcon("news"));
+		} else {
+			updateInstanceToolIcon(m_currentInstIcon);
+		}
+	}
+
+	defaultAccountChanged();
+
+	if (view && view->viewport()) {
+		view->viewport()->update();
+	}
+
 }
 
 void MainWindow::createMainToolbar()
@@ -504,6 +518,12 @@ MainWindow::MainWindow(QWidget* parent)
 	// our state
 	connect(APPLICATION, &Application::globalSettingsClosed, this,
 			&MainWindow::globalSettingsClosed);
+
+	/* Picking an icon theme in the appearance page takes effect here, live.
+	 * Without this the icons are already correct as objects and still drawn
+	 * from the old theme, because nothing repaints */
+	connect(APPLICATION->themeManager(), &ThemeManager::iconThemeChanged,
+			this, &MainWindow::refreshThemedIcons);
 
 	m_statusLeft = new QLabel(tr("No instance selected"), this);
 	m_statusCenter = new QLabel(tr("Total playtime: 0s"), this);

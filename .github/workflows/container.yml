@@ -6,6 +6,9 @@ concurrency:
 
 on:
   push:
+    branches:
+      - 'develop'
+      - 'release-*'
   merge_group:
     types: [checks_requested]
   pull_request:

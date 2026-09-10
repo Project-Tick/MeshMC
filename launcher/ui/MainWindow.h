@@ -267,6 +267,7 @@ class MainWindow : public QMainWindow
   private:
 	void setupUi();
 	void applyThemedIcons();
+	void refreshThemedIcons();
 	void createMainToolbar();
 	void createInstanceToolbar();
 

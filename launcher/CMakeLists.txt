@@ -1204,6 +1204,9 @@ add_unit_test(IconTheme
     LIBS MeshMC_logic
     )
 
+target_compile_definitions(IconTheme_test PRIVATE
+    MESHMC_MAINWINDOW_UI_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/MainWindow.ui")
+
 set_tests_properties(IconTheme PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QPA_PLATFORMTHEME="
     )
