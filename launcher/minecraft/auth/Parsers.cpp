@@ -23,6 +23,8 @@
 #include <QJsonArray>
 #include <QDebug>
 
+#include "Logging.h"
+
 namespace Parsers
 {
 
@@ -100,9 +102,9 @@ namespace Parsers
 	bool parseXTokenResponse(QByteArray& data, Katabasis::Token& output,
 							 QString name)
 	{
-		qDebug() << "Parsing" << name << ":";
+		qCDebug(minecraftauthLog) << "Parsing" << name << ":";
 #ifndef NDEBUG
-		qDebug() << data;
+		qCDebug(minecraftauthLog) << data;
 #endif
 		QJsonParseError jsonError;
 		QJsonDocument doc = QJsonDocument::fromJson(data, &jsonError);
@@ -161,15 +163,15 @@ namespace Parsers
 			return false;
 		}
 		output.validity = Katabasis::Validity::Certain;
-		qDebug() << name << "is valid.";
+		qCDebug(minecraftauthLog) << name << "is valid.";
 		return true;
 	}
 
 	bool parseMinecraftProfile(QByteArray& data, MinecraftProfile& output)
 	{
-		qDebug() << "Parsing Minecraft profile...";
+		qCDebug(minecraftauthLog) << "Parsing Minecraft profile...";
 #ifndef NDEBUG
-		qDebug() << data;
+		qCDebug(minecraftauthLog) << data;
 #endif
 
 		QJsonParseError jsonError;
@@ -249,9 +251,9 @@ namespace Parsers
 	bool parseMinecraftEntitlements(QByteArray& data,
 									MinecraftEntitlement& output)
 	{
-		qDebug() << "Parsing Minecraft entitlements...";
+		qCDebug(minecraftauthLog) << "Parsing Minecraft entitlements...";
 #ifndef NDEBUG
-		qDebug() << data;
+		qCDebug(minecraftauthLog) << data;
 #endif
 
 		QJsonParseError jsonError;
@@ -287,9 +289,9 @@ namespace Parsers
 
 	bool parseRolloutResponse(QByteArray& data, bool& result)
 	{
-		qDebug() << "Parsing Rollout response...";
+		qCDebug(minecraftauthLog) << "Parsing Rollout response...";
 #ifndef NDEBUG
-		qDebug() << data;
+		qCDebug(minecraftauthLog) << data;
 #endif
 
 		QJsonParseError jsonError;
@@ -324,9 +326,9 @@ namespace Parsers
 	bool parseMojangResponse(QByteArray& data, Katabasis::Token& output)
 	{
 		QJsonParseError jsonError;
-		qDebug() << "Parsing Mojang response...";
+		qCDebug(minecraftauthLog) << "Parsing Mojang response...";
 #ifndef NDEBUG
-		qDebug() << data;
+		qCDebug(minecraftauthLog) << data;
 #endif
 		QJsonDocument doc = QJsonDocument::fromJson(data, &jsonError);
 		if (jsonError.error) {
@@ -358,7 +360,7 @@ namespace Parsers
 			return false;
 		}
 		output.validity = Katabasis::Validity::Certain;
-		qDebug() << "Mojang response is valid.";
+		qCDebug(minecraftauthLog) << "Mojang response is valid.";
 		return true;
 	}
 

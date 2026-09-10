@@ -634,7 +634,7 @@ include(ExternalProject)
 set_directory_properties(PROPERTIES EP_BASE External)
 
 # Everything under libraries/ is built as part of this build tree, statically,
-# unless the library hardcodes SHARED (iconfix, rainbow) or opts out itself
+# unless the library hardcodes SHARED (rainbow) or opts out itself
 # (nbt++, via NBT_BUILD_SHARED). This matches what the old pre-built
 # dependency prefix shipped, so linkage does not change — only where the
 # objects come from.
@@ -654,24 +654,23 @@ add_subdirectory(libraries/launcher) # java based launcher part for Minecraft
 add_subdirectory(libraries/javacheck) # java compatibility checker
 add_subdirectory(libraries/xz-embedded) # xz compression
 add_subdirectory(libraries/rainbow) # Qt extension for colors
-add_subdirectory(libraries/iconfix) # fork of Qt's QIcon loader
 add_subdirectory(libraries/localpeer) # fork of a library from Qt solutions
 add_subdirectory(libraries/classparser) # Java class file parser
 add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too much
 
-# Three libraries under libraries/ build as shared objects (iconfix and rainbow
-# hardcode SHARED, nbt++ opts in via NBT_BUILD_SHARED), so they have to be
-# deployed where the launcher can load them: alongside the binary on Windows,
+# Two libraries under libraries/ build as shared objects (rainbow hardcodes
+# SHARED, nbt++ opts in via NBT_BUILD_SHARED), so they have to be deployed
+# where the launcher can load them: alongside the binary on Windows,
 # LIBRARY_DEST_DIR elsewhere (covered by the RPATH, $ORIGIN/../lib).
 #
 # Installed explicitly rather than left to install(RUNTIME_DEPENDENCY_SET),
 # which scans the built binary and searches a directory list — it did not pick
-# these three up. Their own subprojects do install them, but to
+# these up. Their own subprojects do install them, but to
 # ${CMAKE_INSTALL_BINDIR} (install/bin/) while meshmc.exe sits at the install
 # root, so the launcher died on startup with "nbt++.dll not found". These are
 # our own targets and we know exactly where they belong; no point rediscovering
 # it by scanning a binary.
-set_target_properties(nbt++ iconfix rainbow PROPERTIES
+set_target_properties(nbt++ rainbow PROPERTIES
     VERSION   "${MeshMC_RELEASE_VERSION_NAME}"
     SOVERSION "${MeshMC_VERSION_MAJOR}")
 
@@ -679,7 +678,7 @@ if(NOT DEFINED PRIVATE_LIBRARY_DEST_DIR)
     set(PRIVATE_LIBRARY_DEST_DIR "${LIBRARY_DEST_DIR}")
 endif()
 
-install(TARGETS nbt++ iconfix rainbow
+install(TARGETS nbt++ rainbow
     RUNTIME DESTINATION "${BINARY_DEST_DIR}"
     LIBRARY DESTINATION "${PRIVATE_LIBRARY_DEST_DIR}")
 

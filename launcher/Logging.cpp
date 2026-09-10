@@ -32,6 +32,18 @@
 #endif
 
 Q_LOGGING_CATEGORY(netLog, "meshmc.net")
+Q_LOGGING_CATEGORY(mojangLog, "meshmc.mojang")
+Q_LOGGING_CATEGORY(metaLog, "meshmc.meta")
+Q_LOGGING_CATEGORY(archiveLog, "meshmc.archive")
+Q_LOGGING_CATEGORY(backupLog, "meshmc.backup")
+Q_LOGGING_CATEGORY(iconsLog, "meshmc.icons")
+Q_LOGGING_CATEGORY(javaLog, "meshmc.java")
+Q_LOGGING_CATEGORY(launchLog, "meshmc.launch")
+Q_LOGGING_CATEGORY(newsLog, "meshmc.news")
+Q_LOGGING_CATEGORY(pluginsLog, "meshmc.plugins")
+Q_LOGGING_CATEGORY(minecraftauthLog, "meshmc.minecraft.auth")
+Q_LOGGING_CATEGORY(minecraftgoptionsLog, "meshmc.minecraft.gameoptions")
+Q_LOGGING_CATEGORY(minecraftlaunchLog, "meshmc.minecraft.launch")
 
 namespace
 {

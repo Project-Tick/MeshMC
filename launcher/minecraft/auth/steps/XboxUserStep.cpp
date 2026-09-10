@@ -21,6 +21,8 @@
 
 #include <QNetworkRequest>
 
+#include "Logging.h"
+
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
 
@@ -61,7 +63,7 @@ void XboxUserStep::perform()
 	connect(requestor, &AuthRequest::finished, this,
 			&XboxUserStep::onRequestDone);
 	requestor->post(request, xbox_auth_data.toUtf8());
-	qDebug() << "First layer of XBox auth ... commencing.";
+	qCDebug(minecraftauthLog) << "First layer of XBox auth ... commencing.";
 }
 
 void XboxUserStep::onRequestDone(QNetworkReply::NetworkError error,

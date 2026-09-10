@@ -33,14 +33,14 @@
 %global build_platform CentOS
 %endif
 
-%global version v9.0.0
+%global version v10.0.0
 
 Name:           meshmc
 Version:        %{version}
 Release:        1%{?dist}
 Summary:        Custom Minecraft launcher with multi-instance management
 Group:          Amusements/Games
-License:        GPL-3.0-or-later AND Apache-2.0 AND LGPL-3.0-only AND LGPL-2.1 AND OFL-1.1 AND MIT
+License:        Apache-2.0 AND LGPL-3.0-only AND LGPL-2.1 AND OFL-1.1 AND MIT
 URL:            https://projecttick.org/
 Source0:        https://github.com/Project-Tick/MeshMC/releases/download/%{version}/MeshMC-%{version}.tar.gz
 
@@ -172,7 +172,6 @@ appstream-util validate-relax --nonet \
 %files
 %license COPYING.md
 %doc README.md
-%{_bindir}/mmcmodules/
 %{_bindir}/meshmc
 %{_bindir}/meshmc-crashreporter
 %{_datadir}/applications/org.projecttick.MeshMC.desktop
@@ -187,6 +186,7 @@ appstream-util validate-relax --nonet \
 %{_mandir}/man6/*
 %{_datadir}/MeshMC/JavaCheck.jar
 %{_datadir}/MeshMC/NewLaunch.jar
+%{_datadir}/MeshMC/mmcmodules/
 
 %package devel
 Summary: Development files for MeshMC

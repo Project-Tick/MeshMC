@@ -19,6 +19,7 @@
  */
 
 #include "BaseEntity.h"
+#include "Logging.h"
 
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
@@ -87,7 +88,7 @@ bool Meta::BaseEntity::loadLocalFile()
 		parse(obj);
 		return true;
 	} catch (const Exception& e) {
-		qDebug()
+		qCDebug(metaLog)
 			<< QString("Unable to parse file %1: %2").arg(fname, e.cause());
 		// just make sure it's gone and we never consider it again.
 		QFile::remove(fname);

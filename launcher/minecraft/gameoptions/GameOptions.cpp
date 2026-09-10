@@ -19,6 +19,7 @@
 
 #include "GameOptions.h"
 #include "FileSystem.h"
+#include "Logging.h"
 #include <QDebug>
 #include <QSaveFile>
 
@@ -46,14 +47,14 @@ namespace
 			auto key = QString::fromUtf8(line.data(), separatorIndex);
 			auto value = QString::fromUtf8(line.data() + separatorIndex + 1,
 										   line.size() - 1 - separatorIndex);
-			qDebug() << "!!" << key << "!!";
+			qCDebug(minecraftgoptionsLog) << "!!" << key << "!!";
 			if (key == "version") {
 				version = value.toInt();
 				continue;
 			}
 			contents.emplace_back(GameOptionItem{key, value});
 		}
-		qDebug() << "Loaded" << path << "with version:" << version;
+		qCDebug(minecraftgoptionsLog) << "Loaded" << path << "with version:" << version;
 		return true;
 	}
 	bool save(const QString& path, std::vector<GameOptionItem>& mapping,

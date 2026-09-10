@@ -22,6 +22,8 @@
 #include <QNetworkRequest>
 #include <QUrlQuery>
 
+#include "Logging.h"
+
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
 
@@ -66,7 +68,7 @@ void XboxProfileStep::perform()
 	connect(requestor, &AuthRequest::finished, this,
 			&XboxProfileStep::onRequestDone);
 	requestor->get(request);
-	qDebug() << "Getting Xbox profile...";
+	qCDebug(minecraftauthLog) << "Getting Xbox profile...";
 }
 
 void XboxProfileStep::onRequestDone(QNetworkReply::NetworkError error,
@@ -79,7 +81,7 @@ void XboxProfileStep::onRequestDone(QNetworkReply::NetworkError error,
 	if (error != QNetworkReply::NoError) {
 		qWarning() << "Reply error:" << error;
 #ifndef NDEBUG
-		qDebug() << data;
+		qCDebug(minecraftauthLog) << data;
 #endif
 		finished(AccountTaskState::STATE_FAILED_SOFT,
 				 tr("Failed to retrieve the Xbox profile."));
@@ -87,7 +89,7 @@ void XboxProfileStep::onRequestDone(QNetworkReply::NetworkError error,
 	}
 
 #ifndef NDEBUG
-	qDebug() << "XBox profile: " << data;
+	qCDebug(minecraftauthLog) << "XBox profile: " << data;
 #endif
 
 	emit finished(AccountTaskState::STATE_WORKING, tr("Got Xbox profile"));

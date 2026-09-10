@@ -19,13 +19,14 @@
  */
 
 #include "JavaCheckerJob.h"
+#include "Logging.h"
 
 #include <QDebug>
 
 void JavaCheckerJob::partFinished(JavaCheckResult result)
 {
 	num_finished++;
-	qDebug() << m_job_name.toLocal8Bit() << "progress:" << num_finished << "/"
+	qCDebug(javaLog) << m_job_name.toLocal8Bit() << "progress:" << num_finished << "/"
 			 << javacheckers.size();
 	setProgress(num_finished, javacheckers.size());
 
@@ -38,7 +39,7 @@ void JavaCheckerJob::partFinished(JavaCheckResult result)
 
 void JavaCheckerJob::executeTask()
 {
-	qDebug() << m_job_name.toLocal8Bit() << " started.";
+	qCDebug(javaLog) << m_job_name.toLocal8Bit() << " started.";
 	for (auto iter : javacheckers) {
 		javaresults.append(JavaCheckResult());
 		connect(iter.get(), &JavaChecker::checkFinished, this,

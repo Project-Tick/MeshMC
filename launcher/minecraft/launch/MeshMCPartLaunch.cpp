@@ -117,7 +117,7 @@ void MeshMCPartLaunch::executeTask()
 #endif
 	args << "org.projecttick.EntryPoint";
 
-	qDebug() << args.join(' ');
+	qCDebug(minecraftlaunchLog) << args.join(' ');
 
 	QString wrapperCommandStr = m_parent->wrapperCommand();
 	if (!wrapperCommandStr.isEmpty()) {

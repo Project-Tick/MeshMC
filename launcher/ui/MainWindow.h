@@ -31,11 +31,17 @@
 #include "minecraft/auth/MinecraftAccount.h"
 #include "net/NetJob.h"
 
+namespace Ui
+{
+class MainWindow;
+}
+
 class LaunchController;
 class NewsChecker;
 class NewsViewerDialog;
 class NotificationChecker;
 class QToolButton;
+class QAction;
 class QActionGroup;
 class InstanceProxyModel;
 class LabeledToolButton;
@@ -49,8 +55,6 @@ class InstanceTask;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
-
-	class Ui;
 
   public:
 	explicit MainWindow(QWidget* parent = 0);
@@ -261,6 +265,16 @@ class MainWindow : public QMainWindow
 	void lockToolbars(bool state);
 
   private:
+	void setupUi();
+	void applyThemedIcons();
+	void refreshThemedIcons();
+	void createMainToolbar();
+	void createInstanceToolbar();
+
+	// Widens every instance sidebar button to the widest one. Idempotent:
+	// the target comes from the sizeHints, not the bar's current size.
+	void syncSidebarWidths();
+
 	void retranslateUi();
 
 	/**
@@ -287,12 +301,18 @@ class MainWindow : public QMainWindow
 	void showNews(bool withSidebar);
 
   private:
-	std::unique_ptr<Ui> ui;
+	std::unique_ptr<Ui::MainWindow> ui;
 
 	// these are managed by Qt's memory management model!
 	InstanceView* view = nullptr;
 	InstanceProxyModel* proxymodel = nullptr;
 	QToolButton* newsLabel = nullptr;
+	LabeledToolButton* renameButton = nullptr;
+	LabeledToolButton* changeIconButton = nullptr;
+
+	/* Every action that acts on the selected instance, so that they can be
+	 * enabled and disabled together. */
+	QList<QAction*> instance_actions;
 	QLabel* m_statusLeft = nullptr;
 	QLabel* m_statusCenter = nullptr;
 	/* Exclusive group behind the profiler entries of the launch menu. It

@@ -19,6 +19,7 @@
  */
 
 #include "NewsChecker.h"
+#include "Logging.h"
 
 #include <QByteArray>
 #include <QDomDocument>
@@ -76,18 +77,18 @@ void NewsChecker::reloadNews()
 	// Start a netjob per feed and call rssDownloadFinished() as each one
 	// lands.
 	if (isLoadingNews()) {
-		qDebug()
+		qCDebug(newsLog)
 			<< "Ignored request to reload news. Currently reloading already.";
 		return;
 	}
 
 	if (m_feeds.isEmpty()) {
-		qDebug() << "No news feeds configured.";
+		qCDebug(newsLog) << "No news feeds configured.";
 		succeed();
 		return;
 	}
 
-	qDebug() << "Reloading news from" << m_feeds.size() << "feed(s).";
+	qCDebug(newsLog) << "Reloading news from" << m_feeds.size() << "feed(s).";
 
 	m_primaryError.clear();
 	m_pendingFeeds = m_feeds.size();
@@ -123,7 +124,7 @@ void NewsChecker::rssDownloadFinished(int feedIndex)
 	auto& feed = m_feeds[feedIndex];
 
 	// Parse the XML file and process the RSS feed entries.
-	qDebug() << "Finished loading RSS feed" << feed.url;
+	qCDebug(newsLog) << "Finished loading RSS feed" << feed.url;
 
 	feed.job.reset();
 	feed.entries.clear();
@@ -159,10 +160,10 @@ void NewsChecker::rssDownloadFinished(int feedIndex)
 		QString errorMsg = "An unknown error occurred.";
 		if (NewsEntry::fromXmlElement(element, entry.get(), &errorMsg)) {
 			entry->feedIndex = feedIndex;
-			qDebug() << "Loaded news entry" << entry->title;
+			qCDebug(newsLog) << "Loaded news entry" << entry->title;
 			feed.entries.append(entry);
 		} else {
-			qWarning() << "Failed to load news entry at index" << i << ":"
+			qCWarning(newsLog) << "Failed to load news entry at index" << i << ":"
 					   << errorMsg;
 		}
 	}
@@ -250,13 +251,13 @@ void NewsChecker::succeed()
 {
 	m_lastLoadError = "";
 	m_loadedNews = true;
-	qDebug() << "News loading succeeded.";
+	qCDebug(newsLog) << "News loading succeeded.";
 	emit newsLoaded();
 }
 
 void NewsChecker::fail(const QString& errorMsg)
 {
 	m_lastLoadError = errorMsg;
-	qDebug() << "Failed to load news:" << errorMsg;
+	qCDebug(newsLog) << "Failed to load news:" << errorMsg;
 	emit newsLoadingFailed(errorMsg);
 }

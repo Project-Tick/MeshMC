@@ -1199,6 +1199,18 @@ add_unit_test(CustomTheme
     LIBS MeshMC_logic
     )
 
+add_unit_test(IconTheme
+    SOURCES ui/themes/IconTheme_test.cpp
+    LIBS MeshMC_logic
+    )
+
+target_compile_definitions(IconTheme_test PRIVATE
+    MESHMC_MAINWINDOW_UI_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/MainWindow.ui")
+
+set_tests_properties(IconTheme PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QPA_PLATFORMTHEME="
+    )
+
 target_link_libraries(MeshMC_logic
     classparser
     nbt++
@@ -1228,10 +1240,8 @@ target_link_libraries(MeshMC_logic
     Qt${QT_VERSION_MAJOR}::NetworkAuth
     Qt${QT_VERSION_MAJOR}::Concurrent
     Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
     LibArchive::LibArchive
-)
-target_link_libraries(MeshMC_logic
-    iconfix
     cmark::cmark
     rainbow
     LocalPeer::LocalPeer
@@ -1699,7 +1709,7 @@ if(WIN32 OR (UNIX AND APPLE))
     # environment variable) so RUNTIME_DEPENDENCY_SET can locate third-party
     # DLLs that live in a dependency prefix.
     #
-    # nbt++/iconfix/rainbow are NOT handled here: they are our own targets in
+    # nbt++/rainbow are NOT handled here: they are our own targets in
     # this build tree, and the top-level CMakeLists.txt installs them directly
     # to the right place. Everything else under libraries/ links statically.
     set(_prefix_path_bins "")

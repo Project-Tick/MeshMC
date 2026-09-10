@@ -20,6 +20,7 @@
 #include "PasteUpload.h"
 #include "BuildConfig.h"
 #include "Application.h"
+#include "Logging.h"
 
 #include <QDir>
 #include <QDebug>
@@ -188,6 +189,6 @@ bool PasteUpload::parseResult(QJsonDocument doc)
 	}
 	m_pasteLink = object.value("link").toString();
 	m_pasteID = object.value("id").toString();
-	qDebug() << m_pasteLink;
+	qCDebug(netLog) << m_pasteLink;
 	return true;
 }

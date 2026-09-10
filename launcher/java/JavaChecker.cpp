@@ -18,6 +18,7 @@
  */
 
 #include "JavaChecker.h"
+#include "Logging.h"
 
 #include <QFile>
 #include <QProcess>
@@ -58,7 +59,7 @@ void JavaChecker::performCheck()
 	process->setProgram(m_path);
 	process->setProcessChannelMode(QProcess::SeparateChannels);
 	process->setProcessEnvironment(CleanEnviroment());
-	qDebug() << "Running java checker: " + m_path + args.join(" ");
+	qCDebug(javaLog) << "Running java checker: " + m_path + args.join(" ");
 	;
 
 	connect(process.get(), qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this, &JavaChecker::finished);
@@ -102,9 +103,9 @@ void JavaChecker::finished(int exitcode, QProcess::ExitStatus status)
 	}
 	result.errorLog = m_stderr;
 	result.outLog = m_stdout;
-	qDebug() << "STDOUT" << m_stdout;
-	qWarning() << "STDERR" << m_stderr;
-	qDebug() << "Java checker finished with status " << status << " exit code "
+	qCDebug(javaLog) << "STDOUT" << m_stdout;
+	qCWarning(javaLog) << "STDERR" << m_stderr;
+	qCDebug(javaLog) << "Java checker finished with status " << status << " exit code "
 			 << exitcode;
 
 	if (status == QProcess::CrashExit || exitcode == 1) {
@@ -151,18 +152,18 @@ void JavaChecker::finished(int exitcode, QProcess::ExitStatus status)
 	result.realPlatform = os_arch;
 	result.javaVersion = java_version;
 	result.javaVendor = java_vendor;
-	qDebug() << "Java checker succeeded.";
+	qCDebug(javaLog) << "Java checker succeeded.";
 	emit checkFinished(result);
 }
 
 void JavaChecker::error(QProcess::ProcessError err)
 {
 	if (err == QProcess::FailedToStart) {
-		qDebug() << "Java checker has failed to start.";
-		qDebug() << "Process environment:";
-		qDebug() << process->environment();
-		qDebug() << "Native environment:";
-		qDebug() << QProcessEnvironment::systemEnvironment().toStringList();
+		qCDebug(javaLog) << "Java checker has failed to start.";
+		qCDebug(javaLog) << "Process environment:";
+		qCDebug(javaLog) << process->environment();
+		qCDebug(javaLog) << "Native environment:";
+		qCDebug(javaLog) << QProcessEnvironment::systemEnvironment().toStringList();
 		killTimer.stop();
 		JavaCheckResult result;
 		{
@@ -179,7 +180,7 @@ void JavaChecker::timeout()
 {
 	// NO MERCY. NO ABUSE.
 	if (process) {
-		qDebug() << "Java checker has been killed by timeout.";
+		qCDebug(javaLog) << "Java checker has been killed by timeout.";
 		process->kill();
 	}
 }

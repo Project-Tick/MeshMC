@@ -31,6 +31,8 @@
 
 #include <BaseInstance.h>
 
+#include "Logging.h"
+
 #include "minecraft/launch/MinecraftServerTarget.h"
 
 class LaunchController;

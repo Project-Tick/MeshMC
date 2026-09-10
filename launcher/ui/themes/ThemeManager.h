@@ -26,6 +26,7 @@
 #include <QList>
 #include <QDir>
 #include <QIcon>
+#include <QObject>
 #include <QPalette>
 #include <memory>
 #include <map>
@@ -40,11 +41,16 @@ struct IconThemeEntry {
 	QString variant;
 };
 
-class ThemeManager
+/*!
+ * A QObject only so that it can say when the icon theme changed; see
+ * iconThemeChanged().
+ */
+class ThemeManager : public QObject
 {
+	Q_OBJECT
   public:
 	ThemeManager();
-	~ThemeManager();
+	~ThemeManager() override;
 
 	void addTheme(std::unique_ptr<ITheme> theme);
 
@@ -89,6 +95,9 @@ class ThemeManager
 	QString getCatPack(const QString& catName = QString());
 	QList<CatPack*> getValidCatPacks();
 	QDir getCatPacksFolder();
+
+  signals:
+	void iconThemeChanged();
 
   private:
 	std::map<QString, std::unique_ptr<ITheme>> m_themes;

@@ -1,8 +1,6 @@
 {
   "color-space-for-untagged-svg-colors" : "display-p3",
-  "fill" : {
-    "solid" : "display-p3:0.09804,0.14902,0.46275,1.00000"
-  },
+  "fill" : "automatic",
   "groups" : [
     {
       "blend-mode-specializations" : [
@@ -21,49 +19,6 @@
       "blur-material" : null,
       "layers" : [
         {
-          "fill-specializations" : [
-            {
-              "value" : {
-                "automatic-gradient" : "srgb:0.00000,1.00000,1.00000,1.00000"
-              }
-            },
-            {
-              "appearance" : "dark",
-              "value" : {
-                "automatic-gradient" : "srgb:0.00000,1.00000,1.00000,1.00000"
-              }
-            },
-            {
-              "appearance" : "tinted",
-              "value" : {
-                "linear-gradient" : [
-                  "display-p3:0.33784,0.90679,0.91457,1.00000",
-                  "srgb:0.00000,1.00000,1.00000,1.00000"
-                ],
-                "orientation" : {
-                  "start" : {
-                    "x" : 0.5,
-                    "y" : 1
-                  },
-                  "stop" : {
-                    "x" : 0.5,
-                    "y" : 0.3
-                  }
-                }
-              }
-            }
-          ],
-          "image-name" : "org.projecttick.MeshMC_Katman 3 2.svg",
-          "name" : "org.projecttick.MeshMC_Katman 3 2",
-          "position" : {
-            "scale" : 0.37,
-            "translation-in-points" : [
-              -228.30749689427012,
-              -272.44103453711296
-            ]
-          }
-        },
-        {
           "blend-mode-specializations" : [
             {
               "appearance" : "tinted",
@@ -72,87 +27,54 @@
           ],
           "fill-specializations" : [
             {
-              "value" : {
-                "automatic-gradient" : "srgb:1.00000,0.00000,0.23529,1.00000"
-              }
-            },
-            {
-              "appearance" : "dark",
-              "value" : {
-                "automatic-gradient" : "srgb:1.00000,0.00000,0.23529,1.00000"
-              }
-            },
-            {
               "appearance" : "tinted",
               "value" : {
-                "linear-gradient" : [
-                  "display-p3:1.00000,0.00000,0.23529,1.00000",
-                  "srgb:0.00000,0.00000,0.00000,1.00000"
-                ],
-                "orientation" : {
-                  "start" : {
-                    "x" : 0.5,
-                    "y" : 0
-                  },
-                  "stop" : {
-                    "x" : 0.5,
-                    "y" : 0.7
-                  }
-                }
+                "solid" : "display-p3:0.92954,0.26042,0.32277,1.00000"
               }
             }
           ],
-          "hidden" : false,
-          "image-name" : "org.projecttick.MeshMC_Katman 2.svg",
-          "name" : "org.projecttick.MeshMC_Katman 2",
+          "image-name" : "org.projecttick.MeshMC_Katman 2 2.svg",
+          "name" : "org.projecttick.MeshMC_Katman 2 2",
           "position" : {
-            "scale" : 0.37,
+            "scale" : 0.3,
             "translation-in-points" : [
-              326.813985559055,
-              326.813985559055
+              228.755847267817,
+              228.75585402191473
             ]
           }
         },
         {
-          "blend-mode" : "normal",
           "fill-specializations" : [
             {
-              "value" : {
-                "automatic-gradient" : "srgb:0.01961,0.01961,0.01961,1.00000"
-              }
-            },
-            {
-              "appearance" : "dark",
-              "value" : {
-                "automatic-gradient" : "srgb:0.01961,0.01961,0.01961,1.00000"
-              }
-            },
-            {
               "appearance" : "tinted",
               "value" : {
-                "automatic-gradient" : "srgb:0.01961,0.01961,0.01961,1.00000"
+                "solid" : "srgb:0.00000,1.00000,1.00000,1.00000"
               }
             }
           ],
-          "image-name" : "org.projecttick.MeshMC_Katman 1.svg",
-          "name" : "org.projecttick.MeshMC_Katman 1",
+          "image-name" : "org.projecttick.MeshMC_Katman 3.svg",
+          "name" : "org.projecttick.MeshMC_Katman 3",
           "position" : {
-            "scale" : 0.37,
+            "scale" : 0.3,
             "translation-in-points" : [
-              0,
-              0
+              -147.15786359055124,
+              -147.15786359055124
             ]
           }
         },
         {
-          "fill" : {
-            "automatic-gradient" : "srgb:0.09804,0.14902,0.46275,1.00000"
-          },
-          "glass" : true,
-          "image-name" : "batch_Katman 1.svg",
-          "name" : "batch_Katman 1",
+          "fill-specializations" : [
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "srgb:0.00000,0.00000,0.00000,1.00000"
+              }
+            }
+          ],
+          "image-name" : "org.projecttick.MeshMC_Katman 1 2.svg",
+          "name" : "org.projecttick.MeshMC_Katman 1 2",
           "position" : {
-            "scale" : 0.27,
+            "scale" : 0.3,
             "translation-in-points" : [
               0,
               0
