@@ -100,6 +100,8 @@ WorldListPage::WorldListPage(BaseInstance* inst,
 	auto head = ui->worldTreeView->header();
 	head->setSectionResizeMode(0, QHeaderView::Stretch);
 	head->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+	head->setSectionResizeMode(WorldList::DayCountColumn,
+							   QHeaderView::ResizeToContents);
 
 	connect(ui->worldTreeView->selectionModel(),
 			&QItemSelectionModel::currentChanged, this,

@@ -136,6 +136,13 @@ namespace
 	 * level.dat. */
 	const QLatin1String worldGenSettingsPath(
 		"data/minecraft/world_gen_settings.dat");
+
+	/* Minecraft 26.1 moved the daylight clock out of level.dat the same
+	 * way, into a saved data file holding one clock per dimension. The
+	 * Overworld's clock is the day number the player sees. */
+	const QLatin1String worldClocksPath("data/minecraft/world_clocks.dat");
+	const char* const overworldClockKey = "minecraft:overworld";
+	const char* const clockTicksKey = "total_ticks";
 } // namespace
 
 QString getDatFileFromFS(const QFileInfo& file, const QString& relativePath)
@@ -226,6 +233,7 @@ bool World::resetIcon()
 
 /* Defined further down, next to the other NBT reading helpers. */
 static std::optional<int64_t> readWorldGenSettingsSeed(const QByteArray& data);
+static std::optional<int64_t> readWorldClocksDayCount(const QByteArray& data);
 
 void World::readFromFS(const QFileInfo& file)
 {
@@ -241,6 +249,13 @@ void World::readFromFS(const QFileInfo& file)
 		auto worldGenBytes = getDatDataFromFS(file, worldGenSettingsPath);
 		if (!worldGenBytes.isEmpty()) {
 			m_randomSeed = readWorldGenSettingsSeed(worldGenBytes).value_or(0);
+		}
+	}
+
+	if (is_valid && !m_dayCount) {
+		auto clockBytes = getDatDataFromFS(file, worldClocksPath);
+		if (!clockBytes.isEmpty()) {
+			m_dayCount = readWorldClocksDayCount(clockBytes);
 		}
 	}
 }
@@ -268,6 +283,14 @@ void World::readFromZip(const QFileInfo& file)
 			MMCZip::readFileFromZip(zipPath, location + worldGenSettingsPath);
 		if (!worldGenBytes.isEmpty()) {
 			m_randomSeed = readWorldGenSettingsSeed(worldGenBytes).value_or(0);
+		}
+	}
+
+	if (is_valid && !m_dayCount) {
+		auto clockBytes =
+			MMCZip::readFileFromZip(zipPath, location + worldClocksPath);
+		if (!clockBytes.isEmpty()) {
+			m_dayCount = readWorldClocksDayCount(clockBytes);
 		}
 	}
 }
@@ -401,9 +424,69 @@ namespace
 		}
 	}
 
+	/* Tags have changed width between Minecraft versions before, and a
+	 * missing tag is a perfectly normal outcome here, so accept either
+	 * width and stay quiet about tags that simply are not there. */
+	std::optional<int64_t> read_long_or_int(nbt::value& parent,
+											const char* name)
+	{
+		try {
+			auto& namedValue = parent.at(name);
+			switch (namedValue.get_type()) {
+				case nbt::tag_type::Long:
+					return namedValue.as<nbt::tag_long>().get();
+				case nbt::tag_type::Int:
+					return namedValue.as<nbt::tag_int>().get();
+				default:
+					return std::nullopt;
+			}
+		} catch (const std::out_of_range&) {
+			return std::nullopt;
+		} catch (const std::bad_cast&) {
+			return std::nullopt;
+		}
+	}
+
 	GameType read_gametype(nbt::value& parent, const char* name)
 	{
 		return GameType(read_int(parent, name));
+	}
+
+	/* One Minecraft day is 24000 ticks in every version so far. */
+	const int64_t ticksPerDay = 24000;
+
+	/* Clocks are signed and mods have been known to run them backwards,
+	 * so clamp instead of reporting a negative day. */
+	int64_t ticksToDays(int64_t ticks)
+	{
+		return (ticks > 0 ? ticks : 0) / ticksPerDay;
+	}
+
+	/* The day number the game shows is the daylight cycle, which level.dat
+	 * keeps in "DayTime": it counts past 24000 and is never reset. "Time"
+	 * is a different clock - the ticks the world has actually run, what
+	 * /time query gametime returns. The two drift apart every time someone
+	 * sleeps, because waking up jumps DayTime to morning while Time only
+	 * advances by the ticks really spent, so "Time" reports far fewer days
+	 * than the player ever saw in game.
+	 *
+	 * "DayTime" only exists from Minecraft 1.3 onwards. Older worlds have
+	 * no separate daylight clock - "Time" drove the sun directly - so
+	 * there it really is the day count. Those worlds also predate
+	 * "DataVersion" (added in 1.9), which is what tells them apart from
+	 * Minecraft 26.1 and newer, where the daylight clock moved out to
+	 * world_clocks.dat and "Time" would be the wrong answer all over
+	 * again - those are picked up from that file instead. */
+	std::optional<int64_t> read_day_count(nbt::value& parent)
+	{
+		auto ticks = read_long_or_int(parent, "DayTime");
+		if (!ticks && !read_long_or_int(parent, "DataVersion")) {
+			ticks = read_long_or_int(parent, "Time");
+		}
+		if (!ticks) {
+			return std::nullopt;
+		}
+		return ticksToDays(*ticks);
 	}
 
 } // namespace
@@ -435,6 +518,56 @@ static std::optional<int64_t> readWorldGenSettingsSeed(const QByteArray& data)
 		qDebug() << "Seed:" << *seed;
 	}
 	return seed;
+}
+
+/* Minecraft 26.1 and newer keep the daylight clock here instead of in
+ * level.dat's DayTime tag. Every dimension gets its own clock, keyed by
+ * dimension id, and each one records the ticks it has run in total - the
+ * same 24000-ticks-per-day scale DayTime used, still counting past a day
+ * rather than wrapping. The Overworld clock is the day players quote. */
+static std::optional<int64_t> readWorldClocksDayCount(const QByteArray& data)
+{
+	auto clockData = parseLevelDat(data);
+	if (!clockData) {
+		return std::nullopt;
+	}
+
+	nbt::value* valPtr = nullptr;
+	try {
+		/* Saved data files wrap their payload in a "data" compound. */
+		valPtr = &clockData->at("data");
+	} catch (const std::out_of_range&) {
+		qWarning() << "Unable to read the \"data\" compound from"
+				   << worldClocksPath;
+		return std::nullopt;
+	}
+	nbt::value& val = *valPtr;
+
+	if (val.get_type() != nbt::tag_type::Compound) {
+		return std::nullopt;
+	}
+
+	nbt::value* clockPtr = nullptr;
+	try {
+		clockPtr = &val.at(overworldClockKey);
+	} catch (const std::out_of_range&) {
+		qWarning() << "No" << overworldClockKey << "clock in"
+				   << worldClocksPath;
+		return std::nullopt;
+	}
+	nbt::value& clock = *clockPtr;
+
+	if (clock.get_type() != nbt::tag_type::Compound) {
+		return std::nullopt;
+	}
+
+	auto ticks = read_long_or_int(clock, clockTicksKey);
+	if (!ticks) {
+		return std::nullopt;
+	}
+	auto days = ticksToDays(*ticks);
+	qDebug() << "Day Count:" << days;
+	return days;
 }
 
 void World::loadFromLevelDat(QByteArray data)
@@ -469,6 +602,8 @@ void World::loadFromLevelDat(QByteArray data)
 
 	m_gameType = read_gametype(val, "GameType");
 
+	m_dayCount = read_day_count(val);
+
 	std::optional<int64_t> randomSeed;
 	try {
 		auto& WorldGen_val = val.at("WorldGenSettings");
@@ -482,6 +617,9 @@ void World::loadFromLevelDat(QByteArray data)
 
 	qDebug() << "World Name:" << m_actualName;
 	qDebug() << "Last Played:" << m_lastPlayed.toString();
+	if (m_dayCount) {
+		qDebug() << "Day Count:" << *m_dayCount;
+	}
 	if (randomSeed) {
 		qDebug() << "Seed:" << *randomSeed;
 	}

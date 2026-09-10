@@ -21,6 +21,7 @@
 #include <QDir>
 #include <QFile>
 #include <QTemporaryDir>
+#include <optional>
 
 #include "GZip.h"
 #include "minecraft/World.h"
@@ -98,6 +99,15 @@ namespace
 		qint64 worldGenSettingsSeedValue = 0;
 		bool randomSeed = false;
 		qint64 randomSeedValue = 0;
+		bool time = false;
+		qint64 timeValue = 0;
+		// Some tags have changed width between versions, so both are read
+		bool timeAsInt = false;
+		bool dayTime = false;
+		qint64 dayTimeValue = 0;
+		// Added in 1.9, so its absence marks a genuinely old world
+		bool dataVersion = false;
+		qint32 dataVersionValue = 0;
 	};
 
 	QByteArray makeLevelDat(const LevelDatSpec& spec)
@@ -106,6 +116,20 @@ namespace
 		putStringTag(dataPayload, "LevelName", "Test World");
 		putLongTag(dataPayload, "LastPlayed", Q_INT64_C(1600000000000));
 		putIntTag(dataPayload, "GameType", 1);
+		if (spec.time) {
+			if (spec.timeAsInt) {
+				putIntTag(dataPayload, "Time",
+						  static_cast<qint32>(spec.timeValue));
+			} else {
+				putLongTag(dataPayload, "Time", spec.timeValue);
+			}
+		}
+		if (spec.dayTime) {
+			putLongTag(dataPayload, "DayTime", spec.dayTimeValue);
+		}
+		if (spec.dataVersion) {
+			putIntTag(dataPayload, "DataVersion", spec.dataVersionValue);
+		}
 		if (spec.worldGenSettingsSeed) {
 			putTagHeader(dataPayload, TAG_COMPOUND, "WorldGenSettings");
 			putLongTag(dataPayload, "seed", spec.worldGenSettingsSeedValue);
@@ -144,6 +168,35 @@ namespace
 		return root;
 	}
 
+	/*
+	 * Minecraft 26.1 and newer keep the daylight clock in
+	 * <world>/data/minecraft/world_clocks.dat, one compound per dimension
+	 * keyed by dimension id, each recording the ticks it has run in
+	 * total. Shape taken from a real 26.2 world.
+	 */
+	QByteArray makeWorldClocks(std::optional<qint64> overworldTicks,
+							   qint64 endTicks = 4728484)
+	{
+		QByteArray dataPayload;
+		if (overworldTicks) {
+			putTagHeader(dataPayload, TAG_COMPOUND, "minecraft:overworld");
+			putLongTag(dataPayload, "total_ticks", *overworldTicks);
+			putU8(dataPayload, TAG_END);
+		}
+		putTagHeader(dataPayload, TAG_COMPOUND, "minecraft:the_end");
+		putLongTag(dataPayload, "total_ticks", endTicks);
+		putU8(dataPayload, TAG_END);
+		putU8(dataPayload, TAG_END);
+
+		QByteArray root;
+		putTagHeader(root, TAG_COMPOUND, ""); // unnamed root compound
+		putTagHeader(root, TAG_COMPOUND, "data");
+		root.append(dataPayload);
+		putIntTag(root, "DataVersion", 4903);
+		putU8(root, TAG_END);
+		return root;
+	}
+
 	bool writeDat(const QString& worldPath, const QString& relativePath,
 				  const QByteArray& nbt)
 	{
@@ -174,6 +227,11 @@ namespace
 	{
 		return writeDat(worldPath, "data/minecraft/world_gen_settings.dat",
 						nbt);
+	}
+
+	bool writeWorldClocks(const QString& worldPath, const QByteArray& nbt)
+	{
+		return writeDat(worldPath, "data/minecraft/world_clocks.dat", nbt);
 	}
 } // namespace
 
@@ -304,6 +362,262 @@ class WorldTest : public QObject
 		World world{QFileInfo(worldPath)};
 		QVERIFY(world.isValid());
 		QCOMPARE(world.seed(), Q_INT64_C(0));
+	}
+
+	/*
+	 * Day count. The day the game itself counts is the daylight cycle,
+	 * Data -> DayTime, at 24000 ticks per Minecraft day. Values taken from
+	 * a real 1.13.2 world, which is on day 5 even though it has only been
+	 * running for three days worth of ticks.
+	 */
+	void test_ReadDayCountFromDayTime()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("days");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 1631; // 1.13.2
+		spec.time = true;
+		spec.timeValue = Q_INT64_C(91449);
+		spec.dayTime = true;
+		spec.dayTimeValue = Q_INT64_C(124712);
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.dayCount().value_or(-1), Q_INT64_C(5));
+	}
+
+	/*
+	 * Sleeping jumps DayTime to morning while Time only advances by the
+	 * ticks really spent, so a world that has been slept in reports far
+	 * more days than it has been running for. The player sees DayTime.
+	 */
+	void test_DayCountPrefersDayTimeOverTime()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("slept");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 3955; // 1.21.1
+		spec.time = true;
+		spec.timeValue = Q_INT64_C(7632100); // 318 days of ticks
+		spec.dayTime = true;
+		spec.dayTimeValue = Q_INT64_C(12078000); // day 503
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.dayCount().value_or(-1), Q_INT64_C(503));
+	}
+
+	// A world that has not seen a full day yet is on day zero
+	void test_DayCountBelowOneDay()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("fresh");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 3955;
+		spec.dayTime = true;
+		spec.dayTimeValue = Q_INT64_C(23999);
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.dayCount().value_or(-1), Q_INT64_C(0));
+	}
+
+	/*
+	 * Worlds older than 1.3 have no DayTime at all: Time drove the sun
+	 * directly, so there it is the day count. Value taken from the
+	 * McRegion level.dat of a real world (version 19132, no DataVersion).
+	 */
+	void test_LegacyWorldWithoutDayTimeUsesTime()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("mcregion");
+
+		LevelDatSpec spec;
+		spec.time = true;
+		spec.timeValue = Q_INT64_C(24049); // day 1
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.dayCount().value_or(-1), Q_INT64_C(1));
+	}
+
+	/*
+	 * Minecraft 26.1 and newer: the day comes from the Overworld clock in
+	 * world_clocks.dat, not from level.dat. Values taken from a real 26.2
+	 * world, whose Time tag would have claimed day 251 instead of 399.
+	 */
+	void test_ReadDayCountFromWorldClocks()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("clocks");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 4903; // 26.2
+		spec.time = true;
+		spec.timeValue = Q_INT64_C(6034843);
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+		QVERIFY(
+			writeWorldClocks(worldPath, makeWorldClocks(Q_INT64_C(9580803))));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.dayCount().value_or(-1), Q_INT64_C(399));
+	}
+
+	// A DayTime tag in level.dat is authoritative, the clock file is not
+	void test_DayTimeTakesPrecedenceOverWorldClocks()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("bothclocks");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 3955;
+		spec.dayTime = true;
+		spec.dayTimeValue = Q_INT64_C(168001); // day 7
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+		QVERIFY(
+			writeWorldClocks(worldPath, makeWorldClocks(Q_INT64_C(9580803))));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.dayCount().value_or(-1), Q_INT64_C(7));
+	}
+
+	/*
+	 * A 26.1+ world whose clock file is missing, corrupt or has no
+	 * Overworld clock has no day count to show. Time is still in level.dat
+	 * but means gametime there, so showing it would be a wrong number
+	 * rather than no number. DataVersion is what separates these worlds
+	 * from pre-1.3 ones, where Time really is the day count.
+	 */
+	void test_ModernWorldWithoutAnyClockHasNoDayCount()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("noclocks");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 4903;
+		spec.time = true;
+		spec.timeValue = Q_INT64_C(6034843);
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QVERIFY(!world.dayCount().has_value());
+	}
+
+	void test_CorruptWorldClocksFileIsIgnored()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("badclocks");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 4903;
+		spec.time = true;
+		spec.timeValue = Q_INT64_C(6034843);
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+		QVERIFY(QDir(worldPath).mkpath("data/minecraft"));
+		QFile garbage(QDir(worldPath).absoluteFilePath(
+			"data/minecraft/world_clocks.dat"));
+		QVERIFY(garbage.open(QIODevice::WriteOnly));
+		QVERIFY(garbage.write("not a gzipped nbt file") > 0);
+		garbage.close();
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QVERIFY(!world.dayCount().has_value());
+	}
+
+	// Other dimensions have clocks of their own, but only the Overworld
+	// one is the day players talk about
+	void test_WorldClocksWithoutOverworldHasNoDayCount()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("endonly");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 4903;
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+		QVERIFY(writeWorldClocks(worldPath, makeWorldClocks(std::nullopt)));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QVERIFY(!world.dayCount().has_value());
+	}
+
+	// An int-typed clock is accepted as well as a long one
+	void test_DayCountAcceptsIntTime()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("inttime");
+
+		LevelDatSpec spec;
+		spec.time = true;
+		spec.timeAsInt = true;
+		spec.timeValue = Q_INT64_C(48000); // 2 days
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.dayCount().value_or(-1), Q_INT64_C(2));
+	}
+
+	// A negative tick count is nonsense, but must not produce negative days
+	void test_NegativeDayTimeIsZeroDays()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("negative");
+
+		LevelDatSpec spec;
+		spec.dataVersion = true;
+		spec.dataVersionValue = 3955;
+		spec.dayTime = true;
+		spec.dayTimeValue = Q_INT64_C(-48000);
+		QVERIFY(writeWorld(worldPath, makeLevelDat(spec)));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QCOMPARE(world.dayCount().value_or(-1), Q_INT64_C(0));
+	}
+
+	// No world time anywhere: the world loads, the day count is unknown
+	void test_MissingDayCountIsEmpty()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		auto worldPath = QDir(tempDir.path()).absoluteFilePath("timeless");
+
+		QVERIFY(writeWorld(worldPath, makeLevelDat(LevelDatSpec())));
+
+		World world{QFileInfo(worldPath)};
+		QVERIFY(world.isValid());
+		QVERIFY(!world.dayCount().has_value());
 	}
 };
 
