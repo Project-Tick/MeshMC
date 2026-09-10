@@ -17,12 +17,14 @@
  * limitations under the License.
  */
 
+#include <QDebug>
 #include <QTemporaryDir>
 #include <QTest>
 
 #include <archive.h>
 #include <archive_entry.h>
 
+#include "ArchiveOpen.h"
 #include "updater/meshupdater/ReleaseArchive.h"
 
 /*!
@@ -122,8 +124,13 @@ class ReleaseArchiveTest : public QObject
 		archive_write_add_filter_gzip(writer);
 		archive_write_set_format_pax_restricted(writer);
 
-		if (archive_write_open_filename(
-				writer, archivePath.toUtf8().constData()) != ARCHIVE_OK) {
+		// Through the same wrapper the extractor uses: a case that puts the
+		// archive under a non-ASCII path has to be able to create it there
+		// before it can assert anything about reading it back.
+		if (MMCArchive::openForWriting(writer, archivePath) != ARCHIVE_OK) {
+			qWarning().noquote()
+				<< "could not open" << archivePath << "for writing:"
+				<< archive_error_string(writer);
 			archive_write_free(writer);
 			return false;
 		}
@@ -131,18 +138,35 @@ class ReleaseArchiveTest : public QObject
 		bool ok = true;
 		for (const Entry& entry : entries) {
 			archive_entry* header = archive_entry_new();
-			archive_entry_set_pathname(header,
-									   entry.path.toUtf8().constData());
+
+			/* The _utf8 spellings, not the plain ones. The plain setters
+			 * declare their argument to be a multi-byte string in the
+			 * process's own locale, and libarchive converts from that when
+			 * it writes a pax header, which stores names in UTF-8. Handing
+			 * them UTF-8 bytes is therefore only correct where the locale
+			 * says UTF-8 -- true on Linux and macOS, false on Windows,
+			 * where the conversion runs through the active ANSI code page
+			 * and turns "Ş" (C5 9E) into "Åž" without failing. The
+			 * extractor then reads the name back with
+			 * archive_entry_pathname_utf8() and gets the mangled form, so
+			 * an archive written here did not contain what this file said
+			 * it did -- on Windows only.
+			 *
+			 * Saying _utf8 states the encoding instead of leaving it to the
+			 * host, which is also what the reader in ReleaseArchive.cpp
+			 * asks for, so the two ends now agree by construction. */
+			archive_entry_set_pathname_utf8(header,
+											entry.path.toUtf8().constData());
 			archive_entry_set_perm(header, entry.executable ? 0755 : 0644);
 
 			if (!entry.symlinkTo.isEmpty()) {
 				archive_entry_set_filetype(header, AE_IFLNK);
-				archive_entry_set_symlink(
+				archive_entry_set_symlink_utf8(
 					header, entry.symlinkTo.toUtf8().constData());
 				archive_entry_set_size(header, 0);
 			} else if (!entry.hardlinkTo.isEmpty()) {
 				archive_entry_set_filetype(header, AE_IFREG);
-				archive_entry_set_hardlink(
+				archive_entry_set_hardlink_utf8(
 					header, entry.hardlinkTo.toUtf8().constData());
 				archive_entry_set_size(header, 0);
 			} else {
@@ -151,6 +175,12 @@ class ReleaseArchiveTest : public QObject
 			}
 
 			if (archive_write_header(writer, header) != ARCHIVE_OK) {
+				// Reported rather than swallowed: a bare "could not create
+				// the archive" is what made the first Windows failure here
+				// unreadable.
+				qWarning().noquote()
+					<< "could not write a header for" << entry.path << ":"
+					<< archive_error_string(writer);
 				ok = false;
 			} else if (entry.symlinkTo.isEmpty() &&
 					   entry.hardlinkTo.isEmpty() &&
@@ -158,8 +188,13 @@ class ReleaseArchiveTest : public QObject
 				const la_ssize_t written = archive_write_data(
 					writer, entry.contents.constData(),
 					static_cast<size_t>(entry.contents.size()));
-				if (written != entry.contents.size())
+				if (written != entry.contents.size()) {
+					qWarning().noquote()
+						<< "short write for" << entry.path << ":" << written
+						<< "of" << entry.contents.size() << "bytes:"
+						<< archive_error_string(writer);
 					ok = false;
+				}
 			}
 
 			archive_entry_free(header);
@@ -170,6 +205,26 @@ class ReleaseArchiveTest : public QObject
 		archive_write_close(writer);
 		archive_write_free(writer);
 		return ok;
+	}
+
+	/*!
+	 * A path component made of letters no single-byte code page holds:
+	 * Turkish, Cyrillic, CJK.
+	 *
+	 * Spelled as UTF-8 bytes rather than as the characters themselves
+	 * because MSVC decodes a plain string literal in the build machine's
+	 * ANSI code page unless it is given /utf-8, which this build does not
+	 * pass. A case about mis-encoded paths must not itself depend on how
+	 * the compiler guessed at its own source file.
+	 */
+	static QString awkwardName()
+	{
+		return QString::fromUtf8(
+			"\xC5\x9E"                                          // Ş U+015E
+			"afak-"                                             //
+			"\xD0\x9F\xD1\x80\xD0\xB8\xD0\xB2\xD0\xB5\xD1\x82"  // Привет
+			"-"                                                 //
+			"\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E");            // 日本語
 	}
 
 	//! The shape of a real Linux portable release, in miniature.
@@ -497,6 +552,70 @@ class ReleaseArchiveTest : public QObject
 			out.absoluteFilePath(QStringLiteral("meshmc-updater.exe"))));
 	}
 
+	/*!
+	 * A release is unpacked from, and into, a path that is not ASCII.
+	 *
+	 * This is the one case in the file that is about the file name rather
+	 * than the contents. archive_read_open_filename() and its write
+	 * counterpart take a `char*`, and on Windows libarchive hands that to
+	 * the narrow CRT entry points, which decode it in the active ANSI code
+	 * page -- so passing UTF-8 bytes, as this code used to, is the one
+	 * encoding guaranteed to be wrong there. Every archive MeshMC opens
+	 * lives under the user's data directory, which lives under the user
+	 * profile, so for a user named Şafak the answer was "No such file or
+	 * directory" for every zip they ever touched, update included.
+	 *
+	 * Running on Linux this passes either way, since the byte path is
+	 * already UTF-8 -- but it is still the case that fails if someone
+	 * reaches for the narrow call again, and it is the case a Windows run
+	 * has to go through. The nesting is deliberate: the awkward name is in
+	 * the directory holding the archive, in the archive's own file name, in
+	 * an entry inside it, and in the destination, because those are four
+	 * different code paths and only the first two are libarchive's.
+	 */
+	void tst_NonAsciiPathsAreOpened()
+	{
+		QTemporaryDir work;
+		QVERIFY(work.isValid());
+
+		const QString awkward = awkwardName();
+
+		// Stands in for C:\Users\Şafak\AppData\Roaming\MeshMC\update.
+		const QString nest = work.filePath(awkward);
+		QVERIFY(QDir().mkpath(nest));
+
+		const QString archivePath =
+			QDir(nest).filePath(awkward + QStringLiteral(".tar.gz"));
+		const QList<Entry> entries = {
+			file(QStringLiteral("meshmc.exe"), "LAUNCHER", true),
+			file(QStringLiteral("Qt6Core.dll"), "QTCORE"),
+			file(awkward + QStringLiteral("/inside.txt"), "ENTRY"),
+		};
+
+		// Failing here is already the bug, from the writing end.
+		QVERIFY2(writeArchive(archivePath, entries),
+				 "could not create an archive at a non-ASCII path");
+		QVERIFY(QFileInfo::exists(archivePath));
+
+		const QString dest =
+			QDir(nest).filePath(QStringLiteral("out-") + awkward);
+		const ReleaseArchive::Result result =
+			ReleaseArchive::extract(archivePath, dest);
+
+		QVERIFY2(result.ok, qPrintable(result.error));
+		QCOMPARE(result.fileCount, int(entries.size()));
+		QCOMPARE(result.linkCount, 0);
+
+		const QDir out(dest);
+		for (const Entry& entry : entries) {
+			const QFileInfo info(out.absoluteFilePath(entry.path));
+			QVERIFY2(info.isFile(), qPrintable(entry.path));
+			QCOMPARE(info.size(), qint64(entry.contents.size()));
+			QVERIFY2(result.paths.contains(entry.path),
+					 qPrintable(entry.path));
+		}
+	}
+
 	void tst_MissingArchiveIsReportedNotCrashed()
 	{
 		QTemporaryDir work;
@@ -564,8 +683,7 @@ class ReleaseArchiveTest : public QObject
 		QVERIFY(reader);
 		archive_read_support_filter_all(reader);
 		archive_read_support_format_all(reader);
-		QCOMPARE(archive_read_open_filename(
-					 reader, archivePath.toUtf8().constData(), 64 * 1024),
+		QCOMPARE(MMCArchive::openForReading(reader, archivePath, 64 * 1024),
 				 ARCHIVE_OK);
 
 		const QDir out(dest);

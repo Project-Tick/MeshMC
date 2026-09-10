@@ -19,6 +19,7 @@
  */
 
 #include "MMCZip.h"
+#include "ArchiveOpen.h"
 #include "FileSystem.h"
 
 #include <archive.h>
@@ -51,12 +52,52 @@ using ArchiveWritePtr = std::unique_ptr<
 	struct archive,
 	ArchiveWriteDeleter>; // NOLINT(readability-identifier-naming)
 
+/*!
+ * The name of \a entry, in the one spelling the rest of MeshMC can compare
+ * against.
+ *
+ * Reading an archive whose names are UTF-8, libarchive decomposes them on
+ * Apple platforms on purpose -- SCONV_NORMALIZATION_D in archive_string.c,
+ * under `#if defined(__APPLE__)`, so that they compare equal to what HFS
+ * Plus reports for the same file. The consequence for us is that one and the
+ * same zip yields "Ş" as a single code point on Linux and Windows and as "S"
+ * plus a combining cedilla on macOS: the same text, a different string.
+ * Anything that looks an entry up by a name from somewhere else --
+ * readFileFromZip(), extractSubDir(), a pack manifest, a caller's literal --
+ * then misses.
+ *
+ * Composing to NFC gives one form on every platform. It is the form the rest
+ * of Qt and every manifest we read already use, and normalising a string
+ * that is already NFC is cheap: Qt quick-checks it and returns.
+ *
+ * The narrow accessor, deliberately, and not archive_entry_pathname_utf8().
+ * Both of them convert, and which one is correct depends on how the name was
+ * written -- so the only rule that holds is that the two ends of this file
+ * agree. writeFileToArchive() and ZipWriter::addFile() hand libarchive UTF-8
+ * bytes through archive_entry_set_pathname(), which declares them to be in
+ * the process's own charset; libarchive stores them unconverted, because the
+ * source and target charsets are then the same. The narrow accessor returns
+ * exactly those bytes back, and QString::fromUtf8() is right. The _utf8
+ * accessor would instead convert them *out of* the local charset -- on
+ * Windows that is the active ANSI code page, where "Ş" (C5 9E) comes back as
+ * "Åž". That is not theoretical: reaching for _utf8 here is what broke both
+ * Windows builds, and the same asymmetry in the other direction is what
+ * broke ReleaseArchive_test. Changing one end of this pair means changing
+ * the other.
+ */
+static QString entryPathName(struct archive_entry* entry)
+{
+	const char* name = archive_entry_pathname(entry);
+	if (!name)
+		return {};
+	return QString::fromUtf8(name).normalized(QString::NormalizationForm_C);
+}
+
 static ArchiveReadPtr openZipForReading(const QString& path)
 {
 	ArchiveReadPtr a(archive_read_new());
 	archive_read_support_format_zip(a.get());
-	if (archive_read_open_filename(a.get(), path.toUtf8().constData(), 10240) !=
-		ARCHIVE_OK) {
+	if (MMCArchive::openForReading(a.get(), path, 10240) != ARCHIVE_OK) {
 		qWarning() << "Could not open archive:" << path
 				   << archive_error_string(a.get());
 		return nullptr;
@@ -68,8 +109,7 @@ static ArchiveWritePtr createZipForWriting(const QString& path)
 {
 	ArchiveWritePtr a(archive_write_new());
 	archive_write_set_format_zip(a.get());
-	if (archive_write_open_filename(a.get(), path.toUtf8().constData()) !=
-		ARCHIVE_OK) {
+	if (MMCArchive::openForWriting(a.get(), path) != ARCHIVE_OK) {
 		qWarning() << "Could not create archive:" << path
 				   << archive_error_string(a.get());
 		return nullptr;
@@ -303,8 +343,7 @@ bool MMCZip::ZipWriter::open()
 				   << archive_error_string(m_archive);
 	}
 
-	if (archive_write_open_filename(m_archive, m_path.toUtf8().constData()) !=
-		ARCHIVE_OK) {
+	if (MMCArchive::openForWriting(m_archive, m_path) != ARCHIVE_OK) {
 		m_error = QString::fromUtf8(archive_error_string(m_archive));
 		qWarning() << "Could not create archive:" << m_path << m_error;
 		archive_write_free(m_archive);
@@ -432,7 +471,7 @@ bool MMCZip::mergeZipFiles(const QString& intoPath, QFileInfo from,
 
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-		QString filename = QString::fromUtf8(archive_entry_pathname(entry));
+		QString filename = entryPathName(entry);
 		if (filter && !filter(filename)) {
 			qDebug() << "Skipping file " << filename << " from "
 					 << from.fileName() << " - filtered";
@@ -473,7 +512,7 @@ bool MMCZip::mergeZipFiles(const QString& intoPath, QFileInfo from,
 		if (existingAr) {
 			while (archive_read_next_header(existingAr.get(), &entry) ==
 				   ARCHIVE_OK) {
-				QString name = QString::fromUtf8(archive_entry_pathname(entry));
+				QString name = entryPathName(entry);
 				la_int64_t sz = archive_entry_size(entry);
 				QByteArray data;
 				if (sz > 0) {
@@ -540,8 +579,7 @@ bool MMCZip::createModdedJar(QString sourceJarPath, QString targetJarPath,
 			}
 			struct archive_entry* entry;
 			while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-				QString filename =
-					QString::fromUtf8(archive_entry_pathname(entry));
+				QString filename = entryPathName(entry);
 				if (addedFiles.contains(filename)) {
 					archive_read_data_skip(ar.get());
 					continue;
@@ -606,7 +644,7 @@ bool MMCZip::createModdedJar(QString sourceJarPath, QString targetJarPath,
 	}
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-		QString filename = QString::fromUtf8(archive_entry_pathname(entry));
+		QString filename = entryPathName(entry);
 		if (filename.contains("META-INF")) {
 			archive_read_data_skip(ar.get());
 			continue;
@@ -735,7 +773,7 @@ MMCZip::extractSubDir(const QString& zipPath, const QString& subdir,
 		}
 
 		hasEntries = true;
-		QString name = QString::fromUtf8(archive_entry_pathname(entry));
+		QString name = entryPathName(entry);
 		if (!name.startsWith(subdir)) {
 			archive_read_data_skip(ar.get());
 			continue;
@@ -792,7 +830,7 @@ bool MMCZip::extractRelFile(const QString& zipPath, const QString& file,
 
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-		QString name = QString::fromUtf8(archive_entry_pathname(entry));
+		QString name = entryPathName(entry);
 		if (name == file) {
 			return writeDiskEntry(ar.get(), target, error);
 		}
@@ -836,7 +874,7 @@ QByteArray MMCZip::readFileFromZip(const QString& zipPath,
 
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-		QString name = QString::fromUtf8(archive_entry_pathname(entry));
+		QString name = entryPathName(entry);
 		if (name == entryName) {
 			la_int64_t sz = archive_entry_size(entry);
 			if (sz <= 0) {
@@ -865,7 +903,7 @@ bool MMCZip::entryExists(const QString& zipPath, const QString& entryName)
 
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-		QString name = QString::fromUtf8(archive_entry_pathname(entry));
+		QString name = entryPathName(entry);
 		if (name == entryName || name == entryName + "/")
 			return true;
 		archive_read_data_skip(ar.get());
@@ -882,7 +920,7 @@ QStringList MMCZip::listEntries(const QString& zipPath)
 
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-		result.append(QString::fromUtf8(archive_entry_pathname(entry)));
+		result.append(entryPathName(entry));
 		archive_read_data_skip(ar.get());
 	}
 	return result;
@@ -899,7 +937,7 @@ QStringList MMCZip::listEntries(const QString& zipPath, const QString& dirPath,
 	QSet<QString> seen;
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-		QString name = QString::fromUtf8(archive_entry_pathname(entry));
+		QString name = entryPathName(entry);
 
 		// Must start with dirPath
 		if (!name.startsWith(dirPath)) {
@@ -951,7 +989,7 @@ QDateTime MMCZip::getEntryModTime(const QString& zipPath,
 
 	struct archive_entry* entry;
 	while (archive_read_next_header(ar.get(), &entry) == ARCHIVE_OK) {
-		QString name = QString::fromUtf8(archive_entry_pathname(entry));
+		QString name = entryPathName(entry);
 		if (name == entryName) {
 			time_t mtime = archive_entry_mtime(entry);
 			return QDateTime::fromSecsSinceEpoch(mtime);

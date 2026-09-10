@@ -220,6 +220,7 @@ namespace
 		}
 		return count;
 	}
+
 } // namespace
 
 class MMCZipTest : public QObject
@@ -442,6 +443,79 @@ class MMCZipTest : public QObject
 		auto extracted = MMCZip::extractSubDir(zip, QString(""), target);
 		QVERIFY(!extracted.has_value());
 		QCOMPARE(countFilesUnder(target), 0);
+	}
+
+	/* An instance exports to, and imports from, a path that is not ASCII.
+	 *
+	 * Not about the zip format: about the file name handed to libarchive.
+	 * archive_write_open_filename() and archive_read_open_filename() take a
+	 * `char*`, and on Windows libarchive hands it to the narrow CRT entry
+	 * points, which decode it in the active ANSI code page -- so UTF-8
+	 * bytes, which is what this code used to pass, are the one encoding
+	 * guaranteed to be wrong there. Instances live under the user profile,
+	 * so for a user named Şafak every export and every import failed, with
+	 * "No such file or directory" as the only explanation.
+	 *
+	 * Passes on Linux either way, where the byte path is already UTF-8. It
+	 * is here as the case that fails if someone reaches for the narrow call
+	 * again, and as the case a Windows run has to get through.
+	 *
+	 * The entry names are compared against the literal above, which holds on
+	 * every platform only because MMCZip composes the names it reads --
+	 * libarchive hands them back decomposed on macOS, on purpose, and this
+	 * case is what notices if entryPathName() stops undoing that.
+	 */
+	void test_NonAsciiPathRoundTrip()
+	{
+		QTemporaryDir tempDir;
+		QVERIFY(tempDir.isValid());
+		QDir root(tempDir.path());
+
+		// Turkish, Cyrillic and CJK together, so no single-byte code page
+		// can hold the name. Written as UTF-8 bytes rather than as the
+		// characters themselves because MSVC decodes a plain literal in the
+		// build machine's ANSI code page unless it is passed /utf-8, which
+		// this build does not -- and a test about mis-encoded paths must not
+		// depend on how the compiler read its own source.
+		const QString awkward = QString::fromUtf8(
+			"\xC5\x9E"                                          // Ş U+015E
+			"afak-"                                             //
+			"\xD0\x9F\xD1\x80\xD0\xB8\xD0\xB2\xD0\xB5\xD1\x82"  // Привет
+			"-"                                                 //
+			"\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E");            // 日本語
+
+		// Stands in for C:\Users\Şafak\AppData\Roaming\MeshMC\instances.
+		auto home = root.absoluteFilePath(awkward);
+		auto packDir = home + "/pack";
+		QVERIFY(writeFile(packDir + "/mods/a.jar", QByteArray(400, 'a')));
+		QVERIFY(writeFile(packDir + "/" + awkward + "/note.txt", "hello"));
+
+		const QString noteEntry = awkward + QStringLiteral("/note.txt");
+
+		// The archive's own name is awkward too: an export is named after
+		// the instance, and instances get named in the user's language.
+		auto zip = home + "/" + awkward + ".zip";
+		QVERIFY2(MMCZip::compressDir(zip, packDir, nullptr),
+				 "could not write an archive to a non-ASCII path");
+		QVERIFY(QFileInfo::exists(zip));
+
+		// Reading it back: the open, the entry list, and a single entry
+		// fetched by name are three separate paths through MMCZip.
+		auto entries = MMCZip::listEntries(zip);
+		QCOMPARE(countEntries(entries, "mods/a.jar"), 1);
+		QCOMPARE(countEntries(entries, noteEntry), 1);
+		QCOMPARE(MMCZip::readFileFromZip(zip, noteEntry),
+				 QByteArray("hello"));
+
+		auto target = home + "/out-" + awkward;
+		auto extracted = MMCZip::extractDir(zip, target);
+		QVERIFY2(extracted.has_value(),
+				 "could not extract an archive from a non-ASCII path");
+		QCOMPARE(countFilesUnder(target), 2);
+		QCOMPARE(QFileInfo(QDir(target).absoluteFilePath("mods/a.jar")).size(),
+				 qint64(400));
+		QVERIFY2(QFileInfo::exists(QDir(target).absoluteFilePath(noteEntry)),
+				 qPrintable(noteEntry));
 	}
 };
 
