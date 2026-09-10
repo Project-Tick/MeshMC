@@ -313,6 +313,7 @@ class MainWindow : public QMainWindow
 	/* Every action that acts on the selected instance, so that they can be
 	 * enabled and disabled together. */
 	QList<QAction*> instance_actions;
+	QList<QToolButton*> instance_buttons;
 	QLabel* m_statusLeft = nullptr;
 	QLabel* m_statusCenter = nullptr;
 	/* Exclusive group behind the profiler entries of the launch menu. It
