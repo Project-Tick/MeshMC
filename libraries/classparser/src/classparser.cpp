@@ -24,9 +24,41 @@
 #include <archive.h>
 #include <archive_entry.h>
 #include <QDebug>
+#include <QDir>
+#include <QtGlobal>
+
+#include <string>
 
 namespace classparser
 {
+	namespace
+	{
+		/*!
+		 * Open \a path for reading, encoded the way the platform will
+		 * actually read it.
+		 *
+		 * On Windows archive_read_open_filename() decodes its `char*` in
+		 * the active ANSI code page rather than UTF-8, so a jar under
+		 * C:\Users\Şafak\... cannot be opened at all through the narrow
+		 * entry point. The launcher has the same wrapper in
+		 * launcher/ArchiveOpen.h, with the full reasoning; classparser
+		 * carries its own copy because it is built to stand alone and
+		 * links nothing but Qt Core and libarchive.
+		 */
+		int openJarForReading(struct archive* handle, const QString& path,
+							  size_t blockSize)
+		{
+#ifdef Q_OS_WIN32
+			const std::wstring wide =
+				QDir::toNativeSeparators(path).toStdWString();
+			return archive_read_open_filename_w(handle, wide.c_str(),
+												blockSize);
+#else
+			return archive_read_open_filename(
+				handle, path.toUtf8().constData(), blockSize);
+#endif
+		}
+	} // namespace
 
 	QString GetMinecraftJarVersion(QString jarName)
 	{
@@ -40,8 +72,7 @@ namespace classparser
 		// open jar with libarchive
 		struct archive* a = archive_read_new();
 		archive_read_support_format_zip(a);
-		if (archive_read_open_filename(a, jarName.toUtf8().constData(),
-									   10240) != ARCHIVE_OK) {
+		if (openJarForReading(a, jarName, 10240) != ARCHIVE_OK) {
 			archive_read_free(a);
 			return version;
 		}

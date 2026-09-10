@@ -382,10 +382,18 @@ void MainWindow::setupUi()
 						ui->actionCopyInstance,
 						ui->actionDeleteInstance,
 						ui->actionCreateInstanceShortcut};
+
+	instance_buttons = {changeIconButton,
+						renameButton};
+
 	// Nothing is selected yet, and the menus are reachable before
 	// anything is.
 	for (QAction* action : instance_actions) {
 		action->setEnabled(false);
+	}
+
+	for (QToolButton* button : instance_buttons) {
+		button->setEnabled(false);
 	}
 }
 
@@ -1989,6 +1997,9 @@ void MainWindow::instanceChanged(const QModelIndex& current,
 		for (QAction* action : instance_actions) {
 			action->setEnabled(true);
 		}
+		for (QToolButton* button : instance_buttons) {
+			button->setEnabled(true);
+		}
 		/* Launch and Kill are separate buttons now, so each one just
 		 * reflects whether it can do anything right this moment. */
 		ui->actionLaunchInstance->setEnabled(m_selectedInstance->canLaunch() &&
@@ -2052,6 +2063,9 @@ void MainWindow::selectionBad()
 	 * being clicked with no instance to act on. */
 	for (QAction* action : instance_actions) {
 		action->setEnabled(false);
+	}
+	for (QToolButton* button : instance_buttons) {
+		button->setEnabled(false);
 	}
 	renameButton->setText(tr("Rename Instance"));
 	syncSidebarWidths();

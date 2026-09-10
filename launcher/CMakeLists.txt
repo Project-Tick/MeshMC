@@ -29,6 +29,7 @@ set(CORE_SOURCES
     Sys.h
     NullInstance.h
     QtCompat.h
+    ArchiveOpen.h
     MMCZip.h
     MMCZip.cpp
     MMCStrings.h
@@ -1414,6 +1415,7 @@ if(NOT APPLE)
         updater/UpdateLockFile.cpp
 
         # Borrowed from the launcher, all free of Application dependencies.
+        ArchiveOpen.h
         Version.h
         Version.cpp
         MMCStrings.h

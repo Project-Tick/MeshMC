@@ -33,7 +33,13 @@ class WorldList : public QAbstractListModel
 {
 	Q_OBJECT
   public:
-	enum Columns { NameColumn, GameModeColumn, LastPlayedColumn };
+	enum Columns {
+		NameColumn,
+		GameModeColumn,
+		LastPlayedColumn,
+		DayCountColumn,
+		ColumnCount
+	};
 
 	enum Roles {
 		ObjectRole = Qt::UserRole + 1,
@@ -42,7 +48,8 @@ class WorldList : public QAbstractListModel
 		NameRole,
 		GameModeRole,
 		LastPlayedRole,
-		IconFileRole
+		IconFileRole,
+		DayCountRole
 	};
 
 	WorldList(const QString& dir);

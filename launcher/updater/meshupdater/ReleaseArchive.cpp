@@ -19,6 +19,8 @@
 
 #include "ReleaseArchive.h"
 
+#include "ArchiveOpen.h"
+
 #include <archive.h>
 #include <archive_entry.h>
 
@@ -250,8 +252,7 @@ ReleaseArchive::Result ReleaseArchive::extract(const QString& archivePath,
 	archive_read_support_filter_all(reader.get());
 	archive_read_support_format_all(reader.get());
 
-	if (archive_read_open_filename(reader.get(),
-								   archivePath.toUtf8().constData(),
+	if (MMCArchive::openForReading(reader.get(), archivePath,
 								   kCopyBlockSize) != ARCHIVE_OK) {
 		result.error =
 			QStringLiteral("could not open %1: %2")

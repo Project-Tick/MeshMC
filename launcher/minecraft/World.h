@@ -64,6 +64,13 @@ class World
 	{
 		return m_gameType;
 	}
+	/* The in-game day the world is on - the daylight cycle day the game
+	 * itself counts, not the time the world has been running. Empty for
+	 * worlds whose level.dat records no daylight clock. */
+	std::optional<int64_t> dayCount() const
+	{
+		return m_dayCount;
+	}
 	int64_t seed() const
 	{
 		return m_randomSeed;
@@ -110,6 +117,7 @@ class World
 	QDateTime levelDatTime;
 	QDateTime m_lastPlayed;
 	int64_t m_randomSeed = 0;
+	std::optional<int64_t> m_dayCount;
 	GameType m_gameType;
 	bool is_valid = false;
 };
