@@ -37,6 +37,11 @@ class Config
 	QString MESHMC_GIT;
 	QString MESHMC_APPID;
 
+	/** Prefix for the launcher's own environment variables, e.g. "MESHMC"
+	 * for MESHMC_DISABLE_GLVULKAN. Configurable rather than hardcoded so a
+	 * rebranded build's variables carry its own name. */
+	QString MESHMC_ENVNAME;
+
 	/// The major version number.
 	int VERSION_MAJOR;
 	/// The minor version number.

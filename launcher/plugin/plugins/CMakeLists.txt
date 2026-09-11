@@ -38,6 +38,7 @@ endif()
 # instead of doubling up on the core feature.
 #   - Filelink: moved into core
 #   - PackPortal: moved into core
+#   - SkinManager: moved into core
 #   - BackupSystem: moved into core (launcher/backup + BackupPage)
 #   - NewsViewer:   moved into core (launcher/ui/dialogs/NewsViewerDialog,
 #                   multi-feed support folded into news/NewsChecker)
@@ -45,7 +46,6 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
     SystemTray
     DesktopNotifier
     DiscordRPC
-    SkinManager
     GitVersioning
     OfflineWiki
 )
@@ -53,7 +53,6 @@ set(MESHMC_IN_TREE_PLUGIN_TARGETS
 add_subdirectory(SystemTray)
 add_subdirectory(DesktopNotifier)
 add_subdirectory(DiscordRPC)
-add_subdirectory(SkinManager)
 add_subdirectory(GitVersioning)
 add_subdirectory(OfflineWiki)
 

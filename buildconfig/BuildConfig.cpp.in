@@ -33,6 +33,7 @@ Config::Config()
 	MESHMC_CONFIGFILE = "@MeshMC_ConfigFile@";
 	MESHMC_GIT = "@MeshMC_Git@";
 	MESHMC_APPID = "@MeshMC_AppID@";
+	MESHMC_ENVNAME = "@MeshMC_EnvName@";
 
 	USER_AGENT = "@MeshMC_UserAgent@";
 	USER_AGENT_UNCACHED = USER_AGENT + " (Uncached)";

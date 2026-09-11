@@ -431,6 +431,14 @@ set(MINECRAFT_SOURCES
     minecraft/services/SkinDelete.cpp
     minecraft/services/SkinDelete.h
 
+    # Local skin library
+    minecraft/skins/SkinEntry.cpp
+    minecraft/skins/SkinEntry.h
+    minecraft/skins/SkinLibrary.cpp
+    minecraft/skins/SkinLibrary.h
+    minecraft/skins/ProfileSkinImport.cpp
+    minecraft/skins/ProfileSkinImport.h
+
     mojang/PackageManifest.h
     mojang/PackageManifest.cpp
     )
@@ -776,6 +784,7 @@ SET(MESHMC_SOURCES
     resources/documents/documents.qrc
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
+    resources/shaders/shaders.qrc
     ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
 
     # Icons
@@ -993,8 +1002,14 @@ SET(MESHMC_SOURCES
     ui/dialogs/UpdateAvailableDialog.h
     ui/dialogs/VersionSelectDialog.cpp
     ui/dialogs/VersionSelectDialog.h
-    ui/dialogs/SkinUploadDialog.cpp
-    ui/dialogs/SkinUploadDialog.h
+    ui/dialogs/skins/SkinManageDialog.cpp
+    ui/dialogs/skins/SkinManageDialog.h
+    ui/dialogs/skins/render/CubeMesh.cpp
+    ui/dialogs/skins/render/CubeMesh.h
+    ui/dialogs/skins/render/PlayerScene.cpp
+    ui/dialogs/skins/render/PlayerScene.h
+    ui/dialogs/skins/render/SkinPreviewSurface.cpp
+    ui/dialogs/skins/render/SkinPreviewSurface.h
     ui/dialogs/DownloadContentDialog.cpp
     ui/dialogs/DownloadContentDialog.h
     ui/dialogs/DownloadSummaryDialog.cpp
@@ -1114,7 +1129,7 @@ set(MESHMC_UI_FILES
     ui/dialogs/PluginsDialog.ui
     ui/dialogs/NewComponentDialog.ui
     ui/dialogs/ProfileSelectDialog.ui
-    ui/dialogs/SkinUploadDialog.ui
+    ui/dialogs/skins/SkinManageDialog.ui
     ui/dialogs/CreateShortcutDialog.ui
     ui/dialogs/ExportInstanceDialog.ui
     ui/dialogs/ExportPackDialog.ui
@@ -1176,6 +1191,7 @@ set(MESHMC_QRC_FILES
     resources/documents/documents.qrc
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
+    resources/shaders/shaders.qrc
     ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
 )
 
@@ -1247,6 +1263,10 @@ target_link_libraries(MeshMC_logic
     rainbow
     LocalPeer::LocalPeer
 )
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(MeshMC_logic Qt6::OpenGL)
+endif()
 
 # Plugin system needs dlopen/dlsym on Unix
 if(UNIX AND NOT APPLE)

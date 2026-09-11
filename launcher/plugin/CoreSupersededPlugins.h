@@ -71,6 +71,8 @@ findCoreSupersededPlugin(const QString& name)
 		 QLatin1String("The pack portal is now part of MeshMC itself")},
 		{QLatin1String("PackUpdater"),
 		 QLatin1String("The pack updater is now part of MeshMC itself")},
+		{QLatin1String("SkinManager"),
+		 QLatin1String("The skin manager is now part of MeshMC itself")},
 	};
 
 	if (name.isEmpty())

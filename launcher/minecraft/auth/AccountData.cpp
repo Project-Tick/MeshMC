@@ -224,7 +224,7 @@ namespace
 					qWarning() << "cape data is something unexpected";
 					return MinecraftProfile();
 				}
-				out.capes[cape.id] = cape;
+				out.capes.append(cape);
 			}
 		}
 		// current cape
@@ -232,7 +232,7 @@ namespace
 			auto capeV = tokenObject.value("cape");
 			if (capeV.isString()) {
 				auto currentCape = capeV.toString();
-				if (out.capes.contains(currentCape)) {
+				if (out.capeById(currentCape)) {
 					out.currentCape = currentCape;
 				}
 			}

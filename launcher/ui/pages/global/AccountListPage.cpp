@@ -33,7 +33,7 @@
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/dialogs/MSALoginDialog.h"
 #include "ui/dialogs/CustomMessageBox.h"
-#include "ui/dialogs/SkinUploadDialog.h"
+#include "ui/dialogs/skins/SkinManageDialog.h"
 
 #include "tasks/Task.h"
 #include "minecraft/auth/AccountTask.h"
@@ -295,7 +295,17 @@ void AccountListPage::on_actionUploadSkin_triggered()
 		QModelIndex selected = selection.first();
 		MinecraftAccountPtr account = selected.data(AccountList::PointerRole)
 										  .value<MinecraftAccountPtr>();
-		SkinUploadDialog dialog(account, this);
+		/* Offline accounts have no profile to upload to, and the dialog
+		 * cannot do anything useful without one. */
+		if (!account || !account->isMSA()) {
+			CustomMessageBox::selectable(
+				this, tr("Offline account"),
+				tr("Skins can only be managed for Microsoft accounts."),
+				QMessageBox::Warning)
+				->exec();
+			return;
+		}
+		SkinManageDialog dialog(this, account);
 		dialog.exec();
 	}
 }

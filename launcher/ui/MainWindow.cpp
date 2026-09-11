@@ -103,6 +103,7 @@
 #include "ui/dialogs/ExportInstanceDialog.h"
 #include "ui/dialogs/ExportPackDialog.h"
 #include "ui/dialogs/CreateShortcutDialog.h"
+#include "ui/dialogs/skins/SkinManageDialog.h"
 
 #include "KonamiCode.h"
 
@@ -1074,6 +1075,10 @@ void MainWindow::repopulateAccountsMenu()
 			&MainWindow::changeActiveAccount);
 
 	ui->accountMenu->addSeparator();
+	ui->actionManageSkins->setEnabled(defaultAccount &&
+									  defaultAccount->isMSA() &&
+									  !defaultAccount->isActive());
+	ui->accountMenu->addAction(ui->actionManageSkins);
 	ui->accountMenu->addAction(ui->actionManageAccounts);
 }
 
@@ -1605,6 +1610,15 @@ void MainWindow::on_actionEditInstance_triggered()
 void MainWindow::on_actionScreenshots_triggered()
 {
 	APPLICATION->showInstanceWindow(m_selectedInstance, "screenshots");
+}
+
+void MainWindow::on_actionManageSkins_triggered()
+{
+	auto account = APPLICATION->accounts()->defaultAccount();
+	if (account && account->isMSA() && !account->isActive()) {
+		SkinManageDialog dialog(this, account);
+		dialog.exec();
+	}
 }
 
 void MainWindow::on_actionManageAccounts_triggered()
