@@ -20,6 +20,7 @@
 #pragma once
 #include <QString>
 #include <QByteArray>
+#include <QList>
 #include <QVector>
 #include <katabasis/Bits.h>
 #include <QJsonObject>
@@ -51,7 +52,30 @@ struct MinecraftProfile {
 	QString name;
 	Skin skin;
 	QString currentCape;
-	QMap<QString, Cape> capes;
+
+	/* Capes the account owns, in the order the profile service returned
+	 * them.
+	 *
+	 * A list rather than a map keyed by id: the order is meaningful. It is
+	 * the order the cape picker shows them in, and it is the order Mojang
+	 * lists them in -- which a map would silently replace with alphabetical
+	 * order by id, i.e. by opaque UUID, i.e. arbitrary. The stored JSON has
+	 * always been an array, so nothing about the on-disk format changes;
+	 * round-tripping through a list actually preserves it where the map did
+	 * not. */
+	QList<Cape> capes;
+
+	/* Look a cape up by id, or nullptr if the account does not own it. */
+	const Cape* capeById(const QString& id) const
+	{
+		for (const Cape& cape : capes) {
+			if (cape.id == id) {
+				return &cape;
+			}
+		}
+		return nullptr;
+	}
+
 	Katabasis::Validity validity = Katabasis::Validity::None;
 };
 

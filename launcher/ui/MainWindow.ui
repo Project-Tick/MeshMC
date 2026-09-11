@@ -497,6 +497,20 @@
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
+  <action name="actionManageSkins">
+   <property name="meshmcIcon" stdset="0">
+    <string notr="true">settings</string>
+   </property>
+   <property name="text">
+    <string>Manage Skins</string>
+   </property>
+   <property name="toolTip">
+    <string>Manage the skins of the currently selected account.</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
   <action name="actionLockToolbars">
    <property name="checkable">
     <bool>true</bool>

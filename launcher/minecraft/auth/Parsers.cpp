@@ -241,7 +241,9 @@ namespace Parsers
 				continue;
 			}
 
-			output.capes[capeOut.id] = capeOut;
+			/* Appended, not keyed: the service's order is the order the cape
+			 * picker shows. */
+			output.capes.append(capeOut);
 		}
 		output.currentCape = currentCape;
 		output.validity = Katabasis::Validity::Certain;
@@ -361,6 +363,195 @@ namespace Parsers
 		}
 		output.validity = Katabasis::Validity::Certain;
 		qCDebug(minecraftauthLog) << "Mojang response is valid.";
+		return true;
+	}
+
+	namespace
+	{
+		/* Skins of the MHF_Steve and MHF_Alex accounts.
+		 *
+		 * The session server omits the SKIN texture entirely for players who
+		 * never set one, so there is no URL to read. These two are the
+		 * canonical default skins, and pointing at them is the only way to
+		 * show such a player as the game shows them. */
+		const char* const kDefaultSkinUrlClassic =
+			"https://textures.minecraft.net/texture/"
+			"1a4af718455d4aab528e7a61f86fa25e6a369d1768dcb13f7df319a713eb810b";
+		const char* const kDefaultSkinUrlSlim =
+			"https://textures.minecraft.net/texture/"
+			"83cee5ca6afcdb171285aa00e8049c297b2dbeba0efb8ff970a5677a1b644032";
+
+		/* Which of the two default skins a player without a custom one gets.
+		 *
+		 * The game decides this from the Java hashCode of the profile UUID:
+		 * even means the classic model, odd means slim. Reproducing it means
+		 * folding the 128-bit id down the same way Java's UUID.hashCode()
+		 * does -- xor the two halves, then xor the halves of that. */
+		bool defaultsToClassicModel(QString uuid)
+		{
+			uuid.remove('-');
+			if (uuid.size() != 32) {
+				/* Not a UUID we can read; classic is the safer guess, since
+				 * it is what the game falls back to as well. */
+				return true;
+			}
+
+			bool okHigh = false;
+			bool okLow = false;
+			const quint64 high = uuid.left(16).toULongLong(&okHigh, 16);
+			const quint64 low = uuid.right(16).toULongLong(&okLow, 16);
+			if (!okHigh || !okLow) {
+				return true;
+			}
+
+			const quint64 folded = high ^ low;
+			const quint32 hashCode = static_cast<quint32>(folded >> 32) ^
+									 static_cast<quint32>(folded);
+			return hashCode % 2 == 0;
+		}
+
+		/* The session server still hands out plain-http texture URLs. Qt will
+		 * follow them, but there is no reason to fetch a skin in the clear
+		 * when the same host serves it over TLS. */
+		QString preferHttps(QString textureUrl)
+		{
+			return textureUrl.replace(
+				QLatin1String("http://textures.minecraft.net"),
+				QLatin1String("https://textures.minecraft.net"));
+		}
+
+		/* Pull the base64 "textures" property out of a session profile. */
+		QByteArray findTexturePayload(const QJsonArray& properties)
+		{
+			for (const QJsonValue& property : properties) {
+				const QJsonObject entry = property.toObject();
+				if (entry.value("name").toString() !=
+					QLatin1String("textures")) {
+					continue;
+				}
+				const QJsonValue value = entry.value("value");
+				if (!value.isString()) {
+					continue;
+				}
+				const QByteArray decoded = QByteArray::fromBase64(
+					value.toString().toUtf8(),
+					QByteArray::AbortOnBase64DecodingErrors);
+				if (!decoded.isEmpty()) {
+					return decoded;
+				}
+			}
+			return QByteArray();
+		}
+	} // namespace
+
+	bool parseMojangSessionProfile(QByteArray& data, MinecraftProfile& output)
+	{
+		/* This is the *public* profile endpoint
+		 * (sessionserver.mojang.com/session/minecraft/profile/<id>), not the
+		 * authenticated one parseMinecraftProfile() handles. It describes
+		 * somebody else's account, so it carries no entitlements and no cape
+		 * ids -- only texture URLs, and those are buried in a base64 blob. */
+		qCDebug(minecraftauthLog) << "Parsing Mojang session profile...";
+
+		QJsonParseError jsonError;
+		QJsonDocument doc = QJsonDocument::fromJson(data, &jsonError);
+		if (jsonError.error) {
+			qWarning() << "Failed to parse response from sessionserver as "
+						  "JSON:"
+					   << jsonError.errorString();
+			return false;
+		}
+
+		QJsonObject obj = doc.object();
+		if (!getString(obj.value("id"), output.id)) {
+			qWarning() << "Session profile id is not a string";
+			return false;
+		}
+		if (!getString(obj.value("name"), output.name)) {
+			qWarning() << "Session profile name is not a string";
+			return false;
+		}
+
+		const QByteArray texturePayload =
+			findTexturePayload(obj.value("properties").toArray());
+		if (texturePayload.isEmpty()) {
+			qWarning() << "Session profile carries no texture payload";
+			return false;
+		}
+
+		doc = QJsonDocument::fromJson(texturePayload, &jsonError);
+		if (jsonError.error) {
+			qWarning() << "Failed to parse the session texture payload as "
+						  "JSON:"
+					   << jsonError.errorString();
+			return false;
+		}
+
+		const QJsonValue textures = doc.object().value("textures");
+		if (!textures.isObject()) {
+			qWarning() << "Session texture payload has no textures object";
+			return false;
+		}
+
+		Skin skinOut;
+		/* Start from the default this player would be shown with, so that a
+		 * profile with no SKIN entry still yields something displayable. */
+		const bool classic = defaultsToClassicModel(output.id);
+		skinOut.variant = classic ? QStringLiteral("CLASSIC")
+								  : QStringLiteral("SLIM");
+		skinOut.url = classic ? QLatin1String(kDefaultSkinUrlClassic)
+							  : QLatin1String(kDefaultSkinUrlSlim);
+		/* The endpoint does not expose texture ids at all. Nothing downstream
+		 * of here needs one, so it is left empty rather than invented. */
+
+		Cape capeOut;
+		bool hasCape = false;
+
+		const QJsonObject textureObj = textures.toObject();
+		for (auto it = textureObj.constBegin(); it != textureObj.constEnd();
+			 ++it) {
+			if (!it->isObject()) {
+				continue;
+			}
+			const QJsonObject texture = it->toObject();
+
+			if (it.key() == QLatin1String("SKIN")) {
+				if (!getString(texture.value("url"), skinOut.url)) {
+					qWarning() << "Session profile skin url is not a string";
+					return false;
+				}
+				skinOut.url = preferHttps(skinOut.url);
+
+				/* Present only for slim skins; absent means classic, which
+				 * is already what variant holds unless the UUID said
+				 * otherwise -- so read it, but do not require it. */
+				const QJsonValue metadata = texture.value("metadata");
+				if (metadata.isObject()) {
+					getString(metadata.toObject().value("model"),
+							  skinOut.variant);
+				}
+			} else if (it.key() == QLatin1String("CAPE")) {
+				if (!getString(texture.value("url"), capeOut.url)) {
+					qWarning() << "Session profile cape url is not a string";
+					return false;
+				}
+				capeOut.url = preferHttps(capeOut.url);
+				/* No id is published for it either. A stable placeholder is
+				 * enough: this profile is only ever read to copy a look, and
+				 * nothing tries to equip somebody else's cape. */
+				capeOut.id = QStringLiteral("cape");
+				capeOut.alias = QStringLiteral("cape");
+				hasCape = true;
+			}
+		}
+
+		output.skin = skinOut;
+		if (hasCape) {
+			output.capes.clear();
+			output.capes.append(capeOut);
+			output.currentCape = capeOut.id;
+		}
+		output.validity = Katabasis::Validity::Certain;
 		return true;
 	}
 

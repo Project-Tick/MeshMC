@@ -34,6 +34,20 @@ namespace Parsers
 	bool parseMojangResponse(QByteArray& data, Katabasis::Token& output);
 
 	bool parseMinecraftProfile(QByteArray& data, MinecraftProfile& output);
+
+	/* Parse a *public* profile from
+	 * sessionserver.mojang.com/session/minecraft/profile/<id>.
+	 *
+	 * Unlike parseMinecraftProfile(), which reads the signed-in account's own
+	 * profile, this describes an arbitrary player: only id, name and texture
+	 * URLs come back, and the textures arrive as a base64 blob. Used to copy
+	 * another player's skin into the local library.
+	 *
+	 * Fills output.skin (with the default Steve/Alex texture when the player
+	 * never set one) and, if the player has a cape, a single cape entry under
+	 * a placeholder id -- the endpoint publishes no cape ids. */
+	bool parseMojangSessionProfile(QByteArray& data, MinecraftProfile& output);
+
 	bool parseMinecraftEntitlements(QByteArray& data,
 									MinecraftEntitlement& output);
 	bool parseRolloutResponse(QByteArray& data, bool& result);

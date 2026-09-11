@@ -3915,9 +3915,12 @@ int PluginManager::api_account_cape_count(void* mh, const char* account_id)
 
 namespace
 {
-	/* Index → cape pair on the active account, using deterministic
-	 * insertion order (QMap iterates sorted by key, which matches what
-	 * SkinManagerDialog used to do when it walked the QMap directly). */
+	/* Index → cape on the active account.
+	 *
+	 * The index is into the profile service's own ordering, which is what
+	 * MinecraftProfile::capes preserves. It used to be a QMap keyed by cape
+	 * id, so this walked it and got alphabetical-by-UUID order instead --
+	 * stable, but not the order anything else showed the capes in. */
 	const Cape* capeAt(MinecraftAccountPtr a, int index)
 	{
 		if (!a || !a->accountData() || index < 0)
@@ -3925,12 +3928,7 @@ namespace
 		const auto& capes = a->accountData()->minecraftProfile.capes;
 		if (index >= capes.size())
 			return nullptr;
-		int i = 0;
-		for (auto it = capes.cbegin(); it != capes.cend(); ++it, ++i) {
-			if (i == index)
-				return &it.value();
-		}
-		return nullptr;
+		return &capes.at(index);
 	}
 } // namespace
 

@@ -147,6 +147,8 @@ class MainWindow : public QMainWindow
 
     void on_actionViewSkinsFolder_triggered();
 
+	void on_actionManageSkins_triggered();
+
 	void checkForUpdates();
 
 	void on_actionSettings_triggered();
