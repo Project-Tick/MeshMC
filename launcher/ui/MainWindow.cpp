@@ -342,12 +342,6 @@ void MainWindow::setupUi()
 	ui->setupUi(this);
 
 #ifdef Q_OS_MACOS
-	/* Reparented before the menu bar goes, because they outlive it: the
-	 * toolbar buttons pop them up and MacMenuBar reuses them. */
-	ui->foldersMenu->setParent(this);
-	ui->helpMenu->setParent(this);
-	ui->accountMenu->setParent(this);
-	setMenuBar(nullptr);
 	ui->menuBar = nullptr;
 #endif
 
