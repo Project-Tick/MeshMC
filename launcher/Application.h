@@ -328,6 +328,9 @@ class Application : public QApplication
   public:
 	QString m_instanceIdToLaunch;
 	QString m_serverToJoin;
+	/* Save folder name of a world to open on launch, from --world. Mutually
+	 * exclusive with m_serverToJoin; startup rejects both being set. */
+	QString m_worldToJoin;
 	QString m_profileToUse;
 	bool m_liveCheck = false;
 	QUrl m_zipToImport;

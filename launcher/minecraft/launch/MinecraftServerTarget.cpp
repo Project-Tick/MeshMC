@@ -24,8 +24,15 @@
 
 // FIXME: the way this is written, it can't ever do any sort of validation and
 // can accept total junk
-MinecraftServerTarget MinecraftServerTarget::parse(const QString& fullAddress)
+MinecraftServerTarget MinecraftServerTarget::parse(const QString& fullAddress,
+												   bool useWorld)
 {
+	if (useWorld) {
+		MinecraftServerTarget target;
+		target.world = fullAddress;
+		return target;
+	}
+
 	QStringList split = fullAddress.split(":");
 
 	// The logic below replicates the exact logic minecraft uses for parsing
@@ -63,5 +70,5 @@ MinecraftServerTarget MinecraftServerTarget::parse(const QString& fullAddress)
 		}
 	}
 
-	return MinecraftServerTarget{realAddress, realPort};
+	return MinecraftServerTarget{realAddress, realPort, QString()};
 }

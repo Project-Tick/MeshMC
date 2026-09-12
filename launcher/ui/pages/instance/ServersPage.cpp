@@ -727,7 +727,7 @@ void ServersPage::on_actionJoin_triggered()
 	const auto& address = m_model->at(currentServer)->m_address;
 	APPLICATION->launch(m_inst, LaunchMode::Normal,
 						std::make_shared<MinecraftServerTarget>(
-							MinecraftServerTarget::parse(address)));
+							MinecraftServerTarget::parse(address, false)));
 }
 
 #include "ServersPage.moc"

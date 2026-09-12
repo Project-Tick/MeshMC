@@ -78,7 +78,7 @@ CreateShortcutDialog::CreateShortcutDialog(MinecraftInstance* instance,
 				tr("%1 [%2] - Last Played: %3")
 					.arg(world.name(), world.gameType().toTranslatedString(),
 						 world.lastPlayed().toString(Qt::ISODate)),
-				world.name());
+				world.folderName());
 		}
 	}
 
@@ -213,10 +213,6 @@ void CreateShortcutDialog::createShortcut()
 
 	if (ui->targetCheckbox->isChecked()) {
 		if (ui->worldTarget->isChecked()) {
-			/* Unreachable while m_canJoinWorld is always false. When
-			 * quick play does arrive, --world has to be added to the
-			 * command line in Application.cpp alongside --server, or
-			 * the shortcut this writes will be rejected on startup. */
 			shortcut.targetString = tr("world");
 			shortcut.extraArgs
 				<< QStringLiteral("--world")

@@ -348,6 +348,18 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 		return;
 	}
 
+	if (m_instanceIdToLaunch.isEmpty() && !m_worldToJoin.isEmpty()) {
+		qWarning() << "--world can only be used in combination with --launch!";
+		m_status = Application::Failed;
+		return;
+	}
+
+	if (!m_serverToJoin.isEmpty() && !m_worldToJoin.isEmpty()) {
+		qWarning() << "--server and --world cannot be used together!";
+		m_status = Application::Failed;
+		return;
+	}
+
 	if (m_instanceIdToLaunch.isEmpty() && !m_profileToUse.isEmpty()) {
 		qWarning()
 			<< "--profile can only be used in combination with --launch!";
@@ -504,6 +516,13 @@ QHash<QString, QVariant> Application::parseCommandLine(int& argc, char** argv)
 	parser.addDocumentation("server",
 							"Join the specified server on launch (only valid "
 							"in combination with --launch)");
+	// --world
+	parser.addOption("world");
+	parser.addShortOpt("world", 'w');
+	parser.addDocumentation("world",
+							"Open the specified singleplayer world on launch, "
+							"by its save folder name (only valid in "
+							"combination with --launch)");
 	// --profile
 	parser.addOption("profile");
 	parser.addShortOpt("profile", 'a');
@@ -571,6 +590,7 @@ QHash<QString, QVariant> Application::parseCommandLine(int& argc, char** argv)
 
 	m_instanceIdToLaunch = args["launch"].toString();
 	m_serverToJoin = args["server"].toString();
+	m_worldToJoin = args["world"].toString();
 	m_profileToUse = args["profile"].toString();
 	m_liveCheck = args["alive"].toBool();
 	m_zipToImport = args["import"].toUrl();
@@ -732,6 +752,9 @@ bool Application::initPeerInstance()
 			if (!m_serverToJoin.isEmpty()) {
 				launch.args["server"] = m_serverToJoin;
 			}
+			if (!m_worldToJoin.isEmpty()) {
+				launch.args["world"] = m_worldToJoin;
+			}
 			if (!m_profileToUse.isEmpty()) {
 				launch.args["profile"] = m_profileToUse;
 			}
@@ -821,6 +844,9 @@ void Application::setupPaths(const QString& binPath, const QString& origcwdPath,
 	}
 	if (!m_serverToJoin.isEmpty()) {
 		qInfo().noquote() << "Address of server to join  :" << m_serverToJoin;
+	}
+	if (!m_worldToJoin.isEmpty()) {
+		qInfo().noquote() << "Name of world to join      :" << m_worldToJoin;
 	}
 	qInfo().noquote() << "<> Paths set.";
 
@@ -1490,8 +1516,12 @@ void Application::performMainStartupAction()
 			if (!m_serverToJoin.isEmpty()) {
 				// FIXME: validate the server string
 				serverToJoin.reset(new MinecraftServerTarget(
-					MinecraftServerTarget::parse(m_serverToJoin)));
+					MinecraftServerTarget::parse(m_serverToJoin, false)));
 				qDebug() << "   Launching with server" << m_serverToJoin;
+			} else if (!m_worldToJoin.isEmpty()) {
+				serverToJoin.reset(new MinecraftServerTarget(
+					MinecraftServerTarget::parse(m_worldToJoin, true)));
+				qDebug() << "   Launching with world" << m_worldToJoin;
 			}
 
 			if (!m_profileToUse.isEmpty()) {
@@ -1576,6 +1606,7 @@ void Application::messageReceived(const QByteArray& message)
 	} else if (command == "launch") {
 		QString id = received.args["id"];
 		QString server = received.args["server"];
+		QString world = received.args["world"];
 		QString profile = received.args["profile"];
 
 		InstancePtr instance;
@@ -1594,7 +1625,10 @@ void Application::messageReceived(const QByteArray& message)
 		MinecraftServerTargetPtr serverObject = nullptr;
 		if (!server.isEmpty()) {
 			serverObject = std::make_shared<MinecraftServerTarget>(
-				MinecraftServerTarget::parse(server));
+				MinecraftServerTarget::parse(server, false));
+		} else if (!world.isEmpty()) {
+			serverObject = std::make_shared<MinecraftServerTarget>(
+				MinecraftServerTarget::parse(world, true));
 		}
 
 		MinecraftAccountPtr accountObject;
