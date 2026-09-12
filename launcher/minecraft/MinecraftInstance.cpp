@@ -569,8 +569,17 @@ QStringList MinecraftInstance::processMinecraftArgs(
 	}
 
 	if (serverToJoin && !serverToJoin->address.isEmpty()) {
-		args_pattern += " --server " + serverToJoin->address;
-		args_pattern += " --port " + QString::number(serverToJoin->port);
+		if (profile->hasTrait("feature:is_quick_play_multiplayer")) {
+			args_pattern += " --quickPlayMultiplayer " +
+							serverToJoin->address + ":" +
+							QString::number(serverToJoin->port);
+		} else {
+			args_pattern += " --server " + serverToJoin->address;
+			args_pattern += " --port " + QString::number(serverToJoin->port);
+		}
+	} else if (serverToJoin && !serverToJoin->world.isEmpty() &&
+			   profile->hasTrait("feature:is_quick_play_singleplayer")) {
+		args_pattern += " --quickPlaySingleplayer " + serverToJoin->world;
 	}
 
 	QMap<QString, QString> token_mapping;
@@ -636,6 +645,8 @@ MinecraftInstance::createLaunchScript(AuthSessionPtr session,
 		launchScript += "serverAddress " + serverToJoin->address + "\n";
 		launchScript +=
 			"serverPort " + QString::number(serverToJoin->port) + "\n";
+	} else if (serverToJoin && !serverToJoin->world.isEmpty()) {
+		launchScript += "worldName " + serverToJoin->world + "\n";
 	}
 
 	// generic minecraft params
@@ -1016,10 +1027,11 @@ MinecraftInstance::createLaunchTask(AuthSessionPtr session,
 		QString fullAddress =
 			m_settings->get("JoinServerOnLaunchAddress").toString();
 		serverToJoin.reset(new MinecraftServerTarget(
-			MinecraftServerTarget::parse(fullAddress)));
+			MinecraftServerTarget::parse(fullAddress, false)));
 	}
 
-	if (serverToJoin && serverToJoin->port == 25565) {
+	if (serverToJoin && !serverToJoin->address.isEmpty() &&
+		serverToJoin->port == 25565) {
 		// Resolve server address to join on launch
 		auto* step = new LookupServerAddress(pptr);
 		step->setLookupAddress(serverToJoin->address);

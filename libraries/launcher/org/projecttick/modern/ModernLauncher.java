@@ -52,6 +52,8 @@ import java.util.List;
  *   natives      - Path to the native libraries directory
  *   serverAddress - Server address for direct-connect on launch (optional)
  *   serverPort    - Server port for direct-connect on launch (optional)
+ *   worldName     - Singleplayer world save folder to open on launch (optional)
+ *   traits        - Version traits, used to pick quick play vs. legacy args
  */
 public class ModernLauncher implements MeshMC
 {
@@ -124,20 +126,51 @@ public class ModernLauncher implements MeshMC
             params.allSafe("param", Collections.<String>emptyList())
         );
 
-        // Direct-connect: server address / port are passed as separate keys and
-        // must be appended to game args manually (processMinecraftArgs skips them
-        // when a launch script is used).
+        // Launch destination: a server or a world, never both. Passed as
+        // separate keys and appended here rather than by the C++ side, because
+        // processMinecraftArgs skips them when a launch script is used.
+        //
+        // Which argument the game understands depends on its version:
+        // Minecraft 1.20 (23w14a) removed --server/--port and replaced them
+        // with quick play. The version's traits say which it is, so ask them
+        // instead of guessing -- passing the wrong pair makes the game either
+        // ignore the destination or refuse to start.
+        List<String> traits = params.allSafe("traits", Collections.<String>emptyList());
+        boolean quickPlayMultiplayer = traits.contains("feature:is_quick_play_multiplayer");
+        boolean quickPlaySingleplayer = traits.contains("feature:is_quick_play_singleplayer");
+
         String serverAddress = params.firstSafe("serverAddress", "");
         String serverPort    = params.firstSafe("serverPort", "");
+        String worldName     = params.firstSafe("worldName", "");
+
         if (serverAddress != null && !serverAddress.isEmpty())
         {
-            gameArgs.add("--server");
-            gameArgs.add(serverAddress);
-            if (serverPort != null && !serverPort.isEmpty())
+            if (quickPlayMultiplayer)
             {
-                gameArgs.add("--port");
-                gameArgs.add(serverPort);
+                gameArgs.add("--quickPlayMultiplayer");
+                // quickPlayMultiplayer takes one "host:port" argument, so an
+                // absent port has to become the default rather than nothing.
+                String port = (serverPort == null || serverPort.isEmpty()) ? "25565" : serverPort;
+                gameArgs.add(serverAddress + ":" + port);
             }
+            else
+            {
+                gameArgs.add("--server");
+                gameArgs.add(serverAddress);
+                if (serverPort != null && !serverPort.isEmpty())
+                {
+                    gameArgs.add("--port");
+                    gameArgs.add(serverPort);
+                }
+            }
+        }
+        else if (worldName != null && !worldName.isEmpty() && quickPlaySingleplayer)
+        {
+            // No pre-quick-play way to open a world exists, so unlike the
+            // server case there is nothing to fall back to: a version without
+            // the trait just launches to the main menu.
+            gameArgs.add("--quickPlaySingleplayer");
+            gameArgs.add(worldName);
         }
 
         // --- Build the full command ---
