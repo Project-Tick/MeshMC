@@ -194,20 +194,6 @@ namespace
 		return resolved;
 	}
 
-	/// Build one menu from its table and hang it off @p bar, if not empty.
-	void addSpecMenu(QMenuBar* bar, const QMainWindow* window,
-					 const MenuSpec& spec)
-	{
-		auto* menu =
-			new QMenu(QCoreApplication::translate(kContext, spec.title), bar);
-
-		if (appendGroup(menu, resolveEntries(window, spec.entries))) {
-			bar->addMenu(menu);
-		} else {
-			delete menu;
-		}
-	}
-
 	/// Read the toggle, defaulting to on while settings are still coming up.
 	bool settingEnabled()
 	{
@@ -283,25 +269,6 @@ void MacMenuBar::reconcile()
 	if (!platformSupported() || !settingEnabled()) {
 		return;
 	}
-
-	attach();
-}
-
-void MacMenuBar::attach()
-{
-	auto* bar = new QMenuBar(m_window);
-	bar->setObjectName(QStringLiteral("macMenuBar"));
-	bar->setNativeMenuBar(true);
-
-	for (const MenuSpec& spec : kLeadingMenus) {
-		addSpecMenu(bar, m_window, spec);
-	}
-	attachWindowMenu(bar);
-	attachAccounts(bar);
-	addSpecMenu(bar, m_window, kHelpMenu);
-
-	m_bar = bar;
-	m_window->setMenuBar(bar);
 }
 
 void MacMenuBar::detach()
@@ -319,53 +286,6 @@ void MacMenuBar::detach()
 		m_window->setMenuBar(nullptr);
 		m_bar.clear();
 	}
-}
-
-void MacMenuBar::attachWindowMenu(QMenuBar* bar)
-{
-	auto* menu =
-		new QMenu(QCoreApplication::translate(kContext, "&Window"), bar);
-
-	QAction* minimize =
-		menu->addAction(QCoreApplication::translate(kContext, "Minimize"));
-	minimize->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
-	connect(minimize, &QAction::triggered, m_window, &QWidget::showMinimized);
-
-	QAction* zoom =
-		menu->addAction(QCoreApplication::translate(kContext, "Zoom"));
-	connect(zoom, &QAction::triggered, this, [this] {
-		if (m_window->isMaximized()) {
-			m_window->showNormal();
-		} else {
-			m_window->showMaximized();
-		}
-	});
-
-	/* Deliberately no Close item. Shutting the main window ends the
-	 * session, and Cmd-W is far too easy to hit by accident for that. */
-
-	bar->addMenu(menu);
-}
-
-void MacMenuBar::attachAccounts(QMenuBar* bar)
-{
-	m_accountSource = m_window->findChild<QMenu*>(
-		QString::fromLatin1(kAccountMenuName), Qt::FindDirectChildrenOnly);
-	if (!m_accountSource) {
-		return;
-	}
-
-	/* The window rebuilds that menu from scratch whenever the account list
-	 * moves, so watch it rather than reading it once. Copying is safer than
-	 * sharing the menu outright: the toolbar button owns the original as a
-	 * popup, and the native bar wants a menu of its own. */
-	m_accountSource->installEventFilter(this);
-
-	m_accounts =
-		new QMenu(QCoreApplication::translate(kContext, "&Accounts"), bar);
-	bar->addMenu(m_accounts.data());
-
-	syncAccounts();
 }
 
 void MacMenuBar::syncAccounts()
