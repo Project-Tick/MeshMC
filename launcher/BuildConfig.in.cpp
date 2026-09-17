@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 #include <QObject>
 
 const Config BuildConfig;

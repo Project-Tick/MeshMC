@@ -18,7 +18,7 @@
  */
 
 #include "PackageManifest.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 #include <Json.h>
 #include <QDir>
 #include <QDirIterator>

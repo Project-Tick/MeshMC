@@ -26,9 +26,9 @@
 #include "meta/Version.h"
 #include "VersionFile.h"
 #include "minecraft/PackProfile.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "OneSixVersionFormat.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include <assert.h>
 

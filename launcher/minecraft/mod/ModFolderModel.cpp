@@ -19,7 +19,7 @@
  */
 
 #include "ModFolderModel.h"
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <QCryptographicHash>
 #include <QDateTime>
 #include <QFile>

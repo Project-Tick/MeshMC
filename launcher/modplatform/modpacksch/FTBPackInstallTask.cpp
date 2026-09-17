@@ -21,15 +21,15 @@
 
 #include "FTBPackInstallTask.h"
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "Json.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 #include "net/ChecksumValidator.h"
 #include "settings/INISettingsObject.h"
 
-#include "BuildConfig.h"
-#include "Application.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/Application>
 
 #include <QDateTime>
 

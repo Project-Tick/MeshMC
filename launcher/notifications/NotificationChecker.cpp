@@ -26,7 +26,7 @@
 
 #include "net/Download.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 NotificationChecker::NotificationChecker(QObject* parent) : QObject(parent) {}
 

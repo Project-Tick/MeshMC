@@ -21,7 +21,7 @@
 #include "rainbow.h"
 #include <QStyleFactory>
 #include <QDir>
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 void ITheme::apply(bool)
 {

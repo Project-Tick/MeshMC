@@ -19,7 +19,7 @@
  */
 
 #include "InstanceWindow.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include <QScrollBar>
 #include <QMessageBox>
@@ -32,7 +32,7 @@
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/widgets/PageContainer.h"
 
-#include "InstancePageProvider.h"
+#include <MeshMC/Core/InstancePageProvider>
 
 #include "icons/IconList.h"
 

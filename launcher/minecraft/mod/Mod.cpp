@@ -23,7 +23,7 @@
 
 #include "Mod.h"
 #include <QDebug>
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 
 namespace
 {

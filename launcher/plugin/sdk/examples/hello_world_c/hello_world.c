@@ -12,7 +12,7 @@
  * only meaningful from C++.
  */
 
-#include "plugin/sdk/mmco_c_sdk.h"
+#include <MMCO/C.h>
 #include <stdio.h>
 
 /* Module declaration. Note the trailing ';' — MMCO_DEFINE_MODULE

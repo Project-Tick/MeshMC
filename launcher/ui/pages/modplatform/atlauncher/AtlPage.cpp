@@ -28,7 +28,7 @@
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "ui/dialogs/VersionSelectDialog.h"
 
-#include <BuildConfig.h>
+#include <MeshMC/Core/BuildConfig>
 
 AtlPage::AtlPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::AtlPage), dialog(dialog)

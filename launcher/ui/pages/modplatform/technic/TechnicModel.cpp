@@ -19,8 +19,8 @@
  */
 
 #include "TechnicModel.h"
-#include "Application.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
 #include "Json.h"
 
 #include <QIcon>

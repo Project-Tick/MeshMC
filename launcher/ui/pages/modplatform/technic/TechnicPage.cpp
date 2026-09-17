@@ -30,8 +30,8 @@
 #include "modplatform/technic/SolderPackInstallTask.h"
 #include "Json.h"
 
-#include "Application.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
 
 TechnicPage::TechnicPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::TechnicPage), dialog(dialog)

@@ -23,7 +23,7 @@
 
 #include <QDir>
 #include <QObject>
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <Json.h>
 
 const QString CustomTheme::manifestFileName = QStringLiteral("theme.json");

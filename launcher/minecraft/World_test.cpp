@@ -23,7 +23,7 @@
 #include <QTemporaryDir>
 #include <optional>
 
-#include "GZip.h"
+#include <MeshMC/Core/GZip>
 #include "minecraft/World.h"
 
 /*

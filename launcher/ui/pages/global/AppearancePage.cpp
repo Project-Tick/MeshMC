@@ -20,8 +20,8 @@
 #include "AppearancePage.h"
 #include "ui_AppearancePage.h"
 
-#include "Application.h"
-#include "DesktopServices.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/DesktopServices>
 #include "ui/themes/ITheme.h"
 #include "ui/themes/ThemeManager.h"
 #include "ui/themes/CatPack.h"

@@ -22,10 +22,10 @@
 
 #include <QKeyEvent>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "Json.h"
 #include "ui/dialogs/NewInstanceDialog.h"
-#include "InstanceImportTask.h"
+#include <MeshMC/Core/InstanceImportTask>
 #include "FlameModel.h"
 #include "modplatform/flame/FlameApi.h"
 

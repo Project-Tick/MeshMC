@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "NewInstanceDialog.h"
 #include "ui_NewInstanceDialog.h"
 

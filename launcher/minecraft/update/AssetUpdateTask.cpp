@@ -24,7 +24,7 @@
 #include "net/ChecksumValidator.h"
 #include "minecraft/AssetsUtils.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 AssetUpdateTask::AssetUpdateTask(MinecraftInstance* inst)
 {

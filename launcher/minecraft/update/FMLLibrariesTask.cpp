@@ -19,13 +19,13 @@
 
 #include "FMLLibrariesTask.h"
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "minecraft/VersionFilterData.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 
-#include "BuildConfig.h"
-#include "Application.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/Application>
 
 FMLLibrariesTask::FMLLibrariesTask(MinecraftInstance* inst)
 {

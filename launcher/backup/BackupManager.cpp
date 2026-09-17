@@ -18,7 +18,7 @@
  */
 
 #include "backup/BackupManager.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include <QDir>
 #include <QFile>
@@ -28,7 +28,7 @@
 #include <QDebug>
 #include <memory>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "MMCZip.h"
 
 namespace

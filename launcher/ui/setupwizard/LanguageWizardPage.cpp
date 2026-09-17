@@ -23,7 +23,7 @@
 
 #include "ui/widgets/LanguageSelectionWidget.h"
 #include <QVBoxLayout>
-#include <BuildConfig.h>
+#include <MeshMC/Core/BuildConfig>
 
 LanguageWizardPage::LanguageWizardPage(QWidget* parent) : BaseWizardPage(parent)
 {

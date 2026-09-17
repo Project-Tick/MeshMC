@@ -26,8 +26,8 @@
 #include <QStringList>
 #include <QDebug>
 
-#include "BuildConfig.h"
-#include "Application.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/Application>
 
 ImgurAlbumCreation::ImgurAlbumCreation(QList<ScreenShot::Ptr> screenshots)
 	: NetAction(), m_screenshots(screenshots)

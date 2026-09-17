@@ -23,13 +23,13 @@
 #include "minecraft/launch/PrintInstanceInfo.h"
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include <QRegularExpression>
 
 #include "MMCStrings.h"
 #include "pathmatcher/RegexpMatcher.h"
 #include "pathmatcher/MultiMatcher.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "java/JavaVersion.h"
 #include "MMCTime.h"
 

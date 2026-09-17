@@ -19,7 +19,7 @@
 
 #include "ReleaseArchive.h"
 
-#include "ArchiveOpen.h"
+#include <MeshMC/Core/ArchiveOpen>
 
 #include <archive.h>
 #include <archive_entry.h>

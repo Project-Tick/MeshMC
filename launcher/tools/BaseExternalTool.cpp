@@ -26,7 +26,7 @@
 #include <windows.h>
 #endif
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 
 BaseExternalTool::BaseExternalTool(SettingsObjectPtr settings,
 								   InstancePtr instance, QObject* parent)

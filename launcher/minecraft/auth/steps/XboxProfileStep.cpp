@@ -22,7 +22,7 @@
 #include <QNetworkRequest>
 #include <QUrlQuery>
 
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"

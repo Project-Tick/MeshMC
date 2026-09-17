@@ -23,7 +23,7 @@
 
 #include "settings/SettingsObject.h"
 #include "launch/LaunchTask.h"
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 
 class JProfiler : public BaseProfiler
 {

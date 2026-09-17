@@ -22,7 +22,7 @@
 #include <QProcess>
 #include <QObjectPtr.h>
 #include "LogModel.h"
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include "MessageLevel.h"
 #include "LoggedProcess.h"
 #include "LaunchStep.h"

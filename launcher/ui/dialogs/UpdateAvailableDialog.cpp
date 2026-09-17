@@ -23,8 +23,8 @@
 #include <QIcon>
 #include <QPushButton>
 
-#include "BuildConfig.h"
-#include "HoeDown.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/HoeDown>
 #include "MMCStrings.h"
 
 UpdateAvailableDialog::UpdateAvailableDialog(const QString& currentVersion,

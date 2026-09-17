@@ -18,9 +18,9 @@
  */
 
 #include "PasteUpload.h"
-#include "BuildConfig.h"
-#include "Application.h"
-#include "Logging.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/Logging>
 
 #include <QDir>
 #include <QDebug>

@@ -23,7 +23,7 @@
 #include <launch/LaunchTask.h>
 
 #include "MMCZip.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include <QDir>
 
 #ifdef major

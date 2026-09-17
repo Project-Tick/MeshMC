@@ -22,7 +22,7 @@
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 LibrariesTask::LibrariesTask(MinecraftInstance* inst)
 {

@@ -22,8 +22,8 @@
 
 #include <net/Download.h>
 #include <net/ChecksumValidator.h>
-#include <FileSystem.h>
-#include <BuildConfig.h>
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/BuildConfig>
 
 void Library::getApplicableFiles(OpSys system, QStringList& jar,
 								 QStringList& native, QStringList& native32,

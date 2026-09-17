@@ -32,7 +32,7 @@
 #include <QVBoxLayout>
 #include <utility>
 
-#include "DesktopServices.h"
+#include <MeshMC/Core/DesktopServices>
 #include "modplatform/ModDownloadTypes.h"
 #include "ui/dialogs/DownloadContentDialog.h"
 #include "ui/widgets/ContentFilterWidget.h"

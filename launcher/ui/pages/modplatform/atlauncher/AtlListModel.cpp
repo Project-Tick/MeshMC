@@ -20,7 +20,7 @@
 
 #include "AtlListModel.h"
 
-#include <BuildConfig.h>
+#include <MeshMC/Core/BuildConfig>
 #include <Application.h>
 #include <Json.h>
 

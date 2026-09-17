@@ -20,7 +20,7 @@
 
 #include <QFile>
 
-#include "BaseInstaller.h"
+#include <MeshMC/Core/BaseInstaller>
 #include "minecraft/MinecraftInstance.h"
 
 BaseInstaller::BaseInstaller() {}

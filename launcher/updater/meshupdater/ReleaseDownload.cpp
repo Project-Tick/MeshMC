@@ -28,7 +28,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 
 ReleaseDownload::ReleaseDownload(QNetworkAccessManager* network,
 								 const QUrl& url, const QString& path,

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceTask>
 #include "net/HttpMetaCache.h"
 #include "net/NetJob.h"
 

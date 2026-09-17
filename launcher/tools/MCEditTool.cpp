@@ -24,7 +24,7 @@
 #include <QUrl>
 
 #include "settings/SettingsObject.h"
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include "minecraft/MinecraftInstance.h"
 
 MCEditTool::MCEditTool(SettingsObjectPtr settings)

@@ -35,7 +35,7 @@
 #include <memory>
 #include <utility>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "archive/ExportToZipTask.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"

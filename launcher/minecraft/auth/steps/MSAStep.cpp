@@ -25,7 +25,7 @@
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 MSAStep::MSAStep(AccountData* data, Action action)
 	: AuthStep(data), m_action(action)

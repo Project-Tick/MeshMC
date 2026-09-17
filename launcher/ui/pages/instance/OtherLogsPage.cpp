@@ -27,7 +27,7 @@
 
 #include "RecursiveFileSystemWatcher.h"
 #include <GZip.h>
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <QShortcut>
 
 OtherLogsPage::OtherLogsPage(QString path, IPathMatcher::Ptr fileFilter,

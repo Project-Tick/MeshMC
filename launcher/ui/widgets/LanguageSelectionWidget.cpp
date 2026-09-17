@@ -23,7 +23,7 @@
 #include <QTreeView>
 #include <QHeaderView>
 #include <QLabel>
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "translations/TranslationsModel.h"
 
 LanguageSelectionWidget::LanguageSelectionWidget(QWidget* parent)

@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceTask>
 
 #include "minecraft/MinecraftInstance.h"
 #include "net/Mode.h"

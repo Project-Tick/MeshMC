@@ -30,11 +30,11 @@
 #include "ui/widgets/CustomCommands.h"
 
 #include "JavaCommon.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include "java/JavaInstallList.h"
 #include "java/download/JavaRuntime.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 InstanceSettingsPage::InstanceSettingsPage(BaseInstance* inst, QWidget* parent)
 	: QWidget(parent), ui(new Ui::InstanceSettingsPage), m_instance(inst)

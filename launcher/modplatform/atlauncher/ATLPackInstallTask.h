@@ -24,7 +24,7 @@
 #include <meta/VersionList.h>
 #include "ATLPackManifest.h"
 
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceTask>
 #include "net/NetJob.h"
 #include "settings/INISettingsObject.h"
 #include "minecraft/MinecraftInstance.h"

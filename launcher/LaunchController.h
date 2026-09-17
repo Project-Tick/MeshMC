@@ -19,7 +19,7 @@
 
 #pragma once
 #include <QObject>
-#include <BaseInstance.h>
+#include <MeshMC/Core/BaseInstance>
 #include <tools/BaseProfiler.h>
 
 #include "minecraft/launch/MinecraftServerTarget.h"

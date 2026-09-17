@@ -24,10 +24,10 @@
 
 #include "translations/TranslationsModel.h"
 #include <Application.h>
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 
 #include <QAbstractButton>
-#include <BuildConfig.h>
+#include <MeshMC/Core/BuildConfig>
 
 SetupWizard::SetupWizard(QWidget* parent) : QWizard(parent)
 {

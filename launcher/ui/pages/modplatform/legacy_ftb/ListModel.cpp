@@ -18,7 +18,7 @@
  */
 
 #include "ListModel.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include "net/HttpMetaCache.h"
 #include "net/NetJob.h"
@@ -31,7 +31,7 @@
 
 #include <RWStorage.h>
 
-#include <BuildConfig.h>
+#include <MeshMC/Core/BuildConfig>
 
 namespace LegacyFTB
 {

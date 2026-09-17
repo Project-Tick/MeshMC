@@ -27,8 +27,8 @@
 #include <QDebug>
 
 #include "InstanceView.h"
-#include "BaseInstance.h"
-#include "InstanceList.h"
+#include <MeshMC/Core/BaseInstance>
+#include <MeshMC/Core/InstanceList>
 #include <QIcon>
 #include <QTextEdit>
 

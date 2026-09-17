@@ -1,3 +1,5 @@
+// launcher/plugin/PluginManager.h
+// @meshmc-public: MeshMC/Plugin/Manager
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -19,7 +21,7 @@
 
 #pragma once
 
-#include "plugin/PluginLoader.h"
+#include <MeshMC/Plugin/Loader>
 #include "plugin/PluginMetadata.h"
 #include "plugin/PluginHooks.h"
 #include "plugin/PluginAPI.h"

@@ -1,3 +1,5 @@
+// launcher/InstanceCreationTask.h
+// @meshmc-public: MeshMC/Core/InstanceCreationTask
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -23,8 +25,8 @@
 #include "net/NetJob.h"
 #include <QUrl>
 #include "settings/SettingsObject.h"
-#include "BaseVersion.h"
-#include "InstanceTask.h"
+#include <MeshMC/Core/BaseVersion>
+#include <MeshMC/Core/InstanceTask>
 
 class InstanceCreationTask : public InstanceTask
 {

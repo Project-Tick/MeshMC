@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "BaseVersion.h"
+#include <MeshMC/Core/BaseVersion>
 
 #include <QJsonObject>
 #include <QStringList>

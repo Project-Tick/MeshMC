@@ -24,7 +24,7 @@
 
 #include <memory>
 
-#include "FastFileIconProvider.h"
+#include <MeshMC/Core/FastFileIconProvider>
 #include "tasks/Task.h"
 
 class FileIgnoreProxy;

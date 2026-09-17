@@ -25,7 +25,7 @@
 #include <QTextDocument>
 #include <QTimer>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
 #include "net/NetJob.h"

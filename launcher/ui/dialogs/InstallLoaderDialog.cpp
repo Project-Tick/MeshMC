@@ -6,7 +6,7 @@
 #include <QPushButton>
 #include <QSignalBlocker>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "Version.h"
 #include "meta/Index.h"
 #include "meta/VersionList.h"

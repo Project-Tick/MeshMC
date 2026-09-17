@@ -28,7 +28,7 @@
 
 #include "settings/SettingsObject.h"
 #include "tools/BaseProfiler.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 PasteEEPage::PasteEEPage(QWidget* parent)
 	: QWidget(parent), ui(new Ui::PasteEEPage)

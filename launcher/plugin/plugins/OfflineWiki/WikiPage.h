@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "plugin/sdk/mmco_cxx_sdk.hpp"
+#include <MMCO/CXX>
 
 class QTextBrowser;
 class QListWidget;

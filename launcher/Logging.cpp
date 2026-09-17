@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include "MMCStrings.h"
 

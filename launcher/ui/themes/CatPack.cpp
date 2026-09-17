@@ -18,7 +18,7 @@
  */
 
 #include "CatPack.h"
-#include "Exception.h"
+#include <MeshMC/Core/Exception>
 
 #include <QDate>
 #include <QDir>

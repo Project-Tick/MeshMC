@@ -20,10 +20,10 @@
 #include "LegacyUpgradePage.h"
 #include "ui_LegacyUpgradePage.h"
 
-#include "InstanceList.h"
+#include <MeshMC/Core/InstanceList>
 #include "minecraft/legacy/LegacyInstance.h"
 #include "minecraft/legacy/LegacyUpgradeTask.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/ProgressDialog.h"

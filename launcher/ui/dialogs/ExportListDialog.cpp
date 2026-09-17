@@ -39,8 +39,8 @@
 
 #include <utility>
 
-#include "FileSystem.h"
-#include "HoeDown.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/HoeDown>
 
 namespace
 {

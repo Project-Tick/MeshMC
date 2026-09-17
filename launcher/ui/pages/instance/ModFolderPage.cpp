@@ -32,8 +32,8 @@
 #include <QSortFilterProxyModel>
 #include <QStandardPaths>
 
-#include "Application.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/FS>
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "ui/dialogs/BlockedModsDialog.h"
 
@@ -44,7 +44,7 @@
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/GuiUtil.h"
 
-#include "DesktopServices.h"
+#include <MeshMC/Core/DesktopServices>
 
 #include "minecraft/mod/ModFolderModel.h"
 #include "minecraft/mod/Mod.h"

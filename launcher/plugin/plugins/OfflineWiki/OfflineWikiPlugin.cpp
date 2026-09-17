@@ -7,7 +7,7 @@
  * there is no bundle management and no ZIM support.
  */
 
-#include "plugin/sdk/mmco_cxx_sdk.hpp"
+#include <MMCO/CXX>
 #include "WikiRepoBundle.h"
 #include "WikiPage.h"
 

@@ -32,13 +32,13 @@
 
 #include "java/JavaInstall.h"
 #include "java/JavaUtils.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/widgets/VersionSelectWidget.h"
 
-#include "Application.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
 
 JavaSettingsWidget::JavaSettingsWidget(QWidget* parent) : QWidget(parent)
 {

@@ -21,12 +21,12 @@
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 #include <QIcon>
-#include "Application.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
 
 #include <net/NetJob.h>
 
-#include "HoeDown.h"
+#include <MeshMC/Core/HoeDown>
 #include "MMCStrings.h"
 
 namespace

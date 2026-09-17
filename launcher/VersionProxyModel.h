@@ -19,9 +19,9 @@
 
 #pragma once
 #include <QAbstractProxyModel>
-#include "BaseVersionList.h"
+#include <MeshMC/Core/BaseVersionList>
 
-#include <Filter.h>
+#include <MeshMC/Core/Filter>
 
 class VersionFilterModel;
 

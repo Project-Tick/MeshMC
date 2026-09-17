@@ -19,7 +19,7 @@
 
 #include "CreateBackup.h"
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include "launch/LaunchTask.h"
 
 void CreateBackup::executeTask()

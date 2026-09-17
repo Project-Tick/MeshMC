@@ -20,7 +20,7 @@
 #include "ServersPage.h"
 #include "ui_ServersPage.h"
 
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <sstream>
 #include <io/stream_reader.h>
 #include <tag_string.h>

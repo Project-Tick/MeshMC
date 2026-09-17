@@ -22,7 +22,7 @@
 #include <QNetworkRequest>
 #include <QHttpMultiPart>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 CapeChange::CapeChange(QObject* parent, QString token, QString cape)
 	: Task(parent), m_capeId(cape), m_token(token)

@@ -28,7 +28,7 @@
 #include "MMCZip.h"
 
 #include "settings/INIFile.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 namespace
 {

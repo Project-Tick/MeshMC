@@ -18,11 +18,11 @@
  * limitations under the License.
  */
 
-#include "InstanceImportTask.h"
-#include "BaseInstance.h"
-#include "FileSystem.h"
-#include "Application.h"
-#include "InstanceList.h"
+#include <MeshMC/Core/InstanceImportTask>
+#include <MeshMC/Core/BaseInstance>
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/InstanceList>
 #include "MMCZip.h"
 #include "archive/ExtractZipTask.h"
 #include "NullInstance.h"
@@ -43,7 +43,7 @@
 #include "modplatform/technic/TechnicPackProcessor.h"
 
 #include "icons/IconList.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "modplatform/flame/FlameApi.h"
 #include "modplatform/modrinth/ModrinthApi.h"
 #include "ui/dialogs/BlockedModsDialog.h"

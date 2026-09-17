@@ -30,7 +30,7 @@
 #include "LaunchProfile.h"
 #include "Component.h"
 #include "ProfileUtils.h"
-#include "BaseVersion.h"
+#include <MeshMC/Core/BaseVersion>
 #include "MojangDownloadInfo.h"
 #include "net/Mode.h"
 

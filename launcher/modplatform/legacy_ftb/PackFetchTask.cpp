@@ -21,8 +21,8 @@
 #include "PrivatePackManager.h"
 
 #include <QDomDocument>
-#include "BuildConfig.h"
-#include "Application.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/Application>
 
 namespace LegacyFTB
 {

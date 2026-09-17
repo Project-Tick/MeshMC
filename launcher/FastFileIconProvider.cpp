@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-#include "FastFileIconProvider.h"
+#include <MeshMC/Core/FastFileIconProvider>
 
 #include <QApplication>
 #include <QStyle>

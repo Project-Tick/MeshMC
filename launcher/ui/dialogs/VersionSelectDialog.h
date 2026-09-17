@@ -23,7 +23,7 @@
 #include <QDialog>
 #include <QSortFilterProxyModel>
 
-#include "BaseVersionList.h"
+#include <MeshMC/Core/BaseVersionList>
 
 class QVBoxLayout;
 class QHBoxLayout;

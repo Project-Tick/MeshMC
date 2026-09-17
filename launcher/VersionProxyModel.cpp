@@ -18,7 +18,7 @@
  */
 
 #include "VersionProxyModel.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include <QSortFilterProxyModel>
 #include <QPixmapCache>
 #include <Version.h>

@@ -20,7 +20,7 @@
 #pragma once
 #include <optional>
 
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceTask>
 #include "net/NetJob.h"
 #include "meta/Index.h"
 #include "meta/Version.h"

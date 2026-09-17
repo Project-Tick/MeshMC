@@ -1,3 +1,5 @@
+// launcher/InstanceList.h
+// @meshmc-public: MeshMC/Core/InstanceList
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -27,7 +29,7 @@
 #include <QHash>
 #include <QStringList>
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 
 #include "QObjectPtr.h"
 

@@ -22,12 +22,12 @@
 
 #include <QTabBar>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "meta/Index.h"
 #include "meta/VersionList.h"
 #include "ui/dialogs/NewInstanceDialog.h"
-#include "Filter.h"
-#include "InstanceCreationTask.h"
+#include <MeshMC/Core/Filter>
+#include <MeshMC/Core/InstanceCreationTask>
 
 VanillaPage::VanillaPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), dialog(dialog), ui(new Ui::VanillaPage)

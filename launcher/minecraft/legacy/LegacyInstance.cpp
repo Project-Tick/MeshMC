@@ -28,7 +28,7 @@
 #include "minecraft/legacy/LegacyModList.h"
 #include "minecraft/WorldList.h"
 #include <MMCZip.h>
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 
 LegacyInstance::LegacyInstance(SettingsObjectPtr globalSettings,
 							   SettingsObjectPtr settings,

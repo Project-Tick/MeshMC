@@ -18,7 +18,7 @@
  */
 
 #include "ImgurUpload.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 
 #include <QNetworkRequest>
 #include <QHttpMultiPart>

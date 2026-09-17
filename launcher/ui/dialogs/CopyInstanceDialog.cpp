@@ -21,17 +21,17 @@
 #include <QLayout>
 #include <QPushButton>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "CopyInstanceDialog.h"
 #include "ui_CopyInstanceDialog.h"
 
 #include "ui/dialogs/IconPickerDialog.h"
 
-#include "BaseVersion.h"
+#include <MeshMC/Core/BaseVersion>
 #include "icons/IconList.h"
 #include "tasks/Task.h"
-#include "BaseInstance.h"
-#include "InstanceList.h"
+#include <MeshMC/Core/BaseInstance>
+#include <MeshMC/Core/InstanceList>
 
 CopyInstanceDialog::CopyInstanceDialog(InstancePtr original, QWidget* parent)
 	: QDialog(parent), ui(new Ui::CopyInstanceDialog), m_original(original)

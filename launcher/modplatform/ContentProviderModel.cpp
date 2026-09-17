@@ -24,7 +24,7 @@
 #include <QUrl>
 #include <utility>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"

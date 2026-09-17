@@ -628,6 +628,40 @@ else()
     message(FATAL_ERROR "Platform not supported")
 endif()
 
+################################ shimgen ################################
+
+set(SHIMGEN_BUILD_DIR ${CMAKE_BINARY_DIR}/tools/shimgen-build)
+
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_SOURCE_DIR}/launcher/tools/shimgen -B ${SHIMGEN_BUILD_DIR}
+    RESULT_VARIABLE SHIMGEN_CFG_RC
+)
+if(NOT SHIMGEN_CFG_RC EQUAL 0)
+    message(FATAL_ERROR "shimgen configure başarısız")
+endif()
+
+execute_process(
+    COMMAND ${CMAKE_COMMAND} --build ${SHIMGEN_BUILD_DIR} --config Release
+    RESULT_VARIABLE SHIMGEN_BUILD_RC
+)
+if(NOT SHIMGEN_BUILD_RC EQUAL 0)
+    message(FATAL_ERROR "shimgen compile failed")
+endif()
+
+find_program(SHIMGEN_EXE shimgen
+    PATHS ${SHIMGEN_BUILD_DIR} ${SHIMGEN_BUILD_DIR}/Release
+    NO_DEFAULT_PATH
+)
+
+execute_process(
+    COMMAND ${SHIMGEN_EXE} ${CMAKE_SOURCE_DIR}/launcher ${CMAKE_SOURCE_DIR}/launcher/headers
+    RESULT_VARIABLE SHIMGEN_RUN_RC
+)
+
+if(NOT SHIMGEN_RUN_RC EQUAL 0)
+    message(FATAL_ERROR "shim generation has been failed")
+endif()
+
 ################################ Included Libs ################################
 
 include(ExternalProject)
@@ -691,8 +725,6 @@ install(FILES "${JAVACHECK_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "JavaChec
 install(FILES "${NEWLAUNCH_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "NewLaunch.jar")
 
 ############################### Built Artifacts ###############################
-
-add_subdirectory(buildconfig)
 
 add_subdirectory(launcher/crashreporter)
 

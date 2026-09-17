@@ -29,9 +29,9 @@
 #include <QUuid>
 #include <QTimer>
 
-#include "Exception.h"
+#include <MeshMC/Core/Exception>
 #include "minecraft/OneSixVersionFormat.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "meta/Index.h"
 #include "minecraft/MinecraftInstance.h"
 #include "Json.h"
@@ -40,7 +40,7 @@
 #include "PackProfile_p.h"
 #include "ComponentUpdateTask.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 PackProfile::PackProfile(MinecraftInstance* instance) : QAbstractListModel()
 {

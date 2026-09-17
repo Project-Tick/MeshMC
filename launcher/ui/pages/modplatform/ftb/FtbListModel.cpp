@@ -20,8 +20,8 @@
 
 #include "FtbListModel.h"
 
-#include "BuildConfig.h"
-#include "Application.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/Application>
 #include "Json.h"
 
 #include <QPainter>

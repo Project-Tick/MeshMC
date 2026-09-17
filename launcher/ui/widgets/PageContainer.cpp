@@ -36,8 +36,8 @@
 
 #include "ui/widgets/IconLabel.h"
 
-#include "DesktopServices.h"
-#include "Application.h"
+#include <MeshMC/Core/DesktopServices>
+#include <MeshMC/Core/Application>
 
 class PageEntryFilterModel : public QSortFilterProxyModel
 {

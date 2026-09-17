@@ -36,15 +36,15 @@
 #include <QMimeData>
 #include <algorithm>
 
-#include "InstanceList.h"
-#include "BaseInstance.h"
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceList>
+#include <MeshMC/Core/BaseInstance>
+#include <MeshMC/Core/InstanceTask>
 #include "settings/INISettingsObject.h"
 #include "minecraft/legacy/LegacyInstance.h"
 #include "NullInstance.h"
 #include "minecraft/MinecraftInstance.h"
-#include "FileSystem.h"
-#include "ExponentialSeries.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/ExponentialSeries>
 #include "WatchLock.h"
 
 const static int GROUP_FILE_FORMAT_VERSION = 1;

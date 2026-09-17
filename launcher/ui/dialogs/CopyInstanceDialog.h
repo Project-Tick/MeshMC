@@ -21,8 +21,8 @@
 #pragma once
 
 #include <QDialog>
-#include "BaseVersion.h"
-#include <BaseInstance.h>
+#include <MeshMC/Core/BaseVersion>
+#include <MeshMC/Core/BaseInstance>
 
 class BaseInstance;
 

@@ -39,8 +39,8 @@
 #include "java/download/JavaRuntime.h"
 
 #include "settings/SettingsObject.h"
-#include <FileSystem.h>
-#include "Application.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Application>
 #include "Sys.h"
 
 JavaPage::JavaPage(QWidget* parent) : QWidget(parent), ui(new Ui::JavaPage)

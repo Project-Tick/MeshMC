@@ -19,7 +19,7 @@
  */
 
 #include "settings/INIFile.h"
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 
 #include <QFile>
 #include <QTextStream>

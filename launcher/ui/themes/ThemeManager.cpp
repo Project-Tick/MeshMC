@@ -26,8 +26,8 @@
 #include "GreenLightTheme.h"
 #include "CustomTheme.h"
 
-#include "Application.h"
-#include "Exception.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/Exception>
 #include <QApplication>
 #include <QDebug>
 #include <QDirIterator>

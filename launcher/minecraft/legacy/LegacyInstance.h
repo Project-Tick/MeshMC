@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include "launch/LaunchTask.h"
 
 class ModFolderModel;

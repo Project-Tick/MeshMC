@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-#include "Filter.h"
+#include <MeshMC/Core/Filter>
 
 Filter::~Filter() {}
 

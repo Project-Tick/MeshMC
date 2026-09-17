@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-#include "Application.h"
-#include "BuildConfig.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/FS>
 
 #include <QDir>
 #include <QProcess>

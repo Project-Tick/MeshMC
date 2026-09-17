@@ -19,8 +19,8 @@
  */
 
 #include "IconList.h"
-#include "Logging.h"
-#include <FileSystem.h>
+#include <MeshMC/Core/Logging>
+#include <MeshMC/Core/FS>
 #include <QMap>
 #include <QEventLoop>
 #include <QMimeData>

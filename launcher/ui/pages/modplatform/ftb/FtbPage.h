@@ -25,7 +25,7 @@
 
 #include <QWidget>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "ui/pages/BasePage.h"
 #include "tasks/Task.h"
 

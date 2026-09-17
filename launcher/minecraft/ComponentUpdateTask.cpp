@@ -31,7 +31,7 @@
 #include "net/Mode.h"
 #include "OneSixVersionFormat.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 /*
  * This is responsible for loading the components of a component list AND

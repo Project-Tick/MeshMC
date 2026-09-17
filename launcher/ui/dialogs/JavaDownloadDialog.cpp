@@ -31,9 +31,9 @@
 #include <QHeaderView>
 #include <QSplitter>
 
-#include "Application.h"
-#include "BuildConfig.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/FS>
 #include "Json.h"
 #include "java/JavaUtils.h"
 #include "net/Download.h"

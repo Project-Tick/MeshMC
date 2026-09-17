@@ -24,7 +24,7 @@
 
 // For ShortcutTarget, which the instance stores alongside the path so
 // that it can clean its own shortcuts up.
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 
 class QWidget;
 

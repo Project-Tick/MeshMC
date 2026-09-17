@@ -25,7 +25,7 @@
 #include <QVBoxLayout>
 #include <QKeyEvent>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "settings/SettingsObject.h"
 
 #include "ui/widgets/IconLabel.h"

@@ -20,7 +20,7 @@
 #include "LogPage.h"
 #include "ui_LogPage.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include <QIcon>
 #include <QScrollBar>
@@ -33,7 +33,7 @@
 #include "ui/GuiUtil.h"
 #include "ui/ColorCache.h"
 
-#include <BuildConfig.h>
+#include <MeshMC/Core/BuildConfig>
 
 class LogFormatProxyModel : public QIdentityProxyModel
 {

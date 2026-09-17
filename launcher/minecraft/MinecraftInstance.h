@@ -18,7 +18,7 @@
  */
 
 #pragma once
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include <java/JavaVersion.h>
 #include "minecraft/mod/Mod.h"
 #include <QProcess>

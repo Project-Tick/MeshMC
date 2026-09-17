@@ -29,10 +29,10 @@
 #include <settings/Setting.h>
 
 #include <QDebug>
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 #include "java/JavaUtils.h"
 #include "java/JavaInstallList.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 #define IBUS "@im=ibus"
 

@@ -18,7 +18,7 @@
  */
 
 #include "FlameModel.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "modplatform/flame/FlameApi.h"
 #include <Json.h>
 

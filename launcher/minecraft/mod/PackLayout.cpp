@@ -24,7 +24,7 @@
 #include <QString>
 #include <QStringList>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "MMCZip.h"
 
 namespace

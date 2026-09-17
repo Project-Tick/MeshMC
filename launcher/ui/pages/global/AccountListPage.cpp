@@ -39,9 +39,9 @@
 #include "minecraft/auth/AccountTask.h"
 #include "minecraft/services/SkinDelete.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 
 AccountListPage::AccountListPage(QWidget* parent)
 	: QMainWindow(parent), ui(new Ui::AccountListPage)

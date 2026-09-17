@@ -19,15 +19,15 @@
  */
 
 #include "BaseEntity.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
 #include "net/NetJob.h"
 #include "Json.h"
 
-#include "BuildConfig.h"
-#include "Application.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/Application>
 
 class ParsingValidator : public Net::Validator
 {

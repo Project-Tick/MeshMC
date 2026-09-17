@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "NewComponentDialog.h"
 #include "ui_NewComponentDialog.h"
 

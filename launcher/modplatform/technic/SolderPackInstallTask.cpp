@@ -20,7 +20,7 @@
 
 #include "SolderPackInstallTask.h"
 
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <Json.h>
 #include <QtConcurrentRun>
 #include <MMCZip.h>

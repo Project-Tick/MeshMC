@@ -24,7 +24,7 @@
 #include "minecraft/OneSixVersionFormat.h"
 #include "minecraft/Library.h"
 #include "net/HttpMetaCache.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 class LibraryTest : public QObject
 {

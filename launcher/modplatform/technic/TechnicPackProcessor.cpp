@@ -20,7 +20,7 @@
 
 #include "TechnicPackProcessor.h"
 
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <Json.h>
 #include <minecraft/MinecraftInstance.h>
 #include <minecraft/PackProfile.h>

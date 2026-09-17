@@ -1,3 +1,5 @@
+// launcher/InstancePageProvider.h
+// @meshmc-public: MeshMC/Core/InstancePageProvider
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -20,7 +22,7 @@
 #pragma once
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/legacy/LegacyInstance.h"
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include "ui/pages/BasePage.h"
 #include "ui/pages/BasePageProvider.h"
 #include "ui/pages/instance/LogPage.h"
@@ -40,8 +42,8 @@
 #include "ui/pages/instance/ServersPage.h"
 #include "ui/pages/instance/GameOptionsPage.h"
 #include "ui/pages/instance/BackupPage.h"
-#include "Application.h"
-#include "plugin/PluginManager.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Plugin/Manager>
 #include "plugin/PluginHooks.h"
 
 class InstancePageProvider : public QObject, public BasePageProvider

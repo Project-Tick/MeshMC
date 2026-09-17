@@ -1,3 +1,5 @@
+// launcher/InstanceImportTask.h
+// @meshmc-public: MeshMC/Core/InstanceImportTask
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -20,7 +22,7 @@
 
 #pragma once
 
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceTask>
 #include "net/HttpMetaCache.h"
 #include "net/NetJob.h"
 #include <QUrl>

@@ -21,8 +21,8 @@
 #include "DirectJavaLaunch.h"
 #include <launch/LaunchTask.h>
 #include <minecraft/MinecraftInstance.h>
-#include <FileSystem.h>
-#include <Commandline.h>
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Commandline>
 #include <QStandardPaths>
 
 DirectJavaLaunch::DirectJavaLaunch(LaunchTask* parent) : LaunchStep(parent)

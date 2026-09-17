@@ -19,7 +19,7 @@
 
 #include "ModrinthModel.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "Json.h"
 #include "modplatform/modrinth/ModrinthApi.h"
 

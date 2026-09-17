@@ -30,7 +30,7 @@
 #include <QOperatingSystemVersion>
 #include <QVariant>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
 

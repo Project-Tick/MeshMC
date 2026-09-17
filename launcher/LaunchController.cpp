@@ -19,8 +19,8 @@
 
 #include "LaunchController.h"
 #include "minecraft/auth/AccountList.h"
-#include "Application.h"
-#include "plugin/PluginManager.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Plugin/Manager>
 #include "plugin/PluginHooks.h"
 
 #include "ui/MainWindow.h"
@@ -39,7 +39,7 @@
 #include <QHostAddress>
 #include <QPushButton>
 
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 #include "JavaCommon.h"
 #include "tasks/Task.h"
 #include "minecraft/auth/AccountTask.h"
