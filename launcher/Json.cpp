@@ -22,7 +22,7 @@
 
 #include <QFile>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include <math.h>
 
 namespace Json

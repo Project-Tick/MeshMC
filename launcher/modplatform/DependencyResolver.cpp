@@ -18,7 +18,7 @@
  */
 
 #include "DependencyResolver.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "Json.h"
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/ContentType.h"

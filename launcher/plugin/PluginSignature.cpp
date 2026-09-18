@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-#include "plugin/PluginSignature.h"
-#include "plugin/MMCOFormat.h"
-#include "Logging.h"
+#include <MeshMC/Plugin/Signature>
+#include <MeshMC/Plugin/MMCOFormat>
+#include <MeshMC/Core/Logging>
 #include <QByteArray>
 #include <QDateTime>
 #include <QDebug>

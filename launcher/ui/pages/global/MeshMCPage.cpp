@@ -29,11 +29,11 @@
 #include "updater/ExternalUpdater.h"
 
 #include "settings/SettingsObject.h"
-#include <FileSystem.h>
-#include "InstanceList.h"
-#include "DesktopServices.h"
-#include "Application.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/InstanceList>
+#include <MeshMC/Core/DesktopServices>
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
 
 #include <QApplication>
 #include <QProcess>

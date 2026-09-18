@@ -18,7 +18,7 @@
  */
 
 #include "JavaDownloadTask.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include <QDir>
 #include <QProcess>
@@ -26,8 +26,8 @@
 #include <QDirIterator>
 #include <QFileInfo>
 
-#include "Application.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/FS>
 #include "Json.h"
 #include "net/Download.h"
 #include "net/ChecksumValidator.h"

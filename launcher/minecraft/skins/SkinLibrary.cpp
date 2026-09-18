@@ -31,7 +31,7 @@
 
 #include <algorithm>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "Json.h"
 
 namespace

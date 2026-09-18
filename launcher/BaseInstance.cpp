@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 
 #include <QFileInfo>
 #include <QDir>
@@ -34,9 +34,9 @@
 #include "settings/Setting.h"
 #include "settings/OverrideSetting.h"
 
-#include "FileSystem.h"
-#include "Commandline.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Commandline>
+#include <MeshMC/Core/BuildConfig>
 
 BaseInstance::BaseInstance(SettingsObjectPtr globalSettings,
 						   SettingsObjectPtr settings, const QString& rootDir)

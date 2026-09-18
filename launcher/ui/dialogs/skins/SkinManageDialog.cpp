@@ -40,9 +40,9 @@
 #include <QSizePolicy>
 #include <QUrl>
 
-#include "Application.h"
-#include "DesktopServices.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/DesktopServices>
+#include <MeshMC/Core/FS>
 #include "QObjectPtr.h"
 #include "settings/SettingsObject.h"
 

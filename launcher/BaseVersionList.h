@@ -1,3 +1,5 @@
+// launcher/BaseVersionList.h
+// @meshmc-public: MeshMC/Core/BaseVersionList
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -24,7 +26,7 @@
 #include <QVariant>
 #include <QAbstractListModel>
 
-#include "BaseVersion.h"
+#include <MeshMC/Core/BaseVersion>
 #include "tasks/Task.h"
 #include "QObjectPtr.h"
 

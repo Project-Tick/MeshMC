@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-#include "DesktopServices.h"
+#include <MeshMC/Core/DesktopServices>
 #include <QDir>
 #include <QDesktopServices>
 #include <QFile>

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "BaseVersion.h"
+#include <MeshMC/Core/BaseVersion>
 #include "JavaVersion.h"
 
 struct JavaInstall : public BaseVersion {

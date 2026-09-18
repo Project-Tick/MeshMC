@@ -25,7 +25,7 @@
 
 #include "ui/dialogs/NewInstanceDialog.h"
 
-#include "InstanceImportTask.h"
+#include <MeshMC/Core/InstanceImportTask>
 
 class UrlValidator : public QValidator
 {

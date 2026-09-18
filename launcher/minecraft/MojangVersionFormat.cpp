@@ -24,7 +24,7 @@
 #include "Json.h"
 using namespace Json;
 #include "ParseUtils.h"
-#include <BuildConfig.h>
+#include <MeshMC/Core/BuildConfig>
 
 static const int CURRENT_MINIMUM_MESHMC_VERSION = 18;
 

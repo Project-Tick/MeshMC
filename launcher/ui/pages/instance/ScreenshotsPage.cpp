@@ -46,8 +46,8 @@
 #include "tasks/SequentialTask.h"
 
 #include "RWStorage.h"
-#include <FileSystem.h>
-#include <DesktopServices.h>
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/DesktopServices>
 
 typedef RWStorage<QString, QIcon> SharedIconCache;
 typedef std::shared_ptr<SharedIconCache> SharedIconCachePtr;

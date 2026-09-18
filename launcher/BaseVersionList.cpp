@@ -18,8 +18,8 @@
  * limitations under the License.
  */
 
-#include "BaseVersionList.h"
-#include "BaseVersion.h"
+#include <MeshMC/Core/BaseVersionList>
+#include <MeshMC/Core/BaseVersion>
 
 BaseVersionList::BaseVersionList(QObject* parent) : QAbstractListModel(parent)
 {

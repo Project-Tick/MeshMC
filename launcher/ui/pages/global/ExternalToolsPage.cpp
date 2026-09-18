@@ -28,8 +28,8 @@
 
 #include "settings/SettingsObject.h"
 #include "tools/BaseProfiler.h"
-#include <FileSystem.h>
-#include "Application.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Application>
 #include <tools/MCEditTool.h>
 
 ExternalToolsPage::ExternalToolsPage(QWidget* parent)

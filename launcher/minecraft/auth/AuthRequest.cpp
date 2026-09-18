@@ -24,10 +24,10 @@
 #include <QBuffer>
 #include <QUrlQuery>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "AuthRequest.h"
 #include "plugin/PluginHooks.h"
-#include "plugin/PluginManager.h"
+#include <MeshMC/Plugin/Manager>
 #include "katabasis/Globals.h"
 
 namespace

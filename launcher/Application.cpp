@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-#include "Application.h"
-#include "BuildConfig.h"
-#include "plugin/PluginManager.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Plugin/Manager>
 
 #include "ui/MainWindow.h"
 #include "ui/InstanceWindow.h"
@@ -52,7 +52,7 @@
 
 #include "ui/pagedialog/PageDialog.h"
 
-#include "ApplicationMessage.h"
+#include <MeshMC/Core/ApplicationMessage>
 
 #include <iostream>
 
@@ -72,7 +72,7 @@
 #include <QDebug>
 #include <QStyleFactory>
 
-#include "InstanceList.h"
+#include <MeshMC/Core/InstanceList>
 
 #include <minecraft/auth/AccountList.h>
 #include "icons/IconList.h"
@@ -102,9 +102,9 @@
 #include "translations/TranslationsModel.h"
 #include "meta/Index.h"
 
-#include <Commandline.h>
-#include <FileSystem.h>
-#include <DesktopServices.h>
+#include <MeshMC/Core/Commandline>
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/DesktopServices>
 #include <LocalPeer.h>
 #include "MMCZip.h"
 
@@ -113,7 +113,7 @@
 #include "minecraft/Component.h"
 
 #include "Sys.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 #include "MMCStrings.h"
 
 #if defined Q_OS_WIN32

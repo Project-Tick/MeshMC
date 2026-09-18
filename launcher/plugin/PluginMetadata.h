@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "plugin/MMCOFormat.h"
+#include <MeshMC/Plugin/MMCOFormat>
 #include "plugin/PluginAPI.h"
 
 #include <QString>

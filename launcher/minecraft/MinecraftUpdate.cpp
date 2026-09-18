@@ -26,10 +26,10 @@
 #include <QTextStream>
 #include <QDataStream>
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include "minecraft/PackProfile.h"
 #include "minecraft/Library.h"
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 
 #include "update/FoldersTask.h"
 #include "update/LibrariesTask.h"

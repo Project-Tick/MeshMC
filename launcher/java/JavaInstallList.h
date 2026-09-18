@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 
-#include "BaseVersionList.h"
+#include <MeshMC/Core/BaseVersionList>
 #include "tasks/Task.h"
 
 #include "JavaCheckerJob.h"

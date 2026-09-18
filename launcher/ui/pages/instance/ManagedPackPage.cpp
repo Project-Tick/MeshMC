@@ -33,11 +33,11 @@
 #include <QUrlQuery>
 #include <memory>
 
-#include "Application.h"
-#include "HoeDown.h"
-#include "InstanceImportTask.h"
-#include "InstanceList.h"
-#include "InstanceTask.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/HoeDown>
+#include <MeshMC/Core/InstanceImportTask>
+#include <MeshMC/Core/InstanceList>
+#include <MeshMC/Core/InstanceTask>
 #include "MMCStrings.h"
 #include "QObjectPtr.h"
 #include "modplatform/flame/FlameApi.h"

@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include "plugin/sdk/mmco_cxx_sdk.hpp"
+#include <MMCO/CXX>
 #include "vendor/gamemode_client.h"
 #include <QFileInfo>
 #include <QStandardPaths>

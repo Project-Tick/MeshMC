@@ -18,15 +18,15 @@
  * limitations under the License.
  */
 
-#include "FileIgnoreProxy.h"
+#include <MeshMC/Core/FileIgnoreProxy>
 
 #include <QDebug>
 #include <QDir>
 #include <QFileSystemModel>
 #include <QStack>
 
-#include "Exception.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Exception>
+#include <MeshMC/Core/FS>
 #include "MMCStrings.h"
 
 FileIgnoreProxy::FileIgnoreProxy(QString root, QObject* parent)

@@ -27,7 +27,7 @@
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "modplatform/modpacksch/FTBPackInstallTask.h"
 
-#include "HoeDown.h"
+#include <MeshMC/Core/HoeDown>
 
 FtbPage::FtbPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::FtbPage), dialog(dialog)

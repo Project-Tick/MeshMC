@@ -32,7 +32,7 @@
 
 #include <cmath>
 
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 #include "minecraft/skins/SkinEntry.h"
 #include "rainbow.h"
 #include "ui/dialogs/skins/render/CubeMesh.h"

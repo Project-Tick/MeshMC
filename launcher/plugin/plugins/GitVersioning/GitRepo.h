@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "plugin/sdk/mmco_cxx_sdk.hpp"
+#include <MMCO/CXX>
 #include <QObject>
 #include <QProcess>
 

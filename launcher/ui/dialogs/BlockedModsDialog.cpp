@@ -19,7 +19,7 @@
 
 #include "BlockedModsDialog.h"
 
-#include <DesktopServices.h>
+#include <MeshMC/Core/DesktopServices>
 #include <QDir>
 #include <QFont>
 #include <QGridLayout>

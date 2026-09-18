@@ -24,9 +24,9 @@
 
 #include "MMCZip.h"
 #include "TechnicPackProcessor.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 Technic::SingleZipPackInstallTask::SingleZipPackInstallTask(
 	const QUrl& sourceUrl, const QString& minecraftVersion)

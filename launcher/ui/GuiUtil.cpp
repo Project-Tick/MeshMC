@@ -28,10 +28,10 @@
 #include "ui/dialogs/CustomMessageBox.h"
 #include "net/PasteUpload.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include <settings/SettingsObject.h>
-#include <DesktopServices.h>
-#include <BuildConfig.h>
+#include <MeshMC/Core/DesktopServices>
+#include <MeshMC/Core/BuildConfig>
 
 QString GuiUtil::uploadPaste(const QString& text, QWidget* parentWidget)
 {

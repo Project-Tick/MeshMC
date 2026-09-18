@@ -1,3 +1,5 @@
+// launcher/FileSystem.h
+// @meshmc-public: MeshMC/Core/FS
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -20,7 +22,7 @@
 
 #pragma once
 
-#include "Exception.h"
+#include <MeshMC/Core/Exception>
 #include "pathmatcher/IPathMatcher.h"
 
 #include <QDir>

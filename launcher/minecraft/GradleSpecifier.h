@@ -22,7 +22,7 @@
 #include <QString>
 #include <QStringList>
 #include <QRegularExpression>
-#include "DefaultVariable.h"
+#include <MeshMC/Core/DefaultVariable>
 
 struct GradleSpecifier {
 	GradleSpecifier()

@@ -24,7 +24,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#include "ArchiveOpen.h"
+#include <MeshMC/Core/ArchiveOpen>
 #include "updater/meshupdater/ReleaseArchive.h"
 
 /*!

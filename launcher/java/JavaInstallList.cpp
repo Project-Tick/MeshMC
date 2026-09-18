@@ -23,7 +23,7 @@
 
 #include <QDebug>
 
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 #include "java/JavaInstallList.h"
 #include "java/JavaCheckerJob.h"
 #include "java/JavaUtils.h"

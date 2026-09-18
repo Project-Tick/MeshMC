@@ -22,9 +22,9 @@
 
 #include <QPushButton>
 
-#include "Application.h"
-#include "DesktopServices.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/DesktopServices>
+#include <MeshMC/Core/FS>
 #include "icons/IconList.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/ShortcutUtils.h"

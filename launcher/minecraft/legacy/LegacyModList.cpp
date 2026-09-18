@@ -19,7 +19,7 @@
  */
 
 #include "LegacyModList.h"
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <QString>
 #include <QDebug>
 

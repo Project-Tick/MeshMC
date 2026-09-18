@@ -21,7 +21,7 @@
 #include <QTemporaryDir>
 #include "TestUtil.h"
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "minecraft/mod/ModFolderModel.h"
 
 class ModFolderModelTest : public QObject

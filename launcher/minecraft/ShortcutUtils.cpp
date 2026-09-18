@@ -28,11 +28,11 @@
 #include <QUrl>
 #include <QWidget>
 
-#include "Application.h"
-#include "BaseInstance.h"
-#include "BuildConfig.h"
-#include "DesktopServices.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BaseInstance>
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/DesktopServices>
+#include <MeshMC/Core/FS>
 #include "icons/IconList.h"
 
 namespace ShortcutUtils

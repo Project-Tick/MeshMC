@@ -24,9 +24,9 @@
 #include <QSaveFile>
 #include "World.h"
 
-#include "GZip.h"
+#include <MeshMC/Core/GZip>
 #include <MMCZip.h>
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <sstream>
 #include <io/stream_reader.h>
 #include <tag_string.h>

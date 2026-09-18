@@ -18,7 +18,7 @@
  */
 
 #include "JavaWizardPage.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include <QVBoxLayout>
 #include <QGroupBox>
@@ -32,7 +32,7 @@
 
 #include "Sys.h"
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "java/JavaInstall.h"
 #include "java/JavaUtils.h"
 #include "JavaCommon.h"

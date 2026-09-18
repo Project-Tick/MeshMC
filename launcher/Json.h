@@ -30,7 +30,7 @@
 #include <QVariant>
 #include <memory>
 
-#include "Exception.h"
+#include <MeshMC/Core/Exception>
 
 namespace Json
 {

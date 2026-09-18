@@ -22,7 +22,7 @@
 
 #include <QWidget>
 #include <QSortFilterProxyModel>
-#include "BaseVersionList.h"
+#include <MeshMC/Core/BaseVersionList>
 
 class VersionProxyModel;
 class VersionListView;

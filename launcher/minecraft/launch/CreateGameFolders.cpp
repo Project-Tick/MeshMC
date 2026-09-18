@@ -20,7 +20,7 @@
 #include "CreateGameFolders.h"
 #include "minecraft/MinecraftInstance.h"
 #include "launch/LaunchTask.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 CreateGameFolders::CreateGameFolders(LaunchTask* parent) : LaunchStep(parent) {}
 

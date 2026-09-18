@@ -28,7 +28,7 @@
 #include <QSaveFile>
 #include <QSet>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 namespace PackContents
 {

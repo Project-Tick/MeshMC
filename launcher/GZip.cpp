@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-#include "GZip.h"
+#include <MeshMC/Core/GZip>
 #include <zlib.h>
 #include <QByteArray>
 

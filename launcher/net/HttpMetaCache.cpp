@@ -19,7 +19,7 @@
  */
 
 #include "HttpMetaCache.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 #include <QFileInfo>
 #include <QFile>

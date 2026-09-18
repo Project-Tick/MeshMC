@@ -27,7 +27,7 @@
 #include <QProcess>
 #include <QTimer>
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include "minecraft/auth/MinecraftAccount.h"
 #include "net/NetJob.h"
 

@@ -23,7 +23,7 @@
 #include <QUrl>
 #include <QWidget>
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include "modplatform/ManagedPackVersions.h"
 #include "net/NetJob.h"
 #include "ui/pages/BasePage.h"

@@ -20,7 +20,7 @@
 #include "FileSink.h"
 #include <QFile>
 #include <QFileInfo>
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 namespace Net
 {

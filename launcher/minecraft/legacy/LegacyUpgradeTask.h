@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceTask>
 #include "net/NetJob.h"
 #include <QUrl>
 #include <QFuture>
 #include <QFutureWatcher>
 #include "settings/SettingsObject.h"
-#include "BaseVersion.h"
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseVersion>
+#include <MeshMC/Core/BaseInstance>
 
 class LegacyUpgradeTask : public InstanceTask
 {

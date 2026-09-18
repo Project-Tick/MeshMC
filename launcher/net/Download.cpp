@@ -24,13 +24,13 @@
 #include <QDateTime>
 #include <QDebug>
 
-#include "FileSystem.h"
-#include "Logging.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Logging>
 #include "ChecksumValidator.h"
 #include "MetaCacheSink.h"
 #include "ByteArraySink.h"
 
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 #include "modplatform/flame/FlameApi.h"
 #include "modplatform/modrinth/ModrinthApi.h"
 

@@ -25,7 +25,7 @@
 #include <QDebug>
 
 #include "SkinUtils.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include "ui/dialogs/ProgressDialog.h"
 

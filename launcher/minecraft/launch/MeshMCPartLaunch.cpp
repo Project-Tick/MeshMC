@@ -25,9 +25,9 @@
 
 #include "launch/LaunchTask.h"
 #include "minecraft/MinecraftInstance.h"
-#include "FileSystem.h"
-#include "Commandline.h"
-#include "Application.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Commandline>
+#include <MeshMC/Core/Application>
 
 MeshMCPartLaunch::MeshMCPartLaunch(LaunchTask* parent) : LaunchStep(parent)
 {

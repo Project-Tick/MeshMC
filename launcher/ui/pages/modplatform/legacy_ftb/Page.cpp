@@ -22,7 +22,7 @@
 
 #include <QInputDialog>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/NewInstanceDialog.h"

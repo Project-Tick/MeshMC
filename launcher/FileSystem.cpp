@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 #include <QDir>
 #include <QFile>
@@ -44,7 +44,7 @@
 #include <utime.h>
 #endif
 
-#include "DesktopServices.h"
+#include <MeshMC/Core/DesktopServices>
 
 namespace FS
 {

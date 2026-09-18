@@ -17,13 +17,13 @@
  * limitations under the License.
  */
 
-#include "plugin/PluginManager.h"
+#include <MeshMC/Plugin/Manager>
 #include "plugin/PluginDependencyResolver.h"
-#include "plugin/PluginSignature.h"
-#include "Application.h"
-#include "BuildConfig.h"
-#include "InstanceList.h"
-#include "BaseInstance.h"
+#include <MeshMC/Plugin/Signature>
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/InstanceList>
+#include <MeshMC/Core/BaseInstance>
 #include "MMCZip.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
@@ -47,7 +47,7 @@
 #include "java/JavaInstallList.h"
 #include "java/JavaInstall.h"
 #include "settings/SettingsObject.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 #include <QDateTime>
 #include <QDir>
 #include <QDirIterator>

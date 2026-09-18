@@ -21,7 +21,7 @@
 
 #include <QDebug>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 namespace LegacyFTB
 {

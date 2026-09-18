@@ -22,7 +22,7 @@
 #include "launch/LaunchTask.h"
 #include "MMCZip.h"
 #include "minecraft/OpSys.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/mod/ModFolderModel.h"
 

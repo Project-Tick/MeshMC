@@ -22,7 +22,7 @@
 #include <QStandardPaths>
 #include "TestUtil.h"
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 class FileSystemTest : public QObject
 {

@@ -22,7 +22,7 @@
 #include <QNetworkRequest>
 #include <QHttpMultiPart>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 SkinDelete::SkinDelete(QObject* parent, QString token)
 	: Task(parent), m_token(token)

@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <climits>
 
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 #include "ui/dialogs/UpdateAvailableDialog.h"
 
 namespace

@@ -34,12 +34,12 @@
 
 #include <QDebug>
 
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <QSaveFile>
 
 #include <chrono>
 
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 enum AccountListVersion { MojangOnly = 2, MojangMSA = 3 };
 

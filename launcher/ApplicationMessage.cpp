@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-#include "ApplicationMessage.h"
+#include <MeshMC/Core/ApplicationMessage>
 
 #include <QJsonDocument>
 #include <QJsonObject>

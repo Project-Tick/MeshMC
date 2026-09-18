@@ -22,7 +22,7 @@
 #include <QWidget>
 #include <memory>
 
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include "backup/BackupManager.h"
 #include "ui/pages/BasePage.h"
 #include <Application.h>

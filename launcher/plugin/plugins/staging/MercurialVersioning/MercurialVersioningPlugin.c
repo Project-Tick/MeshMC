@@ -26,7 +26,7 @@
  *     the feature is enabled via the plugin setting.
  */
 
-#include "plugin/sdk/mmco_c_sdk.h"
+#include <MMCO/C.h>
 
 #include <stdio.h>
 #include <string.h>

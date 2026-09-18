@@ -20,7 +20,7 @@
 
 #include "SkinUtils.h"
 #include "net/HttpMetaCache.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include <QFile>
 #include <QPainter>

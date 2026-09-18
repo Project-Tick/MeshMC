@@ -19,7 +19,7 @@
  */
 
 #include "WorldList.h"
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <QMimeData>
 #include <QUrl>
 #include <QUuid>

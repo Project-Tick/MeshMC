@@ -25,10 +25,10 @@
 #include <QSignalBlocker>
 #include <QTreeWidgetItem>
 
-#include "Application.h"
-#include "BuildConfig.h"
-#include "plugin/PluginManager.h"
-#include "plugin/PluginSignature.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Plugin/Manager>
+#include <MeshMC/Plugin/Signature>
 
 namespace
 {

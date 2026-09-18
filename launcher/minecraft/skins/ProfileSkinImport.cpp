@@ -25,7 +25,7 @@
 #include <QJsonParseError>
 #include <QUrl>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "minecraft/auth/AccountData.h"
 #include "minecraft/auth/Parsers.h"
 #include "net/Download.h"

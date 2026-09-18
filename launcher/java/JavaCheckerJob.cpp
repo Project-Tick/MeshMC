@@ -19,7 +19,7 @@
  */
 
 #include "JavaCheckerJob.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include <QDebug>
 

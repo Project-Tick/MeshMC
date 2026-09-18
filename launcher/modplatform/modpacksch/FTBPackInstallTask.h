@@ -23,7 +23,7 @@
 
 #include "FTBPackManifest.h"
 
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceTask>
 #include "net/NetJob.h"
 
 namespace ModpacksCH

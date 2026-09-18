@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <utility>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "minecraft/PackProfile.h"
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/flame/FlameContentModel.h"

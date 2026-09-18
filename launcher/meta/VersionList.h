@@ -21,7 +21,7 @@
 #pragma once
 
 #include "BaseEntity.h"
-#include "BaseVersionList.h"
+#include <MeshMC/Core/BaseVersionList>
 #include <QJsonObject>
 #include <memory>
 

@@ -20,7 +20,7 @@
 #include "POTranslator.h"
 
 #include <QDebug>
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 struct POEntry {
 	QString text;

@@ -18,9 +18,9 @@
  */
 
 #include "IconUtils.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include <QDirIterator>
 
 #include <array>

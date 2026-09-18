@@ -19,7 +19,7 @@
 
 #include "LegacyUpgradeTask.h"
 #include "settings/INISettingsObject.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "NullInstance.h"
 #include "pathmatcher/RegexpMatcher.h"
 #include <QtConcurrentRun>

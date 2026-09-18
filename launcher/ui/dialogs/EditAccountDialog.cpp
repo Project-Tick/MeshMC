@@ -20,7 +20,7 @@
 
 #include "EditAccountDialog.h"
 #include "ui_EditAccountDialog.h"
-#include <DesktopServices.h>
+#include <MeshMC/Core/DesktopServices>
 #include <QUrl>
 
 EditAccountDialog::EditAccountDialog(const QString& text, QWidget* parent,

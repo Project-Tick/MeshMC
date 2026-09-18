@@ -19,7 +19,7 @@
  */
 
 #include "NewsChecker.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include <QByteArray>
 #include <QDomDocument>

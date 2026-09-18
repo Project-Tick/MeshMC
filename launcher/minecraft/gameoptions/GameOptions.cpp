@@ -18,8 +18,8 @@
  */
 
 #include "GameOptions.h"
-#include "FileSystem.h"
-#include "Logging.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Logging>
 #include <QDebug>
 #include <QSaveFile>
 

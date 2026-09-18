@@ -27,7 +27,7 @@
 #include <QVBoxLayout>
 #include <algorithm>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "meta/Index.h"
 #include "meta/Version.h"
 #include "meta/VersionList.h"

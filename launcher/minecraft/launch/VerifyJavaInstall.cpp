@@ -33,13 +33,13 @@
 #include <minecraft/PackProfile.h>
 #include <minecraft/VersionFilterData.h>
 
-#include "Application.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/FS>
 #include "Json.h"
 #include "java/JavaUtils.h"
 
 #ifndef MeshMC_DISABLE_JAVA_DOWNLOADER
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 #include <optional>
 #include "net/Download.h"
 #endif

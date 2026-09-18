@@ -27,8 +27,8 @@
 #include <QMessageBox>
 #include <QShortcut>
 
-#include "Application.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
 #include "ui/GuiUtil.h"
 
 MeshMCLogsDialog::MeshMCLogsDialog(QWidget* parent)

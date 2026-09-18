@@ -22,9 +22,9 @@
 
 #include <QDialog>
 
-#include "BaseVersion.h"
+#include <MeshMC/Core/BaseVersion>
 #include "ui/pages/BasePageProvider.h"
-#include "InstanceTask.h"
+#include <MeshMC/Core/InstanceTask>
 
 namespace Ui
 {

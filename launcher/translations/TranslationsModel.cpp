@@ -26,15 +26,15 @@
 #include <QLibraryInfo>
 #include <QDebug>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "net/NetJob.h"
 #include "net/ChecksumValidator.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 #include "Json.h"
 
 #include "POTranslator.h"
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 const static QLatin1String defaultLangCode("en_US");
 

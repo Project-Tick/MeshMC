@@ -26,7 +26,7 @@
 #include "ui/pages/BasePage.h"
 
 #include "minecraft/auth/AccountList.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 namespace Ui
 {

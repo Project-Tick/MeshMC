@@ -21,7 +21,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QDebug>
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include "AuthFlow.h"
 #include "katabasis/Globals.h"

@@ -28,7 +28,7 @@
 #include <QRegularExpression>
 #include <QSaveFile>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "PackwizSidecar.h"
 
 ModMetadataIndex::ModMetadataIndex(const QDir& folder)

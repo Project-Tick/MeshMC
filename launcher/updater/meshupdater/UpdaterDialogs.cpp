@@ -25,7 +25,7 @@
 #include <QPushButton>
 #include <QTreeWidget>
 
-#include "HoeDown.h"
+#include <MeshMC/Core/HoeDown>
 #include "MMCStrings.h"
 
 namespace

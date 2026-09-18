@@ -24,7 +24,7 @@
 #include <QThreadPool>
 #include <QtConcurrent>
 
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "MMCZip.h"
 
 namespace MMCZip

@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-#include "InstanceCreationTask.h"
+#include <MeshMC/Core/InstanceCreationTask>
 #include "settings/INISettingsObject.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 // FIXME: remove this
 #include "minecraft/MinecraftInstance.h"

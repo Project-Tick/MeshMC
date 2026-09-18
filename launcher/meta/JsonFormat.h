@@ -23,7 +23,7 @@
 #include <QJsonObject>
 #include <memory>
 
-#include "Exception.h"
+#include <MeshMC/Core/Exception>
 #include "meta/BaseEntity.h"
 #include <set>
 

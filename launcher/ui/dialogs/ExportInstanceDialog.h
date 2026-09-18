@@ -24,7 +24,7 @@
 #include <QModelIndex>
 #include <memory>
 
-#include "FastFileIconProvider.h"
+#include <MeshMC/Core/FastFileIconProvider>
 
 class BaseInstance;
 class FileIgnoreProxy;

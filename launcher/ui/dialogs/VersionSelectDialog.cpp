@@ -31,10 +31,10 @@
 #include "ui/widgets/VersionSelectWidget.h"
 #include "ui/dialogs/CustomMessageBox.h"
 
-#include "BaseVersion.h"
-#include "BaseVersionList.h"
+#include <MeshMC/Core/BaseVersion>
+#include <MeshMC/Core/BaseVersionList>
 #include "tasks/Task.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "VersionProxyModel.h"
 
 VersionSelectDialog::VersionSelectDialog(BaseVersionList* vlist, QString title,

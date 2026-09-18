@@ -22,7 +22,7 @@
 #include <QNetworkRequest>
 #include <QHttpMultiPart>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 QByteArray getVariant(SkinUpload::Model model)
 {

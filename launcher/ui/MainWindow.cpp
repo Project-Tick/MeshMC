@@ -20,9 +20,9 @@
 
 #include "ui_MainWindow.h"
 
-#include "Application.h"
-#include "BuildConfig.h"
-#include "plugin/PluginManager.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Plugin/Manager>
 #include "plugin/PluginHooks.h"
 
 #include "MainWindow.h"
@@ -57,7 +57,7 @@
 #include <QtWidgets/QProgressDialog>
 #include <QShortcut>
 
-#include <BaseInstance.h>
+#include <MeshMC/Core/BaseInstance>
 #include <InstanceList.h>
 #include <MMCZip.h>
 #include <icons/IconList.h>
@@ -69,7 +69,7 @@
 #include <minecraft/VersionFile.h>
 #include <minecraft/auth/AccountList.h>
 #include <SkinUtils.h>
-#include <BuildConfig.h>
+#include <MeshMC/Core/BuildConfig>
 #include <net/NetJob.h>
 #include <net/Download.h>
 #include <news/NewsChecker.h>
@@ -77,10 +77,10 @@
 #include <tools/BaseProfiler.h>
 
 #include <updater/ExternalUpdater.h>
-#include <DesktopServices.h>
-#include <FileSystem.h>
+#include <MeshMC/Core/DesktopServices>
+#include <MeshMC/Core/FS>
 #include "InstanceWindow.h"
-#include "InstancePageProvider.h"
+#include <MeshMC/Core/InstancePageProvider>
 #include "JavaCommon.h"
 #include "LaunchController.h"
 
@@ -107,8 +107,8 @@
 
 #include "KonamiCode.h"
 
-#include "InstanceImportTask.h"
-#include "InstanceCopyTask.h"
+#include <MeshMC/Core/InstanceImportTask>
+#include <MeshMC/Core/InstanceCopyTask>
 
 #include "MMCTime.h"
 

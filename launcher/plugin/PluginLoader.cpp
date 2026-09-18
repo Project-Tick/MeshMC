@@ -17,14 +17,14 @@
  * limitations under the License.
  */
 
-#include "FileSystem.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/BuildConfig>
 
-#include "plugin/PluginLoader.h"
-#include "plugin/PluginSignature.h"
+#include <MeshMC/Plugin/Loader>
+#include <MeshMC/Plugin/Signature>
 #include "plugin/CoreSupersededPlugins.h"
 
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include <QCoreApplication>
 #include <QDir>

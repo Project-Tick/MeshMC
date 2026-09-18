@@ -20,7 +20,7 @@
 
 #include "CheckJava.h"
 #include <launch/LaunchTask.h>
-#include <FileSystem.h>
+#include <MeshMC/Core/FS>
 #include <QStandardPaths>
 #include <QFileInfo>
 #include "Sys.h"

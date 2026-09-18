@@ -25,7 +25,7 @@
 #include <QJsonObject>
 #include <utility>
 
-#include "HoeDown.h"
+#include <MeshMC/Core/HoeDown>
 #include "Json.h"
 #include "modplatform/modrinth/ModrinthApi.h"
 

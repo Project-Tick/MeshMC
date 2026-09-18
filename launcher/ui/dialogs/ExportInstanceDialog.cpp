@@ -21,8 +21,8 @@
 #include "ExportInstanceDialog.h"
 #include "ui_ExportInstanceDialog.h"
 
-#include <BaseInstance.h>
-#include <FileSystem.h>
+#include <MeshMC/Core/BaseInstance>
+#include <MeshMC/Core/FS>
 #include <MMCZip.h>
 #include <icons/IconList.h>
 
@@ -38,8 +38,8 @@
 #include <functional>
 #include <memory>
 
-#include "Application.h"
-#include "FileIgnoreProxy.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/FileIgnoreProxy>
 #include "archive/ExportToZipTask.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/ProgressDialog.h"

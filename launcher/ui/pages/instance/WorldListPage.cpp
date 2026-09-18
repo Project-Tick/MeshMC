@@ -38,16 +38,16 @@
 #include <algorithm>
 
 #include "tools/MCEditTool.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 
 #include "minecraft/mod/DataPackFolderModel.h"
 #include "ui/GuiUtil.h"
 #include "ui/pages/BasePageProvider.h"
 #include "ui/pages/instance/DataPackPage.h"
 #include "ui/widgets/PageContainer.h"
-#include "DesktopServices.h"
+#include <MeshMC/Core/DesktopServices>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 class WorldListProxyModel : public QSortFilterProxyModel
 {

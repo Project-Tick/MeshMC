@@ -20,7 +20,7 @@
 #include <QTest>
 #include "TestUtil.h"
 
-#include "GZip.h"
+#include <MeshMC/Core/GZip>
 #include <random>
 
 void fib(int& prev, int& cur)

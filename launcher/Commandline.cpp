@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "Commandline.h"
+#include <MeshMC/Core/Commandline>
 
 /**
  * @file libutil/src/cmdutils.cpp

@@ -21,8 +21,8 @@
 #include "InstanceProxyModel.h"
 
 #include "InstanceView.h"
-#include "Application.h"
-#include <BaseInstance.h>
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BaseInstance>
 #include <icons/IconList.h>
 
 #include <QDebug>

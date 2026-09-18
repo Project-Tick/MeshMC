@@ -23,7 +23,7 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 namespace Parsers
 {

@@ -20,8 +20,8 @@
 #include "MetaCacheSink.h"
 #include <QFile>
 #include <QFileInfo>
-#include "FileSystem.h"
-#include "Application.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Application>
 
 namespace Net
 {

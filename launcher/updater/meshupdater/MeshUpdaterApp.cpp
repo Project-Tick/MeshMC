@@ -46,8 +46,8 @@
 #include <mutex>
 
 #include "AssetMatcher.h"
-#include "BuildConfig.h"
-#include "DesktopServices.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/DesktopServices>
 #include "ReleaseArchive.h"
 #include "ReleaseDownload.h"
 #include "UpdaterDialogs.h"

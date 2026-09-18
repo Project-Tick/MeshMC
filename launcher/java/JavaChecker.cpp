@@ -18,7 +18,7 @@
  */
 
 #include "JavaChecker.h"
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include <QFile>
 #include <QProcess>
@@ -26,9 +26,9 @@
 #include <QDebug>
 
 #include "JavaUtils.h"
-#include "FileSystem.h"
-#include "Commandline.h"
-#include "Application.h"
+#include <MeshMC/Core/FS>
+#include <MeshMC/Core/Commandline>
+#include <MeshMC/Core/Application>
 
 JavaChecker::JavaChecker(QObject* parent) : QObject(parent) {}
 

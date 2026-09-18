@@ -1,3 +1,5 @@
+// launcher/Application.h
+// @meshmc-public: MeshMC/Core/Application
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -29,9 +31,9 @@
 #include <QUrl>
 #include <QHash>
 
-#include <BaseInstance.h>
+#include <MeshMC/Core/BaseInstance>
 
-#include "Logging.h"
+#include <MeshMC/Core/Logging>
 
 #include "minecraft/launch/MinecraftServerTarget.h"
 

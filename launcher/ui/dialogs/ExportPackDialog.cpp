@@ -34,8 +34,8 @@
 #include <functional>
 #include <utility>
 
-#include "FileIgnoreProxy.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FileIgnoreProxy>
+#include <MeshMC/Core/FS>
 #include "minecraft/MinecraftInstance.h"
 #include "modplatform/flame/FlamePackExportTask.h"
 #include "modplatform/modrinth/ModrinthPackExportTask.h"

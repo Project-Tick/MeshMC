@@ -26,7 +26,7 @@
 #include <QWidget>
 #include <modplatform/atlauncher/ATLPackInstallTask.h>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 #include "ui/pages/BasePage.h"
 #include "tasks/Task.h"
 

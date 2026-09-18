@@ -1,3 +1,5 @@
+// launcher/InstanceCopyTask.h
+// @meshmc-public: MeshMC/Core/InstanceCopyTask
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -25,9 +27,9 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include "settings/SettingsObject.h"
-#include "BaseVersion.h"
-#include "BaseInstance.h"
-#include "InstanceTask.h"
+#include <MeshMC/Core/BaseVersion>
+#include <MeshMC/Core/BaseInstance>
+#include <MeshMC/Core/InstanceTask>
 
 class InstanceCopyTask : public InstanceTask
 {

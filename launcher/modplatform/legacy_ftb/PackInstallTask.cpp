@@ -22,15 +22,15 @@
 #include <QtConcurrent>
 
 #include "MMCZip.h"
-#include "BaseInstance.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/BaseInstance>
+#include <MeshMC/Core/FS>
 #include "settings/INISettingsObject.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 #include "minecraft/GradleSpecifier.h"
 
-#include "BuildConfig.h"
-#include "Application.h"
+#include <MeshMC/Core/BuildConfig>
+#include <MeshMC/Core/Application>
 
 namespace LegacyFTB
 {

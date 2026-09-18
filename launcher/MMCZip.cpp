@@ -19,8 +19,8 @@
  */
 
 #include "MMCZip.h"
-#include "ArchiveOpen.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/ArchiveOpen>
+#include <MeshMC/Core/FS>
 
 #include <archive.h>
 #include <archive_entry.h>

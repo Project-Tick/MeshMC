@@ -29,12 +29,12 @@
 #include <QDebug>
 
 #include "AssetsUtils.h"
-#include "FileSystem.h"
+#include <MeshMC/Core/FS>
 #include "net/Download.h"
 #include "net/ChecksumValidator.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/BuildConfig>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 namespace
 {

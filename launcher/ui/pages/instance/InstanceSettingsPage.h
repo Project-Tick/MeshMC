@@ -23,11 +23,11 @@
 #include <QWidget>
 
 #include "java/JavaChecker.h"
-#include "BaseInstance.h"
+#include <MeshMC/Core/BaseInstance>
 #include <QObjectPtr.h>
 #include "ui/pages/BasePage.h"
 #include "JavaCommon.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 class JavaChecker;
 namespace Ui

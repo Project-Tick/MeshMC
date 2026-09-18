@@ -26,7 +26,7 @@
 #include <QTabBar>
 
 #include "settings/SettingsObject.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 MinecraftPage::MinecraftPage(QWidget* parent)
 	: QWidget(parent), ui(new Ui::MinecraftPage)

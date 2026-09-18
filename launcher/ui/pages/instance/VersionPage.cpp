@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include <QMessageBox>
 #include <QLabel>
@@ -46,9 +46,9 @@
 #include "minecraft/auth/AccountList.h"
 #include "minecraft/mod/Mod.h"
 #include "icons/IconList.h"
-#include "Exception.h"
+#include <MeshMC/Core/Exception>
 #include "Version.h"
-#include "DesktopServices.h"
+#include <MeshMC/Core/DesktopServices>
 
 #include "meta/Index.h"
 #include "meta/VersionList.h"

@@ -22,7 +22,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 
-#include "Application.h"
+#include <MeshMC/Core/Application>
 
 #include "IconPickerDialog.h"
 #include "ui_IconPickerDialog.h"
@@ -31,7 +31,7 @@
 
 #include "icons/IconList.h"
 #include "icons/IconUtils.h"
-#include <DesktopServices.h>
+#include <MeshMC/Core/DesktopServices>
 
 IconPickerDialog::IconPickerDialog(QWidget* parent)
 	: QDialog(parent), ui(new Ui::IconPickerDialog)

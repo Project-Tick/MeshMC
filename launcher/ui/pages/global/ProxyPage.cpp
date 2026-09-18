@@ -24,8 +24,8 @@
 #include <QTabBar>
 
 #include "settings/SettingsObject.h"
-#include "Application.h"
-#include "Application.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/Application>
 
 ProxyPage::ProxyPage(QWidget* parent) : QWidget(parent), ui(new Ui::ProxyPage)
 {

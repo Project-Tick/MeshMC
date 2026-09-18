@@ -24,8 +24,8 @@
 
 #include <utility>
 
-#include "Application.h"
-#include "BuildConfig.h"
+#include <MeshMC/Core/Application>
+#include <MeshMC/Core/BuildConfig>
 #include "modplatform/flame/FlameApi.h"
 
 namespace Net

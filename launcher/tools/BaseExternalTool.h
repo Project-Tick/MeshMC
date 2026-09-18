@@ -20,7 +20,7 @@
 #pragma once
 
 #include <QObject>
-#include <BaseInstance.h>
+#include <MeshMC/Core/BaseInstance>
 
 class BaseInstance;
 class SettingsObject;
