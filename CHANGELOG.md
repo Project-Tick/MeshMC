@@ -9,6 +9,8 @@
 * Automatic icon refreshing upon theme change has been added.
 * Support for reading non-ASCII paths has been added.
 * A feature to view the number of days in your worlds has been added.
+* The --world parameter has been added.
+* A skin management system has been added.
 
 ## Changed
 

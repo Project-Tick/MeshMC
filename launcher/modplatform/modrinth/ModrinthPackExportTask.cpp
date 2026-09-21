@@ -503,7 +503,8 @@ QByteArray ModrinthPackExportTask::generateIndex() const
 			{QStringLiteral("fabric-loader"),
 			 QStringLiteral("net.fabricmc.fabric-loader")},
 			{QStringLiteral("forge"), QStringLiteral("net.minecraftforge")},
-			{QStringLiteral("neoforge"), QStringLiteral("net.neoforged")}};
+			{QStringLiteral("neoforge"), QStringLiteral("net.neoforged")},
+			{QStringLiteral("babric"), QStringLiteral("babric")}};
 
 		QJsonObject dependencies;
 		for (const auto& dependency : dependencyUids) {

@@ -250,6 +250,9 @@ namespace ModpacksCH
 			} else if (target.name == "quilt-loader") {
 				components->setComponentVersion("org.quiltmc.quilt-loader",
 												target.version, true);
+			} else if (target.name == "babric") {
+				components->setComponentVersion("babric", target.version,
+												true);
 			}
 		}
 

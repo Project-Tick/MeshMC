@@ -843,6 +843,12 @@ namespace ATLauncher
 
 			components->setComponentVersion("org.quiltmc.quilt-loader", version,
 											true);
+		} else if (m_version.loader.type == QString("babric")) {
+			auto version = getVersionForLoader("babric");
+			if (version == Q_NULLPTR)
+				return;
+
+			components->setComponentVersion("babric", version, true);
 		} else if (m_version.loader.type != QString()) {
 			emitFailed(tr("Unknown loader type: ") + m_version.loader.type);
 			return;

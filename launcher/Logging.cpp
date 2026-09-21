@@ -17,6 +17,14 @@
  * limitations under the License.
  */
 
+/*!
+	\page logging-cpp.html
+	\title MeshMC Logging System
+	\brief Manages the categorical and color-coded logging system in MeshMC.
+
+	
+*/
+
 #include "Logging.h"
 
 #include "MMCStrings.h"

@@ -179,7 +179,7 @@
     <string>Install Loader</string>
    </property>
    <property name="toolTip">
-    <string>Install a mod loader - Forge, NeoForge, Fabric, Quilt or LiteLoader.</string>
+    <string>Install a mod loader - Forge, NeoForge, Fabric, Quilt, LiteLoader or Babric.</string>
    </property>
   </action>
   <action name="actionInstall_mods">

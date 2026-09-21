@@ -272,7 +272,6 @@ void ContentFilterWidget::setup(ModPlatform::ContentType contentType,
 		const QList<QPair<QString, QString>> uncommon = {
 			{tr("LiteLoader"), QStringLiteral("liteloader")},
 			{tr("Babric"), QStringLiteral("babric")},
-			{tr("BTA (Babric)"), QStringLiteral("bta-babric")},
 			{tr("Legacy Fabric"), QStringLiteral("legacy-fabric")},
 			{tr("Ornithe"), QStringLiteral("ornithe")},
 			{tr("Rift"), QStringLiteral("rift")},

@@ -64,6 +64,7 @@ static void loadDependencies(Modrinth::Manifest& m, QJsonObject& deps)
 	m.fabricVersion = Json::ensureString(deps, "fabric-loader", "");
 	m.quiltVersion = Json::ensureString(deps, "quilt-loader", "");
 	m.neoForgeVersion = Json::ensureString(deps, "neoforge", "");
+	m.babricVersion = Json::ensureString(deps, "babric", "");
 }
 
 void Modrinth::loadManifest(Modrinth::Manifest& m, const QString& filepath)

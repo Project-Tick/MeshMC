@@ -17,6 +17,40 @@
  * limitations under the License.
  */
 
+/*!
+	\page main-cpp.html
+	\title MeshMC's main entry point
+	\brief MeshMC's main entry point
+
+	This is the entry point for MeshMC. It serves as the initial entry
+	point from Qt and the point where provided parameters are accepted.
+	The function that launches the error reporter when MeshMC encounters
+	an error is also located here.
+
+	\section1 static void launchCrashReporter()
+
+	This function is used to launch MeshMC
+	CrashReporter. It is executed with arguments.
+
+	\since 7.3
+
+	\section1 static void crashSignalHandler(int sig)
+
+	The section where MeshMC detects the signatures it
+	receives and executes the launchCrashReporter() function.
+
+	\param sig The signal received by MeshMC.
+
+	\section1 int main(int argc, char* argv[])
+
+	MeshMC's entry function. libstd++ initializes this first.
+
+	\param argc The number of command-line arguments.
+    \param argv The command-line arguments.
+
+    \return The application's exit status.
+*/
+
 #include "Application.h"
 #include "BuildConfig.h"
 #include "FileSystem.h"
@@ -40,6 +74,15 @@
 #include <chrono>
 #endif
 
+/*!
+	\fn void launchCrashReporter()
+
+	This function is used to launch MeshMC
+	CrashReporter. It is executed with arguments.
+
+	\since 7.3
+
+*/
 static void launchCrashReporter()
 {
 	// Locate the crash reporter binary next to the running executable.
@@ -77,6 +120,15 @@ static void launchCrashReporter()
 	QProcess::startDetached(crashReporterPath, args);
 }
 
+/*!
+	\relates main.cpp
+	\fn void crashSignalHandler(int sig)
+
+	The section where MeshMC detects the signatures it
+	receives and executes the launchCrashReporter() function.
+
+	\param sig The signal received by MeshMC.
+*/
 static void crashSignalHandler(int sig)
 {
 	// Re-set default handler to avoid infinite loops
@@ -88,6 +140,17 @@ static void crashSignalHandler(int sig)
 	raise(sig);
 }
 
+/*!
+	\relates main.cpp
+	\fn int main(int argc, char* argv[])
+
+	MeshMC's entry function. libstd++ initializes this first.
+
+	\param argc The number of command-line arguments.
+    \param argv The command-line arguments.
+
+    \return The application's exit status.
+*/
 int main(int argc, char* argv[])
 {
 #ifdef BREAK_INFINITE_LOOP

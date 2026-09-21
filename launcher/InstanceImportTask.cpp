@@ -694,6 +694,7 @@ void InstanceImportTask::configureFlameInstance(Flame::Manifest& pack)
 		{"fabric-", {}, "net.fabricmc.fabric-loader"},
 		{"neoforge-", {}, "net.neoforged"},
 		{"quilt-", {}, "org.quiltmc.quilt-loader"},
+		{"babric-", {}, "babric"},
 	};
 	for (auto& loader : pack.minecraft.modLoaders) {
 		auto id = loader.id;
@@ -1172,6 +1173,7 @@ void InstanceImportTask::processModrinth()
 		{pack.fabricVersion, "net.fabricmc.fabric-loader", "fabric"},
 		{pack.quiltVersion, "org.quiltmc.quilt-loader", "quilt"},
 		{pack.neoForgeVersion, "net.neoforged", "neoforge"},
+		{pack.babricVersion, "babric", "babric"},
 	};
 
 	if (!pack.minecraftVersion.isEmpty()) {

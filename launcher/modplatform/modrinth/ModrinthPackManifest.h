@@ -70,6 +70,7 @@ namespace Modrinth
 		QString fabricVersion;
 		QString quiltVersion;
 		QString neoForgeVersion;
+		QString babricVersion;
 	};
 
 	void loadManifest(Modrinth::Manifest& m, const QString& filepath);

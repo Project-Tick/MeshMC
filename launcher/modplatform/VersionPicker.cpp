@@ -35,7 +35,7 @@ namespace
 			QStringLiteral("neoforge"),      QStringLiteral("forge"),
 			QStringLiteral("fabric"),        QStringLiteral("quilt"),
 			QStringLiteral("liteloader"),    QStringLiteral("babric"),
-			QStringLiteral("bta-babric"),    QStringLiteral("legacy-fabric"),
+			QStringLiteral("babric"),    QStringLiteral("legacy-fabric"),
 			QStringLiteral("ornithe"),       QStringLiteral("rift"),
 		};
 		return names;

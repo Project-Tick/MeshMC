@@ -142,7 +142,8 @@ void ModrinthPage::onSelectionChanged(QModelIndex first, QModelIndex second)
 			ModrinthApi::projectVersionsUrlForLoaders(
 				projectId, {QStringLiteral("forge"), QStringLiteral("fabric"),
 							QStringLiteral("quilt"),
-							QStringLiteral("neoforge")}),
+							QStringLiteral("neoforge"),
+							QStringLiteral("babric")}),
 			versionResponse.get()));
 
 		QObject::connect(

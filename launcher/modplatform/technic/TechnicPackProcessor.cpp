@@ -188,6 +188,9 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 			} else if (libraryName.startsWith("org.quiltmc:quilt-loader:")) {
 				components->setComponentVersion("org.quiltmc.quilt-loader",
 												libraryName.section(':', 2));
+			} else if (libraryName.startsWith("babric:babric:")) {
+				components->setComponentVersion("babric",
+												libraryName.section(':', 2));
 			}
 		}
 	} catch (const JSONValidationError& e) {

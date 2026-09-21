@@ -124,6 +124,12 @@ namespace
 			return QStringLiteral("neoforge-") + neoForge;
 		}
 
+		const QString babric =
+			profile->getComponentVersion(QStringLiteral("babric"));
+		if (!babric.isEmpty()) {
+			return QStringLiteral("babric-") + babric;
+		}
+
 		return {};
 	}
 } // namespace

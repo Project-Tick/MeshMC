@@ -706,3 +706,9 @@ if(MeshMC_PLUGINS)
     # In-tree .mmco plugins (after launcher so MeshMC_logic target is available)
     add_subdirectory(launcher/plugin/plugins)
 endif()
+
+# Documentation. After launcher, because it reads the source list and the
+# include paths off the MeshMC_logic target instead of keeping a copy of them.
+# Contributes no build steps: the targets are opt-in, and the directory bows
+# out with a status message when qdoc or Qt's doc configuration is missing.
+add_subdirectory(docs)

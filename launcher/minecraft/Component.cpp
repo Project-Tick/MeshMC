@@ -80,6 +80,13 @@ namespace
 			  QStringLiteral("net.neoforged"),
 			  QStringLiteral("net.fabricmc.fabric-loader")}},
 
+			{QStringLiteral("babric"),
+			 QStringLiteral("babric"), QStringLiteral("Babric"),
+			 QStringLiteral("fabricmc"), QString(),
+			 {QStringLiteral("net.minecraftforge"),
+			  QStringLiteral("net.neoforged"),
+			  QStringLiteral("net.fabricmc.fabric-loader")}},
+
 			{QStringLiteral("com.mumfrey.liteloader"), QString(),
 			 QStringLiteral("LiteLoader"), QStringLiteral("liteloader"),
 			 QString(),
