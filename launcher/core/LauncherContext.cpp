@@ -17,31 +17,22 @@
  * limitations under the License.
  */
 
-#include "ClaimAccount.h"
-#include <launch/LaunchTask.h>
-
 #include "core/LauncherContext.h"
-#include "minecraft/auth/AccountList.h"
 
-ClaimAccount::ClaimAccount(LaunchTask* parent, AuthSessionPtr session)
-	: LaunchStep(parent)
+namespace
 {
-	if (session->status == AuthSession::Status::PlayableOnline &&
-		!session->demo) {
-		auto accounts = LAUNCHER->accounts();
-		m_account = accounts->getAccountByProfileName(session->player_name);
-	}
+	/* Deliberately a plain pointer and not an owning one: the implementation
+	 * is the Application object itself, which owns its own lifetime and
+	 * unregisters on the way out. */
+	LauncherContext* g_context = nullptr;
 }
 
-void ClaimAccount::executeTask()
+LauncherContext* LauncherContext::instance()
 {
-	if (m_account) {
-		lock.reset(new UseLock(m_account));
-		emitSucceeded();
-	}
+	return g_context;
 }
 
-void ClaimAccount::finalize()
+void LauncherContext::setInstance(LauncherContext* context)
 {
-	lock.reset();
+	g_context = context;
 }
