@@ -20,7 +20,9 @@
 #include <QtTest>
 #include <QGuiApplication>
 #include <QQmlComponent>
+#include <QStandardItemModel>
 #include <QQmlEngine>
+#include <QQuickStyle>
 #include <QUrl>
 
 #include <memory>
@@ -45,6 +47,15 @@ class QmlModuleTest : public QObject
 	Q_OBJECT
 
   private slots:
+	/* The same controls style QmlShell::show() selects: components use its
+	 * extra properties (Button.danger, ...), which Qt's default style lacks,
+	 * so without it Main.qml would not load here although it does in the
+	 * application. */
+	void initTestCase()
+	{
+		QQuickStyle::setStyle(QStringLiteral("MeshMC.Style"));
+	}
+
 	void rootComponentInstantiates()
 	{
 		QQmlEngine engine;
@@ -58,7 +69,22 @@ class QmlModuleTest : public QObject
 				 qPrintable(QStringLiteral("component not ready: %1")
 								.arg(component.errorString())));
 
-		std::unique_ptr<QObject> root(component.create());
+		/* The root requires the instance model, the selection and the shell;
+		 * an empty stand-in is enough to prove the component loads, and a
+		 * required property left unset would itself be a load error worth
+		 * catching here. The shell is a plain QObject: this test only proves
+		 * Main.qml accepts something for the property, not what QmlShell
+		 * itself does. */
+		QStandardItemModel instances;
+		QObject selection;
+		QObject shell;
+		std::unique_ptr<QObject> root(component.createWithInitialProperties(
+			{{QStringLiteral("instanceModel"),
+			  QVariant::fromValue<QObject*>(&instances)},
+			 {QStringLiteral("selection"),
+			  QVariant::fromValue<QObject*>(&selection)},
+			 {QStringLiteral("shell"),
+			  QVariant::fromValue<QObject*>(&shell)}}));
 		QVERIFY2(root != nullptr, qPrintable(component.errorString()));
 
 		/* Guards against the component resolving to something default

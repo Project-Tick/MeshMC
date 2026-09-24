@@ -23,17 +23,22 @@
 #include <QSet>
 #include <QFile>
 #include <QFileInfo>
+#include <QDateTime>
+#include <QFutureWatcher>
 #include <QThread>
+#include <QThreadPool>
 #include <QTextStream>
 #include <QXmlStreamReader>
 #include <QTimer>
 #include <QDebug>
 #include <QFileSystemWatcher>
+#include <QUrl>
 #include <QUuid>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QMimeData>
+#include <QtConcurrentRun>
 #include <algorithm>
 
 #include "InstanceList.h"
@@ -46,6 +51,10 @@
 #include "FileSystem.h"
 #include "ExponentialSeries.h"
 #include "WatchLock.h"
+#include "core/LauncherContext.h"
+#include "icons/IconList.h"
+#include "launch/LaunchProgressTracker.h"
+#include "launch/LaunchTask.h"
 
 const static int GROUP_FILE_FORMAT_VERSION = 1;
 
@@ -183,7 +192,28 @@ QString InstanceList::rootForStaging(const QString& stagingPath) const
 	return QString();
 }
 
-InstanceList::~InstanceList() {}
+InstanceList::~InstanceList()
+{
+	/* Drops the last InstancePtr reference to each instance (ordinarily
+	 * held only here) while every member below is still fully alive.
+	 *
+	 * Without this, member destruction order does it instead: m_instances
+	 * is declared near the top of the class, so - being torn down in
+	 * reverse declaration order - it is one of the LAST members destroyed,
+	 * well after m_launchTrackers. Destroying an instance emits
+	 * QObject::destroyed(), which trackLaunchProgress() connects to a
+	 * lambda that touches m_launchTrackers; with the instances outliving
+	 * it, that lambda runs against a QHash that has already been torn
+	 * down, and Qt's own QHash asserts (or worse, silently corrupts
+	 * memory in a release build). Clearing explicitly here, before any
+	 * member destructor has run, sidesteps the ordering question
+	 * entirely. Never hit in the shipped app - InstanceList is a
+	 * LauncherContext-owned singleton that outlives every Application
+	 * shutdown path, which calls _exit() before C++ destructors run (see
+	 * main.cpp) - but very much hit by a unit test that constructs one on
+	 * the stack. */
+	m_instances.clear();
+}
 
 Qt::DropActions InstanceList::supportedDragActions() const
 {
@@ -287,7 +317,50 @@ QVariant InstanceList::data(const QModelIndex& index, int role) const
 			return pdata->lastLaunch();
 		}
 		case TotalTimePlayedRole: {
-			return pdata->totalTimePlayed();
+			// int64_t is long on LP64 Linux, which QVariant has no
+			// constructor for; qint64 (long long) it has.
+			return static_cast<qint64>(pdata->totalTimePlayed());
+		}
+		case GameVersionRole: {
+			return pdata->gameVersion();
+		}
+		case LoaderRole:
+			// Empty for vanilla: the UI words that itself, so it can tell
+			// "no loader" apart from a loader's name in any language.
+			return pdata->modLoaderName();
+		case IconTintRole: {
+			auto* context = LauncherContext::instance();
+			return context ? context->icons()->tint(pdata->iconKey())
+						   : QColor();
+		}
+		case LaunchStatusRole: {
+			auto* tracker = m_launchTrackers.value(pdata, nullptr);
+			return tracker ? tracker->status() : QString();
+		}
+		case LaunchProgressRole: {
+			auto* tracker = m_launchTrackers.value(pdata, nullptr);
+			return tracker ? tracker->progress() : -1.0;
+		}
+		case CoverImageRole: {
+			const InstanceId id = pdata->id();
+			auto it = m_coverImageCache.constFind(id);
+			if (it != m_coverImageCache.constEnd()) {
+				return it.value();
+			}
+			/* Not cached yet: kick off a background scan (scheduleCover-
+			 * ImageScan() no-ops if one for this id is already running) and
+			 * answer with nothing for now - the row picks up the real value
+			 * once the scan's dataChanged arrives. data() is const, hence
+			 * the const_cast; scheduling the scan mutates m_coverImage-
+			 * ScansPending and connects a QFutureWatcher, neither of which
+			 * fits a `mutable` member alone the way m_coverImageCache's own
+			 * plain insert does. */
+			const_cast<InstanceList*>(this)->scheduleCoverImageScan(
+				id, FS::PathCombine(pdata->gameRoot(), "screenshots"));
+			return QString();
+		}
+		case HasCrashedRole: {
+			return pdata->hasCrashed();
 		}
 		default:
 			break;
@@ -307,6 +380,13 @@ QHash<int, QByteArray> InstanceList::roleNames() const
 	roles.insert(CanLaunchRole, "canLaunch");
 	roles.insert(LastLaunchRole, "lastLaunch");
 	roles.insert(TotalTimePlayedRole, "totalTimePlayed");
+	roles.insert(GameVersionRole, "gameVersion");
+	roles.insert(LoaderRole, "loader");
+	roles.insert(IconTintRole, "iconTint");
+	roles.insert(LaunchStatusRole, "launchStatus");
+	roles.insert(LaunchProgressRole, "launchProgress");
+	roles.insert(CoverImageRole, "coverImage");
+	roles.insert(HasCrashedRole, "hasCrashed");
 	return roles;
 }
 
@@ -716,6 +796,13 @@ InstanceList::InstListError InstanceList::loadList()
 		for (auto& removedItem : deadList) {
 			auto instPtr = removedItem.first;
 			instPtr->invalidate();
+			// Otherwise these per-id caches would grow for as long as the
+			// launcher runs, bounded only by every instance ever seen
+			// rather than the ones currently in m_instances.
+			const InstanceId removedId = instPtr->id();
+			m_coverImageCache.remove(removedId);
+			m_coverImageScansPending.remove(removedId);
+			m_coverImageGeneration.remove(removedId);
 			currentItem = removedItem.second;
 			if (back_bookmark == -1) {
 				// no bookmark yet
@@ -763,8 +850,178 @@ void InstanceList::add(const QList<InstancePtr>& t)
 	for (auto& ptr : t) {
 		connect(ptr.get(), &BaseInstance::propertiesChanged, this,
 				&InstanceList::propertiesChanged);
+		trackLaunchProgress(ptr.get());
 	}
 	endInsertRows();
+}
+
+void InstanceList::trackLaunchProgress(BaseInstance* inst)
+{
+	/* Parented to the instance, so it is destroyed along with it rather
+	 * than needing its own removal logic here. */
+	auto* tracker = new LaunchProgressTracker(inst);
+	m_launchTrackers.insert(inst, tracker);
+	connect(inst, &QObject::destroyed, this,
+			[this, inst]() { m_launchTrackers.remove(inst); });
+
+	// A launch task appearing or changing is the tracker's whole job.
+	connect(inst, &BaseInstance::launchTaskChanged, this,
+			[tracker](shared_qobject_ptr<LaunchTask> task) {
+				tracker->watch(task.get());
+				/* The task keeps running for as long as the game does, but
+				 * once the game process is up there is nothing left to
+				 * report: from here on the instance is simply running. */
+				if (task) {
+					connect(task.get(), &LaunchTask::readyForLaunch, tracker,
+							&LaunchProgressTracker::clear);
+				}
+			});
+	connect(tracker, &LaunchProgressTracker::changed, this,
+			[this, inst]() { emitLaunchProgressChanged(inst); });
+
+	/* isRunning() does not come from the tracker - it is a property of
+	 * the instance itself - but its transitions are exactly the moments
+	 * a launch card needs to redraw, same as the two roles above. */
+	connect(inst, &BaseInstance::runningStatusChanged, this,
+			[this, inst](bool) { emitIsRunningChanged(inst); });
+}
+
+void InstanceList::emitLaunchProgressChanged(BaseInstance* inst)
+{
+	int i = getInstIndex(inst);
+	if (i != -1) {
+		emit dataChanged(index(i), index(i),
+						 {LaunchStatusRole, LaunchProgressRole});
+	}
+}
+
+void InstanceList::emitIsRunningChanged(BaseInstance* inst)
+{
+	int i = getInstIndex(inst);
+	if (i == -1) {
+		return;
+	}
+	QList<int> roles{IsRunningRole};
+	// The instance just stopped, not started: a play session is exactly
+	// when new screenshots tend to appear, so the cached cover - if any -
+	// may now be stale. Dropped rather than refreshed eagerly, since
+	// CoverImageRole's data() case fills it back in lazily on next ask.
+	if (!inst->isRunning()) {
+		const InstanceId id = inst->id();
+		/* Bumped whether or not anything was cached yet: a scan already in
+		 * flight for this id (started before the session ended, so looking
+		 * at a screenshots folder from before it) is just as stale as a
+		 * cached value would be, and scheduleCoverImageScan()'s completion
+		 * handler uses this to discard that result instead of caching it. */
+		++m_coverImageGeneration[id];
+		if (m_coverImageCache.remove(id) > 0) {
+			roles.append(CoverImageRole);
+		}
+	}
+	emit dataChanged(index(i), index(i), roles);
+}
+
+void InstanceList::scheduleCoverImageScan(const InstanceId& id,
+										  const QString& screenshotsDir)
+{
+	if (m_coverImageScansPending.contains(id)) {
+		// Already scanning; the caller (data()) will get the answer once
+		// that scan's dataChanged arrives, same as if it had asked again a
+		// moment later.
+		return;
+	}
+	m_coverImageScansPending.insert(id);
+	const int generation = m_coverImageGeneration.value(id, 0);
+
+	auto* watcher = new QFutureWatcher<QString>(this);
+	connect(watcher, &QFutureWatcher<QString>::finished, this,
+			[this, id, generation, watcher]() {
+				const QString url = watcher->result();
+				watcher->deleteLater();
+				m_coverImageScansPending.remove(id);
+
+				if (m_coverImageGeneration.value(id, 0) != generation) {
+					/* The instance stopped running while this scan was in
+					 * flight, so it was looking at a screenshots folder
+					 * from before that - not cached as if it were current;
+					 * a fresh scan replaces it instead. */
+					if (InstancePtr inst = getInstanceById(id)) {
+						scheduleCoverImageScan(
+							id,
+							FS::PathCombine(inst->gameRoot(), "screenshots"));
+					}
+					return;
+				}
+
+				m_coverImageCache.insert(id, url);
+				InstancePtr inst = getInstanceById(id);
+				if (!inst) {
+					// The instance is gone by now; nothing left to update.
+					return;
+				}
+				const int row = getInstIndex(inst.get());
+				if (row != -1) {
+					emit dataChanged(index(row), index(row),
+									 {CoverImageRole});
+				}
+			});
+	watcher->setFuture(QtConcurrent::run(QThreadPool::globalInstance(),
+										 &InstanceList::newestScreenshotUrl,
+										 screenshotsDir));
+}
+
+QString InstanceList::newestScreenshotUrl(const QString& screenshotsDir)
+{
+	if (screenshotsDir.isEmpty()) {
+		return QString();
+	}
+	QDir dir(screenshotsDir);
+	if (!dir.exists()) {
+		return QString();
+	}
+
+	// Same three extensions ScreenshotListModel::isImageFile() accepts,
+	// checked the same case-insensitive way - QDir name filters are
+	// case-sensitive on some platforms and not others, which would make
+	// this list agree with the Screenshots tab on some machines and not
+	// others.
+	static const QStringList kExtensions = {
+		QStringLiteral("png"),
+		QStringLiteral("jpg"),
+		QStringLiteral("jpeg"),
+	};
+
+	QString newestPath;
+	QString newestName;
+	QDateTime newestModified;
+	const QFileInfoList files =
+		dir.entryInfoList(QDir::Files | QDir::Readable, QDir::NoSort);
+	for (const QFileInfo& info : files) {
+		bool isImage = false;
+		for (const QString& ext : kExtensions) {
+			if (info.suffix().compare(ext, Qt::CaseInsensitive) == 0) {
+				isImage = true;
+				break;
+			}
+		}
+		if (!isImage) {
+			continue;
+		}
+
+		const QDateTime modified = info.lastModified();
+		// Newest-modified first, file name as a tiebreak - mirrors
+		// ScreenshotListModel::listEntries()'s sort so this always agrees
+		// with what the Screenshots tab shows as its top entry.
+		if (newestPath.isEmpty() || modified > newestModified ||
+			(modified == newestModified && info.fileName() > newestName)) {
+			newestPath = info.absoluteFilePath();
+			newestName = info.fileName();
+			newestModified = modified;
+		}
+	}
+
+	return newestPath.isEmpty() ? QString()
+								 : QUrl::fromLocalFile(newestPath).toString();
 }
 
 void InstanceList::resumeWatch()

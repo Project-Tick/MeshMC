@@ -21,7 +21,8 @@
 #include "InstanceImportTask.h"
 #include "BaseInstance.h"
 #include "FileSystem.h"
-#include "Application.h"
+#include "core/LauncherContext.h"
+#include "core/UiHost.h"
 #include "InstanceList.h"
 #include "MMCZip.h"
 #include "archive/ExtractZipTask.h"
@@ -43,14 +44,9 @@
 #include "modplatform/technic/TechnicPackProcessor.h"
 
 #include "icons/IconList.h"
-#include "Application.h"
 #include "modplatform/flame/FlameApi.h"
 #include "modplatform/modrinth/ModrinthApi.h"
-#include "ui/dialogs/BlockedModsDialog.h"
-#include "ui/dialogs/CustomMessageBox.h"
-#include "ui/dialogs/UntrustedModsDialog.h"
 
-#include <QAbstractButton>
 #include <QCryptographicHash>
 #include <QDirIterator>
 #include <QHash>
@@ -75,11 +71,11 @@ void InstanceImportTask::executeTask()
 		m_downloadRequired = true;
 
 		const QString path = m_sourceUrl.host() + '/' + m_sourceUrl.path();
-		auto entry = APPLICATION->metacache()->resolveEntry("general", path);
+		auto entry = LAUNCHER->metacache()->resolveEntry("general", path);
 		entry->setStale(true);
 		m_archiveEntry = entry;
 		m_filesNetJob =
-			new NetJob(tr("Modpack download"), APPLICATION->network());
+			new NetJob(tr("Modpack download"), LAUNCHER->network());
 		m_filesNetJob->addNetAction(
 			Net::Download::makeCached(m_sourceUrl, entry));
 		m_archivePath = entry->getFullPath();
@@ -314,7 +310,7 @@ void InstanceImportTask::extractFailed()
 		if (!QFile::remove(m_archivePath)) {
 			qWarning() << "Could not remove" << m_archivePath;
 		}
-		APPLICATION->metacache()->evictEntry(m_archiveEntry);
+		LAUNCHER->metacache()->evictEntry(m_archiveEntry);
 		m_archiveEntry.reset();
 		emitFailed(tr("Failed to extract modpack. The downloaded archive is "
 					  "damaged; it has been discarded, so trying again will "
@@ -637,7 +633,7 @@ void InstanceImportTask::processFlame()
 		listFilesRelative(FS::PathCombine(m_stagingPath, gameDirName()));
 
 	m_modIdResolver =
-		new Flame::FileResolvingTask(APPLICATION->network(), pack);
+		new Flame::FileResolvingTask(LAUNCHER->network(), pack);
 	connect(m_modIdResolver.get(), &Flame::FileResolvingTask::succeeded, this,
 			&InstanceImportTask::onFlameFileResolutionSucceeded);
 	connect(m_modIdResolver.get(), &Flame::FileResolvingTask::failed,
@@ -828,7 +824,7 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 		}
 	}
 
-	m_filesNetJob = new NetJob(tr("Mod download"), APPLICATION->network());
+	m_filesNetJob = new NetJob(tr("Mod download"), LAUNCHER->network());
 
 	// Collect restricted mods that need browser download
 	QList<BlockedMod> blockedMods;
@@ -853,7 +849,7 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 	QDir installedGameDir;
 	bool canReuseInstalled = false;
 	if (!m_updateTarget.isEmpty()) {
-		auto previous = APPLICATION->instances()->getInstanceById(
+		auto previous = LAUNCHER->instances()->getInstanceById(
 			m_updateTarget.instanceId);
 		if (auto minecraftPrevious =
 				std::dynamic_pointer_cast<MinecraftInstance>(previous)) {
@@ -977,16 +973,15 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 
 	// Handle restricted mods via dialog
 	if (!blockedMods.isEmpty()) {
-		BlockedModsDialog dlg(nullptr, tr("Restricted Mods"),
-							  tr("The following mods have restricted downloads "
-								 "and are not available through the API.\n"
-								 "Click the Download button next to each mod "
-								 "to open its download page in your browser.\n"
-								 "Once all files appear in your Downloads "
-								 "folder, click Continue."),
-							  blockedMods);
-
-		if (dlg.exec() == QDialog::Accepted) {
+		if (LAUNCHER->uiHost()->resolveBlockedMods(
+				tr("Restricted Mods"),
+				tr("The following mods have restricted downloads "
+				   "and are not available through the API.\n"
+				   "Click the Download button next to each mod "
+				   "to open its download page in your browser.\n"
+				   "Once all files appear in your Downloads "
+				   "folder, click Continue."),
+				blockedMods)) {
 			QString downloadDir = QStandardPaths::writableLocation(
 				QStandardPaths::DownloadLocation);
 			for (const auto& mod : blockedMods) {
@@ -1239,7 +1234,7 @@ void InstanceImportTask::processModrinth()
 
 	// Download all mod files
 	m_filesNetJob =
-		new NetJob(tr("Modrinth mod download"), APPLICATION->network());
+		new NetJob(tr("Modrinth mod download"), LAUNCHER->network());
 	auto minecraftDir = FS::PathCombine(m_stagingPath, gameDirName());
 	auto canonicalBase = QDir(minecraftDir).canonicalPath();
 	/* What this version is responsible for. Built from the same loop that
@@ -1260,7 +1255,7 @@ void InstanceImportTask::processModrinth()
 	QDir installedGameDir;
 	bool canReuseInstalled = false;
 	if (!m_updateTarget.isEmpty()) {
-		auto previous = APPLICATION->instances()->getInstanceById(
+		auto previous = LAUNCHER->instances()->getInstanceById(
 			m_updateTarget.instanceId);
 		if (auto minecraftPrevious =
 				std::dynamic_pointer_cast<MinecraftInstance>(previous)) {
@@ -1477,7 +1472,7 @@ void InstanceImportTask::processMeshMC()
 			IconUtils::findBestIconIn(instance.instanceRoot(), m_instIcon);
 		if (!importIconPath.isNull() && QFile::exists(importIconPath)) {
 			// import icon
-			auto iconList = APPLICATION->icons();
+			auto iconList = LAUNCHER->icons();
 			if (iconList->iconFileExists(m_instIcon)) {
 				iconList->deleteIcon(m_instIcon);
 			}
@@ -1634,10 +1629,9 @@ bool InstanceImportTask::confirmUntrustedFiles(const QStringList& suspectPaths)
 	qWarning() << "Untrusted modpack carries" << suspectPaths.size()
 			   << "file(s) we cannot vouch for";
 
-	/* A dialog of its own, with the files listed in it and consent as a
-	 * separate deliberate act - see UntrustedModsDialog. */
-	UntrustedModsDialog dialog(suspectPaths, m_dialogParent);
-	return dialog.exec() == QDialog::Accepted;
+	/* A surface of its own, with the files listed on it and consent as a
+	 * separate deliberate act. */
+	return LAUNCHER->uiHost()->confirmUntrustedMods(suspectPaths);
 }
 
 bool InstanceImportTask::resolveUpdateTargetFromCatalogue()
@@ -1651,14 +1645,14 @@ bool InstanceImportTask::resolveUpdateTargetFromCatalogue()
 		/* Not a catalogue install, so there is no id to match on. */
 		return true;
 	}
-	if (APPLICATION->settings()->get("SkipModpackUpdatePrompt").toBool()) {
+	if (LAUNCHER->settings()->get("SkipModpackUpdatePrompt").toBool()) {
 		/* Turned off, so installing means installing: a second instance,
 		 * without the question. Checked before looking anything up so
 		 * that the answer costs nothing when nobody wants it. */
 		return true;
 	}
 
-	auto existing = APPLICATION->instances()->getInstanceByManagedPack(
+	auto existing = LAUNCHER->instances()->getInstanceByManagedPack(
 		m_packHint.provider, m_packHint.packId);
 	if (!existing) {
 		return true;
@@ -1670,8 +1664,10 @@ bool InstanceImportTask::resolveUpdateTargetFromCatalogue()
 			? QString()
 			: tr(", at version %1").arg(installedVersion);
 
-	auto* box = CustomMessageBox::selectable(
-		m_dialogParent, tr("This modpack is already installed"),
+	/* Named actions rather than yes/no: there are three answers here and
+	 * two of them install something. */
+	const int choice = LAUNCHER->uiHost()->choose(
+		tr("This modpack is already installed"),
 		tr("The instance \"%1\" was installed from this modpack%2.\n\n"
 		   "Updating it replaces the pack's own files and keeps everything "
 		   "that is yours: worlds, screenshots, play time and the "
@@ -1682,18 +1678,10 @@ bool InstanceImportTask::resolveUpdateTargetFromCatalogue()
 		   "changes or removes mods can leave worlds made with the older "
 		   "version unusable.")
 			.arg(existing->name(), versionSuffix),
-		QMessageBox::Question, QMessageBox::Cancel, QMessageBox::Cancel);
+		UiHost::Severity::Question,
+		{tr("Update existing instance"), tr("Create separate instance")});
 
-	/* Named actions rather than yes/no: there are three answers here and
-	 * two of them install something. */
-	auto* update =
-		box->addButton(tr("Update existing instance"), QMessageBox::AcceptRole);
-	auto* separate =
-		box->addButton(tr("Create separate instance"), QMessageBox::ResetRole);
-
-	box->exec();
-
-	if (box->clickedButton() == update) {
+	if (choice == 0) {
 		/* The version fields are the catalogue entry the user picked -
 		 * the same thing the pack page would pass - because the instance
 		 * has to end up claiming the version it now actually has. */
@@ -1705,7 +1693,7 @@ bool InstanceImportTask::resolveUpdateTargetFromCatalogue()
 		qDebug() << "Installing over existing instance" << target.instanceId;
 		return true;
 	}
-	if (box->clickedButton() == separate) {
+	if (choice == 1) {
 		return true;
 	}
 
@@ -1731,7 +1719,7 @@ QString InstanceImportTask::gameDirName()
 	}
 
 	auto previous =
-		APPLICATION->instances()->getInstanceById(m_updateTarget.instanceId);
+		LAUNCHER->instances()->getInstanceById(m_updateTarget.instanceId);
 	auto minecraftPrevious =
 		std::dynamic_pointer_cast<MinecraftInstance>(previous);
 	if (!minecraftPrevious) {
@@ -1800,26 +1788,17 @@ static QString sidecarPathForModFile(
  * that cannot be downloaded again, and a pack that shipped one has no
  * way of knowing whether the copy on disk is still the one it shipped or
  * a hundred hours of somebody's game. */
-static bool askAboutDeletingSaves(QWidget* parent)
+static bool askAboutDeletingSaves()
 {
-	auto* box = CustomMessageBox::selectable(
-		parent, QObject::tr("Delete existing save files"),
+	return LAUNCHER->uiHost()->confirm(
+		QObject::tr("Delete existing save files"),
 		QObject::tr("The installed version of this modpack came with save "
 					"files that the new version no longer includes.\n\n"
 					"Would you like to remove them as part of this update? "
 					"Keeping them is safe - they simply stay where they "
 					"are, along with any progress made in them."),
-		QMessageBox::Question, QMessageBox::Yes | QMessageBox::No,
-		QMessageBox::No);
-
-	if (auto* remove = box->button(QMessageBox::Yes)) {
-		remove->setText(QObject::tr("Remove saves"));
-	}
-	if (auto* keep = box->button(QMessageBox::No)) {
-		keep->setText(QObject::tr("Keep saves"));
-	}
-
-	return box->exec() == QMessageBox::Yes;
+		UiHost::Severity::Question, QObject::tr("Remove saves"),
+		QObject::tr("Keep saves"));
 }
 
 bool InstanceImportTask::recordPackContents(
@@ -1842,7 +1821,7 @@ bool InstanceImportTask::recordPackContents(
 	}
 
 	auto previous =
-		APPLICATION->instances()->getInstanceById(m_updateTarget.instanceId);
+		LAUNCHER->instances()->getInstanceById(m_updateTarget.instanceId);
 	if (!previous) {
 		/* Gone between the page opening and the update running. The
 		 * commit step will have its own opinion about that; there is
@@ -1870,8 +1849,8 @@ bool InstanceImportTask::recordPackContents(
 		 * the update goes ahead without cleaning up, and says so - the
 		 * leftovers are visible to the user as duplicated mods, and being
 		 * surprised by that is worse than being told. */
-		auto* box = CustomMessageBox::selectable(
-			m_dialogParent, tr("No file list for the installed version"),
+		return LAUNCHER->uiHost()->confirm(
+			tr("No file list for the installed version"),
 			tr("The launcher has no record of which files the installed "
 			   "version of this modpack put into this instance, so it "
 			   "cannot remove the ones the new version no longer "
@@ -1882,9 +1861,7 @@ bool InstanceImportTask::recordPackContents(
 			   "Instances installed before the launcher started keeping "
 			   "that record have no list. This update writes one, so the "
 			   "update after it will be able to clean up."),
-			QMessageBox::Warning, QMessageBox::Ok | QMessageBox::Cancel,
-			QMessageBox::Ok);
-		return box->exec() == QMessageBox::Ok;
+			UiHost::Severity::Warning, tr("Update anyway"), tr("Cancel"));
 	}
 
 	const QStringList stale =
@@ -1917,7 +1894,7 @@ bool InstanceImportTask::recordPackContents(
 		if (relativePath.startsWith(QLatin1String("saves/"),
 									Qt::CaseInsensitive)) {
 			if (m_savesDeletion == SavesDeletion::NotAsked) {
-				m_savesDeletion = askAboutDeletingSaves(m_dialogParent)
+				m_savesDeletion = askAboutDeletingSaves()
 									  ? SavesDeletion::Allowed
 									  : SavesDeletion::Refused;
 			}
@@ -1956,7 +1933,7 @@ void InstanceImportTask::carryOverUserSettings(BaseInstance& instance)
 	}
 
 	auto previous =
-		APPLICATION->instances()->getInstanceById(m_updateTarget.instanceId);
+		LAUNCHER->instances()->getInstanceById(m_updateTarget.instanceId);
 	if (!previous) {
 		/* The instance vanished between the page opening and the update
 		 * running. The staging step will fail to find it too; nothing

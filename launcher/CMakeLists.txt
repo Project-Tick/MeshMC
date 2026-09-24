@@ -7,6 +7,59 @@ project(application)
 include (UnitTest)
 
 set(CORE_SOURCES
+    # The services the core is allowed to reach for, and the interfaces it
+    # declares for things it needs but must not depend on. Nothing here may
+    # mention QtWidgets.
+    core/LauncherContext.h
+    core/LauncherContext.cpp
+
+    # QDesktopServices lives in QtGui; opening a URL or a folder is not UI.
+    DesktopServices.h
+    DesktopServices.cpp
+    core/AuthRequestDecorator.h
+    core/UiHost.h
+
+    # WCAG 2.1 contrast math for the token-based theme. Confined to QtGui,
+    # same as the block above -- no QtWidgets, no ui/.
+    theme/Contrast.h
+    theme/Contrast.cpp
+    theme/ThemePalette.h
+    theme/ThemePalette.cpp
+
+    # What the QML instance grid needs in place of the widget proxy and
+    # QItemSelectionModel. Core, like the blocks above: no QtWidgets, no ui/.
+    models/InstanceFilterModel.h
+    models/InstanceFilterModel.cpp
+    models/IdSelectionModel.h
+    models/IdSelectionModel.cpp
+    models/SettingsAdapter.h
+    models/SettingsAdapter.cpp
+    models/InstanceDetails.h
+    models/InstanceDetails.cpp
+    models/ContentBrowser.h
+    models/ContentBrowser.cpp
+    models/LoaderInstaller.h
+    models/LoaderInstaller.cpp
+    models/OtherLogsModel.h
+    models/OtherLogsModel.cpp
+    models/KeyValueFilterModel.h
+    models/KeyValueFilterModel.cpp
+    models/AccountsController.h
+    models/AccountsController.cpp
+    models/NewInstanceController.h
+    models/NewInstanceController.cpp
+    models/RecentWorldsModel.h
+    models/RecentWorldsModel.cpp
+    models/ServersListModel.h
+    models/ServersListModel.cpp
+    models/BackupController.h
+    models/BackupController.cpp
+    models/WorldDataPacksController.h
+    models/WorldDataPacksController.cpp
+    models/ManagedPackController.h
+    models/ManagedPackController.cpp
+    modplatform/BlockedMod.h
+
     # LOGIC - Base classes and infrastructure
     BaseInstaller.h
     BaseInstaller.cpp
@@ -62,8 +115,6 @@ set(CORE_SOURCES
     # from costing a per-file platform lookup.
     FileIgnoreProxy.h
     FileIgnoreProxy.cpp
-    FastFileIconProvider.h
-    FastFileIconProvider.cpp
 
     # String filters
     Filter.h
@@ -182,6 +233,8 @@ set(LAUNCH_SOURCES
     launch/LaunchStep.h
     launch/LaunchTask.cpp
     launch/LaunchTask.h
+    launch/LaunchProgressTracker.cpp
+    launch/LaunchProgressTracker.h
     launch/LogModel.cpp
     launch/LogModel.h
 )
@@ -270,6 +323,10 @@ set(ICONS_SOURCES
     # Icons System and related code
     icons/IconUtils.h
     icons/IconUtils.cpp
+    icons/MMCIcon.h
+    icons/MMCIcon.cpp
+    icons/IconList.h
+    icons/IconList.cpp
 )
 
 # Support for Minecraft instances and launch
@@ -381,8 +438,6 @@ set(MINECRAFT_SOURCES
     minecraft/ParseUtils.h
     minecraft/ProfileUtils.cpp
     minecraft/ProfileUtils.h
-    minecraft/ShortcutUtils.cpp
-    minecraft/ShortcutUtils.h
     minecraft/Library.cpp
     minecraft/Library.h
     minecraft/MojangDownloadInfo.h
@@ -499,7 +554,14 @@ set(SCREENSHOTS_SOURCES
     screenshots/ImgurUpload.cpp
     screenshots/ImgurAlbumCreation.h
     screenshots/ImgurAlbumCreation.cpp
+    screenshots/ScreenshotListModel.h
+    screenshots/ScreenshotListModel.cpp
 )
+
+add_unit_test(ScreenshotListModel
+    SOURCES screenshots/ScreenshotListModel_test.cpp
+    LIBS MeshMC_core
+    )
 
 set(TASKS_SOURCES
     # Tasks
@@ -509,6 +571,8 @@ set(TASKS_SOURCES
     tasks/ConcurrentTask.cpp
     tasks/SequentialTask.h
     tasks/SequentialTask.cpp
+    tasks/TaskWatcher.h
+    tasks/TaskWatcher.cpp
 )
 
 set(SETTINGS_SOURCES
@@ -566,6 +630,13 @@ set(TRANSLATIONS_SOURCES
     translations/POTranslator.h
     translations/POTranslator.cpp
 )
+
+# Model bookkeeping only (roleNames(), the builtin default row) -- no
+# network, same reasoning as the IconList test below.
+add_unit_test(TranslationsModel
+    SOURCES translations/TranslationsModel_test.cpp
+    LIBS MeshMC_core
+    )
 
 set(TOOLS_SOURCES
     # Tools
@@ -662,6 +733,8 @@ set(MODRINTH_SOURCES
     modplatform/modrinth/ModrinthApi.cpp
     modplatform/modrinth/ModrinthPackExportTask.h
     modplatform/modrinth/ModrinthPackExportTask.cpp
+    modplatform/modrinth/ModrinthModpackModel.h
+    modplatform/modrinth/ModrinthModpackModel.cpp
 )
 
 set(CONTENT_DOWNLOAD_SOURCES
@@ -694,6 +767,10 @@ add_unit_test(PackContents
     )
 
 set(PLUGIN_SOURCES
+    # Supplies core-declared interfaces that need the plugin host to run.
+    plugin/PluginAuthRequestDecorator.h
+    plugin/PluginAuthRequestDecorator.cpp
+
     # MMCO Plugin System
     plugin/MMCOFormat.h
     plugin/PluginHooks.h
@@ -704,12 +781,16 @@ set(PLUGIN_SOURCES
     plugin/PluginLoader.cpp
     plugin/PluginManager.h
     plugin/PluginManager.cpp
+    plugin/PluginUiRenderer.h
+    plugin/PluginUiRenderer.cpp
     plugin/PluginHookTask.h
     plugin/PluginHookTask.cpp
     plugin/PluginSignature.h
     plugin/PluginSignature.cpp
     plugin/PluginDependencyResolver.h
     plugin/PluginDependencyResolver.cpp
+    plugin/PluginSurfaceModel.h
+    plugin/PluginSurfaceModel.cpp
 )
 
 add_unit_test(Index
@@ -749,7 +830,6 @@ set(LOGIC_SOURCES
     ${ATLAUNCHER_SOURCES}
     ${MODRINTH_SOURCES}
     ${CONTENT_DOWNLOAD_SOURCES}
-    ${PLUGIN_SOURCES}
 )
 
 SET(MESHMC_SOURCES
@@ -760,8 +840,6 @@ SET(MESHMC_SOURCES
     ApplicationMessage.cpp
 
     # GUI - general utilities
-    DesktopServices.h
-    DesktopServices.cpp
     VersionProxyModel.h
     VersionProxyModel.cpp
     HoeDown.h
@@ -788,10 +866,6 @@ SET(MESHMC_SOURCES
     ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
 
     # Icons
-    icons/MMCIcon.h
-    icons/MMCIcon.cpp
-    icons/IconList.h
-    icons/IconList.cpp
 
     # GUI - windows
     ui/GuiUtil.h
@@ -799,6 +873,12 @@ SET(MESHMC_SOURCES
     ui/ColorCache.h
     ui/ColorCache.cpp
     ui/MainWindow.h
+    ui/ShortcutUtils.cpp
+    ui/ShortcutUtils.h
+    ui/FastFileIconProvider.cpp
+    ui/FastFileIconProvider.h
+    ui/WidgetUiHost.cpp
+    ui/WidgetUiHost.h
     ui/MainWindow.cpp
     ui/MacMenuBar.h
     ui/MacMenuBar.cpp
@@ -841,15 +921,15 @@ SET(MESHMC_SOURCES
     ui/themes/CatPack.h
 
     # Processes
-    LaunchController.h
-    LaunchController.cpp
+    ui/LaunchController.h
+    ui/LaunchController.cpp
 
     # page provider for instances
-    InstancePageProvider.h
+    ui/InstancePageProvider.h
 
     # Common java checking UI
-    JavaCommon.h
-    JavaCommon.cpp
+    ui/JavaCommon.h
+    ui/JavaCommon.cpp
 
     # GUI - paged dialog base
     ui/pages/BasePage.h
@@ -1196,7 +1276,22 @@ if(WIN32)
 endif()
 
 # Add executable
-add_library(MeshMC_logic STATIC ${LOGIC_SOURCES} ${MESHMC_SOURCES} ${MESHMC_UI} ${MESHMC_SHARED_UI} ${MESHMC_RESOURCES})
+# The launcher is two libraries.
+#
+# MeshMC_core is everything that works without a user interface: instances,
+# downloads, authentication, mod platforms, settings. It must not link
+# QtWidgets -- that is what lets a QML shell reuse it -- and it is not allowed
+# to know the plugin host or anything under ui/ exists.
+#
+# MeshMC_logic is the plugin host and the widget user interface, built on top
+# of the core. It keeps its old name so the application and the unit tests that
+# link it need no change. The plugin host sits here rather than in the core for
+# now: PluginManager renders plugin-supplied widgets and includes MainWindow, so
+# it and the widget UI depend on each other until the declarative plugin ABI
+# replaces that.
+add_library(MeshMC_core STATIC ${LOGIC_SOURCES})
+add_library(MeshMC_logic STATIC ${PLUGIN_SOURCES} ${MESHMC_SOURCES} ${MESHMC_UI} ${MESHMC_SHARED_UI} ${MESHMC_RESOURCES})
+target_link_libraries(MeshMC_logic MeshMC_core)
 
 # Declared after MeshMC_logic because it links against it.
 add_unit_test(CustomTheme
@@ -1204,9 +1299,189 @@ add_unit_test(CustomTheme
     LIBS MeshMC_logic
     )
 
+# MeshMC_logic: the plugin host lives there until the declarative plugin ABI
+# lets it move out of the widget UI's target.
+add_unit_test(PluginLoader
+    SOURCES plugin/PluginLoader_test.cpp
+    LIBS MeshMC_logic
+    )
+
+add_unit_test(PluginUiRenderer
+    SOURCES plugin/PluginUiRenderer_test.cpp
+    LIBS MeshMC_logic
+    )
+
+add_unit_test(PluginSurfaceModel
+    SOURCES plugin/PluginSurfaceModel_test.cpp
+    LIBS MeshMC_logic
+    )
+
+add_unit_test(Contrast
+    SOURCES theme/Contrast_test.cpp
+    LIBS MeshMC_logic
+    )
+
+# Links the core alone, not MeshMC_logic: the palette is core and this proves it.
+add_unit_test(ThemePalette
+    SOURCES theme/ThemePalette_test.cpp
+    LIBS MeshMC_core
+    )
+
+add_unit_test(InstanceFilterModel
+    SOURCES models/InstanceFilterModel_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Mostly exercises InstanceList::newestScreenshotUrl() directly (see
+# InstanceList_test.cpp) - a full InstanceList needs a SettingsObjectPtr and
+# real BaseInstance subclasses, which is more than that one lookup needs to
+# be tested. HasCrashedRole has no such helper, so one test builds that
+# fixture (InstanceList + NullInstance) instead.
+add_unit_test(InstanceList
+    SOURCES InstanceList_test.cpp
+    LIBS MeshMC_core
+    )
+
+add_unit_test(LaunchProgressTracker
+    SOURCES launch/LaunchProgressTracker_test.cpp
+    LIBS MeshMC_core
+    )
+
+add_unit_test(IdSelectionModel
+    SOURCES models/IdSelectionModel_test.cpp
+    LIBS MeshMC_core
+    )
+
+add_unit_test(SettingsAdapter
+    SOURCES models/SettingsAdapter_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Exercises only InstanceLogBridge: a full MinecraftInstance (needed for
+# InstanceDetails' mods/worlds/components) is impractical to construct here,
+# but InstanceLogBridge only needs a BaseInstance and a LaunchTask, and
+# NullInstance + LaunchTask::create() are both concrete enough to drive by
+# hand.
+add_unit_test(InstanceLogBridge
+    SOURCES models/InstanceDetails_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Covers what is testable without a LauncherContext or network: AccountList's
+# QML roles (including the ones added for this page) and the parts of
+# AccountsController that only touch AccountList/MinecraftAccount --
+# add/remove/default and offline validation. loginMicrosoft() itself needs
+# LAUNCHER->network() (via MSAStep) and is not exercised here.
+add_unit_test(AccountsController
+    SOURCES models/AccountsController_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Covers what is testable without a LauncherContext or network: the two
+# Meta version-list proxies (filtering, sorting, loading/error) against a
+# fake BaseVersionList, and the two free-standing suggested-name helpers
+# (create mode's composeSuggestedInstanceName(), import mode's
+# suggestedImportName()). NewInstanceController's own create()/importFrom()
+# need LAUNCHER->metadataIndex()/instances() and are not exercised here.
+add_unit_test(NewInstanceController
+    SOURCES models/NewInstanceController_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Needs neither a BaseInstance nor a LauncherContext - only a directory to
+# read/write servers.dat under, the same reason OtherLogsModel_test.cpp
+# drives that model directly against a temp directory. BackupController and
+# WorldDataPacksController (the other new InstanceDetails-owned models this
+# phase added) both need a real MinecraftInstance/BaseInstance and are not
+# exercised here, the same reason models/InstanceDetails_test.cpp only
+# exercises InstanceLogBridge.
+add_unit_test(ServersListModel
+    SOURCES models/ServersListModel_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Exercises only providerFromString() - the one static, instance-free helper
+# ManagedPackController has. isSupported()/fetchVersions()/updateToVersion()
+# all need a real BaseInstance and are not exercised here, the same reason
+# models/ContentBrowser_test.cpp only exercises its own static helpers.
+add_unit_test(ManagedPackController
+    SOURCES models/ManagedPackController_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Exercises RecentWorldsModel::scan() - the static, pure worker a rescan
+# hands to QtConcurrent::run() - directly against a temporary directory, plus
+# the async rescan-trigger/debounce orchestration around it against a real
+# InstanceList (NullInstance fixture, same as InstanceList_test.cpp's
+# HasCrashedRole tests) - that needs no real MinecraftInstance either.
+add_unit_test(RecentWorldsModel
+    SOURCES models/RecentWorldsModel_test.cpp
+    LIBS MeshMC_core
+    )
+
+# A trivial Task subclass drives status/progress/success/failure by hand;
+# no LauncherContext or network needed.
+add_unit_test(TaskWatcher
+    SOURCES tasks/TaskWatcher_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Exercises only the static JSON parsing helpers (canned search/version
+# replies), not the model itself - see the class comment on
+# ModrinthModpackModel::parseSearchResults().
+add_unit_test(ModrinthModpackModel
+    SOURCES modplatform/modrinth/ModrinthModpackModel_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Exercises only ContentBrowser's static, network-free helpers
+# (isVersionCompatible(), sortOptionsFor()) - constructing a full
+# MinecraftInstance to drive the browser itself is impractical here, the
+# same reason models/InstanceDetails_test.cpp only exercises
+# InstanceLogBridge.
+add_unit_test(ContentBrowser
+    SOURCES models/ContentBrowser_test.cpp
+    LIBS MeshMC_core
+    )
+
+# install() itself needs a PackProfile, which needs a MinecraftInstance -
+# impractical to construct here, the same reason ContentBrowser_test.cpp
+# above only exercises its static helpers. installSequence() is the one
+# static helper LoaderInstaller has: the pure ordering install() drives
+# itself by - see its own comment for why that order is worth a test on
+# its own. OtherLogsModel needs neither a profile nor an instance - just a
+# path and a filter - so it gets a full test against a temp directory
+# instead.
+add_unit_test(LoaderInstaller
+    SOURCES models/LoaderInstaller_test.cpp
+    LIBS MeshMC_core
+    )
+
+add_unit_test(OtherLogsModel
+    SOURCES models/OtherLogsModel_test.cpp
+    LIBS MeshMC_core
+    )
+
+# Exercised against a real GameOptions (a temp options.txt, no instance
+# needed - see GameOptions' own constructor) rather than a fake model:
+# nothing here is specific to GameOptions, but it is the one real source
+# this filter is built for.
+add_unit_test(KeyValueFilterModel
+    SOURCES models/KeyValueFilterModel_test.cpp
+    LIBS MeshMC_core
+    )
+
 add_unit_test(IconTheme
     SOURCES ui/themes/IconTheme_test.cpp
     LIBS MeshMC_logic
+    )
+
+# Model bookkeeping only (roleNames(), builtin vs. file-based) -- no
+# compiled icon theme resource needed, unlike IconTheme/InstanceIconProvider,
+# since addThemeIcon()/addIcon() never render anything.
+add_unit_test(IconList
+    SOURCES icons/IconList_test.cpp
+    LIBS MeshMC_core Qt${QT_VERSION_MAJOR}::Gui
     )
 
 target_compile_definitions(IconTheme_test PRIVATE
@@ -1216,7 +1491,13 @@ set_tests_properties(IconTheme PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QPA_PLATFORMTHEME="
     )
 
-target_link_libraries(MeshMC_logic
+# Core headers are included by their path under launcher/ ("core/UiHost.h",
+# "InstanceList.h"), so that directory is part of the core's interface. Stated
+# here rather than left to CMAKE_INCLUDE_CURRENT_DIR, which only covers targets
+# declared in this directory -- the QML module is declared in launcher/qml/.
+target_include_directories(MeshMC_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(MeshMC_core PUBLIC
     classparser
     nbt++
     ZLIB::ZLIB
@@ -1226,7 +1507,7 @@ target_link_libraries(MeshMC_logic
 )
 
 if(MeshMC_DISABLE_JAVA_DOWNLOADER)
-    target_compile_definitions(MeshMC_logic PUBLIC MeshMC_DISABLE_JAVA_DOWNLOADER)
+    target_compile_definitions(MeshMC_core PUBLIC MeshMC_DISABLE_JAVA_DOWNLOADER)
 endif()
 
 # Keep the function/line of every log message in *all* configurations. Qt only
@@ -1237,20 +1518,30 @@ endif()
 # ones in the application target.
 # Cost, knowingly accepted: __FILE__ is baked into the binary for each
 # translation unit that logs, so the binary grows and carries build paths.
-target_compile_definitions(MeshMC_logic PUBLIC QT_MESSAGELOGCONTEXT)
-target_link_libraries(MeshMC_logic
+target_compile_definitions(MeshMC_core PUBLIC QT_MESSAGELOGCONTEXT)
+target_link_libraries(MeshMC_core PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Xml
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::NetworkAuth
     Qt${QT_VERSION_MAJOR}::Concurrent
     Qt${QT_VERSION_MAJOR}::Gui
-    Qt${QT_VERSION_MAJOR}::Widgets
     LibArchive::LibArchive
     cmark::cmark
     rainbow
     LocalPeer::LocalPeer
 )
+
+# QtWidgets is linked here and only here. See MeshMC_core_link_check below for
+# how that is enforced rather than merely intended.
+target_link_libraries(MeshMC_logic Qt${QT_VERSION_MAJOR}::Widgets)
+
+# Application decides at startup whether to show MainWindow or the QML shell,
+# so it needs the shell compiled in either way. See useQmlShell().
+target_link_libraries(MeshMC_logic MeshMC_qml)
+if(MeshMC_QML_UI)
+    target_compile_definitions(MeshMC_logic PRIVATE MESHMC_QML_UI_DEFAULT)
+endif()
 
 target_link_libraries(MeshMC_logic Qt6::OpenGL)
 
@@ -1274,7 +1565,9 @@ else()
 endif()
 
 if(APPLE)
-    target_link_libraries(MeshMC_logic
+    # PUBLIC on the core: MacSparkleUpdater.mm is core and imports Cocoa, and
+    # ThemeManager.mm in MeshMC_logic inherits it from there.
+    target_link_libraries(MeshMC_core PUBLIC
         "-framework AppKit"
         "-framework Foundation"
         objc
@@ -1287,9 +1580,9 @@ if(MeshMC_SPARKLE_ENABLED)
     # PUBLIC: Application.cpp decides which updater to construct on the
     # strength of this define, and it is compiled into the application target
     # as well as into the logic library.
-    target_compile_definitions(MeshMC_logic PUBLIC MESHMC_SPARKLE_ENABLED)
-    target_include_directories(MeshMC_logic PRIVATE "${MACOSX_SPARKLE_DIR}")
-    target_link_libraries(MeshMC_logic ${SPARKLE_FRAMEWORK})
+    target_compile_definitions(MeshMC_core PUBLIC MESHMC_SPARKLE_ENABLED)
+    target_include_directories(MeshMC_core PRIVATE "${MACOSX_SPARKLE_DIR}")
+    target_link_libraries(MeshMC_core PUBLIC ${SPARKLE_FRAMEWORK})
 
     # Sparkle has to ship inside the bundle: it is loaded at runtime, and it
     # is what checks the signature of the update it installs.
@@ -1297,6 +1590,28 @@ if(MeshMC_SPARKLE_ENABLED)
         DESTINATION "${FRAMEWORK_DEST_DIR}"
         USE_SOURCE_PERMISSIONS)
 endif()
+
+######## The core must link without QtWidgets ########
+
+# Not linking Qt::Widgets into MeshMC_core is not enough on its own to keep
+# widgets out of it. A static library is never linked by itself -- unresolved
+# symbols are left for the final executable, which does link QtWidgets through
+# MeshMC_logic -- and on macOS all Qt frameworks sit in one directory, so
+# #include <QtWidgets/QWidget> resolves through the framework search path even
+# without the target. Either way a widget dependency would slip in unnoticed.
+#
+# So link the core, whole, into a program that has nothing else. Every object
+# in the archive is pulled in whether or not anything calls it, and the program
+# is given nothing that could satisfy a QtWidgets symbol. If any core object
+# needs one, this target fails to link and the build breaks, on every platform,
+# in CI and locally alike. It is part of `all` on purpose.
+add_executable(MeshMC_core_link_check core/CoreLinkCheck.cpp)
+target_link_libraries(MeshMC_core_link_check PRIVATE
+    "$<LINK_LIBRARY:WHOLE_ARCHIVE,MeshMC_core>")
+
+# Listed as a test as well, so the invariant has a name in the ctest output
+# and is not only visible as a link step when it fails.
+add_test(NAME CoreLinksWithoutQtWidgets COMMAND MeshMC_core_link_check)
 
 ######## QML user interface module ########
 
@@ -1310,9 +1625,14 @@ add_subdirectory(qml)
 # Proves the QML toolchain end to end: module built, resources at the expected
 # prefix, engine can instantiate the root component. All three fail silently
 # otherwise -- a green build and an application that renders nothing.
+# MeshMC_qml is linked explicitly: it carries the compiled .qml resources and
+# puts the module plugins in the link closure, which is where
+# qt_import_qml_plugins looks for them. Relying on qmlimportscanner to find
+# them from the test's sources alone worked on macOS but left Main.qml out of
+# the resources on Linux.
 add_unit_test(QmlModule
     SOURCES qml/QmlModule_test.cpp
-    LIBS Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Gui
+    LIBS MeshMC_qml Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Gui
     )
 
 # qt_add_qml_module builds the module as a static library plus a separate QML
@@ -1322,9 +1642,58 @@ add_unit_test(QmlModule
 # links and then fails at runtime with 'plugin "MeshMC_qmlplugin" not found'.
 qt_import_qml_plugins(QmlModule_test)
 
+# MeshMC_logic rather than the core: the built-in icons are compiled from
+# multimc.qrc into MeshMC_logic, and a test where every key falls back to the
+# default icon would prove nothing.
+add_unit_test(InstanceIconProvider
+    SOURCES qml/InstanceIconProvider_test.cpp
+    LIBS MeshMC_logic Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Gui
+    )
+
+# Exercises only AccountFaceProvider::faceFromSkin(), the pure compositing
+# helper -- requestPixmap() itself needs a real LauncherContext/AccountList,
+# which is neither cheap nor hermetic to fake here. MeshMC_logic (rather than
+# just MeshMC_core) because AccountFaceProvider.cpp lives in MeshMC_qml,
+# which MeshMC_logic links.
+add_unit_test(AccountFaceProvider
+    SOURCES qml/AccountFaceProvider_test.cpp
+    LIBS MeshMC_logic Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Gui
+    )
+
+add_unit_test(ScreenshotThumbnailProvider
+    SOURCES qml/ScreenshotThumbnailProvider_test.cpp
+    LIBS MeshMC_logic Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Gui
+    )
+
+# Exercises only sanitizedInstanceName(), the free-standing helper
+# renameInstance()/duplicateInstance() build on -- the rest of QmlShell needs
+# a real LauncherContext, same reason NewInstanceController_test.cpp only
+# covers composeSuggestedInstanceName(). MeshMC_logic because QmlShell.cpp
+# lives in MeshMC_qml, which MeshMC_logic links.
+add_unit_test(QmlShell
+    SOURCES qml/QmlShell_test.cpp
+    LIBS MeshMC_logic Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Gui
+    )
+
+# Drives QmlUiHost headlessly: answers a pending request from a queued
+# QTimer the way QML would, and checks cancellation (quit and this object's
+# own destruction) and busy nesting. MeshMC_logic because QmlUiHost.cpp
+# lives in MeshMC_qml, which MeshMC_logic links.
+add_unit_test(QmlUiHost
+    SOURCES qml/QmlUiHost_test.cpp
+    LIBS MeshMC_logic Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Gui
+    )
+
 add_executable(${MeshMC_Name} MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
-target_link_libraries(${MeshMC_Name} MeshMC_logic)
-target_link_libraries(${MeshMC_Name} MeshMC_qml)
+# Keyword signature: qt_import_qml_plugins below links with PRIVATE, and CMake
+# refuses to mix the two forms on one target.
+target_link_libraries(${MeshMC_Name} PRIVATE MeshMC_logic)
+
+# Same reason as QmlModule_test: MeshMC_qml is a static QML module with a
+# separate plugin, and a plain add_executable does not import it. Without this
+# the launcher links and then fails at runtime with 'plugin "MeshMC_qmlplugin"
+# not found' the moment the QML shell loads.
+qt_import_qml_plugins(${MeshMC_Name})
 
 # Export all symbols so dlopen()'ed .mmco plugins can resolve launcher symbols at runtime
 set_target_properties(${MeshMC_Name} PROPERTIES ENABLE_EXPORTS ON)
@@ -1599,10 +1968,19 @@ if(WIN32 OR (UNIX AND APPLE))
         # Understood by both Qt 5 and Qt 6 windeployqt.
         # install-qt-action and MSYS2 only provide release Qt, so always use
         # --release even when the app itself is built in Debug mode.
+        #
+        # --qmldir points windeployqt at our QML sources so qmlimportscanner
+        # can see what our own qt_add_qml_module() modules import (MeshMC,
+        # MeshMC.Theme, MeshMC.Style and MeshMC.Components are compiled into
+        # meshmc.exe as static QML modules, but the Qt-provided modules they
+        # import -- QtQuick, QtQuick.Controls, QtQml, ... -- are not, and
+        # still have to be deployed as plugins). --no-quick-import used to be
+        # passed here, which skipped QML deployment entirely and left the
+        # QML shell unable to find QtQuick.Controls at runtime.
         set(WINDEPLOYQT_OPTIONS
             --release
             --no-opengl-sw
-            --no-quick-import
+            --qmldir "${CMAKE_CURRENT_SOURCE_DIR}/qml"
             --no-system-d3d-compiler
             --no-translations
             --no-compiler-runtime
@@ -1648,9 +2026,157 @@ if(WIN32 OR (UNIX AND APPLE))
     endif()
 
     if(UNIX AND APPLE)
+        # qt_deploy_runtime_dependencies() below only follows *linked*
+        # libraries and Qt's regular (dlopen()'d-by-plugin-type) plugins; it
+        # does not know about QML modules, which are dlopen()'d by URI at
+        # run time. Our own modules (MeshMC, MeshMC.Theme, MeshMC.Style,
+        # MeshMC.Components) are compiled into meshmc itself via
+        # qt_import_qml_plugins() and need nothing here. The modules those
+        # import from Qt -- QtQuick, QtQuick.Controls, QtQml, ... -- are not
+        # compiled in and are otherwise entirely missing from the bundle.
+        #
+        # Deploy exactly the Qt QML modules launcher/qml/ imports, found with
+        # qmlimportscanner, rather than the whole of $QT_QML_DIR (which also
+        # contains Quick3D, WebEngine, positioning, etc. that this UI never
+        # touches). Done ahead of the qt_deploy_runtime_dependencies() call
+        # below so its ADDITIONAL_LIBRARIES can include these plugins: each
+        # one has its own dependencies (e.g. libqtquickcontrols2plugin.dylib
+        # needs QtQuickControls2Impl.framework) that nothing linked into
+        # meshmc itself pulls in, and qt_deploy_runtime_dependencies is the
+        # tool that already knows how to resolve and copy those correctly
+        # (whole .framework bundles, symlink chains and all) rather than
+        # reimplementing that here.
+        find_program(QMLIMPORTSCANNER_EXECUTABLE
+            NAMES qmlimportscanner
+            HINTS
+                "${QT_LIBEXECS_DIR}"
+                "${Qt${QT_VERSION_MAJOR}_DIR}/../../../bin"
+                "${Qt${QT_VERSION_MAJOR}_DIR}/../../../libexec"
+        )
+        if(NOT QMLIMPORTSCANNER_EXECUTABLE)
+            message(FATAL_ERROR
+                "qmlimportscanner not found (searched QT_LIBEXECS_DIR="
+                "${QT_LIBEXECS_DIR} and Qt${QT_VERSION_MAJOR}_DIR="
+                "${Qt${QT_VERSION_MAJOR}_DIR}/../..). It ships with Qt's "
+                "qtdeclarative tools and is required to know which Qt QML "
+                "modules to bundle into ${MeshMC_Name}.app.")
+        endif()
+
+        execute_process(
+            COMMAND "${QMLIMPORTSCANNER_EXECUTABLE}"
+                -rootPath "${CMAKE_CURRENT_SOURCE_DIR}/qml"
+                -importPath "${QT_QML_DIR}"
+            OUTPUT_VARIABLE _qml_scan_json
+            RESULT_VARIABLE _qml_scan_result
+        )
+        if(NOT _qml_scan_result EQUAL 0)
+            message(FATAL_ERROR
+                "qmlimportscanner failed while scanning launcher/qml "
+                "(exit code: ${_qml_scan_result})")
+        endif()
+
+        # Pull "relativePath" out of the scanner's JSON by hand rather than
+        # depending on CMake 3.19's string(JSON ...), which the floor here
+        # does not guarantee. Modules the scanner could not resolve on disk
+        # (our own MeshMC.* modules, looked up only via -importPath) have no
+        # "relativePath" key at all, so they never match and are correctly
+        # left out -- they are compiled in, not deployed.
+        string(REGEX MATCHALL "\"relativePath\": *\"[^\"]*\""
+            _qml_relpath_matches "${_qml_scan_json}")
+        set(MESHMC_QT_QML_MODULES "")
+        foreach(_qml_match IN LISTS _qml_relpath_matches)
+            string(REGEX REPLACE "\"relativePath\": *\"([^\"]*)\"" "\\1"
+                _qml_relpath "${_qml_match}")
+            list(APPEND MESHMC_QT_QML_MODULES "${_qml_relpath}")
+        endforeach()
+        list(REMOVE_DUPLICATES MESHMC_QT_QML_MODULES)
+
+        if(NOT MESHMC_QT_QML_MODULES)
+            message(FATAL_ERROR
+                "qmlimportscanner reported no deployable Qt QML modules for "
+                "launcher/qml. qt.conf's QmlImports would point at an empty "
+                "directory and the QML shell would fail to load QtQuick at "
+                "startup, so this is a hard error rather than a warning.")
+        endif()
+        message(STATUS "Qt QML modules to bundle into ${MeshMC_Name}.app: ${MESHMC_QT_QML_MODULES}")
+
+        # Destination-relative path of each module's plugin binary (if any),
+        # once copied below -- NOT the original file under $QT_QML_DIR.
+        # ADDITIONAL_LIBRARIES further down is resolved by
+        # file(GET_RUNTIME_DEPENDENCIES) against the *installed* copy (a
+        # relative path there is looked up under the deploy tool's own
+        # runtime install prefix, same as EXECUTABLE above); pointing it at
+        # $QT_QML_DIR instead would have it run install_name_tool/codesign
+        # machinery against files in the Qt installation itself -- rewriting
+        # a shared, developer-machine-wide Qt install as a side effect of
+        # packaging our own app is not something a build should ever do.
+        set(MESHMC_QT_QML_PLUGIN_FILES "")
+        foreach(_qml_module IN LISTS MESHMC_QT_QML_MODULES)
+            file(GLOB _qml_module_plugin_libs "${QT_QML_DIR}/${_qml_module}/*.dylib")
+            foreach(_qml_module_plugin_lib IN LISTS _qml_module_plugin_libs)
+                get_filename_component(_qml_plugin_name "${_qml_module_plugin_lib}" NAME)
+                list(APPEND MESHMC_QT_QML_PLUGIN_FILES "${QML_DEST_DIR}/${_qml_module}/${_qml_plugin_name}")
+            endforeach()
+        endforeach()
+
+        # Pre-render as one quoted argument per line, same reason as
+        # WINDEPLOYQT_OPTIONS_CODE above: splicing the list directly into the
+        # CONTENT string would paste it in semicolon-separated.
+        set(MESHMC_QT_QML_PLUGIN_FILES_CODE "")
+        foreach(_qml_plugin_file IN LISTS MESHMC_QT_QML_PLUGIN_FILES)
+            string(APPEND MESHMC_QT_QML_PLUGIN_FILES_CODE "\n                    \"${_qml_plugin_file}\"")
+        endforeach()
+
+        foreach(_qml_module IN LISTS MESHMC_QT_QML_MODULES)
+            # Copy only the files ${_qml_module} owns directly (its qmldir,
+            # plugin binary, any local .qml/.qmltypes) -- not recursively.
+            # $QT_QML_DIR nests *other*, unrelated QML modules as
+            # subdirectories of shared parents (QtQuick/ alone also holds
+            # WebEngine's Pdf/, Qt3D's Scene2D and Scene3D, VirtualKeyboard,
+            # Timeline, ...), and a plain recursive install(DIRECTORY) would
+            # have pulled all of that in too. Any subdirectory that genuinely
+            # is a module we need is already its own separate entry here
+            # (qmlimportscanner reports e.g. "QtQuick/Controls/Basic/impl"
+            # alongside "QtQuick/Controls/Basic"), so nothing needs to
+            # recurse by hand. FOLLOW_SYMLINK_CHAIN matters on installations
+            # (e.g. Homebrew's, where every file here is itself a symlink
+            # into a completely different keg directory) where a plain copy
+            # would reproduce a dangling symlink instead of the real file.
+            #
+            # Runs ahead of the qt_deploy_runtime_dependencies() script below
+            # (registered via install(SCRIPT), further down) so that by the
+            # time it inspects ${MESHMC_QT_QML_PLUGIN_FILES}, those files
+            # already exist at their *installed* location -- install rules
+            # run in registration order within a directory.
+            install(CODE "
+                file(GLOB _qml_module_files LIST_DIRECTORIES false
+                    \"${QT_QML_DIR}/${_qml_module}/*\")
+                if(_qml_module_files)
+                    file(INSTALL \${_qml_module_files}
+                        DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${QML_DEST_DIR}/${_qml_module}\"
+                        FOLLOW_SYMLINK_CHAIN
+                    )
+                endif()
+            ")
+        endforeach()
+
         # qt_generate_deploy_script/qt_deploy_runtime_dependencies need Qt 6.3+,
         # which the 6.4 floor guarantees. This replaced a macdeployqt shell-out
         # that only existed for the Qt 5 build.
+        #
+        # ADDITIONAL_LIBRARIES: qt_deploy_runtime_dependencies() above only
+        # follows *linked* libraries and Qt's regular
+        # (dlopen()'d-by-plugin-type) plugins; it does not know about QML
+        # modules, which are dlopen()'d by URI at run time. Our own modules
+        # (MeshMC, MeshMC.Theme, MeshMC.Style, MeshMC.Components) are
+        # compiled into meshmc itself via qt_import_qml_plugins() and need
+        # nothing here. The Qt QML plugins copied in just above are not
+        # compiled in, though, and have dependencies of their own (e.g.
+        # libqtquickcontrols2plugin.dylib needs QtQuickControls2Impl.framework)
+        # that nothing linked into meshmc itself pulls in -- ADDITIONAL_LIBRARIES
+        # is what makes qt_deploy_runtime_dependencies also resolve and copy
+        # those (whole .framework bundles, symlink chains and all) rather
+        # than reimplementing that here.
         qt_generate_deploy_script(
             TARGET ${MeshMC_Name}
             OUTPUT_SCRIPT QT_DEPLOY_SCRIPT
@@ -1661,6 +2187,7 @@ if(WIN32 OR (UNIX AND APPLE))
                 LIBEXEC_DIR ${BINARY_DEST_DIR}
                 LIB_DIR ${LIBRARY_DEST_DIR}
                 PLUGINS_DIR ${PLUGIN_DEST_DIR}
+                ADDITIONAL_LIBRARIES${MESHMC_QT_QML_PLUGIN_FILES_CODE}
                 NO_OVERWRITE
                 NO_TRANSLATIONS
                 NO_COMPILER_RUNTIME
@@ -1669,6 +2196,36 @@ if(WIN32 OR (UNIX AND APPLE))
         install(
             SCRIPT ${QT_DEPLOY_SCRIPT}
         )
+
+        foreach(_qml_module IN LISTS MESHMC_QT_QML_MODULES)
+            # Each plugin .dylib in ${_qml_module} carries an @loader_path
+            # (or @rpath) reference to sibling Qt frameworks, resolved
+            # relative to *its original location* inside the Qt install
+            # ($QT_QML_DIR/${_qml_module}, some fixed number of directories
+            # above $QT_LIBS_DIR). That relationship does not hold once the
+            # plugin is copied into Contents/Resources/qml/... -- Frameworks
+            # sits somewhere else entirely. install_name_tool -add_rpath
+            # points it at the real Frameworks directory too; this adds a
+            # working rpath rather than replacing the existing (now
+            # irrelevant) one, so it is harmless if the plugin also has some
+            # already-working entry, and safe to re-run against an existing
+            # install (a duplicate -add_rpath just fails and is ignored).
+            file(RELATIVE_PATH _qml_module_to_frameworks
+                "${CMAKE_INSTALL_PREFIX}/${QML_DEST_DIR}/${_qml_module}"
+                "${CMAKE_INSTALL_PREFIX}/${FRAMEWORK_DEST_DIR}")
+            install(CODE "
+                file(GLOB _qml_plugin_libs
+                    \"\${CMAKE_INSTALL_PREFIX}/${QML_DEST_DIR}/${_qml_module}/*.dylib\")
+                foreach(_qml_plugin_lib IN LISTS _qml_plugin_libs)
+                    execute_process(
+                        COMMAND install_name_tool
+                            -add_rpath \"@loader_path/${_qml_module_to_frameworks}\"
+                            \"\${_qml_plugin_lib}\"
+                        OUTPUT_QUIET ERROR_QUIET
+                    )
+                endforeach()
+            ")
+        endforeach()
     endif()
 
     # Bundle our linked dependencies
@@ -1793,8 +2350,18 @@ if(WIN32 OR (UNIX AND APPLE))
     endif()
 
     # Add qt.conf - tell Qt where to find plugins relative to the executable
+    #
+    # QmlImports is the Qt 6 key for this (Qt 6 ignores the older Qt 5
+    # Qml2Imports key); it has to be set explicitly here, same as Plugins,
+    # because nothing else on Windows/macOS writes a qt.conf for this install.
+    # QT_CONF_PLUGINS_DEST/QT_CONF_QML_DEST (set in the top-level
+    # CMakeLists.txt, next to PLUGIN_DEST_DIR/QML_DEST_DIR) are where
+    # windeployqt (Windows) / the QML deploy step above (macOS) actually put
+    # Qt's plugins and QML modules, expressed the way qt.conf expects them on
+    # each platform -- which is *not* the same as the install()-DESTINATION
+    # form PLUGIN_DEST_DIR/QML_DEST_DIR use elsewhere in this file.
     install(
-        CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}/qt.conf\" \"[Paths]\nPlugins = ${PLUGIN_DEST_DIR}\n\")"
+        CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}/qt.conf\" \"[Paths]\nPlugins = ${QT_CONF_PLUGINS_DEST}\nQmlImports = ${QT_CONF_QML_DEST}\n\")"
     )
     # Add qtlogging.ini as a config file
     install(

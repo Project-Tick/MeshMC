@@ -24,11 +24,10 @@
 #include <QUrl>
 #include <utility>
 
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
-#include "ui/widgets/ProjectItemDelegate.h"
 
 ContentProviderModel::ContentProviderModel(const ModPlatform::ContentApi& api,
 										   ModPlatform::ContentType contentType,
@@ -90,7 +89,7 @@ QVariant ContentProviderModel::data(const QModelIndex& index, int role) const
 			}
 			const_cast<ContentProviderModel*>(this)->requestLogo(
 				project.logoKey, project.logoUrl);
-			return APPLICATION->getThemedIcon("screenshot-placeholder");
+			return LAUNCHER->getThemedIcon("screenshot-placeholder");
 		}
 
 		case Qt::SizeHintRole:
@@ -126,6 +125,12 @@ QVariant ContentProviderModel::data(const QModelIndex& index, int role) const
 		case LogoKeyRole:
 			return project.logoKey;
 
+		case LogoUrlRole:
+			return project.logoUrl;
+
+		case AuthorRole:
+			return project.author;
+
 		default:
 			break;
 	}
@@ -141,6 +146,8 @@ QHash<int, QByteArray> ContentProviderModel::roleNames() const
 	roles.insert(ProjectItemRole::Description, "description");
 	roles.insert(ProjectItemRole::Installed, "installed");
 	roles.insert(LogoKeyRole, "logoKey");
+	roles.insert(LogoUrlRole, "logoUrl");
+	roles.insert(AuthorRole, "author");
 	return roles;
 }
 
@@ -195,7 +202,7 @@ void ContentProviderModel::loadCategories()
 
 	auto response = std::make_shared<QByteArray>();
 	auto* job = new NetJob(QString("%1::Categories").arg(m_api.id()),
-						   APPLICATION->network());
+						   LAUNCHER->network());
 	job->addNetAction(Net::Download::makeByteArray(
 		m_api.categoriesUrl(m_contentType), response.get()));
 
@@ -341,6 +348,7 @@ void ContentProviderModel::restartSearch()
 	m_generation++;
 	m_searchState = None;
 	m_nextSearchOffset = 0;
+	m_lastError.clear();
 	performPaginatedSearch();
 }
 
@@ -366,15 +374,17 @@ void ContentProviderModel::performPaginatedSearch()
 					  .arg(m_api.id(), m_projectLookupId);
 	}
 
-	auto* job = new NetJob(jobName, APPLICATION->network());
+	auto* job = new NetJob(jobName, LAUNCHER->network());
 	job->addNetAction(
 		Net::Download::makeByteArray(url, &m_searchResponse));
 
 	m_searchJob = job;
 	connect(job, &NetJob::succeeded, this,
 			&ContentProviderModel::searchRequestFinished);
-	connect(job, &NetJob::failed, this,
-			[this](QString) { searchRequestFailed(); });
+	connect(job, &NetJob::failed, this, [this](QString reason) {
+		m_lastError = reason;
+		searchRequestFailed();
+	});
 
 	job->start();
 	emit searchStateChanged();
@@ -390,6 +400,8 @@ void ContentProviderModel::searchRequestFinished()
 		searchRequestFailed();
 		return;
 	}
+
+	m_lastError.clear();
 
 	int totalHits = -1;
 	QList<ModPlatform::IndexedProject> newList;
@@ -504,7 +516,7 @@ void ContentProviderModel::loadEntry(int viewRow)
 		auto response = std::make_shared<QByteArray>();
 		auto* job = new NetJob(QString("%1::Versions(%2)")
 								   .arg(m_api.id(), projectId),
-							   APPLICATION->network());
+							   LAUNCHER->network());
 		job->addNetAction(Net::Download::makeByteArray(
 			m_api.projectVersionsUrl(query), response.get()));
 
@@ -532,7 +544,7 @@ void ContentProviderModel::loadEntry(int viewRow)
 		auto response = std::make_shared<QByteArray>();
 		auto* job = new NetJob(
 			QString("%1::Description(%2)").arg(m_api.id(), projectId),
-			APPLICATION->network());
+			LAUNCHER->network());
 		job->addNetAction(Net::Download::makeByteArray(
 			m_api.projectBodyUrl(projectId), response.get()));
 
@@ -675,11 +687,11 @@ void ContentProviderModel::requestLogo(const QString& key, const QString& url)
 		return;
 	}
 
-	MetaEntryPtr entry = APPLICATION->metacache()->resolveEntry(
+	MetaEntryPtr entry = LAUNCHER->metacache()->resolveEntry(
 		iconCacheName(), QString("logos/%1").arg(key.section(".", 0, 0)));
 
 	auto* job = new NetJob(QString("%1 Icon %2").arg(m_api.id(), key),
-						   APPLICATION->network());
+						   LAUNCHER->network());
 	job->addNetAction(Net::Download::makeCached(QUrl(url), entry));
 
 	const QString fullPath = entry->getFullPath();
