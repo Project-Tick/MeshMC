@@ -1,3 +1,5 @@
+// launcher/icons/MMCIcon.h
+// @meshmc-public: MeshMC/Icon/MMCIcon
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0

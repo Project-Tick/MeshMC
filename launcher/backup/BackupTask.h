@@ -1,3 +1,5 @@
+// launcher/backup/BackupTask.h
+// @meshmc-public: MeshMC/Backup/BackupTask
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0

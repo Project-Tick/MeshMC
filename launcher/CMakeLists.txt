@@ -6,8 +6,12 @@ project(application)
 
 include (UnitTest)
 
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/BuildConfig.in.cpp" "${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp")
+
 set(CORE_SOURCES
     # LOGIC - Base classes and infrastructure
+    BuildConfig.h
+    ${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp
     BaseInstaller.h
     BaseInstaller.cpp
     BaseVersionList.h
@@ -1209,6 +1213,7 @@ endif()
 
 # Add executable
 add_library(MeshMC_logic STATIC ${LOGIC_SOURCES} ${MESHMC_SOURCES} ${MESHMC_UI} ${MESHMC_SHARED_UI} ${MESHMC_RESOURCES})
+target_include_directories(MeshMC_logic PUBLIC ${CMAKE_SOURCE_DIR}/launcher/headers)
 
 # Declared after MeshMC_logic because it links against it.
 add_unit_test(CustomTheme
@@ -1233,7 +1238,6 @@ target_link_libraries(MeshMC_logic
     nbt++
     ZLIB::ZLIB
     tomlplusplus::tomlplusplus
-    BuildConfig
     Katabasis
 )
 
@@ -1444,7 +1448,7 @@ if(NOT APPLE)
         DesktopServices.h
         DesktopServices.cpp
         QObjectPtr.h
-
+        ${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp
         tasks/Task.h
         tasks/Task.cpp
 
@@ -1457,7 +1461,7 @@ if(NOT APPLE)
     )
 
     add_library(meshmc_updater_logic STATIC ${MESHUPDATER_SOURCES} ${MESHUPDATER_UI} ${MESHMC_SHARED_UI})
-    target_include_directories(meshmc_updater_logic PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+    target_include_directories(meshmc_updater_logic PUBLIC ${CMAKE_SOURCE_DIR}/launcher/headers)
     target_compile_definitions(meshmc_updater_logic PUBLIC QT_MESSAGELOGCONTEXT)
     target_link_libraries(meshmc_updater_logic
         Qt${QT_VERSION_MAJOR}::Core
@@ -1466,7 +1470,6 @@ if(NOT APPLE)
         Qt${QT_VERSION_MAJOR}::Network
         LibArchive::LibArchive
         cmark::cmark
-        BuildConfig
     )
 
     # WIN32: no console window while updating. Diagnostics go to the log file,

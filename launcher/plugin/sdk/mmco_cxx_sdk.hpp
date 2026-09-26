@@ -1,3 +1,5 @@
+// launcher/plugin/sdk/mmco_cxx_sdk.hpp
+// @meshmc-public: MMCO/CXX
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
