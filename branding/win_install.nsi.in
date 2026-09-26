@@ -412,7 +412,7 @@ Section "@MeshMC_DisplayName@"
     WriteRegStr HKCU "${UNINST_KEY}" "UninstallString" '"$INSTDIR\uninstall.exe" _?=$INSTDIR'
     WriteRegStr HKCU "${UNINST_KEY}" "QuietUninstallString" '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
     WriteRegStr HKCU "${UNINST_KEY}" "InstallLocation" "$INSTDIR"
-    WriteRegStr HKCU "${UNINST_KEY}" "Publisher" "@MeshMC_DisplayName@ Contributors"
+    WriteRegStr HKCU "${UNINST_KEY}" "Publisher" "Project Tick"
     WriteRegStr HKCU "${UNINST_KEY}" "Version" "@MeshMC_VERSION_NAME4@"
     WriteRegStr HKCU "${UNINST_KEY}" "DisplayVersion" "@MeshMC_RELEASE_VERSION_NAME@"
     WriteRegStr HKCU "${UNINST_KEY}" "VersionMajor" "@MeshMC_VERSION_MAJOR@"
