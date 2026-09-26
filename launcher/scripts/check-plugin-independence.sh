@@ -11,7 +11,7 @@
 #
 #   1. Source-level grep over plugins/   — forbids re-introducing the
 #      back-doors that ABI 3 closed (APPLICATION->, Application::*,
-#      direct #include "Application.h" / "BaseInstance.h" / …, BasePage
+#      direct #include <MeshMC/Core/Application> / <MeshMC/Core/BaseInstance> / …, BasePage
 #      subclassing through the launcher tree, etc.).
 #
 #   2. Link-command grep over the build directory — confirms that the

@@ -751,7 +751,7 @@ struct MMCOContext {
 	 * S11's `http_get` only ever sets User-Agent. Plugins that talk
 	 * to APIs gated by auth headers (CurseForge's `x-api-key` is
 	 * the canonical case) use this variant instead. Keys come from
-	 * the plugin's own `#include "BuildConfig.h"` — the launcher
+	 * the plugin's own `#include <MeshMC/Core/BuildConfig>` — the launcher
 	 * does NOT pass keys through this surface; that's deliberate so
 	 * a key doesn't have to traverse a generic plugin API.
 	 *

@@ -1,3 +1,5 @@
+// launcher/BaseVersionList.h
+// @meshmc-public: MeshMC/Core/BaseVersionList
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0

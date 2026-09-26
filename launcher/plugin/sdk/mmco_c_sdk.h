@@ -1,3 +1,5 @@
+// launcher/plugin/sdk/mmco_c_sdk.h
+// @meshmc-public: MMCO/C.h
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
@@ -771,7 +773,7 @@ typedef struct MMCOContext {
 	 * is always set by the launcher; do not bother passing one.
 	 * Use for endpoints gated by auth headers (e.g. CurseForge's
 	 * `x-api-key`); pull the secret from your plugin's
-	 * `#include "BuildConfig.h"`.
+	 * `#include <MeshMC/Core/BuildConfig>`.
 	 *
 	 * Returns 0 on queue, -1 on argument errors. Callback body
 	 * lifetime matches `http_get`.
