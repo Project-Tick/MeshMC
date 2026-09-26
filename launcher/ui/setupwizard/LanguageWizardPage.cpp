@@ -61,6 +61,6 @@ void LanguageWizardPage::retranslate()
 {
 	setTitle(tr("Language"));
 	setSubTitle(
-		tr("Select the language to use in %1").arg(BuildConfig.MESHMC_NAME));
+		tr("Select the language to use in MeshMC"));
 	mainWidget->retranslate();
 }

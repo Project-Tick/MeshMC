@@ -474,8 +474,7 @@ void LaunchController::launchInstance()
 	// Prepend Version
 	m_launcher->prependStep(new TextPrint(
 		m_launcher.get(),
-		BuildConfig.MESHMC_NAME +
-			" version: " + BuildConfig.printableVersionString() + "\n\n",
+		"MeshMC version: " + BuildConfig.printableVersionString() + "\n\n",
 		MessageLevel::MeshMC));
 
 	// Dispatch pre-launch hook to plugins

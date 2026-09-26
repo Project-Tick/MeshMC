@@ -56,7 +56,7 @@ static void launchCrashReporter()
 
 	QStringList args;
 	args << "--logdir" << QDir::currentPath();
-	args << "--name" << BuildConfig.MESHMC_NAME;
+	args << "--name MeshMC";
 
 	QString apiKey = "public";
 	if (APPLICATION && APPLICATION->settings()) {

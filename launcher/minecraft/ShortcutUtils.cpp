@@ -243,7 +243,7 @@ namespace ShortcutUtils
 		 * the free desktops the folder is a menu built from .desktop
 		 * files and a subfolder would simply not be read. */
 		applications = FS::PathCombine(
-			applications, BuildConfig.MESHMC_DISPLAYNAME + " Instances");
+			applications, "MeshMC Instances");
 		if (!QDir(applications).mkpath(".")) {
 			complain(shortcut.parent,
 					 QObject::tr("Could not create %1.")

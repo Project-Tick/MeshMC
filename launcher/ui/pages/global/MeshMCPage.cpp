@@ -121,8 +121,7 @@ bool MeshMCPage::confirmInstanceDirPath(const QString& rawDir,
 			   "This is known to cause problems. "
 			   "After a restart the launcher might break, "
 			   "because it will no longer have access to that directory.\n\n"
-			   "Granting %1 access to it via Flatseal is recommended.")
-				.arg(BuildConfig.MESHMC_DISPLAYNAME));
+			   "Granting MeshMC access to it via Flatseal is recommended."));
 		warning.setInformativeText(tr("Do you want to proceed anyway?"));
 		warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		return warning.exec() == QMessageBox::Yes;
@@ -260,9 +259,8 @@ void MeshMCPage::on_migrateDataFolderMacBtn_clicked()
 {
 	QMessageBox::information(
 		this, tr("Automatic macOS Migration"),
-		tr("%1 now stores macOS data under your Library/Application Support "
-		   "folder automatically.")
-			.arg(BuildConfig.MESHMC_DISPLAYNAME));
+		tr("MeshMC now stores macOS data under your Library/Application Support "
+		   "folder automatically."));
 }
 
 void MeshMCPage::refreshUpdateChannelList()

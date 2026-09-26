@@ -192,11 +192,10 @@ void MojangVersionFormat::readVersionProperties(const QJsonObject& in,
 			out->addProblem(
 				ProblemSeverity::Warning,
 				QObject::tr("The 'minimumMeshMCVersion' value of this version "
-							"(%1) is higher than supported by %3 (%2). It "
+							"(%1) is higher than supported by MeshMC (%2). It "
 							"might not work properly!")
 					.arg(out->minimumMeshMCVersion)
-					.arg(CURRENT_MINIMUM_MESHMC_VERSION)
-					.arg(BuildConfig.MESHMC_NAME));
+					.arg(CURRENT_MINIMUM_MESHMC_VERSION));
 		}
 	}
 	if (in.contains("downloads")) {

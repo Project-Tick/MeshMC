@@ -256,18 +256,17 @@ void LogPage::on_btnPaste_clicked()
 	// GuiUtil!
 	m_model->append(
 		MessageLevel::MeshMC,
-		QString("%2: Log upload triggered at: %1")
-			.arg(QDateTime::currentDateTime().toString(Qt::RFC2822Date),
-				 BuildConfig.MESHMC_NAME));
+		QString("MeshMC: Log upload triggered at: %1")
+			.arg(QDateTime::currentDateTime().toString(Qt::RFC2822Date)));
 	auto url = GuiUtil::uploadPaste(m_model->toPlainText(), this);
 	if (!url.isEmpty()) {
 		m_model->append(MessageLevel::MeshMC,
-						QString("%2: Log uploaded to: %1")
-							.arg(url, BuildConfig.MESHMC_NAME));
+						QString("MeshMC: Log uploaded to: %1")
+							.arg(url));
 	} else {
 		m_model->append(
 			MessageLevel::Error,
-			QString("%1: Log upload failed!").arg(BuildConfig.MESHMC_NAME));
+			QString("MeshMC: Log upload failed!"));
 	}
 }
 

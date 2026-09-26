@@ -3,8 +3,8 @@
 #endif
 #include <windows.h>
 
-IDI_ICON1               ICON    DISCARDABLE     "@MeshMC_AppID@.ico"
-1 RT_MANIFEST "@MeshMC_AppBinaryName@.manifest"
+IDI_ICON1               ICON    DISCARDABLE     "org.projecttick.MeshMC.ico"
+1 RT_MANIFEST "meshmc.manifest"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     @MeshMC_VERSION_NAME4_COMMA@
@@ -15,10 +15,10 @@ BEGIN
         BEGIN
                 BLOCK "000004b0"
                 BEGIN
-                        VALUE "CompanyName", "@MeshMC_Copyright@"
-                        VALUE "FileDescription", "@MeshMC_DisplayName@"
+                        VALUE "CompanyName", "Project Tick"
+                        VALUE "FileDescription", "MeshMC"
                         VALUE "FileVersion", "@MeshMC_RELEASE_VERSION_NAME@.0"
-                        VALUE "ProductName", "@MeshMC_DisplayName@"
+                        VALUE "ProductName", "MeshMC"
                         VALUE "ProductVersion", "@MeshMC_RELEASE_VERSION_NAME@"
                 END
         END

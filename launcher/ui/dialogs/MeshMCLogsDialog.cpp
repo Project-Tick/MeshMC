@@ -79,13 +79,12 @@ void MeshMCLogsDialog::populateLogList()
 		m_watching0Log = false;
 	}
 
-	QString baseName = BuildConfig.MESHMC_NAME;
 	QDir dir(logDirectory());
 	QStringList logFiles;
 
 	// MeshMC-0.log through MeshMC-4.log
 	for (int i = 0; i <= 4; i++) {
-		QString fileName = QString("%1-%2.log").arg(baseName).arg(i);
+		QString fileName = QString("MeshMC-%1.log").arg(i);
 		if (dir.exists(fileName)) {
 			logFiles.append(fileName);
 		}
@@ -131,8 +130,7 @@ void MeshMCLogsDialog::on_selectLogBox_currentIndexChanged(int index)
 	loadSelectedLog();
 
 	// Watch MeshMC-0.log for live updates
-	QString baseName = BuildConfig.MESHMC_NAME;
-	if (m_currentFile == QString("%1-0.log").arg(baseName)) {
+	if (m_currentFile == QString("MeshMC-0.log")) {
 		QString fullPath = logFilePath(m_currentFile);
 		m_liveWatcher->addPath(fullPath);
 		m_watching0Log = true;
@@ -178,8 +176,7 @@ void MeshMCLogsDialog::loadSelectedLog()
 	ui->textBrowser->setPlainText(content);
 
 	// Scroll to bottom for 0.log (live log)
-	QString baseName = BuildConfig.MESHMC_NAME;
-	if (m_currentFile == QString("%1-0.log").arg(baseName)) {
+	if (m_currentFile == QString("MeshMC-0.log")) {
 		ui->textBrowser->moveCursor(QTextCursor::End);
 		ui->textBrowser->ensureCursorVisible();
 	}
@@ -224,12 +221,11 @@ void MeshMCLogsDialog::on_btnDelete_clicked()
 
 void MeshMCLogsDialog::on_btnClean_clicked()
 {
-	QString baseName = BuildConfig.MESHMC_NAME;
 	QStringList toDelete;
 	QDir dir(logDirectory());
 
 	for (int i = 0; i <= 4; i++) {
-		QString fileName = QString("%1-%2.log").arg(baseName).arg(i);
+		QString fileName = QString("MeshMC-%1.log").arg(i);
 		if (dir.exists(fileName)) {
 			toDelete.append(fileName);
 		}
@@ -285,8 +281,7 @@ void MeshMCLogsDialog::onLogFileChanged(const QString& path)
 		loadSelectedLog();
 		// QFileSystemWatcher may stop watching after a file is modified
 		// (rewritten), re-add it
-		QString baseName = BuildConfig.MESHMC_NAME;
-		QString fullPath = logFilePath(QString("%1-0.log").arg(baseName));
+		QString fullPath = logFilePath(QString("MeshMC-0.log"));
 		if (QFile::exists(fullPath)) {
 			auto watched = m_liveWatcher->files();
 			if (!watched.contains(fullPath)) {
