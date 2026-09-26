@@ -1,14 +1,14 @@
-@MeshMC_AppBinaryName@(6) "Project Tick" ""
+meshmc(6) "Project Tick" ""
 
 
 # NAME
 
-@MeshMC_AppBinaryName@ - a launcher and instance manager for Minecraft.
+meshmc - a launcher and instance manager for Minecraft.
 
 
 # SYNOPSIS
 
-*@MeshMC_AppBinaryName@* [OPTIONS...]
+*meshmc* [OPTIONS...]
 
 
 # DESCRIPTION
@@ -81,14 +81,14 @@ variables, besides other common Qt variables:
 
 # BUGS
 
-@MeshMC_BUG_TRACKER_URL@
+https://github.com/Project-Tick/MeshMC/issues
 
 # RESOURCES
 
-GitHub: @MeshMC_Git@
+GitHub: https://github.com/Project-Tick/MeshMC
 
-Main website: https://@MeshMC_Domain@
+Main website: https://projecttick.org
 
 # AUTHORS
 
-@MeshMC_Authors@
+Copyright (C) 2026 Project Tick <https://projecttick.org>, All rights reserved.

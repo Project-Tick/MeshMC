@@ -6,15 +6,15 @@
 
 Unicode true
 
-Name "@MeshMC_DisplayName@"
-InstallDir "$LOCALAPPDATA\Programs\@MeshMC_CommonName@"
-InstallDirRegKey HKCU "Software\@MeshMC_CommonName@" "InstallDir"
+Name "MeshMC"
+InstallDir "$LOCALAPPDATA\Programs\MeshMC"
+InstallDirRegKey HKCU "Software\MeshMC" "InstallDir"
 RequestExecutionLevel user
-OutFile "../@MeshMC_CommonName@-Setup.exe"
+OutFile "../MeshMC-Setup.exe"
 
-!define MUI_ICON "@CMAKE_BINARY_DIR@/@MeshMC_Branding_ICO@"
+!define MUI_ICON "@CMAKE_BINARY_DIR@/org.projecttick.MeshMC.ico"
 
-!define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\@MeshMC_CommonName@"
+!define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\MeshMC"
 
 ;--------------------------------
 
@@ -25,7 +25,7 @@ OutFile "../@MeshMC_CommonName@-Setup.exe"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
-!define MUI_FINISHPAGE_RUN "$InstDir\@MeshMC_AppBinaryName@.exe"
+!define MUI_FINISHPAGE_RUN "$InstDir\meshmc.exe"
 !insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -108,9 +108,9 @@ OutFile "../@MeshMC_CommonName@-Setup.exe"
 ; Version info
 VIProductVersion "@MeshMC_VERSION_NAME4@"
 VIFileVersion "@MeshMC_VERSION_NAME4@"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "@MeshMC_DisplayName@"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "@MeshMC_DisplayName@ Installer"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "@MeshMC_Copyright@"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "MeshMC"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "MeshMC Installer"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "Project Tick"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "@MeshMC_VERSION_NAME4@"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "@MeshMC_VERSION_NAME4@"
 
@@ -365,17 +365,17 @@ SectionEnd
 ;------------------------------------
 
 ; The stuff to install
-Section "@MeshMC_DisplayName@"
+Section "MeshMC"
 
   SectionIn RO
 
-  nsExec::Exec /TIMEOUT=2000 'TaskKill /IM @MeshMC_AppBinaryName@.exe /F'
+  nsExec::Exec /TIMEOUT=2000 'TaskKill /IM meshmc.exe /F'
 
   SetOutPath $INSTDIR
 
-  File "@MeshMC_AppBinaryName@.exe"
-  File "@MeshMC_AppBinaryName@-updater.exe"
-  File "@MeshMC_AppBinaryName@-crashreporter.exe"
+  File "meshmc.exe"
+  File "meshmc-updater.exe"
+  File "meshmc-crashreporter.exe"
   File /r "mmcmodules"
   File "qt.conf"
   File "qtlogging.ini"
@@ -388,27 +388,27 @@ Section "@MeshMC_DisplayName@"
   File /nonfatal /r "tls"
 
   ; Write the installation path into the registry
-  WriteRegStr HKCU Software\@MeshMC_CommonName@ "InstallDir" "$INSTDIR"
+  WriteRegStr HKCU Software\MeshMC "InstallDir" "$INSTDIR"
 
   ; Write the URL Handler into registry for curseforge
   WriteRegStr HKCU Software\Classes\curseforge "URL Protocol" ""
-  WriteRegStr HKCU Software\Classes\curseforge\shell\open\command "" '"$INSTDIR\@MeshMC_AppBinaryName@.exe" "%1"'
+  WriteRegStr HKCU Software\Classes\curseforge\shell\open\command "" '"$INSTDIR\meshmc.exe" "%1"'
 
   ; Write the URL Handler into registry for meshmc
-  WriteRegStr HKCU Software\Classes\@MeshMC_AppBinaryName@ "URL Protocol" ""
-  WriteRegStr HKCU Software\Classes\@MeshMC_AppBinaryName@\shell\open\command "" '"$INSTDIR\@MeshMC_AppBinaryName@.exe" "%1"'
+  WriteRegStr HKCU Software\Classes\meshmc "URL Protocol" ""
+  WriteRegStr HKCU Software\Classes\meshmc\shell\open\command "" '"$INSTDIR\meshmc.exe" "%1"'
 
   ; Write the URL Handler into registry for meshmc import
   WriteRegStr HKCU Software\Classes\meshmc "URL Protocol" ""
-  WriteRegStr HKCU Software\Classes\meshmc\shell\open\command "" '"$INSTDIR\@MeshMC_AppBinaryName@.exe" "%1"'
+  WriteRegStr HKCU Software\Classes\meshmc\shell\open\command "" '"$INSTDIR\meshmc.exe" "%1"'
 
   ; Write the uninstall keys for Windows
   ; https://learn.microsoft.com/en-us/windows/win32/msi/uninstall-registry-key
   ${GetParameters} $R0
   ${GetOptions} $R0 "/NoUninstaller" $R1
   ${If} ${Errors}
-    WriteRegStr HKCU "${UNINST_KEY}" "DisplayName" "@MeshMC_DisplayName@"
-    WriteRegStr HKCU "${UNINST_KEY}" "DisplayIcon" "$INSTDIR\@MeshMC_AppBinaryName@.exe"
+    WriteRegStr HKCU "${UNINST_KEY}" "DisplayName" "MeshMC"
+    WriteRegStr HKCU "${UNINST_KEY}" "DisplayIcon" "$INSTDIR\meshmc.exe"
     WriteRegStr HKCU "${UNINST_KEY}" "UninstallString" '"$INSTDIR\uninstall.exe" _?=$INSTDIR'
     WriteRegStr HKCU "${UNINST_KEY}" "QuietUninstallString" '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
     WriteRegStr HKCU "${UNINST_KEY}" "InstallLocation" "$INSTDIR"
@@ -431,23 +431,23 @@ SectionEnd
 
 Section "Start Menu Shortcut" SM_SHORTCUTS
 
-  CreateShortcut "$SMPROGRAMS\@MeshMC_DisplayName@.lnk" "$INSTDIR\@MeshMC_AppBinaryName@.exe" "" "$INSTDIR\@MeshMC_AppBinaryName@.exe" 0
+  CreateShortcut "$SMPROGRAMS\MeshMC.lnk" "$INSTDIR\meshmc.exe" "" "$INSTDIR\meshmc.exe" 0
 
 SectionEnd
 
 Section /o "Desktop Shortcut" DESKTOP_SHORTCUTS
 
-  CreateShortcut "$DESKTOP\@MeshMC_DisplayName@.lnk" "$INSTDIR\@MeshMC_AppBinaryName@.exe" "" "$INSTDIR\@MeshMC_AppBinaryName@.exe" 0
+  CreateShortcut "$DESKTOP\MeshMC.lnk" "$INSTDIR\meshmc.exe" "" "$INSTDIR\meshmc.exe" 0
 
 SectionEnd
 
 
-!define APPID "@MeshMC_CommonName@.App"
-!define APPEXE "@MeshMC_AppBinaryName@.exe"
+!define APPID "MeshMC.App"
+!define APPEXE "meshmc.exe"
 !define APPICON "$INSTDIR\${APPEXE},0"
-!define APPDESCRIPTION "@MeshMC_DisplayName@"
-!define APPNAME "@MeshMC_DisplayName@"
-!define APPCMDTEXT "@MeshMC_DisplayName@"
+!define APPDESCRIPTION "MeshMC"
+!define APPNAME "MeshMC"
+!define APPCMDTEXT "MeshMC"
 
 Section /o "Shell Association (Open-With dialog)" SHELL_ASSOC
 
@@ -466,14 +466,14 @@ SectionEnd
 
 Section "Uninstall"
 
-  nsExec::Exec /TIMEOUT=2000 'TaskKill /IM @MeshMC_AppBinaryName@.exe /F'
+  nsExec::Exec /TIMEOUT=2000 'TaskKill /IM meshmc.exe /F'
 
-  DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\@MeshMC_CommonName@"
-  DeleteRegKey HKCU SOFTWARE\@MeshMC_CommonName@
+  DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MeshMC"
+  DeleteRegKey HKCU SOFTWARE\MeshMC
 
-  Delete $INSTDIR\@MeshMC_AppBinaryName@.exe
-  Delete $INSTDIR\@MeshMC_AppBinaryName@-updater.exe
-  Delete $INSTDIR\@MeshMC_AppBinaryName@-crashreporter.exe
+  Delete $INSTDIR\meshmc.exe
+  Delete $INSTDIR\meshmc-updater.exe
+  Delete $INSTDIR\meshmc-crashreporter.exe
   Delete $INSTDIR\qt.conf
   Delete $INSTDIR\qtlogging.ini
   Delete $INSTDIR\*.dll
@@ -488,8 +488,8 @@ Section "Uninstall"
   RMDir /r $INSTDIR\styles
   RMDir /r $INSTDIR\tls
 
-  Delete "$SMPROGRAMS\@MeshMC_DisplayName@.lnk"
-  Delete "$DESKTOP\@MeshMC_DisplayName@.lnk"
+  Delete "$SMPROGRAMS\MeshMC.lnk"
+  Delete "$DESKTOP\MeshMC.lnk"
 
   RMDir "$INSTDIR"
 

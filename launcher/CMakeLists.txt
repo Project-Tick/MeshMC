@@ -785,7 +785,7 @@ SET(MESHMC_SOURCES
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
     resources/shaders/shaders.qrc
-    ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
+    ${CMAKE_SOURCE_DIR}/branding/meshmc.qrc
 
     # Icons
     icons/MMCIcon.h
@@ -1192,7 +1192,7 @@ set(MESHMC_QRC_FILES
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
     resources/shaders/shaders.qrc
-    ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.qrc
+    ${CMAKE_SOURCE_DIR}/branding/meshmc.qrc
 )
 
 # Same reasoning as MESHMC_UI above: never rely on the versionless wrapper.
@@ -1204,7 +1204,7 @@ endif()
 
 ######## Windows resource files ########
 if(WIN32)
-    set(MESHMC_RCS ${CMAKE_BINARY_DIR}/${MeshMC_AppBinaryName}.rc)
+    set(MESHMC_RCS ${CMAKE_BINARY_DIR}/meshmc.rc)
 endif()
 
 # Add executable
@@ -1312,28 +1312,27 @@ if(MeshMC_SPARKLE_ENABLED)
         USE_SOURCE_PERMISSIONS)
 endif()
 
-add_executable(${MeshMC_Name} MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
-target_link_libraries(${MeshMC_Name} MeshMC_logic)
+add_executable(MeshMC MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
+target_link_libraries(MeshMC MeshMC_logic)
 
 # Export all symbols so dlopen()'ed .mmco plugins can resolve launcher symbols at runtime
-set_target_properties(${MeshMC_Name} PROPERTIES ENABLE_EXPORTS ON)
+set_target_properties(MeshMC PROPERTIES ENABLE_EXPORTS ON)
 
 if(MSVC)
-    target_link_options(${MeshMC_Name} PRIVATE "/MANIFEST:NO")
+    target_link_options(MeshMC PRIVATE "/MANIFEST:NO")
 endif()
 
-if(DEFINED MeshMC_AppBinaryName)
-    set_target_properties(${MeshMC_Name} PROPERTIES OUTPUT_NAME "${MeshMC_AppBinaryName}")
-endif()
+set_target_properties(MeshMC PROPERTIES OUTPUT_NAME "meshmc")
+
 if(APPLE)
-    set_target_properties(${MeshMC_Name} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../cmake/MacOSXBundleInfo.plist.in")
+    set_target_properties(MeshMC PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../cmake/MacOSXBundleInfo.plist.in")
 endif()
 if(DEFINED MeshMC_BINARY_RPATH)
-    SET_TARGET_PROPERTIES(${MeshMC_Name} PROPERTIES INSTALL_RPATH "${MeshMC_BINARY_RPATH}")
+    SET_TARGET_PROPERTIES(MeshMC PROPERTIES INSTALL_RPATH "${MeshMC_BINARY_RPATH}")
 endif()
 
 if(DEFINED MeshMC_APP_BINARY_DEFS)
-    target_compile_definitions(${MeshMC_Name} PRIVATE ${MeshMC_APP_BINARY_DEFS})
+    target_compile_definitions(MeshMC PRIVATE ${MeshMC_APP_BINARY_DEFS})
     target_compile_definitions(MeshMC_logic PRIVATE ${MeshMC_APP_BINARY_DEFS})
 endif()
 
@@ -1363,7 +1362,7 @@ if(APPLE)
     # build directory.
     set(MeshMC_BundleStagingDir "_meshmc_bundle_staging")
 
-    install(TARGETS ${MeshMC_Name}
+    install(TARGETS MeshMC
         RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
         BUNDLE DESTINATION "${MeshMC_BundleStagingDir}"
         LIBRARY DESTINATION ${LIBRARY_DEST_DIR}
@@ -1375,19 +1374,19 @@ if(APPLE)
     install(CODE "
         set(_meshmc_prefix \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}\")
         set(_meshmc_staging \"\${_meshmc_prefix}/${MeshMC_BundleStagingDir}\")
-        set(_meshmc_staged_bundle \"\${_meshmc_staging}/$<TARGET_BUNDLE_DIR_NAME:${MeshMC_Name}>\")
-        set(_meshmc_bundle \"\${_meshmc_prefix}/${MeshMC_Name}.app\")
+        set(_meshmc_staged_bundle \"\${_meshmc_staging}/$<TARGET_BUNDLE_DIR_NAME:MeshMC>\")
+        set(_meshmc_bundle \"\${_meshmc_prefix}/MeshMC.app\")
         if(NOT IS_DIRECTORY \"\${_meshmc_staged_bundle}\")
             message(FATAL_ERROR
                 \"Staged app bundle '\${_meshmc_staged_bundle}' is missing; \"
-                \"cannot assemble ${MeshMC_Name}.app\")
+                \"cannot assemble MeshMC.app\")
         endif()
         message(STATUS \"Merging \${_meshmc_staged_bundle} into \${_meshmc_bundle}\")
         file(COPY \"\${_meshmc_staged_bundle}/\" DESTINATION \"\${_meshmc_bundle}\")
         file(REMOVE_RECURSE \"\${_meshmc_staging}\")
     ")
 else()
-    install(TARGETS ${MeshMC_Name}
+    install(TARGETS MeshMC
         RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
         BUNDLE DESTINATION ${BUNDLE_DEST_DIR}
         LIBRARY DESTINATION ${LIBRARY_DEST_DIR}
@@ -1647,11 +1646,11 @@ if(WIN32 OR (UNIX AND APPLE))
         # shells out to it.
         if(QT_VERSION_MAJOR EQUAL 6)
             qt_generate_deploy_script(
-                TARGET ${MeshMC_Name}
+                TARGET MeshMC
                 OUTPUT_SCRIPT QT_DEPLOY_SCRIPT
                 CONTENT "
                 qt_deploy_runtime_dependencies(
-                    EXECUTABLE ${BINARY_DEST_DIR}/$<TARGET_FILE_NAME:${MeshMC_Name}>
+                    EXECUTABLE ${BINARY_DEST_DIR}/$<TARGET_FILE_NAME:MeshMC>
                     BIN_DIR ${BINARY_DEST_DIR}
                     LIBEXEC_DIR ${BINARY_DEST_DIR}
                     LIB_DIR ${LIBRARY_DEST_DIR}
@@ -1689,7 +1688,7 @@ if(WIN32 OR (UNIX AND APPLE))
             endif()
 
             # Runs after the install(CODE) further up that merges the staged
-            # bundle into ${CMAKE_INSTALL_PREFIX}/${MeshMC_Name}.app, so the
+            # bundle into ${CMAKE_INSTALL_PREFIX}/MeshMC.app, so the
             # bundle macdeployqt is pointed at already exists. This sits at
             # the same point in the install order as the Qt 6 branch's
             # install(SCRIPT) above.
@@ -1700,7 +1699,7 @@ if(WIN32 OR (UNIX AND APPLE))
             # not rewritten by macdeployqt on either branch.
             install(CODE "
                 set(_meshmc_macdeployqt \"${MACDEPLOYQT_EXECUTABLE}\")
-                set(_meshmc_bundle \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${MeshMC_Name}.app\")
+                set(_meshmc_bundle \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/MeshMC.app\")
 
                 if(NOT _meshmc_macdeployqt)
                     message(FATAL_ERROR
@@ -1772,7 +1771,7 @@ if(WIN32 OR (UNIX AND APPLE))
                     --dir \"\${CMAKE_INSTALL_PREFIX}/${BINARY_DEST_DIR}\"
                     --libdir \"\${CMAKE_INSTALL_PREFIX}/${LIBRARY_DEST_DIR}\"
                     --plugindir \"\${CMAKE_INSTALL_PREFIX}/${PLUGIN_DEST_DIR}\"
-                    \"\${CMAKE_INSTALL_PREFIX}/${BINARY_DEST_DIR}/$<TARGET_FILE_NAME:${MeshMC_Name}>\"
+                    \"\${CMAKE_INSTALL_PREFIX}/${BINARY_DEST_DIR}/$<TARGET_FILE_NAME:MeshMC>\"
                 RESULT_VARIABLE _deploy_result
             )
             if(NOT _deploy_result EQUAL 0)

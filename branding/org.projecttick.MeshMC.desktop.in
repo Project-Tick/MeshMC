@@ -1,13 +1,13 @@
 [Desktop Entry]
 Version=1.0
-Name=@MeshMC_DisplayName@
+Name=MeshMC
 Comment=Discover, manage, and play Minecraft instances
 Type=Application
 Terminal=false
-Exec=@MeshMC_AppBinaryName@ %U
+Exec=meshmc %U
 StartupNotify=true
-Icon=@MeshMC_AppID@
+Icon=org.projecttick.MeshMC
 Categories=Game;ActionGame;AdventureGame;Simulation;PackageManager;
 Keywords=game;minecraft;mc;
-StartupWMClass=@MeshMC_CommonName@
-MimeType=application/zip;application/x-modrinth-modpack+zip;x-scheme-handler/curseforge;x-scheme-handler/meshmc;x-scheme-handler/@MeshMC_AppBinaryName@;
+StartupWMClass=MeshMC
+MimeType=application/zip;application/x-modrinth-modpack+zip;x-scheme-handler/curseforge;x-scheme-handler/meshmc;x-scheme-handler/meshmc;
