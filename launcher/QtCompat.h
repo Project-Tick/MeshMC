@@ -1,3 +1,5 @@
+// launcher/QtCompat.h
+// @meshmc-public: QtCompat
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0

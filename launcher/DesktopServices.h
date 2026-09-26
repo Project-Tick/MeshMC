@@ -1,3 +1,5 @@
+// launcher/DesktopServices.h
+// @meshmc-public: MeshMC/Core/DesktopServices
 /* SPDX-FileCopyrightText: 2026 Project Tick
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
