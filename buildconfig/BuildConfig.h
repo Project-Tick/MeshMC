@@ -156,24 +156,6 @@ class Config
 	QString SUBREDDIT_URL;
 	QString PATREON_URL;
 
-	/**
-	 * GitLab Unleash-compatible feature flags endpoint.
-	 */
-	QString UNLEASH_URL;
-
-	/**
-	 * Unleash instance id.
-	 */
-	QString UNLEASH_INSTANCE_ID;
-
-	/**
-	 * Unleash application name / environment
-	 */
-	QString UNLEASH_APP_NAME;
-
-	/// True when an instance id is configured and feature flags can be fetched.
-	bool FEATURE_FLAGS_ENABLED = false;
-
 	QString RESOURCE_BASE = "https://resources.download.minecraft.net/";
 	QString LIBRARY_BASE = "https://libraries.minecraft.net/";
 	QString IMGUR_BASE_URL = "https://api.imgur.com/3/";

@@ -787,5 +787,5 @@
     <color type="primary" scheme_preference="light">#3584e4</color>
     <color type="primary" scheme_preference="dark">#0a2d6f</color>
   </branding>
-  <launchable type="desktop-id">@MeshMC_AppID@.desktop</launchable>
+  <launchable type="desktop-id">org.projecttick.MeshMC.desktop</launchable>
 </component>
