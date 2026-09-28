@@ -1007,6 +1007,26 @@ void MainWindow::updateToolsMenu()
 						action->data().toString());
 				}
 			});
+	
+	if (APPLICATION->accounts()->count() > 1) {
+		QMenu* launchAsMenu = launchMenu->addMenu(tr("Launch &As"));
+		for (int i = 0; i < APPLICATION->accounts()->count(); i++) {
+			MinecraftAccountPtr account = APPLICATION->accounts()->at(i);
+			QAction* action = launchAsMenu->addAction(account->profileName());
+			if (auto face = account->getFace(); !face.isNull()) {
+				action->setIcon(face);
+			} else {
+				action->setIcon(QIcon::fromTheme("noaccount"));
+			}
+			connect(action, &QAction::triggered, this,
+						[this, account] {
+							if (!m_selectedInstance)
+								return;
+							APPLICATION->launch(m_selectedInstance, LaunchMode::Normal, nullptr, account);
+						}
+					);
+		}
+	}
 
 	ui->actionLaunchInstance->setMenu(launchMenu);
 }
