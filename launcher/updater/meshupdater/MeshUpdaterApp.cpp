@@ -410,15 +410,15 @@ bool MeshUpdaterApp::handleSelfTest(int argc, char** argv)
 
 MeshUpdaterApp::MeshUpdaterApp(int& argc, char** argv) : QApplication(argc, argv)
 {
-	setOrganizationName(BuildConfig.MESHMC_NAME);
-	setOrganizationDomain(BuildConfig.MESHMC_DOMAIN);
-	setApplicationName(BuildConfig.MESHMC_NAME + QStringLiteral("Updater"));
+	setOrganizationName("MeshMC");
+	setOrganizationDomain("projecttick.org");
+	setApplicationName("MeshMC" + QStringLiteral("Updater"));
 	setApplicationVersion(BuildConfig.printableVersionString() +
 						  QLatin1Char('\n') + BuildConfig.GIT_COMMIT);
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription(
-		tr("Installs %1 updates.").arg(BuildConfig.MESHMC_DISPLAYNAME));
+		tr("Installs MeshMC updates."));
 	parser.addOptions({
 		{{QStringLiteral("d"), QStringLiteral("dir")},
 		 tr("Use a custom path as application root (use '.' for current "
@@ -606,7 +606,7 @@ MeshUpdaterApp::~MeshUpdaterApp()
 
 QString MeshUpdaterApp::launcherBinaryName() const
 {
-	QString name = BuildConfig.MESHMC_BINARY;
+	QString name = "meshmc";
 #if defined(Q_OS_WIN32)
 	name.append(QLatin1String(".exe"));
 #endif
@@ -651,8 +651,7 @@ bool MeshUpdaterApp::resolvePaths(const QString& dirOption)
 		m_dataPath = QDir(dirOption).absolutePath();
 	} else if (const QString fromEnvironment =
 				   QProcessEnvironment::systemEnvironment().value(
-					   QStringLiteral("%1_DATA_DIR")
-						   .arg(BuildConfig.MESHMC_NAME.toUpper()));
+					   QStringLiteral("MESHMC_DATA_DIR"));
 			   !fromEnvironment.isEmpty()) {
 		m_dataPath = QDir(fromEnvironment).absolutePath();
 	} else if (m_isPortable) {
@@ -688,7 +687,7 @@ bool MeshUpdaterApp::startLogging()
 	// their logs apart means the install log is not buried under a day's worth
 	// of hourly checks.
 	const QString base =
-		QDir(logDir).absoluteFilePath(BuildConfig.MESHMC_NAME +
+		QDir(logDir).absoluteFilePath("MeshMC" +
 									  QStringLiteral("Updater") +
 									  (m_checkOnly ? QStringLiteral("-CheckOnly")
 												   : QString()) +
@@ -748,7 +747,7 @@ bool MeshUpdaterApp::startLogging()
 void MeshUpdaterApp::logStartupInfo(const QString& adjustedBy,
 									const QString& binPath)
 {
-	qDebug().noquote() << BuildConfig.MESHMC_DISPLAYNAME << "Updater";
+	qDebug().noquote() << "MeshMC Updater";
 	qDebug().noquote() << "Version               :"
 					   << BuildConfig.printableVersionString();
 	qDebug().noquote() << "Git commit            :" << BuildConfig.GIT_COMMIT;
@@ -1040,15 +1039,14 @@ void MeshUpdaterApp::run()
 		// break the install's integrity.
 		showFatalError(
 			tr("Updating Flatpak Is Not Supported"),
-			tr("This is the Flatpak build of %1, which is updated through "
+			tr("This is the Flatpak build of MeshMC, which is updated through "
 			   "Flatpak itself.\n"
 			   "\n"
 			   "Run this to update:\n"
-			   "flatpak update %2\n"
+			   "flatpak update org.projecttick.MeshMC\n"
 			   "\n"
 			   "Checking for updates works, but installing them here does "
-			   "not.")
-				.arg(BuildConfig.MESHMC_DISPLAYNAME, BuildConfig.MESHMC_APPID));
+			   "not."));
 		return;
 	}
 
@@ -1413,14 +1411,13 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 					  .arg(stagedLauncher));
 		deferFailure(
 			tr("Update Failed"),
-			tr("The downloaded release does not contain %1 at:\n"
-			   "%2\n"
+			tr("The downloaded release does not contain MeshMC at:\n"
+			   "%1\n"
 			   "\n"
 			   "Your installation has not been changed.\n"
 			   "The updater log has the details:\n"
-			   "%3")
-				.arg(BuildConfig.MESHMC_DISPLAYNAME,
-					 QDir::toNativeSeparators(stagedLauncher),
+			   "%2")
+				.arg(QDir::toNativeSeparators(stagedLauncher),
 					 QDir::toNativeSeparators(m_updateLogPath)));
 		return;
 	}
@@ -1521,12 +1518,11 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 					 "reported that it had taken over, and it is still "
 					 "running.\n"
 					 "\n"
-					 "Check that %1 still starts before using it. The "
+					 "Check that MeshMC still starts before using it. The "
 					 "previous installation was backed up, and the updater "
 					 "log has the details:\n"
-					 "%2")
-					  .arg(BuildConfig.MESHMC_DISPLAYNAME,
-						   QDir::toNativeSeparators(m_updateLogPath))
+					 "%1")
+					  .arg(QDir::toNativeSeparators(m_updateLogPath))
 				: tr("The second pass of the update stopped before it began "
 					 "installing.\n"
 					 "\n"
@@ -2193,7 +2189,7 @@ QStringList MeshUpdaterApp::installedFileList(const QDir& root) const
 		QStringLiteral("plugins"),
 		QStringLiteral("shared"),
 		QStringLiteral("sharun"),
-		BuildConfig.MESHMC_DISPLAYNAME,
+		QStringLiteral("MeshMC"),
 	};
 #endif
 }

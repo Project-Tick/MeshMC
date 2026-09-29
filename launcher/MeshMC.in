@@ -17,8 +17,8 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 
-LAUNCHER_NAME=@MeshMC_AppBinaryName@
-LAUNCHER_ENVNAME=@MeshMC_EnvName@
+LAUNCHER_NAME=meshmc
+LAUNCHER_ENVNAME=MESHMC
 LAUNCHER_DIR="$(dirname "$(readlink -f "$0")")"
 echo "Launcher Dir: ${LAUNCHER_DIR}"
 

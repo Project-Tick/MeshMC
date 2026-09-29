@@ -159,7 +159,7 @@ namespace skinrender
 		 * then wedges the driver. Checked before touching GL at all, so it
 		 * works even when probing itself is what crashes. */
 		const QString disableVariable =
-			QStringLiteral("%1_DISABLE_GLVULKAN").arg(BuildConfig.MESHMC_ENVNAME);
+			QStringLiteral("MESHMC_DISABLE_GLVULKAN");
 		if (!QProcessEnvironment::systemEnvironment()
 				 .value(disableVariable)
 				 .isEmpty()) {

@@ -1601,7 +1601,7 @@ const char* PluginManager::api_get_app_version(void* mh)
 const char* PluginManager::api_get_app_name(void* mh)
 {
 	auto* r = rt(mh);
-	r->tempString = BuildConfig.MESHMC_NAME.toStdString();
+	r->tempString = "MeshMC";
 	return r->tempString.c_str();
 }
 

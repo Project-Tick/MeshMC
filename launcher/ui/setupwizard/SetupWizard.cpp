@@ -49,7 +49,7 @@ void SetupWizard::retranslate()
 	setButtonText(QWizard::BackButton, tr("< &Back"));
 	setButtonText(QWizard::FinishButton, tr("&Finish"));
 	setButtonText(QWizard::CustomButton1, tr("&Refresh"));
-	setWindowTitle(tr("%1 Quick Setup").arg(BuildConfig.MESHMC_NAME));
+	setWindowTitle(tr("MeshMC Quick Setup"));
 }
 
 BaseWizardPage* SetupWizard::getBasePage(int id)

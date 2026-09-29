@@ -35,8 +35,7 @@ UpdateAvailableDialog::UpdateAvailableDialog(const QString& currentVersion,
 {
 	ui->setupUi(this);
 
-	ui->headerLabel->setText(tr("A new version of %1 is available!")
-								 .arg(BuildConfig.MESHMC_DISPLAYNAME));
+	ui->headerLabel->setText(tr("A new version of MeshMC is available!"));
 	ui->versionAvailableLabel->setText(
 		tr("Version %1 is now available - you have %2 . Would you like to "
 		   "download it now?")

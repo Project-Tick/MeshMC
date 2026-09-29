@@ -349,7 +349,7 @@ set(MeshMC_BUILD_ARTIFACT "" CACHE STRING "Name of the CI build this is, matched
 set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
 
 # Updater: the repository releases are read from.
-set(MeshMC_UPDATER_GITHUB_REPO "" CACHE STRING "GitHub repository the updater reads releases from. Defaults to MeshMC_Git.")
+set(MeshMC_UPDATER_GITHUB_REPO "https://github.com/Project-Tick/MeshMC" CACHE STRING "GitHub repository the updater reads releases from.")
 
 # Updater: the release channel this build subscribes to.
 #
@@ -392,74 +392,31 @@ set(MeshMC_IMGUR_CLIENT_ID "5b97b0713fba4a3" CACHE STRING "Client ID you can get
 # CurseForge API key
 set(MeshMC_CURSEFORGE_API_KEY "$2a$10$S7KcKijbCj8mCHUQcn0tgOmtHg0kA8q9FI0niNJJ7knPq0INomzrG" CACHE STRING "API key for the CurseForge API (get one at https://console.curseforge.com/)")
 
-# Bug tracker URL
-set(MeshMC_BUG_TRACKER_URL "https://github.com/Project-Tick/MeshMC/issues" CACHE STRING "URL for the bug tracker.")
-
-# Discord URL
-set(MeshMC_DISCORD_URL "https://discord.gg/PMxPTqwEwj" CACHE STRING "URL for the Discord guild.")
-
-# Subreddit URL
-set(MeshMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
-
-# Feature flags
-set(MeshMC_UNLEASH_URL "" CACHE STRING "GitLab Unleash-compatible feature flags endpoint.")
-set(MeshMC_UNLEASH_INSTANCE_ID "" CACHE STRING "Unleash instance id. Set this to enable runtime feature flags.")
-set(MeshMC_UNLEASH_APP_NAME "" CACHE STRING "Unleash application name / environment (UNLEASH-APPNAME). Must match the flag's environment spec, e.g. 'production'.")
-
-######## Fourthly, please define MeshMC attributes ########
-
-set(MeshMC_CommonName "MeshMC")
-set(MeshMC_AppBinaryName "meshmc")
-set(MeshMC_EnvName "MESHMC")
-set(MeshMC_AppID "org.projecttick.MeshMC")
-set(MeshMC_Copyright "Project Tick")
-set(MeshMC_Copyright_Mac "© 2026 Project Tick")
-set(MeshMC_Domain "projecttick.org")
-set(MeshMC_Name "${MeshMC_CommonName}")
-set(MeshMC_DisplayName "${MeshMC_CommonName}")
-set(MeshMC_UserAgent "${MeshMC_CommonName}/${MeshMC_RELEASE_TWO_NAME}")
-set(MeshMC_ConfigFile "meshmc.cfg")
-set(MeshMC_Git "https://github.com/Project-Tick/MeshMC")
-set(MeshMC_Patreon_Url "https://www.patreon.com/meshmc")
-
-# Releases are published on the source repository, so that is where the
-# updater looks unless a build says otherwise.
-if(MeshMC_UPDATER_GITHUB_REPO STREQUAL "")
-    set(MeshMC_UPDATER_GITHUB_REPO "${MeshMC_Git}")
-endif()
 message(STATUS "Updater repository: ${MeshMC_UPDATER_GITHUB_REPO}")
-set(MeshMC_Authors "Copyright (C) 2026 Project Tick <https://projecttick.org>, All rights reserved. This Project Licensed under GNU GENERAL PUBLIC LICENSE, either version 3 of the License, or any later version. ")
 
 ######## Lastly, configure placeholders
 
-set(MeshMC_SVGFileName "${MeshMC_AppID}.svg")
-set(MeshMC_Branding_ICNS "branding/${MeshMC_AppID}.icns")
-set(MeshMC_Branding_ICO "${MeshMC_AppID}.ico")
-set(MeshMC_Branding_WindowsRC "branding/${MeshMC_AppBinaryName}.rc")
-set(MeshMC_Branding_LogoQRC "branding/${MeshMC_AppBinaryName}.qrc")
-
-configure_file(branding/${MeshMC_AppID}.desktop.in ${MeshMC_AppID}.desktop)
-configure_file(branding/${MeshMC_AppID}.metainfo.xml.in ${MeshMC_AppID}.metainfo.xml)
-configure_file(branding/${MeshMC_AppBinaryName}.rc.in ${MeshMC_AppBinaryName}.rc @ONLY)
-configure_file(branding/${MeshMC_AppBinaryName}.qrc.in ${MeshMC_AppBinaryName}.qrc @ONLY)
-configure_file(branding/${MeshMC_CommonName}.manifest.in ${MeshMC_AppBinaryName}.manifest @ONLY)
-configure_file(branding/${MeshMC_AppID}.mime.xml ${MeshMC_AppID}.xml COPYONLY)
-configure_file(branding/${MeshMC_SVGFileName} ${MeshMC_SVGFileName} COPYONLY)
-configure_file(branding/${MeshMC_AppID}.ico ${MeshMC_AppID}.ico COPYONLY)
-configure_file(branding/${MeshMC_AppBinaryName}.6.scd.in ${MeshMC_AppBinaryName}.6.scd @ONLY)
+configure_file(branding/org.projecttick.MeshMC.desktop.in org.projecttick.MeshMC.desktop)
+configure_file(branding/org.projecttick.MeshMC.metainfo.xml.in org.projecttick.MeshMC.metainfo.xml)
+configure_file(branding/meshmc.rc.in meshmc.rc @ONLY)
+configure_file(branding/MeshMC.manifest.in meshmc.manifest @ONLY)
+configure_file(branding/org.projecttick.MeshMC.mime.xml org.projecttick.MeshMC.xml COPYONLY)
+configure_file(branding/org.projecttick.MeshMC.svg org.projecttick.MeshMC.svg COPYONLY)
+configure_file(branding/org.projecttick.MeshMC.ico org.projecttick.MeshMC.ico COPYONLY)
+configure_file(branding/meshmc.6.scd.in meshmc.6.scd @ONLY)
 set(MeshMC_Portable_File "branding/portable.txt")
-set(MeshMC_Branding_MAC_ICON "branding/${MeshMC_CommonName}.icon")
+set(MeshMC_Branding_MAC_ICON "branding/MeshMC.icon")
 
 if(SCDOC_FOUND)
-    set(in_scd "${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppBinaryName}.6.scd")
-    set(out_man "${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppBinaryName}.6")
+    set(in_scd "${CMAKE_CURRENT_BINARY_DIR}/meshmc.6.scd")
+    set(out_man "${CMAKE_CURRENT_BINARY_DIR}/meshmc.6")
     add_custom_command(
         DEPENDS "${in_scd}"
         OUTPUT "${out_man}"
         COMMAND ${SCDOC_SCDOC} < "${in_scd}" > "${out_man}"
     )
     add_custom_target(man ALL DEPENDS ${out_man})
-    set(MeshMC_ManPage "${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppBinaryName}.6")
+    set(MeshMC_ManPage "${CMAKE_CURRENT_BINARY_DIR}/meshmc.6")
 endif()
 
 if(MSVC)
@@ -495,27 +452,27 @@ if(NOT (UNIX AND APPLE))
 endif()
 
 if(UNIX AND APPLE)
-    set(BINARY_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS")
-    set(FRAMEWORK_DEST_DIR "${MeshMC_Name}.app/Contents/Frameworks")
+    set(BINARY_DEST_DIR "MeshMC.app/Contents/MacOS")
+    set(FRAMEWORK_DEST_DIR "MeshMC.app/Contents/Frameworks")
     set(LIBRARY_DEST_DIR "${FRAMEWORK_DEST_DIR}")
-    set(PLUGIN_DEST_DIR "${MeshMC_Name}.app/Contents/MacOS")
-    set(RESOURCES_DEST_DIR "${MeshMC_Name}.app/Contents/Resources")
-    set(JARS_DEST_DIR "${MeshMC_Name}.app/Contents/Resources/jars")
+    set(PLUGIN_DEST_DIR "MeshMC.app/Contents/MacOS")
+    set(RESOURCES_DEST_DIR "MeshMC.app/Contents/Resources")
+    set(JARS_DEST_DIR "MeshMC.app/Contents/Resources/jars")
     set(BUNDLE_DEST_DIR ".")
     set(MMCO_MODULES_DEST_DIR
-        "${MeshMC_Name}.app/Contents/Resources/mmcmodules")
+        "MeshMC.app/Contents/Resources/mmcmodules")
     set(MMCO_PLUGIN_DATA_DEST_DIR
-        "${MeshMC_Name}.app/Contents/Resources/MMCOPluginData")
+        "MeshMC.app/Contents/Resources/MMCOPluginData")
 
     # Mac bundle settings
-    set(MACOSX_BUNDLE_BUNDLE_NAME "${MeshMC_DisplayName}")
-    set(MACOSX_BUNDLE_INFO_STRING "${MeshMC_DisplayName}: A custom launcher for Minecraft that allows you to easily manage multiple installations of Minecraft at once.")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "${MeshMC_AppID}")
+    set(MACOSX_BUNDLE_BUNDLE_NAME "MeshMC")
+    set(MACOSX_BUNDLE_INFO_STRING "MeshMC: A custom launcher for Minecraft that allows you to easily manage multiple installations of Minecraft at once.")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.projecttick.MeshMC")
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${MeshMC_RELEASE_VERSION_NAME}")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${MeshMC_RELEASE_VERSION_NAME}")
     set(MACOSX_BUNDLE_LONG_VERSION_STRING "${MeshMC_RELEASE_VERSION_NAME}")
-    set(MACOSX_BUNDLE_ICON_FILE ${MeshMC_AppID}.icns)
-    set(MACOSX_BUNDLE_COPYRIGHT "${MeshMC_Copyright_Mac}")
+    set(MACOSX_BUNDLE_ICON_FILE org.projecttick.MeshMC.icns)
+    set(MACOSX_BUNDLE_COPYRIGHT "© 2026 Project Tick")
     set(MACOSX_SPARKLE_UPDATE_PUBLIC_KEY "C0eBoyDSoZbzgCMxQH9wH6kmjU2mPRmvhZZd9mHgqZQ=" CACHE STRING "Public key for Sparkle update feed")
     set(MACOSX_SPARKLE_UPDATE_FEED_URL "https://projecttick.org/feed/appcast.xml" CACHE STRING "URL for Sparkle update feed")
 
@@ -524,7 +481,7 @@ if(UNIX AND APPLE)
     set(MACOSX_SPARKLE_DIR "${CMAKE_BINARY_DIR}/frameworks/Sparkle")
 
     # Add the icon
-    install(FILES ${MeshMC_Branding_ICNS} DESTINATION ${RESOURCES_DEST_DIR} RENAME ${MeshMC_AppID}.icns)
+    install(FILES branding/org.projecttick.MeshMC.icns DESTINATION ${RESOURCES_DEST_DIR} RENAME org.projecttick.MeshMC.icns)
 
     find_program(ACTOOL_EXE actool DOC "Path to the apple asset catalog compiler")
     if(ACTOOL_EXE)
@@ -551,7 +508,7 @@ if(UNIX AND APPLE)
                 COMMAND ${ACTOOL_EXE} "${ICON_SOURCE}"
                         --compile "${ASSETS_OUT_DIR}"
                         --output-partial-info-plist /dev/null
-                        --app-icon ${MeshMC_Name}
+                        --app-icon MeshMC
                         --enable-on-demand-resources NO
                         --target-device mac
                         --minimum-deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET}
@@ -577,10 +534,10 @@ elseif(UNIX)
 
     set(BINARY_DEST_DIR "${CMAKE_INSTALL_BINDIR}")
     set(LIBRARY_DEST_DIR "${CMAKE_INSTALL_LIBDIR}")
-    set(JARS_DEST_DIR "share/${MeshMC_Name}")
-    set(MMCO_MODULES_DEST_DIR "share/${MeshMC_Name}/mmcmodules")
+    set(JARS_DEST_DIR "share/MeshMC")
+    set(MMCO_MODULES_DEST_DIR "share/MeshMC/mmcmodules")
     set(MMCO_PLUGIN_DATA_DEST_DIR "${MMCO_MODULES_DEST_DIR}")
-    set(PRIVATE_LIBRARY_DEST_DIR "${CMAKE_INSTALL_LIBDIR}/${MeshMC_AppBinaryName}")
+    set(PRIVATE_LIBRARY_DEST_DIR "${CMAKE_INSTALL_LIBDIR}/meshmc")
     SET(MeshMC_BINARY_RPATH "$ORIGIN/../${PRIVATE_LIBRARY_DEST_DIR}")
     set(KDE_INSTALL_APPDIR      "${CMAKE_INSTALL_DATAROOTDIR}/applications")
     set(KDE_INSTALL_METAINFODIR "${CMAKE_INSTALL_DATAROOTDIR}/metainfo")
@@ -588,13 +545,13 @@ elseif(UNIX)
     set(KDE_INSTALL_MIMEDIR     "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages")
     set(KDE_INSTALL_MANDIR      "${CMAKE_INSTALL_MANDIR}")
 
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppID}.desktop DESTINATION ${KDE_INSTALL_APPDIR})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppID}.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/branding/${MeshMC_AppID}.svg DESTINATION "${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps")
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/branding/${MeshMC_AppID}_256.png DESTINATION "${KDE_INSTALL_ICONDIR}/hicolor/256x256/apps" RENAME "${MeshMC_AppID}.png")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MeshMC_AppID}.xml DESTINATION ${KDE_INSTALL_MIMEDIR})
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.projecttick.MeshMC.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.projecttick.MeshMC.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/branding/org.projecttick.MeshMC.svg DESTINATION "${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps")
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/branding/org.projecttick.MeshMC_256.png DESTINATION "${KDE_INSTALL_ICONDIR}/hicolor/256x256/apps" RENAME "org.projecttick.MeshMC.png")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.projecttick.MeshMC.xml DESTINATION ${KDE_INSTALL_MIMEDIR})
 
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/launcher/qtlogging.ini" DESTINATION "share/${MeshMC_Name}")
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/launcher/qtlogging.ini" DESTINATION "share/MeshMC")
 
     set(PLUGIN_DEST_DIR "plugins")
     set(BUNDLE_DEST_DIR ".")
@@ -606,7 +563,7 @@ elseif(UNIX)
 
     # Install basic runner script if component "portable" is selected
     configure_file(launcher/MeshMC.in "${CMAKE_CURRENT_BINARY_DIR}/MeshMCScript" @ONLY)
-    install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/MeshMCScript" DESTINATION "." RENAME ${MeshMC_Name} COMPONENT portable EXCLUDE_FROM_ALL)
+    install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/MeshMCScript" DESTINATION "." RENAME MeshMC COMPONENT portable EXCLUDE_FROM_ALL)
 
 elseif(WIN32)
     set(BINARY_DEST_DIR ".")

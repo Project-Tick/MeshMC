@@ -44,7 +44,7 @@ namespace
 		dataFile.close();
 
 		return fileContent.arg(
-			QObject::tr("%1 Developers").arg(BuildConfig.MESHMC_DISPLAYNAME),
+			QObject::tr("MeshMC Developers"),
 			QObject::tr("MultiMC Developers"));
 	}
 
@@ -70,9 +70,7 @@ AboutDialog::AboutDialog(QWidget* parent)
 {
 	ui->setupUi(this);
 
-	QString launcherName = BuildConfig.MESHMC_DISPLAYNAME;
-
-	setWindowTitle(tr("About %1").arg(launcherName));
+	setWindowTitle(tr("About MeshMC"));
 
 	QString chtml = getCreditsHtml();
 	ui->creditsText->setHtml(Strings::htmlListPatch(chtml));
@@ -83,7 +81,7 @@ AboutDialog::AboutDialog(QWidget* parent)
 	ui->urlLabel->setOpenExternalLinks(true);
 
 	ui->icon->setPixmap(APPLICATION->getThemedIcon("logo").pixmap(64));
-	ui->title->setText(launcherName);
+	ui->title->setText("MeshMC");
 
 	ui->versionLabel->setText(BuildConfig.printableVersionString());
 
@@ -129,10 +127,9 @@ AboutDialog::AboutDialog(QWidget* parent)
 
 	QString urlText(
 		"<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");
-	ui->urlLabel->setText(urlText.arg(BuildConfig.MESHMC_GIT));
+	ui->urlLabel->setText(urlText.arg("https://github.com/Project-Tick/MeshMC"));
 
-	QString copyText("© 2026 %1");
-	ui->copyLabel->setText(copyText.arg(BuildConfig.MESHMC_COPYRIGHT));
+	ui->copyLabel->setText(QString("© 2026 Project Tick"));
 
 	connect(ui->closeButton, &QPushButton::clicked, this, &AboutDialog::close);
 

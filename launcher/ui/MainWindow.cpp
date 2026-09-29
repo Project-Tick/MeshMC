@@ -346,9 +346,9 @@ void MainWindow::setupUi()
 #endif
 
 	setWindowIcon(APPLICATION->getThemedIcon("logo"));
-	setWindowTitle(BuildConfig.MESHMC_DISPLAYNAME);
+	setWindowTitle("MeshMC");
 #ifndef QT_NO_ACCESSIBILITY
-	setAccessibleName(BuildConfig.MESHMC_NAME);
+	setAccessibleName("MeshMC");
 #endif
 	applyThemedIcons();
 
@@ -668,7 +668,7 @@ void MainWindow::retranslateUi()
 {
 	ui->retranslateUi(this);
 
-	const QString appName = BuildConfig.MESHMC_NAME;
+	const QString appName = "MeshMC";
 	for (QAction* action : findChildren<QAction*>()) {
 		if (action->text().contains(QLatin1String("%1")))
 			action->setText(action->text().arg(appName));
@@ -676,9 +676,8 @@ void MainWindow::retranslateUi()
 			action->setToolTip(action->toolTip().arg(appName));
 	}
 
-	QString winTitle = tr("%1 - Version %2", "MeshMC - Version X")
-						   .arg(BuildConfig.MESHMC_DISPLAYNAME,
-								BuildConfig.printableVersionString());
+	QString winTitle = tr("MeshMC - Version %1", "MeshMC - Version X")
+						   .arg(BuildConfig.printableVersionString());
 	if (!BuildConfig.BUILD_PLATFORM.isEmpty()) {
 		winTitle += tr(" on %1", "on platform, as in operating system")
 						.arg(BuildConfig.BUILD_PLATFORM);
@@ -808,7 +807,7 @@ void MainWindow::showInstanceContextMenu(const QPoint& pos)
 	} else {
 		auto group = view->groupNameAt(pos);
 
-		QAction* actionVoid = new QAction(BuildConfig.MESHMC_NAME, this);
+		QAction* actionVoid = new QAction("MeshMC", this);
 		actionVoid->setEnabled(false);
 
 		QAction* actionCreateInstance =
@@ -2135,8 +2134,7 @@ void MainWindow::checkInstancePathForProblems()
 			warning.setInformativeText(
 				tr("You have now two options: <br/>"
 				   " - change the instance folder in the settings <br/>"
-				   " - move this installation of %1 to a different folder")
-					.arg(BuildConfig.MESHMC_NAME));
+				   " - move this installation of MeshMC to a different folder"));
 			warning.setDefaultButton(QMessageBox::Ok);
 			warning.exec();
 		}

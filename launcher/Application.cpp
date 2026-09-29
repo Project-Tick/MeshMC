@@ -149,7 +149,7 @@ namespace
 			return dataPath;
 		}
 		return FS::PathCombine(QDir::homePath(), "Library",
-							   "Application Support", BuildConfig.MESHMC_NAME);
+							   "Application Support", "MeshMC");
 	}
 
 	QStringList legacyMacDataPatterns()
@@ -455,10 +455,10 @@ void Application::initPlatform()
 	// answer depends on what stderr ends up pointing at. Before the message
 	// handler is installed, so the very first line is already correct.
 	Logging::prepareConsoleColour();
-	setOrganizationName(BuildConfig.MESHMC_NAME);
-	setOrganizationDomain(BuildConfig.MESHMC_DOMAIN);
-	setApplicationName(BuildConfig.MESHMC_NAME);
-	setApplicationDisplayName(QString("%1 %2").arg(BuildConfig.MESHMC_DISPLAYNAME, BuildConfig.printableVersionString()));
+	setOrganizationName("MeshMC");
+	setOrganizationDomain("projecttick.org");
+	setApplicationName("MeshMC");
+	setApplicationDisplayName(QString("MeshMC %2").arg(BuildConfig.printableVersionString()));
 	setApplicationVersion(BuildConfig.printableVersionString());
 
 	startTime = QDateTime::currentDateTime();
@@ -639,7 +639,7 @@ bool Application::resolveDataPath(const QHash<QString, QVariant>& args,
 			if (xdgDataHome.isEmpty()) {
 				xdgDataHome = QDir::homePath() + "/.local/share";
 			}
-			dataPath = FS::PathCombine(xdgDataHome, BuildConfig.MESHMC_NAME);
+			dataPath = FS::PathCombine(xdgDataHome, "MeshMC");
 			adjustedBy +=
 				"Non-portable mode, using XDG data location " + dataPath;
 		}
@@ -769,7 +769,7 @@ bool Application::initPeerInstance()
 
 bool Application::initLogging(const QString& dataPath)
 {
-	static const QString logBase = BuildConfig.MESHMC_NAME + "-%0.log";
+	static const QString logBase = "MeshMC-%0.log";
 	auto moveFile = [](const QString& oldName, const QString& newName) {
 		static_cast<void>(QFile::remove(newName));
 		static_cast<void>(QFile::copy(oldName, newName));
@@ -821,8 +821,8 @@ void Application::setupPaths(const QString& binPath, const QString& origcwdPath,
 	FS::updateTimestamp(m_rootPath);
 #endif
 
-	qInfo().noquote() << BuildConfig.MESHMC_DISPLAYNAME << ", (c) 2026"
-					  << BuildConfig.MESHMC_COPYRIGHT;
+	qInfo().noquote() << "MeshMC, (c) 2026"
+					  << "Project Tick";
 	qInfo().noquote() << "Version                    : "
 					  << BuildConfig.printableVersionString();
 	qInfo().noquote() << "Git commit                 : " << BuildConfig.GIT_COMMIT;
@@ -871,7 +871,7 @@ void Application::setupPaths(const QString& binPath, const QString& origcwdPath,
 void Application::initSettings()
 {
 	m_settings.reset(
-		new INISettingsObject(BuildConfig.MESHMC_CONFIGFILE, this));
+		new INISettingsObject("meshmc.cfg", this));
 	// Updates
 	m_settings->registerSetting("UpdateChannel", BuildConfig.VERSION_CHANNEL);
 	m_settings->registerSetting("AutoUpdate", true);
@@ -2255,7 +2255,7 @@ QString Application::getJarsPath()
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
 		auto appDir = QCoreApplication::applicationDirPath();
 		auto installedPath =
-			FS::PathCombine(appDir, "..", "share", BuildConfig.MESHMC_NAME);
+			FS::PathCombine(appDir, "..", "share", "MeshMC");
 		if (QDir(installedPath).exists()) {
 			return installedPath;
 		}

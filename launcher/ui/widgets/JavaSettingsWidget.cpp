@@ -175,12 +175,11 @@ JavaSettingsWidget::ValidationStatus JavaSettingsWidget::validate()
 					this, tr("No Java version selected"),
 					tr("You didn't select a Java version or selected something "
 					   "that doesn't work.\n"
-					   "%1 will not be able to start Minecraft.\n"
+					   "MeshMC will not be able to start Minecraft.\n"
 					   "Do you wish to proceed without any Java?"
 					   "\n\n"
 					   "You can change the Java version in the settings "
-					   "later.\n")
-						.arg(BuildConfig.MESHMC_NAME),
+					   "later.\n"),
 					QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No,
 					QMessageBox::NoButton)
 					->exec();

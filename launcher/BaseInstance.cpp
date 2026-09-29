@@ -502,7 +502,7 @@ QString BaseInstance::name() const
 
 QString BaseInstance::windowTitle() const
 {
-	return BuildConfig.MESHMC_NAME + ": " +
+	return "MeshMC: " +
 		   name().replace(QRegularExpression("[ \n\r\t]+"), " ");
 }
 

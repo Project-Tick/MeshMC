@@ -84,7 +84,7 @@ QStringList PluginLoader::defaultSearchPaths()
 	}
 	paths << QDir(appDir).filePath("mmcmodules"); // legacy
 #elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-	auto path = FS::PathCombine(appDir, "..", "share", BuildConfig.MESHMC_NAME);
+	auto path = FS::PathCombine(appDir, "..", "share", "MeshMC");
 	paths << FS::PathCombine(path, "mmcmodules");
 #else
 	paths << QDir(appDir).filePath("mmcmodules");
