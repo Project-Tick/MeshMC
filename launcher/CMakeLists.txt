@@ -785,7 +785,7 @@ SET(MESHMC_SOURCES
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
     resources/shaders/shaders.qrc
-    ${CMAKE_SOURCE_DIR}/branding/meshmc.qrc
+    resources/meshmc/meshmc.qrc
 
     # Icons
     icons/MMCIcon.h
@@ -1192,7 +1192,7 @@ set(MESHMC_QRC_FILES
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
     resources/shaders/shaders.qrc
-    ${CMAKE_SOURCE_DIR}/branding/meshmc.qrc
+    resources/meshmc/meshmc.qrc
 )
 
 # Same reasoning as MESHMC_UI above: never rely on the versionless wrapper.

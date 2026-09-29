@@ -26,7 +26,7 @@ if command -v "inkscape" && command -v "icotool" && command -v "oxipng"; then
 
     oxipng --opt max --strip all --alpha --interlace 0 "$d/MeshMC_"*".png"
 
-    rm org.projecttick.MeshMC.ico && icotool -o org.projecttick.MeshMC.ico -c \
+    rm org.projecttick.MeshMC.ico && icotool -o ../../packaging/windows/org.projecttick.MeshMC.ico -c \
         "$d/MeshMC_256.png"  \
         "$d/MeshMC_128.png"  \
         "$d/MeshMC_64.png"   \
@@ -35,7 +35,7 @@ if command -v "inkscape" && command -v "icotool" && command -v "oxipng"; then
         "$d/MeshMC_24.png"   \
         "$d/MeshMC_16.png"
     
-    svg2png org.projecttick.MeshMC.svg org.projecttick.MeshMC_256.png 256 256
+    svg2png org.projecttick.MeshMC.svg ../../packaging/linux/org.projecttick.MeshMC_256.png 256 256
 
 else
     echo "ERROR: Windows icons were NOT generated!" >&2
@@ -64,12 +64,12 @@ if command -v "inkscape" && command -v "iconutil" && command -v "oxipng"; then
     oxipng --opt max --strip all --alpha --interlace 0 "$d/icon_"*".png"
 
     iconutil -c icns "$d"
-    cp -v "$tmp/org.projecttick.MeshMC.icns" .
+    cp -v "$tmp/org.projecttick.MeshMC.icns" ../../packaging/macos/org.projecttick.MeshMC.icns
 else
     echo "ERROR: macOS icons were NOT generated!" >&2
     echo "ERROR: requires inkscape, iconutil and oxipng in PATH"
 fi
 
 # replace icon in themes
-cp -v org.projecttick.MeshMC.svg "../launcher/resources/multimc/scalable/instances/meshmc.svg"
-cp -v org.projecttick.MeshMC.svg "../launcher/resources/multimc/scalable/launcher.svg"
+cp -v org.projecttick.MeshMC.svg "../multimc/scalable/instances/meshmc.svg"
+cp -v org.projecttick.MeshMC.svg "../multimc/scalable/launcher.svg"

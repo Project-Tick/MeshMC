@@ -396,19 +396,13 @@ message(STATUS "Updater repository: ${MeshMC_UPDATER_GITHUB_REPO}")
 
 ######## Lastly, configure placeholders
 
-configure_file(branding/org.projecttick.MeshMC.desktop.in org.projecttick.MeshMC.desktop)
-configure_file(branding/org.projecttick.MeshMC.metainfo.xml.in org.projecttick.MeshMC.metainfo.xml)
-configure_file(branding/meshmc.rc.in meshmc.rc @ONLY)
-configure_file(branding/MeshMC.manifest.in meshmc.manifest @ONLY)
-configure_file(branding/org.projecttick.MeshMC.mime.xml org.projecttick.MeshMC.xml COPYONLY)
-configure_file(branding/org.projecttick.MeshMC.svg org.projecttick.MeshMC.svg COPYONLY)
-configure_file(branding/org.projecttick.MeshMC.ico org.projecttick.MeshMC.ico COPYONLY)
-configure_file(branding/meshmc.6.scd.in meshmc.6.scd @ONLY)
-set(MeshMC_Portable_File "branding/portable.txt")
-set(MeshMC_Branding_MAC_ICON "branding/MeshMC.icon")
+configure_file(launcher/packaging/windows/meshmc.rc.in meshmc.rc @ONLY)
+configure_file(launcher/packaging/windows/MeshMC.manifest.in meshmc.manifest @ONLY)
+set(MeshMC_Portable_File "launcher/packaging/portable.txt")
+set(MeshMC_Branding_MAC_ICON "launcher/packaging/macos/MeshMC.icon")
 
 if(SCDOC_FOUND)
-    set(in_scd "${CMAKE_CURRENT_BINARY_DIR}/meshmc.6.scd")
+    set(in_scd "${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/meshmc.6.scd")
     set(out_man "${CMAKE_CURRENT_BINARY_DIR}/meshmc.6")
     add_custom_command(
         DEPENDS "${in_scd}"
@@ -443,7 +437,7 @@ SectionEnd
 ]=])
 endif()
 
-configure_file(branding/win_install.nsi.in win_install.nsi @ONLY)
+configure_file(launcher/packaging/windows/nsis/win_install.nsi.in win_install.nsi @ONLY)
 
 ####################################### Install layout #######################################
 
@@ -481,7 +475,7 @@ if(UNIX AND APPLE)
     set(MACOSX_SPARKLE_DIR "${CMAKE_BINARY_DIR}/frameworks/Sparkle")
 
     # Add the icon
-    install(FILES branding/org.projecttick.MeshMC.icns DESTINATION ${RESOURCES_DEST_DIR} RENAME org.projecttick.MeshMC.icns)
+    install(FILES launcher/packaging/macos/org.projecttick.MeshMC.icns DESTINATION ${RESOURCES_DEST_DIR} RENAME org.projecttick.MeshMC.icns)
 
     find_program(ACTOOL_EXE actool DOC "Path to the apple asset catalog compiler")
     if(ACTOOL_EXE)
@@ -545,11 +539,11 @@ elseif(UNIX)
     set(KDE_INSTALL_MIMEDIR     "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages")
     set(KDE_INSTALL_MANDIR      "${CMAKE_INSTALL_MANDIR}")
 
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.projecttick.MeshMC.desktop DESTINATION ${KDE_INSTALL_APPDIR})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.projecttick.MeshMC.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/branding/org.projecttick.MeshMC.svg DESTINATION "${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps")
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/branding/org.projecttick.MeshMC_256.png DESTINATION "${KDE_INSTALL_ICONDIR}/hicolor/256x256/apps" RENAME "org.projecttick.MeshMC.png")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.projecttick.MeshMC.xml DESTINATION ${KDE_INSTALL_MIMEDIR})
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/org.projecttick.MeshMC.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/org.projecttick.MeshMC.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/resources/meshmc/org.projecttick.MeshMC.svg DESTINATION "${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps")
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/org.projecttick.MeshMC_256.png DESTINATION "${KDE_INSTALL_ICONDIR}/hicolor/256x256/apps" RENAME "org.projecttick.MeshMC.png")
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/org.projecttick.MeshMC.xml DESTINATION ${KDE_INSTALL_MIMEDIR})
 
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/launcher/qtlogging.ini" DESTINATION "share/MeshMC")
 
