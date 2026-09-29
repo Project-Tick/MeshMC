@@ -5,6 +5,9 @@ inputs:
     description: Type for the build
     required: true
     default: Debug
+  qt-major:
+    description: Major version of Qt to use
+    required: true
 
 runs:
   using: composite
@@ -16,6 +19,18 @@ runs:
         brew update
         brew install ninja extra-cmake-modules temurin@17 autoconf pkg-config \
         autoconf-archive automake libtool
+
+    - name: Install Qt5
+      if: ${{ inputs.qt-major == '5' }}
+      shell: bash
+      run: |
+        brew install qt@5
+        brew unlink qt@5 || true
+        QT5_PREFIX="$(brew --prefix qt@5)"
+        echo "CMAKE_PREFIX_PATH=$QT5_PREFIX" >> "$GITHUB_ENV"
+        echo "Qt5_ROOT=$QT5_PREFIX" >> "$GITHUB_ENV"
+        echo "$QT5_PREFIX/bin" >> "$GITHUB_PATH"
+        ls -l /opt/homebrew/lib/cmake | grep -i qt || echo "no Qt cmake files linked in /opt/homebrew/lib/cmake"
 
     - name: Set JAVA_HOME
       shell: bash

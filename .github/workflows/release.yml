@@ -147,10 +147,8 @@ jobs:
             MeshMC-Windows-MSVC-Qt6-${{ env.VERSION }}.zip
             MeshMC-Windows-MSVC-Qt6-Portable-${{ env.VERSION }}.zip
             MeshMC-Windows-MSVC-Qt6-Setup-${{ env.VERSION }}.exe
-            MeshMC-macOS-Intel-Qt5-${{ env.VERSION }}.zip
-            MeshMC-macOS-Intel-Qt5-${{ env.VERSION }}.dmg
-            MeshMC-macOS-Intel-Qt6-${{ env.VERSION }}.zip
-            MeshMC-macOS-Intel-Qt6-${{ env.VERSION }}.dmg
-            MeshMC-macOS-ARM-Qt6-${{ env.VERSION }}.zip
-            MeshMC-macOS-ARM-Qt6-${{ env.VERSION }}.dmg
+            MeshMC-macOS-ARM-Qt5-${{ env.VERSION }}.zip
+            MeshMC-macOS-ARM-Qt5-${{ env.VERSION }}.dmg
+            MeshMC-macOS-Qt6-${{ env.VERSION }}.zip
+            MeshMC-macOS-Qt6-${{ env.VERSION }}.dmg
             MeshMC-${{ env.VERSION }}.tar.gz

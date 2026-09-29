@@ -84,21 +84,13 @@ jobs:
             qt-major: 6
             build-name: Windows MSVC aarch64 Qt6
 
-          - os: macos-26-intel
-            artifact-name: macOS-Intel
-            cmake-preset: macos
-            macosx-deployment-target: 12.0
-            qt-version: 6.9.3
-            qt-major: 6
-            build-name: macOS x86_64 Qt6
-
           - os: macos-26
-            artifact-name: macOS-ARM
-            cmake-preset: macos
+            artifact-name: macOS
+            cmake-preset: macos_universal
             macosx-deployment-target: 12.0
             qt-version: 6.9.3
             qt-major: 6
-            build-name: macOS aarch64 Qt6
+            build-name: macOS Universal Qt6
 
           - os: ubuntu-24.04
             artifact-name: Linux
@@ -124,13 +116,12 @@ jobs:
             qt-major: 5
             build-name: Windows MSVC x86_64 Qt5
 
-          - os: macos-26-intel
-            artifact-name: macOS-Intel
+          - os: macos-26
+            artifact-name: macOS-ARM
             cmake-preset: macos
             macosx-deployment-target: 12.0
-            qt-version: 5.15.2
             qt-major: 5
-            build-name: macOS x86_64 Qt5
+            build-name: macOS aarch64 Qt5
 
     runs-on: ${{ matrix.os }}
 

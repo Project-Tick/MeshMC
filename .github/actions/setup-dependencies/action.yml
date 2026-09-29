@@ -46,6 +46,7 @@ runs:
       uses: ./.github/actions/setup-dependencies/macos
       with:
         build-type: ${{ inputs.build-type }}
+        qt-major: ${{ inputs.qt-major }}
 
     - name: Setup Windows dependencies
       if: ${{ runner.os == 'Windows' }}
@@ -117,7 +118,7 @@ runs:
         echo "VCPKG_TRIPLET=$vcpkg_arch-$vcpkg_platform" >> "$GITHUB_ENV"
 
     - name: Install Qt 5
-      if: ${{ inputs.msystem == '' && inputs.qt-major == '5' }}
+      if: ${{ inputs.msystem == '' && inputs.qt-major == '5' && runner.os != 'macOS' }}
       uses: jurplel/install-qt-action@v4
       with:
         aqtversion: "==3.1.*"
