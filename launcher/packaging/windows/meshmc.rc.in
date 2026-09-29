@@ -3,7 +3,7 @@
 #endif
 #include <windows.h>
 
-IDI_ICON1               ICON    DISCARDABLE     "org.projecttick.MeshMC.ico"
+IDI_ICON1               ICON    DISCARDABLE     "@CMAKE_SOURCE_DIR@/launcher/packaging/windows/org.projecttick.MeshMC.ico"
 1 RT_MANIFEST "meshmc.manifest"
 
 VS_VERSION_INFO VERSIONINFO

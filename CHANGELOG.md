@@ -9,6 +9,9 @@
 * Automatic icon refreshing upon theme change has been added.
 * Support for reading non-ASCII paths has been added.
 * A feature to view the number of days in your worlds has been added.
+* The --world parameter has been added.
+* A skin management system has been added.
+* An option has been added to launch the instance using other accounts via the "Launch as" option.
 
 ## Changed
 
@@ -17,10 +20,12 @@
 * The MainWindow used to have its UI drawn via .cpp code; now, Designer UI is used.
 * The XDGIcon structure has been removed, and the system has switched to the internal Qt icon infrastructure.
 * The logo has been revised to better align with standards for macOS Big Sur and other platforms.
+* Deep branding has been completed.
 
 ## Fixed
 
-* Fixed buttons that remained active even when no instance was selected in the MainWindow
+* Fixed buttons that remained active even when no instance was selected in the MainWindow.
+* An issue where the Publisher ID written to the registry during NSIS installations appeared as "MeshMC Contributors" has been resolved; it has been corrected to "Project Tick".
 
 ## Removed
 
@@ -28,7 +33,11 @@
 
 ## Deprecated
 
+## CI/CD Updates
 
+* Linux CI images have been updated to 26.04.
+* The Backport Action has been updated to version 4.7.0.
+* The Developer Container base image version has been updated to the latest digest.
 
 ## Previous versions
 

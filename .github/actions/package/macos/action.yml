@@ -69,11 +69,11 @@ runs:
 
         if [ -n '${{ inputs.apple-codesign-id }}' ]; then
           APPLE_CODESIGN_ID='${{ inputs.apple-codesign-id }}'
-          ENTITLEMENTS_FILE='../branding/App.entitlements'
+          ENTITLEMENTS_FILE='../launcher/packaging/macos/App.entitlements'
           TIMESTAMP_FLAG='--timestamp'
         else
           APPLE_CODESIGN_ID='-'
-          ENTITLEMENTS_FILE='../branding/AdhocSignedApp.entitlements'
+          ENTITLEMENTS_FILE='../launcher/packaging/macos/AdhocSignedApp.entitlements'
           TIMESTAMP_FLAG='--timestamp=none'
         fi
 

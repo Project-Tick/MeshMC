@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>meshmc</id>
+    <version>10.0.0</version>
+    <packageSourceUrl>https://github.com/Project-Tick/MeshMC</packageSourceUrl>
+    <owners>Mehmet Samet Duman</owners>
+    <title>MeshMC</title>
+    <authors>Project Tick</authors>
+    <projectUrl>https://projecttick.org</projectUrl>
+    <iconUrl>https://cdn.jsdelivr.net/gh/Project-Tick/MeshMC@v10.0.0/branding/org.projecttick.MeshMC.svg</iconUrl>
+    <licenseUrl>https://github.com/Project-Tick/MeshMC/blob/develop/COPYING.md</licenseUrl>
+    <copyright>Copyright (C) 2026 Project Tick. All Rights Reserved.</copyright>
+    <projectSourceUrl>https://github.com/Project-Tick/MeshMC</projectSourceUrl>
+    <docsUrl>https://projecttick.org/wiki</docsUrl>
+    <bugTrackerUrl>https://github.com/Project-Tick/MeshMC/issues</bugTrackerUrl>
+    <tags>meshmc multimc launcher minecraft neoforge forge fabric quilt</tags>
+    <summary>A custom launcher for Minecraft that allows you to easily manage multiple installations of Minecraft at once</summary>
+    <description>## MeshMC
+MeshMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity. With MMCO Plugin system.
+    </description>
+    <releaseNotes>
+## A Big Change
+
+* MeshMC is now offered under the Apache 2.0 license.
+
+## Highlights
+
+* It was heartbreaking, I'm not lying.
+* Being alone is tough, but I like to persevere.
+* This release is really full of emotion, no offense to anyone.
+* Joking aside, this is the first time I'm releasing such a massive release.
+* Everyone, calm down. Take a breath. Because if you try to hold it, you might choke, as I don't think you'll be able to read this release in one breath.
+
+## Added
+
+* Shortcut system has been added.
+* A world selection feature has been added to the Shortcut system.
+* Patreon link has been added.
+* Title bar theming added for macOS.
+* A setting to edit the Skins and Java folders has been added.
+* The "Folder" tab in the top toolbar now includes a list of multiple useful folders.
+* The mod installation and update system has been completely redesigned.
+* Datapack installation and update system has been added.
+* ShaderPack installation and update system has been completely redesigned.
+* ResourcePack installation and update system has been completely redesigned.
+* The ability to throw the instance in the trash has been added.
+* Detailed logging feature has been added.
+* Demo mode support has been added.
+* The number of entries in the Instance Toolbar has been reduced and icons have been added.
+* News display system has been added.
+* Discord URL has been added.
+* The ability to blacklist the plugin has been added.
+* Backup system has been added.
+* The "More News" tab has been added back.
+* Toolbar locking system added.
+* The ability to move two toolbars other than the instance toolbar has been added.
+* A toolbar that works with the alt key has been added, except for macOS.
+* The backup process now shows a progress bar.
+* ModPack management support has been added.
+* Multiple instance folder support has been added.
+* Export via MRPack and Curseforge ZIP has been added.
+* A separate screen was created for loaders.
+* vcpkg build system has been added.
+* RPM Spec has been added.
+
+## Changed
+
+* GreenDark theme palette updated.
+* The macOS ToolBar code has been rewritten.
+* The repository structure has been rebuilt.
+* Minecraft is now downloaded every time an instance is created.
+* vcpkg automates bootstrap and package management.
+* The `std::optional` feature, introduced in the C++17 standard, is now in use.
+* Path corrections have been added for UNIX installations (excluding macOS), especially for Linux; compatibility with Debian and RedHat policies has been ensured.
+* Crowdin translations have been updated.
+
+## Fixed
+
+* The problem of Minecraft not closing when trying to kill an instance on Windows has been solved.
+* The error of not adding version entries in NSIS has been fixed.
+
+## Removed
+
+* The ability to directly delete instances has been removed.
+* The Filelink plugin has been removed.
+* MinGW aarch64 test and packaging removed.
+* The NewsViewer plugin has been removed.
+* The BackupSystem plugin has been removed.
+* PackUpdater plugin has been removed.
+* PackPortal plugin has been removed.
+* The Feature Flag feature has been completely removed.
+* All Rust code has been removed.
+* Optional Bare library has been removed.
+* Analysis collection has been removed.
+
+## Deprecated
+
+* MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.</releaseNotes>
+    <dependencies>
+      <dependency id="vcredist140" version="14.44.35211"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools/chocolateyinstall.ps1" target="tools"/>
+    <file src="tools/chocolateyuninstall.ps1" target="tools"/>
+  </files>
+</package>
