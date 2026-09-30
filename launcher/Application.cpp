@@ -143,11 +143,11 @@ namespace
 #if defined(Q_OS_MAC)
 	QString macOSDataPath()
 	{
-		auto dataPath =
-			QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-		if (!dataPath.isEmpty()) {
-			return dataPath;
-		}
+		const auto base = QStandardPaths::writableLocation(
+		QStandardPaths::AppDataLocation);
+	if (!base.isEmpty()) {
+		return QDir::cleanPath(FS::PathCombine(base, ".."));
+	}
 		return FS::PathCombine(QDir::homePath(), "Library",
 							   "Application Support", "MeshMC");
 	}
@@ -229,6 +229,57 @@ namespace
 			}
 		}
 		return migrated;
+	}
+#endif
+} // namespace
+
+namespace
+{
+#if defined(Q_OS_WIN32) || defined(Q_OS_MAC)
+	bool mergeMoveDir(const QString& src, const QString& dst)
+	{
+		bool ok = true;
+		const auto entries = QDir(src).entryInfoList(
+			QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden |
+			QDir::System);
+		for (const QFileInfo& e : entries) {
+			const QString target = QDir(dst).filePath(e.fileName());
+			if (!QFileInfo::exists(target)) {
+				if (!QDir().rename(e.absoluteFilePath(), target)) {
+					qWarning() << "Migration: could not move"
+							   << e.absoluteFilePath();
+					ok = false;
+				}
+			} else if (e.isDir() && !e.isSymLink() &&
+					   QFileInfo(target).isDir()) {
+				ok &= mergeMoveDir(e.absoluteFilePath(), target);
+			} else {
+				qWarning() << "Migration: conflict, keeping new file" << target;
+				ok = false;
+			}
+		}
+		if (ok)
+			QDir().rmdir(src);
+		return ok;
+	}
+
+	void migrateNestedAppData(const QString& dataPath)
+	{
+		const QString legacy = QDir(dataPath).filePath("MeshMC");
+		const QDir legacyDir(legacy);
+		if (!legacyDir.exists() ||
+			!(legacyDir.exists("meshmc.cfg") || legacyDir.exists("instances")))
+			return;
+
+		if (legacyDir.exists("MeshMC")) {
+			qWarning() << "Migration skipped: nested 'MeshMC' inside" << legacy;
+			return;
+		}
+
+		qInfo() << "Migrating nested app data from" << legacy << "to"
+				<< dataPath;
+		if (!mergeMoveDir(legacy, dataPath))
+			qWarning() << "Migration incomplete, will retry on next launch";
 	}
 #endif
 } // namespace
@@ -623,6 +674,7 @@ bool Application::resolveDataPath(const QHash<QString, QVariant>& args,
 #if defined(Q_OS_MAC)
 		dataPath = macOSDataPath();
 		adjustedBy += "macOS application data location " + dataPath;
+		migrateNestedAppData(dataPath);
 #elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
 		QDir portableDir(applicationDirPath());
 		portableDir.cdUp();
@@ -652,11 +704,13 @@ bool Application::resolveDataPath(const QHash<QString, QVariant>& args,
 				"Portable mode (portable.txt found), using binary path " +
 				dataPath;
 		} else {
-			QString appDataPath = QStandardPaths::writableLocation(
-				QStandardPaths::AppDataLocation);
+			QString appDataPath = QDir::cleanPath(FS::PathCombine(
+				QStandardPaths::writableLocation(
+					QStandardPaths::AppDataLocation), ".."));
 			dataPath = appDataPath;
 			adjustedBy +=
 				"Non-portable mode, using AppData location " + dataPath;
+			migrateNestedAppData(dataPath);
 		}
 #else
 		dataPath = applicationDirPath();
@@ -821,8 +875,7 @@ void Application::setupPaths(const QString& binPath, const QString& origcwdPath,
 	FS::updateTimestamp(m_rootPath);
 #endif
 
-	qInfo().noquote() << "MeshMC, (c) 2026"
-					  << "Project Tick";
+	qInfo().noquote() << "MeshMC, (c) 2026 Project Tick";
 	qInfo().noquote() << "Version                    : "
 					  << BuildConfig.printableVersionString();
 	qInfo().noquote() << "Git commit                 : " << BuildConfig.GIT_COMMIT;

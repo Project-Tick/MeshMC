@@ -93,6 +93,7 @@
 
 * The problem of Minecraft not closing when trying to kill an instance on Windows has been solved.
 * The error of not adding version entries in NSIS has been fixed.
+* An issue where an extra MeshMC folder appeared inside the MeshMC folder (located in the AppData or Application Support directory on Windows and macOS) has been fixed, and a small migrator has been added to prevent migration issues.
 
 ## Removed
 

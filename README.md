@@ -37,3 +37,11 @@ Copyright &copy; 2026 Project Tick
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this program except in compliance with the License. You may obtain a copy of the License at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+## Forking/Redistribution
+
+We keep __MeshMC__ open source because we believe it's important to be able to see the source code of a project like this, and we do this using the Apache license.
+
+One reason we use the Apache license is that we don't want people using the name __MeshMC__ when they fork the project. This means people should examine the source code and remove all references to __MeshMC__, including the project icon and window titles (the title should not contain the phrase __MeshMC-fork__). The Apache license covers reasonable use of the name; mentioning the project's origins in the About dialog and license is acceptable. However, it must be explicitly stated that the project is a fork, which does not mean you have our approval.
+
+However, we give you the freedom to distribute this project as you wish, in any non-exclusive way, without changing its functionality, on a voluntary basis to package managers, without expecting any financial gain. Take the project and distribute it wherever people can reach it. But abide by our restrictions.
