@@ -20,6 +20,8 @@
  */
 
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
+#include <QOperatingSystemVersion>
+#include <QVersionNumber>
 
 /* ── dependencies ─────────────────────────────────────────────────── *
  *
@@ -45,7 +47,7 @@ static const MMCODependency k_systemTrayDeps[] = {
 };
 
 MMCO_DEFINE_MODULE_EX(
-	"SystemTray", "1.0.0", "Project Tick",
+	"SystemTray", "2.0.0", "Project Tick",
 	"System tray icon with quick-launch menu and minimize-to-tray support",
 	"Apache-2.0",
 	/* code_link        */ nullptr,
@@ -395,6 +397,24 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 {
 	g_ctx = ctx;
 	MMCO_LOG(ctx, "SystemTray initializing...");
+
+#ifdef Q_OS_MACOS
+	{
+		const auto os = QOperatingSystemVersion::current();
+		const auto qtVersion =
+			QVersionNumber::fromString(QString::fromLatin1(qVersion()));
+
+		if (os.majorVersion() >= 27 &&
+			qtVersion < QVersionNumber(6, 11, 3)) {
+			MMCO_WARN(
+				ctx,
+				QString("SystemTray: disabled on macOS 27+ because Qt 6.12.0+ "
+				"is required. Current Qt runtime: %1").arg(qVersion()).toUtf8().constData());
+
+			return 0;
+		}
+	}
+#endif
 
 	if (is_flatpak()) {
 		MMCO_LOG(ctx, "SystemTray: Flatpak sandbox detected; disabled "
