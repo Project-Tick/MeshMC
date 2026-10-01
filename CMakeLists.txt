@@ -657,3 +657,7 @@ if(MeshMC_PLUGINS)
     # In-tree .mmco plugins (after launcher so MeshMC_logic target is available)
     add_subdirectory(launcher/plugin/plugins)
 endif()
+
+if(APPLE AND QT_VERSION_MAJOR EQUAL 5)
+    include("${CMAKE_SOURCE_DIR}/cmake/FixQt5MacBundle.cmake")
+endif()
