@@ -29,51 +29,53 @@ class Task;
 
 namespace Meta
 {
-	class Version;
-	class VersionList;
+class Version;
+class VersionList;
 
-	using VersionListPtr = std::shared_ptr<VersionList>;
-	using VersionPtr = std::shared_ptr<Version>;
+using VersionListPtr = std::shared_ptr<VersionList>;
+using VersionPtr = std::shared_ptr<Version>;
 
-	class Index : public QAbstractListModel, public BaseEntity
-	{
-		Q_OBJECT
-	  public:
-		explicit Index(QObject* parent = nullptr);
-		explicit Index(const QVector<VersionListPtr>& lists,
-					   QObject* parent = nullptr);
+class Index : public QAbstractListModel, public BaseEntity
+{
+    Q_OBJECT
+public:
+    explicit Index(QObject *parent = nullptr);
+    explicit Index(const QVector<VersionListPtr> &lists, QObject *parent = nullptr);
 
-		enum { UidRole = Qt::UserRole, NameRole, ListPtrRole };
+    enum {
+        UidRole = Qt::UserRole,
+        NameRole,
+        ListPtrRole
+    };
 
-		QVariant data(const QModelIndex& index, int role) const override;
-		int rowCount(const QModelIndex& parent) const override;
-		int columnCount(const QModelIndex& parent) const override;
-		QVariant headerData(int section, Qt::Orientation orientation,
-							int role) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    int rowCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-		QString localFilename() const override
-		{
-			return "index.json";
-		}
+    QString localFilename() const override
+    {
+        return "index.json";
+    }
 
-		// queries
-		VersionListPtr get(const QString& uid);
-		VersionPtr get(const QString& uid, const QString& version);
-		bool hasUid(const QString& uid) const;
+    // queries
+    VersionListPtr get(const QString &uid);
+    VersionPtr get(const QString &uid, const QString &version);
+    bool hasUid(const QString &uid) const;
 
-		QVector<VersionListPtr> lists() const
-		{
-			return m_lists;
-		}
+    QVector<VersionListPtr> lists() const
+    {
+        return m_lists;
+    }
 
-	  public: // for usage by parsers only
-		void merge(const std::shared_ptr<Index>& other);
-		void parse(const QJsonObject& obj) override;
+public: // for usage by parsers only
+    void merge(const std::shared_ptr<Index> &other);
+    void parse(const QJsonObject &obj) override;
 
-	  private:
-		QVector<VersionListPtr> m_lists;
-		QHash<QString, VersionListPtr> m_uids;
+private:
+    QVector<VersionListPtr> m_lists;
+    QHash<QString, VersionListPtr> m_uids;
 
-		void connectVersionList(const int row, const VersionListPtr& list);
-	};
+    void connectVersionList(const int row, const VersionListPtr &list);
+};
 } // namespace Meta

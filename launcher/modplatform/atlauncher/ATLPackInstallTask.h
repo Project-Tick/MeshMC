@@ -21,114 +21,108 @@
 
 #pragma once
 
-#include <meta/VersionList.h>
 #include "ATLPackManifest.h"
+#include <meta/VersionList.h>
 
 #include "InstanceTask.h"
-#include "net/NetJob.h"
-#include "settings/INISettingsObject.h"
+#include "meta/Version.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
-#include "meta/Version.h"
+#include "net/NetJob.h"
+#include "settings/INISettingsObject.h"
 
 #include <optional>
 
 namespace ATLauncher
 {
 
-	class UserInteractionSupport
-	{
+class UserInteractionSupport
+{
+public:
+    /**
+     * Requests a user interaction to select which optional mods should be
+     * installed.
+     */
+    virtual QVector<QString> chooseOptionalMods(QVector<ATLauncher::VersionMod> mods) = 0;
 
-	  public:
-		/**
-		 * Requests a user interaction to select which optional mods should be
-		 * installed.
-		 */
-		virtual QVector<QString>
-		chooseOptionalMods(QVector<ATLauncher::VersionMod> mods) = 0;
+    /**
+     * Requests a user interaction to select a component version from a
+     * given version list and constrained to a given Minecraft version.
+     */
+    virtual QString chooseVersion(Meta::VersionListPtr vlist, QString minecraftVersion) = 0;
+};
 
-		/**
-		 * Requests a user interaction to select a component version from a
-		 * given version list and constrained to a given Minecraft version.
-		 */
-		virtual QString chooseVersion(Meta::VersionListPtr vlist,
-									  QString minecraftVersion) = 0;
-	};
+class PackInstallTask : public InstanceTask
+{
+    Q_OBJECT
 
-	class PackInstallTask : public InstanceTask
-	{
-		Q_OBJECT
+public:
+    explicit PackInstallTask(UserInteractionSupport *support, QString pack, QString version);
+    virtual ~PackInstallTask()
+    {
+    }
 
-	  public:
-		explicit PackInstallTask(UserInteractionSupport* support, QString pack,
-								 QString version);
-		virtual ~PackInstallTask() {}
+    bool canAbort() const override
+    {
+        /* Two abortable stretches, with a gap between them: the
+         * pack's own downloads while `abortable` is set, and the
+         * optional game-file download the base class runs once the
+         * instance is built. Answering "always" would light up a
+         * button that abort() then refuses to act on. */
+        return abortable || InstanceTask::canAbort();
+    }
+    bool abort() override;
 
-		bool canAbort() const override
-		{
-			/* Two abortable stretches, with a gap between them: the
-			 * pack's own downloads while `abortable` is set, and the
-			 * optional game-file download the base class runs once the
-			 * instance is built. Answering "always" would light up a
-			 * button that abort() then refuses to act on. */
-			return abortable || InstanceTask::canAbort();
-		}
-		bool abort() override;
+protected:
+    virtual void executeTask() override;
 
-	  protected:
-		virtual void executeTask() override;
+private slots:
+    void onDownloadSucceeded();
+    void onDownloadFailed(QString reason);
 
-	  private slots:
-		void onDownloadSucceeded();
-		void onDownloadFailed(QString reason);
+    void onModsDownloaded();
+    void onModsExtracted();
 
-		void onModsDownloaded();
-		void onModsExtracted();
+private:
+    QString getDirForModType(ModType type, QString raw);
+    QString getVersionForLoader(QString uid);
+    QString detectLibrary(VersionLibrary library);
 
-	  private:
-		QString getDirForModType(ModType type, QString raw);
-		QString getVersionForLoader(QString uid);
-		QString detectLibrary(VersionLibrary library);
+    bool createLibrariesComponent(QString instanceRoot, std::shared_ptr<PackProfile> profile);
+    bool createPackComponent(QString instanceRoot, std::shared_ptr<PackProfile> profile);
 
-		bool createLibrariesComponent(QString instanceRoot,
-									  std::shared_ptr<PackProfile> profile);
-		bool createPackComponent(QString instanceRoot,
-								 std::shared_ptr<PackProfile> profile);
+    void installConfigs();
+    void extractConfigs();
+    void downloadMods();
+    bool extractMods(const QMap<QString, VersionMod> &toExtract, const QMap<QString, VersionMod> &toDecomp, const QMap<QString, QString> &toCopy);
+    void install();
 
-		void installConfigs();
-		void extractConfigs();
-		void downloadMods();
-		bool extractMods(const QMap<QString, VersionMod>& toExtract,
-						 const QMap<QString, VersionMod>& toDecomp,
-						 const QMap<QString, QString>& toCopy);
-		void install();
+private:
+    UserInteractionSupport *m_support;
 
-	  private:
-		UserInteractionSupport* m_support;
+    bool abortable = false;
 
-		bool abortable = false;
+    NetJob::Ptr jobPtr;
+    QByteArray response;
 
-		NetJob::Ptr jobPtr;
-		QByteArray response;
+    QString m_pack;
+    QString m_version_name;
+    PackVersion m_version;
 
-		QString m_pack;
-		QString m_version_name;
-		PackVersion m_version;
+    QMap<QString, VersionMod> modsToExtract;
+    QMap<QString, VersionMod> modsToDecomp;
+    QMap<QString, QString> modsToCopy;
 
-		QMap<QString, VersionMod> modsToExtract;
-		QMap<QString, VersionMod> modsToDecomp;
-		QMap<QString, QString> modsToCopy;
+    QString archivePath;
+    QStringList jarmods;
+    Meta::VersionPtr minecraftVersion;
+    QMap<QString, Meta::VersionPtr> componentsToInstall;
 
-		QString archivePath;
-		QStringList jarmods;
-		Meta::VersionPtr minecraftVersion;
-		QMap<QString, Meta::VersionPtr> componentsToInstall;
+    QFuture<std::optional<QStringList>> m_extractFuture;
+    QFutureWatcher<std::optional<QStringList>> m_extractFutureWatcher;
 
-		QFuture<std::optional<QStringList>> m_extractFuture;
-		QFutureWatcher<std::optional<QStringList>> m_extractFutureWatcher;
-
-		QFuture<bool> m_modExtractFuture;
-		QFutureWatcher<bool> m_modExtractFutureWatcher;
-	};
+    QFuture<bool> m_modExtractFuture;
+    QFutureWatcher<bool> m_modExtractFutureWatcher;
+};
 
 } // namespace ATLauncher

@@ -35,17 +35,16 @@
  */
 class ModUpdateDialog : public QDialog
 {
-	Q_OBJECT
-  public:
-	ModUpdateDialog(const QList<ModUpdateCheckTask::UpdateInfo>& updates,
-					QWidget* parent = nullptr);
+    Q_OBJECT
+public:
+    ModUpdateDialog(const QList<ModUpdateCheckTask::UpdateInfo> &updates, QWidget *parent = nullptr);
 
-	/* Returns only the items whose row is checked. */
-	QList<ModPlatform::DownloadItem> selectedDownloadItems() const;
+    /* Returns only the items whose row is checked. */
+    QList<ModPlatform::DownloadItem> selectedDownloadItems() const;
 
-  private:
-	void setupUi(const QList<ModUpdateCheckTask::UpdateInfo>& updates);
+private:
+    void setupUi(const QList<ModUpdateCheckTask::UpdateInfo> &updates);
 
-	QTreeWidget* m_tree = nullptr;
-	QList<ModUpdateCheckTask::UpdateInfo> m_updates;
+    QTreeWidget *m_tree = nullptr;
+    QList<ModUpdateCheckTask::UpdateInfo> m_updates;
 };

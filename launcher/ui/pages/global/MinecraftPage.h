@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include <memory>
 #include <QDialog>
+#include <memory>
 
 #include "java/JavaChecker.h"
 #include "ui/pages/BasePage.h"
@@ -31,43 +31,43 @@ class SettingsObject;
 
 namespace Ui
 {
-	class MinecraftPage;
+class MinecraftPage;
 }
 
 class MinecraftPage : public QWidget, public BasePage
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit MinecraftPage(QWidget* parent = 0);
-	~MinecraftPage();
+public:
+    explicit MinecraftPage(QWidget *parent = 0);
+    ~MinecraftPage();
 
-	QString displayName() const override
-	{
-		return tr("Minecraft");
-	}
-	QIcon icon() const override
-	{
-		return APPLICATION->getThemedIcon("minecraft");
-	}
-	QString id() const override
-	{
-		return "minecraft-settings";
-	}
-	QString helpPage() const override
-	{
-		return "Minecraft-settings";
-	}
-	bool apply() override;
+    QString displayName() const override
+    {
+        return tr("Minecraft");
+    }
+    QIcon icon() const override
+    {
+        return APPLICATION->getThemedIcon("minecraft");
+    }
+    QString id() const override
+    {
+        return "minecraft-settings";
+    }
+    QString helpPage() const override
+    {
+        return "Minecraft-settings";
+    }
+    bool apply() override;
 
-  private:
-	void updateCheckboxStuff();
-	void applySettings();
-	void loadSettings();
+private:
+    void updateCheckboxStuff();
+    void applySettings();
+    void loadSettings();
 
-  private slots:
-	void on_maximizedCheckBox_clicked(bool checked);
+private slots:
+    void on_maximizedCheckBox_clicked(bool checked);
 
-  private:
-	Ui::MinecraftPage* ui;
+private:
+    Ui::MinecraftPage *ui;
 };

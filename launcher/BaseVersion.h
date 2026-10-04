@@ -20,43 +20,45 @@
 
 #pragma once
 
-#include <memory>
-#include <QString>
 #include <QMetaType>
+#include <QString>
+#include <memory>
 
 /*!
  * An abstract base class for versions.
  */
 class BaseVersion
 {
-  public:
-	virtual ~BaseVersion() {}
-	/*!
-	 * A string used to identify this version in config files.
-	 * This should be unique within the version list or shenanigans will occur.
-	 */
-	virtual QString descriptor() = 0;
+public:
+    virtual ~BaseVersion()
+    {
+    }
+    /*!
+     * A string used to identify this version in config files.
+     * This should be unique within the version list or shenanigans will occur.
+     */
+    virtual QString descriptor() = 0;
 
-	/*!
-	 * The name of this version as it is displayed to the user.
-	 * For example: "1.5.1"
-	 */
-	virtual QString name() = 0;
+    /*!
+     * The name of this version as it is displayed to the user.
+     * For example: "1.5.1"
+     */
+    virtual QString name() = 0;
 
-	/*!
-	 * This should return a string that describes
-	 * the kind of version this is (Stable, Beta, Snapshot, whatever)
-	 */
-	virtual QString typeString() const = 0;
+    /*!
+     * This should return a string that describes
+     * the kind of version this is (Stable, Beta, Snapshot, whatever)
+     */
+    virtual QString typeString() const = 0;
 
-	virtual bool operator<(BaseVersion& a)
-	{
-		return name() < a.name();
-	};
-	virtual bool operator>(BaseVersion& a)
-	{
-		return name() > a.name();
-	};
+    virtual bool operator<(BaseVersion &a)
+    {
+        return name() < a.name();
+    };
+    virtual bool operator>(BaseVersion &a)
+    {
+        return name() > a.name();
+    };
 };
 
 typedef std::shared_ptr<BaseVersion> BaseVersionPtr;

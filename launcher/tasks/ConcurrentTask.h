@@ -26,8 +26,8 @@
 #include <QUuid>
 #include <memory>
 
-#include "Task.h"
 #include "QObjectPtr.h"
+#include "Task.h"
 
 /**
  * Runs a bag of tasks, up to a given number of them at the same time.
@@ -44,94 +44,92 @@
  */
 class ConcurrentTask : public Task
 {
-	Q_OBJECT
-  public:
-	explicit ConcurrentTask(QObject* parent = nullptr,
-							QString task_name = QString(),
-							int max_concurrent = 6);
-	virtual ~ConcurrentTask();
+    Q_OBJECT
+public:
+    explicit ConcurrentTask(QObject *parent = nullptr, QString task_name = QString(), int max_concurrent = 6);
+    virtual ~ConcurrentTask();
 
-	/// Queues a task. Tasks added while this one runs are picked up as slots
-	/// free up; tasks added after it finished are ignored.
-	void addTask(Task::Ptr task);
+    /// Queues a task. Tasks added while this one runs are picked up as slots
+    /// free up; tasks added after it finished are ignored.
+    void addTask(Task::Ptr task);
 
-	/// How many tasks were handed to us in total.
-	int totalSize() const
-	{
-		return m_all.size();
-	}
+    /// How many tasks were handed to us in total.
+    int totalSize() const
+    {
+        return m_all.size();
+    }
 
-	/// How many of them reached an end state, one way or another.
-	int finishedSize() const
-	{
-		return m_succeeded + m_failed + m_skipped;
-	}
+    /// How many of them reached an end state, one way or another.
+    int finishedSize() const
+    {
+        return m_succeeded + m_failed + m_skipped;
+    }
 
-	bool isMultiStep() const override
-	{
-		return totalSize() > 1;
-	}
+    bool isMultiStep() const override
+    {
+        return totalSize() > 1;
+    }
 
-	TaskStepProgressList getStepProgress() const override
-	{
-		return m_step_order;
-	}
+    TaskStepProgressList getStepProgress() const override
+    {
+        return m_step_order;
+    }
 
-	bool canAbort() const override;
+    bool canAbort() const override;
 
-  public slots:
-	bool abort() override;
+public slots:
+    bool abort() override;
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-	/// Fills the free slots with queued tasks, and wraps up when there is
-	/// nothing left to run.
-	void startNext();
+    /// Fills the free slots with queued tasks, and wraps up when there is
+    /// nothing left to run.
+    void startNext();
 
-	/// Moves everything still queued out of the way without running it.
-	void dropQueued();
+    /// Moves everything still queued out of the way without running it.
+    void dropQueued();
 
-	/// Recomputes our own progress and status line. Override to reword.
-	virtual void updateState();
+    /// Recomputes our own progress and status line. Override to reword.
+    virtual void updateState();
 
-	/// Brings this task to an end state based on what happened to the
-	/// children.
-	virtual void finishTask();
+    /// Brings this task to an end state based on what happened to the
+    /// children.
+    virtual void finishTask();
 
-	virtual void subTaskSucceeded(Task::Ptr task);
-	virtual void subTaskFailed(Task::Ptr task, const QString& reason);
-	virtual void subTaskStatus(Task::Ptr task, const QString& status);
-	virtual void subTaskDetails(Task::Ptr task, const QString& details);
-	virtual void subTaskProgress(Task::Ptr task, qint64 current, qint64 total);
+    virtual void subTaskSucceeded(Task::Ptr task);
+    virtual void subTaskFailed(Task::Ptr task, const QString &reason);
+    virtual void subTaskStatus(Task::Ptr task, const QString &status);
+    virtual void subTaskDetails(Task::Ptr task, const QString &details);
+    virtual void subTaskProgress(Task::Ptr task, qint64 current, qint64 total);
 
-	/// Hooks a task up to us and asks it to start.
-	void startSubTask(Task::Ptr task);
+    /// Hooks a task up to us and asks it to start.
+    void startSubTask(Task::Ptr task);
 
-	/// Unhooks a finished task and reports its final state to the UI.
-	void disposeOf(Task::Ptr task, TaskStepState state);
+    /// Unhooks a finished task and reports its final state to the UI.
+    void disposeOf(Task::Ptr task, TaskStepState state);
 
-	/// The step we report to the UI for the given task, created on first use.
-	std::shared_ptr<TaskStepProgress> stepFor(const Task::Ptr& task);
+    /// The step we report to the UI for the given task, created on first use.
+    std::shared_ptr<TaskStepProgress> stepFor(const Task::Ptr &task);
 
-  protected:
-	/// Everything ever added, in the order it was added.
-	QList<Task::Ptr> m_all;
-	/// Not started yet.
-	QQueue<Task::Ptr> m_queue;
-	/// Started and not finished, keyed by raw pointer so lookups from signal
-	/// handlers are cheap.
-	QHash<Task*, Task::Ptr> m_doing;
+protected:
+    /// Everything ever added, in the order it was added.
+    QList<Task::Ptr> m_all;
+    /// Not started yet.
+    QQueue<Task::Ptr> m_queue;
+    /// Started and not finished, keyed by raw pointer so lookups from signal
+    /// handlers are cheap.
+    QHash<Task *, Task::Ptr> m_doing;
 
-	int m_succeeded = 0;
-	int m_failed = 0;
-	int m_skipped = 0;
+    int m_succeeded = 0;
+    int m_failed = 0;
+    int m_skipped = 0;
 
-	QStringList m_fail_reasons;
+    QStringList m_fail_reasons;
 
-	QHash<QUuid, std::shared_ptr<TaskStepProgress>> m_steps;
-	TaskStepProgressList m_step_order;
+    QHash<QUuid, std::shared_ptr<TaskStepProgress>> m_steps;
+    TaskStepProgressList m_step_order;
 
-	int m_max_concurrent;
-	bool m_aborted = false;
+    int m_max_concurrent;
+    bool m_aborted = false;
 };

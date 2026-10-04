@@ -54,79 +54,74 @@
  */
 class FileIgnoreProxy : public QSortFilterProxyModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	FileIgnoreProxy(QString root, QObject* parent);
+public:
+    FileIgnoreProxy(QString root, QObject *parent);
 
-	// NOTE: Sadly, we have to do sorting ourselves.
-	bool lessThan(const QModelIndex& left,
-				  const QModelIndex& right) const override;
+    // NOTE: Sadly, we have to do sorting ourselves.
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 
-	Qt::ItemFlags flags(const QModelIndex& index) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-	QVariant data(const QModelIndex& index,
-				  int role = Qt::DisplayRole) const override;
-	bool setData(const QModelIndex& index, const QVariant& value,
-				 int role = Qt::EditRole) override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
-	/* `path` relative to the root this proxy was built for. */
-	QString relPath(const QString& path) const;
+    /* `path` relative to the root this proxy was built for. */
+    QString relPath(const QString &path) const;
 
-	bool setFilterState(QModelIndex index, Qt::CheckState state);
+    bool setFilterState(QModelIndex index, Qt::CheckState state);
 
-	/* Whether the tree should open this node to reveal a blocked path
-	 * somewhere below it - otherwise the only sign of it would be a
-	 * partially checked box several levels up. */
-	bool shouldExpand(QModelIndex index);
+    /* Whether the tree should open this node to reveal a blocked path
+     * somewhere below it - otherwise the only sign of it would be a
+     * partially checked box several levels up. */
+    bool shouldExpand(QModelIndex index);
 
-	void setBlockedPaths(QStringList paths);
+    void setBlockedPaths(QStringList paths);
 
-	const SeparatorPrefixTree<'/'>& blockedPaths() const
-	{
-		return m_blocked;
-	}
-	SeparatorPrefixTree<'/'>& blockedPaths()
-	{
-		return m_blocked;
-	}
+    const SeparatorPrefixTree<'/'> &blockedPaths() const
+    {
+        return m_blocked;
+    }
+    SeparatorPrefixTree<'/'> &blockedPaths()
+    {
+        return m_blocked;
+    }
 
-	/* File names removed from the model outright, wherever they sit. */
-	QStringList& ignoreFilesWithName()
-	{
-		return m_ignoreFiles;
-	}
-	/* Same, by suffix. */
-	QStringList& ignoreFilesWithSuffix()
-	{
-		return m_ignoreFilesSuffixes;
-	}
-	/* Same, by relative path - a folder here takes its contents with
-	 * it. */
-	SeparatorPrefixTree<'/'>& ignoreFilesWithPath()
-	{
-		return m_ignoreFilePaths;
-	}
+    /* File names removed from the model outright, wherever they sit. */
+    QStringList &ignoreFilesWithName()
+    {
+        return m_ignoreFiles;
+    }
+    /* Same, by suffix. */
+    QStringList &ignoreFilesWithSuffix()
+    {
+        return m_ignoreFilesSuffixes;
+    }
+    /* Same, by relative path - a folder here takes its contents with
+     * it. */
+    SeparatorPrefixTree<'/'> &ignoreFilesWithPath()
+    {
+        return m_ignoreFilePaths;
+    }
 
-	/* True when `file` must be left out of the archive, for either
-	 * reason. This is the function the export tasks are handed. */
-	bool filterFile(const QFileInfo& file) const;
+    /* True when `file` must be left out of the archive, for either
+     * reason. This is the function the export tasks are handed. */
+    bool filterFile(const QFileInfo &file) const;
 
-	void loadBlockedPathsFromFile(const QString& fileName);
-	void saveBlockedPathsToFile(const QString& fileName);
+    void loadBlockedPathsFromFile(const QString &fileName);
+    void saveBlockedPathsToFile(const QString &fileName);
 
-  protected:
-	bool filterAcceptsColumn(int source_column,
-							 const QModelIndex& source_parent) const override;
-	bool filterAcceptsRow(int source_row,
-						  const QModelIndex& source_parent) const override;
+protected:
+    bool filterAcceptsColumn(int source_column, const QModelIndex &source_parent) const override;
+    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
-	bool ignoreFile(const QFileInfo& file) const;
+    bool ignoreFile(const QFileInfo &file) const;
 
-  private:
-	const QString m_root;
-	SeparatorPrefixTree<'/'> m_blocked;
-	QStringList m_ignoreFiles;
-	QStringList m_ignoreFilesSuffixes;
-	SeparatorPrefixTree<'/'> m_ignoreFilePaths;
+private:
+    const QString m_root;
+    SeparatorPrefixTree<'/'> m_blocked;
+    QStringList m_ignoreFiles;
+    QStringList m_ignoreFilesSuffixes;
+    SeparatorPrefixTree<'/'> m_ignoreFilePaths;
 };

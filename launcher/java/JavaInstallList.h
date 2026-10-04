@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include <QObject>
 #include <QAbstractListModel>
+#include <QObject>
 
 #include "BaseVersionList.h"
 #include "tasks/Task.h"
@@ -35,48 +35,52 @@ class JavaListLoadTask;
 
 class JavaInstallList : public BaseVersionList
 {
-	Q_OBJECT
-	enum class Status { NotDone, InProgress, Done };
+    Q_OBJECT
+    enum class Status {
+        NotDone,
+        InProgress,
+        Done
+    };
 
-  public:
-	explicit JavaInstallList(QObject* parent = 0);
+public:
+    explicit JavaInstallList(QObject *parent = 0);
 
-	Task::Ptr getLoadTask() override;
-	bool isLoaded() override;
-	const BaseVersionPtr at(int i) const override;
-	int count() const override;
-	void sortVersions() override;
+    Task::Ptr getLoadTask() override;
+    bool isLoaded() override;
+    const BaseVersionPtr at(int i) const override;
+    int count() const override;
+    void sortVersions() override;
 
-	QVariant data(const QModelIndex& index, int role) const override;
-	RoleList providesRoles() const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    RoleList providesRoles() const override;
 
-  public slots:
-	void updateListData(QList<BaseVersionPtr> versions) override;
+public slots:
+    void updateListData(QList<BaseVersionPtr> versions) override;
 
-  protected:
-	void load();
-	Task::Ptr getCurrentTask();
+protected:
+    void load();
+    Task::Ptr getCurrentTask();
 
-  protected:
-	Status m_status = Status::NotDone;
-	shared_qobject_ptr<JavaListLoadTask> m_loadTask;
-	QList<BaseVersionPtr> m_vlist;
+protected:
+    Status m_status = Status::NotDone;
+    shared_qobject_ptr<JavaListLoadTask> m_loadTask;
+    QList<BaseVersionPtr> m_vlist;
 };
 
 class JavaListLoadTask : public Task
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit JavaListLoadTask(JavaInstallList* vlist);
-	virtual ~JavaListLoadTask();
+public:
+    explicit JavaListLoadTask(JavaInstallList *vlist);
+    virtual ~JavaListLoadTask();
 
-	void executeTask() override;
-  public slots:
-	void javaCheckerFinished();
+    void executeTask() override;
+public slots:
+    void javaCheckerFinished();
 
-  protected:
-	shared_qobject_ptr<JavaCheckerJob> m_job;
-	JavaInstallList* m_list;
-	JavaInstall* m_currentRecommended;
+protected:
+    shared_qobject_ptr<JavaCheckerJob> m_job;
+    JavaInstallList *m_list;
+    JavaInstall *m_currentRecommended;
 };

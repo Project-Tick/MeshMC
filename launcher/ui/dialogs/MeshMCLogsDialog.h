@@ -24,36 +24,36 @@
 
 namespace Ui
 {
-	class MeshMCLogsDialog;
+class MeshMCLogsDialog;
 }
 
 class MeshMCLogsDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit MeshMCLogsDialog(QWidget* parent = nullptr);
-	~MeshMCLogsDialog();
+public:
+    explicit MeshMCLogsDialog(QWidget *parent = nullptr);
+    ~MeshMCLogsDialog();
 
-  private slots:
-	void on_selectLogBox_currentIndexChanged(int index);
-	void on_btnReload_clicked();
-	void on_btnCopy_clicked();
-	void on_btnUpload_clicked();
-	void on_btnDelete_clicked();
-	void on_btnClean_clicked();
-	void on_findButton_clicked();
-	void onLogFileChanged(const QString& path);
+private slots:
+    void on_selectLogBox_currentIndexChanged(int index);
+    void on_btnReload_clicked();
+    void on_btnCopy_clicked();
+    void on_btnUpload_clicked();
+    void on_btnDelete_clicked();
+    void on_btnClean_clicked();
+    void on_findButton_clicked();
+    void onLogFileChanged(const QString &path);
 
-  private:
-	void populateLogList();
-	void loadSelectedLog();
-	void setControlsEnabled(bool enabled);
-	QString logFilePath(const QString& name) const;
-	QString logDirectory() const;
+private:
+    void populateLogList();
+    void loadSelectedLog();
+    void setControlsEnabled(bool enabled);
+    QString logFilePath(const QString &name) const;
+    QString logDirectory() const;
 
-	Ui::MeshMCLogsDialog* ui;
-	QFileSystemWatcher* m_liveWatcher;
-	QString m_currentFile;
-	bool m_watching0Log = false;
+    Ui::MeshMCLogsDialog *ui;
+    QFileSystemWatcher *m_liveWatcher;
+    QString m_currentFile;
+    bool m_watching0Log = false;
 };

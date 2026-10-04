@@ -44,56 +44,54 @@
 
 class PluginLoader
 {
-  public:
-	PluginLoader();
-	~PluginLoader();
+public:
+    PluginLoader();
+    ~PluginLoader();
 
-	/*
-	 * Scan all configured search paths and return metadata for every
-	 * valid .mmco module found.
-	 *
-	 * `disabledNames` is a case-insensitive set of module names that
-	 * should be marked PluginDisableReason::UserDisabled. The .mmco file
-	 * is still opened (so the metadata block can be displayed in the
-	 * plugins dialog), but the module's `disabled` flag is set and the
-	 * caller must not call mmco_init() on it.
-	 */
-	QVector<PluginMetadata>
-	discoverModules(const QSet<QString>& disabledNames = {}) const;
+    /*
+     * Scan all configured search paths and return metadata for every
+     * valid .mmco module found.
+     *
+     * `disabledNames` is a case-insensitive set of module names that
+     * should be marked PluginDisableReason::UserDisabled. The .mmco file
+     * is still opened (so the metadata block can be displayed in the
+     * plugins dialog), but the module's `disabled` flag is set and the
+     * caller must not call mmco_init() on it.
+     */
+    QVector<PluginMetadata> discoverModules(const QSet<QString> &disabledNames = {}) const;
 
-	/*
-	 * Open a single .mmco file: dlopen, validate magic/ABI, resolve
-	 * entry points. On success the returned PluginMetadata has
-	 * loaded == true. On failure loaded == false and libraryHandle
-	 * is nullptr.
-	 */
-	PluginMetadata loadModule(const QString& path) const;
+    /*
+     * Open a single .mmco file: dlopen, validate magic/ABI, resolve
+     * entry points. On success the returned PluginMetadata has
+     * loaded == true. On failure loaded == false and libraryHandle
+     * is nullptr.
+     */
+    PluginMetadata loadModule(const QString &path) const;
 
-	/*
-	 * Close a previously loaded module.
-	 */
-	static void unloadModule(PluginMetadata& meta);
+    /*
+     * Close a previously loaded module.
+     */
+    static void unloadModule(PluginMetadata &meta);
 
-	/*
-	 * Return the ordered list of directories that will be scanned.
-	 */
-	QStringList searchPaths() const;
+    /*
+     * Return the ordered list of directories that will be scanned.
+     */
+    QStringList searchPaths() const;
 
-	/*
-	 * Prepend extra search paths (e.g. from settings).
-	 */
-	void addSearchPath(const QString& path);
+    /*
+     * Prepend extra search paths (e.g. from settings).
+     */
+    void addSearchPath(const QString &path);
 
-  private:
-	QStringList m_extraPaths;
+private:
+    QStringList m_extraPaths;
 
-	static QStringList defaultSearchPaths();
-	QVector<PluginMetadata>
-	scanDirectory(const QString& dir, const QSet<QString>& disabledNames) const;
+    static QStringList defaultSearchPaths();
+    QVector<PluginMetadata> scanDirectory(const QString &dir, const QSet<QString> &disabledNames) const;
 
-	/* Run the trust pre-flight on `meta`: verify the GPG trailer (if any)
-	 * and apply the license-based signature policy. Updates the
-	 * signature_state / disabled fields on `meta`. Called from
-	 * loadModule() before that function returns. */
-	static void verifySignatureAndPolicy(PluginMetadata& meta);
+    /* Run the trust pre-flight on `meta`: verify the GPG trailer (if any)
+     * and apply the license-based signature policy. Updates the
+     * signature_state / disabled fields on `meta`. Called from
+     * loadModule() before that function returns. */
+    static void verifySignatureAndPolicy(PluginMetadata &meta);
 };

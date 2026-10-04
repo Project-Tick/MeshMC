@@ -18,14 +18,14 @@
  * limitations under the License.
  */
 #pragma once
-#include <QString>
 #include "classparser_config.h"
+#include <QString>
 
 namespace classparser
 {
-	/**
-	 * @brief Get the version from a minecraft.jar by parsing its class files.
-	 * Expensive!
-	 */
-	QString GetMinecraftJarVersion(QString jar);
+/**
+ * @brief Get the version from a minecraft.jar by parsing its class files.
+ * Expensive!
+ */
+QString GetMinecraftJarVersion(QString jar);
 } // namespace classparser

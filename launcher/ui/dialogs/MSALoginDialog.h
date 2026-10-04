@@ -20,40 +20,40 @@
 
 #pragma once
 
-#include <QtWidgets/QDialog>
 #include <QtCore/QEventLoop>
+#include <QtWidgets/QDialog>
 
 #include "minecraft/auth/MinecraftAccount.h"
 
 namespace Ui
 {
-	class MSALoginDialog;
+class MSALoginDialog;
 }
 
 class MSALoginDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	~MSALoginDialog();
+public:
+    ~MSALoginDialog();
 
-	static MinecraftAccountPtr newAccount(QWidget* parent, QString message);
-	int exec() override;
+    static MinecraftAccountPtr newAccount(QWidget *parent, QString message);
+    int exec() override;
 
-  private:
-	explicit MSALoginDialog(QWidget* parent = 0);
+private:
+    explicit MSALoginDialog(QWidget *parent = 0);
 
-	void setUserInputsEnabled(bool enable);
+    void setUserInputsEnabled(bool enable);
 
-  protected slots:
-	void onTaskFailed(const QString& reason);
-	void onTaskSucceeded();
-	void onTaskStatus(const QString& status);
-	void onTaskProgress(qint64 current, qint64 total);
-	void onAuthorizeWithBrowser(const QUrl& url);
+protected slots:
+    void onTaskFailed(const QString &reason);
+    void onTaskSucceeded();
+    void onTaskStatus(const QString &status);
+    void onTaskProgress(qint64 current, qint64 total);
+    void onAuthorizeWithBrowser(const QUrl &url);
 
-  private:
-	Ui::MSALoginDialog* ui;
-	MinecraftAccountPtr m_account;
-	shared_qobject_ptr<AccountTask> m_loginTask;
+private:
+    Ui::MSALoginDialog *ui;
+    MinecraftAccountPtr m_account;
+    shared_qobject_ptr<AccountTask> m_loginTask;
 };

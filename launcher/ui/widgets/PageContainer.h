@@ -20,11 +20,11 @@
 
 #pragma once
 
-#include <QWidget>
 #include <QModelIndex>
+#include <QWidget>
 
-#include "ui/pages/BasePageProvider.h"
 #include "ui/pages/BasePageContainer.h"
+#include "ui/pages/BasePageProvider.h"
 
 class QLayout;
 class IconLabel;
@@ -38,77 +38,78 @@ class QGridLayout;
 
 class PageContainer : public QWidget, public BasePageContainer
 {
-	Q_OBJECT
-  public:
-	explicit PageContainer(BasePageProvider* pageProvider,
-						   QString defaultId = QString(), QWidget* parent = 0);
-	virtual ~PageContainer() {}
+    Q_OBJECT
+public:
+    explicit PageContainer(BasePageProvider *pageProvider, QString defaultId = QString(), QWidget *parent = 0);
+    virtual ~PageContainer()
+    {
+    }
 
-	void addButtons(QWidget* buttons);
-	void addButtons(QLayout* buttons);
+    void addButtons(QWidget *buttons);
+    void addButtons(QLayout *buttons);
 
-	/* Drop the sidebar. Used when the container hosts a single page and
-	 * the list would just be a one-item column taking up space.
-	 * Defined out of line because m_pageList is only forward declared. */
-	void hidePageList();
-	/*
-	 * Save any unsaved state and prepare to be closed.
-	 * @return true if everything can be saved, false if there is something that
-	 * requires attention
-	 */
-	bool prepareToClose();
-	bool saveAll();
+    /* Drop the sidebar. Used when the container hosts a single page and
+     * the list would just be a one-item column taking up space.
+     * Defined out of line because m_pageList is only forward declared. */
+    void hidePageList();
+    /*
+     * Save any unsaved state and prepare to be closed.
+     * @return true if everything can be saved, false if there is something that
+     * requires attention
+     */
+    bool prepareToClose();
+    bool saveAll();
 
-	/* request close - used by individual pages */
-	bool requestClose() override
-	{
-		if (m_container) {
-			return m_container->requestClose();
-		}
-		return false;
-	}
+    /* request close - used by individual pages */
+    bool requestClose() override
+    {
+        if (m_container) {
+            return m_container->requestClose();
+        }
+        return false;
+    }
 
-	virtual bool selectPage(QString pageId) override;
+    virtual bool selectPage(QString pageId) override;
 
-	/* Every page held by this container, in the order they were given.
-	 * Lets a hosting dialog talk to all of its pages at once. */
-	QList<BasePage*> getPages() const;
-	/* The page currently on screen, or null before the first one is
-	 * shown. */
-	BasePage* selectedPage() const
-	{
-		return m_currentPage;
-	}
+    /* Every page held by this container, in the order they were given.
+     * Lets a hosting dialog talk to all of its pages at once. */
+    QList<BasePage *> getPages() const;
+    /* The page currently on screen, or null before the first one is
+     * shown. */
+    BasePage *selectedPage() const
+    {
+        return m_currentPage;
+    }
 
-	void refreshContainer() override;
-	virtual void setParentContainer(BasePageContainer* container)
-	{
-		m_container = container;
-	};
+    void refreshContainer() override;
+    virtual void setParentContainer(BasePageContainer *container)
+    {
+        m_container = container;
+    };
 
-  private:
-	void createUI();
+private:
+    void createUI();
 
-  signals:
-	/* Fired after the visible page changed. `previous` is null for the
-	 * first page shown. */
-	void selectedPageChanged(BasePage* previous, BasePage* selected);
+signals:
+    /* Fired after the visible page changed. `previous` is null for the
+     * first page shown. */
+    void selectedPageChanged(BasePage *previous, BasePage *selected);
 
-  public slots:
-	void help();
+public slots:
+    void help();
 
-  private slots:
-	void currentChanged(const QModelIndex& current);
-	void showPage(int row);
+private slots:
+    void currentChanged(const QModelIndex &current);
+    void showPage(int row);
 
-  private:
-	BasePageContainer* m_container = nullptr;
-	BasePage* m_currentPage = 0;
-	QSortFilterProxyModel* m_proxyModel;
-	PageModel* m_model;
-	QStackedLayout* m_pageStack;
-	QListView* m_pageList;
-	QLabel* m_header;
-	IconLabel* m_iconHeader;
-	QGridLayout* m_layout;
+private:
+    BasePageContainer *m_container = nullptr;
+    BasePage *m_currentPage = 0;
+    QSortFilterProxyModel *m_proxyModel;
+    PageModel *m_model;
+    QStackedLayout *m_pageStack;
+    QListView *m_pageList;
+    QLabel *m_header;
+    IconLabel *m_iconHeader;
+    QGridLayout *m_layout;
 };

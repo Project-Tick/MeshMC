@@ -20,37 +20,37 @@
 
 #pragma once
 
-#include <QFrame>
 #include "minecraft/mod/Mod.h"
+#include <QFrame>
 
 namespace Ui
 {
-	class MCModInfoFrame;
+class MCModInfoFrame;
 }
 
 class MCModInfoFrame : public QFrame
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit MCModInfoFrame(QWidget* parent = 0);
-	~MCModInfoFrame();
+public:
+    explicit MCModInfoFrame(QWidget *parent = 0);
+    ~MCModInfoFrame();
 
-	void setModText(QString text);
-	void setModDescription(QString text);
+    void setModText(QString text);
+    void setModDescription(QString text);
 
-	void updateWithMod(Mod& m);
-	void clear();
+    void updateWithMod(Mod &m);
+    void clear();
 
-  public slots:
-	void modDescEllipsisHandler(const QString& link);
-	void boxClosed(int result);
+public slots:
+    void modDescEllipsisHandler(const QString &link);
+    void boxClosed(int result);
 
-  private:
-	void updateHiddenState();
+private:
+    void updateHiddenState();
 
-  private:
-	Ui::MCModInfoFrame* ui;
-	QString desc;
-	class QMessageBox* currentBox = nullptr;
+private:
+    Ui::MCModInfoFrame *ui;
+    QString desc;
+    class QMessageBox *currentBox = nullptr;
 };

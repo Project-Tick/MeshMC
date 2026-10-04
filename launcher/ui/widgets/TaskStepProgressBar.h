@@ -25,7 +25,7 @@
 
 namespace Ui
 {
-	class TaskStepProgressBar;
+class TaskStepProgressBar;
 }
 
 /**
@@ -34,16 +34,16 @@ namespace Ui
  */
 class TaskStepProgressBar : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit TaskStepProgressBar(QWidget* parent = nullptr);
-	~TaskStepProgressBar();
+public:
+    explicit TaskStepProgressBar(QWidget *parent = nullptr);
+    ~TaskStepProgressBar();
 
-	/// Shows the given step. A step with an unknown total gets a busy
-	/// indicator rather than a made up percentage.
-	void setStep(const TaskStepProgress& step);
+    /// Shows the given step. A step with an unknown total gets a busy
+    /// indicator rather than a made up percentage.
+    void setStep(const TaskStepProgress &step);
 
-  private:
-	Ui::TaskStepProgressBar* ui;
+private:
+    Ui::TaskStepProgressBar *ui;
 };

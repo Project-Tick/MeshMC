@@ -24,20 +24,20 @@
 
 class ShaderPackPage : public ModFolderPage
 {
-	Q_OBJECT
-  public:
-	explicit ShaderPackPage(MinecraftInstance* instance, QWidget* parent = 0)
-		: ModFolderPage(instance, instance->shaderPackList(), "shaderpacks",
-						"shaderpacks", tr("Shader packs"), "Resource-packs",
-						parent)
-	{
-		ui->actionView_configs->setVisible(false);
-		setContentType(ModPlatform::ContentType::ShaderPack);
-	}
-	virtual ~ShaderPackPage() {}
+    Q_OBJECT
+public:
+    explicit ShaderPackPage(MinecraftInstance *instance, QWidget *parent = 0)
+        : ModFolderPage(instance, instance->shaderPackList(), "shaderpacks", "shaderpacks", tr("Shader packs"), "Resource-packs", parent)
+    {
+        ui->actionView_configs->setVisible(false);
+        setContentType(ModPlatform::ContentType::ShaderPack);
+    }
+    virtual ~ShaderPackPage()
+    {
+    }
 
-	virtual bool shouldDisplay() const override
-	{
-		return true;
-	}
+    virtual bool shouldDisplay() const override
+    {
+        return true;
+    }
 };

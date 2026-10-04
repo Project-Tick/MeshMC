@@ -21,5 +21,4 @@
 #include <QStringList>
 #include <QTextLayout>
 
-QStringList viewItemTextLayout(QTextLayout& textLayout, int lineWidth,
-							   qreal& height, qreal& widthUsed);
+QStringList viewItemTextLayout(QTextLayout &textLayout, int lineWidth, qreal &height, qreal &widthUsed);

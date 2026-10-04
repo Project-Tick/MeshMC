@@ -33,111 +33,109 @@
  */
 
 enum MMCOHookId : uint32_t {
-	/* Application lifecycle */
-	MMCO_HOOK_APP_INITIALIZED = 0x0100, /* payload: nullptr */
-	MMCO_HOOK_APP_SHUTDOWN = 0x0101,	/* payload: nullptr */
+    /* Application lifecycle */
+    MMCO_HOOK_APP_INITIALIZED = 0x0100, /* payload: nullptr */
+    MMCO_HOOK_APP_SHUTDOWN = 0x0101, /* payload: nullptr */
 
-	/* Instance lifecycle */
-	MMCO_HOOK_INSTANCE_PRE_LAUNCH = 0x0200,	 /* payload: MMCOInstanceInfo* */
-	MMCO_HOOK_INSTANCE_POST_LAUNCH = 0x0201, /* payload: MMCOInstanceInfo* */
-	MMCO_HOOK_INSTANCE_CREATED = 0x0202,	 /* payload: MMCOInstanceInfo* */
-	MMCO_HOOK_INSTANCE_REMOVED = 0x0203,	 /* payload: MMCOInstanceInfo* */
+    /* Instance lifecycle */
+    MMCO_HOOK_INSTANCE_PRE_LAUNCH = 0x0200, /* payload: MMCOInstanceInfo* */
+    MMCO_HOOK_INSTANCE_POST_LAUNCH = 0x0201, /* payload: MMCOInstanceInfo* */
+    MMCO_HOOK_INSTANCE_CREATED = 0x0202, /* payload: MMCOInstanceInfo* */
+    MMCO_HOOK_INSTANCE_REMOVED = 0x0203, /* payload: MMCOInstanceInfo* */
 
-	/* Settings */
-	MMCO_HOOK_SETTINGS_CHANGED = 0x0300, /* payload: MMCOSettingChange* */
+    /* Settings */
+    MMCO_HOOK_SETTINGS_CHANGED = 0x0300, /* payload: MMCOSettingChange* */
 
-	/* Content / mod management */
-	MMCO_HOOK_CONTENT_PRE_DOWNLOAD = 0x0400,  /* payload: MMCOContentEvent* */
-	MMCO_HOOK_CONTENT_POST_DOWNLOAD = 0x0401, /* payload: MMCOContentEvent* */
+    /* Content / mod management */
+    MMCO_HOOK_CONTENT_PRE_DOWNLOAD = 0x0400, /* payload: MMCOContentEvent* */
+    MMCO_HOOK_CONTENT_POST_DOWNLOAD = 0x0401, /* payload: MMCOContentEvent* */
 
-	/* Network */
-	MMCO_HOOK_NETWORK_PRE_REQUEST = 0x0500,	 /* payload: MMCONetworkEvent* */
-	MMCO_HOOK_NETWORK_POST_REQUEST = 0x0501, /* payload: MMCONetworkEvent* */
+    /* Network */
+    MMCO_HOOK_NETWORK_PRE_REQUEST = 0x0500, /* payload: MMCONetworkEvent* */
+    MMCO_HOOK_NETWORK_POST_REQUEST = 0x0501, /* payload: MMCONetworkEvent* */
 
-	/* UI extension points */
-	MMCO_HOOK_UI_MAIN_READY = 0x0600,	  /* payload: MMCOUiMainReadyPayload* */
-	MMCO_HOOK_UI_CONTEXT_MENU = 0x0601,	  /* payload: MMCOMenuEvent* */
-	MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602, /* payload: MMCOInstancePagesEvent* */
-	MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES =
-		0x0603, /* payload: MMCOGlobalSettingsPagesEvent* */
+    /* UI extension points */
+    MMCO_HOOK_UI_MAIN_READY = 0x0600, /* payload: MMCOUiMainReadyPayload* */
+    MMCO_HOOK_UI_CONTEXT_MENU = 0x0601, /* payload: MMCOMenuEvent* */
+    MMCO_HOOK_UI_INSTANCE_PAGES = 0x0602, /* payload: MMCOInstancePagesEvent* */
+    MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES = 0x0603, /* payload: MMCOGlobalSettingsPagesEvent* */
 
-	/* ABI 3+ — global-settings dialog lifecycle.
-	 *
-	 * Fires just before the Application's global settings dialog is
-	 * built. Plugins that mutate the dialog's pages on every open
-	 * (e.g. to inject a checkbox into the MeshMCPage) hook here and
-	 * schedule a deferred QTimer::singleShot(0, …) to do the actual
-	 * widget walk on the next event-loop turn (after the dialog's
-	 * own setupUi has run).  Payload: nullptr. */
-	MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN = 0x0604,
+    /* ABI 3+ — global-settings dialog lifecycle.
+     *
+     * Fires just before the Application's global settings dialog is
+     * built. Plugins that mutate the dialog's pages on every open
+     * (e.g. to inject a checkbox into the MeshMCPage) hook here and
+     * schedule a deferred QTimer::singleShot(0, …) to do the actual
+     * widget walk on the next event-loop turn (after the dialog's
+     * own setupUi has run).  Payload: nullptr. */
+    MMCO_HOOK_GLOBAL_SETTINGS_ABOUT_TO_OPEN = 0x0604,
 
-	/* ABI 3+ — per-instance settings page just constructed.
-	 *
-	 * Fires from InstanceSettingsPage's ctor right after its UI is
-	 * assembled. Replaces the legacy
-	 *   QObject::connect(APPLICATION,
-	 *                    &Application::instanceSettingsPageCreated, …)
-	 * dance.
-	 *
-	 * Payload: MMCOInstanceSettingsPageEvent* — see below. */
-	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED = 0x0605,
+    /* ABI 3+ — per-instance settings page just constructed.
+     *
+     * Fires from InstanceSettingsPage's ctor right after its UI is
+     * assembled. Replaces the legacy
+     *   QObject::connect(APPLICATION,
+     *                    &Application::instanceSettingsPageCreated, …)
+     * dance.
+     *
+     * Payload: MMCOInstanceSettingsPageEvent* — see below. */
+    MMCO_HOOK_INSTANCE_SETTINGS_PAGE_CREATED = 0x0605,
 
-	/* ABI 3+ — per-instance settings page finished loading values from
-	 * its backing store. Plugins that mirror values out of the
-	 * instance into their own widgets hook here to refresh.
-	 * Payload: MMCOInstanceSettingsPageEvent* (same fields as 0x0605). */
-	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED = 0x0606,
+    /* ABI 3+ — per-instance settings page finished loading values from
+     * its backing store. Plugins that mirror values out of the
+     * instance into their own widgets hook here to refresh.
+     * Payload: MMCOInstanceSettingsPageEvent* (same fields as 0x0605). */
+    MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED = 0x0606,
 
-	/* ABI 3+ — per-instance settings page about to write back its values.
-	 * Plugins that own custom widgets on the page hook here to push
-	 * the user's choice back into the instance settings before the
-	 * page commits.
-	 * Payload: MMCOInstanceSettingsPageEvent*. */
-	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING = 0x0607,
+    /* ABI 3+ — per-instance settings page about to write back its values.
+     * Plugins that own custom widgets on the page hook here to push
+     * the user's choice back into the instance settings before the
+     * page commits.
+     * Payload: MMCOInstanceSettingsPageEvent*. */
+    MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING = 0x0607,
 
-	/* News */
-	MMCO_HOOK_NEWS_UPDATED =
-		0x0700, /* payload: nullptr — fires after feeds reload */
+    /* News */
+    MMCO_HOOK_NEWS_UPDATED = 0x0700, /* payload: nullptr — fires after feeds reload */
 
-	/* Authentication — plugin-driven auth-provider extension points.
-	 *
-	 * These two hooks are the foundation of third-party authentication
-	 * support (Drasl, Ely.by, LittleSkin, custom Yggdrasil servers,
-	 * anything authlib-injector-compatible).  By intercepting auth
-	 * traffic at the request layer AND injecting session fields at the
-	 * launch layer, a plugin can fully replace the Mojang flow without
-	 * touching launcher code. */
+    /* Authentication — plugin-driven auth-provider extension points.
+     *
+     * These two hooks are the foundation of third-party authentication
+     * support (Drasl, Ely.by, LittleSkin, custom Yggdrasil servers,
+     * anything authlib-injector-compatible).  By intercepting auth
+     * traffic at the request layer AND injecting session fields at the
+     * launch layer, a plugin can fully replace the Mojang flow without
+     * touching launcher code. */
 
-	/* MMCO_HOOK_AUTH_REQUEST
-	 *
-	 * Fires from AuthRequest::setup() just before the network request
-	 * is dispatched.  The payload is an MMCOAuthRequestEvent which
-	 * exposes the in-flight QNetworkRequest's URL, HTTP method, and
-	 * a mutable redirect slot.
-	 *
-	 * Callbacks may:
-	 *   • Read payload->url and payload->method to identify the call.
-	 *   • Set payload->redirect_url to non-null to rewrite the URL
-	 *     before the request is sent (e.g. swap api.minecraftservices.com
-	 *     for authserver.ely.by).
-	 *   • Append HTTP headers via payload->add_header(key, value).
-	 *
-	 * Returning non-zero cancels the request entirely; the AuthRequest
-	 * emits ProtocolUnknownError and the calling AuthStep fails. */
-	MMCO_HOOK_AUTH_REQUEST = 0x0800,
+    /* MMCO_HOOK_AUTH_REQUEST
+     *
+     * Fires from AuthRequest::setup() just before the network request
+     * is dispatched.  The payload is an MMCOAuthRequestEvent which
+     * exposes the in-flight QNetworkRequest's URL, HTTP method, and
+     * a mutable redirect slot.
+     *
+     * Callbacks may:
+     *   • Read payload->url and payload->method to identify the call.
+     *   • Set payload->redirect_url to non-null to rewrite the URL
+     *     before the request is sent (e.g. swap api.minecraftservices.com
+     *     for authserver.ely.by).
+     *   • Append HTTP headers via payload->add_header(key, value).
+     *
+     * Returning non-zero cancels the request entirely; the AuthRequest
+     * emits ProtocolUnknownError and the calling AuthStep fails. */
+    MMCO_HOOK_AUTH_REQUEST = 0x0800,
 
-	/* MMCO_HOOK_SESSION_FILL
-	 *
-	 * Fires from LaunchController::login() immediately after
-	 * MinecraftAccount::fillSession() has populated the AuthSession
-	 * with the host's default account data, and before the launch
-	 * task is built.  Plugins can overwrite any field — access_token,
-	 * uuid, player_name, user_type, session, or append user_properties
-	 * — to inject a non-Mojang session into the JVM launch.
-	 *
-	 * Payload: MMCOSessionFillEvent*.  Return value is ignored
-	 * (mutations always apply). */
-	MMCO_HOOK_SESSION_FILL = 0x0801,
+    /* MMCO_HOOK_SESSION_FILL
+     *
+     * Fires from LaunchController::login() immediately after
+     * MinecraftAccount::fillSession() has populated the AuthSession
+     * with the host's default account data, and before the launch
+     * task is built.  Plugins can overwrite any field — access_token,
+     * uuid, player_name, user_type, session, or append user_properties
+     * — to inject a non-Mojang session into the JVM launch.
+     *
+     * Payload: MMCOSessionFillEvent*.  Return value is ignored
+     * (mutations always apply). */
+    MMCO_HOOK_SESSION_FILL = 0x0801,
 };
 
 /*
@@ -150,8 +148,7 @@ enum MMCOHookId : uint32_t {
  * Return 0 to allow the chain to continue, non-zero to signal cancellation
  * (only effective for "pre" hooks).
  */
-typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,
-								void* payload, void* user_data);
+typedef int (*MMCOHookCallback)(void *module_handle, uint32_t hook_id, void *payload, void *user_data);
 
 /*
  * Flags for MMCOContext::hook_register_ex.
@@ -190,34 +187,34 @@ typedef int (*MMCOHookCallback)(void* module_handle, uint32_t hook_id,
 /* Payload structures for hooks */
 
 struct MMCOInstanceInfo {
-	const char* instance_id;
-	const char* instance_name;
-	const char* instance_path;
-	const char* minecraft_version;
+    const char *instance_id;
+    const char *instance_name;
+    const char *instance_path;
+    const char *minecraft_version;
 };
 
 struct MMCOSettingChange {
-	const char* key;
-	const char* old_value;
-	const char* new_value;
+    const char *key;
+    const char *old_value;
+    const char *new_value;
 };
 
 struct MMCOContentEvent {
-	const char* instance_id;
-	const char* file_name;
-	const char* url;
-	const char* target_path;
+    const char *instance_id;
+    const char *file_name;
+    const char *url;
+    const char *target_path;
 };
 
 struct MMCONetworkEvent {
-	const char* url;
-	const char* method; /* "GET", "POST", etc. */
-	int status_code;	/* 0 for pre-request */
+    const char *url;
+    const char *method; /* "GET", "POST", etc. */
+    int status_code; /* 0 for pre-request */
 };
 
 struct MMCOMenuEvent {
-	const char* context; /* "main", "instance", etc. */
-	void* menu_handle;	 /* Opaque handle for mmco_ui_add_menu_item() */
+    const char *context; /* "main", "instance", etc. */
+    void *menu_handle; /* Opaque handle for mmco_ui_add_menu_item() */
 };
 
 /*
@@ -227,11 +224,11 @@ struct MMCOMenuEvent {
  * QList<BasePage*>*).
  */
 struct MMCOInstancePagesEvent {
-	const char* instance_id;
-	const char* instance_name;
-	const char* instance_path;
-	void* page_list_handle; /* Opaque: QList<BasePage*>* */
-	void* instance_handle;	/* Opaque: InstancePtr raw pointer */
+    const char *instance_id;
+    const char *instance_name;
+    const char *instance_path;
+    void *page_list_handle; /* Opaque: QList<BasePage*>* */
+    void *instance_handle; /* Opaque: InstancePtr raw pointer */
 };
 
 /*
@@ -256,9 +253,9 @@ struct MMCOInstancePagesEvent {
  * effect — this is a notification, not a veto point.
  */
 struct MMCOInstanceSettingsPageEvent {
-	const char* instance_id;
-	void* page_handle;
-	void* instance_handle;
+    const char *instance_id;
+    void *page_handle;
+    void *instance_handle;
 };
 
 /*
@@ -276,9 +273,7 @@ struct MMCOInstanceSettingsPageEvent {
  *   running      — 1 if the instance just started running, 0 if it
  *                  just stopped.
  */
-typedef void (*MMCOInstanceRunningCallback)(void* user_data,
-											const char* instance_id,
-											int running);
+typedef void (*MMCOInstanceRunningCallback)(void *user_data, const char *instance_id, int running);
 
 /*
  * Payload for MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES.
@@ -287,7 +282,7 @@ typedef void (*MMCOInstanceRunningCallback)(void* user_data,
  * QList<BasePage*>*).
  */
 struct MMCOGlobalSettingsPagesEvent {
-	void* page_list_handle; /* Opaque: QList<BasePage*>* */
+    void *page_list_handle; /* Opaque: QList<BasePage*>* */
 };
 
 /*
@@ -303,10 +298,10 @@ struct MMCOGlobalSettingsPagesEvent {
  * normal qobject_cast<>() to the documented concrete type.
  */
 struct MMCOUiMainReadyPayload {
-	void* main_window;		 /* Opaque: QMainWindow* (MainWindow*)  */
-	void* news_toolbar;		 /* Opaque: QToolBar*                    */
-	void* more_news_action;	 /* Opaque: QAction*                     */
-	void* news_label_button; /* Opaque: QToolButton*                 */
+    void *main_window; /* Opaque: QMainWindow* (MainWindow*)  */
+    void *news_toolbar; /* Opaque: QToolBar*                    */
+    void *more_news_action; /* Opaque: QAction*                     */
+    void *news_label_button; /* Opaque: QToolButton*                 */
 };
 
 /*
@@ -325,30 +320,30 @@ struct MMCOUiMainReadyPayload {
  * of the callback only — copy them if you need to keep them.
  */
 struct MMCOAuthRequestEvent {
-	/* ── Read-only request snapshot ─────────────────────────────── */
-	const char* url;	/* Effective URL of the in-flight request    */
-	const char* method; /* "GET", "POST", "DELETE", "PUT", …         */
-	const char* body;	/* POST body (UTF-8 if textual; may be raw   *
-						 * bytes — see body_size). NULL for GETs.    */
-	int body_size;		/* Length of body in bytes. 0 for GETs.      */
+    /* ── Read-only request snapshot ─────────────────────────────── */
+    const char *url; /* Effective URL of the in-flight request    */
+    const char *method; /* "GET", "POST", "DELETE", "PUT", …         */
+    const char *body; /* POST body (UTF-8 if textual; may be raw   *
+                       * bytes — see body_size). NULL for GETs.    */
+    int body_size; /* Length of body in bytes. 0 for GETs.      */
 
-	/* ── Mutable response slots ─────────────────────────────────── */
+    /* ── Mutable response slots ─────────────────────────────────── */
 
-	/* Set to a non-null UTF-8 string to rewrite the request URL
-	 * before it is sent. NULL means "no redirect". The host copies
-	 * the value; you may free or reuse the memory after this call. */
-	const char* redirect_url;
+    /* Set to a non-null UTF-8 string to rewrite the request URL
+     * before it is sent. NULL means "no redirect". The host copies
+     * the value; you may free or reuse the memory after this call. */
+    const char *redirect_url;
 
-	/* ── Header injection helper ────────────────────────────────── */
+    /* ── Header injection helper ────────────────────────────────── */
 
-	/* Opaque handle the plugin passes to add_header(). The host
-	 * uses this to identify which in-flight request to mutate. */
-	void* request_handle;
+    /* Opaque handle the plugin passes to add_header(). The host
+     * uses this to identify which in-flight request to mutate. */
+    void *request_handle;
 
-	/* Add an HTTP header to the in-flight request.  key and value
-	 * must be UTF-8 NUL-terminated. Returns 0 on success. The host
-	 * copies both strings internally. */
-	int (*add_header)(void* request_handle, const char* key, const char* value);
+    /* Add an HTTP header to the in-flight request.  key and value
+     * must be UTF-8 NUL-terminated. Returns 0 on success. The host
+     * copies both strings internally. */
+    int (*add_header)(void *request_handle, const char *key, const char *value);
 };
 
 /*
@@ -375,27 +370,27 @@ struct MMCOAuthRequestEvent {
  * companion settings page).
  */
 struct MMCOSessionFillEvent {
-	/* ── Read-only context ──────────────────────────────────────── */
-	const char* account_id; /* internal id of the resolved account   */
-	int account_is_msa;		/* 1 if MSA, 0 if offline                */
-	int wants_online;		/* 1 if user requested online launch     */
+    /* ── Read-only context ──────────────────────────────────────── */
+    const char *account_id; /* internal id of the resolved account   */
+    int account_is_msa; /* 1 if MSA, 0 if offline                */
+    int wants_online; /* 1 if user requested online launch     */
 
-	/* ── Read-only current session view (host defaults) ─────────── */
-	const char* current_player_name;
-	const char* current_uuid;
-	const char* current_user_type;
+    /* ── Read-only current session view (host defaults) ─────────── */
+    const char *current_player_name;
+    const char *current_uuid;
+    const char *current_user_type;
 
-	/* ── Mutable overwrites (all optional; NULL = no change) ───── */
-	const char* overwrite_access_token;
-	const char* overwrite_session; /* "token:<at>:<uuid>" format    */
-	const char* overwrite_player_name;
-	const char* overwrite_uuid;
-	const char* overwrite_user_type; /* "mojang" / "legacy" / custom  */
-	const char* overwrite_client_token;
+    /* ── Mutable overwrites (all optional; NULL = no change) ───── */
+    const char *overwrite_access_token;
+    const char *overwrite_session; /* "token:<at>:<uuid>" format    */
+    const char *overwrite_player_name;
+    const char *overwrite_uuid;
+    const char *overwrite_user_type; /* "mojang" / "legacy" / custom  */
+    const char *overwrite_client_token;
 
-	/* ── User-properties append ─────────────────────────────────── *
-	 * Comma-separated key=value pairs, or a JSON object literal —
-	 * the host appends them to AuthSession::user_properties verbatim.
-	 * NULL means "no properties to add". */
-	const char* extra_user_properties;
+    /* ── User-properties append ─────────────────────────────────── *
+     * Comma-separated key=value pairs, or a JSON object literal —
+     * the host appends them to AuthSession::user_properties verbatim.
+     * NULL means "no properties to add". */
+    const char *extra_user_properties;
 };

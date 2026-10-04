@@ -25,18 +25,16 @@
 
 class CrashReportDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit CrashReportDialog(const QString& pasteLink,
-							   const QString& logContent,
-							   QWidget* parent = nullptr);
+public:
+    explicit CrashReportDialog(const QString &pasteLink, const QString &logContent, QWidget *parent = nullptr);
 
-  private:
-	QPixmap generateQRCode(const QString& text, int size);
+private:
+    QPixmap generateQRCode(const QString &text, int size);
 
-	QLabel* m_messageLabel;
-	QLabel* m_qrLogLabel;
-	QLabel* m_qrPasteLabel;
-	QLabel* m_pasteLinkLabel;
+    QLabel *m_messageLabel;
+    QLabel *m_qrLogLabel;
+    QLabel *m_qrPasteLabel;
+    QLabel *m_pasteLinkLabel;
 };

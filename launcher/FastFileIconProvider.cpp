@@ -22,25 +22,24 @@
 #include <QApplication>
 #include <QStyle>
 
-QIcon FastFileIconProvider::icon(const QFileInfo& info) const
+QIcon FastFileIconProvider::icon(const QFileInfo &info) const
 {
-	/* isAlias() covers macOS aliases, which are not symlinks and would
-	 * otherwise be drawn as plain files. It is Qt 6.4+ only, so on a Qt 5
-	 * build a macOS alias gets the plain-file icon instead of the link
-	 * one -- cosmetic, and only on macOS. */
+    /* isAlias() covers macOS aliases, which are not symlinks and would
+     * otherwise be drawn as plain files. It is Qt 6.4+ only, so on a Qt 5
+     * build a macOS alias gets the plain-file icon instead of the link
+     * one -- cosmetic, and only on macOS. */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
-	const bool link =
-		info.isSymbolicLink() || info.isAlias() || info.isShortcut();
+    const bool link = info.isSymbolicLink() || info.isAlias() || info.isShortcut();
 #else
-	const bool link = info.isSymbolicLink() || info.isShortcut();
+    const bool link = info.isSymbolicLink() || info.isShortcut();
 #endif
 
-	QStyle::StandardPixmap pixmap;
-	if (info.isDir()) {
-		pixmap = link ? QStyle::SP_DirLinkIcon : QStyle::SP_DirIcon;
-	} else {
-		pixmap = link ? QStyle::SP_FileLinkIcon : QStyle::SP_FileIcon;
-	}
+    QStyle::StandardPixmap pixmap;
+    if (info.isDir()) {
+        pixmap = link ? QStyle::SP_DirLinkIcon : QStyle::SP_DirIcon;
+    } else {
+        pixmap = link ? QStyle::SP_FileLinkIcon : QStyle::SP_FileIcon;
+    }
 
-	return QApplication::style()->standardIcon(pixmap);
+    return QApplication::style()->standardIcon(pixmap);
 }

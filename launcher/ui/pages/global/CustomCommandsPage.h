@@ -20,41 +20,41 @@
 
 #pragma once
 
-#include <memory>
 #include <QDialog>
+#include <memory>
 
 #include "ui/pages/BasePage.h"
-#include <Application.h>
 #include "ui/widgets/CustomCommands.h"
+#include <Application.h>
 
 class CustomCommandsPage : public QWidget, public BasePage
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit CustomCommandsPage(QWidget* parent = 0);
-	~CustomCommandsPage();
+public:
+    explicit CustomCommandsPage(QWidget *parent = 0);
+    ~CustomCommandsPage();
 
-	QString displayName() const override
-	{
-		return tr("Custom Commands");
-	}
-	QIcon icon() const override
-	{
-		return APPLICATION->getThemedIcon("custom-commands");
-	}
-	QString id() const override
-	{
-		return "custom-commands";
-	}
-	QString helpPage() const override
-	{
-		return "Custom-commands";
-	}
-	bool apply() override;
+    QString displayName() const override
+    {
+        return tr("Custom Commands");
+    }
+    QIcon icon() const override
+    {
+        return APPLICATION->getThemedIcon("custom-commands");
+    }
+    QString id() const override
+    {
+        return "custom-commands";
+    }
+    QString helpPage() const override
+    {
+        return "Custom-commands";
+    }
+    bool apply() override;
 
-  private:
-	void applySettings();
-	void loadSettings();
-	CustomCommands* commands;
+private:
+    void applySettings();
+    void loadSettings();
+    CustomCommands *commands;
 };

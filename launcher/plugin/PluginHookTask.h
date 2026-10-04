@@ -41,68 +41,71 @@
  */
 class PluginHookTask : public Task
 {
-	Q_OBJECT
-  public:
-	PluginHookTask(QString module_name, void* module_handle, uint32_t hook_id,
-				   MMCOHookCallback callback, void* payload, void* user_data,
-				   QObject* parent = nullptr);
-	~PluginHookTask() override;
+    Q_OBJECT
+public:
+    PluginHookTask(QString module_name,
+                   void *module_handle,
+                   uint32_t hook_id,
+                   MMCOHookCallback callback,
+                   void *payload,
+                   void *user_data,
+                   QObject *parent = nullptr);
+    ~PluginHookTask() override;
 
-	/*!
-	 * A C callback cannot be interrupted from the outside, so there is
-	 * nothing meaningful to abort.
-	 */
-	bool canAbort() const override
-	{
-		return false;
-	}
+    /*!
+     * A C callback cannot be interrupted from the outside, so there is
+     * nothing meaningful to abort.
+     */
+    bool canAbort() const override
+    {
+        return false;
+    }
 
-	/*!
-	 * True when the callback returned non-zero, i.e. the plugin asked
-	 * for whatever the hook was about to do to be called off. Only
-	 * meaningful once the task has finished.
-	 */
-	bool cancelRequested() const
-	{
-		return m_cancelRequested;
-	}
+    /*!
+     * True when the callback returned non-zero, i.e. the plugin asked
+     * for whatever the hook was about to do to be called off. Only
+     * meaningful once the task has finished.
+     */
+    bool cancelRequested() const
+    {
+        return m_cancelRequested;
+    }
 
-	void* moduleHandle() const
-	{
-		return m_moduleHandle;
-	}
+    void *moduleHandle() const
+    {
+        return m_moduleHandle;
+    }
 
-	/*!
-	 * The task whose callback is running on the calling thread, or
-	 * nullptr when the caller is not inside a background hook callback.
-	 * This is how MMCOContext::progress_report finds the row to write
-	 * to without the ABI having to carry a progress handle around.
-	 */
-	static PluginHookTask* currentOnThisThread();
+    /*!
+     * The task whose callback is running on the calling thread, or
+     * nullptr when the caller is not inside a background hook callback.
+     * This is how MMCOContext::progress_report finds the row to write
+     * to without the ABI having to carry a progress handle around.
+     */
+    static PluginHookTask *currentOnThisThread();
 
-	/*!
-	 * Publishes a progress update coming from the plugin. Called on the
-	 * worker thread; the update is marshalled onto the thread the task
-	 * lives on. Empty status/details leave the current text alone.
-	 */
-	void reportProgress(const QString& status, const QString& details,
-						qint64 current, qint64 total);
+    /*!
+     * Publishes a progress update coming from the plugin. Called on the
+     * worker thread; the update is marshalled onto the thread the task
+     * lives on. Empty status/details leave the current text alone.
+     */
+    void reportProgress(const QString &status, const QString &details, qint64 current, qint64 total);
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-  private:
-	void callbackFinished();
+private:
+    void callbackFinished();
 
-	QString m_moduleName;
-	void* m_moduleHandle;
-	uint32_t m_hookId;
-	MMCOHookCallback m_callback;
-	void* m_payload;
-	void* m_userData;
+    QString m_moduleName;
+    void *m_moduleHandle;
+    uint32_t m_hookId;
+    MMCOHookCallback m_callback;
+    void *m_payload;
+    void *m_userData;
 
-	bool m_cancelRequested = false;
+    bool m_cancelRequested = false;
 
-	QFuture<int> m_future;
-	QFutureWatcher<int> m_watcher;
+    QFuture<int> m_future;
+    QFutureWatcher<int> m_watcher;
 };

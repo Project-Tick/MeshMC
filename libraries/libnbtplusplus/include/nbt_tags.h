@@ -26,10 +26,10 @@
 #ifndef NBT_TAGS_H_INCLUDED
 #define NBT_TAGS_H_INCLUDED
 
+#include "tag_array.h"
+#include "tag_compound.h"
+#include "tag_list.h"
 #include "tag_primitive.h"
 #include "tag_string.h"
-#include "tag_array.h"
-#include "tag_list.h"
-#include "tag_compound.h"
 
 #endif // NBT_TAGS_H_INCLUDED

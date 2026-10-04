@@ -29,54 +29,52 @@
 
 namespace skinrender
 {
-	/* One textured cuboid of the player model, ready to draw.
-	 *
-	 * Size and position are baked into the vertex buffer at construction:
-	 * every box in the model is static relative to the body, so there is
-	 * nothing to recompute per frame. Only rotate()/scale(), which the cape
-	 * and the elytra wings need, go through the model matrix uniform.
-	 *
-	 * The texture coordinates come from the Minecraft box unwrap: a cross of
-	 * six faces laid out at `uv` in a texture of `textureSize`, for a box of
-	 * `textureDim` (width, height, depth) *texture* pixels. That is separate
-	 * from the geometric `size` because the overlay boxes are drawn slightly
-	 * larger than the base ones while sampling the same-sized patch.
-	 *
-	 * Requires a current OpenGL context for its whole lifetime, construction
-	 * and destruction included.
-	 */
-	class CubeMesh : protected QOpenGLFunctions
-	{
-	  public:
-		/* Bare mesh with empty buffers; only useful via plane(). */
-		CubeMesh();
+/* One textured cuboid of the player model, ready to draw.
+ *
+ * Size and position are baked into the vertex buffer at construction:
+ * every box in the model is static relative to the body, so there is
+ * nothing to recompute per frame. Only rotate()/scale(), which the cape
+ * and the elytra wings need, go through the model matrix uniform.
+ *
+ * The texture coordinates come from the Minecraft box unwrap: a cross of
+ * six faces laid out at `uv` in a texture of `textureSize`, for a box of
+ * `textureDim` (width, height, depth) *texture* pixels. That is separate
+ * from the geometric `size` because the overlay boxes are drawn slightly
+ * larger than the base ones while sampling the same-sized patch.
+ *
+ * Requires a current OpenGL context for its whole lifetime, construction
+ * and destruction included.
+ */
+class CubeMesh : protected QOpenGLFunctions
+{
+public:
+    /* Bare mesh with empty buffers; only useful via plane(). */
+    CubeMesh();
 
-		CubeMesh(QVector3D size, QVector3D position, QPoint uv,
-				 QVector3D textureDim, QSize textureSize = QSize(64, 64));
-		virtual ~CubeMesh();
+    CubeMesh(QVector3D size, QVector3D position, QPoint uv, QVector3D textureDim, QSize textureSize = QSize(64, 64));
+    virtual ~CubeMesh();
 
-		/* A full-viewport quad in clip space, for the background.
-		 *
-		 * Its vertices are already where they need to be on screen, which is
-		 * why the background vertex shader passes a_position through
-		 * untouched instead of applying a matrix. */
-		static CubeMesh* plane();
+    /* A full-viewport quad in clip space, for the background.
+     *
+     * Its vertices are already where they need to be on screen, which is
+     * why the background vertex shader passes a_position through
+     * untouched instead of applying a matrix. */
+    static CubeMesh *plane();
 
-		void draw(QOpenGLShaderProgram* program);
+    void draw(QOpenGLShaderProgram *program);
 
-		void rotate(float degrees, const QVector3D& axis);
-		void scale(const QVector3D& factor);
+    void rotate(float degrees, const QVector3D &axis);
+    void scale(const QVector3D &factor);
 
-	  private:
-		CubeMesh(const CubeMesh&) = delete;
-		CubeMesh& operator=(const CubeMesh&) = delete;
+private:
+    CubeMesh(const CubeMesh &) = delete;
+    CubeMesh &operator=(const CubeMesh &) = delete;
 
-		void uploadBox(QVector3D size, QVector3D position, QPoint uv,
-					   QVector3D textureDim, QSize textureSize);
+    void uploadBox(QVector3D size, QVector3D position, QPoint uv, QVector3D textureDim, QSize textureSize);
 
-		QOpenGLBuffer m_vertexBuffer;
-		QOpenGLBuffer m_indexBuffer;
-		QMatrix4x4 m_modelMatrix;
-		GLsizei m_indexCount = 0;
-	};
+    QOpenGLBuffer m_vertexBuffer;
+    QOpenGLBuffer m_indexBuffer;
+    QMatrix4x4 m_modelMatrix;
+    GLsizei m_indexCount = 0;
+};
 } // namespace skinrender

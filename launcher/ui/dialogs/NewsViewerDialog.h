@@ -56,40 +56,40 @@ class QTextBrowser;
  */
 class NewsViewerDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit NewsViewerDialog(NewsChecker* checker, QWidget* parent = nullptr);
-	~NewsViewerDialog() override = default;
+public:
+    explicit NewsViewerDialog(NewsChecker *checker, QWidget *parent = nullptr);
+    ~NewsViewerDialog() override = default;
 
-	/* Populate from the checker. If listVisible is false the article
-	 * list starts collapsed and the latest post is shown on its own. */
-	void loadEntries(bool listVisible = true);
-	bool isSidebarVisible() const
-	{
-		return !m_articleListHidden;
-	}
+    /* Populate from the checker. If listVisible is false the article
+     * list starts collapsed and the latest post is shown on its own. */
+    void loadEntries(bool listVisible = true);
+    bool isSidebarVisible() const
+    {
+        return !m_articleListHidden;
+    }
 
-  private slots:
-	void selectedArticleChanged(int row);
-	void toggleArticleList();
-	void onNewsLoaded();
+private slots:
+    void selectedArticleChanged(int row);
+    void toggleArticleList();
+    void onNewsLoaded();
 
-  private:
-	static QString renderContent(const QString& raw);
-	void setArticleListHidden(bool hidden);
-	void showPlaceholder(const QString& message);
-	/* Human-readable name for the feed an entry came from. */
-	QString feedLabel(int feedIndex) const;
+private:
+    static QString renderContent(const QString &raw);
+    void setArticleListHidden(bool hidden);
+    void showPlaceholder(const QString &message);
+    /* Human-readable name for the feed an entry came from. */
+    QString feedLabel(int feedIndex) const;
 
-	QPointer<NewsChecker> m_checker;
+    QPointer<NewsChecker> m_checker;
 
-	QListWidget* m_articleList = nullptr;
-	QLabel* m_articleTitleLabel = nullptr;
-	QTextBrowser* m_articleContent = nullptr;
-	QPushButton* m_toggleListButton = nullptr;
-	QPushButton* m_closeButton = nullptr;
+    QListWidget *m_articleList = nullptr;
+    QLabel *m_articleTitleLabel = nullptr;
+    QTextBrowser *m_articleContent = nullptr;
+    QPushButton *m_toggleListButton = nullptr;
+    QPushButton *m_closeButton = nullptr;
 
-	QList<NewsEntryPtr> m_entries;
-	bool m_articleListHidden = false;
+    QList<NewsEntryPtr> m_entries;
+    bool m_articleListHidden = false;
 };

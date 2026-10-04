@@ -22,8 +22,8 @@
 
 #include <tasks/Task.h>
 
-#include <QString>
 #include <QJsonObject>
+#include <QString>
 #include <QTimer>
 #include <qsslerror.h>
 
@@ -37,47 +37,47 @@ class QNetworkReply;
  * should be.
  */
 enum class AccountTaskState {
-	STATE_CREATED,
-	STATE_WORKING,
-	STATE_SUCCEEDED,
-	STATE_FAILED_SOFT, //!< soft failure. authentication went through partially
-	STATE_FAILED_HARD, //!< hard failure. main tokens are invalid
-	STATE_FAILED_GONE, //!< hard failure. main tokens are invalid, and the
-					   //!< account no longer exists
-	STATE_OFFLINE //!< soft failure. authentication failed in the first step in
-				  //!< a 'soft' way
+    STATE_CREATED,
+    STATE_WORKING,
+    STATE_SUCCEEDED,
+    STATE_FAILED_SOFT, //!< soft failure. authentication went through partially
+    STATE_FAILED_HARD, //!< hard failure. main tokens are invalid
+    STATE_FAILED_GONE, //!< hard failure. main tokens are invalid, and the
+                       //!< account no longer exists
+    STATE_OFFLINE //!< soft failure. authentication failed in the first step in
+                  //!< a 'soft' way
 };
 
 class AccountTask : public Task
 {
-	Q_OBJECT
-  public:
-	explicit AccountTask(AccountData* data, QObject* parent = 0);
-	virtual ~AccountTask() {};
+    Q_OBJECT
+public:
+    explicit AccountTask(AccountData *data, QObject *parent = 0);
+    virtual ~AccountTask() {};
 
-	AccountTaskState m_taskState = AccountTaskState::STATE_CREATED;
+    AccountTaskState m_taskState = AccountTaskState::STATE_CREATED;
 
-	AccountTaskState taskState()
-	{
-		return m_taskState;
-	}
+    AccountTaskState taskState()
+    {
+        return m_taskState;
+    }
 
-  signals:
-	void authorizeWithBrowser(const QUrl& url);
+signals:
+    void authorizeWithBrowser(const QUrl &url);
 
-  protected:
-	/**
-	 * Returns the state message for the given state.
-	 * Used to set the status message for the task.
-	 * Should be overridden by subclasses that want to change messages for a
-	 * given state.
-	 */
-	virtual QString getStateMessage() const;
+protected:
+    /**
+     * Returns the state message for the given state.
+     * Used to set the status message for the task.
+     * Should be overridden by subclasses that want to change messages for a
+     * given state.
+     */
+    virtual QString getStateMessage() const;
 
-  protected slots:
-	// NOTE: true -> non-terminal state, false -> terminal state
-	bool changeState(AccountTaskState newState, QString reason = QString());
+protected slots:
+    // NOTE: true -> non-terminal state, false -> terminal state
+    bool changeState(AccountTaskState newState, QString reason = QString());
 
-  protected:
-	AccountData* m_data = nullptr;
+protected:
+    AccountData *m_data = nullptr;
 };

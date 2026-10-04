@@ -40,19 +40,17 @@
 namespace ModPlatform
 {
 
-	/* One entry of a CurseForge /mods/{id}/files reply, or an empty
-	 * object when nothing there is usable. `loader` may be empty, which
-	 * means the caller does not know or does not care.
-	 *
-	 * The Minecraft version is not re-checked: the query already asked
-	 * for it, and CurseForge lists a file's game versions and loaders in
-	 * one and the same array, so telling a missing match from an
-	 * unstated one is guesswork. */
-	QJsonObject newestCurseForgeFile(const QJsonArray& files,
-									 const QString& loader);
+/* One entry of a CurseForge /mods/{id}/files reply, or an empty
+ * object when nothing there is usable. `loader` may be empty, which
+ * means the caller does not know or does not care.
+ *
+ * The Minecraft version is not re-checked: the query already asked
+ * for it, and CurseForge lists a file's game versions and loaders in
+ * one and the same array, so telling a missing match from an
+ * unstated one is guesswork. */
+QJsonObject newestCurseForgeFile(const QJsonArray &files, const QString &loader);
 
-	/* The same for a Modrinth /project/{id}/version reply. */
-	QJsonObject newestModrinthVersion(const QJsonArray& versions,
-									  const QString& loader);
+/* The same for a Modrinth /project/{id}/version reply. */
+QJsonObject newestModrinthVersion(const QJsonArray &versions, const QString &loader);
 
 } // namespace ModPlatform
