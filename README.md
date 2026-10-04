@@ -7,13 +7,15 @@ MeshMC
 
 MeshMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity.
 
-## Development
+## Contributing
 
-If you want to contribute, talk to us on [Discord](https://discord.gg/PMxPTqwEwj) first.
+Contributions are welcome from all. This repository is managed in [GitHub](https://github.com/Project-Tick/MeshMC).
 
-While blindly submitting PRs is definitely possible, they're not necessarily going to get accepted.
-
-We aren't looking for flashy features, but expanding upon the existing feature set without disruption or endangering the future viability of the project is OK.
+* Want to contribute code? Fork this project and send PR.
+* Reporting a bug? Please submit it on the [GitHub Issue](https://github.com/Project-Tick/MeshMC/issues).
+* Is there a part of MeshMC that's not translated? See the [Crowdin](https://crowdin.com/project/projtlauncher) page.
+* If you get stuck or need help with anything at all, please use [GitHub Issue](https://github.com/Project-Tick/MeshMC/issues) system.
+* Do you want to write a plugin? The location is `launcher/plugin/plugins`. In-tree plugins are located here.
 
 ### Building
 
@@ -31,7 +33,7 @@ In general, in order of importance:
 
 ## License
 
-Copyright &copy; 2012-2022 MultiMC Contributors
+Copyright &copy; 2012-2022 MultiMC Contributors<br>
 Copyright &copy; 2026 Project Tick
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this program except in compliance with the License. You may obtain a copy of the License at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
