@@ -18,6 +18,8 @@
  */
 
 #pragma once
+#include "annotations.h"
+#include "constants.h"
 #include <exception>
 namespace java
 {

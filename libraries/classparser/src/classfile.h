@@ -20,8 +20,10 @@
 #pragma once
 #include "annotations.h"
 #include "constants.h"
+#include "errors.h"
 #include "membuffer.h"
 #include <map>
+#include <vector>
 namespace java
 {
 /**

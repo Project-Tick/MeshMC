@@ -88,6 +88,8 @@ set(CMAKE_C_STANDARD 11)
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
+kde_enable_exceptions()
+
 include(GenerateExportHeader)
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")

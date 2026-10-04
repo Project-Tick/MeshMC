@@ -18,7 +18,8 @@
  */
 
 #pragma once
-#include "classfile.h"
+#include "constants.h"
+#include "membuffer.h"
 #include <map>
 #include <vector>
 

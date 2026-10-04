@@ -19,6 +19,7 @@
 
 #pragma once
 #include "errors.h"
+#include "membuffer.h"
 #include <sstream>
 
 namespace java

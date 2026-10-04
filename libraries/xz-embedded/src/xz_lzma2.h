@@ -9,6 +9,8 @@
  * You can do whatever you want with this file.
  */
 
+#include "xz_config.h"
+
 #ifndef XZ_LZMA2_H
 #define XZ_LZMA2_H
 
