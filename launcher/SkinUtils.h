@@ -24,5 +24,5 @@
 
 namespace SkinUtils
 {
-	QPixmap getFaceFromCache(QString id, int height = 64, int width = 64);
+QPixmap getFaceFromCache(QString id, int height = 64, int width = 64);
 }

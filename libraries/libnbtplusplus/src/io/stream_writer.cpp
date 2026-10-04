@@ -26,34 +26,32 @@
 
 namespace nbt
 {
-	namespace io
-	{
+namespace io
+{
 
-		void write_tag(const std::string& key, const tag& t, std::ostream& os,
-					   endian::endian e)
-		{
-			stream_writer(os, e).write_tag(key, t);
-		}
+void write_tag(const std::string &key, const tag &t, std::ostream &os, endian::endian e)
+{
+    stream_writer(os, e).write_tag(key, t);
+}
 
-		void stream_writer::write_tag(const std::string& key, const tag& t)
-		{
-			write_type(t.get_type());
-			write_string(key);
-			write_payload(t);
-		}
+void stream_writer::write_tag(const std::string &key, const tag &t)
+{
+    write_type(t.get_type());
+    write_string(key);
+    write_payload(t);
+}
 
-		void stream_writer::write_string(const std::string& str)
-		{
-			if (str.size() > max_string_len) {
-				os.setstate(std::ios::failbit);
-				std::ostringstream sstr;
-				sstr << "String is too long for NBT (" << str.size() << " > "
-					 << max_string_len << ")";
-				throw std::length_error(sstr.str());
-			}
-			write_num(static_cast<uint16_t>(str.size()));
-			os.write(str.data(), str.size());
-		}
+void stream_writer::write_string(const std::string &str)
+{
+    if (str.size() > max_string_len) {
+        os.setstate(std::ios::failbit);
+        std::ostringstream sstr;
+        sstr << "String is too long for NBT (" << str.size() << " > " << max_string_len << ")";
+        throw std::length_error(sstr.str());
+    }
+    write_num(static_cast<uint16_t>(str.size()));
+    os.write(str.data(), str.size());
+}
 
-	} // namespace io
+} // namespace io
 } // namespace nbt

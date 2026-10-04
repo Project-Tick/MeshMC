@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include <QProcess>
 #include "MessageLevel.h"
+#include <QProcess>
 
 /*
  * This is a basic process.
@@ -29,87 +29,87 @@
  */
 class LoggedProcess : public QProcess
 {
-	Q_OBJECT
-  public:
-	enum State {
-		NotRunning,
-		Starting,
-		FailedToStart,
-		Running,
-		Finished,
-		Crashed,
-		Aborted
-	};
+    Q_OBJECT
+public:
+    enum State {
+        NotRunning,
+        Starting,
+        FailedToStart,
+        Running,
+        Finished,
+        Crashed,
+        Aborted
+    };
 
-  public:
-	explicit LoggedProcess(QObject* parent = 0);
-	virtual ~LoggedProcess();
+public:
+    explicit LoggedProcess(QObject *parent = 0);
+    virtual ~LoggedProcess();
 
-	State state() const;
-	int exitCode() const;
-	qint64 processId() const;
+    State state() const;
+    int exitCode() const;
+    qint64 processId() const;
 
-	void setDetachable(bool detachable);
+    void setDetachable(bool detachable);
 
-  signals:
-	void log(QStringList lines, MessageLevel::Enum level);
-	void stateChanged(LoggedProcess::State state);
+signals:
+    void log(QStringList lines, MessageLevel::Enum level);
+    void stateChanged(LoggedProcess::State state);
 
-  public slots:
-	/**
-	 * @brief kill the process - equivalent to kill -9
-	 */
-	void kill();
+public slots:
+    /**
+     * @brief kill the process - equivalent to kill -9
+     */
+    void kill();
 
-  private slots:
-	void on_stdErr();
-	void on_stdOut();
-	void on_exit(int exit_code, QProcess::ExitStatus status);
-	void on_error(QProcess::ProcessError error);
-	void on_stateChange(QProcess::ProcessState);
+private slots:
+    void on_stdErr();
+    void on_stdOut();
+    void on_exit(int exit_code, QProcess::ExitStatus status);
+    void on_error(QProcess::ProcessError error);
+    void on_stateChange(QProcess::ProcessState);
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) && defined(Q_OS_UNIX)
-  protected:
-	/**
-	 * @brief put the child into a new process group so kill() reaches the
-	 *        whole tree
-	 *
-	 * Qt 6 does this with setChildProcessModifier() in the constructor;
-	 * Qt 5 has no such setter and expects this protected virtual to be
-	 * overridden instead. Both run in the child between fork() and exec(),
-	 * so only async-signal-safe calls belong here.
-	 */
-	void setupChildProcess() override;
+protected:
+    /**
+     * @brief put the child into a new process group so kill() reaches the
+     *        whole tree
+     *
+     * Qt 6 does this with setChildProcessModifier() in the constructor;
+     * Qt 5 has no such setter and expects this protected virtual to be
+     * overridden instead. Both run in the child between fork() and exec(),
+     * so only async-signal-safe calls belong here.
+     */
+    void setupChildProcess() override;
 #endif
 
-  private:
-	void changeState(LoggedProcess::State state);
+private:
+    void changeState(LoggedProcess::State state);
 
 #ifdef Q_OS_WIN
-	/**
-	 * @brief put the child into a fresh job object
-	 *
-	 * Called once the child actually exists. Without this, kill() can only
-	 * reach the direct child - which is the wrapper command when one is
-	 * configured, leaving java (and whatever java spawned) alive.
-	 */
-	void assignToJobObject();
+    /**
+     * @brief put the child into a fresh job object
+     *
+     * Called once the child actually exists. Without this, kill() can only
+     * reach the direct child - which is the wrapper command when one is
+     * configured, leaving java (and whatever java spawned) alive.
+     */
+    void assignToJobObject();
 #endif
 
-  private:
-	QString m_err_leftover;
-	QString m_out_leftover;
-	bool m_killed = false;
-	State m_state = NotRunning;
-	int m_exit_code = 0;
-	bool m_is_aborting = false;
-	bool m_is_detachable = false;
+private:
+    QString m_err_leftover;
+    QString m_out_leftover;
+    bool m_killed = false;
+    State m_state = NotRunning;
+    int m_exit_code = 0;
+    bool m_is_aborting = false;
+    bool m_is_detachable = false;
 #ifdef Q_OS_WIN
-	// The job object the child was assigned to, or null if we never got one
-	// (then kill() falls back to only killing the direct child).
-	// Typed as void* on purpose: this is a Windows HANDLE, but keeping it
-	// opaque means windows.h stays out of every translation unit that
-	// launches a process.
-	void* m_job = nullptr;
+    // The job object the child was assigned to, or null if we never got one
+    // (then kill() falls back to only killing the direct child).
+    // Typed as void* on purpose: this is a Windows HANDLE, but keeping it
+    // opaque means windows.h stays out of every translation unit that
+    // launches a process.
+    void *m_job = nullptr;
 #endif
 };

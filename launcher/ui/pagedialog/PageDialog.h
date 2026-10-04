@@ -20,21 +20,22 @@
 
 #pragma once
 
-#include <QDialog>
 #include "ui/pages/BasePageProvider.h"
+#include <QDialog>
 
 class PageContainer;
 class PageDialog : public QDialog
 {
-	Q_OBJECT
-  public:
-	explicit PageDialog(BasePageProvider* pageProvider,
-						QString defaultId = QString(), QWidget* parent = 0);
-	virtual ~PageDialog() {}
+    Q_OBJECT
+public:
+    explicit PageDialog(BasePageProvider *pageProvider, QString defaultId = QString(), QWidget *parent = 0);
+    virtual ~PageDialog()
+    {
+    }
 
-  private slots:
-	virtual void closeEvent(QCloseEvent* event);
+private slots:
+    virtual void closeEvent(QCloseEvent *event);
 
-  private:
-	PageContainer* m_container;
+private:
+    PageContainer *m_container;
 };

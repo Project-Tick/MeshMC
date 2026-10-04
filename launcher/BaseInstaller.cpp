@@ -23,38 +23,40 @@
 #include "BaseInstaller.h"
 #include "minecraft/MinecraftInstance.h"
 
-BaseInstaller::BaseInstaller() {}
-
-bool BaseInstaller::isApplied(MinecraftInstance* on)
+BaseInstaller::BaseInstaller()
 {
-	return QFile::exists(filename(on->instanceRoot()));
 }
 
-bool BaseInstaller::add(MinecraftInstance* to)
+bool BaseInstaller::isApplied(MinecraftInstance *on)
 {
-	if (!patchesDir(to->instanceRoot()).exists()) {
-		QDir(to->instanceRoot()).mkdir("patches");
-	}
-
-	if (isApplied(to)) {
-		if (!remove(to)) {
-			return false;
-		}
-	}
-
-	return true;
+    return QFile::exists(filename(on->instanceRoot()));
 }
 
-bool BaseInstaller::remove(MinecraftInstance* from)
+bool BaseInstaller::add(MinecraftInstance *to)
 {
-	return QFile::remove(filename(from->instanceRoot()));
+    if (!patchesDir(to->instanceRoot()).exists()) {
+        QDir(to->instanceRoot()).mkdir("patches");
+    }
+
+    if (isApplied(to)) {
+        if (!remove(to)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
-QString BaseInstaller::filename(const QString& root) const
+bool BaseInstaller::remove(MinecraftInstance *from)
 {
-	return patchesDir(root).absoluteFilePath(id() + ".json");
+    return QFile::remove(filename(from->instanceRoot()));
 }
-QDir BaseInstaller::patchesDir(const QString& root) const
+
+QString BaseInstaller::filename(const QString &root) const
 {
-	return QDir(root + "/patches/");
+    return patchesDir(root).absoluteFilePath(id() + ".json");
+}
+QDir BaseInstaller::patchesDir(const QString &root) const
+{
+    return QDir(root + "/patches/");
 }

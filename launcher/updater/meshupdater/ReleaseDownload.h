@@ -30,62 +30,61 @@ class QNetworkReply;
 
 class ReleaseDownload : public Task
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	ReleaseDownload(QNetworkAccessManager* network, const QUrl& url,
-					const QString& path, QObject* parent = nullptr);
-	~ReleaseDownload() override;
+public:
+    ReleaseDownload(QNetworkAccessManager *network, const QUrl &url, const QString &path, QObject *parent = nullptr);
+    ~ReleaseDownload() override;
 
-	/*!
-	 * Size the release listing promised, in bytes. 0 means "unknown".
-	 *
-	 * Checked after the transfer: HTTPS protects the bytes in flight, but not
-	 * against a proxy or a CDN handing back a truncated body with a perfectly
-	 * good status code.
-	 */
-	void setExpectedSize(qint64 bytes)
-	{
-		m_expectedSize = bytes;
-	}
+    /*!
+     * Size the release listing promised, in bytes. 0 means "unknown".
+     *
+     * Checked after the transfer: HTTPS protects the bytes in flight, but not
+     * against a proxy or a CDN handing back a truncated body with a perfectly
+     * good status code.
+     */
+    void setExpectedSize(qint64 bytes)
+    {
+        m_expectedSize = bytes;
+    }
 
-	bool canAbort() const override
-	{
-		return true;
-	}
+    bool canAbort() const override
+    {
+        return true;
+    }
 
-	QString filePath() const
-	{
-		return m_path;
-	}
+    QString filePath() const
+    {
+        return m_path;
+    }
 
-  public slots:
-	bool abort() override;
+public slots:
+    bool abort() override;
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-  private slots:
-	void onReadyRead();
-	void onDownloadProgress(qint64 received, qint64 total);
-	void onFinished();
+private slots:
+    void onReadyRead();
+    void onDownloadProgress(qint64 received, qint64 total);
+    void onFinished();
 
-  private:
-	//! Close the reply and the part file, keeping neither.
-	void cleanUp();
+private:
+    //! Close the reply and the part file, keeping neither.
+    void cleanUp();
 
-	//! Report a failure and leave nothing half-written behind.
-	void failWith(const QString& reason);
+    //! Report a failure and leave nothing half-written behind.
+    void failWith(const QString &reason);
 
-	QNetworkAccessManager* m_network;
-	QUrl m_url;
-	QString m_path;
-	QString m_partPath;
+    QNetworkAccessManager *m_network;
+    QUrl m_url;
+    QString m_path;
+    QString m_partPath;
 
-	QNetworkReply* m_reply = nullptr;
-	QFile* m_file = nullptr;
+    QNetworkReply *m_reply = nullptr;
+    QFile *m_file = nullptr;
 
-	qint64 m_expectedSize = 0;
-	qint64 m_received = 0;
-	bool m_aborted = false;
+    qint64 m_expectedSize = 0;
+    qint64 m_received = 0;
+    bool m_aborted = false;
 };

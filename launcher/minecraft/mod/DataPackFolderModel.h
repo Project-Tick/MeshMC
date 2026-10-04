@@ -29,14 +29,13 @@
  * semantics, so the model only needs the folder path. */
 class DataPackFolderModel : public ModFolderModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit DataPackFolderModel(const QString& dir);
+public:
+    explicit DataPackFolderModel(const QString &dir);
 
-	QVariant headerData(int section, Qt::Orientation orientation,
-						int role) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-  protected:
-	bool acceptsFile(const QFileInfo& file, Mod::ModType type) const override;
+protected:
+    bool acceptsFile(const QFileInfo &file, Mod::ModType type) const override;
 };

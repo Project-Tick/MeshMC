@@ -41,50 +41,49 @@
  * the picture again instead of stretching it. */
 class ProjectDescriptionPage final : public QTextBrowser
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit ProjectDescriptionPage(QWidget* parent = nullptr);
+public:
+    explicit ProjectDescriptionPage(QWidget *parent = nullptr);
 
-	/* Metacache bucket the downloaded images are stored in. Must be a
-	 * bucket registered by the application. */
-	void setMetaEntry(const QString& entry);
+    /* Metacache bucket the downloaded images are stored in. Must be a
+     * bucket registered by the application. */
+    void setMetaEntry(const QString &entry);
 
-	/* Forget what is in flight. Call before replacing the contents, so
-	 * that images requested for the previous project cannot land in the
-	 * new one. */
-	void flush();
+    /* Forget what is in flight. Call before replacing the contents, so
+     * that images requested for the previous project cannot land in the
+     * new one. */
+    void flush();
 
-  protected:
-	QVariant loadResource(int type, const QUrl& name) override;
-	void resizeEvent(QResizeEvent* event) override;
+protected:
+    QVariant loadResource(int type, const QUrl &name) override;
+    void resizeEvent(QResizeEvent *event) override;
 
-  private:
-	void requestImage(const QUrl& url);
-	void imageArrived(quint64 generation, const QUrl& url,
-					  const QString& path);
-	/* Shrinks anything wider than the pane; never enlarges. */
-	QImage fitToWidth(const QImage& image) const;
-	int contentWidth() const;
-	void rescaleAll();
+private:
+    void requestImage(const QUrl &url);
+    void imageArrived(quint64 generation, const QUrl &url, const QString &path);
+    /* Shrinks anything wider than the pane; never enlarges. */
+    QImage fitToWidth(const QImage &image) const;
+    int contentWidth() const;
+    void rescaleAll();
 
-	/* Ask for one re-layout from the event loop.
-	 *
-	 * Never marks the document dirty on the spot. A description can pull
-	 * in a dozen pictures, and marking after each one re-lays the whole
-	 * document out, which asks for the images that have not arrived yet,
-	 * which starts more requests from inside that layout pass. Coalescing
-	 * keeps it to a single pass per batch and keeps document changes out
-	 * of the layout itself, which Qt does not allow. */
-	void scheduleRelayout();
+    /* Ask for one re-layout from the event loop.
+     *
+     * Never marks the document dirty on the spot. A description can pull
+     * in a dozen pictures, and marking after each one re-lays the whole
+     * document out, which asks for the images that have not arrived yet,
+     * which starts more requests from inside that layout pass. Coalescing
+     * keeps it to a single pass per batch and keeps document changes out
+     * of the layout itself, which Qt does not allow. */
+    void scheduleRelayout();
 
-  private:
-	QString m_metaEntry;
-	/* Originals, so a resize can rescale from full quality. */
-	QHash<QUrl, QImage> m_images;
-	QSet<QUrl> m_pending;
-	/* Bumped by flush(); replies from an older generation are dropped. */
-	quint64 m_generation = 0;
-	int m_lastWidth = 0;
-	bool m_relayoutQueued = false;
+private:
+    QString m_metaEntry;
+    /* Originals, so a resize can rescale from full quality. */
+    QHash<QUrl, QImage> m_images;
+    QSet<QUrl> m_pending;
+    /* Bumped by flush(); replies from an older generation are dropped. */
+    quint64 m_generation = 0;
+    int m_lastWidth = 0;
+    bool m_relayoutQueued = false;
 };

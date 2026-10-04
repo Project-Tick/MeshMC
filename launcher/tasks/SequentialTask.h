@@ -30,13 +30,12 @@
  */
 class SequentialTask : public ConcurrentTask
 {
-	Q_OBJECT
-  public:
-	explicit SequentialTask(QObject* parent = 0,
-							QString task_name = QString());
-	virtual ~SequentialTask() {};
+    Q_OBJECT
+public:
+    explicit SequentialTask(QObject *parent = 0, QString task_name = QString());
+    virtual ~SequentialTask() {};
 
-  protected:
-	void updateState() override;
-	void subTaskFailed(Task::Ptr task, const QString& reason) override;
+protected:
+    void updateState() override;
+    void subTaskFailed(Task::Ptr task, const QString &reason) override;
 };

@@ -40,7 +40,7 @@ src/annotations.cpp
 
 add_definitions(-DCLASSPARSER_LIBRARY)
 
-add_library(classparser ${CLASSPARSER_SOURCES} ${CLASSPARSER_HEADERS})
+add_library(classparser STATIC ${CLASSPARSER_SOURCES} ${CLASSPARSER_HEADERS})
 set_target_properties(classparser PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(classparser
     PUBLIC

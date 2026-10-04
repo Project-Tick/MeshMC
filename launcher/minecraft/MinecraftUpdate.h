@@ -20,13 +20,13 @@
 
 #pragma once
 
-#include <QObject>
 #include <QList>
+#include <QObject>
 #include <QUrl>
 
+#include "minecraft/VersionFilterData.h"
 #include "net/NetJob.h"
 #include "tasks/SequentialTask.h"
-#include "minecraft/VersionFilterData.h"
 
 class MinecraftVersion;
 class MinecraftInstance;
@@ -38,19 +38,19 @@ class MinecraftInstance;
  */
 class MinecraftUpdate : public SequentialTask
 {
-	Q_OBJECT
-  public:
-	explicit MinecraftUpdate(MinecraftInstance* inst, QObject* parent = 0);
-	virtual ~MinecraftUpdate() {};
+    Q_OBJECT
+public:
+    explicit MinecraftUpdate(MinecraftInstance *inst, QObject *parent = 0);
+    virtual ~MinecraftUpdate() {};
 
-	bool canAbort() const override;
+    bool canAbort() const override;
 
-  public slots:
-	bool abort() override;
+public slots:
+    bool abort() override;
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-  private:
-	MinecraftInstance* m_inst = nullptr;
+private:
+    MinecraftInstance *m_inst = nullptr;
 };

@@ -38,22 +38,25 @@
  */
 class CreateBackup : public LaunchStep
 {
-	Q_OBJECT
-  public:
-	explicit CreateBackup(LaunchTask* parent) : LaunchStep(parent) {}
-	~CreateBackup() override = default;
+    Q_OBJECT
+public:
+    explicit CreateBackup(LaunchTask *parent)
+        : LaunchStep(parent)
+    {
+    }
+    ~CreateBackup() override = default;
 
-	void executeTask() override;
-	void proceed() override;
+    void executeTask() override;
+    void proceed() override;
 
-	bool canAbort() const override
-	{
-		return false;
-	}
+    bool canAbort() const override
+    {
+        return false;
+    }
 
-  private slots:
-	void backupFinished();
+private slots:
+    void backupFinished();
 
-  private:
-	shared_qobject_ptr<BackupTask> m_backupTask;
+private:
+    shared_qobject_ptr<BackupTask> m_backupTask;
 };

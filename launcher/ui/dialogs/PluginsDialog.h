@@ -26,34 +26,34 @@ class QTreeWidgetItem;
 
 namespace Ui
 {
-	class PluginsDialog;
+class PluginsDialog;
 }
 
 class PluginsDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit PluginsDialog(QWidget* parent = nullptr);
-	~PluginsDialog();
+public:
+    explicit PluginsDialog(QWidget *parent = nullptr);
+    ~PluginsDialog();
 
-  private slots:
-	/* Selection in the module tree changed — show details for the
-	 * currently selected plugin in the right-hand text panel. */
-	void onSelectionChanged();
+private slots:
+    /* Selection in the module tree changed — show details for the
+     * currently selected plugin in the right-hand text panel. */
+    void onSelectionChanged();
 
-	/* Checkbox in column 0 toggled — persist the new enable/disable
-	 * state through PluginManager. */
-	void onItemChanged(QTreeWidgetItem* item, int column);
+    /* Checkbox in column 0 toggled — persist the new enable/disable
+     * state through PluginManager. */
+    void onItemChanged(QTreeWidgetItem *item, int column);
 
-  private:
-	/* Rebuild the module tree from PluginManager::modules(). */
-	void populateTree();
+private:
+    /* Rebuild the module tree from PluginManager::modules(). */
+    void populateTree();
 
-	/* Render the HTML details for a single module into the text panel. */
-	void showDetailsForRow(int row);
+    /* Render the HTML details for a single module into the text panel. */
+    void showDetailsForRow(int row);
 
-	Ui::PluginsDialog* ui;
+    Ui::PluginsDialog *ui;
 };
 
 #endif // PLUGINSDIALOG_H

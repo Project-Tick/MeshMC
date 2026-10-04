@@ -65,100 +65,102 @@ class MinecraftInstance;
  */
 class ModrinthPackExportTask : public Task
 {
-	Q_OBJECT
-  public:
-	ModrinthPackExportTask(QString name, QString version, QString summary,
-						   bool optionalFiles, MinecraftInstance* instance,
-						   QString output,
-						   MMCZip::FilterFileFunction filter,
-						   QObject* parent = nullptr);
+    Q_OBJECT
+public:
+    ModrinthPackExportTask(QString name,
+                           QString version,
+                           QString summary,
+                           bool optionalFiles,
+                           MinecraftInstance *instance,
+                           QString output,
+                           MMCZip::FilterFileFunction filter,
+                           QObject *parent = nullptr);
 
-	bool canAbort() const override
-	{
-		return true;
-	}
+    bool canAbort() const override
+    {
+        return true;
+    }
 
-  public slots:
-	bool abort() override;
+public slots:
+    bool abort() override;
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-  private:
-	/* A file the manifest can name: it exists on a host we trust, and we
-	 * know enough about it to let an installer verify what it got. */
-	struct ResolvedFile {
-		QString url;
-		QString sha1;
-		QString sha512;
-		qint64 size = 0;
-		/* "client" / "server" / "both" / empty, as the sidecar recorded
-		 * it. Decides the manifest's `env` block. */
-		QString side;
-	};
+private:
+    /* A file the manifest can name: it exists on a host we trust, and we
+     * know enough about it to let an installer verify what it got. */
+    struct ResolvedFile {
+        QString url;
+        QString sha1;
+        QString sha512;
+        qint64 size = 0;
+        /* "client" / "server" / "both" / empty, as the sidecar recorded
+         * it. Decides the manifest's `env` block. */
+        QString side;
+    };
 
-	/* A file we have hashed but cannot name yet. */
-	struct PendingFile {
-		QString path; /* relative to the game directory */
-		QString sha1;
-		QString sha512;
-		qint64 size = 0;
-	};
+    /* A file we have hashed but cannot name yet. */
+    struct PendingFile {
+        QString path; /* relative to the game directory */
+        QString sha1;
+        QString sha512;
+        qint64 size = 0;
+    };
 
-	struct ScanResult {
-		bool ok = false;
-		QFileInfoList files;
-		QMap<QString, ResolvedFile> resolved;
-		QList<PendingFile> pending;
-	};
+    struct ScanResult {
+        bool ok = false;
+        QFileInfoList files;
+        QMap<QString, ResolvedFile> resolved;
+        QList<PendingFile> pending;
+    };
 
-	/* Runs on a worker thread: walks the game directory, hashes the
-	 * candidate archives and reads their sidecars. Hashing an instance's
-	 * mods is seconds of pure I/O, which is not something to do on the
-	 * thread that draws the progress bar. */
-	ScanResult scanFiles() const;
-	void onScanFinished();
+    /* Runs on a worker thread: walks the game directory, hashes the
+     * candidate archives and reads their sidecars. Hashing an instance's
+     * mods is seconds of pure I/O, which is not something to do on the
+     * thread that draws the progress bar. */
+    ScanResult scanFiles() const;
+    void onScanFinished();
 
-	/* One lookup per file we could not resolve locally. Failures are not
-	 * errors: a mod that is not on Modrinth simply travels inside the
-	 * pack. */
-	void lookUpPendingFiles();
+    /* One lookup per file we could not resolve locally. Failures are not
+     * errors: a mod that is not on Modrinth simply travels inside the
+     * pack. */
+    void lookUpPendingFiles();
 
-	/* Fold one lookup's answer into m_resolved, when it really named the
-	 * file we asked about. Kept apart from the bookkeeping below because
-	 * an answer that turns out to be useless still counts as answered. */
-	void recordLookupResult(const PendingFile& pending,
-							const QByteArray& bytes);
-	void onOneLookupDone();
+    /* Fold one lookup's answer into m_resolved, when it really named the
+     * file we asked about. Kept apart from the bookkeeping below because
+     * an answer that turns out to be useless still counts as answered. */
+    void recordLookupResult(const PendingFile &pending, const QByteArray &bytes);
+    void onOneLookupDone();
 
-	void buildZip();
-	QByteArray generateIndex() const;
+    void buildZip();
+    QByteArray generateIndex() const;
 
-	const QString m_name;
-	const QString m_version;
-	const QString m_summary;
-	const bool m_optionalFiles;
-	MinecraftInstance* m_instance;
-	const QDir m_gameRoot;
-	const QString m_output;
-	const MMCZip::FilterFileFunction m_filter;
+    const QString m_name;
+    const QString m_version;
+    const QString m_summary;
+    const bool m_optionalFiles;
+    MinecraftInstance *m_instance;
+    const QDir m_gameRoot;
+    const QString m_output;
+    const MMCZip::FilterFileFunction m_filter;
 
-	QFileInfoList m_files;
-	QMap<QString, ResolvedFile> m_resolved;
-	QList<PendingFile> m_pending;
+    QFileInfoList m_files;
+    QMap<QString, ResolvedFile> m_resolved;
+    QList<PendingFile> m_pending;
 
-	int m_lookupsOutstanding = 0;
-	int m_lookupsDone = 0;
-	int m_lookupsTotal = 0;
-	QList<QPointer<NetJob>> m_activeJobs;
+    int m_lookupsOutstanding = 0;
+    int m_lookupsDone = 0;
+    int m_lookupsTotal = 0;
+    QList<QPointer<NetJob>> m_activeJobs;
 
-	Task::Ptr m_zipTask;
+    Task::Ptr m_zipTask;
 
-	QFuture<ScanResult> m_scanFuture;
-	QFutureWatcher<ScanResult> m_scanWatcher;
+    QFuture<ScanResult> m_scanFuture;
+    QFutureWatcher<ScanResult> m_scanWatcher;
 
-	/* Latched by abort(). Read by the scan between files, and by every
-	 * handler that might otherwise report a second verdict after the
-	 * aborted one. */
-	std::atomic<bool> m_aborted{false};
+    /* Latched by abort(). Read by the scan between files, and by every
+     * handler that might otherwise report a second verdict after the
+     * aborted one. */
+    std::atomic<bool> m_aborted{false};
 };

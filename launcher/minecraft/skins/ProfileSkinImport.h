@@ -46,63 +46,63 @@ class NetJob;
  */
 class ProfileSkinImport : public Task
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	ProfileSkinImport(QObject* parent, QString username, QString targetPath);
-	~ProfileSkinImport() override = default;
+public:
+    ProfileSkinImport(QObject *parent, QString username, QString targetPath);
+    ~ProfileSkinImport() override = default;
 
-	bool canAbort() const override
-	{
-		return true;
-	}
+    bool canAbort() const override
+    {
+        return true;
+    }
 
-	/* Where the PNG was written. Valid only after success. */
-	QString targetPath() const
-	{
-		return m_targetPath;
-	}
+    /* Where the PNG was written. Valid only after success. */
+    QString targetPath() const
+    {
+        return m_targetPath;
+    }
 
-	/* The profile's texture URL, so the imported skin can be recognised as
-	 * the one that player wears. */
-	QString textureUrl() const
-	{
-		return m_textureUrl;
-	}
+    /* The profile's texture URL, so the imported skin can be recognised as
+     * the one that player wears. */
+    QString textureUrl() const
+    {
+        return m_textureUrl;
+    }
 
-	SkinEntry::Arms arms() const
-	{
-		return m_arms;
-	}
+    SkinEntry::Arms arms() const
+    {
+        return m_arms;
+    }
 
-	/* The cape the player is wearing, under the placeholder id the session
-	 * server forces on us. Empty when they have none. */
-	QString capeId() const
-	{
-		return m_capeId;
-	}
+    /* The cape the player is wearing, under the placeholder id the session
+     * server forces on us. Empty when they have none. */
+    QString capeId() const
+    {
+        return m_capeId;
+    }
 
-  public slots:
-	bool abort() override;
+public slots:
+    bool abort() override;
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-  private:
-	void lookUpUuid();
-	void fetchProfile();
-	void downloadTexture();
+private:
+    void lookUpUuid();
+    void fetchProfile();
+    void downloadTexture();
 
-	QString m_username;
-	QString m_targetPath;
+    QString m_username;
+    QString m_targetPath;
 
-	QString m_uuid;
-	QString m_textureUrl;
-	QString m_capeId;
-	SkinEntry::Arms m_arms = SkinEntry::Arms::Classic;
+    QString m_uuid;
+    QString m_textureUrl;
+    QString m_capeId;
+    SkinEntry::Arms m_arms = SkinEntry::Arms::Classic;
 
-	/* Reused for each step; replaced rather than accumulated so that abort()
-	 * only ever has one thing to stop. */
-	shared_qobject_ptr<NetJob> m_job;
-	QByteArray m_response;
+    /* Reused for each step; replaced rather than accumulated so that abort()
+     * only ever has one thing to stop. */
+    shared_qobject_ptr<NetJob> m_job;
+    QByteArray m_response;
 };

@@ -33,16 +33,16 @@
 namespace PackLayout
 {
 
-	/* True when `file` - a directory or a zip archive - is laid out as an
-	 * OptiFine/Iris shader pack, i.e. it contains a `shaders` directory
-	 * either at its root or exactly one level down. The one-level-down
-	 * case matters because shader packs downloaded straight from a Git
-	 * forge are wrapped in a single top-level folder. */
-	bool isShaderPack(const QFileInfo& file);
+/* True when `file` - a directory or a zip archive - is laid out as an
+ * OptiFine/Iris shader pack, i.e. it contains a `shaders` directory
+ * either at its root or exactly one level down. The one-level-down
+ * case matters because shader packs downloaded straight from a Git
+ * forge are wrapped in a single top-level folder. */
+bool isShaderPack(const QFileInfo &file);
 
-	/* True when `file` is laid out as a vanilla data pack, i.e. it pairs
-	 * a `pack.mcmeta` with a `data` directory. As with shader packs the
-	 * pair may sit at the root or one level down. */
-	bool isDataPack(const QFileInfo& file);
+/* True when `file` is laid out as a vanilla data pack, i.e. it pairs
+ * a `pack.mcmeta` with a `data` directory. As with shader packs the
+ * pair may sit at the root or one level down. */
+bool isDataPack(const QFileInfo &file);
 
 } // namespace PackLayout

@@ -24,25 +24,25 @@
 
 class TexturePackPage : public ModFolderPage
 {
-	Q_OBJECT
-  public:
-	explicit TexturePackPage(MinecraftInstance* instance, QWidget* parent = 0)
-		: ModFolderPage(instance, instance->texturePackList(), "texturepacks",
-						"resourcepacks", tr("Texture packs"), "Texture-packs",
-						parent)
-	{
-		ui->actionView_configs->setVisible(false);
-		/* Legacy texture packs and modern resource packs are the same
-		 * product on CurseForge and Modrinth - only the destination folder
-		 * differs, and that comes from texturePackList(). Without this the
-		 * page inherited ModFolderPage's ContentType::Mod default and the
-		 * download button searched for (and installed) mods. */
-		setContentType(ModPlatform::ContentType::ResourcePack);
-	}
-	virtual ~TexturePackPage() {}
+    Q_OBJECT
+public:
+    explicit TexturePackPage(MinecraftInstance *instance, QWidget *parent = 0)
+        : ModFolderPage(instance, instance->texturePackList(), "texturepacks", "resourcepacks", tr("Texture packs"), "Texture-packs", parent)
+    {
+        ui->actionView_configs->setVisible(false);
+        /* Legacy texture packs and modern resource packs are the same
+         * product on CurseForge and Modrinth - only the destination folder
+         * differs, and that comes from texturePackList(). Without this the
+         * page inherited ModFolderPage's ContentType::Mod default and the
+         * download button searched for (and installed) mods. */
+        setContentType(ModPlatform::ContentType::ResourcePack);
+    }
+    virtual ~TexturePackPage()
+    {
+    }
 
-	virtual bool shouldDisplay() const override
-	{
-		return m_inst->traits().contains("texturepacks");
-	}
+    virtual bool shouldDisplay() const override
+    {
+        return m_inst->traits().contains("texturepacks");
+    }
 };

@@ -24,31 +24,31 @@
 
 namespace Ui
 {
-	class ErrorFrame;
+class ErrorFrame;
 }
 
 class ErrorFrame : public QFrame
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit ErrorFrame(QWidget* parent = 0);
-	~ErrorFrame();
+public:
+    explicit ErrorFrame(QWidget *parent = 0);
+    ~ErrorFrame();
 
-	void setTitle(QString text);
-	void setDescription(QString text);
+    void setTitle(QString text);
+    void setDescription(QString text);
 
-	void clear();
+    void clear();
 
-  public slots:
-	void ellipsisHandler(const QString& link);
-	void boxClosed(int result);
+public slots:
+    void ellipsisHandler(const QString &link);
+    void boxClosed(int result);
 
-  private:
-	void updateHiddenState();
+private:
+    void updateHiddenState();
 
-  private:
-	Ui::ErrorFrame* ui;
-	QString desc;
-	class QMessageBox* currentBox = nullptr;
+private:
+    Ui::ErrorFrame *ui;
+    QString desc;
+    class QMessageBox *currentBox = nullptr;
 };

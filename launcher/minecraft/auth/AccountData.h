@@ -18,110 +18,113 @@
  */
 
 #pragma once
-#include <QString>
 #include <QByteArray>
+#include <QJsonObject>
 #include <QList>
+#include <QString>
 #include <QVector>
 #include <katabasis/Bits.h>
-#include <QJsonObject>
 
 struct Skin {
-	QString id;
-	QString url;
-	QString variant;
+    QString id;
+    QString url;
+    QString variant;
 
-	QByteArray data;
+    QByteArray data;
 };
 
 struct Cape {
-	QString id;
-	QString url;
-	QString alias;
+    QString id;
+    QString url;
+    QString alias;
 
-	QByteArray data;
+    QByteArray data;
 };
 
 struct MinecraftEntitlement {
-	bool ownsMinecraft = false;
-	bool canPlayMinecraft = false;
-	Katabasis::Validity validity = Katabasis::Validity::None;
+    bool ownsMinecraft = false;
+    bool canPlayMinecraft = false;
+    Katabasis::Validity validity = Katabasis::Validity::None;
 };
 
 struct MinecraftProfile {
-	QString id;
-	QString name;
-	Skin skin;
-	QString currentCape;
+    QString id;
+    QString name;
+    Skin skin;
+    QString currentCape;
 
-	/* Capes the account owns, in the order the profile service returned
-	 * them.
-	 *
-	 * A list rather than a map keyed by id: the order is meaningful. It is
-	 * the order the cape picker shows them in, and it is the order Mojang
-	 * lists them in -- which a map would silently replace with alphabetical
-	 * order by id, i.e. by opaque UUID, i.e. arbitrary. The stored JSON has
-	 * always been an array, so nothing about the on-disk format changes;
-	 * round-tripping through a list actually preserves it where the map did
-	 * not. */
-	QList<Cape> capes;
+    /* Capes the account owns, in the order the profile service returned
+     * them.
+     *
+     * A list rather than a map keyed by id: the order is meaningful. It is
+     * the order the cape picker shows them in, and it is the order Mojang
+     * lists them in -- which a map would silently replace with alphabetical
+     * order by id, i.e. by opaque UUID, i.e. arbitrary. The stored JSON has
+     * always been an array, so nothing about the on-disk format changes;
+     * round-tripping through a list actually preserves it where the map did
+     * not. */
+    QList<Cape> capes;
 
-	/* Look a cape up by id, or nullptr if the account does not own it. */
-	const Cape* capeById(const QString& id) const
-	{
-		for (const Cape& cape : capes) {
-			if (cape.id == id) {
-				return &cape;
-			}
-		}
-		return nullptr;
-	}
+    /* Look a cape up by id, or nullptr if the account does not own it. */
+    const Cape *capeById(const QString &id) const
+    {
+        for (const Cape &cape : capes) {
+            if (cape.id == id) {
+                return &cape;
+            }
+        }
+        return nullptr;
+    }
 
-	Katabasis::Validity validity = Katabasis::Validity::None;
+    Katabasis::Validity validity = Katabasis::Validity::None;
 };
 
-enum class AccountType { MSA, Offline };
+enum class AccountType {
+    MSA,
+    Offline
+};
 
 enum class AccountState {
-	Unchecked,
-	Offline,
-	Working,
-	Online,
-	Errored,
-	Expired,
-	Gone
+    Unchecked,
+    Offline,
+    Working,
+    Online,
+    Errored,
+    Expired,
+    Gone
 };
 
 struct AccountData {
-	QJsonObject saveState() const;
-	bool resumeStateFromV3(QJsonObject data);
+    QJsonObject saveState() const;
+    bool resumeStateFromV3(QJsonObject data);
 
-	//! Gamertag for MSA
-	QString accountDisplayString() const;
+    //! Gamertag for MSA
+    QString accountDisplayString() const;
 
-	//! Yggdrasil access token, as passed to the game.
-	QString accessToken() const;
+    //! Yggdrasil access token, as passed to the game.
+    QString accessToken() const;
 
-	QString profileId() const;
-	QString profileName() const;
+    QString profileId() const;
+    QString profileName() const;
 
-	QString lastError() const;
+    QString lastError() const;
 
-	AccountType type = AccountType::MSA;
+    AccountType type = AccountType::MSA;
 
-	QString offlineUsername;
+    QString offlineUsername;
 
-	Katabasis::Token msaToken;
-	Katabasis::Token userToken;
-	Katabasis::Token xboxApiToken;
-	Katabasis::Token mojangservicesToken;
+    Katabasis::Token msaToken;
+    Katabasis::Token userToken;
+    Katabasis::Token xboxApiToken;
+    Katabasis::Token mojangservicesToken;
 
-	Katabasis::Token yggdrasilToken;
-	MinecraftProfile minecraftProfile;
-	MinecraftEntitlement minecraftEntitlement;
-	Katabasis::Validity validity_ = Katabasis::Validity::None;
+    Katabasis::Token yggdrasilToken;
+    MinecraftProfile minecraftProfile;
+    MinecraftEntitlement minecraftEntitlement;
+    Katabasis::Validity validity_ = Katabasis::Validity::None;
 
-	// runtime only information (not saved with the account)
-	QString internalId;
-	QString errorString;
-	AccountState accountState = AccountState::Unchecked;
+    // runtime only information (not saved with the account)
+    QString internalId;
+    QString errorString;
+    AccountState accountState = AccountState::Unchecked;
 };

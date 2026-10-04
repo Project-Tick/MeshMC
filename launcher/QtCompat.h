@@ -32,62 +32,57 @@
  * Qt 6, and building on it would just relocate the problem to Qt 7.
  */
 
-#include <QtGlobal>
 #include <QMouseEvent>
 #include <QObject>
 #include <QPointF>
+#include <QtGlobal>
 
 #include <memory>
 #include <utility>
 
 namespace QtCompat
 {
-	/* Connect a signal to a functor that should fire at most once.
-	 *
-	 * Qt 6 expresses this as a connection type, Qt::SingleShotConnection.
-	 * Qt 5 has no equivalent, so the connection handle is captured and
-	 * disconnected from inside the wrapper the first time it runs. The
-	 * shared_ptr is what makes that possible: the handle has to outlive
-	 * this call and be reachable from the functor.
-	 *
-	 * The Qt 5 wrapper takes its arguments variadically because only the
-	 * signal knows how many there are; Qt derives the count from the
-	 * signal and calls the functor with exactly that many.
-	 */
-	template <typename Sender, typename Signal, typename Receiver,
-			  typename Functor>
-	inline void connectOnce(Sender* sender, Signal signal, Receiver* receiver,
-							Functor functor)
-	{
+/* Connect a signal to a functor that should fire at most once.
+ *
+ * Qt 6 expresses this as a connection type, Qt::SingleShotConnection.
+ * Qt 5 has no equivalent, so the connection handle is captured and
+ * disconnected from inside the wrapper the first time it runs. The
+ * shared_ptr is what makes that possible: the handle has to outlive
+ * this call and be reachable from the functor.
+ *
+ * The Qt 5 wrapper takes its arguments variadically because only the
+ * signal knows how many there are; Qt derives the count from the
+ * signal and calls the functor with exactly that many.
+ */
+template<typename Sender, typename Signal, typename Receiver, typename Functor>
+inline void connectOnce(Sender *sender, Signal signal, Receiver *receiver, Functor functor)
+{
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		QObject::connect(sender, signal, receiver, std::move(functor),
-						 Qt::SingleShotConnection);
+    QObject::connect(sender, signal, receiver, std::move(functor), Qt::SingleShotConnection);
 #else
-		auto connection = std::make_shared<QMetaObject::Connection>();
-		*connection = QObject::connect(
-			sender, signal, receiver,
-			[connection, functor = std::move(functor)](auto&&... args) {
-				/* Before the call, not after: the functor is free to
-				 * spin an event loop, and a second emission reaching it
-				 * in the meantime is exactly what this prevents. */
-				QObject::disconnect(*connection);
-				functor(std::forward<decltype(args)>(args)...);
-			});
+    auto connection = std::make_shared<QMetaObject::Connection>();
+    *connection = QObject::connect(sender, signal, receiver, [connection, functor = std::move(functor)](auto &&...args) {
+        /* Before the call, not after: the functor is free to
+         * spin an event loop, and a second emission reaching it
+         * in the meantime is exactly what this prevents. */
+        QObject::disconnect(*connection);
+        functor(std::forward<decltype(args)>(args)...);
+    });
 #endif
-	}
+}
 
-	/* Widget-local position of a mouse event.
-	 *
-	 * Qt 6 has position(); Qt 5 spells the same value localPos(). Qt 6 does
-	 * still carry pos(), but only as a deprecated alias for
-	 * position().toPoint().
-	 */
-	inline QPointF mousePosition(const QMouseEvent* event)
-	{
+/* Widget-local position of a mouse event.
+ *
+ * Qt 6 has position(); Qt 5 spells the same value localPos(). Qt 6 does
+ * still carry pos(), but only as a deprecated alias for
+ * position().toPoint().
+ */
+inline QPointF mousePosition(const QMouseEvent *event)
+{
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		return event->position();
+    return event->position();
 #else
-		return event->localPos();
+    return event->localPos();
 #endif
-	}
+}
 } // namespace QtCompat

@@ -19,30 +19,28 @@
 
 #include "SequentialTask.h"
 
-SequentialTask::SequentialTask(QObject* parent, QString task_name)
-	: ConcurrentTask(parent, task_name, 1)
+SequentialTask::SequentialTask(QObject *parent, QString task_name)
+    : ConcurrentTask(parent, task_name, 1)
 {
 }
 
 void SequentialTask::updateState()
 {
-	if (totalSize() <= 1) {
-		// One step is not a sequence worth counting out loud. Let the step
-		// speak for itself, the way a plain ConcurrentTask would.
-		ConcurrentTask::updateState();
-		return;
-	}
+    if (totalSize() <= 1) {
+        // One step is not a sequence worth counting out loud. Let the step
+        // speak for itself, the way a plain ConcurrentTask would.
+        ConcurrentTask::updateState();
+        return;
+    }
 
-	setProgress(finishedSize(), totalSize());
-	setStatus(tr("Executing task %1 out of %2")
-				  .arg(QString::number(m_doing.size() + finishedSize()),
-					   QString::number(totalSize())));
+    setProgress(finishedSize(), totalSize());
+    setStatus(tr("Executing task %1 out of %2").arg(QString::number(m_doing.size() + finishedSize()), QString::number(totalSize())));
 }
 
-void SequentialTask::subTaskFailed(Task::Ptr task, const QString& reason)
+void SequentialTask::subTaskFailed(Task::Ptr task, const QString &reason)
 {
-	// Every step here builds on the one before it, so there is nothing left
-	// worth running.
-	dropQueued();
-	ConcurrentTask::subTaskFailed(task, reason);
+    // Every step here builds on the one before it, so there is nothing left
+    // worth running.
+    dropQueued();
+    ConcurrentTask::subTaskFailed(task, reason);
 }

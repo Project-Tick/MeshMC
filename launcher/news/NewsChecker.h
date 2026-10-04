@@ -20,10 +20,10 @@
 
 #pragma once
 
+#include <QList>
 #include <QObject>
 #include <QString>
 #include <QStringList>
-#include <QList>
 
 #include <net/NetJob.h>
 
@@ -44,110 +44,108 @@
  */
 class NewsChecker : public QObject
 {
-	Q_OBJECT
-  public:
-	/*!
-	 * Constructs a news reader to read from the given RSS feed URL.
-	 */
-	NewsChecker(shared_qobject_ptr<QNetworkAccessManager> network,
-				const QString& feedUrl);
+    Q_OBJECT
+public:
+    /*!
+     * Constructs a news reader to read from the given RSS feed URL.
+     */
+    NewsChecker(shared_qobject_ptr<QNetworkAccessManager> network, const QString &feedUrl);
 
-	/*!
-	 * Constructs a news reader over several feeds. The first URL is the
-	 * primary feed; empty entries are dropped and duplicates collapsed.
-	 */
-	NewsChecker(shared_qobject_ptr<QNetworkAccessManager> network,
-				const QStringList& feedUrls);
+    /*!
+     * Constructs a news reader over several feeds. The first URL is the
+     * primary feed; empty entries are dropped and duplicates collapsed.
+     */
+    NewsChecker(shared_qobject_ptr<QNetworkAccessManager> network, const QStringList &feedUrls);
 
-	/*!
-	 * The feeds being watched, in the order their indices refer to.
-	 */
-	QStringList feedUrls() const;
+    /*!
+     * The feeds being watched, in the order their indices refer to.
+     */
+    QStringList feedUrls() const;
 
-	/*!
-	 * Returns the error message for the last time the news was loaded.
-	 * Empty string if the last load was successful.
-	 */
-	QString getLastLoadErrorMsg() const;
+    /*!
+     * Returns the error message for the last time the news was loaded.
+     * Empty string if the last load was successful.
+     */
+    QString getLastLoadErrorMsg() const;
 
-	/*!
-	 * Returns true if the news has been loaded successfully.
-	 */
-	bool isNewsLoaded() const;
+    /*!
+     * Returns true if the news has been loaded successfully.
+     */
+    bool isNewsLoaded() const;
 
-	//! True if the news is currently loading. If true, reloadNews() will do
-	//! nothing.
-	bool isLoadingNews() const;
+    //! True if the news is currently loading. If true, reloadNews() will do
+    //! nothing.
+    bool isLoadingNews() const;
 
-	/*!
-	 * Every feed's entries merged into one list, newest first. Each
-	 * entry carries the index of the feed it came from.
-	 */
-	QList<NewsEntryPtr> getNewsEntries() const;
+    /*!
+     * Every feed's entries merged into one list, newest first. Each
+     * entry carries the index of the feed it came from.
+     */
+    QList<NewsEntryPtr> getNewsEntries() const;
 
-	/*!
-	 * Reloads the news from the website's RSS feed.
-	 * If the news is already loading, this does nothing.
-	 */
-	void Q_SLOT reloadNews();
+    /*!
+     * Reloads the news from the website's RSS feed.
+     * If the news is already loading, this does nothing.
+     */
+    void Q_SLOT reloadNews();
 
-  signals:
-	/*!
-	 * Signal fired after the news has finished loading.
-	 */
-	void newsLoaded();
+signals:
+    /*!
+     * Signal fired after the news has finished loading.
+     */
+    void newsLoaded();
 
-	/*!
-	 * Signal fired after the news fails to load.
-	 */
-	void newsLoadingFailed(QString errorMsg);
+    /*!
+     * Signal fired after the news fails to load.
+     */
+    void newsLoadingFailed(QString errorMsg);
 
-  protected slots:
-	void rssDownloadFinished(int feedIndex);
-	void rssDownloadFailed(int feedIndex, QString reason);
+protected slots:
+    void rssDownloadFinished(int feedIndex);
+    void rssDownloadFailed(int feedIndex, QString reason);
 
-  protected: /* methods */
-	/*!
-	 * Called once per feed as its download settles, whichever way it
-	 * went. Emits newsLoaded()/newsLoadingFailed() once the last
-	 * outstanding feed has reported in — never before, so a caller
-	 * never sees a half-populated list.
-	 */
-	void feedSettled();
+protected: /* methods */
+    /*!
+     * Called once per feed as its download settles, whichever way it
+     * went. Emits newsLoaded()/newsLoadingFailed() once the last
+     * outstanding feed has reported in — never before, so a caller
+     * never sees a half-populated list.
+     */
+    void feedSettled();
 
-  protected: /* data */
-	/*! Everything one feed needs to be downloaded and parsed
-	 *  independently of the others. */
-	struct Feed {
-		QString url;
-		QByteArray data;
-		QList<NewsEntryPtr> entries;
-		NetJob::Ptr job;
-	};
+protected: /* data */
+    /*! Everything one feed needs to be downloaded and parsed
+     *  independently of the others. */
+    struct Feed {
+        QString url;
+        QByteArray data;
+        QList<NewsEntryPtr> entries;
+        NetJob::Ptr job;
+    };
 
-	QList<Feed> m_feeds;
+    QList<Feed> m_feeds;
 
-	//! Feeds still being downloaded in the current reload.
-	int m_pendingFeeds = 0;
+    //! Feeds still being downloaded in the current reload.
+    int m_pendingFeeds = 0;
 
-	//! Set when the primary feed failed during the current reload.
-	QString m_primaryError;
+    //! Set when the primary feed failed during the current reload.
+    QString m_primaryError;
 
-	//! True if news has been loaded.
-	bool m_loadedNews = false;
+    //! True if news has been loaded.
+    bool m_loadedNews = false;
 
-	/*!
-	 * Gets the error message that was given last time the news was loaded.
-	 * If the last news load succeeded, this will be an empty string.
-	 */
-	QString m_lastLoadError;
+    /*!
+     * Gets the error message that was given last time the news was loaded.
+     * If the last news load succeeded, this will be an empty string.
+     */
+    QString m_lastLoadError;
 
-	shared_qobject_ptr<QNetworkAccessManager> m_network;
+    shared_qobject_ptr<QNetworkAccessManager> m_network;
 
-  protected slots:
-	/// Emits newsLoaded() and sets m_lastLoadError to empty string.
-	void succeed();
+protected slots:
+    /// Emits newsLoaded() and sets m_lastLoadError to empty string.
+    void succeed();
 
-	/// Emits newsLoadingFailed() and sets m_lastLoadError to the given message.
-	void fail(const QString& errorMsg);
+    /// Emits newsLoadingFailed() and sets m_lastLoadError to the given message.
+    void fail(const QString &errorMsg);
 };

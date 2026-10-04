@@ -29,179 +29,179 @@
 namespace FS
 {
 
-	class FileSystemException : public ::Exception
-	{
-	  public:
-		FileSystemException(const QString& message) : Exception(message) {}
-	};
+class FileSystemException : public ::Exception
+{
+public:
+    FileSystemException(const QString &message)
+        : Exception(message)
+    {
+    }
+};
 
-	/**
-	 * write data to a file safely
-	 */
-	void write(const QString& filename, const QByteArray& data);
+/**
+ * write data to a file safely
+ */
+void write(const QString &filename, const QByteArray &data);
 
-	/**
-	 * read data from a file safely\
-	 */
-	QByteArray read(const QString& filename);
+/**
+ * read data from a file safely\
+ */
+QByteArray read(const QString &filename);
 
-	/**
-	 * Update the last changed timestamp of an existing file
-	 */
-	bool updateTimestamp(const QString& filename);
+/**
+ * Update the last changed timestamp of an existing file
+ */
+bool updateTimestamp(const QString &filename);
 
-	/**
-	 * Creates all the folders in a path for the specified path
-	 * last segment of the path is treated as a file name and is ignored!
-	 */
-	bool ensureFilePathExists(QString filenamepath);
+/**
+ * Creates all the folders in a path for the specified path
+ * last segment of the path is treated as a file name and is ignored!
+ */
+bool ensureFilePathExists(QString filenamepath);
 
-	/**
-	 * Creates all the folders in a path for the specified path
-	 * last segment of the path is treated as a folder name and is created!
-	 */
-	bool ensureFolderPathExists(QString filenamepath);
+/**
+ * Creates all the folders in a path for the specified path
+ * last segment of the path is treated as a folder name and is created!
+ */
+bool ensureFolderPathExists(QString filenamepath);
 
-	class copy
-	{
-	  public:
-		copy(const QString& src, const QString& dst)
-		{
-			m_src = src;
-			m_dst = dst;
-		}
-		copy& followSymlinks(const bool follow)
-		{
-			m_followSymlinks = follow;
-			return *this;
-		}
-		copy& blacklist(const IPathMatcher* filter)
-		{
-			m_blacklist = filter;
-			return *this;
-		}
-		bool operator()()
-		{
-			return operator()(QString());
-		}
+class copy
+{
+public:
+    copy(const QString &src, const QString &dst)
+    {
+        m_src = src;
+        m_dst = dst;
+    }
+    copy &followSymlinks(const bool follow)
+    {
+        m_followSymlinks = follow;
+        return *this;
+    }
+    copy &blacklist(const IPathMatcher *filter)
+    {
+        m_blacklist = filter;
+        return *this;
+    }
+    bool operator()()
+    {
+        return operator()(QString());
+    }
 
-	  private:
-		bool operator()(const QString& offset);
+private:
+    bool operator()(const QString &offset);
 
-	  private:
-		bool m_followSymlinks = true;
-		const IPathMatcher* m_blacklist = nullptr;
-		QDir m_src;
-		QDir m_dst;
-	};
+private:
+    bool m_followSymlinks = true;
+    const IPathMatcher *m_blacklist = nullptr;
+    QDir m_src;
+    QDir m_dst;
+};
 
-	/**
-	 * Delete a folder recursively
-	 */
-	bool deletePath(QString path);
+/**
+ * Delete a folder recursively
+ */
+bool deletePath(QString path);
 
-	/**
-	 * Move everything in @p source on top of @p destination, replacing
-	 * files that exist in both and leaving files that exist only in
-	 * @p destination alone.
-	 *
-	 * This is how a modpack update lands: the staged copy of the new
-	 * version is merged over the live instance, so that the instance
-	 * keeps its identity and everything the pack does not ship - saves,
-	 * screenshots, logs, the user's own config edits - survives.
-	 *
-	 * Deliberately *not* "delete the destination and move the source
-	 * in": the whole point is that the destination holds data the pack
-	 * has no copy of. Files the new version dropped are removed by the
-	 * caller, which is the only party that knows the difference between
-	 * "this file is gone from the pack" and "the user put this here".
-	 *
-	 * @p source is removed on success. Returns false on the first
-	 * failure, having done part of the work -- there is no way to roll a
-	 * partial merge back, so callers should treat a failure as "the
-	 * instance may be in a mixed state" and say so.
-	 */
-	bool overrideFolder(const QString& destination, const QString& source);
+/**
+ * Move everything in @p source on top of @p destination, replacing
+ * files that exist in both and leaving files that exist only in
+ * @p destination alone.
+ *
+ * This is how a modpack update lands: the staged copy of the new
+ * version is merged over the live instance, so that the instance
+ * keeps its identity and everything the pack does not ship - saves,
+ * screenshots, logs, the user's own config edits - survives.
+ *
+ * Deliberately *not* "delete the destination and move the source
+ * in": the whole point is that the destination holds data the pack
+ * has no copy of. Files the new version dropped are removed by the
+ * caller, which is the only party that knows the difference between
+ * "this file is gone from the pack" and "the user put this here".
+ *
+ * @p source is removed on success. Returns false on the first
+ * failure, having done part of the work -- there is no way to roll a
+ * partial merge back, so callers should treat a failure as "the
+ * instance may be in a mixed state" and say so.
+ */
+bool overrideFolder(const QString &destination, const QString &source);
 
-	/**
-	 * Whether this platform has a trash we can trust to be reversible.
-	 *
-	 * Worth asking before offering the user a choice, so that a dialog
-	 * can promise "recoverable" or "permanent" and be right either way
-	 * rather than hedging.
-	 */
-	bool canTrash();
+/**
+ * Whether this platform has a trash we can trust to be reversible.
+ *
+ * Worth asking before offering the user a choice, so that a dialog
+ * can promise "recoverable" or "permanent" and be right either way
+ * rather than hedging.
+ */
+bool canTrash();
 
-	/**
-	 * Move a file or folder to the platform's trash, so that the user can
-	 * put it back.
-	 *
-	 * On success @p pathInTrash, when given, receives where the item
-	 * landed, which is what makes an undo possible.
-	 *
-	 * Returns false without touching anything where there is no trash we
-	 * can trust to be reversible; the caller is then free to fall back to
-	 * deletePath() -- but it has to say so, because at that point the
-	 * operation is no longer undoable.
-	 */
-	bool trash(const QString& path, QString* pathInTrash = nullptr);
+/**
+ * Move a file or folder to the platform's trash, so that the user can
+ * put it back.
+ *
+ * On success @p pathInTrash, when given, receives where the item
+ * landed, which is what makes an undo possible.
+ *
+ * Returns false without touching anything where there is no trash we
+ * can trust to be reversible; the caller is then free to fall back to
+ * deletePath() -- but it has to say so, because at that point the
+ * operation is no longer undoable.
+ */
+bool trash(const QString &path, QString *pathInTrash = nullptr);
 
-	QString PathCombine(const QString& path1, const QString& path2);
-	QString PathCombine(const QString& path1, const QString& path2,
-						const QString& path3);
-	QString PathCombine(const QString& path1, const QString& path2,
-						const QString& path3, const QString& path4);
+QString PathCombine(const QString &path1, const QString &path2);
+QString PathCombine(const QString &path1, const QString &path2, const QString &path3);
+QString PathCombine(const QString &path1, const QString &path2, const QString &path3, const QString &path4);
 
-	QString AbsolutePath(QString path);
+QString AbsolutePath(QString path);
 
-	/**
-	 * Resolve an executable
-	 *
-	 * Will resolve:
-	 *   single executable (by name)
-	 *   relative path
-	 *   absolute path
-	 *
-	 * @return absolute path to executable or null string
-	 */
-	QString ResolveExecutable(QString path);
+/**
+ * Resolve an executable
+ *
+ * Will resolve:
+ *   single executable (by name)
+ *   relative path
+ *   absolute path
+ *
+ * @return absolute path to executable or null string
+ */
+QString ResolveExecutable(QString path);
 
-	/**
-	 * Normalize path
-	 *
-	 * Any paths inside the current directory will be normalized to relative
-	 * paths (to current) Other paths will be made absolute
-	 *
-	 * Returns false if the path logic somehow filed (and normalizedPath in
-	 * invalid)
-	 */
-	QString NormalizePath(QString path);
+/**
+ * Normalize path
+ *
+ * Any paths inside the current directory will be normalized to relative
+ * paths (to current) Other paths will be made absolute
+ *
+ * Returns false if the path logic somehow filed (and normalizedPath in
+ * invalid)
+ */
+QString NormalizePath(QString path);
 
-	QString RemoveInvalidFilenameChars(QString string, QChar replaceWith = '-');
+QString RemoveInvalidFilenameChars(QString string, QChar replaceWith = '-');
 
-	QString DirNameFromString(QString string, QString inDir = ".");
+QString DirNameFromString(QString string, QString inDir = ".");
 
-	/// Checks if the a given Path contains "!"
-	bool checkProblemticPathJava(QDir folder);
+/// Checks if the a given Path contains "!"
+bool checkProblemticPathJava(QDir folder);
 
-	// Get the Directory representing the User's Desktop
-	QString getDesktopDir();
+// Get the Directory representing the User's Desktop
+QString getDesktopDir();
 
-	// Get the directory the platform lists installed applications in
-	QString getApplicationsDir();
+// Get the directory the platform lists installed applications in
+QString getApplicationsDir();
 
-	/**
-	 * Write a shortcut that runs @p target with @p args, labelled @p name and
-	 * wearing the image at @p iconPath.
-	 *
-	 * @p destination is the path to create *without* a suffix -- each
-	 * platform appends its own, because what a shortcut even is differs: a
-	 * `.lnk` shell link on Windows, a `.desktop` entry on Linux and the BSDs,
-	 * and a small `.app` bundle on macOS, that being the only form Finder
-	 * will show with an icon and arguments of its own.
-	 *
-	 * Returns the path actually written, or an empty string if nothing was.
-	 */
-	QString createShortcut(QString destination, QString target,
-						   QStringList args, QString name, QString iconPath);
+/**
+ * Write a shortcut that runs @p target with @p args, labelled @p name and
+ * wearing the image at @p iconPath.
+ *
+ * @p destination is the path to create *without* a suffix -- each
+ * platform appends its own, because what a shortcut even is differs: a
+ * `.lnk` shell link on Windows, a `.desktop` entry on Linux and the BSDs,
+ * and a small `.app` bundle on macOS, that being the only form Finder
+ * will show with an icon and arguments of its own.
+ *
+ * Returns the path actually written, or an empty string if nothing was.
+ */
+QString createShortcut(QString destination, QString target, QStringList args, QString name, QString iconPath);
 } // namespace FS

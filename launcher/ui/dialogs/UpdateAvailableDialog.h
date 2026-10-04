@@ -23,31 +23,28 @@
 
 namespace Ui
 {
-	class UpdateAvailableDialog;
+class UpdateAvailableDialog;
 }
 
 class UpdateAvailableDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	enum ResultCode {
-		Install = 10,
-		DontInstall = 11,
-		Skip = 12,
-	};
+public:
+    enum ResultCode {
+        Install = 10,
+        DontInstall = 11,
+        Skip = 12,
+    };
 
-	/*!
-	 * \a currentVersion  version the user is running, as displayed.
-	 * \a availableVersion version being offered, as displayed.
-	 * \a releaseNotes    release notes in Markdown, as published.
-	 */
-	explicit UpdateAvailableDialog(const QString& currentVersion,
-								   const QString& availableVersion,
-								   const QString& releaseNotes,
-								   QWidget* parent = nullptr);
-	~UpdateAvailableDialog() override;
+    /*!
+     * \a currentVersion  version the user is running, as displayed.
+     * \a availableVersion version being offered, as displayed.
+     * \a releaseNotes    release notes in Markdown, as published.
+     */
+    explicit UpdateAvailableDialog(const QString &currentVersion, const QString &availableVersion, const QString &releaseNotes, QWidget *parent = nullptr);
+    ~UpdateAvailableDialog() override;
 
-  private:
-	Ui::UpdateAvailableDialog* ui;
+private:
+    Ui::UpdateAvailableDialog *ui;
 };

@@ -30,59 +30,59 @@
 
 class WikiRepoBundle
 {
-  public:
-	/* A single navigable page: its slug ("Page-Name") and display
-	 * title ("Page Name"). */
-	struct Entry {
-		QString slug;
-		QString title;
-	};
+public:
+    /* A single navigable page: its slug ("Page-Name") and display
+     * title ("Page Name"). */
+    struct Entry {
+        QString slug;
+        QString title;
+    };
 
-	bool open(const QString& dir);
+    bool open(const QString &dir);
 
-	QString name() const
-	{
-		return m_name;
-	}
-	QString rootPath() const
-	{
-		return m_root;
-	}
-	bool isOpen() const
-	{
-		return !m_root.isEmpty();
-	}
-	int articleCount() const
-	{
-		return m_order.size();
-	}
+    QString name() const
+    {
+        return m_name;
+    }
+    QString rootPath() const
+    {
+        return m_root;
+    }
+    bool isOpen() const
+    {
+        return !m_root.isEmpty();
+    }
+    int articleCount() const
+    {
+        return m_order.size();
+    }
 
-	/* Navigation list: Home first (if present), then alphabetical. */
-	QList<Entry> nav() const;
+    /* Navigation list: Home first (if present), then alphabetical. */
+    QList<Entry> nav() const;
 
-	/* Resolve a slug to fully-rendered HTML (internal links rewritten to
-	 * the wiki: scheme, relative images resolved). Empty if not found. */
-	QString renderArticleHtml(const QString& slug) const;
+    /* Resolve a slug to fully-rendered HTML (internal links rewritten to
+     * the wiki: scheme, relative images resolved). Empty if not found. */
+    QString renderArticleHtml(const QString &slug) const;
 
-	/* Pages whose title contains `query` (case-insensitive substring). */
-	QList<Entry> searchTitles(const QString& query, int limit = 200) const;
+    /* Pages whose title contains `query` (case-insensitive substring). */
+    QList<Entry> searchTitles(const QString &query, int limit = 200) const;
 
-	/* Slug helpers. */
-	static QString slugFromFileName(const QString& fileName);
-	static QString titleFromSlug(const QString& slug);
+    /* Slug helpers. */
+    static QString slugFromFileName(const QString &fileName);
+    static QString titleFromSlug(const QString &slug);
 
-  private:
-	struct Article {
-		QString slug;	 // "Page-Name"
-		QString title;	 // "Page Name"
-		QString relFile; // "Page-Name.md"
-	};
+private:
+    struct Article {
+        QString slug; // "Page-Name"
+        QString title; // "Page Name"
+        QString relFile; // "Page-Name.md"
+    };
 
-	QString rewriteLinks(const QString& markdown) const;
+    QString rewriteLinks(const QString &markdown) const;
 
-	QString m_name;
-	QString m_root;
-	QHash<QString, Article> m_articles; // slug -> article
-	QList<Article> m_order;				// alphabetical
-	bool m_hasFooter = false;
+    QString m_name;
+    QString m_root;
+    QHash<QString, Article> m_articles; // slug -> article
+    QList<Article> m_order; // alphabetical
+    bool m_hasFooter = false;
 };

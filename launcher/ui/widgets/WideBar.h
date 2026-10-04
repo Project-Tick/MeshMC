@@ -19,38 +19,37 @@
 
 #pragma once
 
-#include <QToolBar>
 #include <QAction>
 #include <QMap>
+#include <QToolBar>
 
 class QMenu;
 
 class WideBar : public QToolBar
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit WideBar(const QString& title, QWidget* parent = nullptr);
-	explicit WideBar(QWidget* parent = nullptr);
-	virtual ~WideBar();
+public:
+    explicit WideBar(const QString &title, QWidget *parent = nullptr);
+    explicit WideBar(QWidget *parent = nullptr);
+    virtual ~WideBar();
 
-	void addAction(QAction* action);
-	void addSeparator();
-	void insertSpacer(QAction* action);
-	QMenu* createContextMenu(QWidget* parent = nullptr,
-							 const QString& title = QString());
+    void addAction(QAction *action);
+    void addSeparator();
+    void insertSpacer(QAction *action);
+    QMenu *createContextMenu(QWidget *parent = nullptr, const QString &title = QString());
 
-	/* Re-read the actions into the buttons that stand for them.
-	 *
-	 * The buttons copy what an action looks like when they are built,
-	 * which for a bar coming out of a .ui file is before the page's
-	 * constructor has had a chance to say anything. A page that gives an
-	 * action a menu at that point needs to say so, because the button is
-	 * already there and QAction has no way for us to ask it to announce
-	 * itself again. */
-	void refreshActions();
+    /* Re-read the actions into the buttons that stand for them.
+     *
+     * The buttons copy what an action looks like when they are built,
+     * which for a bar coming out of a .ui file is before the page's
+     * constructor has had a chance to say anything. A page that gives an
+     * action a menu at that point needs to say so, because the button is
+     * already there and QAction has no way for us to ask it to announce
+     * itself again. */
+    void refreshActions();
 
-  private:
-	struct BarEntry;
-	QList<BarEntry*> m_entries;
+private:
+    struct BarEntry;
+    QList<BarEntry *> m_entries;
 };

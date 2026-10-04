@@ -19,10 +19,10 @@
  */
 
 #include "AboutDialog.h"
-#include "ui_AboutDialog.h"
-#include <QIcon>
 #include "Application.h"
 #include "BuildConfig.h"
+#include "ui_AboutDialog.h"
+#include <QIcon>
 
 #include <net/NetJob.h>
 
@@ -31,112 +31,106 @@
 
 namespace
 {
-	// Credits
-	QString getCreditsHtml()
-	{
-		QFile dataFile(":/documents/credits.html");
-		if (!dataFile.open(QIODevice::ReadOnly)) {
-			qWarning() << "Failed to open file" << dataFile.fileName()
-					   << "for reading:" << dataFile.errorString();
-			return {};
-		}
-		QString fileContent = QString::fromUtf8(dataFile.readAll());
-		dataFile.close();
+// Credits
+QString getCreditsHtml()
+{
+    QFile dataFile(":/documents/credits.html");
+    if (!dataFile.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file" << dataFile.fileName() << "for reading:" << dataFile.errorString();
+        return {};
+    }
+    QString fileContent = QString::fromUtf8(dataFile.readAll());
+    dataFile.close();
 
-		return fileContent.arg(
-			QObject::tr("MeshMC Developers"),
-			QObject::tr("MultiMC Developers"));
-	}
+    return fileContent.arg(QObject::tr("MeshMC Developers"), QObject::tr("MultiMC Developers"));
+}
 
-	QString getLicenseHtml()
-	{
-		QFile dataFile(":/documents/COPYING.md");
-		if (dataFile.open(QIODevice::ReadOnly)) {
-			HoeDown hoedown;
-			QString output = hoedown.process(dataFile.readAll());
-			dataFile.close();
-			return output;
-		} else {
-			qWarning() << "Failed to open file" << dataFile.fileName()
-					   << "for reading:" << dataFile.errorString();
-			return QString();
-		}
-	}
+QString getLicenseHtml()
+{
+    QFile dataFile(":/documents/COPYING.md");
+    if (dataFile.open(QIODevice::ReadOnly)) {
+        HoeDown hoedown;
+        QString output = hoedown.process(dataFile.readAll());
+        dataFile.close();
+        return output;
+    } else {
+        qWarning() << "Failed to open file" << dataFile.fileName() << "for reading:" << dataFile.errorString();
+        return QString();
+    }
+}
 
 } // namespace
 
-AboutDialog::AboutDialog(QWidget* parent)
-	: QDialog(parent), ui(new Ui::AboutDialog)
+AboutDialog::AboutDialog(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::AboutDialog)
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
 
-	setWindowTitle(tr("About MeshMC"));
+    setWindowTitle(tr("About MeshMC"));
 
-	QString chtml = getCreditsHtml();
-	ui->creditsText->setHtml(Strings::htmlListPatch(chtml));
+    QString chtml = getCreditsHtml();
+    ui->creditsText->setHtml(Strings::htmlListPatch(chtml));
 
-	QString lhtml = getLicenseHtml();
-	ui->licenseText->setHtml(Strings::htmlListPatch(lhtml));
+    QString lhtml = getLicenseHtml();
+    ui->licenseText->setHtml(Strings::htmlListPatch(lhtml));
 
-	ui->urlLabel->setOpenExternalLinks(true);
+    ui->urlLabel->setOpenExternalLinks(true);
 
-	ui->icon->setPixmap(APPLICATION->getThemedIcon("logo").pixmap(64));
-	ui->title->setText("MeshMC");
+    ui->icon->setPixmap(APPLICATION->getThemedIcon("logo").pixmap(64));
+    ui->title->setText("MeshMC");
 
-	ui->versionLabel->setText(BuildConfig.printableVersionString());
+    ui->versionLabel->setText(BuildConfig.printableVersionString());
 
-	if (!BuildConfig.BUILD_PLATFORM.isEmpty())
-		ui->platformLabel->setText(tr("Platform") + ": " +
-								   BuildConfig.BUILD_PLATFORM);
-	else
-		ui->platformLabel->setVisible(false);
+    if (!BuildConfig.BUILD_PLATFORM.isEmpty())
+        ui->platformLabel->setText(tr("Platform") + ": " + BuildConfig.BUILD_PLATFORM);
+    else
+        ui->platformLabel->setVisible(false);
 
-	if (!BuildConfig.GIT_COMMIT.isEmpty() &&
-		BuildConfig.GIT_COMMIT != "GITDIR-NOTFOUND") {
-		ui->commitLabel->setText(tr("Commit: %1").arg(BuildConfig.GIT_COMMIT));
-	} else
-		ui->commitLabel->setVisible(false);
+    if (!BuildConfig.GIT_COMMIT.isEmpty() && BuildConfig.GIT_COMMIT != "GITDIR-NOTFOUND") {
+        ui->commitLabel->setText(tr("Commit: %1").arg(BuildConfig.GIT_COMMIT));
+    } else
+        ui->commitLabel->setVisible(false);
 
-	if (!BuildConfig.BUILD_DATE.isEmpty())
-		ui->buildDateLabel->setText(
-			tr("Build date: %1").arg(BuildConfig.BUILD_DATE));
-	else
-		ui->buildDateLabel->setVisible(false);
+    if (!BuildConfig.BUILD_DATE.isEmpty())
+        ui->buildDateLabel->setText(tr("Build date: %1").arg(BuildConfig.BUILD_DATE));
+    else
+        ui->buildDateLabel->setVisible(false);
 
-	if (!BuildConfig.VERSION_CHANNEL.isEmpty())
-		ui->versionchannelLabel->setText(tr("Version Channel") + ": " +
-								  BuildConfig.VERSION_CHANNEL);
-	else
-		ui->versionchannelLabel->setVisible(false);
+    if (!BuildConfig.VERSION_CHANNEL.isEmpty())
+        ui->versionchannelLabel->setText(tr("Version Channel") + ": " + BuildConfig.VERSION_CHANNEL);
+    else
+        ui->versionchannelLabel->setVisible(false);
 
-	if (!BuildConfig.UPDATE_CHANNEL.isEmpty())
-		ui->updatechannelLabel->setText(tr("Update Channel") + ": " +
-								  BuildConfig.UPDATE_CHANNEL);
-	else
-		ui->updatechannelLabel->setVisible(false);
+    if (!BuildConfig.UPDATE_CHANNEL.isEmpty())
+        ui->updatechannelLabel->setText(tr("Update Channel") + ": " + BuildConfig.UPDATE_CHANNEL);
+    else
+        ui->updatechannelLabel->setVisible(false);
 
-	
-    ui->redistributionText->setHtml(tr(
-"<p>We keep <b>MeshMC</b> open source because we believe it's important to be able to see the source code of a project like this, and we do this using the Apache license.</p>\n"
-"<p>One reason we use the Apache license is that we don't want people using the name <b>MeshMC</b> when they fork the project. "
-"This means people should examine the source code and remove all references to <b>MeshMC</b>, including the project icon and window titles (the title should not contain the phrase <b>MeshMC-fork</b>). "
-"The Apache license covers reasonable use of the name; mentioning the project's origins in the About dialog and license is acceptable. However, it must be explicitly stated that the project is a fork, "
-"which does not mean you have our approval.</p>\n<p>However, we give you the freedom to distribute this project as you wish, in any non-exclusive way, without changing its functionality, on a voluntary "
-"basis to package managers, without expecting any financial gain. Take the project and distribute it wherever people can reach it. But abide by our restrictions."
-    ));
+    ui->redistributionText->setHtml(
+        tr("<p>We keep <b>MeshMC</b> open source because we believe it's important to be able to see the source code of a project like this, and we do this "
+           "using the Apache license.</p>\n"
+           "<p>One reason we use the Apache license is that we don't want people using the name <b>MeshMC</b> when they fork the project. "
+           "This means people should examine the source code and remove all references to <b>MeshMC</b>, including the project icon and window titles (the "
+           "title should not contain the phrase <b>MeshMC-fork</b>). "
+           "The Apache license covers reasonable use of the name; mentioning the project's origins in the About dialog and license is acceptable. However, it "
+           "must be explicitly stated that the project is a fork, "
+           "which does not mean you have our approval.</p>\n<p>However, we give you the freedom to distribute this project as you wish, in any non-exclusive "
+           "way, without changing its functionality, on a voluntary "
+           "basis to package managers, without expecting any financial gain. Take the project and distribute it wherever people can reach it. But abide by our "
+           "restrictions."));
 
-	QString urlText(
-		"<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");
-	ui->urlLabel->setText(urlText.arg("https://github.com/Project-Tick/MeshMC"));
+    QString urlText("<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");
+    ui->urlLabel->setText(urlText.arg("https://github.com/Project-Tick/MeshMC"));
 
-	ui->copyLabel->setText(QString("© 2026 Project Tick"));
+    ui->copyLabel->setText(QString("© 2026 Project Tick"));
 
-	connect(ui->closeButton, &QPushButton::clicked, this, &AboutDialog::close);
+    connect(ui->closeButton, &QPushButton::clicked, this, &AboutDialog::close);
 
-	connect(ui->aboutQt, &QPushButton::clicked, &QApplication::aboutQt);
+    connect(ui->aboutQt, &QPushButton::clicked, &QApplication::aboutQt);
 }
 
 AboutDialog::~AboutDialog()
 {
-	delete ui;
+    delete ui;
 }

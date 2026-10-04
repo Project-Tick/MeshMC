@@ -25,98 +25,91 @@
 #include <QFileInfo>
 #include <QTextStream>
 
-QString UpdateLockFile::markerPath(const QString& dataDir,
-								   const QString& fileName)
+QString UpdateLockFile::markerPath(const QString &dataDir, const QString &fileName)
 {
-	return QDir(dataDir).absoluteFilePath(fileName);
+    return QDir(dataDir).absoluteFilePath(fileName);
 }
 
-QString UpdateLockFile::lockPath(const QString& dataDir)
+QString UpdateLockFile::lockPath(const QString &dataDir)
 {
-	return markerPath(dataDir, QLatin1String(kLockFileName));
+    return markerPath(dataDir, QLatin1String(kLockFileName));
 }
 
-QString UpdateLockFile::updateLogPath(const QString& dataDir)
+QString UpdateLockFile::updateLogPath(const QString &dataDir)
 {
-	return QDir(dataDir).absoluteFilePath(
-		QStringLiteral("logs/%1").arg(QLatin1String(kUpdateLogName)));
+    return QDir(dataDir).absoluteFilePath(QStringLiteral("logs/%1").arg(QLatin1String(kUpdateLogName)));
 }
 
-bool UpdateLockFile::read(const QString& path, Contents* contents)
+bool UpdateLockFile::read(const QString &path, Contents *contents)
 {
-	Q_ASSERT(contents);
-	*contents = Contents();
+    Q_ASSERT(contents);
+    *contents = Contents();
 
-	QFile file(path);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		qWarning() << "Could not read the update lock file" << path << ":"
-				   << file.errorString();
-		return false;
-	}
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Could not read the update lock file" << path << ":" << file.errorString();
+        return false;
+    }
 
-	QTextStream stream(&file);
-	while (!stream.atEnd()) {
-		const QString line = stream.readLine();
-		const int separator = line.indexOf(QLatin1Char('='));
-		if (separator <= 0)
-			continue;
+    QTextStream stream(&file);
+    while (!stream.atEnd()) {
+        const QString line = stream.readLine();
+        const int separator = line.indexOf(QLatin1Char('='));
+        if (separator <= 0)
+            continue;
 
-		const QString key = line.left(separator).trimmed().toUpper();
-		const QString value = line.mid(separator + 1).trimmed();
+        const QString key = line.left(separator).trimmed().toUpper();
+        const QString value = line.mid(separator + 1).trimmed();
 
-		if (key == QLatin1String("TIMESTAMP")) {
-			contents->timestamp = QDateTime::fromString(value, Qt::ISODate);
-		} else if (key == QLatin1String("FROM")) {
-			contents->from = value;
-		} else if (key == QLatin1String("TO")) {
-			contents->to = value;
-		} else if (key == QLatin1String("TARGET")) {
-			contents->target = value;
-		} else if (key == QLatin1String("DATA_PATH")) {
-			contents->dataPath = value;
-		} else if (key == QLatin1String("STAGE")) {
-			contents->stage = value.toInt();
-		} else if (key == QLatin1String("PID")) {
-			contents->pid = value.toLongLong();
-		}
-		// Unknown keys are ignored rather than rejected, so a newer updater
-		// can add a field without an older launcher refusing to start.
-	}
+        if (key == QLatin1String("TIMESTAMP")) {
+            contents->timestamp = QDateTime::fromString(value, Qt::ISODate);
+        } else if (key == QLatin1String("FROM")) {
+            contents->from = value;
+        } else if (key == QLatin1String("TO")) {
+            contents->to = value;
+        } else if (key == QLatin1String("TARGET")) {
+            contents->target = value;
+        } else if (key == QLatin1String("DATA_PATH")) {
+            contents->dataPath = value;
+        } else if (key == QLatin1String("STAGE")) {
+            contents->stage = value.toInt();
+        } else if (key == QLatin1String("PID")) {
+            contents->pid = value.toLongLong();
+        }
+        // Unknown keys are ignored rather than rejected, so a newer updater
+        // can add a field without an older launcher refusing to start.
+    }
 
-	return true;
+    return true;
 }
 
-bool UpdateLockFile::write(const QString& path, const Contents& contents)
+bool UpdateLockFile::write(const QString &path, const Contents &contents)
 {
-	if (!QDir().mkpath(QFileInfo(path).absolutePath())) {
-		qWarning() << "Could not create the directory for the update lock file"
-				   << path;
-		return false;
-	}
+    if (!QDir().mkpath(QFileInfo(path).absolutePath())) {
+        qWarning() << "Could not create the directory for the update lock file" << path;
+        return false;
+    }
 
-	QFile file(path);
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate |
-				   QIODevice::Text)) {
-		qWarning() << "Could not write the update lock file" << path << ":"
-				   << file.errorString();
-		return false;
-	}
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        qWarning() << "Could not write the update lock file" << path << ":" << file.errorString();
+        return false;
+    }
 
-	QTextStream stream(&file);
-	stream << "TIMESTAMP=" << contents.timestamp.toString(Qt::ISODate) << '\n'
-		   << "FROM=" << contents.from << '\n'
-		   << "TO=" << contents.to << '\n'
-		   << "TARGET=" << contents.target << '\n'
-		   << "DATA_PATH=" << contents.dataPath << '\n'
-		   << "STAGE=" << contents.stage << '\n'
-		   << "PID=" << contents.pid << '\n';
-	stream.flush();
+    QTextStream stream(&file);
+    stream << "TIMESTAMP=" << contents.timestamp.toString(Qt::ISODate) << '\n'
+           << "FROM=" << contents.from << '\n'
+           << "TO=" << contents.to << '\n'
+           << "TARGET=" << contents.target << '\n'
+           << "DATA_PATH=" << contents.dataPath << '\n'
+           << "STAGE=" << contents.stage << '\n'
+           << "PID=" << contents.pid << '\n';
+    stream.flush();
 
-	if (file.error() != QFileDevice::NoError) {
-		qWarning() << "Could not write the update lock file" << path << ":"
-				   << file.errorString();
-		return false;
-	}
+    if (file.error() != QFileDevice::NoError) {
+        qWarning() << "Could not write the update lock file" << path << ":" << file.errorString();
+        return false;
+    }
 
-	return true;
+    return true;
 }

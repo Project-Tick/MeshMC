@@ -20,48 +20,49 @@
 
 #pragma once
 
-#include <launch/LaunchStep.h>
-#include <QObjectPtr.h>
 #include <LoggedProcess.h>
+#include <QObjectPtr.h>
 #include <java/JavaChecker.h>
+#include <launch/LaunchStep.h>
 #include <net/Mode.h>
 
 // FIXME: stupid. should be defined by the instance type? or even completely
 // abstracted away...
 class Update : public LaunchStep
 {
-	Q_OBJECT
-  public:
-	explicit Update(LaunchTask* parent, Net::Mode mode)
-		: LaunchStep(parent), m_mode(mode) {};
-	virtual ~Update() {};
+    Q_OBJECT
+public:
+    explicit Update(LaunchTask *parent, Net::Mode mode)
+        : LaunchStep(parent)
+        , m_mode(mode) {};
+    virtual ~Update() {};
 
-	void executeTask() override;
-	bool canAbort() const override;
-	void proceed() override;
+    void executeTask() override;
+    bool canAbort() const override;
+    void proceed() override;
 
-	// We are a stand-in for the update task, so answer for it. Without this
-	// a progress dialog opened partway through has no steps to catch up on.
-	bool isMultiStep() const override
-	{
-		return m_updateTask && m_updateTask->isMultiStep();
-	}
-	TaskStepProgressList getStepProgress() const override
-	{
-		if (!m_updateTask) {
-			return {};
-		}
-		return m_updateTask->getStepProgress();
-	}
+    // We are a stand-in for the update task, so answer for it. Without this
+    // a progress dialog opened partway through has no steps to catch up on.
+    bool isMultiStep() const override
+    {
+        return m_updateTask && m_updateTask->isMultiStep();
+    }
+    TaskStepProgressList getStepProgress() const override
+    {
+        if (!m_updateTask) {
+            return {};
+        }
+        return m_updateTask->getStepProgress();
+    }
 
-  public slots:
-	bool abort() override;
+public slots:
+    bool abort() override;
 
-  private slots:
-	void updateFinished();
+private slots:
+    void updateFinished();
 
-  private:
-	Task::Ptr m_updateTask;
-	bool m_aborted = false;
-	Net::Mode m_mode = Net::Mode::Offline;
+private:
+    Task::Ptr m_updateTask;
+    bool m_aborted = false;
+    Net::Mode m_mode = Net::Mode::Offline;
 };

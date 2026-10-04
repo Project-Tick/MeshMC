@@ -32,40 +32,40 @@
 
 class JavaVersion
 {
-	friend class JavaVersionTest;
+    friend class JavaVersionTest;
 
-  public:
-	JavaVersion() {};
-	JavaVersion(const QString& rhs);
+public:
+    JavaVersion() {};
+    JavaVersion(const QString &rhs);
 
-	JavaVersion& operator=(const QString& rhs);
+    JavaVersion &operator=(const QString &rhs);
 
-	bool operator<(const JavaVersion& rhs) const;
-	bool operator==(const JavaVersion& rhs) const;
-	bool operator>(const JavaVersion& rhs) const;
+    bool operator<(const JavaVersion &rhs) const;
+    bool operator==(const JavaVersion &rhs) const;
+    bool operator>(const JavaVersion &rhs) const;
 
-	bool requiresPermGen() const;
+    bool requiresPermGen() const;
 
-	QString toString() const;
+    QString toString() const;
 
-	int major() const
-	{
-		return m_major;
-	}
-	int minor() const
-	{
-		return m_minor;
-	}
-	int security() const
-	{
-		return m_security;
-	}
+    int major() const
+    {
+        return m_major;
+    }
+    int minor() const
+    {
+        return m_minor;
+    }
+    int security() const
+    {
+        return m_security;
+    }
 
-  private:
-	QString m_string;
-	int m_major = 0;
-	int m_minor = 0;
-	int m_security = 0;
-	bool m_parseable = false;
-	QString m_prerelease;
+private:
+    QString m_string;
+    int m_major = 0;
+    int m_minor = 0;
+    int m_security = 0;
+    bool m_parseable = false;
+    QString m_prerelease;
 };

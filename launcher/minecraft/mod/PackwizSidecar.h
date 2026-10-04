@@ -63,38 +63,38 @@
  * kept together and `Entry::sha1` is only populated when the format
  * actually says sha1.
  */
-namespace Packwiz {
-	/* True when `fileName` is one of our per-file TOML sidecars. */
-	bool isSidecarFileName(const QString& fileName);
+namespace Packwiz
+{
+/* True when `fileName` is one of our per-file TOML sidecars. */
+bool isSidecarFileName(const QString &fileName);
 
-	/* `sodium.pw.toml` -> `sodium`. Empty for anything else. */
-	QString slugFromFileName(const QString& fileName);
+/* `sodium.pw.toml` -> `sodium`. Empty for anything else. */
+QString slugFromFileName(const QString &fileName);
 
-	/* Sidecar file name to use for `entry`.
-	 *
-	 * The slug is preferred, because that is the name every other tool
-	 * looks a project up by. Locally added files and dependencies whose
-	 * slug we never learned fall back to the archive's own base name,
-	 * which is unique within the folder. */
-	QString sidecarFileName(const ModMetadataIndex::Entry& entry);
+/* Sidecar file name to use for `entry`.
+ *
+ * The slug is preferred, because that is the name every other tool
+ * looks a project up by. Locally added files and dependencies whose
+ * slug we never learned fall back to the archive's own base name,
+ * which is unique within the folder. */
+QString sidecarFileName(const ModMetadataIndex::Entry &entry);
 
-	/* Name to fall back to when the preferred one is already taken by a
-	 * different file - two versions of the same mod share a slug, so they
-	 * would otherwise want the same sidecar and the second would erase
-	 * the first. Derived from the archive name, which is unique within a
-	 * folder. */
-	QString fallbackSidecarFileName(const ModMetadataIndex::Entry& entry);
+/* Name to fall back to when the preferred one is already taken by a
+ * different file - two versions of the same mod share a slug, so they
+ * would otherwise want the same sidecar and the second would erase
+ * the first. Derived from the archive name, which is unique within a
+ * folder. */
+QString fallbackSidecarFileName(const ModMetadataIndex::Entry &entry);
 
-	/* Serialize `entry` as TOML. Returns an empty array if `entry` is not
-	 * worth writing (no file name). */
-	QByteArray serialize(const ModMetadataIndex::Entry& entry);
+/* Serialize `entry` as TOML. Returns an empty array if `entry` is not
+ * worth writing (no file name). */
+QByteArray serialize(const ModMetadataIndex::Entry &entry);
 
-	/* Parse a sidecar. `slugHint` is the slug taken from the file name,
-	 * used when the file itself does not carry one - that is how packwiz
-	 * and its readers get the slug for files they wrote themselves.
-	 *
-	 * Returns an invalid entry (empty `fileName`) when the TOML is broken
-	 * or does not describe a file. */
-	ModMetadataIndex::Entry parse(const QByteArray& bytes,
-								  const QString& slugHint);
+/* Parse a sidecar. `slugHint` is the slug taken from the file name,
+ * used when the file itself does not carry one - that is how packwiz
+ * and its readers get the slug for files they wrote themselves.
+ *
+ * Returns an invalid entry (empty `fileName`) when the TOML is broken
+ * or does not describe a file. */
+ModMetadataIndex::Entry parse(const QByteArray &bytes, const QString &slugHint);
 }

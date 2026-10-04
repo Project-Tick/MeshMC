@@ -23,56 +23,59 @@
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include <QRegularExpression>
 
-enum class Severity { Low, Medium, High };
+enum class Severity {
+    Low,
+    Medium,
+    High
+};
 
 struct Rule {
-	QString id;
-	QString title;
-	Severity severity = Severity::Medium;
-	QStringList patternStrings;
-	QList<QRegularExpression> patterns;
-	QString advice;
-	QStringList tags;
-	QString packName;	// source rule pack
-	QJsonArray actions; // free-form action descriptors from the JSON
+    QString id;
+    QString title;
+    Severity severity = Severity::Medium;
+    QStringList patternStrings;
+    QList<QRegularExpression> patterns;
+    QString advice;
+    QStringList tags;
+    QString packName; // source rule pack
+    QJsonArray actions; // free-form action descriptors from the JSON
 };
 
 struct Match {
-	QString ruleId;
-	QString ruleTitle;
-	Severity severity = Severity::Medium;
-	QString advice;
-	QString matchedLine;
-	int line = -1;
-	double score = 0.0; // populated from LearningStore
+    QString ruleId;
+    QString ruleTitle;
+    Severity severity = Severity::Medium;
+    QString advice;
+    QString matchedLine;
+    int line = -1;
+    double score = 0.0; // populated from LearningStore
 };
 
 class RuleEngine
 {
-  public:
-	bool loadDirectory(const QString& dir, QString* errorMsg = nullptr);
+public:
+    bool loadDirectory(const QString &dir, QString *errorMsg = nullptr);
 
-	/* Load a rule pack from raw JSON bytes. Used to support
-	 * user-supplied packs that don't live on disk. */
-	bool loadFromBytes(const QByteArray& bytes, const QString& packName,
-					   QString* errorMsg = nullptr);
+    /* Load a rule pack from raw JSON bytes. Used to support
+     * user-supplied packs that don't live on disk. */
+    bool loadFromBytes(const QByteArray &bytes, const QString &packName, QString *errorMsg = nullptr);
 
-	const QList<Rule>& rules() const
-	{
-		return m_rules;
-	}
-	int ruleCount() const
-	{
-		return m_rules.size();
-	}
+    const QList<Rule> &rules() const
+    {
+        return m_rules;
+    }
+    int ruleCount() const
+    {
+        return m_rules.size();
+    }
 
-	/* Run every rule against `text` and return the matches in
-	 * descending severity, then descending learning score. */
-	QList<Match> analyse(const QString& text) const;
+    /* Run every rule against `text` and return the matches in
+     * descending severity, then descending learning score. */
+    QList<Match> analyse(const QString &text) const;
 
-	/* Locate the rule with id `id` and return its index, or -1. */
-	int findRuleIndex(const QString& id) const;
+    /* Locate the rule with id `id` and return its index, or -1. */
+    int findRuleIndex(const QString &id) const;
 
-  private:
-	QList<Rule> m_rules;
+private:
+    QList<Rule> m_rules;
 };

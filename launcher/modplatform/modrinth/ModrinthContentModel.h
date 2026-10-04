@@ -25,29 +25,21 @@
  * lives in the base class. */
 class ModrinthContentModel final : public ContentProviderModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit ModrinthContentModel(ModPlatform::ContentType contentType,
-								  ModPlatform::SearchFilters filters,
-								  QObject* parent = nullptr);
+public:
+    explicit ModrinthContentModel(ModPlatform::ContentType contentType, ModPlatform::SearchFilters filters, QObject *parent = nullptr);
 
-  protected:
-	QList<ModPlatform::IndexedProject>
-	parseSearchResponse(const QByteArray& bytes, int& totalHits) const override;
+protected:
+    QList<ModPlatform::IndexedProject> parseSearchResponse(const QByteArray &bytes, int &totalHits) const override;
 
-	ModPlatform::IndexedProject
-	parseProjectResponse(const QByteArray& bytes) const override;
+    ModPlatform::IndexedProject parseProjectResponse(const QByteArray &bytes) const override;
 
-	QList<ModPlatform::ContentVersion>
-	parseVersionsResponse(const QByteArray& bytes,
-						  const ModPlatform::IndexedProject& project)
-		const override;
+    QList<ModPlatform::ContentVersion> parseVersionsResponse(const QByteArray &bytes, const ModPlatform::IndexedProject &project) const override;
 
-	QString parseBodyResponse(const QByteArray& bytes) const override;
+    QString parseBodyResponse(const QByteArray &bytes) const override;
 
-	QList<ModPlatform::Category>
-	parseCategoriesResponse(const QByteArray& bytes) const override;
+    QList<ModPlatform::Category> parseCategoriesResponse(const QByteArray &bytes) const override;
 
-	QString iconCacheName() const override;
+    QString iconCacheName() const override;
 };

@@ -72,64 +72,62 @@
  */
 #define MMCO_TRAILER_MAGIC 0x53434D4D
 #define MMCO_FLAG_NONE 0x00000000
-#define MMCO_VERNUM                                                            \
-	0x0A000000L /* MMNNRRSM: major minor revision status modified */
+#define MMCO_VERNUM 0x0A000000L /* MMNNRRSM: major minor revision status modified */
 #define MMCO_VER_MAJOR 10
 #define MMCO_VER_MINOR 0
 #define MMCO_VER_REVISION 0
 #define MMCO_VER_STATUS 0 /* 0=devel, 1-E=beta, F=Release (DEPRECATED) */
-#define MMCO_VER_STATUSH                                                       \
-	0x0 /* Hex values: 0=devel, 1-9=beta, A-E=Release Candidate, F=Release */
+#define MMCO_VER_STATUSH 0x0 /* Hex values: 0=devel, 1-9=beta, A-E=Release Candidate, F=Release */
 #define MMCO_VER_MODIFIED 0 /* non-zero if modified externally from mmco */
 
 /* Optional dependency on another .mmco module, declared in
  * MMCOModuleInfo::dependencies. */
 struct MMCODependency {
-	const char* name;
-	/* Minimum acceptable version string (semver-ish). May be nullptr or
-	 * empty to mean "any version". */
-	const char* min_version;
-	/* If non-zero, the dependency is optional: the dependent module will
-	 * still load even if this dependency is missing. */
-	uint32_t optional;
+    const char *name;
+    /* Minimum acceptable version string (semver-ish). May be nullptr or
+     * empty to mean "any version". */
+    const char *min_version;
+    /* If non-zero, the dependency is optional: the dependent module will
+     * still load even if this dependency is missing. */
+    uint32_t optional;
 };
 
 struct MMCOModuleInfo {
-	uint32_t magic;			 /* Must be MMCO_MAGIC */
-	uint32_t abi_version;	 /* Must match MMCO_ABI_VERSION */
-	const char* name;		 /* Human-readable module name */
-	const char* version;	 /* Module version string */
-	const char* author;		 /* Author / maintainer */
-	const char* description; /* Short description */
-	const char* license;	 /* SPDX license identifier */
-	uint32_t flags;			 /* Reserved for future use, set to 0 */
-	const char* code_link;	 /* Optional: URL to source code repository */
+    uint32_t magic; /* Must be MMCO_MAGIC */
+    uint32_t abi_version; /* Must match MMCO_ABI_VERSION */
+    const char *name; /* Human-readable module name */
+    const char *version; /* Module version string */
+    const char *author; /* Author / maintainer */
+    const char *description; /* Short description */
+    const char *license; /* SPDX license identifier */
+    uint32_t flags; /* Reserved for future use, set to 0 */
+    const char *code_link; /* Optional: URL to source code repository */
 
-	/* Qt resource prefix where the plugin's icon set is mounted, or
-	 * nullptr if the plugin ships no icons.
-	 *
-	 * Plugins bundle icons by compiling a .qrc into the .mmco shared
-	 * library. The launcher exposes them via MMCOContext::ui_plugin_icon().
-	 * The string is treated as a logical name (e.g. "myplugin") and the
-	 * launcher resolves it to ":/plugins/<name>/<icon>.png" at runtime. */
-	const char* icon_set_resource;
+    /* Qt resource prefix where the plugin's icon set is mounted, or
+     * nullptr if the plugin ships no icons.
+     *
+     * Plugins bundle icons by compiling a .qrc into the .mmco shared
+     * library. The launcher exposes them via MMCOContext::ui_plugin_icon().
+     * The string is treated as a logical name (e.g. "myplugin") and the
+     * launcher resolves it to ":/plugins/<name>/<icon>.png" at runtime. */
+    const char *icon_set_resource;
 
-	/* Dependency table.
-	 *
-	 * `dependencies` may be nullptr if `dependency_count` is 0; otherwise
-	 * it points to `dependency_count` MMCODependency entries with static
-	 * storage duration (i.e. the module owns them for its full lifetime). */
-	const MMCODependency* dependencies;
-	uint32_t dependency_count;
+    /* Dependency table.
+     *
+     * `dependencies` may be nullptr if `dependency_count` is 0; otherwise
+     * it points to `dependency_count` MMCODependency entries with static
+     * storage duration (i.e. the module owns them for its full lifetime). */
+    const MMCODependency *dependencies;
+    uint32_t dependency_count;
 
-	/* Identifier of the OpenPGP key the module was signed with, or
-	 * nullptr / empty for unsigned modules.
-	 *
-	 * Informational only — the actual signature bytes live in the
-	 * file-trailer described at the top of this header. The launcher
-	 * uses this hint to look up the corresponding public key in the
-	 * trusted keyring before verifying the trailer. */
-	const char* signing_key_id;
+    /* Identifier of the OpenPGP key the module was signed with, or
+     * nullptr / empty for unsigned modules.
+     *
+     * Informational only — the actual signature bytes live in the
+     * file-trailer described at the top of this header. The launcher
+     * uses this hint to look up the corresponding public key in the
+     * trusted keyring before verifying the trailer. */
+    const char *signing_key_id;
 };
 
 /* Module flags (reserved, extend as needed) */

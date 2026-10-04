@@ -43,56 +43,58 @@
  * tri-state, so it works as tick-all. */
 class DownloadSummaryDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit DownloadSummaryDialog(
-		const QList<ModPlatform::SelectedMod>& selectedMods,
-		const QList<ModPlatform::DependencyInfo>& dependencies,
-		const QList<ModPlatform::UnresolvedDep>& unresolvedDeps,
-		ModPlatform::ContentType contentType, QWidget* parent = nullptr);
+public:
+    explicit DownloadSummaryDialog(const QList<ModPlatform::SelectedMod> &selectedMods,
+                                   const QList<ModPlatform::DependencyInfo> &dependencies,
+                                   const QList<ModPlatform::UnresolvedDep> &unresolvedDeps,
+                                   ModPlatform::ContentType contentType,
+                                   QWidget *parent = nullptr);
 
-	/* Only the rows that are still ticked. */
-	QList<ModPlatform::DownloadItem> downloadItems() const;
+    /* Only the rows that are still ticked. */
+    QList<ModPlatform::DownloadItem> downloadItems() const;
 
-  private slots:
-	/* Ticks or unticks every dependency row at once - useful when the
-	 * resolver brought in a dozen libraries and none of them are
-	 * wanted. */
-	void onToggleDependencies();
+private slots:
+    /* Ticks or unticks every dependency row at once - useful when the
+     * resolver brought in a dozen libraries and none of them are
+     * wanted. */
+    void onToggleDependencies();
 
-  private:
-	void setupUi();
-	/* One row, plus its detail lines. `enabled` decides whether it
-	 * starts ticked. */
-	void appendRow(const ModPlatform::DownloadItem& item,
-				   const QString& provider, const QStringList& requiredBy,
-				   const QString& versionType, bool isDependency,
-				   bool enabled);
+private:
+    void setupUi();
+    /* One row, plus its detail lines. `enabled` decides whether it
+     * starts ticked. */
+    void appendRow(const ModPlatform::DownloadItem &item,
+                   const QString &provider,
+                   const QStringList &requiredBy,
+                   const QString &versionType,
+                   bool isDependency,
+                   bool enabled);
 
-  private:
-	QList<ModPlatform::SelectedMod> m_selectedMods;
-	QList<ModPlatform::DependencyInfo> m_dependencies;
-	QList<ModPlatform::UnresolvedDep> m_unresolvedDeps;
-	ModPlatform::ContentType m_contentType;
+private:
+    QList<ModPlatform::SelectedMod> m_selectedMods;
+    QList<ModPlatform::DependencyInfo> m_dependencies;
+    QList<ModPlatform::UnresolvedDep> m_unresolvedDeps;
+    ModPlatform::ContentType m_contentType;
 
-	/* A row and the download it stands for, so the answer can be built
-	 * from the tick boxes without matching rows back up by name. */
-	struct Row {
-		QTreeWidgetItem* item = nullptr;
-		ModPlatform::DownloadItem download;
-	};
-	QList<Row> m_rows;
+    /* A row and the download it stands for, so the answer can be built
+     * from the tick boxes without matching rows back up by name. */
+    struct Row {
+        QTreeWidgetItem *item = nullptr;
+        ModPlatform::DownloadItem download;
+    };
+    QList<Row> m_rows;
 
-	QTreeWidget* m_treeWidget = nullptr;
-	QTreeWidgetItem* m_rootItem = nullptr;
-	QLabel* m_explainLabel = nullptr;
-	QLabel* m_onlyCheckedLabel = nullptr;
-	QPushButton* m_toggleDepsButton = nullptr;
-	QPushButton* m_continueButton = nullptr;
-	QPushButton* m_cancelButton = nullptr;
+    QTreeWidget *m_treeWidget = nullptr;
+    QTreeWidgetItem *m_rootItem = nullptr;
+    QLabel *m_explainLabel = nullptr;
+    QLabel *m_onlyCheckedLabel = nullptr;
+    QPushButton *m_toggleDepsButton = nullptr;
+    QPushButton *m_continueButton = nullptr;
+    QPushButton *m_cancelButton = nullptr;
 
-	/* Rows the resolver added, for the toggle button. */
-	QList<QTreeWidgetItem*> m_dependencyItems;
-	bool m_dependenciesChecked = true;
+    /* Rows the resolver added, for the toggle button. */
+    QList<QTreeWidgetItem *> m_dependencyItems;
+    bool m_dependenciesChecked = true;
 };

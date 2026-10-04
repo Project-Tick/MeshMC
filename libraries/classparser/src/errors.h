@@ -18,10 +18,12 @@
  */
 
 #pragma once
+#include "annotations.h"
+#include "constants.h"
 #include <exception>
 namespace java
 {
-	class classfile_exception : public std::exception
-	{
-	};
+class classfile_exception : public std::exception
+{
+};
 } // namespace java

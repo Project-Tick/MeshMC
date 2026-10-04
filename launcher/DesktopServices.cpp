@@ -18,11 +18,11 @@
  */
 
 #include "DesktopServices.h"
-#include <QDir>
+#include <QDebug>
 #include <QDesktopServices>
+#include <QDir>
 #include <QFile>
 #include <QProcess>
-#include <QDebug>
 
 /**
  * This shouldn't exist, but until QTBUG-9328 and other unreported bugs are
@@ -30,129 +30,121 @@
  */
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
 
-#include <unistd.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
-template <typename T>
-bool IndirectOpen(T callable, qint64* pid_forked = nullptr)
+template<typename T>
+bool IndirectOpen(T callable, qint64 *pid_forked = nullptr)
 {
-	auto pid = fork();
-	if (pid_forked) {
-		if (pid > 0)
-			*pid_forked = pid;
-		else
-			*pid_forked = 0;
-	}
-	if (pid == -1) {
-		qWarning() << "IndirectOpen failed to fork: " << errno;
-		return false;
-	}
-	// child - do the stuff
-	if (pid == 0) {
-		// unset all this garbage so it doesn't get passed to the child process
-		qunsetenv("LD_PRELOAD");
-		qunsetenv("LD_LIBRARY_PATH");
-		qunsetenv("LD_DEBUG");
-		qunsetenv("QT_PLUGIN_PATH");
-		qunsetenv("QT_FONTPATH");
+    auto pid = fork();
+    if (pid_forked) {
+        if (pid > 0)
+            *pid_forked = pid;
+        else
+            *pid_forked = 0;
+    }
+    if (pid == -1) {
+        qWarning() << "IndirectOpen failed to fork: " << errno;
+        return false;
+    }
+    // child - do the stuff
+    if (pid == 0) {
+        // unset all this garbage so it doesn't get passed to the child process
+        qunsetenv("LD_PRELOAD");
+        qunsetenv("LD_LIBRARY_PATH");
+        qunsetenv("LD_DEBUG");
+        qunsetenv("QT_PLUGIN_PATH");
+        qunsetenv("QT_FONTPATH");
 
-		// open the URL
-		auto status = callable();
+        // open the URL
+        auto status = callable();
 
-		// detach from the parent process group.
-		setsid();
+        // detach from the parent process group.
+        setsid();
 
-		// die. now. do not clean up anything, it would just hang forever.
-		_exit(status ? 0 : 1);
-	} else {
-		// parent - assume it worked.
-		int status;
-		while (waitpid(pid, &status, 0)) {
-			if (WIFEXITED(status)) {
-				return WEXITSTATUS(status) == 0;
-			}
-			if (WIFSIGNALED(status)) {
-				return false;
-			}
-		}
-		return true;
-	}
+        // die. now. do not clean up anything, it would just hang forever.
+        _exit(status ? 0 : 1);
+    } else {
+        // parent - assume it worked.
+        int status;
+        while (waitpid(pid, &status, 0)) {
+            if (WIFEXITED(status)) {
+                return WEXITSTATUS(status) == 0;
+            }
+            if (WIFSIGNALED(status)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 #endif
 
 namespace DesktopServices
 {
-	bool openDirectory(const QString& path, bool ensureExists)
-	{
-		qDebug() << "Opening directory" << path;
-		QDir parentPath;
-		QDir dir(path);
-		if (!dir.exists()) {
-			parentPath.mkpath(dir.absolutePath());
-		}
+bool openDirectory(const QString &path, bool ensureExists)
+{
+    qDebug() << "Opening directory" << path;
+    QDir parentPath;
+    QDir dir(path);
+    if (!dir.exists()) {
+        parentPath.mkpath(dir.absolutePath());
+    }
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-		return QProcess::startDetached("xdg-open", QStringList()
-													   << dir.absolutePath());
+    return QProcess::startDetached("xdg-open", QStringList() << dir.absolutePath());
 #else
-		return QDesktopServices::openUrl(
-			QUrl::fromLocalFile(dir.absolutePath()));
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absolutePath()));
 #endif
-	}
+}
 
-	bool openFile(const QString& path)
-	{
-		qDebug() << "Opening file" << path;
+bool openFile(const QString &path)
+{
+    qDebug() << "Opening file" << path;
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-		return QProcess::startDetached("xdg-open", QStringList() << path);
+    return QProcess::startDetached("xdg-open", QStringList() << path);
 #else
-		return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
 #endif
-	}
+}
 
-	bool openFile(const QString& application, const QString& path,
-				  const QString& workingDirectory, qint64* pid)
-	{
-		qDebug() << "Opening file" << path << "using" << application;
-		return QProcess::startDetached(application, QStringList() << path,
-									   workingDirectory, pid);
-	}
+bool openFile(const QString &application, const QString &path, const QString &workingDirectory, qint64 *pid)
+{
+    qDebug() << "Opening file" << path << "using" << application;
+    return QProcess::startDetached(application, QStringList() << path, workingDirectory, pid);
+}
 
-	bool run(const QString& application, const QStringList& args,
-			 const QString& workingDirectory, qint64* pid)
-	{
-		qDebug() << "Running" << application << "with args" << args.join(' ');
-		return QProcess::startDetached(application, args, workingDirectory,
-									   pid);
-	}
+bool run(const QString &application, const QStringList &args, const QString &workingDirectory, qint64 *pid)
+{
+    qDebug() << "Running" << application << "with args" << args.join(' ');
+    return QProcess::startDetached(application, args, workingDirectory, pid);
+}
 
-	bool openUrl(const QUrl& url)
-	{
-		qDebug() << "Opening URL" << url.toString();
+bool openUrl(const QUrl &url)
+{
+    qDebug() << "Opening URL" << url.toString();
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-		QStringList args;
-		args << url.toString();
-		return QProcess::startDetached("xdg-open", args);
+    QStringList args;
+    args << url.toString();
+    return QProcess::startDetached("xdg-open", args);
 #else
-		return QDesktopServices::openUrl(url);
+    return QDesktopServices::openUrl(url);
 #endif
-	}
+}
 
-	bool isFlatpak()
-	{
+bool isFlatpak()
+{
 #ifdef Q_OS_LINUX
-		/* Both are set by the runtime for every Flatpak app: the marker
-		 * file is what flatpak-spawn and friends look for, and the
-		 * variable is what the app itself is told. Either one alone is
-		 * enough to be sure. */
-		static const bool sandboxed =
-			QFile::exists(QStringLiteral("/.flatpak-info")) ||
-			qEnvironmentVariableIsSet("FLATPAK_ID");
-		return sandboxed;
+    /* Both are set by the runtime for every Flatpak app: the marker
+     * file is what flatpak-spawn and friends look for, and the
+     * variable is what the app itself is told. Either one alone is
+     * enough to be sure. */
+    static const bool sandboxed = QFile::exists(QStringLiteral("/.flatpak-info")) || qEnvironmentVariableIsSet("FLATPAK_ID");
+    return sandboxed;
 #else
-		return false;
+    return false;
 #endif
-	}
+}
 
 } // namespace DesktopServices

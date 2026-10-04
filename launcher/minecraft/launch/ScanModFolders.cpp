@@ -19,51 +19,48 @@
  */
 
 #include "ScanModFolders.h"
-#include "launch/LaunchTask.h"
-#include "MMCZip.h"
-#include "minecraft/OpSys.h"
 #include "FileSystem.h"
+#include "MMCZip.h"
+#include "launch/LaunchTask.h"
 #include "minecraft/MinecraftInstance.h"
+#include "minecraft/OpSys.h"
 #include "minecraft/mod/ModFolderModel.h"
 
 void ScanModFolders::executeTask()
 {
-	auto m_inst =
-		std::dynamic_pointer_cast<MinecraftInstance>(m_parent->instance());
+    auto m_inst = std::dynamic_pointer_cast<MinecraftInstance>(m_parent->instance());
 
-	auto loaders = m_inst->loaderModList();
-	m_modsConnection = connect(loaders.get(), &ModFolderModel::updateFinished,
-							   this, &ScanModFolders::modsDone);
-	if (!loaders->update()) {
-		m_modsDone = true;
-	}
+    auto loaders = m_inst->loaderModList();
+    m_modsConnection = connect(loaders.get(), &ModFolderModel::updateFinished, this, &ScanModFolders::modsDone);
+    if (!loaders->update()) {
+        m_modsDone = true;
+    }
 
-	auto cores = m_inst->coreModList();
-	m_coreModsConnection = connect(cores.get(), &ModFolderModel::updateFinished,
-								   this, &ScanModFolders::coreModsDone);
-	if (!cores->update()) {
-		m_coreModsDone = true;
-	}
-	checkDone();
+    auto cores = m_inst->coreModList();
+    m_coreModsConnection = connect(cores.get(), &ModFolderModel::updateFinished, this, &ScanModFolders::coreModsDone);
+    if (!cores->update()) {
+        m_coreModsDone = true;
+    }
+    checkDone();
 }
 
 void ScanModFolders::modsDone()
 {
-	m_modsDone = true;
-	checkDone();
+    m_modsDone = true;
+    checkDone();
 }
 
 void ScanModFolders::coreModsDone()
 {
-	m_coreModsDone = true;
-	checkDone();
+    m_coreModsDone = true;
+    checkDone();
 }
 
 void ScanModFolders::checkDone()
 {
-	if (m_modsDone && m_coreModsDone) {
-		disconnect(m_modsConnection);
-		disconnect(m_coreModsConnection);
-		emitSucceeded();
-	}
+    if (m_modsDone && m_coreModsDone) {
+        disconnect(m_modsConnection);
+        disconnect(m_coreModsConnection);
+        emitSucceeded();
+    }
 }

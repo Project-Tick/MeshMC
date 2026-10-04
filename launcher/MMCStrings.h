@@ -24,14 +24,13 @@
 
 namespace Strings
 {
-	int naturalCompare(const QString& s1, const QString& s2,
-					   Qt::CaseSensitivity cs);
-	QString htmlListPatch(const QString& html);
-	const char* logColor(QtMsgType type);
-	const char* logColorReset();
-	/// Dimmed, for the parts of a log line that are scaffolding rather than
-	/// content: the timestamp and the source location.
-	const char* logColorFaint();
-	/// Emphasised, for the level letter and the category tag.
-	const char* logColorBold();
+int naturalCompare(const QString &s1, const QString &s2, Qt::CaseSensitivity cs);
+QString htmlListPatch(const QString &html);
+const char *logColor(QtMsgType type);
+const char *logColorReset();
+/// Dimmed, for the parts of a log line that are scaffolding rather than
+/// content: the timestamp and the source location.
+const char *logColorFaint();
+/// Emphasised, for the level letter and the category tag.
+const char *logColorBold();
 } // namespace Strings

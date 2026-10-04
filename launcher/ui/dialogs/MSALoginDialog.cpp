@@ -23,107 +23,101 @@
 
 #include "minecraft/auth/AccountTask.h"
 
-#include <QtWidgets/QPushButton>
 #include <QUrl>
+#include <QtWidgets/QPushButton>
 
-MSALoginDialog::MSALoginDialog(QWidget* parent)
-	: QDialog(parent), ui(new Ui::MSALoginDialog)
+MSALoginDialog::MSALoginDialog(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::MSALoginDialog)
 {
-	ui->setupUi(this);
-	ui->progressBar->setVisible(false);
+    ui->setupUi(this);
+    ui->progressBar->setVisible(false);
 
-	connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-	connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
 int MSALoginDialog::exec()
 {
-	setUserInputsEnabled(false);
-	ui->progressBar->setVisible(true);
-	ui->progressBar->setMaximum(0); // Indeterminate progress
-	ui->label->setText(tr("Opening your browser for Microsoft login..."));
+    setUserInputsEnabled(false);
+    ui->progressBar->setVisible(true);
+    ui->progressBar->setMaximum(0); // Indeterminate progress
+    ui->label->setText(tr("Opening your browser for Microsoft login..."));
 
-	// Setup the login task and start it
-	m_account = MinecraftAccount::createBlankMSA();
-	m_loginTask = m_account->loginMSA();
-	connect(m_loginTask.get(), &Task::failed, this,
-			&MSALoginDialog::onTaskFailed);
-	connect(m_loginTask.get(), &Task::succeeded, this,
-			&MSALoginDialog::onTaskSucceeded);
-	connect(m_loginTask.get(), &Task::status, this,
-			&MSALoginDialog::onTaskStatus);
-	connect(m_loginTask.get(), &Task::progress, this,
-			&MSALoginDialog::onTaskProgress);
-	connect(m_loginTask.get(), &AccountTask::authorizeWithBrowser, this,
-			&MSALoginDialog::onAuthorizeWithBrowser);
-	m_loginTask->start();
+    // Setup the login task and start it
+    m_account = MinecraftAccount::createBlankMSA();
+    m_loginTask = m_account->loginMSA();
+    connect(m_loginTask.get(), &Task::failed, this, &MSALoginDialog::onTaskFailed);
+    connect(m_loginTask.get(), &Task::succeeded, this, &MSALoginDialog::onTaskSucceeded);
+    connect(m_loginTask.get(), &Task::status, this, &MSALoginDialog::onTaskStatus);
+    connect(m_loginTask.get(), &Task::progress, this, &MSALoginDialog::onTaskProgress);
+    connect(m_loginTask.get(), &AccountTask::authorizeWithBrowser, this, &MSALoginDialog::onAuthorizeWithBrowser);
+    m_loginTask->start();
 
-	return QDialog::exec();
+    return QDialog::exec();
 }
 
 MSALoginDialog::~MSALoginDialog()
 {
-	delete ui;
+    delete ui;
 }
 
-void MSALoginDialog::onAuthorizeWithBrowser(const QUrl& url)
+void MSALoginDialog::onAuthorizeWithBrowser(const QUrl &url)
 {
-	QString urlString = url.toString();
-	QString linkString =
-		QString("<a href=\"%1\">%2</a>").arg(urlString, tr("here"));
-	ui->label->setText(
-		tr("<p>A browser window will open for Microsoft login.</p>"
-		   "<p>If it doesn't open automatically, click %1.</p>")
-			.arg(linkString));
+    QString urlString = url.toString();
+    QString linkString = QString("<a href=\"%1\">%2</a>").arg(urlString, tr("here"));
+    ui->label->setText(tr("<p>A browser window will open for Microsoft login.</p>"
+                          "<p>If it doesn't open automatically, click %1.</p>")
+                           .arg(linkString));
 }
 
 void MSALoginDialog::setUserInputsEnabled(bool enable)
 {
-	ui->buttonBox->setEnabled(enable);
+    ui->buttonBox->setEnabled(enable);
 }
 
-void MSALoginDialog::onTaskFailed(const QString& reason)
+void MSALoginDialog::onTaskFailed(const QString &reason)
 {
-	// Set message
-	auto lines = reason.split('\n');
-	QString processed;
-	for (auto line : lines) {
-		if (line.size()) {
-			processed += "<font color='red'>" + line + "</font><br />";
-		} else {
-			processed += "<br />";
-		}
-	}
-	ui->label->setText(processed);
+    // Set message
+    auto lines = reason.split('\n');
+    QString processed;
+    for (auto line : lines) {
+        if (line.size()) {
+            processed += "<font color='red'>" + line + "</font><br />";
+        } else {
+            processed += "<br />";
+        }
+    }
+    ui->label->setText(processed);
 
-	// Re-enable user-interaction
-	setUserInputsEnabled(true);
-	ui->progressBar->setVisible(false);
+    // Re-enable user-interaction
+    setUserInputsEnabled(true);
+    ui->progressBar->setVisible(false);
 }
 
 void MSALoginDialog::onTaskSucceeded()
 {
-	QDialog::accept();
+    QDialog::accept();
 }
 
-void MSALoginDialog::onTaskStatus(const QString& status)
+void MSALoginDialog::onTaskStatus(const QString &status)
 {
-	ui->label->setText(status);
+    ui->label->setText(status);
 }
 
 void MSALoginDialog::onTaskProgress(qint64 current, qint64 total)
 {
-	ui->progressBar->setMaximum(total);
-	ui->progressBar->setValue(current);
+    ui->progressBar->setMaximum(total);
+    ui->progressBar->setValue(current);
 }
 
 // Public interface
-MinecraftAccountPtr MSALoginDialog::newAccount(QWidget* parent, QString msg)
+MinecraftAccountPtr MSALoginDialog::newAccount(QWidget *parent, QString msg)
 {
-	MSALoginDialog dlg(parent);
-	dlg.ui->label->setText(msg);
-	if (dlg.exec() == QDialog::Accepted) {
-		return dlg.m_account;
-	}
-	return nullptr;
+    MSALoginDialog dlg(parent);
+    dlg.ui->label->setText(msg);
+    if (dlg.exec() == QDialog::Accepted) {
+        return dlg.m_account;
+    }
+    return nullptr;
 }

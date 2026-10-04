@@ -33,15 +33,15 @@
  * list readable if a view is ever shown without this delegate attached. */
 namespace ProjectItemRole
 {
-	enum Role {
-		/* QString - project name, drawn large on the first line. */
-		Title = Qt::UserRole + 1,
-		/* QString - short summary, wrapped over at most two lines. */
-		Description,
-		/* bool - already present in the target folder. Such rows are
-		 * dimmed and tagged, because installing them again is a no-op. */
-		Installed,
-	};
+enum Role {
+    /* QString - project name, drawn large on the first line. */
+    Title = Qt::UserRole + 1,
+    /* QString - short summary, wrapped over at most two lines. */
+    Description,
+    /* bool - already present in the target folder. Such rows are
+     * dimmed and tagged, because installing them again is a no-op. */
+    Installed,
+};
 }
 
 /* Draws one search result: optional checkbox, icon, title, description.
@@ -59,23 +59,19 @@ namespace ProjectItemRole
  * double-click handler. */
 class ProjectItemDelegate final : public QStyledItemDelegate
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit ProjectItemDelegate(QWidget* parent = nullptr);
+public:
+    explicit ProjectItemDelegate(QWidget *parent = nullptr);
 
-	void paint(QPainter* painter, const QStyleOptionViewItem& option,
-			   const QModelIndex& index) const override;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-	bool editorEvent(QEvent* event, QAbstractItemModel* model,
-					 const QStyleOptionViewItem& option,
-					 const QModelIndex& index) override;
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
-  signals:
-	void checkboxClicked(const QModelIndex& index);
+signals:
+    void checkboxClicked(const QModelIndex &index);
 
-  private:
-	/* Where the checkbox goes: hard left, vertically centred. */
-	QStyleOptionViewItem checkboxOption(const QStyleOptionViewItem& option,
-										const QStyle* style) const;
+private:
+    /* Where the checkbox goes: hard left, vertically centred. */
+    QStyleOptionViewItem checkboxOption(const QStyleOptionViewItem &option, const QStyle *style) const;
 };

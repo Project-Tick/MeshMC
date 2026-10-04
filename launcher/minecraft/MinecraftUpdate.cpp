@@ -21,74 +21,75 @@
 #include "MinecraftUpdate.h"
 #include "MinecraftInstance.h"
 
+#include <QDataStream>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
-#include <QDataStream>
 
 #include "BaseInstance.h"
-#include "minecraft/PackProfile.h"
 #include "minecraft/Library.h"
+#include "minecraft/PackProfile.h"
 #include <FileSystem.h>
 
+#include "update/AssetUpdateTask.h"
+#include "update/FMLLibrariesTask.h"
 #include "update/FoldersTask.h"
 #include "update/LibrariesTask.h"
-#include "update/FMLLibrariesTask.h"
-#include "update/AssetUpdateTask.h"
 
 #include <meta/Index.h>
 #include <meta/Version.h>
 
-MinecraftUpdate::MinecraftUpdate(MinecraftInstance* inst, QObject* parent)
-	: SequentialTask(parent, QStringLiteral("MinecraftUpdate")), m_inst(inst)
+MinecraftUpdate::MinecraftUpdate(MinecraftInstance *inst, QObject *parent)
+    : SequentialTask(parent, QStringLiteral("MinecraftUpdate"))
+    , m_inst(inst)
 {
 }
 
 void MinecraftUpdate::executeTask()
 {
-	// create folders
-	{
-		addTask(Task::Ptr(new FoldersTask(m_inst)));
-	}
+    // create folders
+    {
+        addTask(Task::Ptr(new FoldersTask(m_inst)));
+    }
 
-	// add metadata update task if necessary
-	{
-		auto components = m_inst->getPackProfile();
-		components->reload(Net::Mode::Online);
-		auto task = components->getCurrentTask();
-		if (task) {
-			addTask(task);
-		}
-	}
+    // add metadata update task if necessary
+    {
+        auto components = m_inst->getPackProfile();
+        components->reload(Net::Mode::Online);
+        auto task = components->getCurrentTask();
+        if (task) {
+            addTask(task);
+        }
+    }
 
-	// libraries download
-	{
-		addTask(Task::Ptr(new LibrariesTask(m_inst)));
-	}
+    // libraries download
+    {
+        addTask(Task::Ptr(new LibrariesTask(m_inst)));
+    }
 
-	// FML libraries download and copy into the instance
-	{
-		addTask(Task::Ptr(new FMLLibrariesTask(m_inst)));
-	}
+    // FML libraries download and copy into the instance
+    {
+        addTask(Task::Ptr(new FMLLibrariesTask(m_inst)));
+    }
 
-	// assets update
-	{
-		addTask(Task::Ptr(new AssetUpdateTask(m_inst)));
-	}
+    // assets update
+    {
+        addTask(Task::Ptr(new AssetUpdateTask(m_inst)));
+    }
 
-	SequentialTask::executeTask();
+    SequentialTask::executeTask();
 }
 
 bool MinecraftUpdate::abort()
 {
-	SequentialTask::abort();
-	// A step that cannot be interrupted still has to run to completion, but
-	// the update as a whole stops either way, so from the caller's point of
-	// view this always works.
-	return true;
+    SequentialTask::abort();
+    // A step that cannot be interrupted still has to run to completion, but
+    // the update as a whole stops either way, so from the caller's point of
+    // view this always works.
+    return true;
 }
 
 bool MinecraftUpdate::canAbort() const
 {
-	return true;
+    return true;
 }

@@ -27,42 +27,42 @@
 
 namespace Ui
 {
-	class PasteEEPage;
+class PasteEEPage;
 }
 
 class PasteEEPage : public QWidget, public BasePage
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit PasteEEPage(QWidget* parent = 0);
-	~PasteEEPage();
+public:
+    explicit PasteEEPage(QWidget *parent = 0);
+    ~PasteEEPage();
 
-	QString displayName() const override
-	{
-		return tr("Log Upload");
-	}
-	QIcon icon() const override
-	{
-		return APPLICATION->getThemedIcon("log");
-	}
-	QString id() const override
-	{
-		return "log-upload";
-	}
-	QString helpPage() const override
-	{
-		return "Log-Upload";
-	}
-	virtual bool apply() override;
+    QString displayName() const override
+    {
+        return tr("Log Upload");
+    }
+    QIcon icon() const override
+    {
+        return APPLICATION->getThemedIcon("log");
+    }
+    QString id() const override
+    {
+        return "log-upload";
+    }
+    QString helpPage() const override
+    {
+        return "Log-Upload";
+    }
+    virtual bool apply() override;
 
-  private:
-	void loadSettings();
-	void applySettings();
+private:
+    void loadSettings();
+    void applySettings();
 
-  private slots:
-	void textEdited(const QString& text);
+private slots:
+    void textEdited(const QString &text);
 
-  private:
-	Ui::PasteEEPage* ui;
+private:
+    Ui::PasteEEPage *ui;
 };
