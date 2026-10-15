@@ -22,8 +22,6 @@
 #include "SystemTheme.h"
 #include "DarkTheme.h"
 #include "BrightTheme.h"
-#include "GreenDarkTheme.h"
-#include "GreenLightTheme.h"
 #include "CustomTheme.h"
 
 #include "Application.h"
@@ -78,8 +76,6 @@ void ThemeManager::initializeThemes()
 	auto darkTheme = new DarkTheme();
 	addTheme(std::unique_ptr<ITheme>(darkTheme));
 	addTheme(std::make_unique<BrightTheme>());
-	addTheme(std::make_unique<GreenDarkTheme>());
-	addTheme(std::make_unique<GreenLightTheme>());
 
 	// System widget themes from QStyleFactory
 	QStringList styles = QStyleFactory::keys();
@@ -387,28 +383,12 @@ bool readIconThemeIndex(const QDir& dir, IconThemeEntry& out)
 void ThemeManager::initIconThemes()
 {
 	m_iconThemes = {
-		{"pe_colored", i18n("Default"), i18n("Default"),
-		 QString()},
-		{"multimc", QStringLiteral("MultiMC"), QStringLiteral("MultiMC"),
-		 QString()},
-		{"pe_dark", i18n("Simple (Dark Icons)"),
-		 i18n("Simple (Dark Icons)"), QString()},
-		{"pe_light", i18n("Simple (Light Icons)"),
-		 i18n("Simple (Light Icons)"), QString()},
-		{"pe_blue", i18n("Simple (Blue Icons)"),
-		 i18n("Simple (Blue Icons)"), QString()},
-		{"pe_colored", i18n("Simple (Colored Icons)"),
-		 i18n("Simple (Colored Icons)"), QString()},
-		{"OSX", QStringLiteral("OSX"), QStringLiteral("OSX"), QString()},
-		{"iOS", QStringLiteral("iOS"), QStringLiteral("iOS"), QString()},
-		{"flat", i18n("Flat (Light)"), QStringLiteral("Flat"),
-		 i18n("Light")},
-		{"flat_white", i18n("Flat (Dark)"), QStringLiteral("Flat"),
-		 i18n("Dark")},
 		{"breeze_dark", i18n("Breeze (Dark)"), QStringLiteral("Breeze"),
 		 i18n("Dark")},
 		{"breeze_light", i18n("Breeze (Light)"),
 		 QStringLiteral("Breeze"), i18n("Light")},
+		{"multimc", QStringLiteral("MultiMC"), QStringLiteral("MultiMC"),
+		 QString()},
 	};
 
 	// NOTE: there used to be a hardcoded "custom" entry here, but no such

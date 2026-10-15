@@ -45,7 +45,6 @@
 #include "ui/themes/ThemeManager.h"
 
 #include "ui/setupwizard/SetupWizard.h"
-#include "ui/setupwizard/LanguageWizardPage.h"
 #include "ui/setupwizard/JavaWizardPage.h"
 
 #include "ui/dialogs/CustomMessageBox.h"
@@ -932,7 +931,7 @@ void Application::initSettings()
 	m_settings->registerSetting("AutoUpdate", true);
 
 	// Theming
-	m_settings->registerSetting("IconTheme", QString("pe_colored"));
+	m_settings->registerSetting("IconTheme", QString("breeze_dark"));
 	m_settings->registerSetting("ApplicationTheme", QString("system"));
 
 	/* Screen-top menu bar. Only macOS has one; elsewhere the setting is
@@ -1412,18 +1411,10 @@ bool Application::createSetupWizard()
 		}
 		return false;
 	}();
-	bool languageRequired = [&]() {
-		if (settings()->get("Language").toString().isEmpty())
-			return true;
-		return false;
-	}();
-	bool wizardRequired = javaRequired || languageRequired;
+	bool wizardRequired = javaRequired;
 
 	if (wizardRequired) {
 		m_setupWizard = new SetupWizard(nullptr);
-		if (languageRequired) {
-			m_setupWizard->addPage(new LanguageWizardPage(m_setupWizard));
-		}
 		if (javaRequired) {
 			m_setupWizard->addPage(new JavaWizardPage(m_setupWizard));
 		}

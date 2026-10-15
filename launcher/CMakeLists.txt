@@ -773,14 +773,6 @@ SET(MESHMC_SOURCES
     # Bundled resources
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
-    resources/pe_dark/pe_dark.qrc
-    resources/pe_light/pe_light.qrc
-    resources/pe_colored/pe_colored.qrc
-    resources/pe_blue/pe_blue.qrc
-    resources/OSX/OSX.qrc
-    resources/iOS/iOS.qrc
-    resources/flat/flat.qrc
-    resources/flat_white/flat_white.qrc
     resources/documents/documents.qrc
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
@@ -815,18 +807,12 @@ SET(MESHMC_SOURCES
     ui/setupwizard/BaseWizardPage.h
     ui/setupwizard/JavaWizardPage.cpp
     ui/setupwizard/JavaWizardPage.h
-    ui/setupwizard/LanguageWizardPage.cpp
-    ui/setupwizard/LanguageWizardPage.h
 
     # GUI - themes
     ui/themes/FusionTheme.cpp
     ui/themes/FusionTheme.h
     ui/themes/BrightTheme.cpp
     ui/themes/BrightTheme.h
-    ui/themes/GreenDarkTheme.cpp
-    ui/themes/GreenDarkTheme.h
-    ui/themes/GreenLightTheme.cpp
-    ui/themes/GreenLightTheme.h
     ui/themes/CustomTheme.cpp
     ui/themes/CustomTheme.h
     ui/themes/DarkTheme.cpp
@@ -1180,14 +1166,6 @@ endif()
 set(MESHMC_QRC_FILES
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
-    resources/pe_dark/pe_dark.qrc
-    resources/pe_light/pe_light.qrc
-    resources/pe_colored/pe_colored.qrc
-    resources/pe_blue/pe_blue.qrc
-    resources/OSX/OSX.qrc
-    resources/iOS/iOS.qrc
-    resources/flat/flat.qrc
-    resources/flat_white/flat_white.qrc
     resources/documents/documents.qrc
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc

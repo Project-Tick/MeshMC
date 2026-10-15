@@ -125,11 +125,7 @@ namespace
 /// MESHMC_QRC_FILES in launcher/CMakeLists.txt (minus the ones that are not
 /// icon themes: backgrounds, documents, shaders).
 const QStringList kBundledThemes = {
-	QStringLiteral("multimc"),      QStringLiteral("pe_dark"),
-	QStringLiteral("pe_light"),     QStringLiteral("pe_colored"),
-	QStringLiteral("pe_blue"),      QStringLiteral("OSX"),
-	QStringLiteral("iOS"),          QStringLiteral("flat"),
-	QStringLiteral("flat_white"),   QStringLiteral("breeze_dark"),
+	QStringLiteral("multimc"),   QStringLiteral("breeze_dark"),
 	QStringLiteral("breeze_light"),
 };
 
@@ -1015,16 +1011,8 @@ int main(int argc, char* argv[])
 	 * because leaving one out would show up as that theme having no icons at
 	 * all rather than as a link error. */
 	Q_INIT_RESOURCE(multimc);
-	Q_INIT_RESOURCE(pe_dark);
-	Q_INIT_RESOURCE(pe_light);
-	Q_INIT_RESOURCE(pe_blue);
-	Q_INIT_RESOURCE(pe_colored);
 	Q_INIT_RESOURCE(breeze_dark);
 	Q_INIT_RESOURCE(breeze_light);
-	Q_INIT_RESOURCE(OSX);
-	Q_INIT_RESOURCE(iOS);
-	Q_INIT_RESOURCE(flat);
-	Q_INIT_RESOURCE(flat_white);
 
 	IconThemeTest testCase;
 	return QTest::qExec(&testCase, argc, argv);
