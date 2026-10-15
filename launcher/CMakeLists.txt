@@ -1228,15 +1228,6 @@ set_tests_properties(IconTheme PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QPA_PLATFORMTHEME="
     )
 
-target_link_libraries(MeshMC_logic
-    classparser
-    nbt++
-    ZLIB::ZLIB
-    tomlplusplus::tomlplusplus
-    BuildConfig
-    Katabasis
-)
-
 if(MeshMC_DISABLE_JAVA_DOWNLOADER)
     target_compile_definitions(MeshMC_logic PUBLIC MeshMC_DISABLE_JAVA_DOWNLOADER)
 endif()
@@ -1258,10 +1249,17 @@ target_link_libraries(MeshMC_logic
     Qt${QT_VERSION_MAJOR}::Concurrent
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
+    KF${QT_VERSION_MAJOR}::I18n
+    KF${QT_VERSION_MAJOR}::GuiAddons
     LibArchive::LibArchive
     cmark::cmark
-    rainbow
     LocalPeer::LocalPeer
+    classparser
+    nbt++
+    ZLIB::ZLIB
+    tomlplusplus
+    BuildConfig
+    Katabasis
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
@@ -1730,7 +1728,7 @@ if(WIN32 OR (UNIX AND APPLE))
     # environment variable) so RUNTIME_DEPENDENCY_SET can locate third-party
     # DLLs that live in a dependency prefix.
     #
-    # nbt++/rainbow are NOT handled here: they are our own targets in
+    # nbt++ are NOT handled here: they are our own targets in
     # this build tree, and the top-level CMakeLists.txt installs them directly
     # to the right place. Everything else under libraries/ links statically.
     set(_prefix_path_bins "")
