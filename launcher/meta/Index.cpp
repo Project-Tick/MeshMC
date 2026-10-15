@@ -22,6 +22,7 @@
 
 #include "VersionList.h"
 #include "JsonFormat.h"
+#include <KLocalizedString>
 
 namespace Meta
 {
@@ -73,7 +74,7 @@ namespace Meta
 	{
 		if (orientation == Qt::Horizontal && role == Qt::DisplayRole &&
 			section == 0) {
-			return tr("Name");
+			return i18n("Name");
 		} else {
 			return QVariant();
 		}

@@ -20,6 +20,7 @@
 #include "FileResolvingTask.h"
 #include "Json.h"
 #include "modplatform/flame/FlameApi.h"
+#include <KLocalizedString>
 
 Flame::FileResolvingTask::FileResolvingTask(
 	shared_qobject_ptr<QNetworkAccessManager> network,
@@ -30,7 +31,7 @@ Flame::FileResolvingTask::FileResolvingTask(
 
 void Flame::FileResolvingTask::executeTask()
 {
-	setStatus(tr("Resolving mod IDs..."));
+	setStatus(i18n("Resolving mod IDs..."));
 	setProgress(0, m_toProcess.files.size());
 	m_dljob = new NetJob("Mod id resolver", m_network);
 	results.resize(m_toProcess.files.size());

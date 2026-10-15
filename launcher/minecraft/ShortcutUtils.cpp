@@ -34,6 +34,7 @@
 #include "DesktopServices.h"
 #include "FileSystem.h"
 #include "icons/IconList.h"
+#include <KLocalizedString>
 
 namespace ShortcutUtils
 {
@@ -41,7 +42,7 @@ namespace ShortcutUtils
 	{
 		QString title()
 		{
-			return QObject::tr("Create Shortcut");
+			return i18n("Create Shortcut");
 		}
 
 		void complain(QWidget* parent, const QString& what)
@@ -78,9 +79,8 @@ namespace ShortcutUtils
 			if (!icon.pixmap(size, size).save(path, format)) {
 				QFile::remove(path);
 				complain(shortcut.parent,
-						 QObject::tr("Could not write the shortcut's icon to "
-									 "%1.")
-							 .arg(QDir::toNativeSeparators(path)));
+						 i18n("Could not write the shortcut's icon to "
+									 "%1.", QDir::toNativeSeparators(path)));
 				return QString();
 			}
 			return path;
@@ -105,7 +105,7 @@ namespace ShortcutUtils
 		 * it would be dead on arrival. */
 		if (appPath.startsWith(QLatin1String("/private/var/"))) {
 			complain(shortcut.parent,
-					 QObject::tr("MeshMC is running from the folder it was "
+					 i18n("MeshMC is running from the folder it was "
 								 "extracted into, so it cannot create a "
 								 "shortcut. Move it to your Applications "
 								 "folder first."));
@@ -123,7 +123,7 @@ namespace ShortcutUtils
 			appPath = qEnvironmentVariable("APPIMAGE");
 			if (appPath.isEmpty()) {
 				complain(shortcut.parent,
-						 QObject::tr("MeshMC looks like an AppImage, but "
+						 i18n("MeshMC looks like an AppImage, but "
 									 "$APPIMAGE is not set, so the path to "
 									 "write into the shortcut is unknown."));
 				return false;
@@ -167,7 +167,7 @@ namespace ShortcutUtils
 
 #else
 		complain(shortcut.parent,
-				 QObject::tr("Shortcuts are not supported on this platform."));
+				 i18n("Shortcuts are not supported on this platform."));
 		return false;
 #endif
 
@@ -186,8 +186,7 @@ namespace ShortcutUtils
 		if (written.isEmpty()) {
 			QFile::remove(iconPath);
 			complain(shortcut.parent,
-					 QObject::tr("Could not create a shortcut to this %1.")
-						 .arg(shortcut.targetString));
+					 i18n("Could not create a shortcut to this %1.", shortcut.targetString));
 			return false;
 		}
 
@@ -208,7 +207,7 @@ namespace ShortcutUtils
 		const QString desktop = FS::getDesktopDir();
 		if (desktop.isEmpty()) {
 			complain(shortcut.parent,
-					 QObject::tr("This system has no desktop folder."));
+					 i18n("This system has no desktop folder."));
 			return false;
 		}
 
@@ -219,8 +218,7 @@ namespace ShortcutUtils
 		}
 
 		report(shortcut.parent,
-			   QObject::tr("Created a shortcut to this %1 on your desktop.")
-				   .arg(shortcut.targetString));
+			   i18n("Created a shortcut to this %1 on your desktop.", shortcut.targetString));
 		return true;
 	}
 
@@ -233,7 +231,7 @@ namespace ShortcutUtils
 		QString applications = FS::getApplicationsDir();
 		if (applications.isEmpty()) {
 			complain(shortcut.parent,
-					 QObject::tr("This system has no applications folder."));
+					 i18n("This system has no applications folder."));
 			return false;
 		}
 
@@ -246,8 +244,7 @@ namespace ShortcutUtils
 			applications, "MeshMC Instances");
 		if (!QDir(applications).mkpath(".")) {
 			complain(shortcut.parent,
-					 QObject::tr("Could not create %1.")
-						 .arg(QDir::toNativeSeparators(applications)));
+					 i18n("Could not create %1.", QDir::toNativeSeparators(applications)));
 			return false;
 		}
 #endif
@@ -259,9 +256,7 @@ namespace ShortcutUtils
 		}
 
 		report(shortcut.parent,
-			   QObject::tr(
-				   "Created a shortcut to this %1 in your applications folder.")
-				   .arg(shortcut.targetString));
+			   i18n("Created a shortcut to this %1 in your applications folder.", shortcut.targetString));
 		return true;
 	}
 
@@ -273,13 +268,13 @@ namespace ShortcutUtils
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD) || defined(Q_OS_OPENBSD)
 		const QString suffix = QStringLiteral(".desktop");
-		const QString filter = QObject::tr("Desktop entries") + " (*.desktop)";
+		const QString filter = i18n("Desktop entries") + " (*.desktop)";
 #elif defined(Q_OS_WIN)
 		const QString suffix = QStringLiteral(".lnk");
-		const QString filter = QObject::tr("Shortcuts") + " (*.lnk)";
+		const QString filter = i18n("Shortcuts") + " (*.lnk)";
 #else
 		const QString suffix = QString();
-		const QString filter = QObject::tr("Applications") + " (*)";
+		const QString filter = i18n("Applications") + " (*)";
 #endif
 
 		const QString desktop = FS::getDesktopDir();
@@ -316,8 +311,7 @@ namespace ShortcutUtils
 		}
 
 		report(shortcut.parent,
-			   QObject::tr("Created a shortcut to this %1.")
-				   .arg(shortcut.targetString));
+			   i18n("Created a shortcut to this %1.", shortcut.targetString));
 		return true;
 	}
 } // namespace ShortcutUtils

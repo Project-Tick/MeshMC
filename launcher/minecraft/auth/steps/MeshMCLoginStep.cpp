@@ -26,6 +26,7 @@
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
 #include "minecraft/auth/AccountTask.h"
+#include <KLocalizedString>
 
 MeshMCLoginStep::MeshMCLoginStep(AccountData* data) : AuthStep(data) {}
 
@@ -33,7 +34,7 @@ MeshMCLoginStep::~MeshMCLoginStep() noexcept = default;
 
 QString MeshMCLoginStep::describe()
 {
-	return tr("Accessing Mojang services.");
+	return i18n("Accessing Mojang services.");
 }
 
 void MeshMCLoginStep::perform()
@@ -79,8 +80,7 @@ void MeshMCLoginStep::onRequestDone(QNetworkReply::NetworkError error,
 		qCDebug(minecraftauthLog) << data;
 #endif
 		emit finished(AccountTaskState::STATE_FAILED_SOFT,
-					  tr("Failed to get Minecraft access token: %1")
-						  .arg(requestor->errorString_));
+					  i18n("Failed to get Minecraft access token: %1", requestor->errorString_));
 		return;
 	}
 
@@ -91,8 +91,8 @@ void MeshMCLoginStep::onRequestDone(QNetworkReply::NetworkError error,
 #endif
 		emit finished(
 			AccountTaskState::STATE_FAILED_SOFT,
-			tr("Failed to parse the Minecraft access token response."));
+			i18n("Failed to parse the Minecraft access token response."));
 		return;
 	}
-	emit finished(AccountTaskState::STATE_WORKING, tr(""));
+	emit finished(AccountTaskState::STATE_WORKING, i18n(""));
 }

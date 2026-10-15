@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QUuid>
 #include <QRegularExpression>
+#include <KLocalizedString>
 
 namespace
 {
@@ -353,7 +354,7 @@ QString AccountData::profileName() const
 		return offlineUsername;
 	}
 	if (minecraftProfile.name.size() == 0) {
-		return QObject::tr("No profile (%1)").arg(accountDisplayString());
+		return i18n("No profile (%1)", accountDisplayString());
 	} else {
 		return minecraftProfile.name;
 	}

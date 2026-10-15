@@ -31,6 +31,7 @@
 
 #include "BuildConfig.h"
 #include "Application.h"
+#include <KLocalizedString>
 
 namespace LegacyFTB
 {
@@ -51,7 +52,7 @@ namespace LegacyFTB
 
 	void PackInstallTask::downloadPack()
 	{
-		setStatus(tr("Downloading zip for %1").arg(m_pack.name));
+		setStatus(i18n("Downloading zip for %1", m_pack.name));
 
 		auto packoffset =
 			QString("%1/%2/%3")
@@ -102,15 +103,13 @@ namespace LegacyFTB
 	{
 		abortable = true;
 		progress(current, total * 4);
-		setStatus(tr("Downloading zip for %1 (%2%)")
-					  .arg(m_pack.name)
-					  .arg(current / 10));
+		setStatus(i18n("Downloading zip for %1 (%2%)", m_pack.name, current / 10));
 	}
 
 	void PackInstallTask::unzip()
 	{
 		progress(2, 4);
-		setStatus(tr("Extracting modpack"));
+		setStatus(i18n("Extracting modpack"));
 		QDir extractDir(m_stagingPath);
 
 		QString extractPath = extractDir.absolutePath() + "/unzip";
@@ -139,13 +138,13 @@ namespace LegacyFTB
 	void PackInstallTask::install()
 	{
 		progress(3, 4);
-		setStatus(tr("Installing modpack"));
+		setStatus(i18n("Installing modpack"));
 		QDir unzipMcDir(m_stagingPath + "/unzip/minecraft");
 		if (unzipMcDir.exists()) {
 			// ok, found minecraft dir, move contents to instance dir
 			if (!QDir().rename(m_stagingPath + "/unzip/minecraft",
 							   m_stagingPath + "/.minecraft")) {
-				emitFailed(tr("Failed to move unzipped minecraft!"));
+				emitFailed(i18n("Failed to move unzipped minecraft!"));
 				return;
 			}
 		}
@@ -178,7 +177,7 @@ namespace LegacyFTB
 		QDir jarmodDir = QDir(m_stagingPath + "/unzip/instMods");
 		if (packJson.exists()) {
 			if (!packJson.open(QIODevice::ReadOnly | QIODevice::Text)) {
-				emitFailed(tr("Failed to open pack.json!"));
+				emitFailed(i18n("Failed to open pack.json!"));
 				return;
 			}
 			QJsonDocument doc = QJsonDocument::fromJson(packJson.readAll());
@@ -224,7 +223,7 @@ namespace LegacyFTB
 
 		if (fallback) {
 			// TODO: Some fallback mechanism... or just keep failing!
-			emitFailed(tr("No installation method found!"));
+			emitFailed(i18n("No installation method found!"));
 			return;
 		}
 

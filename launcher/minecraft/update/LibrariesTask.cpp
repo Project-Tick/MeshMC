@@ -23,6 +23,7 @@
 #include "minecraft/PackProfile.h"
 
 #include "Application.h"
+#include <KLocalizedString>
 
 LibrariesTask::LibrariesTask(MinecraftInstance* inst)
 {
@@ -31,7 +32,7 @@ LibrariesTask::LibrariesTask(MinecraftInstance* inst)
 
 void LibrariesTask::executeTask()
 {
-	setStatus(tr("Getting the library files from Mojang..."));
+	setStatus(i18n("Getting the library files from Mojang..."));
 	qDebug() << m_inst->name() << ": downloading libraries";
 	MinecraftInstance* inst = (MinecraftInstance*)m_inst;
 
@@ -39,7 +40,7 @@ void LibrariesTask::executeTask()
 	auto components = inst->getPackProfile();
 	auto profile = components->getProfile();
 
-	auto job = new NetJob(tr("Libraries for instance %1").arg(inst->name()),
+	auto job = new NetJob(i18n("Libraries for instance %1", inst->name()),
 						  APPLICATION->network());
 	downloadJob.reset(job);
 
@@ -51,7 +52,7 @@ void LibrariesTask::executeTask()
 		for (auto lib : pool) {
 			if (!lib) {
 				emitFailed(
-					tr("Null jar is specified in the metadata, aborting."));
+					i18n("Null jar is specified in the metadata, aborting."));
 				return false;
 			}
 			auto dls = lib->getDownloads(currentSystem, metacache.get(), errors,
@@ -80,11 +81,10 @@ void LibrariesTask::executeTask()
 		downloadJob.reset();
 		QString failed_all =
 			(failedLocalLibraries + failedLocalJarMods).join("\n");
-		emitFailed(tr("Some artifacts marked as 'local' are missing their "
+		emitFailed(i18n("Some artifacts marked as 'local' are missing their "
 					  "files:\n%1\n\nYou need to either add the files, or "
 					  "removed the packages that require them.\nYou'll have to "
-					  "correct this problem manually.")
-					   .arg(failed_all));
+					  "correct this problem manually.", failed_all));
 		return;
 	}
 
@@ -108,9 +108,8 @@ bool LibrariesTask::canAbort() const
 
 void LibrariesTask::jarlibFailed(QString reason)
 {
-	emitFailed(tr("Game update failed: it was impossible to fetch the required "
-				  "libraries.\nReason:\n%1")
-				   .arg(reason));
+	emitFailed(i18n("Game update failed: it was impossible to fetch the required "
+				  "libraries.\nReason:\n%1", reason));
 }
 
 bool LibrariesTask::abort()

@@ -23,6 +23,7 @@
 #include <QPixmapCache>
 #include <Version.h>
 #include <meta/VersionList.h>
+#include <KLocalizedString>
 
 class VersionFilterModel : public QSortFilterProxyModel
 {
@@ -103,37 +104,37 @@ QVariant VersionProxyModel::headerData(int section, Qt::Orientation orientation,
 	if (role == Qt::DisplayRole) {
 		switch (column) {
 			case Name:
-				return tr("Version");
+				return i18n("Version");
 			case ParentVersion:
-				return tr("Minecraft"); // FIXME: this should come from metadata
+				return i18n("Minecraft"); // FIXME: this should come from metadata
 			case Branch:
-				return tr("Branch");
+				return i18n("Branch");
 			case Type:
-				return tr("Type");
+				return i18n("Type");
 			case Architecture:
-				return tr("Architecture");
+				return i18n("Architecture");
 			case Path:
-				return tr("Path");
+				return i18n("Path");
 			case Time:
-				return tr("Released");
+				return i18n("Released");
 		}
 	} else if (role == Qt::ToolTipRole) {
 		switch (column) {
 			case Name:
-				return tr("The name of the version.");
+				return i18n("The name of the version.");
 			case ParentVersion:
-				return tr("Minecraft version"); // FIXME: this should come from
+				return i18n("Minecraft version"); // FIXME: this should come from
 												// metadata
 			case Branch:
-				return tr("The version's branch");
+				return i18n("The version's branch");
 			case Type:
-				return tr("The version's type");
+				return i18n("The version's type");
 			case Architecture:
-				return tr("CPU Architecture");
+				return i18n("CPU Architecture");
 			case Path:
-				return tr("Filesystem path to this version");
+				return i18n("Filesystem path to this version");
 			case Time:
-				return tr("Release date of this version");
+				return i18n("Release date of this version");
 		}
 	}
 	return QVariant();
@@ -155,7 +156,7 @@ QVariant VersionProxyModel::data(const QModelIndex& index, int role) const
 							->data(parentIndex, BaseVersionList::VersionRole)
 							.toString();
 					if (version == m_currentVersion) {
-						return tr("%1 (installed)").arg(version);
+						return i18n("%1 (installed)", version);
 					}
 					return version;
 				}
@@ -189,15 +190,15 @@ QVariant VersionProxyModel::data(const QModelIndex& index, int role) const
 						auto value = sourceModel()->data(
 							parentIndex, BaseVersionList::RecommendedRole);
 						if (value.toBool()) {
-							return tr("Recommended");
+							return i18n("Recommended");
 						} else if (hasLatest) {
 							auto value = sourceModel()->data(
 								parentIndex, BaseVersionList::LatestRole);
 							if (value.toBool()) {
-								return tr("Latest");
+								return i18n("Latest");
 							}
 						} else if (index.row() == 0) {
-							return tr("Latest");
+							return i18n("Latest");
 						}
 					}
 				}

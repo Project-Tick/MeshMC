@@ -31,6 +31,7 @@
 #include "modplatform/legacy_ftb/PackInstallTask.h"
 #include "modplatform/legacy_ftb/PrivatePackManager.h"
 #include "ListModel.h"
+#include <KLocalizedString>
 
 namespace LegacyFTB
 {
@@ -227,10 +228,9 @@ namespace LegacyFTB
 												QString packCode)
 	{
 		auto reply =
-			QMessageBox::question(this, tr("FTB private packs"),
-								  tr("Failed to download pack information for "
-									 "code %1.\nShould it be removed now?")
-									  .arg(packCode));
+			QMessageBox::question(this, i18n("FTB private packs"),
+								  i18n("Failed to download pack information for "
+									 "code %1.\nShould it be removed now?", packCode));
 		if (reply == QMessageBox::Yes) {
 			ftbPrivatePacks->remove(packCode);
 		}
@@ -352,8 +352,8 @@ namespace LegacyFTB
 	void Page::onAddPackClicked()
 	{
 		bool ok;
-		QString text = QInputDialog::getText(this, tr("Add FTB pack"),
-											 tr("Enter pack code:"),
+		QString text = QInputDialog::getText(this, i18n("Add FTB pack"),
+											 i18n("Enter pack code:"),
 											 QLineEdit::Normal, QString(), &ok);
 		if (ok && !text.isEmpty()) {
 			ftbPrivatePacks->add(text);
@@ -370,8 +370,8 @@ namespace LegacyFTB
 		auto row = index.row();
 		Modpack pack = privateListModel->at(row);
 		auto answer = QMessageBox::question(
-			this, tr("Remove pack"),
-			tr("Are you sure you want to remove pack %1?").arg(pack.name),
+			this, i18n("Remove pack"),
+			i18n("Are you sure you want to remove pack %1?", pack.name),
 			QMessageBox::Yes | QMessageBox::No);
 		if (answer != QMessageBox::Yes) {
 			return;

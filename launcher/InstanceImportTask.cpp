@@ -59,6 +59,7 @@
 
 #include <QDir>
 #include <QStandardPaths>
+#include <KLocalizedString>
 
 InstanceImportTask::InstanceImportTask(const QUrl sourceUrl)
 {
@@ -71,7 +72,7 @@ void InstanceImportTask::executeTask()
 		m_archivePath = m_sourceUrl.toLocalFile();
 		processZipPack();
 	} else {
-		setStatus(tr("Downloading modpack:\n%1").arg(m_sourceUrl.toString()));
+		setStatus(i18n("Downloading modpack:\n%1", m_sourceUrl.toString()));
 		m_downloadRequired = true;
 
 		const QString path = m_sourceUrl.host() + '/' + m_sourceUrl.path();
@@ -79,7 +80,7 @@ void InstanceImportTask::executeTask()
 		entry->setStale(true);
 		m_archiveEntry = entry;
 		m_filesNetJob =
-			new NetJob(tr("Modpack download"), APPLICATION->network());
+			new NetJob(i18n("Modpack download"), APPLICATION->network());
 		m_filesNetJob->addNetAction(
 			Net::Download::makeCached(m_sourceUrl, entry));
 		m_archivePath = entry->getFullPath();
@@ -121,7 +122,7 @@ void InstanceImportTask::downloadProgressChanged(qint64 current, qint64 total)
 
 void InstanceImportTask::processZipPack()
 {
-	setStatus(tr("Inspecting modpack archive"));
+	setStatus(i18n("Inspecting modpack archive"));
 	qDebug() << "Detecting modpack type for" << m_archivePath;
 
 	// Run ALL archive scanning in a background thread so the UI stays
@@ -218,16 +219,15 @@ void InstanceImportTask::detectFinished()
 	if (m_modpackType == ModpackType::Unknown) {
 		QFileInfo fi(m_archivePath);
 		if (!fi.exists() || fi.size() == 0) {
-			emitFailed(tr("Modpack archive is missing or empty:\n%1")
-						   .arg(m_archivePath));
+			emitFailed(i18n("Modpack archive is missing or empty:\n%1", m_archivePath));
 		} else {
 			emitFailed(
-				tr("Archive does not contain a recognized modpack type."));
+				i18n("Archive does not contain a recognized modpack type."));
 		}
 		return;
 	}
 
-	setStatus(tr("Extracting modpack"));
+	setStatus(i18n("Extracting modpack"));
 
 	auto* extract =
 		new MMCZip::ExtractZipTask(m_archivePath, QDir(r.extractTarget), root);
@@ -316,12 +316,12 @@ void InstanceImportTask::extractFailed()
 		}
 		APPLICATION->metacache()->evictEntry(m_archiveEntry);
 		m_archiveEntry.reset();
-		emitFailed(tr("Failed to extract modpack. The downloaded archive is "
+		emitFailed(i18n("Failed to extract modpack. The downloaded archive is "
 					  "damaged; it has been discarded, so trying again will "
 					  "download it afresh."));
 		return;
 	}
-	emitFailed(tr("Failed to extract modpack. The archive appears to be "
+	emitFailed(i18n("Failed to extract modpack. The archive appears to be "
 				  "damaged."));
 }
 
@@ -356,7 +356,7 @@ void InstanceImportTask::extractFinished()
 		if (origPermissions != permissions) {
 			if (!QFile::setPermissions(filepath, permissions)) {
 				logWarning(
-					tr("Could not fix permissions for %1").arg(filepath));
+					i18n("Could not fix permissions for %1", filepath));
 			} else {
 				qDebug() << "Fixed" << filepath;
 			}
@@ -378,7 +378,7 @@ void InstanceImportTask::extractFinished()
 			return;
 		case ModpackType::Unknown:
 			emitFailed(
-				tr("Archive does not contain a recognized modpack type."));
+				i18n("Archive does not contain a recognized modpack type."));
 			return;
 	}
 }
@@ -593,7 +593,7 @@ void InstanceImportTask::processFlame()
 	 * replacing an instance - starting with the name of the directory the
 	 * overrides are about to be moved into. */
 	if (!resolveUpdateTargetFromCatalogue()) {
-		emitFailed(tr("Installation cancelled."));
+		emitFailed(i18n("Installation cancelled."));
 		return;
 	}
 
@@ -605,7 +605,7 @@ void InstanceImportTask::processFlame()
 			qWarning() << "Could not remove manifest.json from staging";
 		}
 	} catch (const JSONValidationError& e) {
-		emitFailed(tr("Could not understand pack manifest:\n") + e.cause());
+		emitFailed(i18n("Could not understand pack manifest:\n") + e.cause());
 		return;
 	}
 	if (!pack.overrides.isEmpty()) {
@@ -613,14 +613,13 @@ void InstanceImportTask::processFlame()
 		if (QFile::exists(overridePath)) {
 			QString mcPath = FS::PathCombine(m_stagingPath, gameDirName());
 			if (!QFile::rename(overridePath, mcPath)) {
-				emitFailed(tr("Could not rename the overrides folder:\n") +
+				emitFailed(i18n("Could not rename the overrides folder:\n") +
 						   pack.overrides);
 				return;
 			}
 		} else {
-			logWarning(tr("The specified overrides folder (%1) is missing. "
-						  "Maybe the modpack was already used before?")
-						   .arg(pack.overrides));
+			logWarning(i18n("The specified overrides folder (%1) is missing. "
+						  "Maybe the modpack was already used before?", pack.overrides));
 		}
 	}
 
@@ -643,7 +642,7 @@ void InstanceImportTask::processFlame()
 	connect(m_modIdResolver.get(), &Flame::FileResolvingTask::failed,
 			[&](QString reason) {
 				m_modIdResolver.reset();
-				emitFailed(tr("Unable to resolve mod IDs:\n") + reason);
+				emitFailed(i18n("Unable to resolve mod IDs:\n") + reason);
 			});
 	connect(m_modIdResolver.get(), &Flame::FileResolvingTask::progress,
 			[&](qint64 current, qint64 total) { setProgress(current, total); });
@@ -707,7 +706,7 @@ void InstanceImportTask::configureFlameInstance(Flame::Manifest& pack)
 			}
 		}
 		if (!matched) {
-			logWarning(tr("Unknown mod loader in manifest: %1").arg(id));
+			logWarning(i18n("Unknown mod loader in manifest: %1", id));
 		}
 	}
 
@@ -721,7 +720,7 @@ void InstanceImportTask::configureFlameInstance(Flame::Manifest& pack)
 	// Hack to correct some 'special sauce'...
 	if (mcVersion.endsWith('.')) {
 		mcVersion.remove(QRegularExpression("[.]+$"));
-		logWarning(tr("Mysterious trailing dots removed from Minecraft version "
+		logWarning(i18n("Mysterious trailing dots removed from Minecraft version "
 					  "while importing pack."));
 	}
 	auto components = instance.getPackProfile();
@@ -735,8 +734,7 @@ void InstanceImportTask::configureFlameInstance(Flame::Manifest& pack)
 			forgeMapping.version = forgemap[mcVersion];
 		} else {
 			logWarning(
-				tr("Could not map recommended forge version for Minecraft %1")
-					.arg(mcVersion));
+				i18n("Could not map recommended forge version for Minecraft %1", mcVersion));
 		}
 	}
 
@@ -822,13 +820,13 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 		suspect.removeDuplicates();
 
 		if (!confirmUntrustedFiles(suspect)) {
-			emitFailed(tr("Installation cancelled: the modpack's untrusted "
+			emitFailed(i18n("Installation cancelled: the modpack's untrusted "
 						  "content was not accepted."));
 			return;
 		}
 	}
 
-	m_filesNetJob = new NetJob(tr("Mod download"), APPLICATION->network());
+	m_filesNetJob = new NetJob(i18n("Mod download"), APPLICATION->network());
 
 	// Collect restricted mods that need browser download
 	QList<BlockedMod> blockedMods;
@@ -859,7 +857,7 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 				std::dynamic_pointer_cast<MinecraftInstance>(previous)) {
 			installedGameDir = QDir(minecraftPrevious->gameRoot());
 			canReuseInstalled = true;
-			setStatus(tr("Checking files already installed..."));
+			setStatus(i18n("Checking files already installed..."));
 		}
 	}
 	int reusedCount = 0;
@@ -878,7 +876,7 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 		switch (result.type) {
 			case Flame::File::Type::Folder: {
 				logWarning(
-					tr("This 'Folder' may need extracting: %1").arg(relpath));
+					i18n("This 'Folder' may need extracting: %1", relpath));
 				[[fallthrough]];
 			}
 			case Flame::File::Type::SingleFile:
@@ -899,10 +897,8 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 					break;
 				}
 				if (isBlocked) {
-					logWarning(tr("Skipping mod %1 (project %2) - no download "
-								  "URL and no filename available")
-								   .arg(result.fileId)
-								   .arg(result.projectId));
+					logWarning(i18n("Skipping mod %1 (project %2) - no download "
+								  "URL and no filename available", result.fileId, result.projectId));
 					break;
 				}
 				if (canReuseInstalled) {
@@ -947,17 +943,15 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 				break;
 			}
 			case Flame::File::Type::Modpack:
-				logWarning(tr("Nesting modpacks in modpacks is not "
-							  "implemented, nothing was downloaded: %1")
-							   .arg(relpath));
+				logWarning(i18n("Nesting modpacks in modpacks is not "
+							  "implemented, nothing was downloaded: %1", relpath));
 				break;
 			case Flame::File::Type::Cmod2:
 				[[fallthrough]];
 			case Flame::File::Type::Ctoc:
 				[[fallthrough]];
 			case Flame::File::Type::Unknown:
-				logWarning(tr("Unrecognized/unhandled PackageType for: %1")
-							   .arg(relpath));
+				logWarning(i18n("Unrecognized/unhandled PackageType for: %1", relpath));
 				break;
 		}
 	}
@@ -977,8 +971,8 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 
 	// Handle restricted mods via dialog
 	if (!blockedMods.isEmpty()) {
-		BlockedModsDialog dlg(nullptr, tr("Restricted Mods"),
-							  tr("The following mods have restricted downloads "
+		BlockedModsDialog dlg(nullptr, i18n("Restricted Mods"),
+							  i18n("The following mods have restricted downloads "
 								 "and are not available through the API.\n"
 								 "Click the Download button next to each mod "
 								 "to open its download page in your browser.\n"
@@ -999,15 +993,13 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 					if (QFile::copy(srcPath, mod.targetPath)) {
 						qDebug() << "Copied restricted mod:" << mod.fileName;
 					} else {
-						logWarning(tr("Failed to copy %1 from downloads folder")
-									   .arg(mod.fileName));
+						logWarning(i18n("Failed to copy %1 from downloads folder", mod.fileName));
 					}
 				}
 			}
 		} else {
-			logWarning(tr("User cancelled restricted mod downloads - %1 mod(s) "
-						  "will be missing")
-						   .arg(blockedMods.size()));
+			logWarning(i18n("User cancelled restricted mod downloads - %1 mod(s) "
+						  "will be missing", blockedMods.size()));
 		}
 	}
 
@@ -1015,7 +1007,7 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 
 	if (!recordPackContents(contentPaths)) {
 		m_filesNetJob.reset();
-		emitFailed(tr("Update cancelled."));
+		emitFailed(i18n("Update cancelled."));
 		return;
 	}
 
@@ -1045,7 +1037,7 @@ void InstanceImportTask::onFlameFileResolutionSucceeded()
 			[&](qint64 current, qint64 total) { setProgress(current, total); });
 	// One line per mod being downloaded.
 	propagateStepsFrom(m_filesNetJob.get());
-	setStatus(tr("Downloading mods..."));
+	setStatus(i18n("Downloading mods..."));
 	m_filesNetJob->start();
 }
 
@@ -1088,7 +1080,7 @@ void InstanceImportTask::processModrinth()
 	/* Same reason as the Flame path: asked before anything that depends
 	 * on the answer. */
 	if (!resolveUpdateTargetFromCatalogue()) {
-		emitFailed(tr("Installation cancelled."));
+		emitFailed(i18n("Installation cancelled."));
 		return;
 	}
 
@@ -1101,7 +1093,7 @@ void InstanceImportTask::processModrinth()
 			qWarning() << "Could not remove modrinth.index.json from staging";
 		}
 	} catch (const JSONValidationError& e) {
-		emitFailed(tr("Could not understand Modrinth modpack manifest:\n") +
+		emitFailed(i18n("Could not understand Modrinth modpack manifest:\n") +
 				   e.cause());
 		return;
 	}
@@ -1143,7 +1135,7 @@ void InstanceImportTask::processModrinth()
 		suspect.removeDuplicates();
 
 		if (!confirmUntrustedFiles(suspect)) {
-			emitFailed(tr("Installation cancelled: the modpack's untrusted "
+			emitFailed(i18n("Installation cancelled: the modpack's untrusted "
 						  "content was not accepted."));
 			return;
 		}
@@ -1239,7 +1231,7 @@ void InstanceImportTask::processModrinth()
 
 	// Download all mod files
 	m_filesNetJob =
-		new NetJob(tr("Modrinth mod download"), APPLICATION->network());
+		new NetJob(i18n("Modrinth mod download"), APPLICATION->network());
 	auto minecraftDir = FS::PathCombine(m_stagingPath, gameDirName());
 	auto canonicalBase = QDir(minecraftDir).canonicalPath();
 	/* What this version is responsible for. Built from the same loop that
@@ -1266,7 +1258,7 @@ void InstanceImportTask::processModrinth()
 				std::dynamic_pointer_cast<MinecraftInstance>(previous)) {
 			installedGameDir = QDir(minecraftPrevious->gameRoot());
 			canReuseInstalled = true;
-			setStatus(tr("Checking files already installed..."));
+			setStatus(i18n("Checking files already installed..."));
 		}
 	}
 	int reusedCount = 0;
@@ -1309,7 +1301,7 @@ void InstanceImportTask::processModrinth()
 		}
 		if (!file.downloadUrl.isValid() || file.downloadUrl.isEmpty()) {
 			logWarning(
-				tr("Skipping file with no download URL: %1").arg(file.path));
+				i18n("Skipping file with no download URL: %1", file.path));
 			continue;
 		}
 		if (canReuseInstalled) {
@@ -1350,7 +1342,7 @@ void InstanceImportTask::processModrinth()
 
 	if (!recordPackContents(contentPaths)) {
 		m_filesNetJob.reset();
-		emitFailed(tr("Update cancelled."));
+		emitFailed(i18n("Update cancelled."));
 		return;
 	}
 
@@ -1382,7 +1374,7 @@ void InstanceImportTask::processModrinth()
 	// One line per mod being downloaded.
 	propagateStepsFrom(m_filesNetJob.get());
 
-	setStatus(tr("Downloading mods..."));
+	setStatus(i18n("Downloading mods..."));
 	m_filesNetJob->start();
 }
 
@@ -1418,7 +1410,7 @@ void InstanceImportTask::processTechnic()
 		 * finished without reporting anything at all, which we cannot
 		 * treat as an install. */
 		if (!processed && !reportedFailure) {
-			emitFailed(tr("The Technic pack could not be processed."));
+			emitFailed(i18n("The Technic pack could not be processed."));
 		}
 		return;
 	}
@@ -1429,7 +1421,7 @@ void InstanceImportTask::processTechnic()
 	 * shipped, which is what a later update needs to know to clean up
 	 * after it. */
 	if (!recordPackContents(listFilesRelative(stagedGameDir()))) {
-		emitFailed(tr("Installation cancelled."));
+		emitFailed(i18n("Installation cancelled."));
 		return;
 	}
 
@@ -1488,7 +1480,7 @@ void InstanceImportTask::processMeshMC()
 	/* Same as the Technic path: a MeshMC pack is its own file list, so
 	 * what was unpacked is what the pack consists of. */
 	if (!recordPackContents(listFilesRelative(stagedGameDir()))) {
-		emitFailed(tr("Installation cancelled."));
+		emitFailed(i18n("Installation cancelled."));
 		return;
 	}
 
@@ -1668,11 +1660,11 @@ bool InstanceImportTask::resolveUpdateTargetFromCatalogue()
 	const QString versionSuffix =
 		installedVersion.isEmpty()
 			? QString()
-			: tr(", at version %1").arg(installedVersion);
+			: i18n(", at version %1", installedVersion);
 
 	auto* box = CustomMessageBox::selectable(
-		m_dialogParent, tr("This modpack is already installed"),
-		tr("The instance \"%1\" was installed from this modpack%2.\n\n"
+		m_dialogParent, i18n("This modpack is already installed"),
+		i18n("The instance \"%1\" was installed from this modpack%2.\n\n"
 		   "Updating it replaces the pack's own files and keeps everything "
 		   "that is yours: worlds, screenshots, play time and the "
 		   "instance's settings. Creating a separate instance leaves it "
@@ -1680,16 +1672,15 @@ bool InstanceImportTask::resolveUpdateTargetFromCatalogue()
 		   "Back up anything you cannot afford to lose before updating. An "
 		   "update replaces the pack's configuration files, and a pack that "
 		   "changes or removes mods can leave worlds made with the older "
-		   "version unusable.")
-			.arg(existing->name(), versionSuffix),
+		   "version unusable.", existing->name(), versionSuffix),
 		QMessageBox::Question, QMessageBox::Cancel, QMessageBox::Cancel);
 
 	/* Named actions rather than yes/no: there are three answers here and
 	 * two of them install something. */
 	auto* update =
-		box->addButton(tr("Update existing instance"), QMessageBox::AcceptRole);
+		box->addButton(i18n("Update existing instance"), QMessageBox::AcceptRole);
 	auto* separate =
-		box->addButton(tr("Create separate instance"), QMessageBox::ResetRole);
+		box->addButton(i18n("Create separate instance"), QMessageBox::ResetRole);
 
 	box->exec();
 
@@ -1803,8 +1794,8 @@ static QString sidecarPathForModFile(
 static bool askAboutDeletingSaves(QWidget* parent)
 {
 	auto* box = CustomMessageBox::selectable(
-		parent, QObject::tr("Delete existing save files"),
-		QObject::tr("The installed version of this modpack came with save "
+		parent, i18n("Delete existing save files"),
+		i18n("The installed version of this modpack came with save "
 					"files that the new version no longer includes.\n\n"
 					"Would you like to remove them as part of this update? "
 					"Keeping them is safe - they simply stay where they "
@@ -1813,10 +1804,10 @@ static bool askAboutDeletingSaves(QWidget* parent)
 		QMessageBox::No);
 
 	if (auto* remove = box->button(QMessageBox::Yes)) {
-		remove->setText(QObject::tr("Remove saves"));
+		remove->setText(i18n("Remove saves"));
 	}
 	if (auto* keep = box->button(QMessageBox::No)) {
-		keep->setText(QObject::tr("Keep saves"));
+		keep->setText(i18n("Keep saves"));
 	}
 
 	return box->exec() == QMessageBox::Yes;
@@ -1871,8 +1862,8 @@ bool InstanceImportTask::recordPackContents(
 		 * leftovers are visible to the user as duplicated mods, and being
 		 * surprised by that is worse than being told. */
 		auto* box = CustomMessageBox::selectable(
-			m_dialogParent, tr("No file list for the installed version"),
-			tr("The launcher has no record of which files the installed "
+			m_dialogParent, i18n("No file list for the installed version"),
+			i18n("The launcher has no record of which files the installed "
 			   "version of this modpack put into this instance, so it "
 			   "cannot remove the ones the new version no longer "
 			   "ships.\n\n"

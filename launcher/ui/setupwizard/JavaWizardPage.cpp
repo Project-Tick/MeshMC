@@ -41,6 +41,7 @@
 #include "ui/widgets/VersionSelectWidget.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/widgets/JavaSettingsWidget.h"
+#include <KLocalizedString>
 
 JavaWizardPage::JavaWizardPage(QWidget* parent) : BaseWizardPage(parent)
 {
@@ -134,12 +135,11 @@ bool JavaWizardPage::validatePage()
 
 void JavaWizardPage::retranslate()
 {
-	setTitle(tr("Java"));
-	setSubTitle(tr(
-		"You do not have a working Java set up yet or it went missing.\n"
+	setTitle(i18n("Java"));
+	setSubTitle(i18n("You do not have a working Java set up yet or it went missing.\n"
 		"Please select one of the following or browse for a java executable.\n"
 		"You can also choose which vendor to use for automatic Java "
 		"downloads."));
-	m_vendorLabel->setText(tr("Auto-download Java from:"));
+	m_vendorLabel->setText(i18n("Auto-download Java from:"));
 	m_java_widget->retranslate();
 }

@@ -26,6 +26,7 @@
 #include <QPushButton>
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
+#include <KLocalizedString>
 
 ModUpdateDialog::ModUpdateDialog(
 	const QList<ModUpdateCheckTask::UpdateInfo>& updates, QWidget* parent)
@@ -37,18 +38,17 @@ ModUpdateDialog::ModUpdateDialog(
 void ModUpdateDialog::setupUi(
 	const QList<ModUpdateCheckTask::UpdateInfo>& updates)
 {
-	setWindowTitle(tr("Available Mod Updates"));
+	setWindowTitle(i18n("Available Mod Updates"));
 	resize(620, 420);
 
 	auto* layout = new QVBoxLayout(this);
 
 	auto* header = new QLabel(this);
 	if (updates.isEmpty()) {
-		header->setText(tr("All mods are up to date."));
+		header->setText(i18n("All mods are up to date."));
 	} else {
-		header->setText(tr("%1 mod(s) have newer compatible versions. "
-						   "Tick the ones you want to update.")
-							.arg(updates.size()));
+		header->setText(i18n("%1 mod(s) have newer compatible versions. "
+						   "Tick the ones you want to update.", updates.size()));
 	}
 	header->setWordWrap(true);
 	layout->addWidget(header);
@@ -56,7 +56,7 @@ void ModUpdateDialog::setupUi(
 	m_tree = new QTreeWidget(this);
 	m_tree->setColumnCount(4);
 	m_tree->setHeaderLabels(
-		{tr("Mod"), tr("Source"), tr("Current"), tr("New")});
+		{i18n("Mod"), i18n("Source"), i18n("Current"), i18n("New")});
 	m_tree->header()->setStretchLastSection(false);
 	m_tree->header()->setSectionResizeMode(0, QHeaderView::Stretch);
 	m_tree->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
@@ -71,9 +71,7 @@ void ModUpdateDialog::setupUi(
 		row->setText(1, u.platform);
 		row->setText(2, u.currentVersionId);
 		row->setText(3, u.newVersionId);
-		row->setToolTip(0, tr("%1 → %2\nFile: %3 → %4")
-							   .arg(u.currentVersionId, u.newVersionId,
-									u.currentFileName, u.item.fileName));
+		row->setToolTip(0, i18n("%1 → %2\nFile: %3 → %4", u.currentVersionId, u.newVersionId, u.currentFileName, u.item.fileName));
 		row->setFlags(row->flags() | Qt::ItemIsUserCheckable);
 		row->setCheckState(0, Qt::Checked);
 	}
@@ -81,8 +79,8 @@ void ModUpdateDialog::setupUi(
 
 	auto* btnRow = new QHBoxLayout();
 
-	auto* checkAll = new QPushButton(tr("Select all"), this);
-	auto* uncheckAll = new QPushButton(tr("Select none"), this);
+	auto* checkAll = new QPushButton(i18n("Select all"), this);
+	auto* uncheckAll = new QPushButton(i18n("Select none"), this);
 	connect(checkAll, &QPushButton::clicked, this, [this]() {
 		for (int i = 0; i < m_tree->topLevelItemCount(); ++i) {
 			m_tree->topLevelItem(i)->setCheckState(0, Qt::Checked);
@@ -99,7 +97,7 @@ void ModUpdateDialog::setupUi(
 
 	auto* buttons = new QDialogButtonBox(
 		QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
-	buttons->button(QDialogButtonBox::Ok)->setText(tr("Update"));
+	buttons->button(QDialogButtonBox::Ok)->setText(i18n("Update"));
 	buttons->button(QDialogButtonBox::Ok)->setEnabled(!updates.isEmpty());
 	connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);

@@ -23,6 +23,7 @@
 #include <QThreadPool>
 #include <QtConcurrentRun>
 #include <utility>
+#include <KLocalizedString>
 
 BackupTask::BackupTask(QString instanceId, QString instanceRoot, QString label,
 					   QObject* parent)
@@ -30,7 +31,7 @@ BackupTask::BackupTask(QString instanceId, QString instanceRoot, QString label,
 	  m_instanceRoot(std::move(instanceRoot)), m_label(std::move(label))
 {
 	setObjectName(QStringLiteral("BackupTask"));
-	setStatus(tr("Preparing backup..."));
+	setStatus(i18n("Preparing backup..."));
 	// The file count is only known once compressDir() has walked the
 	// instance, so sweep until BackupManager says otherwise.
 	setProgress(0, 0);
@@ -52,7 +53,7 @@ BackupTask::~BackupTask()
 void BackupTask::executeTask()
 {
 	if (m_instanceRoot.isEmpty()) {
-		emitFailed(tr("The instance has no directory to back up."));
+		emitFailed(i18n("The instance has no directory to back up."));
 		return;
 	}
 
@@ -95,7 +96,7 @@ void BackupTask::backupFinished()
 
 	if (!m_result.isValid()) {
 		emitFailed(
-			tr("Could not create the backup. See the launcher log for "
+			i18n("Could not create the backup. See the launcher log for "
 			   "details."));
 		return;
 	}

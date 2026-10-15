@@ -25,6 +25,7 @@
 #include <QtConcurrent>
 
 #include "MMCZip.h"
+#include <KLocalizedString>
 
 namespace MMCZip
 {
@@ -38,7 +39,7 @@ namespace MMCZip
 
 	void ExtractZipTask::executeTask()
 	{
-		setStatus(tr("Extracting files..."));
+		setStatus(i18n("Extracting files..."));
 		setProgress(0, 0);
 
 		m_future = QtConcurrent::run(QThreadPool::globalInstance(),
@@ -83,7 +84,7 @@ namespace MMCZip
 		reporting.isCancelled = [this]() { return m_cancelled.load(); };
 		reporting.entryStarted = [this](const QString& name) {
 			if (!name.isEmpty()) {
-				reportStatus(tr("Unpacking: %1").arg(name));
+				reportStatus(i18n("Unpacking: %1", name));
 			}
 		};
 
@@ -97,8 +98,7 @@ namespace MMCZip
 				return ZipResult();
 			}
 			return ZipResult(
-				tr("Failed to unpack %1. The archive appears to be damaged.")
-					.arg(QFileInfo(m_input).fileName()));
+				i18n("Failed to unpack %1. The archive appears to be damaged.", QFileInfo(m_input).fileName()));
 		}
 
 		m_extracted = extracted.value();

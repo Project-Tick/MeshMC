@@ -39,6 +39,7 @@
 #include <QStyle>
 #include <QStyleFactory>
 #include <QSysInfo>
+#include <KLocalizedString>
 
 #ifndef Q_OS_MACOS
 
@@ -386,28 +387,28 @@ bool readIconThemeIndex(const QDir& dir, IconThemeEntry& out)
 void ThemeManager::initIconThemes()
 {
 	m_iconThemes = {
-		{"pe_colored", QObject::tr("Default"), QObject::tr("Default"),
+		{"pe_colored", i18n("Default"), i18n("Default"),
 		 QString()},
 		{"multimc", QStringLiteral("MultiMC"), QStringLiteral("MultiMC"),
 		 QString()},
-		{"pe_dark", QObject::tr("Simple (Dark Icons)"),
-		 QObject::tr("Simple (Dark Icons)"), QString()},
-		{"pe_light", QObject::tr("Simple (Light Icons)"),
-		 QObject::tr("Simple (Light Icons)"), QString()},
-		{"pe_blue", QObject::tr("Simple (Blue Icons)"),
-		 QObject::tr("Simple (Blue Icons)"), QString()},
-		{"pe_colored", QObject::tr("Simple (Colored Icons)"),
-		 QObject::tr("Simple (Colored Icons)"), QString()},
+		{"pe_dark", i18n("Simple (Dark Icons)"),
+		 i18n("Simple (Dark Icons)"), QString()},
+		{"pe_light", i18n("Simple (Light Icons)"),
+		 i18n("Simple (Light Icons)"), QString()},
+		{"pe_blue", i18n("Simple (Blue Icons)"),
+		 i18n("Simple (Blue Icons)"), QString()},
+		{"pe_colored", i18n("Simple (Colored Icons)"),
+		 i18n("Simple (Colored Icons)"), QString()},
 		{"OSX", QStringLiteral("OSX"), QStringLiteral("OSX"), QString()},
 		{"iOS", QStringLiteral("iOS"), QStringLiteral("iOS"), QString()},
-		{"flat", QObject::tr("Flat (Light)"), QStringLiteral("Flat"),
-		 QObject::tr("Light")},
-		{"flat_white", QObject::tr("Flat (Dark)"), QStringLiteral("Flat"),
-		 QObject::tr("Dark")},
-		{"breeze_dark", QObject::tr("Breeze (Dark)"), QStringLiteral("Breeze"),
-		 QObject::tr("Dark")},
-		{"breeze_light", QObject::tr("Breeze (Light)"),
-		 QStringLiteral("Breeze"), QObject::tr("Light")},
+		{"flat", i18n("Flat (Light)"), QStringLiteral("Flat"),
+		 i18n("Light")},
+		{"flat_white", i18n("Flat (Dark)"), QStringLiteral("Flat"),
+		 i18n("Dark")},
+		{"breeze_dark", i18n("Breeze (Dark)"), QStringLiteral("Breeze"),
+		 i18n("Dark")},
+		{"breeze_light", i18n("Breeze (Light)"),
+		 QStringLiteral("Breeze"), i18n("Light")},
 	};
 
 	// NOTE: there used to be a hardcoded "custom" entry here, but no such
@@ -460,11 +461,11 @@ void ThemeManager::initCustomIconThemes()
 void ThemeManager::initializeCatPacks()
 {
 	QList<std::pair<QString, QString>> defaultCats{
-		{"kitteh", QObject::tr("Background Cat (from MultiMC)")},
-		{"rory", QObject::tr("Rory ID 11 (drawn by Ashtaka)")},
+		{"kitteh", i18n("Background Cat (from MultiMC)")},
+		{"rory", i18n("Rory ID 11 (drawn by Ashtaka)")},
 		{"rory-flat",
-		 QObject::tr("Rory ID 11 (flat edition, drawn by Ashtaka)")},
-		{"teawie", QObject::tr("Teawie (drawn by SympathyTea)")}};
+		 i18n("Rory ID 11 (flat edition, drawn by Ashtaka)")},
+		{"teawie", i18n("Teawie (drawn by SympathyTea)")}};
 
 	for (const auto& [id, name] : defaultCats) {
 		addCatPack(std::make_unique<BasicCatPack>(id, name));

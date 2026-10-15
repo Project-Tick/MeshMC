@@ -39,6 +39,7 @@
 #include "ui/widgets/ProgressWidget.h"
 #include "ui/widgets/ProjectDescriptionPage.h"
 #include "ui/widgets/ProjectItemDelegate.h"
+#include <KLocalizedString>
 
 ContentProviderPage::ContentProviderPage(DownloadContentDialog* dialog,
 										 ContentProviderModel* model,
@@ -169,7 +170,7 @@ QIcon ContentProviderPage::icon() const
 void ContentProviderPage::openedImpl()
 {
 	m_ui->searchEdit->setPlaceholderText(
-		tr("Search for %1...").arg(m_dialog->contentsNoun()));
+		i18n("Search for %1...", m_dialog->contentsNoun()));
 	updateSelectionButton();
 	if (m_suppressInitialSearch) {
 		/* One page's worth only: switching back here later is an
@@ -335,8 +336,8 @@ void ContentProviderPage::openProject(const QString& projectId)
 	auto* okButton = buttonBox->button(QDialogButtonBox::Ok);
 	okButton->setDefault(true);
 	okButton->setAutoDefault(true);
-	okButton->setText(tr("Reinstall"));
-	okButton->setShortcut(tr("Ctrl+Return"));
+	okButton->setText(i18n("Reinstall"));
+	okButton->setShortcut(i18n("Ctrl+Return"));
 	/* Nothing is selected yet - the version list has not even been
 	 * asked for. The connection below opens this up. */
 	okButton->setEnabled(false);
@@ -344,7 +345,7 @@ void ContentProviderPage::openProject(const QString& projectId)
 	auto* cancelButton = buttonBox->button(QDialogButtonBox::Cancel);
 	cancelButton->setDefault(false);
 	cancelButton->setAutoDefault(false);
-	cancelButton->setText(tr("Cancel"));
+	cancelButton->setText(i18n("Cancel"));
 
 	connect(okButton, &QPushButton::clicked, this, [this] {
 		/* Same path as the ordinary selection button: the picked version
@@ -389,7 +390,7 @@ void ContentProviderPage::selectLookedUpProject()
 		return;
 	}
 
-	m_ui->packDescription->setText(tr("The resource was not found"));
+	m_ui->packDescription->setText(i18n("The resource was not found"));
 }
 
 void ContentProviderPage::onSearchStateChanged()
@@ -502,7 +503,7 @@ void ContentProviderPage::updateDescription()
 	}
 
 	if (!project->author.isEmpty()) {
-		html += "<br>" + tr("by %1").arg(project->author.toHtmlEscaped());
+		html += "<br>" + i18n("by %1", project->author.toHtmlEscaped());
 	}
 
 	/* No "already installed" note here: the reference launcher says it
@@ -589,14 +590,14 @@ void ContentProviderPage::updateVersionList()
 					m_dialog->installedVersionId(m_model->platformId(),
 												 project->projectId)) {
 				//: Marks the version of a mod that is already on disk
-				text += tr(" [installed]");
+				text += i18n(" [installed]");
 			}
 			m_ui->versionSelectionBox->addItem(text, i);
 		}
 	}
 
 	if (m_ui->versionSelectionBox->count() == 0) {
-		m_ui->versionSelectionBox->addItem(tr("No valid version found."), -1);
+		m_ui->versionSelectionBox->addItem(i18n("No valid version found."), -1);
 	}
 }
 
@@ -621,30 +622,30 @@ void ContentProviderPage::updateSelectionButton()
 
 	const auto* project = currentProject();
 	if (!project) {
-		button->setText(tr("Select %1 for download").arg(noun));
+		button->setText(i18n("Select %1 for download", noun));
 		button->setEnabled(false);
 		return;
 	}
 
 	if (m_dialog->isNameQueued(project->name)) {
-		button->setText(tr("Deselect %1 for download").arg(noun));
+		button->setText(i18n("Deselect %1 for download", noun));
 		button->setEnabled(true);
 		return;
 	}
 
 	if (!project->versionsLoaded) {
-		button->setText(tr("Loading versions..."));
+		button->setText(i18n("Loading versions..."));
 		button->setEnabled(false);
 		return;
 	}
 
 	if (project->versions.isEmpty() || selectedVersionIndex() < 0) {
-		button->setText(tr("Cannot select invalid version :("));
+		button->setText(i18n("Cannot select invalid version :("));
 		button->setEnabled(false);
 		return;
 	}
 
-	button->setText(tr("Select %1 for download").arg(noun));
+	button->setText(i18n("Select %1 for download", noun));
 	button->setEnabled(true);
 }
 
@@ -687,11 +688,10 @@ void ContentProviderPage::onToggleRequested(const QModelIndex& index)
 		/* Nothing to offer. Saying so is better than a click that
 		 * appears to do nothing at all. */
 		auto* message = new QMessageBox(
-			QMessageBox::Warning, tr("No versions available"),
-			tr("No versions of '%1' are available for this instance.\n"
+			QMessageBox::Warning, i18n("No versions available"),
+			i18n("No versions of '%1' are available for this instance.\n"
 			   "The author may have blocked third-party launchers, or "
-			   "there may be no build for this Minecraft version.")
-				.arg(project->name),
+			   "there may be no build for this Minecraft version.", project->name),
 			QMessageBox::Ok, this);
 		message->setAttribute(Qt::WA_DeleteOnClose);
 		message->open();
@@ -719,10 +719,9 @@ void ContentProviderPage::onToggleRequested(const QModelIndex& index)
 		 * hiding, so there is nothing to queue. Saying so beats a click
 		 * that appears to do nothing. */
 		auto* message = new QMessageBox(
-			QMessageBox::Warning, tr("No versions available"),
-			tr("Every version of '%1' is on a release channel that the "
-			   "filter is currently hiding.")
-				.arg(project->name),
+			QMessageBox::Warning, i18n("No versions available"),
+			i18n("Every version of '%1' is on a release channel that the "
+			   "filter is currently hiding.", project->name),
 			QMessageBox::Ok, this);
 		message->setAttribute(Qt::WA_DeleteOnClose);
 		message->open();

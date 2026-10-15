@@ -33,6 +33,7 @@
 #include <tag_primitive.h>
 
 #include <QCoreApplication>
+#include <KLocalizedString>
 
 GameType::GameType(std::optional<int> original) : original(original)
 {
@@ -61,21 +62,20 @@ QString GameType::toTranslatedString() const
 {
 	switch (type) {
 		case GameType::Survival:
-			return QCoreApplication::translate("GameType", "Survival");
+			return i18nc("GameType", "Survival");
 		case GameType::Creative:
-			return QCoreApplication::translate("GameType", "Creative");
+			return i18nc("GameType", "Creative");
 		case GameType::Adventure:
-			return QCoreApplication::translate("GameType", "Adventure");
+			return i18nc("GameType", "Adventure");
 		case GameType::Spectator:
-			return QCoreApplication::translate("GameType", "Spectator");
+			return i18nc("GameType", "Spectator");
 		default:
 			break;
 	}
 	if (original) {
-		return QCoreApplication::translate("GameType", "Unknown (%1)")
-			.arg(*original);
+		return i18nc("GameType", "Unknown (%1)", *original);
 	}
-	return QCoreApplication::translate("GameType", "Undefined");
+	return i18nc("GameType", "Undefined");
 }
 
 QString GameType::toLogString() const

@@ -20,6 +20,7 @@
 #include "FoldersTask.h"
 #include "minecraft/MinecraftInstance.h"
 #include <QDir>
+#include <KLocalizedString>
 
 FoldersTask::FoldersTask(MinecraftInstance* inst) : Task()
 {
@@ -31,7 +32,7 @@ void FoldersTask::executeTask()
 	// Make directories
 	QDir mcDir(m_inst->gameRoot());
 	if (!mcDir.exists() && !mcDir.mkpath(".")) {
-		emitFailed(tr("Failed to create folder for minecraft binaries."));
+		emitFailed(i18n("Failed to create folder for minecraft binaries."));
 		return;
 	}
 	emitSucceeded();

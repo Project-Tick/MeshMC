@@ -22,6 +22,7 @@
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include <QOperatingSystemVersion>
 #include <QVersionNumber>
+#include <KLocalizedString>
 
 /* ── dependencies ─────────────────────────────────────────────────── *
  *
@@ -300,16 +301,15 @@ static void injectCheckboxIntoMeshMCPage()
 	if (!layout)
 		return;
 
-	auto* groupBox = new QGroupBox(QObject::tr("System Tray"));
+	auto* groupBox = new QGroupBox(i18n("System Tray"));
 	groupBox->setObjectName(QStringLiteral("systemTrayGroupBox"));
 	auto* gl = new QVBoxLayout(groupBox);
 
 	g_enabledCheckbox = new QCheckBox(
-		QObject::tr("Show MeshMC system tray icon (Restart required.)"),
+		i18n("Show MeshMC system tray icon (Restart required.)"),
 		groupBox);
 	g_enabledCheckbox->setObjectName(QStringLiteral("systemTrayEnabledCheck"));
-	g_enabledCheckbox->setToolTip(QObject::tr(
-		"When on, MeshMC keeps a persistent tray icon with quick-launch "
+	g_enabledCheckbox->setToolTip(i18n("When on, MeshMC keeps a persistent tray icon with quick-launch "
 		"shortcuts and an optional minimise-to-tray close handler.\n\n"
 		"Toggle takes effect after restarting MeshMC."));
 	gl->addWidget(g_enabledCheckbox);

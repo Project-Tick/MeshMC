@@ -61,6 +61,7 @@ target_link_libraries(MeshMC_sdk INTERFACE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Network
+    KF${QT_VERSION_MAJOR}::I18n
 )
 
 # ---------------------------------------------------------------------------
