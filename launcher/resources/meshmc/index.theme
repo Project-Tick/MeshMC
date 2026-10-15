@@ -1,0 +1,23 @@
+[Icon Theme]
+Name=meshmc
+Comment=Default Icons
+Inherits=default
+Directories=32x32/instances,50x50/instances,128x128/instances,scalable,scalable/instances
+
+[32x32/instances]
+Size=32
+MinSize=1
+MaxSize=32
+
+[50x50/instances]
+Size=50
+
+[128x128/instances]
+Size=128
+MinSize=33
+MaxSize=128
+
+[scalable/instances]
+Size=128
+MinSize=16
+MaxSize=256

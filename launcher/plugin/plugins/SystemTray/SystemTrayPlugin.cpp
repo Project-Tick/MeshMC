@@ -489,7 +489,7 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	 * gets a sensible icon on stripped/older builds. */
 	const char* iconCandidates[] = {
 		":/org.projecttick.MeshMC.svg",			 /* primary — MeshMC logo  */
-		":/multimc/scalable/instances/logo.svg", /* instance default */
+		":/meshmc/scalable/instances/logo.svg",  /* instance default */
 		"meshmc",								 /* themed name (XDG)      */
 		"applications-games",					 /* last-ditch fallback    */
 	};

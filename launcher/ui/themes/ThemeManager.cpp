@@ -387,7 +387,7 @@ void ThemeManager::initIconThemes()
 		 i18n("Dark")},
 		{"breeze_light", i18n("Breeze (Light)"),
 		 QStringLiteral("Breeze"), i18n("Light")},
-		{"multimc", QStringLiteral("MultiMC"), QStringLiteral("MultiMC"),
+		{"meshmc", QStringLiteral("MeshMC"), QStringLiteral("MeshMC"),
 		 QString()},
 	};
 

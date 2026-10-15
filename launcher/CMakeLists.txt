@@ -772,7 +772,6 @@ SET(MESHMC_SOURCES
 
     # Bundled resources
     resources/backgrounds/backgrounds.qrc
-    resources/multimc/multimc.qrc
     resources/documents/documents.qrc
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
@@ -1165,7 +1164,6 @@ endif()
 
 set(MESHMC_QRC_FILES
     resources/backgrounds/backgrounds.qrc
-    resources/multimc/multimc.qrc
     resources/documents/documents.qrc
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
