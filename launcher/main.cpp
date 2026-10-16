@@ -24,6 +24,7 @@
 #include <QDir>
 #include <QProcess>
 #include <QProcessEnvironment>
+#include <KLocalizedString>
 
 #include <csignal>
 #include <cstdlib>
@@ -90,6 +91,7 @@ static void crashSignalHandler(int sig)
 
 int main(int argc, char* argv[])
 {
+	KLocalizedString::setApplicationDomain("meshmc");
 #ifdef BREAK_INFINITE_LOOP
 	while (true) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
