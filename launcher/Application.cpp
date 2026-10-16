@@ -510,7 +510,7 @@ void Application::initPlatform()
 	setOrganizationName("MeshMC");
 	setOrganizationDomain("projecttick.org");
 	setApplicationName("MeshMC");
-	setApplicationDisplayName(QString("MeshMC %2").arg(BuildConfig.printableVersionString()));
+	setApplicationDisplayName(QString("MeshMC"));
 	setApplicationVersion(BuildConfig.printableVersionString());
 
 	startTime = QDateTime::currentDateTime();
