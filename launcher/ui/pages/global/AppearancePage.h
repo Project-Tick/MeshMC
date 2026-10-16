@@ -58,7 +58,6 @@ class AppearancePage : public QWidget, public BasePage
   private slots:
 	void applyWidgetTheme(int index);
 	void applyIconTheme(int index);
-	void applyCatTheme(int index);
 	void openThemesFolder();
 	void openIconThemesFolder();
 	void reloadThemes();
@@ -66,8 +65,6 @@ class AppearancePage : public QWidget, public BasePage
   private:
 	void applySettings();
 	void loadSettings();
-	void updateIconPreview();
-	void updateCatPreview();
 
 	Ui::AppearancePage* ui;
 };

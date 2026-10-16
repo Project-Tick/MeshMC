@@ -248,15 +248,6 @@ set(NOTIFICATIONS_SOURCES
     notifications/NotificationChecker.cpp
 )
 
-# Backend for the news bar... there's usually no news.
-set(NEWS_SOURCES
-    # News System
-    news/NewsChecker.h
-    news/NewsChecker.cpp
-    news/NewsEntry.h
-    news/NewsEntry.cpp
-)
-
 # Instance backup snapshots (was the BackupSystem .mmco plugin)
 set(BACKUP_SOURCES
     backup/BackupManager.h
@@ -731,7 +722,6 @@ set(LOGIC_SOURCES
     ${LAUNCH_SOURCES}
     ${UPDATE_SOURCES}
     ${NOTIFICATIONS_SOURCES}
-    ${NEWS_SOURCES}
     ${BACKUP_SOURCES}
     ${MINECRAFT_SOURCES}
     ${SCREENSHOTS_SOURCES}
@@ -822,8 +812,6 @@ SET(MESHMC_SOURCES
     ui/themes/SystemTheme.h
     ui/themes/ThemeManager.cpp
     ui/themes/ThemeManager.h
-    ui/themes/CatPack.cpp
-    ui/themes/CatPack.h
 
     # Processes
     LaunchController.h
@@ -973,8 +961,6 @@ SET(MESHMC_SOURCES
     ui/dialogs/NewComponentDialog.h
     ui/dialogs/NewInstanceDialog.cpp
     ui/dialogs/NewInstanceDialog.h
-    ui/dialogs/NewsViewerDialog.cpp
-    ui/dialogs/NewsViewerDialog.h
     ui/dialogs/NotificationDialog.cpp
     ui/dialogs/NotificationDialog.h
     ui/pagedialog/PageDialog.cpp
@@ -1437,6 +1423,7 @@ if(NOT APPLE)
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Network
+        KF${QT_VERSION_MAJOR}::I18n
         LibArchive::LibArchive
         cmark::cmark
         BuildConfig

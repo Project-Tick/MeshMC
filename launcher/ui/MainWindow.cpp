@@ -72,7 +72,6 @@
 #include <BuildConfig.h>
 #include <net/NetJob.h>
 #include <net/Download.h>
-#include <news/NewsChecker.h>
 #include <notifications/NotificationChecker.h>
 #include <tools/BaseProfiler.h>
 
@@ -91,7 +90,6 @@
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/dialogs/AboutDialog.h"
-#include "ui/dialogs/NewsViewerDialog.h"
 #include "ui/dialogs/MeshMCLogsDialog.h"
 #include "ui/dialogs/PluginsDialog.h"
 #include "ui/dialogs/VersionSelectDialog.h"
@@ -211,10 +209,6 @@ void MainWindow::refreshThemedIcons()
 {
 	applyThemedIcons();
 
-	if (newsLabel) {
-		newsLabel->setIcon(APPLICATION->getThemedIcon("news"));
-	}
-
 	if (changeIconButton) {
 		if (m_currentInstIcon.isEmpty()) {
 			// Nothing selected: createInstanceToolbar()'s placeholder.
@@ -243,10 +237,6 @@ void MainWindow::createMainToolbar()
 
 	ui->actionReportBug->setVisible(!BuildConfig.BUG_TRACKER_URL.isEmpty());
 
-	ui->actionDISCORD->setVisible(!BuildConfig.DISCORD_URL.isEmpty());
-
-	ui->actionREDDIT->setVisible(!BuildConfig.SUBREDDIT_URL.isEmpty());
-
 	ui->actionPlugins->setVisible(
 		APPLICATION->pluginManager()->moduleCount() >= 1);
 
@@ -258,8 +248,6 @@ void MainWindow::createMainToolbar()
 	}
 
 	ui->actionCheckUpdate->setVisible(APPLICATION->updaterEnabled());
-
-	ui->actionPatreon->setVisible(!BuildConfig.PATREON_URL.isEmpty());
 }
 
 void MainWindow::createInstanceToolbar()
@@ -416,43 +404,6 @@ MainWindow::MainWindow(QWidget* parent)
 				&MainWindow::konamiTriggered);
 	}
 
-	// Add the news label to the news toolbar.
-	{
-		// Feed 0 is ours; anything after it comes from
-		// -DMeshMC_NEWS_EXTRA_FEEDS at build time. The news bar only
-		// ever shows the newest headline across the lot; the rest is
-		// for the news dialog.
-		QStringList feeds{BuildConfig.NEWS_RSS_URL};
-		feeds.append(BuildConfig.NEWS_EXTRA_FEEDS.split(QLatin1Char(';'),
-														Qt::SkipEmptyParts));
-		m_newsChecker.reset(new NewsChecker(APPLICATION->network(), feeds));
-		newsLabel = new QToolButton();
-		newsLabel->setIcon(APPLICATION->getThemedIcon("news"));
-		newsLabel->setSizePolicy(QSizePolicy::Expanding,
-								 QSizePolicy::Preferred);
-		newsLabel->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-		newsLabel->setFocusPolicy(Qt::NoFocus);
-		ui->newsToolBar->insertWidget(ui->actionMoreNews, newsLabel);
-		QObject::connect(newsLabel, &QAbstractButton::clicked, this,
-						 &MainWindow::newsButtonClicked);
-		QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this,
-						 &MainWindow::updateNewsLabel);
-
-		/* Re-publish a finished load as MMCO_HOOK_NEWS_UPDATED. The
-		 * checker is ours, so this is the only place that knows when
-		 * every feed has landed — and by now they all have, which is
-		 * what the hook promises its listeners. */
-		QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this,
-						 []() {
-							 if (APPLICATION->pluginManager()) {
-								 APPLICATION->pluginManager()->dispatchHook(
-									 MMCO_HOOK_NEWS_UPDATED);
-							 }
-						 });
-
-		updateNewsLabel();
-	}
-
 	// Create the instance list widget
 	{
 		view = new InstanceView(ui->centralWidget);
@@ -486,16 +437,6 @@ MainWindow::MainWindow(QWidget* parent)
 				APPLICATION->instances().get(),
 				&InstanceList::on_GroupStateChanged);
 		ui->horizontalLayout->addWidget(view);
-	}
-	// The cat background
-	{
-		bool cat_enable = APPLICATION->settings()->get("TheCat").toBool();
-		ui->actionCAT->setChecked(cat_enable);
-		// NOTE: calling the operator like that is an ugly hack to appease
-		// ancient gcc...
-		connect(ui->actionCAT, &QAction::toggled, this,
-				&MainWindow::onCatToggled);
-		setCatBackground(cat_enable);
 	}
 	// start instance when double-clicked
 	connect(view, &InstanceView::activated, this,
@@ -588,12 +529,6 @@ MainWindow::MainWindow(QWidget* parent)
 	// TODO: refresh accounts here?
 	// auto accounts = APPLICATION->accounts();
 
-	// load the news
-	{
-		m_newsChecker->reloadNews();
-		updateNewsLabel();
-	}
-
 	if (APPLICATION->updaterEnabled()) {
 		updatesAllowedChanged(APPLICATION->updatesAreAllowed());
 
@@ -656,10 +591,6 @@ MainWindow::MainWindow(QWidget* parent)
 		// qApp->allWidgets() on every load).
 		MMCOUiMainReadyPayload mainReady{};
 		mainReady.main_window = static_cast<void*>(this);
-		mainReady.news_toolbar = static_cast<void*>(ui->newsToolBar);
-		mainReady.more_news_action =
-			static_cast<void*>(ui->actionMoreNews);
-		mainReady.news_label_button = static_cast<void*>(newsLabel);
 		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_MAIN_READY,
 												   &mainReady);
 	}
@@ -717,7 +648,6 @@ void MainWindow::lockToolbars(bool state)
 {
 	ui->mainToolBar->setMovable(!state);
 	ui->instanceToolBar->setMovable(!state);
-	ui->newsToolBar->setMovable(!state);
 	APPLICATION->settings()->set("ToolbarsLocked", state);
 }
 
@@ -1184,23 +1114,6 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* ev)
 	return QMainWindow::eventFilter(obj, ev);
 }
 
-void MainWindow::updateNewsLabel()
-{
-	if (m_newsChecker->isLoadingNews()) {
-		newsLabel->setText(i18n("Loading news..."));
-		newsLabel->setEnabled(false);
-	} else {
-		QList<NewsEntryPtr> entries = m_newsChecker->getNewsEntries();
-		if (entries.length() > 0) {
-			newsLabel->setText(entries[0]->title);
-			newsLabel->setEnabled(true);
-		} else {
-			newsLabel->setText(i18n("No news available."));
-			newsLabel->setEnabled(false);
-		}
-	}
-}
-
 QList<int> stringToIntList(const QString& string)
 {
 	QStringList split = string.split(',', Qt::SkipEmptyParts);
@@ -1235,32 +1148,6 @@ void MainWindow::notificationsChanged()
 	}
 	APPLICATION->settings()->set("ShownNotifications",
 								 intListToString(shownNotifications));
-}
-
-void MainWindow::onCatToggled(bool state)
-{
-	setCatBackground(state);
-	APPLICATION->settings()->set("TheCat", state);
-}
-
-void MainWindow::setCatBackground(bool enabled)
-{
-	if (enabled) {
-		QString catPath = APPLICATION->themeManager()->getCatPack();
-		view->setStyleSheet(QString(R"(
-InstanceView
-{
-    background-image: url(%1);
-    background-attachment: fixed;
-    background-clip: padding;
-    background-position: top right;
-    background-repeat: none;
-    background-color:palette(base);
-})")
-								.arg(catPath));
-	} else {
-		view->setStyleSheet(QString());
-	}
 }
 
 void MainWindow::runModalTask(Task* task)
@@ -1398,16 +1285,6 @@ void MainWindow::droppedURLs(QList<QUrl> urls)
 	}
 }
 
-void MainWindow::on_actionREDDIT_triggered()
-{
-	DesktopServices::openUrl(QUrl(BuildConfig.SUBREDDIT_URL));
-}
-
-void MainWindow::on_actionDISCORD_triggered()
-{
-	DesktopServices::openUrl(QUrl(BuildConfig.DISCORD_URL));
-}
-
 void MainWindow::on_actionChangeInstIcon_triggered()
 {
 	if (!m_selectedInstance)
@@ -1540,11 +1417,6 @@ void MainWindow::on_actionViewWidgetThemeFolder_triggered()
 	DesktopServices::openDirectory(APPLICATION->themeManager()->getApplicationThemesFolder().path(), true);
 }
 
-void MainWindow::on_actionViewCatPackFolder_triggered()
-{
-	DesktopServices::openDirectory(APPLICATION->themeManager()->getCatPacksFolder().path(), true);
-}
-
 void MainWindow::on_actionViewIconsFolder_triggered()
 {
 	DesktopServices::openDirectory(APPLICATION->icons()->getDirectory(), true);
@@ -1641,38 +1513,6 @@ void MainWindow::on_actionManageAccounts_triggered()
 void MainWindow::on_actionReportBug_triggered()
 {
 	DesktopServices::openUrl(QUrl(BuildConfig.BUG_TRACKER_URL));
-}
-
-void MainWindow::on_actionPatreon_triggered()
-{
-    DesktopServices::openUrl(QUrl(BuildConfig.PATREON_URL));
-}
-
-/*
- * The two ways into the news dialog. They differ only in whether the
- * list of every entry is open: "More news" wants to browse, the
- * headline in the news bar wants that one post.
- */
-void MainWindow::showNews(bool withSidebar)
-{
-	if (!m_newsDialog) {
-		m_newsDialog = new NewsViewerDialog(m_newsChecker.get(), this);
-		m_newsDialog->setAttribute(Qt::WA_DeleteOnClose);
-	}
-	m_newsDialog->loadEntries(withSidebar);
-	m_newsDialog->show();
-	m_newsDialog->raise();
-	m_newsDialog->activateWindow();
-}
-
-void MainWindow::on_actionMoreNews_triggered()
-{
-	showNews(true);
-}
-
-void MainWindow::newsButtonClicked()
-{
-	showNews(false);
 }
 
 void MainWindow::on_actionAbout_triggered()

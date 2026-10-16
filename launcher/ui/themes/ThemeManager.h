@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "CatPack.h"
 #include "ITheme.h"
 
 #include <QString>
@@ -91,19 +90,12 @@ class ThemeManager : public QObject
 	 */
 	void refresh();
 
-	// CatPack API
-	QString getCatPack(const QString& catName = QString());
-	QList<CatPack*> getValidCatPacks();
-	QDir getCatPacksFolder();
-
   signals:
 	void iconThemeChanged();
 
   private:
 	std::map<QString, std::unique_ptr<ITheme>> m_themes;
 	QList<IconThemeEntry> m_iconThemes;
-	std::map<QString, std::unique_ptr<CatPack>> m_catPacks;
-	QDir m_catPacksFolder;
 	QDir m_applicationThemeFolder;
 	QDir m_iconThemeFolder;
 	QString m_defaultStyle;
@@ -113,8 +105,6 @@ class ThemeManager : public QObject
 	void initializeCustomThemes(ITheme* baseTheme);
 	void initIconThemes();
 	void initCustomIconThemes();
-	void initializeCatPacks();
-	void addCatPack(std::unique_ptr<CatPack> catPack);
 #ifdef Q_OS_MACOS
 	struct MacState;
 	std::unique_ptr<MacState> m_macState;

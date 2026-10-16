@@ -105,8 +105,7 @@ static QString gamemode_status_text()
 	int status = gamemode_query_status();
 	QString gmBin = gamemoderun_executable();
 	if (status >= 0) {
-		return QObject::
-			i18n("GameMode daemon: running — will activate at game launch  (%1)", gmBin);
+		return i18n("GameMode daemon: running — will activate at game launch  (%1)", gmBin);
 	}
 
 	if (is_flatpak()) {

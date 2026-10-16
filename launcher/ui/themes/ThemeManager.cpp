@@ -63,7 +63,6 @@ void ThemeManager::initialize()
 
 	initializeThemes();
 	initIconThemes();
-	initializeCatPacks();
 }
 
 void ThemeManager::initializeThemes()
@@ -140,11 +139,9 @@ void ThemeManager::initializeCustomThemes(ITheme* baseTheme)
 void ThemeManager::refresh()
 {
 	m_themes.clear();
-	m_catPacks.clear();
 
 	initializeThemes();
 	initIconThemes();
-	initializeCatPacks();
 }
 
 void ThemeManager::addTheme(std::unique_ptr<ITheme> theme)
@@ -436,100 +433,6 @@ void ThemeManager::initCustomIconThemes()
 		qDebug() << "Loaded custom icon theme" << entry.id << "from"
 				 << dir.path();
 	}
-}
-
-void ThemeManager::initializeCatPacks()
-{
-	QList<std::pair<QString, QString>> defaultCats{
-		{"kitteh", i18n("Background Cat (from MultiMC)")},
-		{"rory", i18n("Rory ID 11 (drawn by Ashtaka)")},
-		{"rory-flat",
-		 i18n("Rory ID 11 (flat edition, drawn by Ashtaka)")},
-		{"teawie", i18n("Teawie (drawn by SympathyTea)")}};
-
-	for (const auto& [id, name] : defaultCats) {
-		addCatPack(std::make_unique<BasicCatPack>(id, name));
-	}
-
-	// Create catpacks folder in data directory
-	m_catPacksFolder = QDir("catpacks");
-	if (!m_catPacksFolder.mkpath("."))
-		qWarning() << "Couldn't create catpacks folder";
-
-	QStringList supportedImageFormats;
-	for (const auto& format : QImageReader::supportedImageFormats()) {
-		supportedImageFormats.append("*." + format);
-	}
-
-	auto loadFiles = [this, &supportedImageFormats](const QDir& dir) {
-		QDirIterator it(dir.absolutePath(), supportedImageFormats, QDir::Files);
-		while (it.hasNext()) {
-			QFileInfo info(it.next());
-			addCatPack(std::make_unique<FileCatPack>(info));
-		}
-	};
-
-	// Load image files in catpacks folder root
-	loadFiles(m_catPacksFolder);
-
-	// Load subdirectories
-	QDirIterator directoryIterator(m_catPacksFolder.path(),
-								   QDir::Dirs | QDir::NoDotAndDotDot);
-	while (directoryIterator.hasNext()) {
-		QDir dir(directoryIterator.next());
-		QFileInfo manifest(dir.absoluteFilePath("catpack.json"));
-
-		if (manifest.isFile()) {
-			try {
-				addCatPack(std::make_unique<JsonCatPack>(manifest));
-			} catch (const Exception& e) {
-				qWarning() << "Couldn't load catpack json:" << e.cause();
-			}
-		} else {
-			loadFiles(dir);
-		}
-	}
-}
-
-void ThemeManager::addCatPack(std::unique_ptr<CatPack> catPack)
-{
-	QString id = catPack->id();
-	if (m_catPacks.find(id) == m_catPacks.end())
-		m_catPacks.emplace(id, std::move(catPack));
-	else
-		qWarning() << "CatPack" << id << "not added to prevent id duplication";
-}
-
-QString ThemeManager::getCatPack(const QString& catName)
-{
-	QString id = catName.isEmpty()
-					 ? APPLICATION->settings()->get("BackgroundCat").toString()
-					 : catName;
-
-	auto it = m_catPacks.find(id);
-	if (it != m_catPacks.end())
-		return it->second->path();
-
-	// Fallback to first available
-	if (!m_catPacks.empty())
-		return m_catPacks.begin()->second->path();
-
-	return QString();
-}
-
-QList<CatPack*> ThemeManager::getValidCatPacks()
-{
-	QList<CatPack*> ret;
-	ret.reserve(m_catPacks.size());
-	for (auto& [id, pack] : m_catPacks) {
-		ret.append(pack.get());
-	}
-	return ret;
-}
-
-QDir ThemeManager::getCatPacksFolder()
-{
-	return m_catPacksFolder;
 }
 
 QDir ThemeManager::getApplicationThemesFolder()
