@@ -6,6 +6,11 @@
 * For this reason, I had to remove many features. It was painful, but worth the effort.
 * MeshMC is now moving toward becoming a "simpler" and highly stable launcher.
 
+## New Dependencies
+
+* KDE Frameworks 5/6 I18n
+* KDE Frameworks 5/6 GuiAddons
+
 ## Added
 
 * Automatic icon refreshing upon theme change has been added.
@@ -37,8 +42,11 @@
 * The CatPack system has been removed. `;(`
 * Patreon information has been removed.
 * Discord and Subreddit information features have been removed.
+* vcpkg support has been removed.
 
 ## Deprecated
+
+
 
 ## CI/CD Updates
 

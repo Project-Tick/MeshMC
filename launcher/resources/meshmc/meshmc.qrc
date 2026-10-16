@@ -20,6 +20,13 @@
         <file alias="32x32/accounts.png">32x32/noaccount.png</file>
         <file alias="48x48/accounts.png">48x48/noaccount.png</file>
 
+        <!-- Star, LGPL3, Oxygen icons.-->
+        <file>16x16/star.png</file>
+        <file>24x24/star.png</file>
+        <file>32x32/star.png</file>
+        <file>48x48/star.png</file>
+        <file>64x64/star.png</file>
+
         <file>scalable/git-scm.svg</file>
 
         <!-- REDDIT logo icon, needs reddit license! -->

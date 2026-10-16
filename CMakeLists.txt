@@ -96,6 +96,7 @@ else()
 endif()
 
 include(ECMQtDeclareLoggingCategory)
+include(FeatureSummary)
 
 option(ENABLE_LTO "Enable Link Time Optimization" off)
 option(MeshMC_DISABLE_JAVA_DOWNLOADER "Disable the built-in Java downloader feature" OFF)
@@ -626,3 +627,5 @@ endif()
 if(APPLE AND QT_VERSION_MAJOR EQUAL 5)
     include("${CMAKE_SOURCE_DIR}/cmake/FixQt5MacBundle.cmake")
 endif()
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
