@@ -71,6 +71,43 @@ Kirigami.Page {
             logLoader.item.showFile(name)
     }
 
+    // Back from Add Content: the Content tab on the kind just browsed.
+    function showContentKind(kind) {
+        if (contentLoader.item)
+            contentLoader.item.showKind(kind)
+    }
+
+    // The Content tab's Check for Updates or Export List dialog, open: for
+    // review snapshots (DevRoute.qml's "updates" and "export"). False until
+    // the tab is there.
+    function openContentDialog(which) {
+        page.tab = "content"
+        var content = contentLoader.item
+        if (!content || !content.content)
+            return false
+        // Asked once: a check that cannot start says why, and asking again
+        // would only say it again.
+        if (which === "updates")
+            content.checkUpdates()
+        else
+            content.exportList()
+        return true
+    }
+
+    // Installs from Add Content, kept here so they go on after Add Content
+    // closes, and the dialog that lists what one brings along.
+    readonly property alias contentInstaller: installer
+    ContentInstaller {
+        id: installer
+        app: page.app
+        details: page.details
+        onReviewRequested: (review, key) => installReview.show(review, key)
+    }
+    InstallReviewDialog {
+        id: installReview
+        onInstallStarted: (watcher, key, title) => installer.track(key, watcher, title)
+    }
+
     Component.onCompleted: page.shownTabChanged()
     Component.onDestruction: page.app.instancePageClosed(page)
 
@@ -133,6 +170,7 @@ Kirigami.Page {
         currentIndex: ["content", "worlds", "screenshots", "log", "settings"].indexOf(page.shownTab)
 
         Loader {
+            id: contentLoader
             active: page.visitedTabs.indexOf("content") >= 0
             sourceComponent: ContentTab {
                 app: page.app

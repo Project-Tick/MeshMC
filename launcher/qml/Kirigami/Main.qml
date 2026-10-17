@@ -54,6 +54,11 @@ Kirigami.ApplicationWindow {
     // The library's grid or list, kept here so it survives the library page
     // being rebuilt; session-only, as it was before.
     property string libraryView: "grid"
+    // Discover's provider ("modrinth", "curseforge", ...), and those it has
+    // searched this session: kept here, like libraryView, so they survive
+    // the page being rebuilt. Each provider's model keeps its own results.
+    property string discoverProvider: "modrinth"
+    property var discoverSearched: []
 
     // One section page at a time, with an instance page pushed over the
     // library: never two columns side by side, which is for master-detail
@@ -159,6 +164,49 @@ Kirigami.ApplicationWindow {
     }
     function openImport(source) {
         root.openNewInstance("import", source)
+    }
+
+    // Discover's modpack page; Add Content for an instance, and a project
+    // from it: see Navigator.qml.
+    function openModpack(source, pack) {
+        return navigator.openModpack(source, pack)
+    }
+    function openAddContent(id, kind) {
+        return navigator.openAddContent(id, kind)
+    }
+    function openContentProject(owner, row, project) {
+        return navigator.openContentProject(owner, row, project)
+    }
+
+    /* Modpack installs started from Discover, by "provider/projectId": the
+     * TaskWatcher, which C++ owns, so an install goes on after its page
+     * closes and the page finds it again when reopened. A plain object does
+     * not notify, so `modpackInstallsRevision` is bumped on every change and
+     * read by whatever looks an install up. */
+    property var modpackInstalls: ({})
+    property int modpackInstallsRevision: 0
+    function modpackInstall(key) {
+        root.modpackInstallsRevision
+        return root.modpackInstalls[key] || null
+    }
+    // Says how it went when it ends, with a way to the new instance, unless
+    // the pack's own page is on screen to say so itself.
+    function trackModpackInstall(key, watcher, name) {
+        if (!watcher)
+            return
+        root.modpackInstalls[key] = watcher
+        root.modpackInstallsRevision++
+        watcher.finished.connect(function (ok) {
+            root.modpackInstallsRevision++
+            var page = root.pageStack.currentItem
+            if (page && page.installKey === key)
+                return
+            if (ok)
+                root.notify(i18n("“%1” is installed.", name), i18nc("@action:button", "Open"),
+                            () => root.openInstance(watcher.instanceId))
+            else
+                root.notify(i18n("Could not install “%1”: %2", name, watcher.error))
+        })
     }
 
     Shortcut {

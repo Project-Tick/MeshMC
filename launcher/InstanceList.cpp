@@ -40,6 +40,7 @@
 #include <QMimeData>
 #include <QtConcurrentRun>
 #include <algorithm>
+#include <memory>
 
 #include "InstanceList.h"
 #include "BaseInstance.h"
@@ -56,6 +57,7 @@
 #include "icons/IconList.h"
 #include "launch/LaunchProgressTracker.h"
 #include "launch/LaunchTask.h"
+#include "tasks/TaskWatcher.h"
 
 const static int GROUP_FILE_FORMAT_VERSION = 1;
 
@@ -1820,6 +1822,22 @@ bool InstanceList::commitStagedInstance(const QString& path,
 	}
 	saveGroupList();
 	return true;
+}
+
+void InstanceList::reportCommittedInstance(TaskWatcher* watcher)
+{
+	if (!watcher) {
+		return;
+	}
+	/* The commit names its instance and only then lets the task succeed,
+	 * in one go (InstanceStaging::childSucceded()), so the last id named
+	 * before this watcher's own task ends is always its own - even with
+	 * other installs running beside it. */
+	auto connection = std::make_shared<QMetaObject::Connection>();
+	*connection = connect(this, &InstanceList::instanceSelectRequest, watcher,
+						  &TaskWatcher::setInstanceId);
+	connect(watcher, &TaskWatcher::finished, this,
+			[connection] { QObject::disconnect(*connection); });
 }
 
 bool InstanceList::destroyStagingPath(const QString& keyPath)

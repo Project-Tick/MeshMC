@@ -226,6 +226,20 @@ class ContentBrowserTest : public QObject
 		QCOMPARE(mod.versionType, QString("beta"));
 	}
 
+	/* An entry update settles the versions only once they are in: the
+	 * description lands beside them, often first. A project gone from the
+	 * list settles them too (as empty). */
+	void test_VersionsSettleOnlyOnceLoaded()
+	{
+		ModPlatform::IndexedProject project;
+		QVERIFY(!ContentBrowser::versionsSettled(&project));
+		project.bodyLoaded = true;
+		QVERIFY(!ContentBrowser::versionsSettled(&project));
+		project.versionsLoaded = true;
+		QVERIFY(ContentBrowser::versionsSettled(&project));
+		QVERIFY(ContentBrowser::versionsSettled(nullptr));
+	}
+
 	void test_CategoryLabel()
 	{
 		QCOMPARE(ContentBrowser::categoryLabel("game-mechanics"),

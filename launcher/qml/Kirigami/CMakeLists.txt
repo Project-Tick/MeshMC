@@ -48,6 +48,29 @@ qt_add_qml_module(MeshMC_qml_kirigami
         UiRequestBody.qml
         Clipboard.qml
         ListArea.qml
+        format.js
+        RemoteRichText.qml
+        DiscoverPage.qml
+        ModpackRow.qml
+        ModpackFilterDialog.qml
+        ModpackPage.qml
+        GalleryStrip.qml
+        GalleryViewer.qml
+        ContentInstaller.qml
+        AddContentPage.qml
+        ContentResultRow.qml
+        ContentFilterDialog.qml
+        ContentProjectPage.qml
+        InstallReviewDialog.qml
+        ContentFlows.qml
+        UpdatesDialog.qml
+        ExportListDialog.qml
+        ProgressFooter.qml
+        SortAction.qml
+        SearchHeading.qml
+        ModpackHeader.qml
+        ModpackLinks.qml
+        ContentActions.qml
 )
 
 target_link_libraries(MeshMC_qml_kirigami PUBLIC

@@ -68,17 +68,111 @@ class FakeDetails : public QObject
 	}
 };
 
+/* A modpack's lazily loaded detail (ModrinthModpackDetail), empty. */
+class FakePackDetail : public QObject
+{
+	Q_OBJECT
+	Q_PROPERTY(QString projectId MEMBER m_projectId NOTIFY changed)
+	Q_PROPERTY(QString bodyHtml MEMBER m_empty CONSTANT)
+	Q_PROPERTY(QVariantList versions MEMBER m_none CONSTANT)
+	Q_PROPERTY(QVariantList gallery MEMBER m_none CONSTANT)
+	Q_PROPERTY(QVariantList links MEMBER m_none CONSTANT)
+	Q_PROPERTY(bool loading MEMBER m_loading CONSTANT)
+	Q_PROPERTY(QString error MEMBER m_empty CONSTANT)
+
+  public:
+	QString m_projectId;
+	QString m_empty;
+	QVariantList m_none;
+	bool m_loading = true;
+
+  signals:
+	void changed();
+};
+
+/* One provider's modpack model (ModrinthModpackModel and its siblings), as
+ * far as Discover reads it: one result row, and a record of what it was
+ * asked to do. */
+class FakeModpackModel : public QStandardItemModel
+{
+	Q_OBJECT
+	Q_PROPERTY(QString query MEMBER m_query NOTIFY changed)
+	Q_PROPERTY(QString sort MEMBER m_sort NOTIFY changed)
+	Q_PROPERTY(QVariantList sortOptions MEMBER m_sortOptions CONSTANT)
+	Q_PROPERTY(QString loader MEMBER m_loader NOTIFY changed)
+	Q_PROPERTY(bool searching MEMBER m_searching CONSTANT)
+	Q_PROPERTY(bool canFetchMore MEMBER m_canFetchMore CONSTANT)
+	Q_PROPERTY(int count READ count CONSTANT)
+	Q_PROPERTY(QString error MEMBER m_error CONSTANT)
+	Q_PROPERTY(bool keyMissing MEMBER m_keyMissing CONSTANT)
+	Q_PROPERTY(QObject* detail READ detail CONSTANT)
+
+  public:
+	FakeModpackModel()
+	{
+		setItemRoleNames({{Qt::UserRole + 1, "projectId"},
+						  {Qt::UserRole + 2, "title"},
+						  {Qt::UserRole + 3, "author"}});
+		auto* item = new QStandardItem;
+		item->setData(QStringLiteral("abc12345"), Qt::UserRole + 1);
+		item->setData(QStringLiteral("Vault Hunters"), Qt::UserRole + 2);
+		item->setData(QStringLiteral("iskallia"), Qt::UserRole + 3);
+		appendRow(item);
+		m_sortOptions = {QVariantMap{{QStringLiteral("id"), QStringLiteral("relevance")},
+									 {QStringLiteral("label"), QStringLiteral("Relevance")}}};
+	}
+	int count() const
+	{
+		return rowCount();
+	}
+	QObject* detail()
+	{
+		return &m_detail;
+	}
+	Q_INVOKABLE void search()
+	{
+		++searches;
+	}
+	Q_INVOKABLE void fetchMore() {}
+	Q_INVOKABLE void loadDetail(const QString& projectId)
+	{
+		m_detail.m_projectId = projectId;
+		emit m_detail.changed();
+		detailsAsked.append(projectId);
+	}
+
+	QString m_query;
+	QString m_sort = QStringLiteral("relevance");
+	QVariantList m_sortOptions;
+	QString m_loader;
+	bool m_searching = false;
+	bool m_canFetchMore = false;
+	QString m_error;
+	bool m_keyMissing = false;
+	FakePackDetail m_detail;
+	int searches = 0;
+	QStringList detailsAsked;
+
+  signals:
+	void changed();
+};
+
 /* Stands in for QmlShell: the members Main.qml calls here, and nothing
  * else -- Main.qml checks for each shell member before using it. */
 class FakeShell : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(int accountCount READ accountCount CONSTANT)
+	Q_PROPERTY(QObject* modpackModel READ modpackModel CONSTANT)
 
   public:
 	int accountCount() const
 	{
 		return m_accountCount;
+	}
+	QObject* modpackModel()
+	{
+		return &m_modpacks;
 	}
 	/// One instance exists: "fabric".
 	Q_INVOKABLE QObject* instanceDetails(const QString& id)
@@ -93,6 +187,7 @@ class FakeShell : public QObject
 
 	int m_accountCount = 1;
 	QString lastLaunch;
+	FakeModpackModel m_modpacks;
 
   signals:
 	void navigateRequested(const QString& target);
@@ -157,6 +252,18 @@ class KirigamiShellTest : public QObject
 	static int depth(QObject* root)
 	{
 		return evaluate(root, QStringLiteral("root.pageStack.depth")).toInt();
+	}
+
+	static QString topTitle(QObject* root)
+	{
+		return evaluate(root, QStringLiteral("root.pageStack.currentItem.title")).toString();
+	}
+
+	/* Pops the top page and lets it go, as Back does. */
+	static void back(QObject* root)
+	{
+		evaluate(root, QStringLiteral("root.pageStack.pop()"));
+		QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 	}
 
 	QStandardItemModel m_instances;
@@ -255,6 +362,82 @@ class KirigamiShellTest : public QObject
 
 		emit shell.navigateRequested(QStringLiteral("accounts"));
 		QCOMPARE(root->property("section").toString(), QStringLiteral("accounts"));
+	}
+
+	/* Discover searches its provider once, the first time it is shown;
+	 * a pack opens on its own page over it, which asks for the pack's
+	 * detail, and Back returns to the results. */
+	void discoverOpensAModpackOverItself()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+
+		QVERIFY(navigate(root.get(), QStringLiteral("discover")));
+		QCOMPARE(depth(root.get()), 1);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Discover"));
+		QCOMPARE(shell.m_modpacks.searches, 1);
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.providers.length")).toInt(), 1);
+
+		QVERIFY(evaluate(root.get(), QStringLiteral(
+			"root.pageStack.currentItem.open({ projectId: 'abc12345', title: 'Vault Hunters', author: 'iskallia' }), true")).toBool());
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Vault Hunters"));
+		QCOMPARE(shell.m_modpacks.detailsAsked, QStringList({QStringLiteral("abc12345")}));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.installKey")).toString(),
+				 QStringLiteral("modrinth/abc12345"));
+
+		back(root.get());
+		QCOMPARE(depth(root.get()), 1);
+		QCOMPARE(root->property("section").toString(), QStringLiteral("discover"));
+
+		/* Shown again, it does not search again: the model kept the
+		 * results. A provider in the path is the one shown. */
+		QVERIFY(navigate(root.get(), QStringLiteral("library")));
+		QVERIFY(navigate(root.get(), QStringLiteral("discover/curseforge")));
+		QCOMPARE(shell.m_modpacks.searches, 1);
+		QCOMPARE(root->property("discoverProvider").toString(), QStringLiteral("curseforge"));
+	}
+
+	/* Add Content goes over the instance's page, on the kind asked for; a
+	 * project from it over that; the instance's own path goes back down
+	 * to its page. An instance that does not exist has none. */
+	void addContentOpensOverTheInstance()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+
+		QVERIFY(!navigate(root.get(), QStringLiteral("instance/missing/add")));
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/add/resourcepacks")));
+		QCOMPARE(depth(root.get()), 3);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Add Content"));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.initialKind")).toString(),
+				 QStringLiteral("resourcepacks"));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.instancePage.shownTab")).toString(),
+				 QStringLiteral("content"));
+
+		QVERIFY(evaluate(root.get(), QStringLiteral(
+			"root.openContentProject(root.pageStack.currentItem, 0, { title: 'Sodium', author: 'jellysquid3' }) !== null")).toBool());
+		QCOMPARE(depth(root.get()), 4);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Sodium"));
+		/* Only from the Add Content page on top. */
+		QVERIFY(evaluate(root.get(), QStringLiteral(
+			"root.openContentProject(root.instancePage, 0, { title: 'Iris' }) === null")).toBool());
+
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/worlds")));
+		QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.instancePage.shownTab")).toString(),
+				 QStringLiteral("worlds"));
+
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/add")));
+		QCOMPARE(depth(root.get()), 3);
+		back(root.get());
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(root->property("openedInstanceId").toString(), QStringLiteral("fabric"));
 	}
 
 	/* With no account at all, "Play Offline" goes to the Accounts page

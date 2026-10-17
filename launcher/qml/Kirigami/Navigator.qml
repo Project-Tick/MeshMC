@@ -7,9 +7,11 @@ import org.kde.kirigamiaddons.formcard as FormCard
 
 /*
  * What the window's page stack shows: one section's page (Library,
- * Discover, Accounts, Settings, About), and an instance's page pushed over
- * the library. The state it moves -- `section`, `openedInstanceId`,
- * `instancePage` -- lives on Main.qml, which the drawer and pages read.
+ * Discover, Accounts, Settings, About), with what was opened from it pushed
+ * on top -- an instance's page over the library, then that instance's Add
+ * Content and a project from it; a modpack's page over Discover. The state
+ * it moves -- `section`, `openedInstanceId`, `instancePage` -- lives on
+ * Main.qml, which the drawer and pages read.
  */
 QtObject {
     id: navigator
@@ -25,16 +27,23 @@ QtObject {
     readonly property Component aboutPage: Component {
         FormCard.AboutPage {}
     }
+    readonly property Component discoverPage: Component {
+        DiscoverPage { app: navigator.app }
+    }
+    readonly property Component modpackPage: Component {
+        ModpackPage { app: navigator.app }
+    }
+    readonly property Component addContentPage: Component {
+        AddContentPage { app: navigator.app }
+    }
+    readonly property Component contentProjectPage: Component {
+        ContentProjectPage { app: navigator.app }
+    }
     // The sections whose pages are still to be ported: a placeholder each.
     readonly property Component placeholderPage: Component {
         PlaceholderPage {}
     }
     readonly property var placeholders: ({
-        discover: {
-            title: i18nc("@title", "Discover"),
-            iconName: "system-search",
-            text: i18n("Modpacks from Modrinth, CurseForge and more will be here soon")
-        },
         accounts: {
             title: i18nc("@title", "Accounts"),
             iconName: "user-identity",
@@ -68,7 +77,7 @@ QtObject {
     // already showing; an instance page open over the library closes.
     function showSection(id) {
         var app = navigator.app
-        if (id !== "library" && id !== "about" && !navigator.placeholders[id])
+        if (id !== "library" && id !== "about" && id !== "discover" && !navigator.placeholders[id])
             return false
         if (app.section === id && app.pageStack.depth > 0) {
             if (app.pageStack.depth > 1)
@@ -79,6 +88,8 @@ QtObject {
         app.pageStack.clear()
         if (id === "library")
             navigator.push(navigator.libraryPage)
+        else if (id === "discover")
+            navigator.push(navigator.discoverPage)
         else if (id === "about")
             navigator.push(navigator.aboutPage)
         else
@@ -95,6 +106,9 @@ QtObject {
         if (!details)
             return false
         if (app.instancePage && app.openedInstanceId === id) {
+            // Back to the instance from whatever was opened over it.
+            if (app.pageStack.currentItem !== app.instancePage)
+                app.pageStack.pop(app.instancePage)
             if (tab)
                 app.instancePage.tab = tab
             return true
@@ -109,15 +123,60 @@ QtObject {
         return true
     }
 
+    // Discover's modpack @p pack (a result row's roles) over Discover, from
+    // @p source: {provider, providerName, model, installer} (DiscoverPage).
+    function openModpack(source, pack) {
+        if (!source || !source.model || !pack || !pack.projectId)
+            return null
+        navigator.showSection("discover")
+        return navigator.push(navigator.modpackPage, { source: source, pack: pack })
+    }
+
+    // Add Content over instance @p id's page, on @p kind ("mods",
+    // "resourcepacks", "shaderpacks", "datapacks") when given. False for an
+    // unknown instance, or one with nothing to browse for.
+    function openAddContent(id, kind) {
+        var app = navigator.app
+        if (!navigator.openInstance(id, "content"))
+            return false
+        var details = app.instancePage ? app.instancePage.details : null
+        if (!details || details.isLegacy)
+            return false
+        navigator.push(navigator.addContentPage, {
+            details: details,
+            installer: app.instancePage.contentInstaller,
+            initialKind: kind || ""
+        })
+        return true
+    }
+
+    // Project @p project of Add Content's results, row @p row, over the
+    // Add Content page @p owner.
+    function openContentProject(owner, row, project) {
+        var app = navigator.app
+        if (!owner || app.pageStack.currentItem !== owner)
+            return null
+        return navigator.push(navigator.contentProjectPage, {
+            owner: owner,
+            row: row,
+            project: project
+        })
+    }
+
     /*
      * Cross-page links: any page can send the user somewhere else in the
      * app with one call. Targets are paths, given whole or split in two
      * (navigate("instance", "fabric") is navigate("instance/fabric")):
      *   "library", "discover", "accounts", "settings", "about"
      *   "settings/<section>"        Settings (its sections come later)
+     *   "discover/<provider>"       Discover on "modrinth", "curseforge",
+     *                               "ftb", "atlauncher" or "technic"
      *   "instance/<id>" or "instance/<id>/<tab>"
      *                               an InstancePage tab id ("content",
      *                               "worlds", "screenshots", "log", ...)
+     *   "instance/<id>/add" or "instance/<id>/add/<kind>"
+     *                               Add Content for it, on a kind
+     *                               ("mods", "resourcepacks", ...)
      * Instance ids are folder names and never contain "/". Returns false,
      * leaving the current page alone, for a path it does not know or an
      * instance that does not exist.
@@ -129,8 +188,11 @@ QtObject {
         switch (parts[0]) {
         case "home":
             return navigator.showSection("library")
-        case "library":
         case "discover":
+            if (parts.length > 1 && parts[1].length > 0)
+                navigator.app.discoverProvider = parts[1]
+            return navigator.showSection("discover")
+        case "library":
         case "accounts":
         case "settings":
         case "about":
@@ -138,6 +200,8 @@ QtObject {
         case "instance":
             if (parts.length < 2 || parts[1].length === 0)
                 return false
+            if (parts.length > 2 && parts[2] === "add")
+                return navigator.openAddContent(parts[1], parts.length > 3 ? parts[3] : "")
             return navigator.openInstance(parts[1], parts.length > 2 ? parts[2] : "")
         }
         return false

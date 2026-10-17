@@ -14,13 +14,17 @@ import org.kde.kirigamiaddons.components as Components
  * and, where the instance has them, core mods, texture packs and data packs
  * -- one kind at a time, each file with a switch to turn it on or off.
  *
- * The toolbar picks the kind and searches it, adds files and opens the
- * folder. Mods are locked while the game runs, as they always were: the
- * files are open, and a change would only apply next time. Packs the game
- * reloads by itself stay editable.
+ * The toolbar picks the kind and searches it; its actions add content from
+ * Modrinth and CurseForge (Add Content, pushed over the instance page) or
+ * from files, check what is installed for updates, verify the mods'
+ * dependencies, export the list and open the folder. Mods are locked while
+ * the game runs, as they always were: the files are open, and a change
+ * would only apply next time. Packs the game reloads by itself stay
+ * editable.
  *
- * Downloading from Modrinth and CurseForge, updates and the list export
- * come with the content browser in a later phase.
+ * Whatever installs or updates, from here or from Add Content, re-reads the
+ * folder once it ends (ContentInstallReview, ContentUpdateController), and
+ * the list follows.
  */
 Item {
     id: tab
@@ -126,8 +130,8 @@ Item {
                 }
                 Kirigami.SearchField {
                     id: searchField
-                    Layout.fillWidth: true
-                    Layout.maximumWidth: Kirigami.Units.gridUnit * 16
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 14
+                    Layout.minimumWidth: Kirigami.Units.gridUnit * 6
                     placeholderText: i18nc("@info:placeholder", "Search…")
                     focusSequences: tab.isCurrent ? [StandardKey.Find] : []
                     onTextChanged: if (tab.listModel) tab.listModel.filterText = text
@@ -139,19 +143,10 @@ Item {
                         }
                     }
                 }
-                Item {
+                Kirigami.ActionToolBar {
                     Layout.fillWidth: true
-                }
-                QQC2.ToolButton {
-                    text: i18nc("@action:button", "Add Files…")
-                    icon.name: "list-add"
-                    enabled: tab.unlocked
-                    onClicked: addFiles.open()
-                }
-                QQC2.ToolButton {
-                    text: i18nc("@action:button", "Open Folder")
-                    icon.name: "document-open-folder"
-                    onClicked: tab.app.call("openPath", tab.content.dir(tab.kind))
+                    alignment: Qt.AlignRight
+                    actions: contentActions.actions
                 }
             }
         }
@@ -193,10 +188,68 @@ Item {
                     visible: list.count === 0
                     icon.name: tab.totalCount > 0 ? "edit-find" : "package-x-generic"
                     text: tab.totalCount > 0 ? i18n("Nothing matches your search") : tab.current.empty
-                    explanation: tab.totalCount > 0 ? "" : i18n("Add files here, or drop them into the folder.")
+                    explanation: tab.totalCount > 0 ? ""
+                               : i18n("Find some on Modrinth and CurseForge, or add files you already have.")
+                    helpfulAction: tab.totalCount > 0 ? null : addContentAction
                 }
             }
         }
+
+        // An update or dependency download in progress.
+        ProgressFooter {
+            Layout.fillWidth: true
+            active: flows.busy
+            status: flows.busyText
+            progress: flows.busyProgress
+        }
+    }
+
+    Kirigami.Action {
+        id: addContentAction
+        text: i18nc("@action:button", "Add Content…")
+        icon.name: "list-add"
+        onTriggered: tab.addContent()
+    }
+
+    // Add Content, on this kind when it can be browsed (mods otherwise).
+    function addContent() {
+        if (tab.details)
+            tab.app.openAddContent(tab.details.instanceId, tab.kind)
+    }
+    // Shows @p kind when this instance has it (back from Add Content).
+    function showKind(kind) {
+        if (tab.kinds.some(k => k.value === kind))
+            tab.kind = kind
+    }
+    function exportList() {
+        exportDialog.kind = tab.kind
+        exportDialog.open()
+        return true
+    }
+    // For review snapshots (DevRoute.qml's "updates").
+    function checkUpdates() {
+        return flows.checkUpdates()
+    }
+
+    ContentActions {
+        id: contentActions
+        contentTab: tab
+        contentFlows: flows
+        onAddFilesRequested: addFiles.open()
+    }
+
+    ContentFlows {
+        id: flows
+        app: tab.app
+        content: tab.content
+        kind: tab.kind
+    }
+
+    ExportListDialog {
+        id: exportDialog
+        controller: tab.content
+        listName: tab.details ? tab.details.name : ""
+        onDone: (message) => tab.app.notify(message)
     }
 
     // One file's menu: switch it, its project page, remove it.

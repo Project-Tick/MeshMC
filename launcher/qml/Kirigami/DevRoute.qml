@@ -30,6 +30,27 @@ import org.kde.kirigami as Kirigami
  *   crashed=<id>         marks the instance as crashed last time
  *   click=x,y[,right[,delayMs]]
  *                        a real click at a window point (QmlShell::debugClick())
+ *
+ * Discover and Add Content (the page on top of the stack):
+ *   provider=<id>        Discover's provider, or Add Content's site
+ *   kind=<id>            Add Content's kind ("mods", "resourcepacks", ...)
+ *   search=<words>       the page's search
+ *   filters              its Filters dialog
+ *   detail=<n>           opens result n once the search has answered
+ *   version=<n>          the project page's version n, once listed
+ *   install              presses Install once the page can (modpack or
+ *                        project page) -- a real install: use it only with a
+ *                        data folder of its own
+ *   gallery=<n>          the modpack's picture n, full size
+ *   scroll=<where>       the page scrolled to "description", "bottom" or a
+ *                        pixel offset, once that part has loaded
+ *   updates, export      the Content tab's Check for Updates and Export
+ *                        List dialogs (after instance=<id>)
+ *   wait=<ms>            pauses the steps after it
+ *
+ * The steps from detail= on wait for the network: each runs once the page
+ * can do it (asked again every few frames, given up after a while), and
+ * the steps after it run only then.
  */
 QtObject {
     id: route
@@ -45,13 +66,67 @@ QtObject {
         onTriggered: route.drawer.open()
     }
 
+    // The steps still to run, and the one being waited on: a function that
+    // returns true once it has done its step.
+    property var pending: []
+    property var waitingOn: null
+    property int waitedMs: 0
+    readonly property int pollMs: 200
+    readonly property int giveUpMs: 30000
+    readonly property Timer poll: Timer {
+        interval: route.pollMs
+        repeat: true
+        onTriggered: {
+            route.waitedMs += interval
+            var done = false
+            try {
+                done = route.waitingOn()
+            } catch (e) {
+                done = false
+            }
+            if (!done && route.waitedMs < route.giveUpMs)
+                return
+            if (!done)
+                console.warn("DevRoute: gave up waiting on a step")
+            stop()
+            route.waitingOn = null
+            route.runPending()
+        }
+    }
+    // Runs @p fn now if it can be done now, else every pollMs until it is.
+    function waitFor(fn) {
+        try {
+            if (fn())
+                return
+        } catch (e) {
+        }
+        route.waitingOn = fn
+        route.waitedMs = 0
+        route.poll.restart()
+    }
+    // The page on top of the stack, if it has @p method.
+    function top(method) {
+        var page = route.app.pageStack.currentItem
+        return page && typeof page[method] === "function" ? page : null
+    }
+
     function apply(text) {
+        route.pending = text.split(";")
+        route.runPending()
+    }
+    function runPending() {
+        while (route.pending.length > 0 && !route.waitingOn) {
+            var step = route.pending[0]
+            route.pending = route.pending.slice(1)
+            route.applyStep(step)
+        }
+    }
+    function applyStep(step) {
         var app = route.app
-        var steps = text.split(";")
-        for (var i = 0; i < steps.length; ++i) {
-            var eq = steps[i].indexOf("=")
-            var key = (eq < 0 ? steps[i] : steps[i].slice(0, eq)).trim()
-            var value = eq < 0 ? "" : steps[i].slice(eq + 1).trim()
+        {
+            var eq = step.indexOf("=")
+            var key = (eq < 0 ? step : step.slice(0, eq)).trim()
+            var value = eq < 0 ? "" : step.slice(eq + 1).trim()
             if (key === "size") {
                 var wh = value.split("x")
                 app.width = parseInt(wh[0])
@@ -90,6 +165,33 @@ QtObject {
                 app.call("debugMarkInstanceCrashed", value)
             else if (key === "click")
                 app.call("debugClick", value)
+            else if (key === "provider") {
+                if (route.top("setProvider"))
+                    route.top("setProvider").setProvider(value)
+                else
+                    app.discoverProvider = value
+            } else if (key === "kind" && route.top("showKind"))
+                route.top("showKind").showKind(value)
+            else if (key === "search" && route.top("setSearch"))
+                route.top("setSearch").setSearch(value)
+            else if (key === "filters")
+                route.waitFor(() => !!route.top("openFilters") && route.top("openFilters").openFilters())
+            else if (key === "detail")
+                route.waitFor(() => !!route.top("openResult") && route.top("openResult").openResult(parseInt(value)))
+            else if (key === "version")
+                route.waitFor(() => !!route.top("pickVersion") && route.top("pickVersion").pickVersion(parseInt(value)))
+            else if (key === "install")
+                route.waitFor(() => !!route.top("installWhenReady") && route.top("installWhenReady").installWhenReady())
+            else if (key === "gallery")
+                route.waitFor(() => !!route.top("openGallery") && route.top("openGallery").openGallery(parseInt(value)))
+            else if (key === "scroll")
+                route.waitFor(() => !!route.top("scrollTo") && route.top("scrollTo").scrollTo(value))
+            else if (key === "updates" || key === "export")
+                route.waitFor(() => !!app.instancePage && app.instancePage.openContentDialog(key))
+            else if (key === "wait") {
+                var until = Date.now() + parseInt(value)
+                route.waitFor(() => Date.now() >= until)
+            }
         }
     }
 }

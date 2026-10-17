@@ -33,6 +33,7 @@
 
 class QFileSystemWatcher;
 class InstanceTask;
+class TaskWatcher;
 class LaunchProgressTracker;
 using InstanceId = QString;
 using GroupId = QString;
@@ -262,6 +263,14 @@ class InstanceList : public QAbstractListModel
 	// Wrap an instance creation task in some more task machinery and make it
 	// ready to be used
 	Task* wrapInstanceTask(InstanceTask* task);
+
+	/* Gives @p watcher, over a task from wrapInstanceTask(), the id of the
+	 * instance that task commits (the one instanceSelectRequest() names as
+	 * it lands), so whoever started an install can open what it made -
+	 * TaskWatcher cannot know it beforehand, since the folder name is only
+	 * settled at the commit. Stops listening once the task is over, so a
+	 * later instance never overwrites it. */
+	void reportCommittedInstance(TaskWatcher* watcher);
 
 	/**
 	 * Create a new empty staging area for instance creation and @return a

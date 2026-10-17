@@ -474,7 +474,16 @@ void ContentBrowser::onEntryUpdated(int row)
 		 * idea on the model's own side. */
 		return;
 	}
-	applyVersionsFromProject(model->projectAt(row));
+	const auto* project = model->projectAt(row);
+	if (!versionsSettled(project)) {
+		return;
+	}
+	applyVersionsFromProject(project);
+}
+
+bool ContentBrowser::versionsSettled(const ModPlatform::IndexedProject* project)
+{
+	return !project || project->versionsLoaded;
 }
 
 void ContentBrowser::loadVersions(int row)

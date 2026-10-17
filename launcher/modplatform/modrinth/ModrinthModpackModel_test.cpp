@@ -17,6 +17,8 @@
  * limitations under the License.
  */
 
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QTest>
 
 #include "modplatform/modrinth/ModrinthModpackModel.h"
@@ -204,6 +206,51 @@ class ModrinthModpackModelTest : public QObject
 		QCOMPARE(second.value("downloadUrl").toString(),
 				 QString("https://cdn.modrinth.com/data/abc12345/versions/"
 						 "ver2/pack.mrpack"));
+	}
+
+	/* The project page from the slug, then only the links the project
+	 * gives - an empty or missing one is left out, not listed blank. */
+	void test_ParseProjectLinks()
+	{
+		const QByteArray json =
+			"{"
+			"  \"id\": \"abc12345\","
+			"  \"slug\": \"vault-hunters\","
+			"  \"source_url\": \"https://github.com/example/vh\","
+			"  \"issues_url\": \"\","
+			"  \"wiki_url\": null,"
+			"  \"discord_url\": \"https://discord.gg/example\","
+			"  \"donation_urls\": ["
+			"    {\"id\": \"patreon\", \"platform\": \"Patreon\","
+			"     \"url\": \"https://patreon.com/example\"},"
+			"    {\"id\": \"other\", \"platform\": \"Other\", \"url\": \"\"}"
+			"  ]"
+			"}";
+		const QVariantList links = ModrinthModpackModel::parseProjectLinks(
+			QJsonDocument::fromJson(json).object());
+
+		QCOMPARE(links.size(), 4);
+		QCOMPARE(links.at(0).toMap().value("kind").toString(), QString("page"));
+		QCOMPARE(links.at(0).toMap().value("url").toString(),
+				 QString("https://modrinth.com/modpack/vault-hunters"));
+		QCOMPARE(links.at(1).toMap().value("kind").toString(), QString("source"));
+		QCOMPARE(links.at(2).toMap().value("kind").toString(), QString("discord"));
+		const QVariantMap donation = links.at(3).toMap();
+		QCOMPARE(donation.value("kind").toString(), QString("donation"));
+		QCOMPARE(donation.value("platform").toString(), QString("Patreon"));
+		QCOMPARE(donation.value("url").toString(),
+				 QString("https://patreon.com/example"));
+	}
+
+	/* No slug: the page is named by the id. Nothing at all: no links. */
+	void test_ParseProjectLinksFallsBackToTheId()
+	{
+		const QVariantList links = ModrinthModpackModel::parseProjectLinks(
+			QJsonDocument::fromJson("{\"id\": \"abc12345\"}").object());
+		QCOMPARE(links.size(), 1);
+		QCOMPARE(links.at(0).toMap().value("url").toString(),
+				 QString("https://modrinth.com/modpack/abc12345"));
+		QVERIFY(ModrinthModpackModel::parseProjectLinks(QJsonObject()).isEmpty());
 	}
 };
 

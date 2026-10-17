@@ -56,6 +56,7 @@ void ModrinthModpackDetail::reset(const QString& projectId)
 	setBody(QString());
 	setVersions(QVariantList());
 	setGallery(QVariantList());
+	setLinks(QVariantList());
 	setError(QString());
 	setLoading(true);
 }
@@ -90,6 +91,15 @@ void ModrinthModpackDetail::setGallery(const QVariantList& gallery)
 {
 	m_gallery = gallery;
 	emit galleryChanged();
+}
+
+void ModrinthModpackDetail::setLinks(const QVariantList& links)
+{
+	if (m_links == links) {
+		return;
+	}
+	m_links = links;
+	emit linksChanged();
 }
 
 void ModrinthModpackDetail::setLoading(bool loading)
@@ -548,6 +558,7 @@ void ModrinthModpackModel::fetchDetailBody(const QString& projectId,
 									   !b.toMap().value(QStringLiteral("featured")).toBool();
 							});
 						m_detail->setGallery(gallery);
+						m_detail->setLinks(parseProjectLinks(obj));
 					}
 				}
 				markDetailPartDone(generation, true);
@@ -645,6 +656,52 @@ ModrinthModpackModel::parseVersionsJson(const QByteArray& bytes,
 		result.append(entry);
 	}
 	return result;
+}
+
+QVariantList ModrinthModpackModel::parseProjectLinks(const QJsonObject& project)
+{
+	QVariantList links;
+	const auto add = [&links](const QString& kind, const QString& url) {
+		if (url.trimmed().isEmpty()) {
+			return;
+		}
+		QVariantMap link;
+		link[QStringLiteral("kind")] = kind;
+		link[QStringLiteral("url")] = url.trimmed();
+		links.append(link);
+	};
+
+	/* The project's own page needs no field of its own: the slug, or the
+	 * id when a project has none, names it. */
+	const QString slug = Json::ensureString(project, "slug", QString());
+	const QString name =
+		slug.isEmpty() ? Json::ensureString(project, "id", QString()) : slug;
+	if (!name.isEmpty()) {
+		add(QStringLiteral("page"),
+			QStringLiteral("https://modrinth.com/modpack/%1").arg(name));
+	}
+	add(QStringLiteral("source"),
+		Json::ensureString(project, "source_url", QString()));
+	add(QStringLiteral("issues"),
+		Json::ensureString(project, "issues_url", QString()));
+	add(QStringLiteral("wiki"),
+		Json::ensureString(project, "wiki_url", QString()));
+	add(QStringLiteral("discord"),
+		Json::ensureString(project, "discord_url", QString()));
+	for (const auto& raw : Json::ensureArray(project, "donation_urls")) {
+		const QJsonObject donation = raw.toObject();
+		const QString url = Json::ensureString(donation, "url", QString());
+		if (url.trimmed().isEmpty()) {
+			continue;
+		}
+		QVariantMap link;
+		link[QStringLiteral("kind")] = QStringLiteral("donation");
+		link[QStringLiteral("url")] = url.trimmed();
+		link[QStringLiteral("platform")] =
+			Json::ensureString(donation, "platform", QString());
+		links.append(link);
+	}
+	return links;
 }
 
 QString ModrinthModpackModel::resolveIconKey(const QString& slug,
@@ -748,6 +805,7 @@ QObject* ModrinthModpackModel::install(const QString& projectId,
 
 	Task* wrapped = LAUNCHER->instances()->wrapInstanceTask(importTask);
 	auto* watcher = new TaskWatcher(Task::Ptr(wrapped), this);
+	LAUNCHER->instances()->reportCommittedInstance(watcher);
 	watcher->setTitle(effectiveName);
 	wrapped->start();
 	return watcher;

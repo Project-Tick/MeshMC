@@ -525,6 +525,7 @@ QObject* AtlModpackModel::install(const QString& projectId,
 
 	Task* wrapped = LAUNCHER->instances()->wrapInstanceTask(task);
 	auto* watcher = new TaskWatcher(Task::Ptr(wrapped), this);
+	LAUNCHER->instances()->reportCommittedInstance(watcher);
 	questions->setParent(watcher);
 	watcher->setTitle(effectiveName);
 	wrapped->start();

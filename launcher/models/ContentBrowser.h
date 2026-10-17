@@ -356,6 +356,11 @@ class ContentBrowser : public QObject
 				  const ModPlatform::ContentVersion& version,
 				  const QString& platform, const QString& mcVersion,
 				  const QString& loader);
+	/// Whether an entry update for @p project answers a loadVersions():
+	/// only once its versions are in. The description is fetched beside
+	/// them and often lands first; settling `versions` then would show an
+	/// empty list and stop `versionsLoading` before the versions came.
+	static bool versionsSettled(const ModPlatform::IndexedProject* project);
 	/// ModPlatform::SortingMethod -> {id: <index>, label: <readableName>}.
 	/// Public and static for the same reason as isVersionCompatible().
 	static QVariantList

@@ -28,6 +28,8 @@
 #include "InstanceList.h"
 #include "NullInstance.h"
 #include "settings/INISettingsObject.h"
+#include "tasks/Task.h"
+#include "tasks/TaskWatcher.h"
 
 namespace
 {
@@ -73,6 +75,20 @@ SettingsObjectPtr makeGlobalSettings(QTemporaryDir& dir)
 	settings->registerSetting("ConsoleOverflowStop", true);
 	return settings;
 }
+
+/* A Task that only ends when told to, standing in for an install. */
+class ScriptedTask : public Task
+{
+  public:
+	using Task::Task;
+	void driveSuccess()
+	{
+		emitSucceeded();
+	}
+
+  protected:
+	void executeTask() override {}
+};
 } // namespace
 
 /*
@@ -329,6 +345,33 @@ class InstanceListTest : public QObject
 		// it eventually lands the same (still correct) URL.
 		QTRY_COMPARE(list.data(idx, InstanceList::CoverImageRole).toString(),
 					 expectedUrl);
+	}
+
+	/* An install's watcher learns the id its commit names - the id is only
+	 * settled then - and keeps it once the task is over, whatever is
+	 * committed after. */
+	void reportCommittedInstanceNamesTheInstallsOwnInstance()
+	{
+		QTemporaryDir globalDir;
+		QVERIFY(globalDir.isValid());
+		QTemporaryDir instsDir;
+		QVERIFY(instsDir.isValid());
+		InstanceList list(makeGlobalSettings(globalDir), {instsDir.path()});
+
+		auto* task = new ScriptedTask();
+		TaskWatcher watcher{Task::Ptr(task)};
+		list.reportCommittedInstance(&watcher);
+		task->start();
+		QCOMPARE(watcher.instanceId(), QString());
+
+		emit list.instanceSelectRequest(QStringLiteral("All the Mods 10"));
+		task->driveSuccess();
+		QCOMPARE(watcher.instanceId(), QStringLiteral("All the Mods 10"));
+
+		emit list.instanceSelectRequest(QStringLiteral("something later"));
+		QCOMPARE(watcher.instanceId(), QStringLiteral("All the Mods 10"));
+
+		list.reportCommittedInstance(nullptr);
 	}
 };
 

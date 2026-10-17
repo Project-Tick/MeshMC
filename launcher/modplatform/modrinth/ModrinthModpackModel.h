@@ -59,6 +59,11 @@ class ModrinthModpackDetail : public QObject
 	 * gallery, straight from the same project fetch body() comes from
 	 * (see fetchDetailBody()). Empty when the project has no gallery. */
 	Q_PROPERTY(QVariantList gallery READ gallery NOTIFY galleryChanged)
+	/* QVariantList of maps: kind ("page", "source", "issues", "wiki",
+	 * "discord", "donation"), url, and for a donation its platform - where
+	 * else the project lives, from the same project fetch. Only Modrinth's
+	 * model fills it; the others leave it empty. */
+	Q_PROPERTY(QVariantList links READ links NOTIFY linksChanged)
 	Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 	Q_PROPERTY(QString error READ error NOTIFY errorChanged)
 
@@ -89,6 +94,10 @@ class ModrinthModpackDetail : public QObject
 	{
 		return m_gallery;
 	}
+	QVariantList links() const
+	{
+		return m_links;
+	}
 	bool loading() const
 	{
 		return m_loading;
@@ -108,6 +117,7 @@ class ModrinthModpackDetail : public QObject
 				 RichBody::Format format = RichBody::Format::Markdown);
 	void setVersions(const QVariantList& versions);
 	void setGallery(const QVariantList& gallery);
+	void setLinks(const QVariantList& links);
 	void setLoading(bool loading);
 	void setError(const QString& error);
 
@@ -117,6 +127,7 @@ class ModrinthModpackDetail : public QObject
 	void bodyChanged();
 	void versionsChanged();
 	void galleryChanged();
+	void linksChanged();
 	void loadingChanged();
 	void errorChanged();
 
@@ -127,6 +138,7 @@ class ModrinthModpackDetail : public QObject
 	QString m_bodyHtml;
 	QVariantList m_versions;
 	QVariantList m_gallery;
+	QVariantList m_links;
 	bool m_loading = false;
 	QString m_error;
 };
@@ -294,6 +306,11 @@ class ModrinthModpackModel : public QAbstractListModel
 	 * Modrinth::loadIndexedPackVersions() for the actual parsing. */
 	static QVariantList parseVersionsJson(const QByteArray& bytes,
 										  const QString& projectId);
+	/* A project object (GET /project/{id}) -> the `links` of
+	 * ModrinthModpackDetail: the project's own page first, then its
+	 * source, issues, wiki, Discord and donation links, each only when
+	 * given. Network-free, like the two above. */
+	static QVariantList parseProjectLinks(const QJsonObject& project);
 
   signals:
 	void queryChanged();
