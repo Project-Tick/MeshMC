@@ -25,6 +25,7 @@
 #include "FileSystem.h"
 #include "GZip.h"
 #include "RecursiveFileSystemWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -121,21 +122,19 @@ void OtherLogsModel::reload()
 	}
 	QFile file(FS::PathCombine(m_path, m_currentFile));
 	if (!file.open(QFile::ReadOnly)) {
-		setContent(tr("Unable to open %1 for reading: %2")
-					   .arg(m_currentFile, file.errorString()));
+		setContent(i18n("Unable to open %1 for reading: %2", m_currentFile, file.errorString()));
 		return;
 	}
 	if (file.size() > kTooBigToOpen) {
-		setContent(tr("The file (%1) is too big. You may want to open it in "
-					  "a viewer optimized for large files.")
-					   .arg(file.fileName()));
+		setContent(i18n("The file (%1) is too big. You may want to open it in "
+					  "a viewer optimized for large files.", file.fileName()));
 		return;
 	}
 	QString content;
 	if (file.fileName().endsWith(QStringLiteral(".gz"))) {
 		QByteArray uncompressed;
 		if (!GZip::unzip(file.readAll(), uncompressed)) {
-			setContent(tr("The file (%1) is not readable.").arg(file.fileName()));
+			setContent(i18n("The file (%1) is not readable.", file.fileName()));
 			return;
 		}
 		content = QString::fromUtf8(uncompressed);
@@ -143,9 +142,8 @@ void OtherLogsModel::reload()
 		content = QString::fromUtf8(file.readAll());
 	}
 	if (content.size() >= kTooBigToShow) {
-		setContent(tr("The file (%1) is too big. You may want to open it in "
-					  "a viewer optimized for large files.")
-					   .arg(file.fileName()));
+		setContent(i18n("The file (%1) is too big. You may want to open it in "
+					  "a viewer optimized for large files.", file.fileName()));
 		return;
 	}
 	setContent(content);

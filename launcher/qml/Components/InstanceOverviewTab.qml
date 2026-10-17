@@ -51,7 +51,7 @@ Item {
     // Each mod's logo tile in the Mods card.
     readonly property int modIconSize: 24
 
-    Accessible.name: qsTr("Overview")
+    Accessible.name: i18n("Overview")
 
     // Worlds most recently played first. WorldList keeps folder order, so
     // the rows are collected here and sorted; `revision` re-sorts whenever
@@ -166,13 +166,13 @@ Item {
                 // widget's "Upgrade is required" page.
                 Card {
                     visible: root.isLegacy
-                    title: qsTr("Upgrade is required")
+                    title: i18n("Upgrade is required")
 
                     Hint {
-                        text: qsTr("MeshMC now runs old Minecraft versions in its newer instance format, and the old (legacy) format is switched off, so this instance has to be upgraded before it can be played.")
+                        text: i18n("MeshMC now runs old Minecraft versions in its newer instance format, and the old (legacy) format is switched off, so this instance has to be upgraded before it can be played.")
                     }
                     Hint {
-                        text: qsTr("The upgrade makes a copy of this instance in the new format. The original stays as it is, in case anything goes wrong.")
+                        text: i18n("The upgrade makes a copy of this instance in the new format. The original stays as it is, in case anything goes wrong.")
                     }
 
                     RowLayout {
@@ -182,7 +182,7 @@ Item {
                         Button {
                             highlighted: true
                             enabled: !root.upgrading && !!root.details && root.details.contentChangesAllowed
-                            text: root.upgrading ? qsTr("Upgrading…") : qsTr("Upgrade to a new instance")
+                            text: root.upgrading ? i18n("Upgrading…") : i18n("Upgrade to a new instance")
                             onClicked: root.upgrade = root.details.upgradeLegacy()
                         }
                         LaunchProgressBar {
@@ -194,23 +194,23 @@ Item {
 
                     Hint {
                         visible: !!root.details && !root.details.contentChangesAllowed
-                        text: qsTr("Close the game first.")
+                        text: i18n("Close the game first.")
                     }
                     Hint {
                         visible: !!root.upgrade && root.upgrade.failed
-                        text: root.upgrade ? (root.upgrade.error || qsTr("The upgrade did not work.")) : ""
+                        text: root.upgrade ? (root.upgrade.error || i18n("The upgrade did not work.")) : ""
                         color: Theme.palette.danger
                     }
                     Hint {
                         visible: !!root.upgrade && root.upgrade.succeeded
-                        text: qsTr("Done. The upgraded instance is in your library.")
+                        text: i18n("Done. The upgraded instance is in your library.")
                         color: Theme.palette.success
                     }
                 }
 
                 Card {
-                    title: qsTr("Recent screenshots")
-                    actionText: !!root.shotsModel && root.shotsModel.count > 0 ? qsTr("View all") : ""
+                    title: i18n("Recent screenshots")
+                    actionText: !!root.shotsModel && root.shotsModel.count > 0 ? i18n("View all") : ""
                     onActionTriggered: root.screenshotsRequested()
 
                     // A plain Item sized by the layout, with the tiles in a Row
@@ -267,14 +267,14 @@ Item {
 
                     Hint {
                         visible: !root.shotsModel || root.shotsModel.count === 0
-                        text: qsTr("Press F2 in game and your screenshots show up here.")
+                        text: i18n("Press F2 in game and your screenshots show up here.")
                     }
                 }
 
                 Card {
                     visible: root.isMinecraft
-                    title: qsTr("Worlds")
-                    actionText: root.recentWorlds.length > 0 ? qsTr("View all") : ""
+                    title: i18n("Worlds")
+                    actionText: root.recentWorlds.length > 0 ? i18n("View all") : ""
                     onActionTriggered: root.worldsRequested()
 
                     Repeater {
@@ -355,7 +355,7 @@ Item {
 
                     Hint {
                         visible: root.recentWorlds.length === 0
-                        text: qsTr("Worlds you create in single player show up here.")
+                        text: i18n("Worlds you create in single player show up here.")
                     }
                 }
             }
@@ -368,8 +368,8 @@ Item {
                 spacing: Theme.space.lg
 
                 Card {
-                    title: modsRepeater.count > 0 ? qsTr("Mods (%1)").arg(modsRepeater.count) : qsTr("Mods")
-                    actionText: modsRepeater.count > 0 ? qsTr("Manage") : ""
+                    title: modsRepeater.count > 0 ? i18n("Mods (%1)", modsRepeater.count) : i18n("Mods")
+                    actionText: modsRepeater.count > 0 ? i18n("Manage") : ""
                     onActionTriggered: root.manageContentRequested()
 
                     Column {
@@ -436,7 +436,7 @@ Item {
 
                         Text {
                             visible: modsRepeater.count > root.modsShown
-                            text: qsTr("and %1 more").arg(modsRepeater.count - root.modsShown)
+                            text: i18n("and %1 more", modsRepeater.count - root.modsShown)
                             color: Theme.palette.textTertiary
                             font.family: Theme.font.family
                             font.pixelSize: Theme.type.caption.pixelSize
@@ -445,13 +445,13 @@ Item {
 
                     Hint {
                         visible: modsRepeater.count === 0
-                        text: root.isMinecraft ? qsTr("No mods installed yet.")
-                                               : qsTr("This instance cannot have mods.")
+                        text: root.isMinecraft ? i18n("No mods installed yet.")
+                                               : i18n("This instance cannot have mods.")
                     }
                 }
 
                 Card {
-                    title: qsTr("Notes")
+                    title: i18n("Notes")
 
                     Rectangle {
                         Layout.fillWidth: true
@@ -467,7 +467,7 @@ Item {
 
                             TextArea {
                                 id: notesArea
-                                placeholderText: qsTr("Seed, server address, which mods to update…")
+                                placeholderText: i18n("Seed, server address, which mods to update…")
                                 wrapMode: TextEdit.Wrap
                                 selectByMouse: true
                                 background: null

@@ -51,10 +51,10 @@ Dialog {
     width: Math.min(root.dialogWidth, parent ? parent.width - Theme.space.xxl * 2 : root.dialogWidth)
     modal: true
     closePolicy: Popup.CloseOnEscape
-    title: qsTr("Duplicate “%1”").arg(root.sourceName)
+    title: i18n("Duplicate “%1”", root.sourceName)
 
     onOpened: {
-        nameField.text = qsTr("%1 (copy)").arg(root.sourceName)
+        nameField.text = i18n("%1 (copy)", root.sourceName)
         savesBox.checked = true
         playtimeBox.checked = true
         nameField.forceActiveFocus()
@@ -76,10 +76,10 @@ Dialog {
                 Layout.alignment: Qt.AlignBottom
                 hoverEnabled: true
                 enabled: !!root.library && !!root.library.iconsModel
-                Accessible.name: qsTr("Change icon")
+                Accessible.name: i18n("Change icon")
                 ToolTip.visible: hovered
                 ToolTip.delay: 400
-                ToolTip.text: qsTr("Change icon")
+                ToolTip.text: i18n("Change icon")
                 onClicked: {
                     iconPicker.current = root.iconKey
                     iconPicker.open()
@@ -109,7 +109,7 @@ Dialog {
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: Theme.space.xs
-                FieldLabel { text: qsTr("Name") }
+                FieldLabel { text: i18n("Name") }
                 TextField {
                     id: nameField
                     Layout.fillWidth: true
@@ -126,12 +126,12 @@ Dialog {
                 id: savesBox
                 // Box edge on the content edge, under the icon.
                 leftPadding: 0
-                text: qsTr("Copy worlds")
+                text: i18n("Copy worlds")
             }
             CheckBox {
                 id: playtimeBox
                 leftPadding: 0
-                text: qsTr("Keep play time")
+                text: i18n("Keep play time")
             }
         }
     }
@@ -145,12 +145,12 @@ Dialog {
         Button {
             highlighted: true
             enabled: !!root.library && nameField.text.trim().length > 0
-            text: qsTr("Duplicate")
+            text: i18n("Duplicate")
             onClicked: root.submit()
         }
         Button {
             flat: true
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             onClicked: root.close()
         }
     }

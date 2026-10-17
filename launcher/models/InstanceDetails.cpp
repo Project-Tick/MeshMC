@@ -61,6 +61,7 @@
 #include "tasks/TaskWatcher.h"
 #include "FileSystem.h"
 #include "InstanceList.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -131,7 +132,7 @@ class WorldCopyTask : public Task
 				setProgress(1, 1);
 				emitSucceeded();
 			} else {
-				emitFailed(tr("The operation failed. See the launcher log "
+				emitFailed(i18n("The operation failed. See the launcher log "
 							  "for details."));
 			}
 		});
@@ -514,11 +515,11 @@ QObject* InstanceDetails::copyWorld(int row, const QString& name)
 	const QString to = m_worlds->dir().absolutePath();
 
 	auto* task = new WorldCopyTask(
-		tr("Copying world…"),
+		i18n("Copying world…"),
 		[world, to, trimmed]() mutable { return world.install(to, trimmed); });
 
 	auto* watcher = new TaskWatcher(Task::Ptr(task), this);
-	watcher->setTitle(tr("Copy world"));
+	watcher->setTitle(i18n("Copy world"));
 	task->start();
 	return watcher;
 }
@@ -662,11 +663,11 @@ QObject* InstanceDetails::installWorld(const QString& fileUrlOrPath)
 	}
 	const QString to = m_worlds->dir().absolutePath();
 
-	auto* task = new WorldCopyTask(tr("Adding world…"), [source, to]() {
+	auto* task = new WorldCopyTask(i18n("Adding world…"), [source, to]() {
 		return WorldTools::installWorld(source, to);
 	});
 	auto* watcher = new TaskWatcher(Task::Ptr(task), this);
-	watcher->setTitle(tr("Add world"));
+	watcher->setTitle(i18n("Add world"));
 	task->start();
 	return watcher;
 }
@@ -717,7 +718,7 @@ bool InstanceDetails::mceditConfigured() const
 QString InstanceDetails::openWorldInMCEdit(int row)
 {
 	if (!m_worlds || row < 0 || static_cast<size_t>(row) >= m_worlds->size()) {
-		return tr("That world is no longer in the list.");
+		return i18n("That world is no longer in the list.");
 	}
 	auto* launcher = LauncherContext::instance();
 	const QString path =

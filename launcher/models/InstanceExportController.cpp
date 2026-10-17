@@ -38,6 +38,7 @@
 #include "modplatform/modrinth/ModrinthPackExportTask.h"
 #include "settings/SettingsObject.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -320,18 +321,18 @@ QString InstanceExportController::suggestedFileUrl() const
 QObject* InstanceExportController::exportTo(const QString& urlOrPath)
 {
 	if (m_task && m_task->isRunning()) {
-		setError(tr("This instance is already being exported."));
+		setError(i18n("This instance is already being exported."));
 		return nullptr;
 	}
 	if (!ready()) {
-		setError(tr("A Modrinth pack needs a version."));
+		setError(i18n("A Modrinth pack needs a version."));
 		return nullptr;
 	}
 
 	const QUrl url(urlOrPath);
 	QString output = url.isLocalFile() ? url.toLocalFile() : urlOrPath;
 	if (output.isEmpty()) {
-		setError(tr("Choose where to save the export."));
+		setError(i18n("Choose where to save the export."));
 		return nullptr;
 	}
 	/* `.zip` is left alone on a Modrinth pack: an mrpack is a zip, and a
@@ -355,7 +356,7 @@ QObject* InstanceExportController::exportTo(const QString& urlOrPath)
 	m_task = Task::Ptr(task);
 
 	auto* watcher = new TaskWatcher(m_task, this);
-	watcher->setTitle(tr("Export"));
+	watcher->setTitle(i18n("Export"));
 	m_watcher = watcher;
 	connect(watcher, &TaskWatcher::finished, this, [this, output](bool ok) {
 		if (!ok) {
@@ -479,7 +480,7 @@ Task* InstanceExportController::buildTask(const QString& output)
 			QFileInfoList files;
 			if (!MMCZip::collectFileListRecursively(
 					m_instance->instanceRoot(), QString(), &files, filter)) {
-				setError(tr("The instance's files could not be read."));
+				setError(i18n("The instance's files could not be read."));
 				return nullptr;
 			}
 			return new MMCZip::ExportToZipTask(

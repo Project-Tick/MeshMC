@@ -31,6 +31,7 @@
 #include <QDirIterator>
 #include <QDebug>
 #include <QStandardPaths>
+#include <KLocalizedString>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -459,18 +460,11 @@ PluginLoader::classifyAbiMismatch(const QString& moduleName,
 {
 	const QString label = moduleName.isEmpty() ? fallbackLabel : moduleName;
 
-	// QCoreApplication::translate() rather than tr(): PluginLoader is not
-	// a QObject, so it has no tr() of its own, but the message is still
-	// user-facing and needs to go through Qt's translation machinery.
-	outDetail = QCoreApplication::translate(
-					"PluginLoader",
-					"“%1” was built for plugin ABI %2; this MeshMC "
-					"supports %3–%4. It needs to be updated by its "
-					"author.")
-					.arg(label)
-					.arg(builtForAbi)
-					.arg(abiMin)
-					.arg(abiMax);
+	outDetail = i18n("“%1” was built for plugin ABI %2; this MeshMC "
+					 "supports %3–%4. It needs to be updated by its "
+					 "author.",
+					 label, QString::number(builtForAbi),
+					 QString::number(abiMin), QString::number(abiMax));
 
 	return builtForAbi < abiMin ? PluginDisableReason::AbiTooOld
 								 : PluginDisableReason::AbiTooNew;

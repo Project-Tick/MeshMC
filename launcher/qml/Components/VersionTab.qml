@@ -29,7 +29,7 @@ Item {
     readonly property bool locked: !root.details || !root.details.contentChangesAllowed
     // ComponentTools: the actions behind "More" and a row's "Edit JSON".
     readonly property var tools: root.details ? root.details.componentTools : null
-    readonly property string lockedReason: root.locked ? qsTr("The game is running. Components can be changed once it closes.") : ""
+    readonly property string lockedReason: root.locked ? i18n("The game is running. Components can be changed once it closes.") : ""
     // The TaskWatcher of "Download all files", while it runs and after it fails.
     property var downloadWatcher: null
     readonly property bool downloading: !!root.downloadWatcher && root.downloadWatcher.running
@@ -39,11 +39,10 @@ Item {
     // most often meets (the version metadata could not be fetched or
     // checked) is said here in plain words instead. Anything else is shown
     // as it comes -- those already name what failed.
-    readonly property string unresolvedError: qsTranslate("ComponentUpdateTask",
-        "Instance has unresolved dependencies while loading/checking for launch.")
+    readonly property string unresolvedError: i18n("Instance has unresolved dependencies while loading/checking for launch.")
     function friendlyError(error) {
         return error === root.unresolvedError
-               ? qsTr("Some of this instance's version files could not be checked. Check your connection, then reload.")
+               ? i18n("Some of this instance's version files could not be checked. Check your connection, then reload.")
                : error
     }
 
@@ -56,7 +55,7 @@ Item {
 
             Button {
                 enabled: !root.locked && !!root.components && !root.components.busy
-                text: qsTr("Change Minecraft version")
+                text: i18n("Change Minecraft version")
                 onClicked: minecraftVersionDialog.open()
             }
             // "More ▾": mirrored so the chevron follows the label.
@@ -66,7 +65,7 @@ Item {
                 Button {
                     id: moreButton
                     LayoutMirroring.enabled: true
-                    text: qsTr("More")
+                    text: i18n("More")
                     icon.source: Icons.url("chevron-down")
                     onClicked: moreMenu.popup(moreButton, moreButton.width - moreMenu.width, moreButton.height)
                 }
@@ -75,7 +74,7 @@ Item {
             // is this page's one primary action.
             Button {
                 enabled: !root.locked && !!root.installer && !!root.components && !root.components.busy
-                text: qsTr("Install loader")
+                text: i18n("Install loader")
                 icon.source: Icons.url("download")
                 onClicked: {
                     loaderInstallDialog.preselectUid = ""
@@ -98,8 +97,8 @@ Item {
             visible: root.downloading || failed || (!!root.tools && root.tools.error.length > 0)
             tone: root.downloading ? "info" : "warning"
             progress: root.downloading ? root.downloadWatcher.progress : -2
-            text: root.downloading ? (root.downloadWatcher.status.length > 0 ? root.downloadWatcher.status : qsTr("Downloading game files…"))
-                  : failed ? (root.downloadWatcher.error.length > 0 ? root.downloadWatcher.error : qsTr("Downloading the game files failed."))
+            text: root.downloading ? (root.downloadWatcher.status.length > 0 ? root.downloadWatcher.status : i18n("Downloading game files…"))
+                  : failed ? (root.downloadWatcher.error.length > 0 ? root.downloadWatcher.error : i18n("Downloading the game files failed."))
                   : (root.tools ? root.tools.error : "")
         }
 
@@ -122,8 +121,8 @@ Item {
                     Layout.fillWidth: true
                     text: root.components && root.components.task
                           ? (root.components.task.status.length > 0 ? root.components.task.status
-                             : (root.components.task.title.length > 0 ? root.components.task.title : qsTr("Updating…")))
-                          : qsTr("Updating…")
+                             : (root.components.task.title.length > 0 ? root.components.task.title : i18n("Updating…")))
+                          : i18n("Updating…")
                     elide: Text.ElideRight
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
@@ -171,13 +170,13 @@ Item {
                     flat: true
                     visible: !!root.components && root.components.lastError === root.unresolvedError
                     enabled: !root.locked && !!root.components && !root.components.busy
-                    text: qsTr("Reload")
+                    text: i18n("Reload")
                     onClicked: {
                         errorBanner.dismissed = true
                         root.components.reloadProfile()
                     }
                 }
-                IconButton { iconName: "x"; tip: qsTr("Dismiss"); onClicked: errorBanner.dismissed = true }
+                IconButton { iconName: "x"; tip: i18n("Dismiss"); onClicked: errorBanner.dismissed = true }
             }
         }
 
@@ -203,8 +202,8 @@ Item {
         anchors.centerIn: parent
         upperThird: true
         visible: list.count === 0
-        title: qsTr("No components")
-        body: qsTr("This instance has nothing installed yet.")
+        title: i18n("No components")
+        body: i18n("This instance has nothing installed yet.")
         MeshIcon { iconName: "package"; size: 40; color: Theme.palette.textTertiary }
     }
 
@@ -288,8 +287,8 @@ Item {
                     Row {
                         spacing: Theme.space.xs
                         Tag { text: row.version }
-                        StatusBadge { visible: row.isCustom; text: qsTr("Custom"); tone: "warning" }
-                        StatusBadge { visible: !row.isEnabled; text: qsTr("Off") }
+                        StatusBadge { visible: row.isCustom; text: i18n("Custom"); tone: "warning" }
+                        StatusBadge { visible: !row.isEnabled; text: i18n("Off") }
                     }
                 }
 
@@ -297,7 +296,7 @@ Item {
                     visible: row.canDisable
                     enabled: !root.locked
                     checked: row.isEnabled
-                    Accessible.name: qsTr("Enable %1").arg(row.name)
+                    Accessible.name: i18n("Enable %1", row.name)
                     onToggled: {
                         root.components.setComponentEnabled(row.uid, checked)
                         checked = Qt.binding(() => row.isEnabled)
@@ -311,7 +310,7 @@ Item {
                     opacity: row.hasActions ? 1 : 0
                     enabled: row.hasActions
                     iconName: "more"
-                    tip: qsTr("More")
+                    tip: i18n("More")
                     onClicked: rowMenu.popup(moreButton, moreButton.width - rowMenu.width, moreButton.height)
                 }
             }
@@ -327,7 +326,7 @@ Item {
                     visible: row.changeable && row.hasVersionList
                     height: visible ? implicitHeight : 0
                     enabled: !root.locked
-                    text: qsTr("Change version…")
+                    text: i18n("Change version…")
                     icon.source: Icons.url("download")
                     onTriggered: root.openChangeVersion(row.uid)
                 }
@@ -335,7 +334,7 @@ Item {
                     visible: row.isCustomizable && !row.isCustom
                     height: visible ? implicitHeight : 0
                     enabled: !root.locked
-                    text: qsTr("Customize")
+                    text: i18n("Customize")
                     icon.source: Icons.url("edit")
                     onTriggered: root.components.customizeComponent(row.index)
                 }
@@ -343,18 +342,19 @@ Item {
                     visible: row.isRevertible
                     height: visible ? implicitHeight : 0
                     enabled: !root.locked
-                    text: qsTr("Revert to the original…")
+                    text: i18n("Revert to the original…")
                     icon.source: Icons.url("refresh")
                     onTriggered: {
                         revertConfirm.row = row.index
-                        revertConfirm.text = qsTr("Revert “%1” to its original version? Your own changes to it are lost.").arg(row.name)
+                        revertConfirm.text = i18n("Revert “%1” to its original version? Your own changes to it are lost.",
+                                                  row.name)
                         revertConfirm.open()
                     }
                 }
                 MenuItem {
                     visible: row.hasFile
                     height: visible ? implicitHeight : 0
-                    text: qsTr("Edit JSON")
+                    text: i18n("Edit JSON")
                     icon.source: Icons.url("edit")
                     onTriggered: root.tools.editComponentJson(row.index)
                 }
@@ -362,7 +362,7 @@ Item {
                     visible: row.isMoveable
                     height: visible ? implicitHeight : 0
                     enabled: !root.locked && row.index > 0
-                    text: qsTr("Move up")
+                    text: i18n("Move up")
                     icon.source: Icons.url("arrow-up")
                     onTriggered: root.components.moveComponentUp(row.index)
                 }
@@ -370,7 +370,7 @@ Item {
                     visible: row.isMoveable
                     height: visible ? implicitHeight : 0
                     enabled: !root.locked && row.index < list.count - 1
-                    text: qsTr("Move down")
+                    text: i18n("Move down")
                     icon.source: Icons.url("arrow-down")
                     onTriggered: root.components.moveComponentDown(row.index)
                 }
@@ -382,11 +382,11 @@ Item {
                     visible: row.isRemovable
                     height: visible ? implicitHeight : 0
                     enabled: !root.locked
-                    text: qsTr("Remove…")
+                    text: i18n("Remove…")
                     icon.source: Icons.url("trash")
                     onTriggered: {
                         removeConfirm.row = row.index
-                        removeConfirm.text = qsTr("Remove “%1” from this instance?").arg(row.name)
+                        removeConfirm.text = i18n("Remove “%1” from this instance?", row.name)
                         removeConfirm.open()
                     }
                 }
@@ -432,44 +432,44 @@ Item {
         id: moreMenu
         MenuItem {
             enabled: !root.locked && !!root.components && !root.components.busy
-            text: qsTr("Reload")
+            text: i18n("Reload")
             icon.source: Icons.url("refresh")
             onTriggered: root.components.reloadProfile()
         }
         MenuSeparator {}
         MenuItem {
             enabled: !root.locked && !!root.components && !root.components.busy
-            text: qsTr("Add empty component…")
+            text: i18n("Add empty component…")
             icon.source: Icons.url("plus")
             onTriggered: newComponentDialog.open()
         }
         MenuItem {
             enabled: !root.locked && !!root.components && !root.components.busy
-            text: qsTr("Add to Minecraft.jar…")
+            text: i18n("Add to Minecraft.jar…")
             icon.source: Icons.url("archive")
             onTriggered: jarModsDialog.open()
         }
         MenuItem {
             enabled: !root.locked && !!root.components && !root.components.busy
-            text: qsTr("Replace Minecraft.jar…")
+            text: i18n("Replace Minecraft.jar…")
             icon.source: Icons.url("archive")
             onTriggered: mainJarDialog.open()
         }
         MenuSeparator {}
         MenuItem {
             enabled: !root.locked && !root.downloading
-            text: qsTr("Download all game files")
+            text: i18n("Download all game files")
             icon.source: Icons.url("download")
             onTriggered: root.downloadWatcher = root.tools.downloadAll()
         }
         MenuSeparator {}
         MenuItem {
-            text: qsTr("Open libraries folder")
+            text: i18n("Open libraries folder")
             icon.source: Icons.url("folder")
             onTriggered: root.tools.openLibrariesFolder()
         }
         MenuItem {
-            text: qsTr("Open game folder")
+            text: i18n("Open game folder")
             icon.source: Icons.url("folder")
             onTriggered: root.tools.openGameFolder()
         }
@@ -482,33 +482,33 @@ Item {
 
     FileDialog {
         id: jarModsDialog
-        title: qsTr("Choose jar mods")
+        title: i18n("Choose jar mods")
         fileMode: FileDialog.OpenFiles
-        nameFilters: [qsTr("Minecraft.jar mods (*.zip *.jar)")]
+        nameFilters: [i18n("Minecraft.jar mods (*.zip *.jar)")]
         onAccepted: root.tools.addJarMods(selectedFiles)
     }
 
     FileDialog {
         id: mainJarDialog
-        title: qsTr("Choose the replacement Minecraft.jar")
+        title: i18n("Choose the replacement Minecraft.jar")
         fileMode: FileDialog.OpenFile
-        nameFilters: [qsTr("Minecraft.jar replacement (*.jar)")]
+        nameFilters: [i18n("Minecraft.jar replacement (*.jar)")]
         onAccepted: root.tools.replaceMainJar(selectedFile)
     }
 
     ConfirmDialog {
         id: removeConfirm
         property int row: -1
-        title: qsTr("Remove component")
-        confirmText: qsTr("Remove")
+        title: i18n("Remove component")
+        confirmText: i18n("Remove")
         onConfirmed: if (root.components) root.components.removeComponent(row)
     }
 
     ConfirmDialog {
         id: revertConfirm
         property int row: -1
-        title: qsTr("Revert component")
-        confirmText: qsTr("Revert")
+        title: i18n("Revert component")
+        confirmText: i18n("Revert")
         onConfirmed: if (root.components) root.components.revertComponent(row)
     }
 }

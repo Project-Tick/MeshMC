@@ -28,8 +28,8 @@ SettingsScroll {
     // to read a stretch of log without the page itself scrolling.
     readonly property int viewerHeight: 520
 
-    title: qsTr("Launcher logs")
-    description: qsTr("MeshMC's own log files. The newest is the current run. Upload one when you report a problem.")
+    title: i18n("Launcher logs")
+    description: i18n("MeshMC's own log files. The newest is the current run. Upload one when you report a problem.")
 
     OtherLogsView {
         width: parent.width

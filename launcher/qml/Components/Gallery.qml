@@ -40,11 +40,11 @@ Item {
     ]
 
     readonly property var navItems: [
-        { id: "library", icon: "library", label: qsTr("Library") },
-        { id: "modpacks", icon: "compass", label: qsTr("Discover") }
+        { id: "library", icon: "library", label: i18n("Library") },
+        { id: "modpacks", icon: "compass", label: i18n("Discover") }
     ]
     readonly property var navFooterItems: [
-        { id: "settings", icon: "settings", label: qsTr("Settings") }
+        { id: "settings", icon: "settings", label: i18n("Settings") }
     ]
 
     Rectangle {
@@ -85,7 +85,7 @@ Item {
             SectionHeader {
                 Layout.topMargin: Theme.space.lg
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Top Bar")
+                title: i18n("Top Bar")
                 collapsible: false
             }
 
@@ -93,19 +93,19 @@ Item {
                 Layout.fillWidth: true
                 Layout.leftMargin: Theme.space.lg
                 Layout.rightMargin: Theme.space.lg
-                title: qsTr("Instances")
+                title: i18n("Instances")
                 count: 12
                 searchText: "vanilla"
 
                 Button {
-                    text: qsTr("New instance")
+                    text: i18n("New instance")
                     highlighted: true
                 }
             }
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Sidebar Nav")
+                title: i18n("Sidebar Nav")
                 collapsible: false
             }
 
@@ -129,8 +129,8 @@ Item {
                 Layout.leftMargin: Theme.space.lg
                 spacing: Theme.space.sm
 
-                NavItem { iconName: "library"; label: qsTr("Unselected") }
-                NavItem { iconName: "library"; label: qsTr("Selected"); selected: true }
+                NavItem { iconName: "library"; label: i18n("Unselected") }
+                NavItem { iconName: "library"; label: i18n("Selected"); selected: true }
             }
 
             // Account Chip states: signed in (Microsoft), signed in (Offline), signed out.
@@ -145,7 +145,7 @@ Item {
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Status Badge")
+                title: i18n("Status Badge")
                 collapsible: false
             }
 
@@ -153,16 +153,16 @@ Item {
                 Layout.leftMargin: Theme.space.lg
                 spacing: Theme.space.sm
 
-                StatusBadge { text: qsTr("Local"); tone: "neutral" }
-                StatusBadge { text: qsTr("Up to date"); tone: "success" }
-                StatusBadge { text: qsTr("Update available"); tone: "warning" }
-                StatusBadge { text: qsTr("Broken"); tone: "danger" }
-                StatusBadge { text: qsTr("Modded"); tone: "info" }
+                StatusBadge { text: i18n("Local"); tone: "neutral" }
+                StatusBadge { text: i18n("Up to date"); tone: "success" }
+                StatusBadge { text: i18n("Update available"); tone: "warning" }
+                StatusBadge { text: i18n("Broken"); tone: "danger" }
+                StatusBadge { text: i18n("Modded"); tone: "info" }
             }
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Buttons")
+                title: i18n("Buttons")
                 collapsible: false
             }
 
@@ -175,14 +175,14 @@ Item {
                 PlayButton { size: Theme.control.height }
                 PlayButton { round: false }
                 PlayButton { round: false; running: true }
-                IconButton { iconName: "folder"; tip: qsTr("Open folder") }
-                IconButton { iconName: "more"; tip: qsTr("More"); flat: false }
-                IconButton { iconName: "refresh"; tip: qsTr("Refresh"); size: Theme.control.heightLg }
+                IconButton { iconName: "folder"; tip: i18n("Open folder") }
+                IconButton { iconName: "more"; tip: i18n("More"); flat: false }
+                IconButton { iconName: "refresh"; tip: i18n("Refresh"); size: Theme.control.heightLg }
             }
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Controls")
+                title: i18n("Controls")
                 collapsible: false
             }
 
@@ -196,11 +196,11 @@ Item {
 
                 TextField {
                     Layout.preferredWidth: 220
-                    placeholderText: qsTr("Text field")
+                    placeholderText: i18n("Text field")
                 }
                 ComboBox {
                     Layout.preferredWidth: 220
-                    model: [qsTr("First option"), qsTr("Second option"), qsTr("Third option")]
+                    model: [i18n("First option"), i18n("Second option"), i18n("Third option")]
                 }
                 SpinBox {
                     Layout.preferredWidth: 140
@@ -211,18 +211,18 @@ Item {
 
                 RowLayout {
                     spacing: Theme.space.lg
-                    CheckBox { text: qsTr("Unchecked") }
-                    CheckBox { text: qsTr("Checked"); checked: true }
+                    CheckBox { text: i18n("Unchecked") }
+                    CheckBox { text: i18n("Checked"); checked: true }
                 }
                 RowLayout {
                     spacing: Theme.space.lg
-                    RadioButton { text: qsTr("Off") }
-                    RadioButton { text: qsTr("On"); checked: true }
+                    RadioButton { text: i18n("Off") }
+                    RadioButton { text: i18n("On"); checked: true }
                 }
                 RowLayout {
                     spacing: Theme.space.lg
-                    Switch { text: qsTr("Off") }
-                    Switch { text: qsTr("On"); checked: true }
+                    Switch { text: i18n("Off") }
+                    Switch { text: i18n("On"); checked: true }
                 }
 
                 Slider {
@@ -230,18 +230,18 @@ Item {
                     value: 0.6
                 }
                 SegmentedControl {
-                    options: [ { value: "a", label: qsTr("Day") }, { value: "b", label: qsTr("Week") }, { value: "c", label: qsTr("Month") } ]
+                    options: [ { value: "a", label: i18n("Day") }, { value: "b", label: i18n("Week") }, { value: "c", label: i18n("Month") } ]
                     current: "b"
                 }
                 TabStrip {
-                    tabs: [ { id: "one", label: qsTr("Mods"), count: 6 }, { id: "two", label: qsTr("Worlds") }, { id: "three", label: qsTr("Log") } ]
+                    tabs: [ { id: "one", label: i18n("Mods"), count: 6 }, { id: "two", label: i18n("Worlds") }, { id: "three", label: i18n("Log") } ]
                     current: "one"
                 }
             }
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Dialog Header")
+                title: i18n("Dialog Header")
                 collapsible: false
             }
 
@@ -252,9 +252,9 @@ Item {
 
                 Repeater {
                     model: [
-                        { title: qsTr("Delete world"), icon: "alert-triangle", tint: Theme.palette.danger },
-                        { title: qsTr("Update available"), icon: "download", tint: Theme.palette.accent },
-                        { title: qsTr("Choose an icon"), icon: "image", tint: Theme.palette.accent }
+                        { title: i18n("Delete world"), icon: "alert-triangle", tint: Theme.palette.danger },
+                        { title: i18n("Update available"), icon: "download", tint: Theme.palette.accent },
+                        { title: i18n("Choose an icon"), icon: "image", tint: Theme.palette.accent }
                     ]
 
                     delegate: Rectangle {
@@ -278,7 +278,7 @@ Item {
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Tag & Search Field")
+                title: i18n("Tag & Search Field")
                 collapsible: false
             }
 
@@ -288,7 +288,7 @@ Item {
 
                 Tag { text: "Fabric"; iconName: "layers" }
                 Tag { text: "1.21.4"; iconName: "cube" }
-                Tag { text: qsTr("2 h ago"); iconName: "clock" }
+                Tag { text: i18n("2 h ago"); iconName: "clock" }
 
                 Rectangle {
                     Layout.preferredWidth: 150
@@ -298,7 +298,7 @@ Item {
 
                     Tag {
                         anchors.centerIn: parent
-                        text: qsTr("On media")
+                        text: i18n("On media")
                         iconName: "check"
                         onMedia: true
                     }
@@ -306,13 +306,13 @@ Item {
 
                 SearchBox {
                     Layout.preferredWidth: 220
-                    placeholderText: qsTr("Search")
+                    placeholderText: i18n("Search")
                 }
             }
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Instance Card")
+                title: i18n("Instance Card")
                 collapsible: false
             }
 
@@ -325,12 +325,12 @@ Item {
                 // selected, running, never played, launching.
                 Repeater {
                     model: [
-                        { instanceId: "card-rest", name: qsTr("Vanilla 1.21.4"), iconKey: "grass", version: "1.21.4", loader: "", last: Date.now() - 2 * 86400000, running: false, hovered: false, selected: false },
-                        { instanceId: "card-hovered", name: qsTr("Skyblock Extreme"), iconKey: "diamond", version: "1.20.1", loader: "Fabric", last: Date.now(), running: false, hovered: true, selected: false },
-                        { instanceId: "card-selected", name: qsTr("A very long modpack name that needs to wrap"), iconKey: "gold", version: "1.20.1", loader: "Forge", last: Date.now() - 3 * 86400000, running: false, hovered: false, selected: true },
-                        { instanceId: "card-running", name: qsTr("Create: Above and Beyond"), iconKey: "enderman", version: "1.18.2", loader: "Fabric", last: Date.now(), running: true, hovered: false, selected: false },
-                        { instanceId: "card-never-played", name: qsTr("Superflat Creative"), iconKey: "stone", version: "1.20.1", loader: "", last: 0, running: false, hovered: false, selected: false },
-                        { instanceId: "card-launching", name: qsTr("Better Minecraft"), iconKey: "tnt", version: "1.20.1", loader: "Forge", last: 0, running: true, hovered: false, selected: false, status: qsTr("Downloading assets"), progress: 0.45 }
+                        { instanceId: "card-rest", name: i18n("Vanilla 1.21.4"), iconKey: "grass", version: "1.21.4", loader: "", last: Date.now() - 2 * 86400000, running: false, hovered: false, selected: false },
+                        { instanceId: "card-hovered", name: i18n("Skyblock Extreme"), iconKey: "diamond", version: "1.20.1", loader: "Fabric", last: Date.now(), running: false, hovered: true, selected: false },
+                        { instanceId: "card-selected", name: i18n("A very long modpack name that needs to wrap"), iconKey: "gold", version: "1.20.1", loader: "Forge", last: Date.now() - 3 * 86400000, running: false, hovered: false, selected: true },
+                        { instanceId: "card-running", name: i18n("Create: Above and Beyond"), iconKey: "enderman", version: "1.18.2", loader: "Fabric", last: Date.now(), running: true, hovered: false, selected: false },
+                        { instanceId: "card-never-played", name: i18n("Superflat Creative"), iconKey: "stone", version: "1.20.1", loader: "", last: 0, running: false, hovered: false, selected: false },
+                        { instanceId: "card-launching", name: i18n("Better Minecraft"), iconKey: "tnt", version: "1.20.1", loader: "Forge", last: 0, running: true, hovered: false, selected: false, status: i18n("Downloading assets"), progress: 0.45 }
                     ]
 
                     delegate: InstanceCard {
@@ -363,8 +363,8 @@ Item {
 
                 Repeater {
                     model: [
-                        { instanceId: "row-launching", name: qsTr("Better Minecraft"), iconKey: "tnt", version: "1.20.1", loader: "Forge", status: qsTr("Downloading assets"), progress: 0.45 },
-                        { instanceId: "row-running", name: qsTr("Create: Above and Beyond"), iconKey: "enderman", version: "1.18.2", loader: "Fabric" }
+                        { instanceId: "row-launching", name: i18n("Better Minecraft"), iconKey: "tnt", version: "1.20.1", loader: "Forge", status: i18n("Downloading assets"), progress: 0.45 },
+                        { instanceId: "row-running", name: i18n("Create: Above and Beyond"), iconKey: "enderman", version: "1.18.2", loader: "Fabric" }
                     ]
 
                     delegate: InstanceListRow {
@@ -388,7 +388,7 @@ Item {
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Continue Card")
+                title: i18n("Continue Card")
                 collapsible: false
             }
 
@@ -397,7 +397,7 @@ Item {
                 Layout.leftMargin: Theme.space.lg
                 Layout.rightMargin: Theme.space.lg
                 instanceId: "continue-1"
-                name: qsTr("All the Mods 10")
+                name: i18n("All the Mods 10")
                 iconKey: "iron"
                 isRunning: false
                 canLaunch: true
@@ -413,7 +413,7 @@ Item {
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Instance Section")
+                title: i18n("Instance Section")
                 collapsible: false
             }
 
@@ -421,7 +421,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.leftMargin: Theme.space.lg
                 Layout.rightMargin: Theme.space.lg
-                title: qsTr("Vanilla")
+                title: i18n("Vanilla")
                 model: vanillaModel
                 columns: 3
                 cardWidth: 208
@@ -431,7 +431,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.leftMargin: Theme.space.lg
                 Layout.rightMargin: Theme.space.lg
-                title: qsTr("Modded")
+                title: i18n("Modded")
                 model: moddedModel
                 columns: 3
                 cardWidth: 208
@@ -439,16 +439,16 @@ Item {
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Empty State")
+                title: i18n("Empty State")
                 collapsible: false
             }
 
             EmptyState {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 220
-                title: qsTr("No instances yet")
-                body: qsTr("Create an instance to see it here.")
-                actionText: qsTr("Create instance")
+                title: i18n("No instances yet")
+                body: i18n("Create an instance to see it here.")
+                actionText: i18n("Create instance")
 
                 MeshIcon {
                     iconName: "package"
@@ -459,7 +459,7 @@ Item {
 
             SectionHeader {
                 Layout.leftMargin: Theme.space.lg
-                title: qsTr("Icons")
+                title: i18n("Icons")
                 collapsible: false
             }
 

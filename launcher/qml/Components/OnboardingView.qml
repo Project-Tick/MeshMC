@@ -59,9 +59,9 @@ Rectangle {
 
     function stepTitle(id) {
         switch (id) {
-        case "java": return qsTr("Java & memory")
-        case "account": return qsTr("Account")
-        case "done": return qsTr("Ready")
+        case "java": return i18n("Java & memory")
+        case "account": return i18n("Account")
+        case "done": return i18n("Ready")
         default: return id
         }
     }
@@ -102,7 +102,7 @@ Rectangle {
                 }
                 Text {
                     Layout.fillWidth: true
-                    text: qsTr("Welcome to MeshMC")
+                    text: i18n("Welcome to MeshMC")
                     wrapMode: Text.Wrap
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
@@ -112,7 +112,7 @@ Rectangle {
                 }
                 Text {
                     Layout.fillWidth: true
-                    text: qsTr("A couple of choices and you're playing.")
+                    text: i18n("A couple of choices and you're playing.")
                     wrapMode: Text.Wrap
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
@@ -182,9 +182,9 @@ Rectangle {
                 spacing: Theme.space.lg
 
                 Text {
-                    text: root.step === "java" ? qsTr("Java and memory")
-                        : root.step === "account" ? qsTr("Sign in to play online")
-                        : qsTr("You're all set")
+                    text: root.step === "java" ? i18n("Java and memory")
+                        : root.step === "account" ? i18n("Sign in to play online")
+                        : i18n("You're all set")
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.display.pixelSize
@@ -194,9 +194,9 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.maximumWidth: 640
                     wrapMode: Text.Wrap
-                    text: root.step === "java" ? qsTr("Minecraft runs on Java. Pick an installed one, or let MeshMC download the right version for each game automatically.")
-                        : root.step === "account" ? qsTr("Use the Microsoft account that owns Minecraft. You can also do this later from the sidebar.")
-                        : qsTr("Create an instance, or find a modpack in Discover.")
+                    text: root.step === "java" ? i18n("Minecraft runs on Java. Pick an installed one, or let MeshMC download the right version for each game automatically.")
+                        : root.step === "account" ? i18n("Use the Microsoft account that owns Minecraft. You can also do this later from the sidebar.")
+                        : i18n("Create an instance, or find a modpack in Discover.")
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.body.pixelSize + 1
@@ -216,11 +216,11 @@ Rectangle {
                             Layout.fillWidth: true
                             SettingSwitch {
                                 key: "JavaAutoDownload"
-                                label: qsTr("Download Java automatically")
-                                description: qsTr("Recommended. Each Minecraft version gets the Java it needs.")
+                                label: i18n("Download Java automatically")
+                                description: i18n("Recommended. Each Minecraft version gets the Java it needs.")
                             }
                             MemorySetting {
-                                label: qsTr("Maximum memory")
+                                label: i18n("Maximum memory")
                                 systemMiB: root.shell && root.shell.systemMemoryMiB ? root.shell.systemMemoryMiB : 8192
                             }
                         }
@@ -228,7 +228,7 @@ Rectangle {
                             Layout.fillWidth: true
                             Text {
                                 Layout.fillWidth: true
-                                text: qsTr("Java on this computer")
+                                text: i18n("Java on this computer")
                                 color: Theme.palette.textPrimary
                                 font.family: Theme.font.family
                                 font.pixelSize: Theme.type.title.pixelSize
@@ -236,7 +236,7 @@ Rectangle {
                             }
                             Button {
                                 flat: true
-                                text: qsTr("Detect again")
+                                text: i18n("Detect again")
                                 icon.source: Icons.url("refresh")
                                 enabled: !!root.shell && !root.shell.javaDetecting
                                 onClicked: root.shell.detectJava()
@@ -279,7 +279,7 @@ Rectangle {
                                             Layout.fillWidth: true
                                             spacing: 2
                                             Text {
-                                                text: qsTr("Java %1").arg(String(javaRow.version))
+                                                text: i18n("Java %1", String(javaRow.version))
                                                 color: javaRow.chosen ? Theme.palette.accent : Theme.palette.textPrimary
                                                 font.family: Theme.font.family
                                                 font.pixelSize: Theme.type.body.pixelSize
@@ -299,7 +299,7 @@ Rectangle {
                                             Layout.rightMargin: Theme.space.md
                                             visible: javaRow.recommended
                                             tone: "success"
-                                            text: qsTr("Recommended")
+                                            text: i18n("Recommended")
                                         }
                                     }
                                 }
@@ -315,8 +315,8 @@ Rectangle {
                                     horizontalAlignment: Text.AlignHCenter
                                     wrapMode: Text.Wrap
                                     text: SettingsStore.bool("JavaAutoDownload")
-                                          ? qsTr("No Java found on this computer. That's fine: MeshMC downloads the right one the first time you play.")
-                                          : qsTr("No Java found on this computer. Turn on automatic downloads above, or install Java and detect again.")
+                                          ? i18n("No Java found on this computer. That's fine: MeshMC downloads the right one the first time you play.")
+                                          : i18n("No Java found on this computer. Turn on automatic downloads above, or install Java and detect again.")
                                     color: Theme.palette.textTertiary
                                     font.family: Theme.font.family
                                     font.pixelSize: Theme.type.label.pixelSize
@@ -331,7 +331,7 @@ Rectangle {
                         spacing: Theme.space.md
                         Button {
                             highlighted: true
-                            text: qsTr("Sign in with Microsoft")
+                            text: i18n("Sign in with Microsoft")
                             icon.source: Icons.url("user")
                             onClicked: {
                                 root.finish()
@@ -360,7 +360,7 @@ Rectangle {
                     Button {
                         flat: true
                         visible: root.index > 0 && root.step !== "done"
-                        text: qsTr("Back")
+                        text: i18n("Back")
                         icon.source: Icons.url("chevron-left")
                         onClicked: root.index--
                     }
@@ -368,13 +368,13 @@ Rectangle {
                     Button {
                         flat: true
                         visible: root.step === "account"
-                        text: qsTr("Later")
+                        text: i18n("Later")
                         onClicked: root.next()
                     }
                     Button {
                         highlighted: true
                         visible: root.step !== "account"
-                        text: root.step === "done" ? qsTr("Start playing") : qsTr("Continue")
+                        text: root.step === "done" ? i18n("Start playing") : i18n("Continue")
                         icon.source: root.step === "done" ? Icons.url("play") : ""
                         onClicked: root.next()
                     }

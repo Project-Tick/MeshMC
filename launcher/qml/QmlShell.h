@@ -488,9 +488,9 @@ class QmlShell : public QObject
 	QObject* languages() const;
 	/* Applies @p key live the way LanguageSelectionWidget's row-changed
 	 * handler does (TranslationsModel::selectLanguage() +
-	 * updateLanguage()), retranslates the running QML engine so qsTr()
-	 * strings update immediately, and persists it in the "Language"
-	 * setting. Used by Settings > Appearance's language picker. */
+	 * updateLanguage()), points KI18n at it and retranslates the running QML
+	 * engine so i18n() strings update immediately, and persists it in the
+	 * "Language" setting. Used by Settings > Appearance's language picker. */
 	Q_INVOKABLE void selectLanguage(const QString& key);
 	QObject* javaInstalls() const;
 	bool javaDetecting() const;

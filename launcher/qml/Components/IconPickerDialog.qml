@@ -30,7 +30,7 @@ Dialog {
     width: Math.min(640, parent ? parent.width - Theme.space.xxl * 2 : 640)
     height: Math.min(520, parent ? parent.height - Theme.space.xxl * 2 : 520)
     modal: true
-    title: qsTr("Choose an icon")
+    title: i18n("Choose an icon")
 
     header: DialogHeader {
         title: root.title
@@ -127,18 +127,18 @@ Dialog {
         layoutDirection: Qt.RightToLeft
 
         Button {
-            text: qsTr("Use icon")
+            text: i18n("Use icon")
             highlighted: true
             onClicked: { root.picked(root.current); root.close() }
         }
         Button {
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             flat: true
             onClicked: root.close()
         }
         Button {
             flat: true
-            text: qsTr("Open icons folder")
+            text: i18n("Open icons folder")
             icon.source: Icons.url("folder")
             onClicked: root.openFolderRequested()
         }

@@ -35,6 +35,7 @@
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -82,7 +83,7 @@ QVariantList TechnicModpackModel::sortOptions() const
 	/* Technic orders its own answers; there is nothing to choose. */
 	QVariantMap entry;
 	entry[QStringLiteral("id")] = QStringLiteral("relevance");
-	entry[QStringLiteral("label")] = tr("Sort by Relevance");
+	entry[QStringLiteral("label")] = i18n("Sort by Relevance");
 	return {entry};
 }
 
@@ -307,7 +308,7 @@ QVariantList TechnicModpackModel::versionEntries(const Pack& pack)
 	/* Solder serves its recommended build; a zip pack is what it is. */
 	entry[QStringLiteral("id")] = QStringLiteral("recommended");
 	entry[QStringLiteral("name")] =
-		pack.version.isEmpty() ? tr("Recommended build") : pack.version;
+		pack.version.isEmpty() ? i18n("Recommended build") : pack.version;
 	entry[QStringLiteral("versionNumber")] = entry.value(QStringLiteral("name"));
 	entry[QStringLiteral("gameVersions")] = QVariant::fromValue(
 		pack.minecraftVersion.isEmpty() ? QStringList()
@@ -411,7 +412,7 @@ void TechnicModpackModel::loadDetail(const QString& projectId)
 
 	Pack* pack = packFor(projectId);
 	if (!pack) {
-		m_detail->setError(tr("This modpack is not in the loaded list."));
+		m_detail->setError(i18n("This modpack is not in the loaded list."));
 		m_detail->setLoading(false);
 		return;
 	}
@@ -438,7 +439,7 @@ void TechnicModpackModel::loadDetail(const QString& projectId)
 			return;
 		}
 		if (!parseMetadata(*response, *pack)) {
-			m_detail->setError(tr("Technic has no download for this modpack."));
+			m_detail->setError(i18n("Technic has no download for this modpack."));
 			m_detail->setLoading(false);
 			return;
 		}

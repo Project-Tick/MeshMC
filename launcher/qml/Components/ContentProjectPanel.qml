@@ -82,7 +82,7 @@ Rectangle {
                 Text {
                     Layout.fillWidth: true
                     visible: text.length > 0
-                    text: root.project && root.project.author ? qsTr("by %1").arg(root.project.author) : ""
+                    text: root.project && root.project.author ? i18n("by %1", root.project.author) : ""
                     elide: Text.ElideRight
                     color: Theme.palette.textTertiary
                     font.family: Theme.font.family
@@ -92,7 +92,7 @@ Rectangle {
             IconButton {
                 Layout.alignment: Qt.AlignTop
                 iconName: "x"
-                tip: qsTr("Close")
+                tip: i18n("Close")
                 onClicked: root.closeRequested()
             }
         }
@@ -124,7 +124,7 @@ Rectangle {
             Layout.fillWidth: true
             Text {
                 Layout.fillWidth: true
-                text: qsTr("Versions")
+                text: i18n("Versions")
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.bodyStrong.pixelSize
@@ -132,7 +132,7 @@ Rectangle {
             }
             Text {
                 visible: root.owner.versions.length > 0
-                text: qsTr("%n available", "", root.owner.versions.length)
+                text: i18np("%1 available", "%1 available", root.owner.versions.length)
                 color: Theme.palette.textTertiary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.caption.pixelSize
@@ -180,9 +180,9 @@ Rectangle {
             visible: text.length > 0
             readonly property var d: root.download
             text: root.owner.installNote.length > 0 ? root.owner.installNote
-                : root.owner.selectedChecking ? qsTr("Checking what it needs…")
-                : d && d.failed ? (d.error || qsTr("Install failed."))
-                : d && d.succeeded ? qsTr("Installed.")
+                : root.owner.selectedChecking ? i18n("Checking what it needs…")
+                : d && d.failed ? (d.error || i18n("Install failed."))
+                : d && d.succeeded ? i18n("Installed.")
                 : d ? (d.status || "") : ""
             wrapMode: Text.Wrap
             maximumLineCount: 2
@@ -208,10 +208,10 @@ Rectangle {
                 enabled: !root.owner.selectedInstalling && !root.owner.selectedChecking
                          && root.owner.pickedVersion >= 0 && !!root.owner.browser
                          && root.owner.blockedReason.length === 0
-                text: root.owner.selectedInstalling ? qsTr("Installing…")
-                    : root.owner.selectedChecking ? qsTr("Checking…")
-                    : root.project && root.project.installed ? qsTr("Install this version")
-                    : qsTr("Install")
+                text: root.owner.selectedInstalling ? i18n("Installing…")
+                    : root.owner.selectedChecking ? i18n("Checking…")
+                    : root.project && root.project.installed ? i18n("Install this version")
+                    : i18n("Install")
                 icon.source: Icons.url("download")
                 onClicked: root.owner.install()
             }

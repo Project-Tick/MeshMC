@@ -27,6 +27,7 @@
 #include "screenshots/ImgurAlbumCreation.h"
 #include "screenshots/ImgurUpload.h"
 #include "tasks/SequentialTask.h"
+#include <KLocalizedString>
 
 ScreenshotUploader::ScreenshotUploader(QObject* parent) : QObject(parent) {}
 
@@ -50,12 +51,12 @@ QString ScreenshotUploader::albumUrl(const QString& albumId)
 QString ScreenshotUploader::validate(const QStringList& paths)
 {
 	if (paths.isEmpty()) {
-		return tr("Pick a screenshot to upload first.");
+		return i18n("Pick a screenshot to upload first.");
 	}
 	for (const QString& path : paths) {
 		const QFileInfo info(path);
 		if (!info.isFile() || !info.isReadable()) {
-			return tr("“%1” could not be read.").arg(info.fileName());
+			return i18n("“%1” could not be read.", info.fileName());
 		}
 	}
 	return QString();
@@ -73,7 +74,7 @@ void ScreenshotUploader::upload(const QStringList& paths)
 	}
 	auto* launcher = LauncherContext::instance();
 	if (!available() || !launcher || !launcher->network()) {
-		emit failed(tr("Uploading to Imgur is not available in this build."));
+		emit failed(i18n("Uploading to Imgur is not available in this build."));
 		return;
 	}
 
@@ -124,10 +125,10 @@ void ScreenshotUploader::finish(bool ok, const QString& urlOrError, int count)
 	if (ok && !urlOrError.isEmpty()) {
 		emit uploaded(urlOrError, count);
 	} else if (ok) {
-		emit failed(tr("Imgur did not return a link. Try again in a moment."));
+		emit failed(i18n("Imgur did not return a link. Try again in a moment."));
 	} else {
 		emit failed(urlOrError.isEmpty()
-						? tr("The upload failed. Check your connection and try again.")
-						: tr("The upload failed: %1").arg(urlOrError));
+						? i18n("The upload failed. Check your connection and try again.")
+						: i18n("The upload failed: %1", urlOrError));
 	}
 }

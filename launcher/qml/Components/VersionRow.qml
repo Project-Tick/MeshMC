@@ -57,12 +57,12 @@ AbstractButton {
                 readonly property string games: (root.entry.gameVersions || []).slice(0, 3).join(", ")
                 readonly property string loaders: (root.entry.loaders || []).join(", ")
                 readonly property string fits: loaders.length > 0 && games.length > 0
-                                               ? qsTr("%1 for %2").arg(loaders).arg(games)
+                                               ? i18n("%1 for %2", loaders, games)
                                                : loaders + games
                 width: parent.width
                 text: root.entry.isCompatible ? fits
-                      : fits.length > 0 ? qsTr("Not for this instance (%1)").arg(fits)
-                      : qsTr("Not for this instance")
+                      : fits.length > 0 ? i18n("Not for this instance (%1)", fits)
+                      : i18n("Not for this instance")
                 elide: Text.ElideRight
                 color: root.entry.isCompatible ? Theme.palette.textTertiary : Theme.palette.warning
                 font.family: Theme.font.family
@@ -71,7 +71,7 @@ AbstractButton {
         }
         Tag {
             visible: root.installed
-            text: qsTr("Installed")
+            text: i18n("Installed")
         }
         MeshIcon {
             Layout.rightMargin: Theme.space.sm

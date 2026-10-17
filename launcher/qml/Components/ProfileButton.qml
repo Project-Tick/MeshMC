@@ -42,7 +42,7 @@ AbstractButton {
     implicitHeight: Theme.control.height
     hoverEnabled: true
 
-    Accessible.name: signedIn ? qsTr("Account menu: %1").arg(control.name) : qsTr("Sign in")
+    Accessible.name: signedIn ? i18n("Account menu: %1", control.name) : i18n("Sign in")
 
     onClicked: control.signedIn ? menu.toggle() : control.openAccountsRequested()
 
@@ -96,7 +96,7 @@ AbstractButton {
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: !control.signedIn
-                text: qsTr("Sign in")
+                text: i18n("Sign in")
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.label.pixelSize

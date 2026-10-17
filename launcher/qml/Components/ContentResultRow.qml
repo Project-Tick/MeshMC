@@ -131,7 +131,7 @@ AbstractButton {
                     width: Math.max(0, parent.width - x)
                     anchors.baseline: titleText.baseline
                     visible: row.author.length > 0 && width > 0
-                    text: qsTr("by %1").arg(row.author)
+                    text: i18n("by %1", row.author)
                     elide: Text.ElideRight
                     color: Theme.palette.textTertiary
                     font.family: Theme.font.family
@@ -140,8 +140,8 @@ AbstractButton {
             }
             Text {
                 Layout.fillWidth: true
-                text: row.downloading ? (row.download.status || qsTr("Installing…"))
-                    : row.checking ? qsTr("Checking what it needs…") : row.description
+                text: row.downloading ? (row.download.status || i18n("Installing…"))
+                    : row.checking ? i18n("Checking what it needs…") : row.description
                 elide: Text.ElideRight
                 color: row.downloading || row.checking ? Theme.palette.accentText : Theme.palette.textTertiary
                 font.family: Theme.font.family
@@ -152,7 +152,7 @@ AbstractButton {
         StatusBadge {
             visible: row.installed || row.justInstalled || row.failed
             tone: row.failed ? "danger" : "success"
-            text: row.failed ? qsTr("Failed") : qsTr("Installed")
+            text: row.failed ? i18n("Failed") : i18n("Installed")
         }
     }
 }

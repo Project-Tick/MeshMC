@@ -26,7 +26,7 @@ Dialog {
     width: Math.min(680, parent ? parent.width - Theme.space.xxl * 2 : 680)
     height: Math.min(600, parent ? parent.height - Theme.space.xxl * 2 : 600)
     modal: true
-    title: qsTr("Install a mod loader")
+    title: i18n("Install a mod loader")
 
     header: DialogHeader {
         title: root.title
@@ -111,7 +111,7 @@ Dialog {
                         }
                         StatusBadge {
                             visible: cell.recommended
-                            text: qsTr("Recommended")
+                            text: i18n("Recommended")
                         }
                     }
                 }
@@ -127,17 +127,17 @@ Dialog {
                 anchors.centerIn: parent
                 visible: !!root.installer && root.installer.supported && !!root.installer.versions
                          && !root.installer.versions.loading && root.installer.versions.count === 0
-                title: qsTr("No versions found")
+                title: i18n("No versions found")
                 body: root.installer && root.installer.versions.error.length > 0
                       ? root.installer.versions.error
-                      : qsTr("Nothing is published for this Minecraft version yet.")
+                      : i18n("Nothing is published for this Minecraft version yet.")
                 MeshIcon { iconName: "download"; size: 40; color: Theme.palette.textTertiary }
             }
 
             EmptyState {
                 anchors.centerIn: parent
                 visible: !!root.installer && !root.installer.supported
-                title: qsTr("Not compatible")
+                title: i18n("Not compatible")
                 body: root.installer ? root.installer.unsupportedReason : ""
                 MeshIcon { iconName: "alert-triangle"; size: 40; color: Theme.palette.textTertiary }
             }
@@ -146,7 +146,7 @@ Dialog {
         Text {
             Layout.fillWidth: true
             visible: !!root.installer && root.installer.installedVersion.length > 0
-            text: root.installer ? qsTr("Already installed: %1").arg(root.installer.installedVersion) : ""
+            text: root.installer ? i18n("Already installed: %1", root.installer.installedVersion) : ""
             color: Theme.palette.textTertiary
             font.family: Theme.font.family
             font.pixelSize: Theme.type.caption.pixelSize
@@ -161,12 +161,12 @@ Dialog {
 
         Button {
             highlighted: true
-            text: qsTr("Install")
+            text: i18n("Install")
             enabled: list.currentIndex >= 0
             onClicked: root.doInstall(list.currentItem ? list.currentItem.versionId : "")
         }
         Button {
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             flat: true
             onClicked: root.close()
         }
@@ -178,10 +178,10 @@ Dialog {
         }
         if (root.installer.conflictName.length > 0) {
             var picked = root.installer.loaders.find(function (l) { return l.uid === root.installer.selectedUid })
-            var brand = picked ? picked.brandName : qsTr("This loader")
+            var brand = picked ? picked.brandName : i18n("This loader")
             conflictConfirm.versionId = versionId
-            conflictConfirm.text = qsTr("%1 and %2 hook into the same parts of the game and cannot run together. Installing this turns %1 off.")
-                                        .arg(root.installer.conflictName).arg(brand)
+            conflictConfirm.text = i18n("%1 and %2 hook into the same parts of the game and cannot run together. Installing this turns %1 off.",
+                                        root.installer.conflictName, brand)
             conflictConfirm.open()
             return
         }
@@ -193,8 +193,8 @@ Dialog {
     ConfirmDialog {
         id: conflictConfirm
         property string versionId: ""
-        title: qsTr("Turn off the other loader?")
-        confirmText: qsTr("Install anyway")
+        title: i18n("Turn off the other loader?")
+        confirmText: i18n("Install anyway")
         onConfirmed: {
             if (root.installer.install(versionId)) {
                 root.close()

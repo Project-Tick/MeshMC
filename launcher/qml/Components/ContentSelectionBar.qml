@@ -61,7 +61,7 @@ Rectangle {
                 anchors.centerIn: parent
                 padding: 0
                 checkState: root.allShown ? Qt.Checked : Qt.PartiallyChecked
-                Accessible.name: qsTr("Select all")
+                Accessible.name: i18n("Select all")
                 onClicked: {
                     if (root.allShown)
                         root.list.clearSelection()
@@ -74,7 +74,7 @@ Rectangle {
         Text {
             Layout.leftMargin: Theme.space.xs
             Layout.fillWidth: true
-            text: qsTr("%1 selected").arg(root.list ? root.list.selectedKeys.length : 0)
+            text: i18n("%1 selected", root.list ? root.list.selectedKeys.length : 0)
             elide: Text.ElideRight
             color: Theme.palette.textPrimary
             font.family: Theme.font.family
@@ -88,41 +88,41 @@ Rectangle {
                 spacing: Theme.space.sm
                 enabled: root.unlocked
                 Button {
-                    text: qsTr("Enable")
+                    text: i18n("Enable")
                     onClicked: root.enableRequested(true)
                 }
                 Button {
-                    text: qsTr("Disable")
+                    text: i18n("Disable")
                     onClicked: root.enableRequested(false)
                 }
                 Button {
-                    text: qsTr("Remove…")
+                    text: i18n("Remove…")
                     icon.source: Icons.url("trash")
                     onClicked: root.removeRequested()
                 }
             }
         }
         Button {
-            text: qsTr("Export…")
+            text: i18n("Export…")
             onClicked: root.exportRequested()
         }
         IconButton {
             id: moreButton
             visible: root.updatable
             iconName: "more"
-            tip: qsTr("More")
+            tip: i18n("More")
             onClicked: moreMenu.popup(moreButton, moreButton.width - moreMenu.width, moreButton.height)
 
             Menu {
                 id: moreMenu
                 MenuItem {
                     enabled: root.unlocked
-                    text: qsTr("Check these for updates")
+                    text: i18n("Check these for updates")
                     icon.source: Icons.url("refresh")
                     onTriggered: root.checkUpdatesRequested()
                 }
                 MenuItem {
-                    text: qsTr("Reset metadata…")
+                    text: i18n("Reset metadata…")
                     icon.source: Icons.url("refresh")
                     onTriggered: root.resetMetadataRequested()
                 }
@@ -130,7 +130,7 @@ Rectangle {
         }
         IconButton {
             iconName: "x"
-            tip: qsTr("Clear selection")
+            tip: i18n("Clear selection")
             onClicked: root.list.clearSelection()
         }
     }

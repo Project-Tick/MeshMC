@@ -40,7 +40,7 @@ Item {
     property string lockedReason: ""
     property string iconName: "package"
     // Lower-case plural for confirmations: "mods", "resource packs".
-    property string noun: qsTr("files")
+    property string noun: i18n("files")
 
     // Keys of the ticked rows. Always replaced, never changed in place, so
     // bindings on it update.
@@ -106,7 +106,7 @@ Item {
 
     function confirmRemove(key, name) {
         confirm.key = key
-        confirm.text = qsTr("Remove “%1” from this instance? The file is deleted.").arg(name)
+        confirm.text = i18n("Remove “%1” from this instance? The file is deleted.", name)
         confirm.open()
     }
 
@@ -169,16 +169,16 @@ Item {
         // Its own width, or it takes its title's.
         width: parent.width
         visible: !!root.model && root.model.totalCount > 0 && root.model.count === 0
-        title: qsTr("No matches")
-        body: root.model ? qsTr("Nothing here matches “%1”.").arg(root.model.filterText) : ""
+        title: i18n("No matches")
+        body: root.model ? i18n("Nothing here matches “%1”.", root.model.filterText) : ""
         MeshIcon { iconName: "search"; size: 40; color: Theme.palette.textTertiary }
     }
 
     ConfirmDialog {
         id: confirm
         property string key: ""
-        title: qsTr("Remove")
-        confirmText: qsTr("Remove")
+        title: i18n("Remove")
+        confirmText: i18n("Remove")
         onConfirmed: {
             if (root.controller)
                 root.controller.remove(root.kind, [key])

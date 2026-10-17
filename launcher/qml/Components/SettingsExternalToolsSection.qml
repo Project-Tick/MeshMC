@@ -13,16 +13,16 @@ import MeshMC.Theme
  * same as the classic page.
  */
 SettingsScroll {
-    title: qsTr("External tools")
-    description: qsTr("Profilers, MCEdit, and the editor used for JSON and text files.")
+    title: i18n("External tools")
+    description: i18n("Profilers, MCEdit, and the editor used for JSON and text files.")
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("JProfiler")
-        description: qsTr("https://www.ej-technologies.com/products/jprofiler/overview.html")
+        title: i18n("JProfiler")
+        description: i18n("https://www.ej-technologies.com/products/jprofiler/overview.html")
         SettingPathField {
             key: "JProfilerPath"
-            label: qsTr("Install folder")
+            label: i18n("Install folder")
             folder: true
             toolId: "jprofiler"
         }
@@ -30,11 +30,11 @@ SettingsScroll {
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("JVisualVM")
-        description: qsTr("https://visualvm.github.io/")
+        title: i18n("JVisualVM")
+        description: i18n("https://visualvm.github.io/")
         SettingPathField {
             key: "JVisualVMPath"
-            label: qsTr("Executable")
+            label: i18n("Executable")
             toolId: "jvisualvm"
         }
     }
@@ -44,11 +44,11 @@ SettingsScroll {
     SettingsGroup {
         width: parent.width
         visible: SettingsStore.string("MCEditPath").length > 0
-        title: qsTr("MCEdit")
-        description: qsTr("https://www.mcedit.net/")
+        title: i18n("MCEdit")
+        description: i18n("https://www.mcedit.net/")
         SettingPathField {
             key: "MCEditPath"
-            label: qsTr("Install folder")
+            label: i18n("Install folder")
             folder: true
             toolId: "mcedit"
         }
@@ -56,12 +56,12 @@ SettingsScroll {
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("Editors")
-        description: qsTr("Leave empty to use the system default.")
+        title: i18n("Editors")
+        description: i18n("Leave empty to use the system default.")
         SettingPathField {
             key: "JsonEditor"
-            label: qsTr("Text editor")
-            placeholder: qsTr("Automatic")
+            label: i18n("Text editor")
+            placeholder: i18n("Automatic")
         }
     }
 }

@@ -83,14 +83,14 @@ Item {
 
             TextArea {
                 id: area
-                placeholderText: qsTr("Seed, server address, which mods to update…")
+                placeholderText: i18n("Seed, server address, which mods to update…")
                 wrapMode: TextEdit.Wrap
                 selectByMouse: true
                 background: null
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.body.pixelSize
-                Accessible.name: qsTr("Notes")
+                Accessible.name: i18n("Notes")
                 onTextChanged: if (!root.loading) saveTimer.restart()
             }
         }

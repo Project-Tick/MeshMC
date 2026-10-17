@@ -39,6 +39,7 @@
 #include "minecraft/auth/AuthRequest.h"
 #include "modplatform/flame/FlameApi.h"
 #include "models/AtlOptionalModsModel.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -352,7 +353,7 @@ void QmlUiRequest::checkProfileName(const QString& name)
 	if (!permittedName.match(name).hasMatch()) {
 		setProfileNameStatus(
 			QStringLiteral("unset"),
-			tr("Name must be 3-16 characters long: letters, numbers and "
+			i18n("Name must be 3-16 characters long: letters, numbers and "
 			   "underscores only."));
 		return;
 	}
@@ -631,11 +632,11 @@ bool QmlUiHost::chooseOptionalMods(const QString& packName,
 								   AtlOptionalModsModel& mods)
 {
 	QmlUiRequest request(
-		QmlUiRequest::Kind::OptionalMods, tr("Optional mods for %1").arg(packName),
-		tr("Pick the extra mods this pack can install. The recommended ones "
+		QmlUiRequest::Kind::OptionalMods, i18n("Optional mods for %1", packName),
+		i18n("Pick the extra mods this pack can install. The recommended ones "
 		   "are ticked to begin with."));
 	request.setSeverity(Severity::Question);
-	request.setLabels(tr("Install"), tr("Use the pack's choice"));
+	request.setLabels(i18n("Install"), i18n("Use the pack's choice"));
 	request.setOptionalMods(&mods);
 	runRequest(request);
 	return request.accepted();
@@ -703,15 +704,15 @@ bool QmlUiHost::confirmUntrustedMods(const QStringList& suspectPaths)
 	 * that copy verbatim for QML to show the same way it shows any other
 	 * request's title/text. */
 	QmlUiRequest request(
-		QmlUiRequest::Kind::UntrustedMods, tr("Easy There!"),
-		tr("This modpack installs code that is not hosted on Modrinth or "
+		QmlUiRequest::Kind::UntrustedMods, i18n("Easy There!"),
+		i18n("This modpack installs code that is not hosted on Modrinth or "
 		   "CurseForge - either downloaded from another host, or carried "
 		   "inside the pack itself.\n\n"
 		   "Malicious mods are often distributed through links sent on "
 		   "platforms such as Discord. We strongly recommend only "
 		   "importing modpacks from trusted sources."));
 	request.setSeverity(Severity::Warning);
-	request.setLabels(tr("Install anyway"), QString());
+	request.setLabels(i18n("Install anyway"), QString());
 	request.setUntrustedModsFiles(suspectPaths);
 	runRequest(request);
 	return request.accepted();
@@ -723,11 +724,9 @@ UiHost::UpdateChoice QmlUiHost::offerUpdate(const QString& currentVersion,
 {
 	QmlUiRequest request(
 		QmlUiRequest::Kind::Update,
-		tr("A new version of %1 is available!")
-			.arg(QStringLiteral("MeshMC")),
-		tr("Version %1 is now available - you have %2 . Would you like to "
-		   "download it now?")
-			.arg(availableVersion, currentVersion));
+		i18n("A new version of %1 is available!", QStringLiteral("MeshMC")),
+		i18n("Version %1 is now available - you have %2 . Would you like to "
+		   "download it now?", availableVersion, currentVersion));
 	request.setUpdateInfo(currentVersion, availableVersion, releaseNotes);
 	runRequest(request);
 	return request.updateChoice();
@@ -750,8 +749,8 @@ namespace
 bool QmlUiHost::setupProfile(MinecraftAccountPtr account)
 {
 	QmlUiRequest request(
-		QmlUiRequest::Kind::ProfileSetup, tr("Choose a Minecraft name"),
-		tr("This Microsoft account has never set up a Minecraft profile "
+		QmlUiRequest::Kind::ProfileSetup, i18n("Choose a Minecraft name"),
+		i18n("This Microsoft account has never set up a Minecraft profile "
 		   "before. Pick a username to play with -- it can be changed "
 		   "again later at minecraft.net."));
 
@@ -791,7 +790,7 @@ bool QmlUiHost::setupProfile(MinecraftAccountPtr account)
 						if (error != QNetworkReply::NoError) {
 							guard->setProfileNameStatus(
 								QStringLiteral("error"),
-								tr("Failed to check name availability."));
+								i18n("Failed to check name availability."));
 							return;
 						}
 						const auto root =
@@ -804,18 +803,16 @@ bool QmlUiHost::setupProfile(MinecraftAccountPtr account)
 						} else if (status == QLatin1String("DUPLICATE")) {
 							guard->setProfileNameStatus(
 								QStringLiteral("exists"),
-								tr("A Minecraft profile named %1 already "
-								   "exists.")
-									.arg(name));
+								i18n("A Minecraft profile named %1 already "
+								   "exists.", name));
 						} else if (status == QLatin1String("NOT_ALLOWED")) {
 							guard->setProfileNameStatus(
 								QStringLiteral("notAllowed"),
-								tr("The name %1 is not allowed.").arg(name));
+								i18n("The name %1 is not allowed.", name));
 						} else {
 							guard->setProfileNameStatus(
 								QStringLiteral("error"),
-								tr("Unhandled profile name status: %1")
-									.arg(status));
+								i18n("Unhandled profile name status: %1", status));
 						}
 					});
 				QNetworkRequest netReq{ QUrl(
@@ -861,7 +858,7 @@ bool QmlUiHost::setupProfile(MinecraftAccountPtr account)
 						guard->setProfileNameStatus(
 							QStringLiteral("error"),
 							message.isEmpty()
-								? tr("Failed to create the profile.")
+								? i18n("Failed to create the profile.")
 								: message);
 					});
 			QNetworkRequest netReq{ QUrl(QStringLiteral(

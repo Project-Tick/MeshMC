@@ -82,14 +82,14 @@ SettingsScroll {
         }
     }
 
-    title: qsTr("Appearance")
-    description: qsTr("The launcher's own language and colour scheme.")
+    title: i18n("Appearance")
+    description: i18n("The launcher's own language and colour scheme.")
     SettingsGroup {
         width: parent.width
-        title: qsTr("Language")
+        title: i18n("Language")
         SettingRow {
-            label: qsTr("Display language")
-            description: qsTr("Applied immediately.")
+            label: i18n("Display language")
+            description: i18n("Applied immediately.")
             ComboBox {
                 id: languageBox
                 width: root.languageBoxWidth
@@ -110,17 +110,17 @@ SettingsScroll {
                     root.selectLanguage(currentValue)
                     syncToSetting()
                 }
-                Accessible.name: qsTr("Display language")
+                Accessible.name: i18n("Display language")
             }
         }
     }
     SettingsGroup {
         width: parent.width
-        title: qsTr("Theme")
+        title: i18n("Theme")
         SettingRow {
             wide: true
-            label: qsTr("Palette")
-            description: qsTr("The launcher's colours. Each palette has a dark and a light variant.")
+            label: i18n("Palette")
+            description: i18n("The launcher's colours. Each palette has a dark and a light variant.")
             PalettePicker {
                 current: Theme.scheme
                 onPicked: (scheme) => {
@@ -131,33 +131,33 @@ SettingsScroll {
         }
         SettingChoice {
             key: "UiThemeMode"
-            label: qsTr("Mode")
+            label: i18n("Mode")
             showDivider: true
             options: [
-                { value: "system", label: qsTr("System") },
-                { value: "dark", label: qsTr("Dark") },
-                { value: "light", label: qsTr("Light") }
+                { value: "system", label: i18n("System") },
+                { value: "dark", label: i18n("Dark") },
+                { value: "light", label: i18n("Light") }
             ]
             onChanged: (value) => Theme.mode = value
         }
     }
     SettingsGroup {
         width: parent.width
-        title: qsTr("Font")
+        title: i18n("Font")
         FontFamilyRow {
             key: "UiFontFamily"
             defaultFamily: "Inter"
-            label: qsTr("Interface font")
-            description: qsTr("The font every screen of the launcher is drawn in. Sizes stay the same. Inter comes with MeshMC; the rest are installed on this computer.")
+            label: i18n("Interface font")
+            description: i18n("The font every screen of the launcher is drawn in. Sizes stay the same. Inter comes with MeshMC; the rest are installed on this computer.")
         }
     }
     SettingsGroup {
         width: parent.width
-        title: qsTr("Motion")
+        title: i18n("Motion")
         SettingSwitch {
             key: "UiReduceMotion"
-            label: qsTr("Reduce motion")
-            description: qsTr("Turns off decorative animation across the launcher, including the cat.")
+            label: i18n("Reduce motion")
+            description: i18n("Turns off decorative animation across the launcher, including the cat.")
         }
     }
     // Hidden outright rather than shown disabled: a build
@@ -167,23 +167,23 @@ SettingsScroll {
     SettingsGroup {
         width: parent.width
         visible: root.catAvailable
-        title: qsTr("Cat")
+        title: i18n("Cat")
         SettingSwitch {
             key: "CatEnabled"
-            label: qsTr("Show the cat")
-            description: qsTr("A small Minecraft cat that lives on the play bar. Click to pet it, double-click and it hops.")
+            label: i18n("Show the cat")
+            description: i18n("A small Minecraft cat that lives on the play bar. Click to pet it, double-click and it hops.")
         }
         SettingRow {
             wide: true
             showDivider: true
-            label: qsTr("Variant")
+            label: i18n("Variant")
             Row {
                 spacing: Theme.space.md
-                CatVariantTile { value: "calico"; label: qsTr("Calico") }
-                CatVariantTile { value: "ginger"; label: qsTr("Ginger") }
-                CatVariantTile { value: "black"; label: qsTr("Black") }
-                CatVariantTile { value: "white"; label: qsTr("White") }
-                CatVariantTile { value: "siamese"; label: qsTr("Siamese") }
+                CatVariantTile { value: "calico"; label: i18n("Calico") }
+                CatVariantTile { value: "ginger"; label: i18n("Ginger") }
+                CatVariantTile { value: "black"; label: i18n("Black") }
+                CatVariantTile { value: "white"; label: i18n("White") }
+                CatVariantTile { value: "siamese"; label: i18n("Siamese") }
             }
         }
     }

@@ -21,6 +21,7 @@
 #include "MinecraftInstance.h"
 #include "LaunchProfile.h"
 #include "PackProfile.h"
+#include <KLocalizedString>
 
 MinecraftLoadAndCheck::MinecraftLoadAndCheck(MinecraftInstance* inst,
 											 QObject* parent)
@@ -101,7 +102,7 @@ bool MinecraftLoadAndCheck::profileUsable(
 QString MinecraftLoadAndCheck::notDownloadedMessage(const QString& detail)
 {
 	const QString message =
-		tr("This instance's game files aren't downloaded yet. Connect to the "
+		i18n("This instance's game files aren't downloaded yet. Connect to the "
 		   "internet and play once.");
 	return detail.trimmed().isEmpty()
 			   ? message

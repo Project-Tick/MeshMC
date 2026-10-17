@@ -23,6 +23,7 @@
 
 #include "minecraft/legacy/LegacyInstance.h"
 #include "minecraft/legacy/LegacyUpgradeTask.h"
+#include <KLocalizedString>
 
 namespace LegacyUpgrade
 {
@@ -33,7 +34,7 @@ namespace LegacyUpgrade
 
 	QString upgradedName(const QString& name)
 	{
-		return QObject::tr("%1 (Migrated)").arg(name);
+		return i18n("%1 (Migrated)", name);
 	}
 
 	LegacyUpgradeTask* makeTask(const InstancePtr& instance,

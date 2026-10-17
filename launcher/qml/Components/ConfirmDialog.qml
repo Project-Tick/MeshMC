@@ -15,7 +15,7 @@ Dialog {
     id: root
 
     property string text
-    property string confirmText: qsTr("Delete")
+    property string confirmText: i18n("Delete")
     // Every confirm dialog in this codebase guards a destructive action
     // (delete, remove); a caller that ever needs the plain accent-coloured
     // button back can set this to false.
@@ -59,7 +59,7 @@ Dialog {
             }
         }
         Button {
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             flat: true
             onClicked: root.close()
         }

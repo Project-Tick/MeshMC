@@ -42,8 +42,8 @@ Dialog {
     modal: true
     // Worded like the buttons that open it ("Skin and cape"), with the
     // player's name as part of the sentence rather than after a dash.
-    title: root.accountName.length > 0 ? qsTr("Skin and cape for %1").arg(root.accountName)
-                                        : qsTr("Skin and cape")
+    title: root.accountName.length > 0 ? i18n("Skin and cape for %1", root.accountName)
+                                        : i18n("Skin and cape")
 
     // AccountsController: accountSkinInfo, skins, changeSkin, resetSkin,
     // changeCape.
@@ -212,7 +212,7 @@ Dialog {
     // Puts cape @p capeId on (empty takes it off), and turns the player
     // round to show it once it is on.
     function changeCape(capeId) {
-        root.run(root.controller.changeCape(root.row, capeId), qsTr("The cape could not be changed."),
+        root.run(root.controller.changeCape(root.row, capeId), i18n("The cape could not be changed."),
                  function(ok) {
                      if (ok && capeId.length > 0)
                          preview.showBack()
@@ -227,7 +227,7 @@ Dialog {
         // mark: the account's own refresh says it is worn.
         var fromLibrary = root.selectedDefault.length === 0
         root.run(root.controller.changeSkin(root.row, skin.path, skin.slim),
-                 qsTr("The skin could not be uploaded."),
+                 i18n("The skin could not be uploaded."),
                  function(ok) {
                      if (ok && fromLibrary && root.skins)
                          root.skins.markWorn(skin.name)
@@ -320,7 +320,7 @@ Dialog {
                         Text {
                             Layout.fillWidth: true
                             visible: preview.threeD
-                            text: qsTr("Drag to turn it around.")
+                            text: i18n("Drag to turn it around.")
                             horizontalAlignment: Text.AlignHCenter
                             color: Theme.palette.textTertiary
                             font.family: Theme.font.family
@@ -328,7 +328,7 @@ Dialog {
                         }
                         CheckBox {
                             visible: preview.threeD
-                            text: qsTr("Show the elytra")
+                            text: i18n("Show the elytra")
                             checked: root.showElytra
                             onToggled: {
                                 root.showElytra = checked
@@ -348,7 +348,7 @@ Dialog {
                             spacing: Theme.space.sm
                             Text {
                                 Layout.fillWidth: true
-                                text: qsTr("Skins")
+                                text: i18n("Skins")
                                 color: Theme.palette.textPrimary
                                 font.family: Theme.font.family
                                 font.pixelSize: Theme.type.title.pixelSize
@@ -356,14 +356,14 @@ Dialog {
                             }
                             Button {
                                 id: addButton
-                                text: qsTr("Add skin")
+                                text: i18n("Add skin")
                                 icon.source: Icons.url("plus")
                                 enabled: !!root.skins && !root.busy
                                 onClicked: addMenu.popup(addButton, 0, addButton.height + Theme.space.xs)
                             }
                             IconButton {
                                 iconName: "folder"
-                                tip: qsTr("Open the skins folder")
+                                tip: i18n("Open the skins folder")
                                 flat: false
                                 enabled: !!root.skins
                                 onClicked: root.skins.openFolder()
@@ -393,11 +393,11 @@ Dialog {
                                     width: skinGrid.width
                                     bottomPadding: Theme.space.sm
                                     spacing: Theme.space.sm
-                                    LibrarySectionLabel { text: qsTr("Your skins") }
+                                    LibrarySectionLabel { text: i18n("Your skins") }
                                     Text {
                                         width: parent.width
                                         visible: root.skinList.length === 0
-                                        text: qsTr("No skins here yet. Add one from a file, a link or a player's name.")
+                                        text: i18n("No skins here yet. Add one from a file, a link or a player's name.")
                                         wrapMode: Text.Wrap
                                         color: Theme.palette.textTertiary
                                         font.family: Theme.font.family
@@ -425,13 +425,13 @@ Dialog {
                                         spacing: Theme.space.sm
                                         LibrarySectionLabel {
                                             id: defaultsLabel
-                                            text: qsTr("Default skins")
+                                            text: i18n("Default skins")
                                         }
                                         Text {
                                             anchors.baseline: defaultsLabel.baseline
                                             visible: root.defaultsLoading || !root.anyDefaultReady
-                                            text: root.defaultsLoading ? qsTr("Downloading…")
-                                                                       : qsTr("They download when you are online.")
+                                            text: root.defaultsLoading ? i18n("Downloading…")
+                                                                       : i18n("They download when you are online.")
                                             color: Theme.palette.textTertiary
                                             font.family: Theme.font.family
                                             font.pixelSize: Theme.type.caption.pixelSize
@@ -477,7 +477,7 @@ Dialog {
                             Layout.fillWidth: true
                             spacing: Theme.space.sm
                             Text {
-                                text: qsTr("Arms")
+                                text: i18n("Arms")
                                 color: Theme.palette.textSecondary
                                 font.family: Theme.font.family
                                 font.pixelSize: Theme.type.label.pixelSize
@@ -487,8 +487,8 @@ Dialog {
                             // not a pill switch.
                             Repeater {
                                 model: [
-                                    { slim: false, label: qsTr("Classic") },
-                                    { slim: true, label: qsTr("Slim") }
+                                    { slim: false, label: i18n("Classic") },
+                                    { slim: true, label: i18n("Slim") }
                                 ]
                                 delegate: RadioButton {
                                     id: armsRadio
@@ -518,13 +518,13 @@ Dialog {
                             Item { Layout.fillWidth: true }
                             Button {
                                 flat: true
-                                text: qsTr("Reset skin")
+                                text: i18n("Reset skin")
                                 enabled: !root.busy
-                                onClicked: root.run(root.controller.resetSkin(root.row), qsTr("The skin could not be reset."))
+                                onClicked: root.run(root.controller.resetSkin(root.row), i18n("The skin could not be reset."))
                             }
                             Button {
                                 highlighted: true
-                                text: qsTr("Wear this skin")
+                                text: i18n("Wear this skin")
                                 enabled: root.selectedReady && !root.busy
                                 onClicked: root.wearSelected()
                             }
@@ -544,7 +544,7 @@ Dialog {
                                 Layout.fillWidth: true
                                 wrapMode: Text.Wrap
                                 color: root.messageIsError && !root.busy ? Theme.palette.danger : Theme.palette.textTertiary
-                                text: root.busy ? (root.watcher.status.length > 0 ? root.watcher.status : qsTr("Working…"))
+                                text: root.busy ? (root.watcher.status.length > 0 ? root.watcher.status : i18n("Working…"))
                                                 : root.message
                                 font.family: Theme.font.family
                                 font.pixelSize: Theme.type.label.pixelSize
@@ -556,7 +556,7 @@ Dialog {
                 Rectangle { Layout.fillWidth: true; height: 1; color: Theme.palette.divider }
 
                 Text {
-                    text: qsTr("Capes")
+                    text: i18n("Capes")
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.title.pixelSize
@@ -568,7 +568,7 @@ Dialog {
                     spacing: Theme.space.sm
 
                     CapeTile {
-                        label: qsTr("No cape")
+                        label: i18n("No cape")
                         isNoCapeOption: true
                         selected: root.info.currentCapeId.length === 0
                         enabled: !root.busy
@@ -614,7 +614,7 @@ Dialog {
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: Theme.space.lg / 2
             iconName: "x"
-            tip: qsTr("Close")
+            tip: i18n("Close")
             onClicked: root.close()
         }
     }
@@ -623,11 +623,11 @@ Dialog {
     Menu {
         id: addMenu
         MenuItem {
-            text: qsTr("From a file…")
+            text: i18n("From a file…")
             onTriggered: skinFileDialog.open()
         }
         MenuItem {
-            text: qsTr("From a link…")
+            text: i18n("From a link…")
             onTriggered: {
                 linkDialog.value = ""
                 linkDialog.error = ""
@@ -635,7 +635,7 @@ Dialog {
             }
         }
         MenuItem {
-            text: qsTr("From a player's name…")
+            text: i18n("From a player's name…")
             onTriggered: {
                 playerDialog.value = ""
                 playerDialog.error = ""
@@ -654,7 +654,7 @@ Dialog {
             popup()
         }
         MenuItem {
-            text: qsTr("Rename…")
+            text: i18n("Rename…")
             icon.source: Icons.url("edit")
             onTriggered: {
                 renameDialog.targetName = skinMenu.targetName
@@ -664,7 +664,7 @@ Dialog {
             }
         }
         MenuItem {
-            text: qsTr("Delete…")
+            text: i18n("Delete…")
             icon.source: Icons.url("trash")
             enabled: !skinMenu.targetWorn
             onTriggered: {
@@ -679,9 +679,9 @@ Dialog {
     ConfirmDialog {
         id: deleteDialog
         property string targetName
-        title: qsTr("Delete skin")
-        text: qsTr("Delete “%1” from your skins?").arg(deleteDialog.targetName)
-        confirmText: qsTr("Delete skin")
+        title: i18n("Delete skin")
+        text: i18n("Delete “%1” from your skins?", deleteDialog.targetName)
+        confirmText: i18n("Delete skin")
         onConfirmed: {
             var problem = root.skins.remove(deleteDialog.targetName)
             if (problem.length > 0)
@@ -693,61 +693,61 @@ Dialog {
 
     FileDialog {
         id: skinFileDialog
-        title: qsTr("Add a skin")
-        nameFilters: [qsTr("PNG images (*.png)")]
+        title: i18n("Add a skin")
+        nameFilters: [i18n("PNG images (*.png)")]
         onAccepted: {
             var problem = root.skins.importFile(selectedFile.toString())
-            root.say(problem.length > 0 ? problem : qsTr("Skin added."), problem.length > 0)
+            root.say(problem.length > 0 ? problem : i18n("Skin added."), problem.length > 0)
         }
     }
 
     PromptDialog {
         id: linkDialog
-        title: qsTr("Add a skin from a link")
-        label: qsTr("A direct link to the skin's PNG file.")
+        title: i18n("Add a skin from a link")
+        label: i18n("A direct link to the skin's PNG file.")
         placeholder: "https://"
-        confirmText: qsTr("Add")
+        confirmText: i18n("Add")
         onSubmitted: (text) => {
             var w = root.skins.importFromUrl(text)
             if (!w) {
-                error = qsTr("That is not a link. Links start with https://")
+                error = i18n("That is not a link. Links start with https://")
                 return
             }
             close()
-            root.run(w, qsTr("The skin could not be added."),
-                     function(ok) { if (ok) root.say(qsTr("Skin added."), false) })
+            root.run(w, i18n("The skin could not be added."),
+                     function(ok) { if (ok) root.say(i18n("Skin added."), false) })
         }
     }
 
     PromptDialog {
         id: playerDialog
-        title: qsTr("Add another player's skin")
-        label: qsTr("The Minecraft name of the player whose skin you want.")
-        confirmText: qsTr("Add")
+        title: i18n("Add another player's skin")
+        label: i18n("The Minecraft name of the player whose skin you want.")
+        confirmText: i18n("Add")
         onSubmitted: (text) => {
             var w = root.skins.importFromUsername(text)
             if (!w) {
-                error = qsTr("Type a player's name.")
+                error = i18n("Type a player's name.")
                 return
             }
             close()
-            root.run(w, qsTr("The skin could not be added."),
-                     function(ok) { if (ok) root.say(qsTr("Skin added."), false) })
+            root.run(w, i18n("The skin could not be added."),
+                     function(ok) { if (ok) root.say(i18n("Skin added."), false) })
         }
     }
 
     PromptDialog {
         id: renameDialog
         property string targetName
-        title: qsTr("Rename skin")
-        confirmText: qsTr("Rename")
+        title: i18n("Rename skin")
+        confirmText: i18n("Rename")
         onSubmitted: (text) => {
             if (root.skins.rename(targetName, text)) {
                 if (root.selectedName === targetName)
                     root.selectedName = text.trim()
                 close()
             } else {
-                error = qsTr("That name is empty or already taken.")
+                error = i18n("That name is empty or already taken.")
             }
         }
     }

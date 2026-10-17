@@ -43,6 +43,7 @@
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -269,7 +270,7 @@ void FlameModpackModel::search()
 		endResetModel();
 		emit countChanged();
 		setCanFetchMore(false);
-		setError(tr("This build has no CurseForge API key, so CurseForge "
+		setError(i18n("This build has no CurseForge API key, so CurseForge "
 					"cannot be searched."));
 		return;
 	}
@@ -583,7 +584,7 @@ void FlameModpackModel::loadDetail(const QString& projectId)
 	}
 
 	if (keyMissing()) {
-		m_detail->setError(tr("This build has no CurseForge API key."));
+		m_detail->setError(i18n("This build has no CurseForge API key."));
 		m_detail->setLoading(false);
 		return;
 	}

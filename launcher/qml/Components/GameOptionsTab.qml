@@ -35,10 +35,10 @@ TabScroll {
     readonly property bool editable: !root.running && collector.count > 0
 
     description: collector.count === 0
-                 ? qsTr("This instance has no options yet. Play it once and the game creates them.")
+                 ? i18n("This instance has no options yet. Play it once and the game creates them.")
                  : root.running
-                 ? qsTr("The game is running. These can be changed again once it closes.")
-                 : qsTr("What this instance's game is set to. Changes are saved straight away and apply the next time it starts.")
+                 ? i18n("The game is running. These can be changed again once it closes.")
+                 : i18n("What this instance's game is set to. Changes are saved straight away and apply the next time it starts.")
 
     // key -> raw value, read from the unfiltered GameOptions underneath the
     // search proxy, so the groups above never change while searching.
@@ -78,7 +78,7 @@ TabScroll {
         const locale = Qt.locale(parts[0] + (parts.length > 1 ? "_" + parts[1].toUpperCase() : ""))
         if (locale.name === "C")
             return root.values.lang
-        return parts.length > 1 ? qsTr("%1 (%2)").arg(locale.nativeLanguageName).arg(locale.nativeTerritoryName)
+        return parts.length > 1 ? i18n("%1 (%2)", locale.nativeLanguageName, locale.nativeTerritoryName)
                                 : locale.nativeLanguageName
     }
     // ["vanilla","fabric","file/Fresh Animations.zip"] -> "Fresh Animations"
@@ -87,14 +87,14 @@ TabScroll {
         try { list = JSON.parse(root.values.resourcePacks) } catch (e) { return root.values.resourcePacks }
         const named = list.filter((p) => p !== "vanilla" && p !== "fabric")
                           .map((p) => String(p).replace(/^file\//, "").replace(/\.zip$/i, ""))
-        return named.length > 0 ? named.join(", ") : qsTr("None")
+        return named.length > 0 ? named.join(", ") : i18n("None")
     }
 
     // Row specs for GameOptionRow (its header lists the fields).
     function chunks(label, key, from) {
         return { label: label, key: key, kind: "slider", from: from, to: 32, step: 1,
                  toSlider: (raw) => Number(raw), toRaw: (v) => String(v),
-                 text: (v) => qsTr("%1 chunks").arg(v) }
+                 text: (v) => i18n("%1 chunks", v) }
     }
     // A 0..1 value shown as 0..scale.
     function fraction(label, key, scale, text) {
@@ -103,7 +103,7 @@ TabScroll {
                  toRaw: (v) => root.decimal(v / scale), text: text }
     }
     function volume(label, key) {
-        return root.fraction(label, key, 100, (v) => v === 0 ? qsTr("Off") : qsTr("%1%").arg(v))
+        return root.fraction(label, key, 100, (v) => v === 0 ? i18n("Off") : i18n("%1%", v))
     }
     function toggle(label, key) { return { label: label, key: key, kind: "switch" } }
     function info(label, key, text) { return { label: label, key: key, kind: "text", text: text } }
@@ -120,53 +120,53 @@ TabScroll {
     // of graphicsMode).
     // (Not "groups": that is TabScroll's default property.)
     readonly property var optionGroups: [
-        { title: qsTr("Video"), rows: [
-            root.chunks(qsTr("Render distance"), "renderDistance", 2),
-            root.chunks(qsTr("Simulation distance"), "simulationDistance", 5),
-            { label: qsTr("Field of view"), key: "fov", kind: "slider",
+        { title: i18n("Video"), rows: [
+            root.chunks(i18n("Render distance"), "renderDistance", 2),
+            root.chunks(i18n("Simulation distance"), "simulationDistance", 5),
+            { label: i18n("Field of view"), key: "fov", kind: "slider",
               from: root.normalFov - root.fovSpan, to: root.normalFov + root.fovSpan, step: 1,
               toSlider: (raw) => Math.round(root.normalFov + Number(raw) * root.fovSpan),
               toRaw: (deg) => root.decimal((deg - root.normalFov) / root.fovSpan),
-              text: (deg) => deg === root.normalFov ? qsTr("Normal")
-                           : deg === root.normalFov + root.fovSpan ? qsTr("Quake Pro") : String(deg) },
-            { label: qsTr("Max framerate"), key: "maxFps", kind: "slider", from: 10, to: root.unlimitedFps, step: 10,
+              text: (deg) => deg === root.normalFov ? i18n("Normal")
+                           : deg === root.normalFov + root.fovSpan ? i18n("Quake Pro") : String(deg) },
+            { label: i18n("Max framerate"), key: "maxFps", kind: "slider", from: 10, to: root.unlimitedFps, step: 10,
               toSlider: (raw) => Number(raw), toRaw: (v) => String(v),
-              text: (v) => v >= root.unlimitedFps ? qsTr("Unlimited") : qsTr("%1 fps").arg(v) },
-            { label: qsTr("Graphics"), key: "graphicsMode", kind: "choice", choices: [
-                { value: "0", label: qsTr("Fast") }, { value: "1", label: qsTr("Fancy") },
-                { value: "2", label: qsTr("Fabulous!") }] },
-            { label: qsTr("Graphics"), key: "fancyGraphics", kind: "choice", choices: [
-                { value: "false", label: qsTr("Fast") }, { value: "true", label: qsTr("Fancy") }] },
-            root.fraction(qsTr("Brightness"), "gamma", 100,
-                          (v) => v === 0 ? qsTr("Moody") : v === 100 ? qsTr("Bright") : qsTr("%1%").arg(v)),
-            { label: qsTr("GUI scale"), key: "guiScale", kind: "choice",
-              choices: [{ value: "0", label: qsTr("Auto") }].concat(
+              text: (v) => v >= root.unlimitedFps ? i18n("Unlimited") : i18n("%1 fps", v) },
+            { label: i18n("Graphics"), key: "graphicsMode", kind: "choice", choices: [
+                { value: "0", label: i18n("Fast") }, { value: "1", label: i18n("Fancy") },
+                { value: "2", label: i18n("Fabulous!") }] },
+            { label: i18n("Graphics"), key: "fancyGraphics", kind: "choice", choices: [
+                { value: "false", label: i18n("Fast") }, { value: "true", label: i18n("Fancy") }] },
+            root.fraction(i18n("Brightness"), "gamma", 100,
+                          (v) => v === 0 ? i18n("Moody") : v === 100 ? i18n("Bright") : i18n("%1%", v)),
+            { label: i18n("GUI scale"), key: "guiScale", kind: "choice",
+              choices: [{ value: "0", label: i18n("Auto") }].concat(
                   Array.from({ length: root.maxGuiScale }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }))) },
-            root.toggle(qsTr("VSync"), "enableVsync"),
-            root.toggle(qsTr("Fullscreen"), "fullscreen")
+            root.toggle(i18n("VSync"), "enableVsync"),
+            root.toggle(i18n("Fullscreen"), "fullscreen")
         ] },
-        { title: qsTr("Music and sounds"), rows: [
-            root.volume(qsTr("Master volume"), "soundCategory_master"),
-            root.volume(qsTr("Music"), "soundCategory_music"),
-            root.volume(qsTr("Jukebox and note blocks"), "soundCategory_record"),
-            root.volume(qsTr("Weather"), "soundCategory_weather"),
-            root.volume(qsTr("Blocks"), "soundCategory_block"),
-            root.volume(qsTr("Hostile creatures"), "soundCategory_hostile"),
-            root.volume(qsTr("Friendly creatures"), "soundCategory_neutral"),
-            root.volume(qsTr("Players"), "soundCategory_player"),
-            root.volume(qsTr("Ambient"), "soundCategory_ambient"),
-            root.volume(qsTr("Voice"), "soundCategory_voice")
+        { title: i18n("Music and sounds"), rows: [
+            root.volume(i18n("Master volume"), "soundCategory_master"),
+            root.volume(i18n("Music"), "soundCategory_music"),
+            root.volume(i18n("Jukebox and note blocks"), "soundCategory_record"),
+            root.volume(i18n("Weather"), "soundCategory_weather"),
+            root.volume(i18n("Blocks"), "soundCategory_block"),
+            root.volume(i18n("Hostile creatures"), "soundCategory_hostile"),
+            root.volume(i18n("Friendly creatures"), "soundCategory_neutral"),
+            root.volume(i18n("Players"), "soundCategory_player"),
+            root.volume(i18n("Ambient"), "soundCategory_ambient"),
+            root.volume(i18n("Voice"), "soundCategory_voice")
         ] },
-        { title: qsTr("Controls"), rows: [
+        { title: i18n("Controls"), rows: [
             // 0.5 is the game's 100%.
-            root.fraction(qsTr("Mouse sensitivity"), "mouseSensitivity", 200, (v) => qsTr("%1%").arg(v)),
-            root.toggle(qsTr("Auto-jump"), "autoJump")
+            root.fraction(i18n("Mouse sensitivity"), "mouseSensitivity", 200, (v) => i18n("%1%", v)),
+            root.toggle(i18n("Auto-jump"), "autoJump")
         ] },
         // Read-only: the language list is the game's own, and packs are
         // turned on and off on the Content tab.
-        { title: qsTr("Language and packs"), rows: [
-            root.info(qsTr("Language"), "lang", root.language),
-            root.info(qsTr("Resource packs"), "resourcePacks", root.resourcePacks)
+        { title: i18n("Language and packs"), rows: [
+            root.info(i18n("Language"), "lang", root.language),
+            root.info(i18n("Resource packs"), "resourcePacks", root.resourcePacks)
         ] }
     ]
 
@@ -202,7 +202,7 @@ TabScroll {
         Button {
             flat: true
             leftPadding: 0
-            text: root.showAll ? qsTr("Hide all options") : qsTr("All options (%1)").arg(collector.count)
+            text: root.showAll ? i18n("Hide all options") : i18n("All options (%1)", collector.count)
             icon.source: Icons.url(root.showAll ? "chevron-down" : "chevron-right")
             onClicked: root.showAll = !root.showAll
         }
@@ -210,7 +210,7 @@ TabScroll {
         SearchBox {
             visible: root.showAll
             width: parent.width
-            placeholderText: qsTr("Search options")
+            placeholderText: i18n("Search options")
             onTextChanged: if (root.model) root.model.filterText = text
         }
 
@@ -265,7 +265,7 @@ TabScroll {
                     width: rawColumn.width - Theme.space.lg * 2
                     height: Theme.control.height
                     verticalAlignment: Text.AlignVCenter
-                    text: root.model ? qsTr("Nothing matches “%1”.").arg(root.model.filterText) : ""
+                    text: root.model ? i18n("Nothing matches “%1”.", root.model.filterText) : ""
                     elide: Text.ElideRight
                     color: Theme.palette.textTertiary
                     font.family: Theme.font.family

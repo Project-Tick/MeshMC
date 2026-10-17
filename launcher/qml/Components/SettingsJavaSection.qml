@@ -27,8 +27,8 @@ SettingsScroll {
     readonly property bool canDownload: !!java && java.downloaderAvailable
     property string removeError
 
-    title: qsTr("Java & memory")
-    description: qsTr("How much memory Minecraft gets, and which Java runtime runs it.")
+    title: i18n("Java & memory")
+    description: i18n("How much memory Minecraft gets, and which Java runtime runs it.")
 
     Connections {
         target: JavaStore.download
@@ -41,53 +41,53 @@ SettingsScroll {
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("Memory")
+        title: i18n("Memory")
         MemorySetting {
-            label: qsTr("Maximum memory")
+            label: i18n("Maximum memory")
             systemMiB: root.systemMemoryMiB
         }
         MemoryStartSetting {
-            label: qsTr("Starting memory")
-            description: qsTr("Memory reserved when the game starts. Never above the maximum.")
+            label: i18n("Starting memory")
+            description: i18n("Memory reserved when the game starts. Never above the maximum.")
         }
         SettingNumber {
             visible: javaPath.legacy
             key: "PermGen"
-            label: qsTr("PermGen size")
-            description: qsTr("Extra memory for Java older than 8. Newer Java ignores it.")
+            label: i18n("PermGen size")
+            description: i18n("Extra memory for Java older than 8. Newer Java ignores it.")
             from: 64
             to: 4096
             stepSize: 64
-            suffix: qsTr("MiB")
+            suffix: i18n("MiB")
         }
     }
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("Java runtime")
+        title: i18n("Java runtime")
         JavaPathRow {
             id: javaPath
-            label: qsTr("Java executable")
-            description: qsTr("Used when an instance does not choose its own. Leave empty to let MeshMC pick.")
+            label: i18n("Java executable")
+            description: i18n("Used when an instance does not choose its own. Leave empty to let MeshMC pick.")
         }
         JvmArgsRow {
-            label: qsTr("JVM arguments")
-            description: qsTr("Extra flags for every launch. MeshMC already sets memory and the classpath.")
+            label: i18n("JVM arguments")
+            description: i18n("Extra flags for every launch. MeshMC already sets memory and the classpath.")
         }
     }
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("Automatic Java")
+        title: i18n("Automatic Java")
         SettingSwitch {
             key: "JavaAutoDownload"
-            label: qsTr("Download Java automatically")
-            description: qsTr("Fetches the Java version each Minecraft release needs, so you never have to install one yourself.")
+            label: i18n("Download Java automatically")
+            description: i18n("Fetches the Java version each Minecraft release needs, so you never have to install one yourself.")
         }
         JavaVendorRow {
             enabled: SettingsStore.bool("JavaAutoDownload")
-            label: qsTr("Download from")
-            description: qsTr("Which vendor the automatic downloads come from.")
+            label: i18n("Download from")
+            description: i18n("Which vendor the automatic downloads come from.")
         }
     }
 
@@ -97,7 +97,7 @@ SettingsScroll {
         visible: root.canDownload
 
         Text {
-            text: qsTr("Downloaded Java")
+            text: i18n("Downloaded Java")
             color: Theme.palette.textPrimary
             font.family: Theme.font.family
             font.pixelSize: Theme.type.title.pixelSize
@@ -105,7 +105,7 @@ SettingsScroll {
         }
         Text {
             width: parent.width
-            text: qsTr("Java that MeshMC downloaded and keeps in its own folder.")
+            text: i18n("Java that MeshMC downloaded and keeps in its own folder.")
             wrapMode: Text.Wrap
             color: Theme.palette.textTertiary
             font.family: Theme.font.family
@@ -135,13 +135,13 @@ SettingsScroll {
         Row {
             spacing: Theme.space.sm
             Button {
-                text: qsTr("Download Java…")
+                text: i18n("Download Java…")
                 icon.source: Icons.url("download")
                 onClicked: downloadDialog.open()
             }
             Button {
                 flat: true
-                text: qsTr("Refresh")
+                text: i18n("Refresh")
                 icon.source: Icons.url("refresh")
                 onClicked: root.java.refreshManaged()
             }

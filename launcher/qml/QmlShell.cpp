@@ -86,6 +86,8 @@
 #include "minecraft/mod/ModIconCache.h"
 #include "minecraft/auth/MinecraftAccount.h"
 #include "minecraft/skins/DefaultSkins.h"
+#include <KLocalizedQmlContext>
+#include <KLocalizedString>
 
 namespace
 {
@@ -453,8 +455,8 @@ void QmlShell::debugShowRequest(const QString& kind)
 				list.append(accounts->at(i));
 			}
 			m_uiHost->pickAccount(
-				tr("Choose an account"),
-				tr("No account is set as the default. Pick the one to play "
+				i18n("Choose an account"),
+				i18n("No account is set as the default. Pick the one to play "
 				   "with."),
 				list);
 		});
@@ -520,8 +522,8 @@ void QmlShell::debugShowRequest(const QString& kind)
 		 * is destroyed itself. */
 		auto holder =
 			std::make_shared<std::unique_ptr<UiHost::BusyIndicator>>();
-		*holder = m_uiHost->showBusy(tr("Refreshing account…"),
-									 tr("Play offline"),
+		*holder = m_uiHost->showBusy(i18n("Refreshing account…"),
+									 i18n("Play offline"),
 									 [holder]() { holder->reset(); });
 	}
 }
@@ -665,6 +667,19 @@ void QmlShell::finishSetupStep(const QString& id)
 	recomputeSetupSteps();
 }
 
+namespace
+{
+/* Points KI18n at the launcher's "Language" setting (a key such as
+ * "de_DE"). KI18n would otherwise follow the system locale and ignore the
+ * choice made in Settings > Appearance. An empty key leaves it alone. */
+void applyKI18nLanguage(const QString& key)
+{
+	if (!key.isEmpty()) {
+		KLocalizedString::setLanguages({QString(key).replace(QLatin1Char('-'), QLatin1Char('_'))});
+	}
+}
+} // namespace
+
 QObject* QmlShell::languages() const
 {
 	return expose(LAUNCHER->translations().get());
@@ -680,6 +695,9 @@ void QmlShell::selectLanguage(const QString& key)
 	// should persist whatever it actually settled on rather than trusting
 	// an arbitrary string.
 	LAUNCHER->settings()->set("Language", translations->selectedLanguage());
+	// TranslationsModel switches Qt's translators and QLocale, neither of
+	// which KI18n looks at: it has to be told the language itself.
+	applyKI18nLanguage(translations->selectedLanguage());
 	if (m_engine) {
 		m_engine->retranslate();
 	}
@@ -1148,6 +1166,10 @@ bool QmlShell::load()
 
 	m_engine = std::make_unique<QQmlApplicationEngine>();
 	m_engine->addImportPath(QStringLiteral("qrc:/qt/qml"));
+	/* i18n(), i18nc(), i18np() and i18ncp() for every .qml file, translated
+	 * in the same "meshmc" domain as the C++ side (see main.cpp). */
+	KLocalization::setupLocalizedContext(m_engine.get());
+	applyKI18nLanguage(LAUNCHER->settings()->get("Language").toString());
 
 	/* The engine takes ownership of image providers. Registered before load()
 	 * so the first frame already has icons rather than broken images. */

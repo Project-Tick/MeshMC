@@ -29,6 +29,7 @@
 #include "InstanceShortcuts.h"
 #include "core/LauncherContext.h"
 #include "minecraft/auth/AccountList.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -62,15 +63,15 @@ QVariantList InstanceShortcutController::locations() const
 	 * save dialog goes through the portal and is the only way out. */
 	if (!DesktopServices::isFlatpak()) {
 		if (!InstanceShortcuts::folderFor(ShortcutTarget::Desktop).isEmpty()) {
-			list.append(location(QStringLiteral("desktop"), tr("Desktop")));
+			list.append(location(QStringLiteral("desktop"), i18n("Desktop")));
 		}
 		if (!InstanceShortcuts::folderFor(ShortcutTarget::Applications)
 				 .isEmpty()) {
 			list.append(
-				location(QStringLiteral("applications"), tr("Applications")));
+				location(QStringLiteral("applications"), i18n("Applications")));
 		}
 	}
-	list.append(location(QStringLiteral("other"), tr("Other…")));
+	list.append(location(QStringLiteral("other"), i18n("Other…")));
 	return list;
 }
 
@@ -108,7 +109,7 @@ QString InstanceShortcutController::suggestedName(const QString& server) const
 {
 	const QString address = server.trimmed();
 	return address.isEmpty() ? m_instance->name()
-							  : tr("%1 (%2)").arg(m_instance->name(), address);
+							  : i18n("%1 (%2)", m_instance->name(), address);
 }
 
 QString InstanceShortcutController::suggestedFileUrl(const QString& name) const
@@ -134,7 +135,7 @@ bool InstanceShortcutController::create(const QString& name,
 	request.instance = m_instance.get();
 	request.name = name.trimmed().isEmpty() ? suggestedName(address)
 											: name.trimmed();
-	request.targetString = address.isEmpty() ? tr("instance") : tr("server");
+	request.targetString = address.isEmpty() ? i18n("instance") : i18n("server");
 	if (!address.isEmpty()) {
 		request.extraArgs << QStringLiteral("--server") << address;
 	}
@@ -153,7 +154,7 @@ bool InstanceShortcutController::create(const QString& name,
 		const QUrl url(location);
 		const QString path = url.isLocalFile() ? url.toLocalFile() : location;
 		if (path.isEmpty() || location == QLatin1String("other")) {
-			setError(tr("Choose where to put the shortcut."));
+			setError(i18n("Choose where to put the shortcut."));
 			return false;
 		}
 		request.target = ShortcutTarget::Other;

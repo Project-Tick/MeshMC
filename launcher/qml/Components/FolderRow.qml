@@ -31,12 +31,12 @@ SettingRow {
 
         Button {
             visible: root.movable
-            text: qsTr("Change…")
+            text: i18n("Change…")
             onClicked: dialog.open()
         }
         IconButton {
             iconName: "folder"
-            tip: qsTr("Open folder")
+            tip: i18n("Open folder")
             flat: false
             onClicked: root.openRequested(root.path)
         }

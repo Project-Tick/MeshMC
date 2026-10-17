@@ -33,7 +33,7 @@ Dialog {
     anchors.centerIn: parent
     width: Math.min(root.dialogWidth, parent ? parent.width - Theme.space.xxl * 2 : root.dialogWidth)
     modal: true
-    title: qsTr("Add empty component")
+    title: i18n("Add empty component")
 
     header: DialogHeader {
         title: root.title
@@ -51,7 +51,7 @@ Dialog {
 
         Text {
             Layout.fillWidth: true
-            text: qsTr("An empty component has no files of its own. Add its libraries and arguments by editing its JSON afterwards.")
+            text: i18n("An empty component has no files of its own. Add its libraries and arguments by editing its JSON afterwards.")
             wrapMode: Text.Wrap
             color: Theme.palette.textTertiary
             font.family: Theme.font.family
@@ -63,13 +63,13 @@ Dialog {
         ColumnLayout {
             Layout.fillWidth: true
             spacing: Theme.space.xs
-            FieldLabel { text: qsTr("Name") }
+            FieldLabel { text: i18n("Name") }
             TextField {
                 id: nameField
                 Layout.fillWidth: true
                 selectByMouse: true
-                placeholderText: qsTr("My component")
-                Accessible.name: qsTr("Name")
+                placeholderText: i18n("My component")
+                Accessible.name: i18n("Name")
                 onAccepted: if (root.problem.length === 0) root.add()
             }
         }
@@ -77,14 +77,14 @@ Dialog {
         ColumnLayout {
             Layout.fillWidth: true
             spacing: Theme.space.xs
-            FieldLabel { text: qsTr("ID") }
+            FieldLabel { text: i18n("ID") }
             TextField {
                 id: uidField
                 Layout.fillWidth: true
                 selectByMouse: true
                 font.family: Theme.font.mono
                 placeholderText: root.suggestedUid.length > 0 ? root.suggestedUid : "org.example.mycomponent"
-                Accessible.name: qsTr("ID")
+                Accessible.name: i18n("ID")
                 onAccepted: if (root.problem.length === 0) root.add()
             }
         }
@@ -107,13 +107,13 @@ Dialog {
         topPadding: 0
 
         Button {
-            text: qsTr("Add")
+            text: i18n("Add")
             highlighted: true
             enabled: root.problem.length === 0
             onClicked: root.add()
         }
         Button {
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             flat: true
             onClicked: root.close()
         }

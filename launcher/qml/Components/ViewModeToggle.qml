@@ -22,12 +22,12 @@ Row {
     spacing: Theme.space.xxs
 
     Accessible.role: Accessible.Grouping
-    Accessible.name: qsTr("View")
+    Accessible.name: i18n("View")
 
     Repeater {
         model: [
-            { value: "grid", icon: "grid", tip: qsTr("Grid view") },
-            { value: "list", icon: "list", tip: qsTr("List view") }
+            { value: "grid", icon: "grid", tip: i18n("Grid view") },
+            { value: "list", icon: "list", tip: i18n("List view") }
         ]
         delegate: ToolButton {
             id: option

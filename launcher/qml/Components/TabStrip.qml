@@ -106,7 +106,7 @@ Item {
         font.family: Theme.font.family
         font.pixelSize: Theme.type.body.pixelSize
         font.weight: Font.DemiBold
-        text: qsTr("More")
+        text: i18n("More")
     }
 
     Rectangle {
@@ -232,7 +232,7 @@ Item {
             height: row.height
             hoverEnabled: true
             Accessible.role: Accessible.ButtonMenu
-            Accessible.name: selected ? qsTr("%1, more tabs").arg(root.currentOverflowTab.label) : qsTr("More tabs")
+            Accessible.name: selected ? i18n("%1, more tabs", root.currentOverflowTab.label) : i18n("More tabs")
             onClicked: moreMenu.visible ? moreMenu.close() : moreMenu.open()
 
             contentItem: Row {
@@ -286,7 +286,7 @@ Item {
                     delegate: MenuItem {
                         required property var modelData
                         text: modelData.count !== undefined && modelData.count >= 0
-                              ? qsTr("%1 (%2)").arg(modelData.label).arg(modelData.count)
+                              ? i18n("%1 (%2)", modelData.label, modelData.count)
                               : modelData.label
                         onTriggered: root.activated(modelData.id)
                     }

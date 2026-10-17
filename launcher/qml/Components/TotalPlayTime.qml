@@ -26,7 +26,7 @@ Row {
     spacing: Theme.space.xs
 
     Accessible.role: Accessible.StaticText
-    Accessible.name: qsTr("Total play time: %1").arg(root.total)
+    Accessible.name: i18n("Total play time: %1", root.total)
 
     MeshIcon {
         anchors.verticalCenter: parent.verticalCenter
@@ -36,7 +36,7 @@ Row {
     }
     Text {
         anchors.verticalCenter: parent.verticalCenter
-        text: qsTr("%1 played").arg(root.total)
+        text: i18n("%1 played", root.total)
         color: Theme.palette.textTertiary
         font.family: Theme.font.family
         font.pixelSize: Theme.type.label.pixelSize

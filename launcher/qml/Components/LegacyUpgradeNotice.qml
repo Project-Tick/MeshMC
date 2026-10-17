@@ -27,12 +27,12 @@ NoticeBar {
 
     visible: !!root.details && root.details.isLegacy
     tone: root.upgraded ? "info" : "warning"
-    text: root.upgrading ? qsTr("Upgrading…")
-        : root.upgraded ? qsTr("Done. The upgraded copy is in your library.")
-        : root.failed ? (root.upgrade.error || qsTr("The upgrade did not work."))
-        : root.gameRunning ? qsTr("This instance uses the old format and has to be upgraded before it can be played. Close the game first.")
-        : qsTr("This instance uses the old format and has to be upgraded before it can be played. The upgrade makes a new copy and leaves this one as it is.")
-    actionText: root.upgrading || root.upgraded || root.gameRunning ? "" : qsTr("Upgrade")
+    text: root.upgrading ? i18n("Upgrading…")
+        : root.upgraded ? i18n("Done. The upgraded copy is in your library.")
+        : root.failed ? (root.upgrade.error || i18n("The upgrade did not work."))
+        : root.gameRunning ? i18n("This instance uses the old format and has to be upgraded before it can be played. Close the game first.")
+        : i18n("This instance uses the old format and has to be upgraded before it can be played. The upgrade makes a new copy and leaves this one as it is.")
+    actionText: root.upgrading || root.upgraded || root.gameRunning ? "" : i18n("Upgrade")
     progress: root.upgrading ? root.upgrade.progress : -2
     onActionTriggered: root.upgrade = root.details.upgradeLegacy()
 }

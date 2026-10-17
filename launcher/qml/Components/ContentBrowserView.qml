@@ -94,8 +94,8 @@ Item {
     }
     // Why the install button is off, if it is.
     readonly property string blockedReason: !root.browser ? ""
-        : !root.browser.changesAllowed ? qsTr("The game is running. Mods can be installed once it closes.")
-        : !root.browser.installTargetAvailable ? qsTr("This instance's shared data pack folder is turned off.")
+        : !root.browser.changesAllowed ? i18n("The game is running. Mods can be installed once it closes.")
+        : !root.browser.installTargetAvailable ? i18n("This instance's shared data pack folder is turned off.")
         : ""
     property string installNote: ""
 
@@ -106,7 +106,7 @@ Item {
         var key = projectKey(root.selectedProject.title, root.selectedProject.author)
         var review = root.browser.review(root.selectedRow, root.versions[root.pickedVersion].id)
         if (!review) {
-            root.installNote = qsTr("This version cannot be installed here.")
+            root.installNote = i18n("This version cannot be installed here.")
             return
         }
         root.checking[key] = review
@@ -152,10 +152,10 @@ Item {
         { value: "curseforge", label: "CurseForge" }
     ]
     readonly property var types: [
-        { value: "mods", label: qsTr("Mods") },
-        { value: "resourcepacks", label: qsTr("Resource packs") },
-        { value: "shaderpacks", label: qsTr("Shaders") },
-        { value: "datapacks", label: qsTr("Data packs") }
+        { value: "mods", label: i18n("Mods") },
+        { value: "resourcepacks", label: i18n("Resource packs") },
+        { value: "shaderpacks", label: i18n("Shaders") },
+        { value: "datapacks", label: i18n("Data packs") }
     ]
 
     property bool searched: false
@@ -246,7 +246,7 @@ Item {
             spacing: Theme.space.lg
 
             Text {
-                text: qsTr("Add content")
+                text: i18n("Add content")
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.heading.pixelSize
@@ -283,7 +283,7 @@ Item {
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("%n installing", "", root.activeDownloads)
+                        text: i18np("%1 installing", "%1 installing", root.activeDownloads)
                         color: Theme.palette.accentText
                         font.family: Theme.font.family
                         font.pixelSize: Theme.type.label.pixelSize
@@ -300,10 +300,10 @@ Item {
             visible: text.length > 0
             text: root.blockedReason.length > 0 ? root.blockedReason
                 : root.browser && root.browser.contentType === "mods" && !root.browser.hasModLoader
-                  ? qsTr("This instance has no mod loader, so mods will not run. Install one first.")
+                  ? i18n("This instance has no mod loader, so mods will not run. Install one first.")
                 : ""
             actionText: !!root.details && root.blockedReason.length === 0 && text.length > 0
-                        ? qsTr("Install a loader…") : ""
+                        ? i18n("Install a loader…") : ""
             onActionTriggered: loaderDialog.open()
         }
 
@@ -320,7 +320,7 @@ Item {
                 textRole: "label"
                 valueRole: "value"
                 currentIndex: root.providers.findIndex((p) => p.value === (root.browser ? root.browser.provider : "modrinth"))
-                Accessible.name: qsTr("Search on")
+                Accessible.name: i18n("Search on")
                 onActivated: {
                     root.browser.provider = currentValue
                     currentIndex = Qt.binding(() => root.providers.findIndex((p) => p.value === (root.browser ? root.browser.provider : "modrinth")))
@@ -331,7 +331,7 @@ Item {
                 id: searchField
                 Layout.fillWidth: true
                 Layout.minimumWidth: root.searchMinWidth
-                placeholderText: qsTr("Search %1").arg(providerBox.currentText)
+                placeholderText: i18n("Search %1", providerBox.currentText)
                 onTextEdited: debounce.restart()
                 onTextChanged: if (text.length === 0) debounce.restart()
             }
@@ -341,13 +341,13 @@ Item {
                 model: root.browser && root.browser.sortOptions ? root.browser.sortOptions : []
                 textRole: "label"
                 valueRole: "id"
-                Accessible.name: qsTr("Sort by")
+                Accessible.name: i18n("Sort by")
                 onActivated: { root.browser.sortIndex = currentValue; root.runSearch() }
             }
             Button {
                 id: filtersButton
                 readonly property int active: root.browser ? root.browser.activeFilterCount : 0
-                text: active > 0 ? qsTr("Filters (%1)").arg(active) : qsTr("Filters")
+                text: active > 0 ? i18n("Filters (%1)", active) : i18n("Filters")
                 icon.source: Icons.url("filter")
                 onClicked: filterPopup.opened ? filterPopup.close() : filterPopup.open()
 
@@ -438,9 +438,9 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width
                     visible: root.searched && !!root.browser && !root.browser.searching && results.count === 0
-                    title: root.browser && root.browser.error.length > 0 ? qsTr("Search failed") : qsTr("Nothing found")
+                    title: root.browser && root.browser.error.length > 0 ? i18n("Search failed") : i18n("Nothing found")
                     body: root.browser && root.browser.error.length > 0 ? root.browser.error
-                                                                         : qsTr("Try other words, fewer filters, or the other site.")
+                                                                         : i18n("Try other words, fewer filters, or the other site.")
                     MeshIcon { iconName: "search"; size: 40; color: Theme.palette.textTertiary }
                 }
             }

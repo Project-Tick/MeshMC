@@ -100,7 +100,7 @@ Popup {
                 Layout.fillWidth: true
                 Text {
                     Layout.fillWidth: true
-                    text: qsTr("Filters")
+                    text: i18n("Filters")
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.title.pixelSize
@@ -109,7 +109,7 @@ Popup {
                 Button {
                     flat: true
                     enabled: !!root.browser && root.browser.activeFilterCount > 0
-                    text: qsTr("Reset")
+                    text: i18n("Reset")
                     onClicked: root.browser.resetFilters()
                 }
             }
@@ -117,11 +117,11 @@ Popup {
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: Theme.space.sm
-                GroupTitle { text: qsTr("Minecraft version") }
+                GroupTitle { text: i18n("Minecraft version") }
                 ComboBox {
                     id: versionBox
                     Layout.fillWidth: true
-                    readonly property var options: [{ value: "", label: qsTr("Any version") }]
+                    readonly property var options: [{ value: "", label: i18n("Any version") }]
                         .concat((root.browser ? root.browser.gameVersionOptions : [])
                                 .map((v) => ({ value: v, label: v })))
                     model: options
@@ -139,7 +139,7 @@ Popup {
                 Layout.fillWidth: true
                 visible: !!root.browser && root.browser.loaderFilterAvailable
                 spacing: Theme.space.sm
-                GroupTitle { text: qsTr("Loader") }
+                GroupTitle { text: i18n("Loader") }
                 GridLayout {
                     Layout.fillWidth: true
                     columns: root.optionColumns
@@ -168,7 +168,7 @@ Popup {
                 Layout.fillWidth: true
                 visible: !!root.browser && root.browser.extendedFilters && root.browser.loaderFilterAvailable
                 spacing: Theme.space.sm
-                GroupTitle { text: qsTr("Runs on") }
+                GroupTitle { text: i18n("Runs on") }
                 GridLayout {
                     Layout.fillWidth: true
                     columns: root.optionColumns
@@ -176,10 +176,10 @@ Popup {
                     rowSpacing: 0
                     Repeater {
                         model: [
-                            { value: "", label: qsTr("Anywhere") },
-                            { value: "client", label: qsTr("Client") },
-                            { value: "server", label: qsTr("Server") },
-                            { value: "both", label: qsTr("Client and server") }
+                            { value: "", label: i18n("Anywhere") },
+                            { value: "client", label: i18n("Client") },
+                            { value: "server", label: i18n("Server") },
+                            { value: "both", label: i18n("Client and server") }
                         ]
                         RadioButton {
                             // The box on the group title's edge, not 4px in.
@@ -201,7 +201,7 @@ Popup {
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: Theme.space.sm
-                GroupTitle { text: qsTr("Categories") }
+                GroupTitle { text: i18n("Categories") }
                 GridLayout {
                     Layout.fillWidth: true
                     columns: root.optionColumns
@@ -227,7 +227,7 @@ Popup {
                 Text {
                     Layout.fillWidth: true
                     visible: !!root.browser && root.browser.categories.length === 0
-                    text: qsTr("Loading categories…")
+                    text: i18n("Loading categories…")
                     color: Theme.palette.textTertiary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.caption.pixelSize
@@ -240,7 +240,7 @@ Popup {
                 CheckBox {
                     // The box on the group title's edge, not 4px in.
                     leftPadding: 0
-                    text: qsTr("Hide what is already installed")
+                    text: i18n("Hide what is already installed")
                     checked: !!root.browser && root.browser.hideInstalled
                     onToggled: {
                         root.browser.hideInstalled = checked
@@ -251,7 +251,7 @@ Popup {
                     // The box on the group title's edge, not 4px in.
                     leftPadding: 0
                     visible: !!root.browser && root.browser.extendedFilters
-                    text: qsTr("Open source only")
+                    text: i18n("Open source only")
                     checked: !!root.browser && root.browser.openSourceOnly
                     onToggled: {
                         root.browser.openSourceOnly = checked

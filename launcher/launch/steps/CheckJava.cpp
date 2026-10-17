@@ -24,10 +24,11 @@
 #include <QStandardPaths>
 #include <QFileInfo>
 #include "Sys.h"
+#include <KLocalizedString>
 
 void CheckJava::executeTask()
 {
-	setStatus(tr("Checking Java"));
+	setStatus(i18n("Checking Java"));
 	auto instance = m_parent->instance();
 	auto settings = instance->settings();
 	m_javaPath = FS::ResolveExecutable(settings->get("JavaPath").toString());

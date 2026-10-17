@@ -79,7 +79,7 @@ Item {
     }
 
     Accessible.role: Accessible.Pane
-    Accessible.name: qsTr("Play bar")
+    Accessible.name: i18n("Play bar")
 
     // For a dev-route snapshot ("picker") that needs the instance picker
     // open without a real click.
@@ -219,7 +219,7 @@ Item {
             implicitWidth: implicitContentWidth + leftPadding + rightPadding
             implicitHeight: implicitContentHeight + topPadding + bottomPadding
             hoverEnabled: true
-            Accessible.name: root.hasInstance ? qsTr("Change instance: %1").arg(root.dockName) : qsTr("Choose an instance")
+            Accessible.name: root.hasInstance ? i18n("Change instance: %1", root.dockName) : i18n("Choose an instance")
 
             onClicked: picker.visible ? picker.close() : picker.open()
 
@@ -271,7 +271,7 @@ Item {
 
                     Text {
                         Layout.maximumWidth: 190
-                        text: root.hasInstance ? root.dockName : qsTr("Choose an instance")
+                        text: root.hasInstance ? root.dockName : i18n("Choose an instance")
                         elide: Text.ElideRight
                         color: Theme.palette.textPrimary
                         font.family: Theme.font.family
@@ -339,7 +339,7 @@ Item {
                     size: Theme.control.heightLg + 6
                     flat: false
                     iconName: "chevron-down"
-                    tip: qsTr("More ways to play")
+                    tip: i18n("More ways to play")
                     enabled: root.hasInstance && root.dockCanLaunch
                     onClicked: launchMenu.visible ? launchMenu.close() : root.openLaunchMenu()
                 }
@@ -362,7 +362,7 @@ Item {
 
                 Accessible.role: Accessible.ProgressBar
                 Accessible.name: root.launchProgress >= 0
-                                 ? qsTr("%1, %2 percent").arg(root.launchStage).arg(Math.round(root.launchProgress * 100))
+                                 ? i18n("%1, %2 percent", root.launchStage, Math.round(root.launchProgress * 100))
                                  : root.launchStage
 
                 ColumnLayout {
@@ -386,7 +386,7 @@ Item {
                         // Only once the step says how far it is.
                         Text {
                             visible: root.launchProgress >= 0
-                            text: qsTr("%1%").arg(Math.round(root.launchProgress * 100))
+                            text: i18n("%1%", Math.round(root.launchProgress * 100))
                             color: Theme.palette.textSecondary
                             font.family: Theme.font.family
                             font.pixelSize: Theme.type.label.pixelSize
@@ -406,7 +406,7 @@ Item {
                 Button {
                     Layout.alignment: Qt.AlignVCenter
                     implicitHeight: Theme.control.heightLg
-                    text: qsTr("Cancel")
+                    text: i18n("Cancel")
                     onClicked: root.cancelRequested(root.dockInstanceId)
                 }
             }
@@ -440,7 +440,7 @@ Item {
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Playing")
+                        text: i18n("Playing")
                         color: Theme.palette.textPrimary
                         font.family: Theme.font.family
                         font.pixelSize: Theme.type.bodyStrong.pixelSize
@@ -513,7 +513,7 @@ Item {
             SearchBox {
                 id: searchField
                 Layout.fillWidth: true
-                placeholderText: qsTr("Search instances")
+                placeholderText: i18n("Search instances")
                 onTextChanged: if (root.instanceModel) root.instanceModel.filterText = text
             }
 
@@ -619,7 +619,7 @@ Item {
                     EmptyState {
                         anchors.centerIn: parent
                         visible: list.count === 0
-                        title: qsTr("No instances found")
+                        title: i18n("No instances found")
                         body: ""
                         actionText: ""
 

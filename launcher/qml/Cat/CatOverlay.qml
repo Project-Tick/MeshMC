@@ -290,7 +290,7 @@ Item {
             onClicked: root.pet()
             onDoubleClicked: hop.start()
             Accessible.role: Accessible.Button
-            Accessible.name: qsTr("Pet the cat")
+            Accessible.name: i18n("Pet the cat")
         }
 
         // Hearts rise from the cat when petted.

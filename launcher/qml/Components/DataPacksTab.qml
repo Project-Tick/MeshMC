@@ -29,7 +29,7 @@ Item {
     readonly property var controller: root.details ? root.details.worldDataPacks : null
     readonly property bool unlocked: !!root.controller && root.controller.unlocked
     readonly property int count: list.count
-    readonly property string lockedReason: qsTr("The game is running. Data packs can be changed once it has closed.")
+    readonly property string lockedReason: i18n("The game is running. Data packs can be changed once it has closed.")
     readonly property int thumbSize: 36
     readonly property int pickerWidth: 220
 
@@ -62,7 +62,7 @@ Item {
 
             leading: [
                 Text {
-                    text: qsTr("World")
+                    text: i18n("World")
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.label.pixelSize
@@ -81,7 +81,7 @@ Item {
             ]
 
             Button {
-                text: qsTr("Open folder")
+                text: i18n("Open folder")
                 icon.source: Icons.url("folder")
                 enabled: root.controller && root.controller.ready
                 onClicked: root.openFolderRequested(root.controller ? root.controller.directory : "")
@@ -91,7 +91,7 @@ Item {
                 reason: root.lockedReason
                 Button {
                     enabled: root.unlocked && root.controller && root.controller.ready
-                    text: qsTr("Add from file…")
+                    text: i18n("Add from file…")
                     icon.source: Icons.url("plus")
                     onClicked: fileDialog.open()
                 }
@@ -182,7 +182,7 @@ Item {
                     Switch {
                         checked: row.itemEnabled
                         enabled: root.unlocked
-                        Accessible.name: qsTr("Enable %1").arg(row.name)
+                        Accessible.name: i18n("Enable %1", row.name)
                         onToggled: {
                             root.controller.setEnabled(row.index, checked)
                             checked = Qt.binding(() => row.itemEnabled)
@@ -192,7 +192,7 @@ Item {
                     IconButton {
                         id: moreButton
                         iconName: "more"
-                        tip: qsTr("More")
+                        tip: i18n("More")
                         onClicked: rowMenu.popup(moreButton, moreButton.width - rowMenu.width, moreButton.height)
                     }
                 }
@@ -201,17 +201,17 @@ Item {
                     id: rowMenu
                     MenuItem {
                         enabled: root.unlocked
-                        text: row.itemEnabled ? qsTr("Disable") : qsTr("Enable")
+                        text: row.itemEnabled ? i18n("Disable") : i18n("Enable")
                         onTriggered: root.controller.setEnabled(row.index, !row.itemEnabled)
                     }
                     MenuSeparator {}
                     MenuItem {
                         enabled: root.unlocked
-                        text: qsTr("Remove…")
+                        text: i18n("Remove…")
                         icon.source: Icons.url("trash")
                         onTriggered: {
                             confirm.row = row.index
-                            confirm.text = qsTr("Remove “%1” from this world? The file is deleted.").arg(row.name)
+                            confirm.text = i18n("Remove “%1” from this world? The file is deleted.", row.name)
                             confirm.open()
                         }
                     }
@@ -231,8 +231,8 @@ Item {
     ConfirmDialog {
         id: confirm
         property int row: -1
-        title: qsTr("Remove data pack")
-        confirmText: qsTr("Remove")
+        title: i18n("Remove data pack")
+        confirmText: i18n("Remove")
         onConfirmed: if (root.controller) root.controller.remove(row)
     }
 
@@ -240,8 +240,8 @@ Item {
         anchors.centerIn: parent
         upperThird: true
         visible: picker.count === 0
-        title: qsTr("No worlds yet")
-        body: qsTr("Data packs live inside a world's own folder, so create a world first.")
+        title: i18n("No worlds yet")
+        body: i18n("Data packs live inside a world's own folder, so create a world first.")
         MeshIcon { iconName: "package"; size: 40; color: Theme.palette.textTertiary }
     }
 
@@ -249,15 +249,15 @@ Item {
         anchors.centerIn: parent
         upperThird: true
         visible: picker.count > 0 && list.count === 0
-        title: qsTr("No data packs")
-        body: qsTr("Data packs change this world's recipes, loot and more. Add a .zip to get started.")
+        title: i18n("No data packs")
+        body: i18n("Data packs change this world's recipes, loot and more. Add a .zip to get started.")
         MeshIcon { iconName: "package"; size: 40; color: Theme.palette.textTertiary }
     }
 
     FileDialog {
         id: fileDialog
-        title: qsTr("Add data pack")
-        nameFilters: [qsTr("Data pack files (*.zip)"), qsTr("All files (*)")]
+        title: i18n("Add data pack")
+        nameFilters: [i18n("Data pack files (*.zip)"), i18n("All files (*)")]
         onAccepted: if (root.controller) root.controller.install(selectedFile.toString())
     }
 }

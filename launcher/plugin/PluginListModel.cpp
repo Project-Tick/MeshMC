@@ -22,6 +22,7 @@
 #include <QStringList>
 
 #include "plugin/PluginManager.h"
+#include <KLocalizedString>
 
 PluginListModel::PluginListModel(PluginManager* manager, QObject* parent)
 	: QAbstractListModel(parent), m_manager(manager)
@@ -67,7 +68,7 @@ QVariant PluginListModel::data(const QModelIndex& index, int role) const
 			if (mod.disabled) {
 				return pluginDisableReasonLabel(mod.disableReason);
 			}
-			return mod.initialized ? tr("Loaded") : tr("Not loaded");
+			return mod.initialized ? i18n("Loaded") : i18n("Not loaded");
 		case StatusKindRole:
 			if (mod.disabled) {
 				return QStringLiteral("disabled");
@@ -89,7 +90,7 @@ QVariant PluginListModel::data(const QModelIndex& index, int role) const
 					part += QStringLiteral(" >= %1").arg(dependency.minVersion);
 				}
 				if (dependency.optional) {
-					part += tr(" (optional)");
+					part += i18n(" (optional)");
 				}
 				parts.append(part);
 			}
@@ -165,20 +166,20 @@ QString PluginListModel::signatureLabel(PluginSignatureState state)
 {
 	switch (state) {
 		case PluginSignatureState::Valid:
-			return tr("Signed");
+			return i18n("Signed");
 		case PluginSignatureState::Untrusted:
-			return tr("Signed by an unknown key");
+			return i18n("Signed by an unknown key");
 		case PluginSignatureState::Absent:
-			return tr("Unsigned");
+			return i18n("Unsigned");
 		case PluginSignatureState::BadSignature:
 		case PluginSignatureState::Malformed:
-			return tr("Bad signature");
+			return i18n("Bad signature");
 		case PluginSignatureState::Error:
-			return tr("Signature not checked");
+			return i18n("Signature not checked");
 		case PluginSignatureState::NotChecked:
 			break;
 	}
-	return tr("Signature not checked");
+	return i18n("Signature not checked");
 }
 
 QVector<PluginMetadata> PluginListModel::fetchModules() const

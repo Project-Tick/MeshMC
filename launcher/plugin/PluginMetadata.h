@@ -27,6 +27,7 @@
 #include <QStringList>
 #include <QVector>
 #include <string>
+#include <KLocalizedString>
 
 /*
  * Result of running the signature verification step against a .mmco file.
@@ -67,29 +68,29 @@ enum class PluginDisableReason {
 };
 
 /* A short label for @p reason, as the plugin lists show it (the widget
- * PluginsDialog and the QML "Installed plugins" section). Translated in
- * the QObject context, where these strings have always lived. */
+ * PluginsDialog and the QML "Installed plugins" section). Translated
+ * through KI18n like the rest of the launcher. */
 inline QString pluginDisableReasonLabel(PluginDisableReason reason)
 {
 	switch (reason) {
 		case PluginDisableReason::None:
-			return QObject::tr("OK");
+			return i18n("OK");
 		case PluginDisableReason::UserDisabled:
-			return QObject::tr("Disabled by user");
+			return i18n("Disabled by user");
 		case PluginDisableReason::SignatureRequired:
-			return QObject::tr("Signature required");
+			return i18n("Signature required");
 		case PluginDisableReason::SignatureInvalid:
-			return QObject::tr("Invalid signature");
+			return i18n("Invalid signature");
 		case PluginDisableReason::DependencyMissing:
-			return QObject::tr("Missing dependency");
+			return i18n("Missing dependency");
 		case PluginDisableReason::DependencyCycle:
-			return QObject::tr("Dependency cycle");
+			return i18n("Dependency cycle");
 		case PluginDisableReason::SupersededByCore:
-			return QObject::tr("Built into MeshMC");
+			return i18n("Built into MeshMC");
 		case PluginDisableReason::AbiTooOld:
-			return QObject::tr("Plugin ABI too old");
+			return i18n("Plugin ABI too old");
 		case PluginDisableReason::AbiTooNew:
-			return QObject::tr("Plugin ABI too new");
+			return i18n("Plugin ABI too new");
 	}
 	return QString();
 }

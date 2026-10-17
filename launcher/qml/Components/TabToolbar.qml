@@ -26,8 +26,8 @@ import MeshMC.Theme
  *         Layout.fillWidth: true
  *         leading: ComboBox { ... }
  *         IconButton { ... }
- *         Button { text: qsTr("Open folder") ... }
- *         Button { text: qsTr("Add world") ... }
+ *         Button { text: i18n("Open folder") ... }
+ *         Button { text: i18n("Add world") ... }
  *     }
  */
 RowLayout {

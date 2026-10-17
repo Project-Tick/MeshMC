@@ -35,11 +35,11 @@ AbstractButton {
     implicitHeight: control.iconSize + Theme.space.md * 2
     hoverEnabled: true
 
-    Accessible.name: qsTr("%1, in %2").arg(control.worldName).arg(control.instanceName)
+    Accessible.name: i18n("%1, in %2", control.worldName, control.instanceName)
 
     ToolTip.visible: control.hovered
     ToolTip.delay: 500
-    ToolTip.text: qsTr("%1 — %2").arg(control.worldName).arg(control.instanceName)
+    ToolTip.text: i18n("%1 — %2", control.worldName, control.instanceName)
 
     background: Rectangle {
         radius: Theme.radius.sm

@@ -24,7 +24,7 @@ SettingRow {
     property string key: "JavaPath"
     property string argsKey: "JvmArgs"
     property var source: SettingsStore
-    property string placeholder: qsTr("Automatic")
+    property string placeholder: i18n("Automatic")
     // Tells a test started here from one started by another page that
     // shares the controller.
     property string token: "java-" + Math.random()
@@ -104,19 +104,19 @@ SettingRow {
             }
             Button {
                 visible: !!root.java
-                text: qsTr("Choose…")
+                text: i18n("Choose…")
                 onClicked: picker.open()
             }
             IconButton {
                 visible: !!root.java
                 iconName: "folder"
-                tip: qsTr("Browse for a Java file")
+                tip: i18n("Browse for a Java file")
                 flat: false
                 onClicked: browse.open()
             }
             Button {
                 visible: !!root.java
-                text: root.testing ? qsTr("Testing…") : qsTr("Test")
+                text: root.testing ? i18n("Testing…") : i18n("Test")
                 enabled: !root.testing && root.path.length > 0 && !!root.java && root.java.testingToken.length === 0
                 onClicked: root.runTest()
             }
@@ -163,13 +163,13 @@ SettingRow {
                         lineHeight: Theme.type.label.lineHeight
                         text: {
                             if (root.testing)
-                                return qsTr("Checking this Java…")
+                                return i18n("Checking this Java…")
                             if (!root.result)
                                 return ""
                             if (!root.result.ok)
                                 return root.result.error
-                            var line = qsTr("Works. Java %1, %2, from %3.")
-                                .arg(root.result.version).arg(root.result.architecture).arg(root.result.vendor)
+                            var line = i18n("Works. Java %1, %2, from %3.",
+                                            root.result.version, root.result.architecture, root.result.vendor)
                             return root.result.warnings.length > 0 ? line + "\n" + root.result.warnings : line
                         }
                     }
@@ -186,11 +186,11 @@ SettingRow {
 
     FileDialog {
         id: browse
-        title: qsTr("Find Java executable")
+        title: i18n("Find Java executable")
         onAccepted: {
             var picked = root.java ? root.java.pickedJava(selectedFile) : ""
             if (picked.length === 0) {
-                root.result = { ok: false, error: qsTr("That file cannot be run as Java.") }
+                root.result = { ok: false, error: i18n("That file cannot be run as Java.") }
                 return
             }
             root.setPath(picked, -1)

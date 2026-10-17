@@ -40,6 +40,7 @@
 #include "meta/VersionList.h"
 #include "models/ContentInstallReview.h"
 #include "settings/Setting.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -345,7 +346,7 @@ void ContentBrowser::onModelSearchStateChanged()
 void ContentBrowser::search()
 {
 	if (m_provider == QStringLiteral("curseforge") && curseForgeKeyMissing()) {
-		setError(tr("This build has no CurseForge API key configured, so "
+		setError(i18n("This build has no CurseForge API key configured, so "
 					"CurseForge cannot be searched."));
 		return;
 	}

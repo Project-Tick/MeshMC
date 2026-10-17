@@ -28,7 +28,7 @@ SettingRow {
     property var source: SettingsStore
     property bool folder: false
     property string placeholder
-    property var nameFilters: [qsTr("All files (*)")]
+    property var nameFilters: [i18n("All files (*)")]
     property string toolId: ""
     wide: true
 
@@ -58,18 +58,18 @@ SettingRow {
             }
             IconButton {
                 iconName: "folder"
-                tip: qsTr("Browse…")
+                tip: i18n("Browse…")
                 flat: false
                 onClicked: root.folder ? folderDialog.open() : fileDialog.open()
             }
             Button {
                 visible: root.toolId.length > 0
-                text: qsTr("Check")
+                text: i18n("Check")
                 onClicked: {
                     const adapter = root.source.adapter
                     const error = adapter ? adapter.checkExternalTool(root.toolId, field.text)
-                                          : qsTr("Not available.")
-                    root.checkResult = error.length === 0 ? qsTr("Looks good.") : error
+                                          : i18n("Not available.")
+                    root.checkResult = error.length === 0 ? i18n("Looks good.") : error
                     root.checkOk = error.length === 0
                 }
             }

@@ -38,9 +38,9 @@ Item {
     property var watcher: null
     readonly property bool busy: !!root.watcher && root.watcher.running
     // What the watcher is doing, for the progress line and the toasts.
-    property string busyText: qsTr("Copying world…")
-    property string failText: qsTr("The world could not be copied.")
-    property string doneText: qsTr("World copied.")
+    property string busyText: i18n("Copying world…")
+    property string failText: i18n("The world could not be copied.")
+    property string doneText: i18n("World copied.")
     // Whether the MCEdit setting points at a usable MCEdit; checked each time
     // a row menu opens, since it is a launcher setting that can change.
     property bool mceditReady: false
@@ -68,14 +68,14 @@ Item {
             var started = root.details.installWorld(String(fileUrls[i]))
             if (!started)
                 continue
-            root.busyText = qsTr("Adding world…")
-            root.failText = qsTr("The world could not be added.")
-            root.doneText = fileUrls.length > 1 ? qsTr("World added. Add the others one at a time.")
-                                                : qsTr("World added.")
+            root.busyText = i18n("Adding world…")
+            root.failText = i18n("The world could not be added.")
+            root.doneText = fileUrls.length > 1 ? i18n("World added. Add the others one at a time.")
+                                                : i18n("World added.")
             root.watcher = started
             return
         }
-        toast.show(qsTr("That is not a Minecraft world. Pick a .zip with a world in it."), "danger")
+        toast.show(i18n("That is not a Minecraft world. Pick a .zip with a world in it."), "danger")
     }
 
     readonly property int rowHeight: 76
@@ -83,8 +83,8 @@ Item {
     // The game modes worth a tag. WorldList reports a level.dat without one
     // as "Undefined" (or "Unknown (n)"), which says nothing to a player, so
     // anything else is simply left out.
-    readonly property var knownModes: [qsTranslate("GameType", "Survival"), qsTranslate("GameType", "Creative"),
-                                       qsTranslate("GameType", "Adventure"), qsTranslate("GameType", "Spectator")]
+    readonly property var knownModes: [i18nc("GameType", "Survival"), i18nc("GameType", "Creative"),
+                                       i18nc("GameType", "Adventure"), i18nc("GameType", "Spectator")]
 
     // A different instance's details: whatever this tab was doing belonged
     // to the previous one.
@@ -100,18 +100,18 @@ Item {
             IconButton {
                 flat: false
                 iconName: "refresh"
-                tip: qsTr("Refresh")
+                tip: i18n("Refresh")
                 onClicked: if (root.details) root.details.refreshWorlds()
             }
             Button {
-                text: qsTr("Open folder")
+                text: i18n("Open folder")
                 icon.source: Icons.url("folder")
                 onClicked: root.openFolderRequested(root.details ? root.details.worldsDir : "")
             }
             // Secondary: the play bar's Play is this page's primary action.
             Button {
                 enabled: !!root.details && !root.busy
-                text: qsTr("Add world")
+                text: i18n("Add world")
                 icon.source: Icons.url("plus")
                 onClicked: root.guarded(() => addDialog.open())
             }
@@ -250,7 +250,7 @@ Item {
                                 }
                                 Tag {
                                     visible: cell.dayCount !== undefined && cell.dayCount !== null
-                                    text: qsTr("Day %1").arg(cell.dayCount)
+                                    text: i18n("Day %1", String(cell.dayCount))
                                 }
                                 Tag {
                                     iconName: "clock"
@@ -263,7 +263,7 @@ Item {
                             id: moreButton
                             enabled: !root.busy
                             iconName: "more"
-                            tip: qsTr("More")
+                            tip: i18n("More")
                             onClicked: rowMenu.popup(moreButton, moreButton.width - rowMenu.width, moreButton.height)
 
                             Menu {
@@ -273,22 +273,22 @@ Item {
                                     // An old-format instance has no Data packs tab.
                                     visible: !!root.details && root.details.isMinecraft
                                     height: visible ? implicitHeight : 0
-                                    text: qsTr("Data packs")
+                                    text: i18n("Data packs")
                                     icon.source: Icons.url("package")
                                     onTriggered: root.dataPacksRequested(cell.index)
                                 }
                                 MenuItem {
-                                    text: qsTr("Copy seed")
+                                    text: i18n("Copy seed")
                                     icon.source: Icons.url("copy")
                                     onTriggered: {
                                         clipboard.copyText(String(cell.seed))
-                                        toast.show(qsTr("Seed copied."), "success")
+                                        toast.show(i18n("Seed copied."), "success")
                                     }
                                 }
                                 MenuItem {
                                     visible: root.mceditReady
                                     height: visible ? implicitHeight : 0
-                                    text: qsTr("Open in MCEdit")
+                                    text: i18n("Open in MCEdit")
                                     icon.source: Icons.url("external-link")
                                     onTriggered: root.guarded(() => {
                                         var problem = root.details.openWorldInMCEdit(cell.index)
@@ -298,7 +298,7 @@ Item {
                                 }
                                 MenuSeparator {}
                                 MenuItem {
-                                    text: qsTr("Rename…")
+                                    text: i18n("Rename…")
                                     icon.source: Icons.url("edit")
                                     onTriggered: root.guarded(() => {
                                         renamePrompt.row = cell.index
@@ -307,27 +307,28 @@ Item {
                                     })
                                 }
                                 MenuItem {
-                                    text: qsTr("Copy…")
+                                    text: i18n("Copy…")
                                     icon.source: Icons.url("copy")
                                     onTriggered: root.guarded(() => {
                                         copyPrompt.row = cell.index
-                                        copyPrompt.value = qsTr("%1 (copy)").arg(cell.displayName)
+                                        copyPrompt.value = i18n("%1 (copy)", cell.displayName)
                                         copyPrompt.open()
                                     })
                                 }
                                 MenuItem {
-                                    text: qsTr("Reset icon")
+                                    text: i18n("Reset icon")
                                     icon.source: Icons.url("image")
                                     enabled: !!cell.iconFile
                                     onTriggered: root.guarded(() => root.details.resetWorldIcon(cell.index))
                                 }
                                 MenuSeparator {}
                                 MenuItem {
-                                    text: qsTr("Delete…")
+                                    text: i18n("Delete…")
                                     icon.source: Icons.url("trash")
                                     onTriggered: root.guarded(() => {
                                         confirm.row = cell.index
-                                        confirm.text = qsTr("Delete the world “%1”? It cannot be recovered from the launcher.").arg(cell.displayName)
+                                        confirm.text = i18n("Delete the world “%1”? It cannot be recovered from the launcher.",
+                                                            cell.displayName)
                                         confirm.open()
                                     })
                                 }
@@ -350,48 +351,48 @@ Item {
     ConfirmDialog {
         id: confirm
         property int row: -1
-        title: qsTr("Delete world")
-        confirmText: qsTr("Delete world")
+        title: i18n("Delete world")
+        confirmText: i18n("Delete world")
         onConfirmed: if (root.details) root.details.deleteWorld(row)
     }
 
     PromptDialog {
         id: renamePrompt
         property int row: -1
-        title: qsTr("Rename world")
-        confirmText: qsTr("Rename")
+        title: i18n("Rename world")
+        confirmText: i18n("Rename")
         onSubmitted: (text) => {
             if (!root.details || root.details.renameWorld(row, text))
                 close()
             else
-                error = qsTr("That name cannot be used.")
+                error = i18n("That name cannot be used.")
         }
     }
 
     PromptDialog {
         id: copyPrompt
         property int row: -1
-        title: qsTr("Copy world")
-        confirmText: qsTr("Copy")
+        title: i18n("Copy world")
+        confirmText: i18n("Copy")
         onSubmitted: (text) => {
             var watcher = root.details ? root.details.copyWorld(row, text) : null
             if (watcher) {
-                root.busyText = qsTr("Copying world…")
-                root.failText = qsTr("The world could not be copied.")
-                root.doneText = qsTr("World copied.")
+                root.busyText = i18n("Copying world…")
+                root.failText = i18n("The world could not be copied.")
+                root.doneText = i18n("World copied.")
                 root.watcher = watcher
                 close()
             } else {
-                error = qsTr("That name cannot be used.")
+                error = i18n("That name cannot be used.")
             }
         }
     }
 
     ConfirmDialog {
         id: runningConfirm
-        title: qsTr("Minecraft is running")
-        text: qsTr("Changing a world while Minecraft is running can damage it. Continue anyway?")
-        confirmText: qsTr("Continue anyway")
+        title: i18n("Minecraft is running")
+        text: i18n("Changing a world while Minecraft is running can damage it. Continue anyway?")
+        confirmText: i18n("Continue anyway")
         onConfirmed: {
             var action = root.pendingAction
             root.pendingAction = null
@@ -402,8 +403,8 @@ Item {
 
     FileDialog {
         id: addDialog
-        title: qsTr("Add world")
-        nameFilters: [qsTr("World archives (*.zip)"), qsTr("All files (*)")]
+        title: i18n("Add world")
+        nameFilters: [i18n("World archives (*.zip)"), i18n("All files (*)")]
         onAccepted: root.addWorlds([selectedFile])
     }
 
@@ -432,7 +433,7 @@ Item {
 
             Text {
                 anchors.centerIn: parent
-                text: qsTr("Drop a world here to add it")
+                text: i18n("Drop a world here to add it")
                 color: Theme.palette.accentText
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.bodyStrong.pixelSize
@@ -458,8 +459,8 @@ Item {
         anchors.centerIn: parent
         upperThird: true
         visible: list.count === 0
-        title: qsTr("No worlds yet")
-        body: qsTr("Worlds you create in single player show up here. You can also add one from a .zip.")
+        title: i18n("No worlds yet")
+        body: i18n("Worlds you create in single player show up here. You can also add one from a .zip.")
         MeshIcon { iconName: "globe"; size: 40; color: Theme.palette.textTertiary }
     }
 }

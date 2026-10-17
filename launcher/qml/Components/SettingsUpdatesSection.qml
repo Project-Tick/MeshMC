@@ -21,18 +21,18 @@ SettingsScroll {
     // The same width SettingNumber gives its field.
     readonly property int intervalFieldWidth: 168
 
-    title: qsTr("Updates")
-    description: qsTr("Whether MeshMC looks for new versions by itself.")
+    title: i18n("Updates")
+    description: i18n("Whether MeshMC looks for new versions by itself.")
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("Update checks")
+        title: i18n("Update checks")
         SettingRow {
-            label: qsTr("Check for updates automatically")
-            description: qsTr("MeshMC asks the update server in the background and tells you when a new version is out.")
+            label: i18n("Check for updates automatically")
+            description: i18n("MeshMC asks the update server in the background and tells you when a new version is out.")
             Switch {
                 checked: !!root.updates && root.updates.autoCheck
-                Accessible.name: qsTr("Check for updates automatically")
+                Accessible.name: i18n("Check for updates automatically")
                 onToggled: {
                     root.updates.autoCheck = checked
                     checked = Qt.binding(() => !!root.updates && root.updates.autoCheck)
@@ -40,8 +40,8 @@ SettingsScroll {
             }
         }
         SettingRow {
-            label: qsTr("How often")
-            description: qsTr("0 means only when MeshMC starts.")
+            label: i18n("How often")
+            description: i18n("0 means only when MeshMC starts.")
             enabled: !!root.updates && root.updates.autoCheck
             SpinBox {
                 id: interval
@@ -51,13 +51,14 @@ SettingsScroll {
                 stepSize: 6
                 editable: true
                 value: root.updates ? root.updates.intervalHours : 0
-                textFromValue: (value, locale) => value === 0 ? qsTr("On launch")
-                                                              : qsTr("Every %1 h").arg(Number(value).toLocaleString(locale, "f", 0))
+                textFromValue: (value, locale) => value === 0 ? i18n("On launch")
+                                                              : i18n("Every %1 h",
+                                                                     Number(value).toLocaleString(locale, "f", 0))
                 valueFromText: (text, locale) => {
                     var digits = text.replace(/[^0-9]/g, "")
                     return digits.length > 0 ? parseInt(digits, 10) : (root.updates ? root.updates.intervalHours : 0)
                 }
-                Accessible.name: qsTr("Hours between update checks")
+                Accessible.name: i18n("Hours between update checks")
                 onValueModified: {
                     root.updates.intervalHours = value
                     value = Qt.binding(() => root.updates ? root.updates.intervalHours : 0)
@@ -65,10 +66,10 @@ SettingsScroll {
             }
         }
         SettingRow {
-            label: qsTr("Check now")
-            description: qsTr("Looks for a new version right away.")
+            label: i18n("Check now")
+            description: i18n("Looks for a new version right away.")
             Button {
-                text: qsTr("Check for updates")
+                text: i18n("Check for updates")
                 icon.source: Icons.url("refresh")
                 onClicked: root.updates.checkNow()
             }

@@ -17,7 +17,7 @@ Dialog {
     property string label
     property string value
     property string placeholder
-    property string confirmText: qsTr("Save")
+    property string confirmText: i18n("Save")
     property bool allowEmpty: false
     property var suggestions: []
     property string error
@@ -86,7 +86,7 @@ Dialog {
                     }
                     contentItem: Text {
                         id: chipText
-                        text: chip.modelData.length > 0 ? chip.modelData : qsTr("No group")
+                        text: chip.modelData.length > 0 ? chip.modelData : i18n("No group")
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         color: Theme.palette.textSecondary
@@ -120,7 +120,7 @@ Dialog {
             onClicked: root.submit()
         }
         Button {
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             flat: true
             onClicked: root.close()
         }

@@ -23,7 +23,7 @@ Dialog {
     property var controller: null
     property var watcher: null
     // Lower-case plural for the copy: "mods", "resource packs".
-    property string noun: qsTr("mods")
+    property string noun: i18n("mods")
     // Started with the download's TaskWatcher once Update is pressed.
     signal updateStarted(var watcher)
 
@@ -51,7 +51,7 @@ Dialog {
     height: Math.min(root.maxHeight, implicitHeight, parent ? parent.height - Theme.space.xxl * 2 : root.maxHeight)
     modal: true
     closePolicy: Popup.CloseOnEscape
-    title: qsTr("Updates")
+    title: i18n("Updates")
 
     header: DialogHeader {
         title: root.title
@@ -75,7 +75,7 @@ Dialog {
             Text {
                 Layout.fillWidth: true
                 text: root.watcher && root.watcher.status.length > 0 ? root.watcher.status
-                                                                       : qsTr("Checking for updates…")
+                                                                       : i18n("Checking for updates…")
                 elide: Text.ElideRight
                 color: Theme.palette.textSecondary
                 font.family: Theme.font.family
@@ -90,8 +90,8 @@ Dialog {
         Text {
             Layout.fillWidth: true
             visible: !root.checking
-            text: root.count === 0 ? qsTr("Everything is up to date.")
-                  : qsTr("Newer versions that run on this instance. Untick any you want to keep as they are.")
+            text: root.count === 0 ? i18n("Everything is up to date.")
+                  : i18n("Newer versions that run on this instance. Untick any you want to keep as they are.")
             wrapMode: Text.Wrap
             color: Theme.palette.textSecondary
             font.family: Theme.font.family
@@ -123,9 +123,9 @@ Dialog {
                 width: list.width
                 checked: model.checked
                 title: name
-                subtitle: qsTr("%1 → %2").arg(currentVersion).arg(newVersion)
+                subtitle: i18n("%1 → %2", currentVersion, newVersion)
                 tags: provider.length > 0 ? [provider] : []
-                linkText: qsTr("What's new")
+                linkText: i18n("What's new")
                 linkUrl: changelog
                 onToggled: (on) => root.updates.setChecked(index, on)
             }
@@ -148,7 +148,7 @@ Dialog {
                 // Box edge on the content edge.
                 leftPadding: 0
                 visible: !root.checking && root.count > 1
-                text: qsTr("All")
+                text: i18n("All")
                 checkState: root.allState()
                 onClicked: {
                     root.updates.setAllChecked(root.updates.checkedCount !== root.updates.count)
@@ -158,14 +158,14 @@ Dialog {
             Item { Layout.fillWidth: true }
             Button {
                 flat: true
-                text: root.checking || root.count > 0 ? qsTr("Cancel") : qsTr("Close")
+                text: root.checking || root.count > 0 ? i18n("Cancel") : i18n("Close")
                 onClicked: root.close()
             }
             Button {
                 visible: !root.checking && root.count > 0
                 highlighted: true
                 enabled: !!root.updates && root.updates.checkedCount > 0
-                text: root.updates ? qsTr("Update %1").arg(root.updates.checkedCount) : qsTr("Update")
+                text: root.updates ? i18n("Update %1", root.updates.checkedCount) : i18n("Update")
                 icon.source: Icons.url("download")
                 onClicked: {
                     const watcher = root.controller.applyUpdates()

@@ -31,6 +31,7 @@
 #include "minecraft/auth/AccountList.h"
 #include "settings/SettingsObject.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 ComponentTools::ComponentTools(std::shared_ptr<MinecraftInstance> instance,
 							   QObject* parent)
@@ -69,18 +70,18 @@ QString ComponentTools::validateNewComponent(const QString& name,
 {
 	const QString cleanName = name.trimmed();
 	if (cleanName.isEmpty()) {
-		return tr("Give the component a name.");
+		return i18n("Give the component a name.");
 	}
 	QString cleanUid = uid.trimmed();
 	if (cleanUid.isEmpty()) {
 		cleanUid = suggestUid(cleanName);
 	}
 	if (cleanUid.isEmpty()) {
-		return tr("Give the component an id, for example "
+		return i18n("Give the component an id, for example "
 				  "org.example.mycomponent.");
 	}
 	if (existingUids.contains(cleanUid)) {
-		return tr("This instance already has a component with that id.");
+		return i18n("This instance already has a component with that id.");
 	}
 	return QString();
 }
@@ -100,7 +101,7 @@ QString ComponentTools::addEmpty(const QString& name, const QString& uid)
 {
 	auto* p = profile();
 	if (!p) {
-		return tr("This instance has no components.");
+		return i18n("This instance has no components.");
 	}
 	const QString problem = validateNewComponent(name, uid, componentUids());
 	if (!problem.isEmpty()) {
@@ -111,7 +112,7 @@ QString ComponentTools::addEmpty(const QString& name, const QString& uid)
 		cleanUid = suggestUid(name.trimmed());
 	}
 	if (!p->installEmpty(cleanUid, name.trimmed())) {
-		return tr("The component could not be created.");
+		return i18n("The component could not be created.");
 	}
 	return QString();
 }
@@ -133,7 +134,7 @@ bool ComponentTools::addJarMods(const QList<QUrl>& files)
 	auto* p = profile();
 	const QStringList paths = existingFiles(files);
 	if (!p || paths.isEmpty()) {
-		setError(tr("Choose at least one .jar or .zip file."));
+		setError(i18n("Choose at least one .jar or .zip file."));
 		return false;
 	}
 	setError(QString());
@@ -146,7 +147,7 @@ bool ComponentTools::replaceMainJar(const QUrl& file)
 	auto* p = profile();
 	const QStringList paths = existingFiles({file});
 	if (!p || paths.isEmpty()) {
-		setError(tr("Choose a .jar file."));
+		setError(i18n("Choose a .jar file."));
 		return false;
 	}
 	setError(QString());
@@ -160,18 +161,18 @@ QObject* ComponentTools::downloadAll()
 		return nullptr;
 	}
 	if (!LAUNCHER || !LAUNCHER->accounts()->anyAccountIsValid()) {
-		setError(tr("MeshMC cannot download Minecraft unless you have signed "
+		setError(i18n("MeshMC cannot download Minecraft unless you have signed "
 					"in with an account. Add one under Accounts."));
 		return nullptr;
 	}
 	Task::Ptr task = m_instance->createUpdateTask(Net::Mode::Online);
 	if (!task) {
-		setError(tr("There is nothing to download for this instance."));
+		setError(i18n("There is nothing to download for this instance."));
 		return nullptr;
 	}
 	setError(QString());
 	auto* watcher = new TaskWatcher(task, this);
-	watcher->setTitle(tr("Downloading game files"));
+	watcher->setTitle(i18n("Downloading game files"));
 	task->start();
 	return watcher;
 }
@@ -193,7 +194,7 @@ bool ComponentTools::editComponentJson(int row)
 	}
 	const QString file = p->getComponent(row)->getFilename();
 	if (!QFileInfo::exists(file)) {
-		setError(tr("This component has no file of its own to edit. "
+		setError(i18n("This component has no file of its own to edit. "
 					"Customize it first."));
 		return false;
 	}
@@ -208,7 +209,7 @@ bool ComponentTools::editComponentJson(int row)
 						? DesktopServices::openUrl(QUrl::fromLocalFile(absolute))
 						: DesktopServices::run(editor, {absolute});
 	if (!ok) {
-		setError(tr("The JSON editor could not be started."));
+		setError(i18n("The JSON editor could not be started."));
 	}
 	return ok;
 }

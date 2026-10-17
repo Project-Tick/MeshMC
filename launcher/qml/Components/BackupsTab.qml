@@ -51,11 +51,12 @@ Item {
             return bare
         var when = new Date(String(timestampText).replace(" ", "T"))
         return isNaN(when.getTime()) ? bare
-               : qsTr("%1, %2").arg(Format.calendarDate(when)).arg(when.toLocaleTimeString(Qt.locale(), Locale.ShortFormat))
+               : i18n("%1, %2", Format.calendarDate(when), when.toLocaleTimeString(Qt.locale(), Locale.ShortFormat))
     }
     function confirmRestore(row, name) {
         restoreConfirm.row = row
-        restoreConfirm.text = qsTr("Replace this instance's current contents with the backup “%1”? This cannot be undone.").arg(name)
+        restoreConfirm.text = i18n("Replace this instance's current contents with the backup “%1”? This cannot be undone.",
+                                   name)
         restoreConfirm.open()
     }
 
@@ -75,14 +76,14 @@ Item {
 
             Button {
                 enabled: !root.busy
-                text: qsTr("Import…")
+                text: i18n("Import…")
                 icon.source: Icons.url("download")
                 onClicked: importDialog.open()
             }
             // Secondary: the play bar's Play is this page's primary action.
             Button {
                 enabled: !root.busy
-                text: qsTr("Create backup")
+                text: i18n("Create backup")
                 icon.source: Icons.url("archive")
                 onClicked: labelPrompt.open()
             }
@@ -91,7 +92,7 @@ Item {
         NoticeBar {
             Layout.fillWidth: true
             visible: root.running
-            text: qsTr("The game is running. Backups can be restored once it has closed.")
+            text: i18n("The game is running. Backups can be restored once it has closed.")
         }
 
         RowLayout {
@@ -101,7 +102,7 @@ Item {
 
             Text {
                 Layout.preferredWidth: 140
-                text: root.actionError.length > 0 ? qsTr("Restore") : root.watcher ? (root.watcher.title || qsTr("Working…")) : ""
+                text: root.actionError.length > 0 ? i18n("Restore") : root.watcher ? (root.watcher.title || i18n("Working…")) : ""
                 color: root.actionError.length > 0 || (root.watcher && root.watcher.failed) ? Theme.palette.danger : Theme.palette.textSecondary
                 elide: Text.ElideRight
                 font.family: Theme.font.family
@@ -112,8 +113,8 @@ Item {
                 text: root.actionError.length > 0
                       ? root.actionError
                       : root.watcher
-                        ? (root.watcher.failed ? (root.watcher.error || qsTr("Failed."))
-                                               : (root.watcher.status || qsTr("Working…")))
+                        ? (root.watcher.failed ? (root.watcher.error || i18n("Failed."))
+                                               : (root.watcher.status || i18n("Working…")))
                         : ""
                 color: root.actionError.length > 0 || (root.watcher && root.watcher.failed) ? Theme.palette.danger : Theme.palette.textSecondary
                 elide: Text.ElideRight
@@ -190,7 +191,7 @@ Item {
                         }
                         Text {
                             width: parent.width
-                            text: qsTr("%1, %2").arg(root.backupAge(row.timestampText)).arg(row.sizeText)
+                            text: i18n("%1, %2", root.backupAge(row.timestampText), row.sizeText)
                             elide: Text.ElideRight
                             color: Theme.palette.textTertiary
                             font.family: Theme.font.family
@@ -199,17 +200,17 @@ Item {
                     }
 
                     Button {
-                        text: qsTr("Restore")
+                        text: i18n("Restore")
                         enabled: !root.busy && !root.running
                         ToolTip.visible: hovered && root.running
-                        ToolTip.text: qsTr("Close the game before restoring a backup.")
+                        ToolTip.text: i18n("Close the game before restoring a backup.")
                         onClicked: root.confirmRestore(row.index, row.title)
                     }
                     IconButton {
                         id: moreButton
                         enabled: !root.busy
                         iconName: "more"
-                        tip: qsTr("More")
+                        tip: i18n("More")
                         onClicked: rowMenu.popup(moreButton, moreButton.width - rowMenu.width, moreButton.height)
                     }
                 }
@@ -217,7 +218,7 @@ Item {
                 Menu {
                     id: rowMenu
                     MenuItem {
-                        text: qsTr("Export…")
+                        text: i18n("Export…")
                         icon.source: Icons.url("download")
                         onTriggered: {
                             exportDialog.row = row.index
@@ -226,11 +227,11 @@ Item {
                     }
                     MenuSeparator {}
                     MenuItem {
-                        text: qsTr("Delete…")
+                        text: i18n("Delete…")
                         icon.source: Icons.url("trash")
                         onTriggered: {
                             deleteConfirm.row = row.index
-                            deleteConfirm.text = qsTr("Delete the backup “%1”? This cannot be undone.").arg(row.title)
+                            deleteConfirm.text = i18n("Delete the backup “%1”? This cannot be undone.", row.title)
                             deleteConfirm.open()
                         }
                     }
@@ -251,17 +252,17 @@ Item {
         anchors.centerIn: parent
         upperThird: true
         visible: list.count === 0
-        title: qsTr("No backups yet")
-        body: qsTr("A backup is a zip of this whole instance, including its worlds and mods, that you can restore later.")
+        title: i18n("No backups yet")
+        body: i18n("A backup is a zip of this whole instance, including its worlds and mods, that you can restore later.")
         MeshIcon { iconName: "archive"; size: 40; color: Theme.palette.textTertiary }
     }
 
     PromptDialog {
         id: labelPrompt
-        title: qsTr("Create backup")
-        label: qsTr("Optional label")
-        placeholder: qsTr("e.g. before updating mods")
-        confirmText: qsTr("Create")
+        title: i18n("Create backup")
+        label: i18n("Optional label")
+        placeholder: i18n("e.g. before updating mods")
+        confirmText: i18n("Create")
         allowEmpty: true
         onSubmitted: (text) => {
             if (root.controller) {
@@ -275,8 +276,8 @@ Item {
     ConfirmDialog {
         id: restoreConfirm
         property int row: -1
-        title: qsTr("Restore backup")
-        confirmText: qsTr("Restore")
+        title: i18n("Restore backup")
+        confirmText: i18n("Restore")
         onConfirmed: {
             if (!root.controller)
                 return
@@ -285,15 +286,15 @@ Item {
             if (watcher)
                 root.watcher = watcher
             else
-                root.actionError = qsTr("Close the game before restoring a backup.")
+                root.actionError = i18n("Close the game before restoring a backup.")
         }
     }
 
     ConfirmDialog {
         id: deleteConfirm
         property int row: -1
-        title: qsTr("Delete backup")
-        confirmText: qsTr("Delete")
+        title: i18n("Delete backup")
+        confirmText: i18n("Delete")
         onConfirmed: if (root.controller) {
             root.actionError = ""
             root.watcher = root.controller.deleteBackup(row)
@@ -302,8 +303,8 @@ Item {
 
     FileDialog {
         id: importDialog
-        title: qsTr("Import backup")
-        nameFilters: [qsTr("Zip files (*.zip)"), qsTr("All files (*)")]
+        title: i18n("Import backup")
+        nameFilters: [i18n("Zip files (*.zip)"), i18n("All files (*)")]
         onAccepted: if (root.controller) {
             root.actionError = ""
             root.watcher = root.controller.importBackup(selectedFile.toString(), "")
@@ -313,9 +314,9 @@ Item {
     FileDialog {
         id: exportDialog
         property int row: -1
-        title: qsTr("Export backup")
+        title: i18n("Export backup")
         fileMode: FileDialog.SaveFile
-        nameFilters: [qsTr("Zip files (*.zip)")]
+        nameFilters: [i18n("Zip files (*.zip)")]
         onAccepted: if (root.controller) {
             root.actionError = ""
             root.watcher = root.controller.exportBackup(row, selectedFile.toString())

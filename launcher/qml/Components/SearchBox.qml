@@ -47,7 +47,7 @@ TextField {
         anchors.verticalCenter: parent.verticalCenter
         size: Theme.control.heightSm
         iconName: "x"
-        tip: qsTr("Clear search")
+        tip: i18n("Clear search")
         visible: control.text.length > 0
         focusPolicy: Qt.NoFocus
         onClicked: control.clear()

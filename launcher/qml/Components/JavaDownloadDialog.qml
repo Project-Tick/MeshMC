@@ -29,7 +29,7 @@ Dialog {
     width: Math.min(520, parent ? parent.width - Theme.space.xxl * 2 : 520)
     modal: true
     closePolicy: root.busy ? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    title: qsTr("Download Java")
+    title: i18n("Download Java")
 
     header: DialogHeader {
         title: root.title
@@ -51,7 +51,7 @@ Dialog {
 
         Text {
             Layout.fillWidth: true
-            text: qsTr("MeshMC keeps downloaded Java in its own folder, apart from anything you installed yourself.")
+            text: i18n("MeshMC keeps downloaded Java in its own folder, apart from anything you installed yourself.")
             wrapMode: Text.Wrap
             color: Theme.palette.textTertiary
             font.family: Theme.font.family
@@ -66,13 +66,13 @@ Dialog {
             rowSpacing: Theme.space.md
             enabled: !root.busy
 
-            FieldLabel { text: qsTr("Vendor") }
+            FieldLabel { text: i18n("Vendor") }
             ComboBox {
                 Layout.fillWidth: true
                 model: root.download ? root.download.vendors : []
                 textRole: "label"
                 valueRole: "value"
-                Accessible.name: qsTr("Vendor")
+                Accessible.name: i18n("Vendor")
                 // Selected by value, and again whenever the list or the
                 // choice changes (see JavaVendorRow.qml for why not a binding).
                 readonly property string chosen: root.download ? root.download.vendor : ""
@@ -86,14 +86,14 @@ Dialog {
                 }
             }
 
-            FieldLabel { text: qsTr("Java version") }
+            FieldLabel { text: i18n("Java version") }
             ComboBox {
                 Layout.fillWidth: true
                 model: root.download ? root.download.versions : []
                 textRole: "label"
                 valueRole: "value"
-                displayText: currentIndex >= 0 ? currentText : (root.download && root.download.loading ? qsTr("Loading…") : "")
-                Accessible.name: qsTr("Java version")
+                displayText: currentIndex >= 0 ? currentText : (root.download && root.download.loading ? i18n("Loading…") : "")
+                Accessible.name: i18n("Java version")
                 readonly property string chosen: root.download ? root.download.version : ""
                 function sync() { currentIndex = count > 0 ? indexOfValue(chosen) : -1 }
                 onChosenChanged: sync()
@@ -105,13 +105,13 @@ Dialog {
                 }
             }
 
-            FieldLabel { text: qsTr("Build") }
+            FieldLabel { text: i18n("Build") }
             ComboBox {
                 Layout.fillWidth: true
                 model: root.download ? root.download.builds : []
                 textRole: "label"
                 displayText: currentIndex >= 0 ? currentText : ""
-                Accessible.name: qsTr("Build")
+                Accessible.name: i18n("Build")
                 readonly property int chosen: root.download ? root.download.build : -1
                 function sync() { currentIndex = count > 0 ? chosen : -1 }
                 onChosenChanged: sync()
@@ -127,7 +127,7 @@ Dialog {
         Text {
             Layout.fillWidth: true
             visible: !!root.download && root.download.alreadyInstalled && !root.busy && !root.done
-            text: qsTr("This build is already downloaded. Downloading again replaces it.")
+            text: i18n("This build is already downloaded. Downloading again replaces it.")
             wrapMode: Text.Wrap
             color: Theme.palette.textSecondary
             font.family: Theme.font.family
@@ -176,7 +176,7 @@ Dialog {
             }
             Text {
                 Layout.fillWidth: true
-                text: qsTr("Java is downloaded and ready.")
+                text: i18n("Java is downloaded and ready.")
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.body.pixelSize
@@ -190,7 +190,7 @@ Dialog {
         Button {
             Layout.bottomMargin: Theme.space.lg
             visible: !root.done
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             flat: true
             onClicked: root.close()
         }
@@ -199,14 +199,14 @@ Dialog {
             Layout.rightMargin: Theme.space.lg
             visible: !root.done
             highlighted: true
-            text: !!root.download && root.download.alreadyInstalled ? qsTr("Download again") : qsTr("Download")
+            text: !!root.download && root.download.alreadyInstalled ? i18n("Download again") : i18n("Download")
             enabled: !!root.download && root.download.build >= 0 && !root.busy && !root.download.loading
             onClicked: root.download.download()
         }
         Button {
             Layout.bottomMargin: Theme.space.lg
             visible: root.done
-            text: qsTr("Close")
+            text: i18n("Close")
             flat: true
             onClicked: root.close()
         }
@@ -215,7 +215,7 @@ Dialog {
             Layout.rightMargin: Theme.space.lg
             visible: root.done
             highlighted: true
-            text: qsTr("Use this Java")
+            text: i18n("Use this Java")
             onClicked: {
                 root.useRequested(root.download.installedPath)
                 root.close()

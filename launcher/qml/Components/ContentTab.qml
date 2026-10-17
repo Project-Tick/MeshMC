@@ -45,24 +45,24 @@ Item {
 
     // Label, noun and empty-state copy per kind.
     readonly property var kindInfo: ({
-        mods: { label: qsTr("Mods"), noun: qsTr("mods"), icon: "package",
-                emptyTitle: qsTr("No mods"),
-                emptyBody: qsTr("Find some with Add content, or drop .jar files here.") },
-        coremods: { label: qsTr("Core mods"), noun: qsTr("core mods"), icon: "package",
-                    emptyTitle: qsTr("No core mods"),
-                    emptyBody: qsTr("Old Forge versions load these before other mods. Most mods go in Mods instead.") },
-        resourcepacks: { label: qsTr("Resource packs"), noun: qsTr("resource packs"), icon: "image",
-                         emptyTitle: qsTr("No resource packs"),
-                         emptyBody: qsTr("Change how the game looks: find one with Add content, or drop a .zip here.") },
-        shaderpacks: { label: qsTr("Shader packs"), noun: qsTr("shader packs"), icon: "layers",
-                       emptyTitle: qsTr("No shader packs"),
-                       emptyBody: qsTr("Needs a shader-capable renderer, such as Iris or OptiFine, to have any effect.") },
-        texturepacks: { label: qsTr("Texture packs"), noun: qsTr("texture packs"), icon: "grid",
-                        emptyTitle: qsTr("No texture packs"),
-                        emptyBody: qsTr("This version predates resource packs and uses texture packs instead.") },
-        datapacks: { label: qsTr("Data packs"), noun: qsTr("data packs"), icon: "archive",
-                     emptyTitle: qsTr("No data packs"),
-                     emptyBody: qsTr("Packs here are added to every world by a loader such as Paxi or OpenLoader.") }
+        mods: { label: i18n("Mods"), noun: i18n("mods"), icon: "package",
+                emptyTitle: i18n("No mods"),
+                emptyBody: i18n("Find some with Add content, or drop .jar files here.") },
+        coremods: { label: i18n("Core mods"), noun: i18n("core mods"), icon: "package",
+                    emptyTitle: i18n("No core mods"),
+                    emptyBody: i18n("Old Forge versions load these before other mods. Most mods go in Mods instead.") },
+        resourcepacks: { label: i18n("Resource packs"), noun: i18n("resource packs"), icon: "image",
+                         emptyTitle: i18n("No resource packs"),
+                         emptyBody: i18n("Change how the game looks: find one with Add content, or drop a .zip here.") },
+        shaderpacks: { label: i18n("Shader packs"), noun: i18n("shader packs"), icon: "layers",
+                       emptyTitle: i18n("No shader packs"),
+                       emptyBody: i18n("Needs a shader-capable renderer, such as Iris or OptiFine, to have any effect.") },
+        texturepacks: { label: i18n("Texture packs"), noun: i18n("texture packs"), icon: "grid",
+                        emptyTitle: i18n("No texture packs"),
+                        emptyBody: i18n("This version predates resource packs and uses texture packs instead.") },
+        datapacks: { label: i18n("Data packs"), noun: i18n("data packs"), icon: "archive",
+                     emptyTitle: i18n("No data packs"),
+                     emptyBody: i18n("Packs here are added to every world by a loader such as Paxi or OpenLoader.") }
     })
 
     // One entry per kind this instance has right now.
@@ -85,7 +85,7 @@ Item {
         return root.content.changesAllowed(root.kind)
     }
     readonly property string lockedReason: root.unlocked ? ""
-        : qsTr("The game is running. %1 can be changed once it closes.").arg(root.current.label)
+        : i18n("The game is running. %1 can be changed once it closes.", root.current.label)
     // Whether files of this kind can come from Modrinth or CurseForge, and
     // so be updated or changed to another version.
     readonly property bool updatable: !!root.content && !!root.content.updater
@@ -146,12 +146,12 @@ Item {
                 failed.push(root.fileName(urls[i]))
         }
         if (failed.length > 0)
-            toast.show(failed.length === 1 ? qsTr("“%1” could not be added.").arg(failed[0])
-                                           : qsTr("%1 files could not be added.").arg(failed.length), "danger")
+            toast.show(failed.length === 1 ? i18n("“%1” could not be added.", failed[0])
+                                           : i18n("%1 files could not be added.", failed.length), "danger")
         else if (added.length === 1)
-            toast.show(qsTr("Added “%1”.").arg(added[0]), "success")
+            toast.show(i18n("Added “%1”.", added[0]), "success")
         else
-            toast.show(qsTr("Added %1 %2.").arg(added.length).arg(root.current.noun), "success")
+            toast.show(i18n("Added %1 %2.", added.length, root.current.noun), "success")
     }
 
     function bulkEnable(enabled) {
@@ -162,8 +162,8 @@ Item {
         const keys = packList.selectedKeys
         bulkConfirm.keys = keys
         bulkConfirm.text = keys.length === 1
-            ? qsTr("Remove this file from the instance? It is deleted.")
-            : qsTr("Remove %1 %2 from this instance? The files are deleted.").arg(keys.length).arg(root.current.noun)
+            ? i18n("Remove this file from the instance? It is deleted.")
+            : i18n("Remove %1 %2 from this instance? The files are deleted.", keys.length, root.current.noun)
         bulkConfirm.open()
     }
     function exportList(keys) {
@@ -226,14 +226,14 @@ Item {
                     id: searchField
                     Layout.fillWidth: true
                     Layout.minimumWidth: toolbar.searchMinWidth
-                    placeholderText: qsTr("Search %1").arg(root.current.noun)
+                    placeholderText: i18n("Search %1", root.current.noun)
                 }
 
                 // Only measured, for updatesLabelFits.
                 Button {
                     id: updatesMeasure
                     visible: false
-                    text: qsTr("Check for updates")
+                    text: i18n("Check for updates")
                     icon.source: Icons.url("refresh")
                 }
                 HoverReason {
@@ -242,7 +242,7 @@ Item {
                     Button {
                         enabled: root.unlocked && root.count > 0 && !root.flowsBusy
                         display: toolbar.updatesLabelFits ? AbstractButton.TextBesideIcon : AbstractButton.IconOnly
-                        text: qsTr("Check for updates")
+                        text: i18n("Check for updates")
                         icon.source: Icons.url("refresh")
                         ToolTip.visible: hovered && display === AbstractButton.IconOnly
                         ToolTip.delay: 400
@@ -253,7 +253,7 @@ Item {
 
                 Button {
                     id: folderButton
-                    text: qsTr("Open folder")
+                    text: i18n("Open folder")
                     icon.source: Icons.url("folder")
                     onClicked: root.openFolderRequested(root.content ? root.content.dir(root.kind) : "")
                 }
@@ -262,7 +262,7 @@ Item {
                 Button {
                     id: moreButton
                     LayoutMirroring.enabled: true
-                    text: qsTr("More")
+                    text: i18n("More")
                     icon.source: Icons.url("chevron-down")
                     onClicked: moreMenu.popup(moreButton, 0, moreButton.height)
 
@@ -270,7 +270,7 @@ Item {
                         id: moreMenu
                         MenuItem {
                             enabled: root.unlocked
-                            text: qsTr("Add from file…")
+                            text: i18n("Add from file…")
                             icon.source: Icons.url("file")
                             onTriggered: root.addFromFile()
                         }
@@ -278,7 +278,7 @@ Item {
                             // A hidden item still takes its row in a Menu; zero it.
                             visible: root.kind === "mods" || root.kind === "coremods"
                             height: visible ? implicitHeight : 0
-                            text: qsTr("Open configs folder")
+                            text: i18n("Open configs folder")
                             icon.source: Icons.url("folder")
                             onTriggered: root.openFolderRequested(root.content ? root.content.configsDir : "")
                         }
@@ -287,7 +287,7 @@ Item {
                             visible: root.updatable
                             height: visible ? implicitHeight : 0
                             enabled: root.unlocked && root.count > 0 && !root.flowsBusy
-                            text: qsTr("Check for updates")
+                            text: i18n("Check for updates")
                             icon.source: Icons.url("refresh")
                             onTriggered: root.withLoader(() => flows.checkUpdates([]))
                         }
@@ -295,7 +295,7 @@ Item {
                             visible: root.kind === "mods"
                             height: visible ? implicitHeight : 0
                             enabled: root.unlocked && root.count > 0 && !root.flowsBusy
-                            text: qsTr("Verify dependencies")
+                            text: i18n("Verify dependencies")
                             icon.source: Icons.url("layers")
                             onTriggered: root.withLoader(() => flows.verifyDependencies())
                         }
@@ -305,13 +305,13 @@ Item {
                         }
                         MenuItem {
                             enabled: root.listModel && root.listModel.count > 0
-                            text: qsTr("Select all")
+                            text: i18n("Select all")
                             icon.source: Icons.url("check")
                             onTriggered: packList.selectAll()
                         }
                         MenuItem {
                             enabled: root.count > 0
-                            text: qsTr("Export list…")
+                            text: i18n("Export list…")
                             icon.source: Icons.url("list")
                             onTriggered: root.exportList([])
                         }
@@ -324,7 +324,7 @@ Item {
                 // works while the game runs; installing then waits.
                 Button {
                     id: addButton
-                    text: qsTr("Add content")
+                    text: i18n("Add content")
                     icon.source: Icons.url("plus")
                     onClicked: root.browse()
                 }
@@ -437,31 +437,31 @@ Item {
         anchors.centerIn: parent
         width: parent.width
         visible: !root.isMinecraft
-        title: qsTr("No content")
-        body: qsTr("This instance cannot have mods, resource packs or shader packs.")
+        title: i18n("No content")
+        body: i18n("This instance cannot have mods, resource packs or shader packs.")
         MeshIcon { iconName: "package"; size: 40; color: Theme.palette.textTertiary }
     }
 
     FileDialog {
         id: fileDialog
-        title: qsTr("Add %1").arg(root.current.noun)
+        title: i18n("Add %1", root.current.noun)
         fileMode: FileDialog.OpenFiles
         nameFilters: root.kind === "mods" || root.kind === "coremods"
-                     ? [qsTr("Mod files (*.jar *.zip *.litemod)"), qsTr("All files (*)")]
-                     : [qsTr("Pack files (*.zip)"), qsTr("All files (*)")]
+                     ? [i18n("Mod files (*.jar *.zip *.litemod)"), i18n("All files (*)")]
+                     : [i18n("Pack files (*.zip)"), i18n("All files (*)")]
         onAccepted: root.installFiles(selectedFiles)
     }
 
     ConfirmDialog {
         id: bulkConfirm
         property var keys: []
-        title: qsTr("Remove")
-        confirmText: qsTr("Remove")
+        title: i18n("Remove")
+        confirmText: i18n("Remove")
         onConfirmed: {
             const removed = root.content ? root.content.remove(root.kind, keys) : 0
             packList.clearSelection()
             if (removed < keys.length)
-                toast.show(qsTr("Some files could not be removed. Is the game running?"), "danger")
+                toast.show(i18n("Some files could not be removed. Is the game running?"), "danger")
         }
     }
 
@@ -469,9 +469,9 @@ Item {
     // instruction (ModFolderPage::ensureModLoaderPresent()).
     ConfirmDialog {
         id: loaderPrompt
-        title: qsTr("Install a mod loader?")
-        text: qsTr("Mods need a loader such as Fabric or Forge to run, and this instance has none.")
-        confirmText: qsTr("Choose a loader…")
+        title: i18n("Install a mod loader?")
+        text: i18n("Mods need a loader such as Fabric or Forge to run, and this instance has none.")
+        confirmText: i18n("Choose a loader…")
         danger: false
         onConfirmed: loaderDialog.open()
     }
@@ -516,8 +516,8 @@ Item {
         kind: root.kind
         noun: root.current.noun
         listName: root.details ? root.details.name : ""
-        onSaved: toast.show(qsTr("List saved."), "success")
-        onCopied: toast.show(qsTr("List copied."), "success")
+        onSaved: toast.show(i18n("List saved."), "success")
+        onCopied: toast.show(i18n("List copied."), "success")
         onFailed: (message) => toast.show(message, "danger")
     }
 

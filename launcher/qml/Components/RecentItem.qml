@@ -134,7 +134,7 @@ AbstractButton {
                 size: parent.width
                 visible: control.hovered && !control.isRunning
                 iconName: "play"
-                tip: qsTr("Play")
+                tip: i18n("Play")
                 focusPolicy: Qt.NoFocus
                 onClicked: control.playRequested()
             }

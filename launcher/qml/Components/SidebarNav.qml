@@ -32,7 +32,7 @@ Rectangle {
     component CollapseToggle: IconButton {
         size: Theme.control.heightSm
         iconName: "chevron-left"
-        tip: root.collapsed ? qsTr("Expand sidebar") : qsTr("Collapse sidebar")
+        tip: root.collapsed ? i18n("Expand sidebar") : i18n("Collapse sidebar")
         rotation: root.collapsed ? 180 : 0
 
         Behavior on rotation { NumberAnimation { duration: Theme.motion.normal; easing.type: Theme.motion.easing } }
@@ -222,7 +222,7 @@ Rectangle {
             Layout.leftMargin: Theme.space.md
             Layout.bottomMargin: Theme.space.xs
             visible: recentRepeater.count > 0 && !root.collapsed
-            text: qsTr("Recent")
+            text: i18n("Recent")
             color: Theme.palette.textTertiary
             font.family: Theme.font.family
             font.pixelSize: Theme.type.caption.pixelSize

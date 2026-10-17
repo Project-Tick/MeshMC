@@ -30,7 +30,7 @@ Column {
     spacing: Theme.space.sm
 
     Text {
-        text: qsTr("More instance folders")
+        text: i18n("More instance folders")
         color: Theme.palette.textPrimary
         font.family: Theme.font.family
         font.pixelSize: Theme.type.title.pixelSize
@@ -38,7 +38,7 @@ Column {
     }
     Text {
         width: parent.width
-        text: qsTr("Instances in these folders show up in the library too. New instances are still made in the main folder.")
+        text: i18n("Instances in these folders show up in the library too. New instances are still made in the main folder.")
         wrapMode: Text.Wrap
         color: Theme.palette.textTertiary
         font.family: Theme.font.family
@@ -63,7 +63,7 @@ Column {
                 height: Theme.control.heightLg + Theme.space.xl
                 verticalAlignment: Text.AlignVCenter
                 leftPadding: Theme.space.lg
-                text: qsTr("No extra folders.")
+                text: i18n("No extra folders.")
                 color: Theme.palette.textTertiary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.body.pixelSize
@@ -108,7 +108,7 @@ Column {
                         IconButton {
                             id: more
                             iconName: "more"
-                            tip: qsTr("More")
+                            tip: i18n("More")
                             onClicked: {
                                 root.target = row.modelData
                                 menu.popup(more, more.width - menu.width, more.height)
@@ -121,7 +121,7 @@ Column {
     }
 
     Button {
-        text: qsTr("Add folder…")
+        text: i18n("Add folder…")
         icon.source: Icons.url("plus")
         onClicked: dialog.open()
     }
@@ -129,13 +129,13 @@ Column {
     Menu {
         id: menu
         MenuItem {
-            text: qsTr("Open folder")
+            text: i18n("Open folder")
             icon.source: Icons.url("folder")
             onTriggered: root.openRequested(root.target)
         }
         MenuSeparator {}
         MenuItem {
-            text: qsTr("Remove from the list")
+            text: i18n("Remove from the list")
             icon.source: Icons.url("trash")
             onTriggered: root.folders.removeAdditionalDir(root.target)
         }
@@ -143,7 +143,7 @@ Column {
 
     FolderDialog {
         id: dialog
-        title: qsTr("Add an instance folder")
+        title: i18n("Add an instance folder")
         onAccepted: root.folders.addAdditionalDir(selectedFolder)
     }
 }

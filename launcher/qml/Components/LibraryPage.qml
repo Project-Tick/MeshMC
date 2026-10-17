@@ -177,7 +177,7 @@ Item {
                 delegate: InstanceSection {
                     required property string modelData
                     width: content.width
-                    title: modelData.length > 0 ? modelData : qsTr("Ungrouped")
+                    title: modelData.length > 0 ? modelData : i18n("Ungrouped")
                     // Ungrouped instances get no header, as in MultiMC and
                     // Prism: a named "Ungrouped" group read as one more
                     // group the user had made.
@@ -202,7 +202,8 @@ Item {
                     }
                     onDeleteGroupRequested: (group) => {
                         groupDeleteDialog.group = group
-                        groupDeleteDialog.text = qsTr("Delete the group \u201c%1\u201d? Its instances stay in your library, without a group.").arg(group)
+                        groupDeleteDialog.text = i18n("Delete the group “%1”? Its instances stay in your library, without a group.",
+                                                      group)
                         groupDeleteDialog.open()
                     }
                     onInstanceDropped: (id, group) => root.library.moveToGroup(id, group)
@@ -229,11 +230,11 @@ Item {
     EmptyState {
         anchors.centerIn: parent
         visible: root.instanceCount === 0
-        title: root.searching ? qsTr("No instances match “%1”").arg(root.searchText)
-                              : qsTr("No instances yet")
-        body: root.searching ? qsTr("Check the spelling, or search for part of the name.")
-                             : qsTr("An instance is one Minecraft setup: a version, a mod loader and its mods. Create one to start playing.")
-        actionText: root.searching ? qsTr("Clear search") : qsTr("Create instance")
+        title: root.searching ? i18n("No instances match “%1”", root.searchText)
+                              : i18n("No instances yet")
+        body: root.searching ? i18n("Check the spelling, or search for part of the name.")
+                             : i18n("An instance is one Minecraft setup: a version, a mod loader and its mods. Create one to start playing.")
+        actionText: root.searching ? i18n("Clear search") : i18n("Create instance")
         actionIcon: root.searching ? "x" : "plus"
         onActionTriggered: root.searching ? root.clearSearchRequested() : root.createRequested()
 
@@ -291,7 +292,7 @@ Item {
         }
 
         MenuItem {
-            text: instanceMenu.targetRunning ? qsTr("Stop") : qsTr("Play")
+            text: instanceMenu.targetRunning ? i18n("Stop") : i18n("Play")
             icon.source: Icons.url(instanceMenu.targetRunning ? "stop" : "play")
             onTriggered: instanceMenu.targetRunning ? root.stopRequested(instanceMenu.targetId)
                                                     : root.launchRequested(instanceMenu.targetId)
@@ -307,12 +308,12 @@ Item {
         }
         // An arrow, "go to its page": the gear it had read as "settings".
         MenuItem {
-            text: qsTr("Open")
+            text: i18n("Open")
             icon.source: Icons.url("arrow-right")
             onTriggered: root.editRequested(instanceMenu.targetId)
         }
         MenuItem {
-            text: qsTr("Open folder")
+            text: i18n("Open folder")
             icon.source: Icons.url("folder")
             onTriggered: root.folderRequested(instanceMenu.targetId)
         }
@@ -320,36 +321,36 @@ Item {
             // A hidden item still takes its row in a Menu; zero it as well.
             visible: instanceMenu.gameFolder.length > 0
             height: visible ? implicitHeight : 0
-            text: qsTr("Open .minecraft folder")
+            text: i18n("Open .minecraft folder")
             icon.source: Icons.url("folder")
             onTriggered: root.library.openFolder(instanceMenu.gameFolder)
         }
         MenuItem {
             visible: instanceMenu.modsFolder.length > 0
             height: visible ? implicitHeight : 0
-            text: qsTr("Open mods folder")
+            text: i18n("Open mods folder")
             icon.source: Icons.url("folder")
             onTriggered: root.library.openFolder(instanceMenu.modsFolder)
         }
         MenuSeparator {}
         MenuItem {
-            text: qsTr("Rename\u2026")
+            text: i18n("Rename…")
             icon.source: Icons.url("edit")
             onTriggered: root.renameRequested(instanceMenu.targetId, instanceMenu.targetName)
         }
         MenuItem {
-            text: qsTr("Change icon\u2026")
+            text: i18n("Change icon…")
             icon.source: Icons.url("image")
             onTriggered: root.iconRequested(instanceMenu.targetId, instanceMenu.targetIcon)
         }
         // The instance page's ⋯ menu words it the same way.
         MenuItem {
-            text: qsTr("Change group\u2026")
+            text: i18n("Change group…")
             icon.source: Icons.url("folder-input")
             onTriggered: root.groupRequested(instanceMenu.targetId, instanceMenu.targetGroup)
         }
         MenuItem {
-            text: qsTr("Duplicate\u2026")
+            text: i18n("Duplicate…")
             icon.source: Icons.url("copy")
             onTriggered: exportFlows.canDuplicate
                          ? exportFlows.duplicateInstance(instanceMenu.targetId, instanceMenu.targetName,
@@ -360,20 +361,20 @@ Item {
             // A hidden item still takes its row in a Menu; zero it as well.
             visible: exportFlows.canExport
             height: visible ? implicitHeight : 0
-            text: qsTr("Export\u2026")
+            text: i18n("Export…")
             icon.source: Icons.url("archive")
             onTriggered: exportFlows.exportInstance(instanceMenu.targetId)
         }
         MenuItem {
             visible: exportFlows.canCreateShortcut
             height: visible ? implicitHeight : 0
-            text: qsTr("Create shortcut\u2026")
+            text: i18n("Create shortcut…")
             icon.source: Icons.url("external-link")
             onTriggered: exportFlows.createShortcut(instanceMenu.targetId)
         }
         MenuSeparator {}
         MenuItem {
-            text: qsTr("Delete\u2026")
+            text: i18n("Delete…")
             icon.source: Icons.url("trash")
             enabled: !instanceMenu.targetRunning
             onTriggered: root.deleteRequested(instanceMenu.targetId, instanceMenu.targetName)
@@ -404,8 +405,8 @@ Item {
     PromptDialog {
         id: groupRenameDialog
         property string group
-        title: qsTr("Rename group")
-        confirmText: qsTr("Rename")
+        title: i18n("Rename group")
+        confirmText: i18n("Rename")
         onSubmitted: (text) => {
             if (root.library)
                 root.library.renameGroup(group, text)
@@ -416,8 +417,8 @@ Item {
     ConfirmDialog {
         id: groupDeleteDialog
         property string group
-        title: qsTr("Delete group")
-        confirmText: qsTr("Delete group")
+        title: i18n("Delete group")
+        confirmText: i18n("Delete group")
         // Nothing is lost: the instances stay, ungrouped.
         danger: false
         onConfirmed: if (root.library) root.library.deleteGroup(group)

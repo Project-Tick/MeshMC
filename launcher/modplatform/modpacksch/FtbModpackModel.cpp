@@ -41,6 +41,7 @@
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -71,10 +72,10 @@ FtbModpackModel::FtbModpackModel(QObject* parent)
 	/* The widget page's three sorts, and the last update, which the
 	 * other providers offer too. */
 	const QList<QPair<QString, QString>> sorts = {
-		{QStringLiteral("plays"), tr("Sort by Plays")},
-		{QStringLiteral("installs"), tr("Sort by Installs")},
-		{QStringLiteral("updated"), tr("Sort by Last Updated")},
-		{QStringLiteral("name"), tr("Sort by Name")},
+		{QStringLiteral("plays"), i18n("Sort by Plays")},
+		{QStringLiteral("installs"), i18n("Sort by Installs")},
+		{QStringLiteral("updated"), i18n("Sort by Last Updated")},
+		{QStringLiteral("name"), i18n("Sort by Name")},
 	};
 	for (const auto& sort : sorts) {
 		QVariantMap entry;
@@ -384,7 +385,7 @@ void FtbModpackModel::startLoading()
 		m_job.reset();
 		m_pending = parseIndex(*response);
 		if (m_pending.isEmpty()) {
-			setError(tr("FTB sent back no modpacks."));
+			setError(i18n("FTB sent back no modpacks."));
 			setLoading(false);
 			return;
 		}
@@ -461,7 +462,7 @@ void FtbModpackModel::loadDetail(const QString& projectId)
 	m_detail->reset(projectId);
 	const ModpacksCH::Modpack* pack = packFor(projectId);
 	if (!pack) {
-		m_detail->setError(tr("This modpack is not in the loaded list."));
+		m_detail->setError(i18n("This modpack is not in the loaded list."));
 		m_detail->setLoading(false);
 		return;
 	}

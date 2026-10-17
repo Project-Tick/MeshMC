@@ -53,9 +53,9 @@ Item {
 
             Repeater {
                 model: [
-                    { text: qsTr("[Something/ERROR] A spooky error!"), color: Theme.palette.danger },
-                    { text: qsTr("[Something/WARN] A not so spooky warning."), color: Theme.palette.warning },
-                    { text: qsTr("[Test/INFO] A harmless message…"), color: Theme.palette.textSecondary }
+                    { text: i18n("[Something/ERROR] A spooky error!"), color: Theme.palette.danger },
+                    { text: i18n("[Something/WARN] A not so spooky warning."), color: Theme.palette.warning },
+                    { text: i18n("[Test/INFO] A harmless message…"), color: Theme.palette.textSecondary }
                 ]
                 delegate: Text {
                     required property var modelData

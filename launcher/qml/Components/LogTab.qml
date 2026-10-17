@@ -132,7 +132,7 @@ Item {
                 return
             root.uploading = false
             clipboard.copyText(url)
-            toast.show(qsTr("Link copied to your clipboard."), "success", qsTr("Open"),
+            toast.show(i18n("Link copied to your clipboard."), "success", i18n("Open"),
                        () => Qt.openUrlExternally(url))
         }
         function onFailed(message) {
@@ -176,24 +176,24 @@ Item {
             Switch {
                 id: follow
                 checked: true
-                text: qsTr("Follow")
+                text: i18n("Follow")
             }
             Button {
                 enabled: !!root.model
-                text: qsTr("Copy all")
+                text: i18n("Copy all")
                 icon.source: Icons.url("copy")
                 display: root.compact ? AbstractButton.IconOnly : AbstractButton.TextBesideIcon
                 ToolTip.visible: root.compact && hovered
                 ToolTip.text: text
                 onClicked: {
                     clipboard.copyText(root.log.text())
-                    toast.show(qsTr("Log copied."), "success")
+                    toast.show(i18n("Log copied."), "success")
                 }
             }
             Button {
                 visible: !!root.uploader
                 enabled: !!root.model && !!root.uploader && !root.uploader.busy
-                text: root.uploading ? qsTr("Uploading…") : qsTr("Upload")
+                text: root.uploading ? i18n("Uploading…") : i18n("Upload")
                 icon.source: Icons.url("arrow-up")
                 display: root.compact ? AbstractButton.IconOnly : AbstractButton.TextBesideIcon
                 ToolTip.visible: root.compact && hovered
@@ -207,13 +207,13 @@ Item {
                 id: moreButton
                 flat: false
                 iconName: "more"
-                tip: qsTr("More")
+                tip: i18n("More")
                 onClicked: moreMenu.popup(moreButton, moreButton.width - moreMenu.width, moreButton.height)
 
                 Menu {
                     id: moreMenu
                     MenuItem {
-                        text: qsTr("Wrap lines")
+                        text: i18n("Wrap lines")
                         checkable: true
                         checked: findBar.wrap
                         onToggled: findBar.wrap = checked
@@ -221,7 +221,7 @@ Item {
                     MenuSeparator {}
                     MenuItem {
                         enabled: !!root.model
-                        text: qsTr("Clear log")
+                        text: i18n("Clear log")
                         icon.source: Icons.url("x")
                         onTriggered: {
                             root.log.clear()
@@ -259,8 +259,8 @@ Item {
                 anchors.centerIn: parent
                 upperThird: true
                 visible: !root.model || lines.count === 0
-                title: qsTr("No log yet")
-                body: qsTr("Play this instance to see the game's output here as it runs.")
+                title: i18n("No log yet")
+                body: i18n("Play this instance to see the game's output here as it runs.")
                 MeshIcon { iconName: "terminal"; size: 40; color: Theme.palette.textTertiary }
             }
         }

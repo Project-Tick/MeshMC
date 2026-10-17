@@ -39,7 +39,7 @@ Rectangle {
     // A picture under the text (screenshot or pack art): media colours.
     readonly property bool hasPhoto: coverImage.length > 0 || art.hasPackArt
 
-    property string editText: qsTr("Edit")
+    property string editText: i18n("Edit")
     // A shorter banner for pages where the content below matters more.
     property bool compact: false
     // False on the instance page: the persistent play bar plays and stops
@@ -196,7 +196,7 @@ Rectangle {
                 spacing: Theme.space.sm
 
                 Tag {
-                    text: root.loader.length > 0 ? root.loader : qsTr("Vanilla")
+                    text: root.loader.length > 0 ? root.loader : i18n("Vanilla")
                     iconName: "layers"
                     onMedia: root.hasPhoto
                 }
@@ -218,7 +218,7 @@ Rectangle {
                     readonly property string played: SettingsStore.bool("ShowGameTime")
                                                      ? Format.playTime(root.totalTimePlayed) : ""
                     visible: played.length > 0
-                    text: qsTr("%1 played").arg(played)
+                    text: i18n("%1 played", played)
                     iconName: "hourglass"
                     onMedia: root.hasPhoto
                 }
@@ -241,7 +241,7 @@ Rectangle {
                 Text {
                     width: parent.width
                     text: root.launchProgress >= 0
-                          ? qsTr("%1, %2%").arg(root.launchStatus).arg(Math.round(root.launchProgress * 100))
+                          ? i18n("%1, %2%", root.launchStatus, Math.round(root.launchProgress * 100))
                           : root.launchStatus
                     elide: Text.ElideRight
                     color: root.hasPhoto ? Theme.media.textSecondary : Theme.palette.textSecondary
@@ -287,7 +287,7 @@ Rectangle {
                 size: Theme.control.heightLg
                 flat: false
                 iconName: "folder"
-                tip: qsTr("Open folder")
+                tip: i18n("Open folder")
                 onClicked: root.folderRequested()
             }
 
@@ -299,7 +299,7 @@ Rectangle {
                 size: root.slim ? Theme.control.height : Theme.control.heightLg
                 flat: false
                 iconName: "more"
-                tip: qsTr("More")
+                tip: i18n("More")
                 Accessible.role: Accessible.ButtonMenu
                 onClicked: {
                     if (!root.menu) {

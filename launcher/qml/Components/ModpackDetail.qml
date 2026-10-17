@@ -127,7 +127,7 @@ Item {
                 readonly property int chevronBearing: Math.round(Theme.icon.sm / 3)
                 x: -(leftPadding + chevronBearing)
                 flat: true
-                text: qsTr("Back to results")
+                text: i18n("Back to results")
                 icon.source: Icons.url("chevron-left")
                 leftPadding: Theme.space.sm
                 onClicked: root.backRequested()
@@ -263,7 +263,7 @@ Item {
                         Text {
                             Layout.fillWidth: true
                             visible: !!root.pack.author
-                            text: qsTr("by %1").arg(root.pack.author || "")
+                            text: i18n("by %1", root.pack.author || "")
                             elide: Text.ElideRight
                             color: Theme.media.textSecondary
                             font.family: Theme.font.family
@@ -278,13 +278,13 @@ Item {
                                 // Not every provider counts them (ATLauncher).
                                 visible: (root.pack.downloads || 0) > 0
                                 iconName: "download"
-                                text: qsTr("%1 downloads").arg(Format.compactNumber(root.pack.downloads))
+                                text: i18n("%1 downloads", Format.compactNumber(root.pack.downloads))
                             }
                             Tag {
                                 onMedia: true
                                 visible: (root.pack.follows || 0) > 0
                                 iconName: "users"
-                                text: qsTr("%1 followers").arg(Format.compactNumber(root.pack.follows))
+                                text: i18n("%1 followers", Format.compactNumber(root.pack.follows))
                             }
                             // Format's own wording, the same an instance's
                             // "last played" uses, behind a clock.
@@ -293,7 +293,7 @@ Item {
                                 visible: root.updatedText.length > 0
                                 iconName: "clock"
                                 text: root.updatedText
-                                Accessible.name: qsTr("Updated %1").arg(root.updatedText)
+                                Accessible.name: i18n("Updated %1", root.updatedText)
                             }
                         }
                     }
@@ -307,7 +307,7 @@ Item {
                         enabled: !root.installing && versionBox.currentIndex >= 0
                         highlighted: true
                         implicitHeight: Theme.control.heightLg
-                        text: root.installing ? qsTr("Installing…") : qsTr("Install")
+                        text: root.installing ? i18n("Installing…") : i18n("Install")
                         icon.source: Icons.url("download")
                         onClicked: root.install()
                     }
@@ -316,7 +316,7 @@ Item {
                         visible: root.installed
                         highlighted: true
                         implicitHeight: Theme.control.heightLg
-                        text: qsTr("Show in library")
+                        text: i18n("Show in library")
                         icon.source: Icons.url("library")
                         onClicked: root.showInstanceRequested(root.watcher.instanceId || "")
                     }
@@ -330,8 +330,8 @@ Item {
                 width: parent.width
                 visible: !!root.watcher && root.watcher.failed
                 text: root.watcher && root.watcher.error.length > 0
-                      ? qsTr("The install failed: %1").arg(root.watcher.error)
-                      : qsTr("The install failed.")
+                      ? i18n("The install failed: %1", root.watcher.error)
+                      : i18n("The install failed.")
             }
 
             Text {
@@ -361,18 +361,18 @@ Item {
             SettingsGroup {
                 id: installGroup
                 width: parent.width
-                title: qsTr("Install")
+                title: i18n("Install")
 
                 SettingRow {
-                    label: qsTr("Version")
-                    description: root.detail && root.detail.loading ? qsTr("Loading versions…")
-                               : root.versions.length === 0 ? qsTr("No versions found.") : ""
+                    label: i18n("Version")
+                    description: root.detail && root.detail.loading ? i18n("Loading versions…")
+                               : root.versions.length === 0 ? i18n("No versions found.") : ""
                     ComboBox {
                         id: versionBox
                         width: 320
                         enabled: root.versions.length > 0 && !root.installing
                         model: root.versions.map(v => root.versionLabel(v))
-                        Accessible.name: qsTr("Version")
+                        Accessible.name: i18n("Version")
                         // Newest first from either provider, alphas included: start on
                         // the version the author features, if there is one.
                         onModelChanged: {
@@ -383,13 +383,13 @@ Item {
                 }
 
                 SettingRow {
-                    label: qsTr("Instance name")
+                    label: i18n("Instance name")
                     TextField {
                         id: nameField
                         width: 320
                         enabled: !root.installing
                         selectByMouse: true
-                        Accessible.name: qsTr("Instance name")
+                        Accessible.name: i18n("Instance name")
                     }
                 }
 
@@ -400,12 +400,12 @@ Item {
                     // The group draws its hairlines once, from which rows
                     // are visible then; this one appears later.
                     onVisibleChanged: installGroup.markRows()
-                    label: root.installed ? qsTr("Installed")
-                         : root.installing ? (root.watcher.status || qsTr("Installing…"))
-                         : root.watcher && root.watcher.failed ? qsTr("Install failed")
+                    label: root.installed ? i18n("Installed")
+                         : root.installing ? (root.watcher.status || i18n("Installing…"))
+                         : root.watcher && root.watcher.failed ? i18n("Install failed")
                          : ""
                     description: root.watcher && root.watcher.failed ? root.watcher.error
-                               : root.installed ? qsTr("“%1” is in your library.").arg(nameField.text) : ""
+                               : root.installed ? i18n("“%1” is in your library.", nameField.text) : ""
 
                     LaunchProgressBar {
                         width: 180
@@ -422,7 +422,7 @@ Item {
                 visible: root.gallery.length > 0
 
                 Text {
-                    text: qsTr("Gallery")
+                    text: i18n("Gallery")
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.title.pixelSize
@@ -489,7 +489,7 @@ Item {
                 // Same heading as the Install card's title, on the same
                 // left edge.
                 Text {
-                    text: qsTr("About")
+                    text: i18n("About")
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.title.pixelSize

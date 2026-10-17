@@ -22,29 +22,29 @@ import MeshMC.Theme
 SettingsScroll {
     id: root
 
-    title: qsTr("Log upload")
-    description: qsTr("paste.ee is used to share uploaded logs. Add your own API key to have uploads paired with your paste.ee account.")
+    title: i18n("Log upload")
+    description: i18n("paste.ee is used to share uploaded logs. Add your own API key to have uploads paired with your paste.ee account.")
 
     readonly property string meshmcKey: "meshmc"
     property bool ownKey: SettingsStore.string("PasteEEAPIKey") !== root.meshmcKey
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("API key")
-        description: qsTr("Never shown again once set. Retype it to change it.")
+        title: i18n("API key")
+        description: i18n("Never shown again once set. Retype it to change it.")
 
         ButtonGroup { id: keyGroup }
 
         SettingRow {
             wide: true
-            label: qsTr("Upload with")
+            label: i18n("Upload with")
             ColumnLayout {
                 width: parent.width
                 spacing: Theme.space.xs
                 RadioButton {
                     ButtonGroup.group: keyGroup
                     checked: !root.ownKey
-                    text: qsTr("MeshMC's shared key (12 MB limit)")
+                    text: i18n("MeshMC's shared key (12 MB limit)")
                     onToggled: if (checked) {
                         root.ownKey = false
                         SettingsStore.setValue("PasteEEAPIKey", root.meshmcKey)
@@ -53,14 +53,14 @@ SettingsScroll {
                 RadioButton {
                     ButtonGroup.group: keyGroup
                     checked: root.ownKey
-                    text: qsTr("My own key (12 MB limit, get one at paste.ee)")
+                    text: i18n("My own key (12 MB limit, get one at paste.ee)")
                     onToggled: if (checked) root.ownKey = true
                 }
                 TextField {
                     Layout.fillWidth: true
                     visible: root.ownKey
                     echoMode: TextInput.Password
-                    placeholderText: qsTr("Paste your API key here")
+                    placeholderText: i18n("Paste your API key here")
                     selectByMouse: true
                     onEditingFinished: if (text.trim().length > 0)
                                            SettingsStore.setValue("PasteEEAPIKey", text.trim())

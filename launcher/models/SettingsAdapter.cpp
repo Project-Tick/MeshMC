@@ -26,6 +26,7 @@
 #include "tools/JProfiler.h"
 #include "tools/JVisualVM.h"
 #include "tools/MCEditTool.h"
+#include <KLocalizedString>
 
 SettingsAdapter::SettingsAdapter(SettingsObjectPtr settings, QObject* parent)
 	: QObject(parent), m_settings(std::move(settings))
@@ -128,7 +129,7 @@ QString SettingsAdapter::checkExternalTool(const QString& tool,
 	} else {
 		qWarning() << "SettingsAdapter::checkExternalTool: unknown tool"
 				   << tool;
-		return tr("Unknown tool.");
+		return i18n("Unknown tool.");
 	}
 	return ok ? QString() : error;
 }

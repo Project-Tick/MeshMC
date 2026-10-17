@@ -28,6 +28,7 @@
 
 #include "tasks/Task.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -153,7 +154,7 @@ class BackupJobTask : public Task
 				setProgress(1, 1);
 				emitSucceeded();
 			} else {
-				emitFailed(tr("The operation failed. See the launcher log "
+				emitFailed(i18n("The operation failed. See the launcher log "
 							  "for details."));
 			}
 		});
@@ -208,13 +209,13 @@ QObject* BackupController::createBackup(const QString& label)
 	const QString labelCopy = label;
 
 	auto* task = new BackupJobTask(
-		tr("Creating backup…"),
+		i18n("Creating backup…"),
 		[manager, labelCopy]() mutable {
 			return manager.createBackup(labelCopy).isValid();
 		});
 
 	auto* watcher = new TaskWatcher(Task::Ptr(task), this);
-	watcher->setTitle(tr("Backup"));
+	watcher->setTitle(i18n("Backup"));
 	connect(watcher, &TaskWatcher::finished, this, [this](bool ok) {
 		if (ok) {
 			refresh();
@@ -232,12 +233,12 @@ QObject* BackupController::restoreBackup(int row)
 	const BackupEntry entry = m_entries.at(row);
 	BackupManager manager = m_manager;
 
-	auto* task = new BackupJobTask(tr("Restoring backup…"), [manager, entry]() mutable {
+	auto* task = new BackupJobTask(i18n("Restoring backup…"), [manager, entry]() mutable {
 		return manager.restoreBackup(entry);
 	});
 
 	auto* watcher = new TaskWatcher(Task::Ptr(task), this);
-	watcher->setTitle(tr("Restore"));
+	watcher->setTitle(i18n("Restore"));
 	connect(watcher, &TaskWatcher::finished, this, [this](bool ok) {
 		if (ok) {
 			refresh();
@@ -255,12 +256,12 @@ QObject* BackupController::deleteBackup(int row)
 	const BackupEntry entry = m_entries.at(row);
 	BackupManager manager = m_manager;
 
-	auto* task = new BackupJobTask(tr("Deleting backup…"), [manager, entry]() mutable {
+	auto* task = new BackupJobTask(i18n("Deleting backup…"), [manager, entry]() mutable {
 		return manager.deleteBackup(entry);
 	});
 
 	auto* watcher = new TaskWatcher(Task::Ptr(task), this);
-	watcher->setTitle(tr("Delete"));
+	watcher->setTitle(i18n("Delete"));
 	connect(watcher, &TaskWatcher::finished, this, [this](bool ok) {
 		if (ok) {
 			refresh();
@@ -280,12 +281,12 @@ QObject* BackupController::exportBackup(int row, const QString& destUrlOrPath)
 	const QString dest = url.isLocalFile() ? url.toLocalFile() : destUrlOrPath;
 	BackupManager manager = m_manager;
 
-	auto* task = new BackupJobTask(tr("Exporting backup…"), [manager, entry, dest]() mutable {
+	auto* task = new BackupJobTask(i18n("Exporting backup…"), [manager, entry, dest]() mutable {
 		return manager.exportBackup(entry, dest);
 	});
 
 	auto* watcher = new TaskWatcher(Task::Ptr(task), this);
-	watcher->setTitle(tr("Export"));
+	watcher->setTitle(i18n("Export"));
 	task->start();
 	return watcher;
 }
@@ -298,12 +299,12 @@ QObject* BackupController::importBackup(const QString& fileUrlOrPath,
 	BackupManager manager = m_manager;
 	const QString labelCopy = label;
 
-	auto* task = new BackupJobTask(tr("Importing backup…"), [manager, src, labelCopy]() mutable {
+	auto* task = new BackupJobTask(i18n("Importing backup…"), [manager, src, labelCopy]() mutable {
 		return manager.importBackup(src, labelCopy).isValid();
 	});
 
 	auto* watcher = new TaskWatcher(Task::Ptr(task), this);
-	watcher->setTitle(tr("Import"));
+	watcher->setTitle(i18n("Import"));
 	connect(watcher, &TaskWatcher::finished, this, [this](bool ok) {
 		if (ok) {
 			refresh();

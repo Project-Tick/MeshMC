@@ -39,12 +39,12 @@ SettingRow {
         model: root.families
         Accessible.name: root.label
         displayText: currentText + (currentText === root.defaultFamily && root.defaultFamily.length > 0
-                                    ? qsTr(" (default)") : "")
+                                    ? i18n(" (default)") : "")
         delegate: ItemDelegate {
             required property var modelData
             required property int index
             width: combo.width
-            text: modelData + (modelData === root.defaultFamily ? qsTr(" (default)") : "")
+            text: modelData + (modelData === root.defaultFamily ? i18n(" (default)") : "")
             highlighted: combo.highlightedIndex === index
             font.family: modelData
         }

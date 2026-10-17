@@ -59,9 +59,10 @@ SettingRow {
             root.source.setValue(root.minKey, max)
     }
 
-    description: tooMuch ? qsTr("That is most of this computer's %1 GB; the system and other programs may slow down.").arg(gib(systemMiB))
+    description: tooMuch ? i18n("That is most of this computer's %1 GB; the system and other programs may slow down.",
+                                gib(systemMiB))
                : hint.length > 0 ? hint
-               : qsTr("%1 GB installed. %2–%3 GB suits most modpacks.").arg(gib(systemMiB)).arg(gib(suitsLow)).arg(gib(suitsHigh))
+               : i18n("%1 GB installed. %2–%3 GB suits most modpacks.", gib(systemMiB), gib(suitsLow), gib(suitsHigh))
 
     Row {
         spacing: Theme.space.md

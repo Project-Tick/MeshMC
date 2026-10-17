@@ -23,6 +23,8 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 
+#include <KLocalizedString>
+
 #include "BuildConfig.h"
 #include "FileSystem.h"
 #include "core/LauncherContext.h"
@@ -134,7 +136,7 @@ QVariantList JavaDownloadController::versionsFromJson(const QByteArray& json,
 	const auto doc = QJsonDocument::fromJson(json, &parseError);
 	if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
 		if (error) {
-			*error = tr("The list of Java versions could not be read.");
+			*error = i18n("The list of Java versions could not be read.");
 		}
 		return {};
 	}
@@ -158,7 +160,7 @@ JavaDownloadController::runtimesFromJson(const QByteArray& json,
 	const auto doc = QJsonDocument::fromJson(json, &parseError);
 	if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
 		if (error) {
-			*error = tr("The list of Java builds could not be read.");
+			*error = i18n("The list of Java builds could not be read.");
 		}
 		return {};
 	}
@@ -215,12 +217,12 @@ void JavaDownloadController::fetch(
 	stopFetch();
 	setError(QString());
 	if (!LAUNCHER) {
-		setError(tr("Downloads are not available right now."));
+		setError(i18n("Downloads are not available right now."));
 		return;
 	}
 	auto data = std::make_shared<QByteArray>();
 	m_fetchData = data;
-	auto job = NetJob::Ptr(new NetJob(tr("Fetch Java versions"),
+	auto job = NetJob::Ptr(new NetJob(i18n("Fetch Java versions"),
 									  LAUNCHER->network()));
 	job->addNetAction(Net::Download::makeByteArray(
 		QUrl(BuildConfig.META_URL + relativeUrl), data.get()));
@@ -247,7 +249,7 @@ void JavaDownloadController::fetch(
 		}
 		m_fetchJob.reset();
 		setLoading(false);
-		setError(tr("Could not load the list: %1").arg(reason));
+		setError(i18n("Could not load the list: %1", reason));
 	});
 	job->start();
 }
@@ -300,7 +302,7 @@ void JavaDownloadController::selectVendor(const QString& uid)
 		setError(parseError);
 		emit versionsChanged();
 		if (parseError.isEmpty() && m_versions.isEmpty()) {
-			setError(tr("This vendor has no Java versions to download."));
+			setError(i18n("This vendor has no Java versions to download."));
 		}
 		// Start from the best choice instead of an empty picker.
 		const QString preselected = defaultVersion(m_versions);
@@ -340,7 +342,7 @@ void JavaDownloadController::selectVersion(const QString& versionId)
 			  setError(parseError);
 			  emit buildsChanged();
 			  if (parseError.isEmpty() && m_runtimes.isEmpty()) {
-				  setError(tr("There is no build of this Java for your "
+				  setError(i18n("There is no build of this Java for your "
 							  "computer."));
 			  } else if (!m_runtimes.isEmpty()) {
 				  selectBuild(0);
@@ -372,7 +374,7 @@ void JavaDownloadController::download()
 	setError(QString());
 	m_installedPath.clear();
 	m_progress = 0;
-	m_status = tr("Starting");
+	m_status = i18n("Starting");
 	m_downloading = true;
 	emit progressChanged();
 	emit statusChanged();
@@ -397,7 +399,7 @@ void JavaDownloadController::download()
 		emit installed();
 	});
 	connect(task, &Task::failed, this, [this](const QString& reason) {
-		setError(tr("Download failed: %1").arg(reason));
+		setError(i18n("Download failed: %1", reason));
 	});
 	connect(task, &Task::finished, this, [this]() {
 		m_downloading = false;

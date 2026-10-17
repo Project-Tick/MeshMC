@@ -21,7 +21,7 @@ Item {
     property var content: null
     property string kind: "mods"
     // Lower-case plural: "mods", "resource packs".
-    property string noun: qsTr("mods")
+    property string noun: i18n("mods")
 
     readonly property var updater: root.content ? root.content.updater : null
     // The download in progress (TaskWatcher), or null.
@@ -30,7 +30,7 @@ Item {
     property var resolving: null
     // What the tab's progress notice says; empty when nothing is going on.
     readonly property string busyText: root.activity ? (root.activity.status.length > 0 ? root.activity.status : root.activity.title)
-                                       : root.resolving ? qsTr("Checking what it needs…") : ""
+                                       : root.resolving ? i18n("Checking what it needs…") : ""
     readonly property real busyProgress: root.activity ? root.activity.progress : -1
 
     signal notify(string message, string tone)
@@ -64,17 +64,19 @@ Item {
             root.notify(root.updater.lastError, "neutral")
             return
         }
-        root.settle(review, qsTr("Installed the missing dependencies."),
-                    qsTr("Every dependency is installed."))
+        root.settle(review, i18n("Installed the missing dependencies."),
+                    i18n("Every dependency is installed."))
     }
 
     function resetMetadata(keys, name) {
         resetConfirm.keys = keys
         resetConfirm.text = keys.length === 1 && name.length > 0
-            ? qsTr("Forget where “%1” came from? It stays installed, but can no longer be updated or changed to another version from here.").arg(name)
+            ? i18n("Forget where “%1” came from? It stays installed, but can no longer be updated or changed to another version from here.",
+                   name)
             : keys.length === 1
-            ? qsTr("Forget where this file came from? It stays installed, but can no longer be updated or changed to another version from here.")
-            : qsTr("Forget where %1 %2 came from? They stay installed, but can no longer be updated or changed to another version from here.").arg(keys.length).arg(root.noun)
+            ? i18n("Forget where this file came from? It stays installed, but can no longer be updated or changed to another version from here.")
+            : i18n("Forget where %1 %2 came from? They stay installed, but can no longer be updated or changed to another version from here.",
+                   keys.length, root.noun)
         resetConfirm.open()
     }
 
@@ -107,7 +109,7 @@ Item {
             return
         root.activity = watcher
         watcher.finished.connect(function (ok) {
-            root.notify(ok ? doneText : (watcher.error.length > 0 ? watcher.error : qsTr("The download did not finish.")),
+            root.notify(ok ? doneText : (watcher.error.length > 0 ? watcher.error : i18n("The download did not finish.")),
                         ok ? "success" : "danger")
             if (root.activity === watcher)
                 root.activity = null
@@ -118,13 +120,13 @@ Item {
         id: updateDialog
         controller: root.updater
         noun: root.noun
-        onUpdateStarted: (watcher) => root.track(watcher, qsTr("Updates installed."))
+        onUpdateStarted: (watcher) => root.track(watcher, i18n("Updates installed."))
     }
 
     ChangeVersionDialog {
         id: versionDialog
         controller: root.updater
-        onReviewRequested: (review) => root.settle(review, qsTr("Installed %1.").arg(review.title), "")
+        onReviewRequested: (review) => root.settle(review, i18n("Installed %1.", review.title), "")
     }
 
     InstallReviewDialog {
@@ -136,14 +138,14 @@ Item {
     ConfirmDialog {
         id: resetConfirm
         property var keys: []
-        title: qsTr("Forget where it came from?")
-        confirmText: qsTr("Forget")
+        title: i18n("Forget where it came from?")
+        confirmText: i18n("Forget")
         danger: false
         onConfirmed: {
             const n = root.updater ? root.updater.resetMetadata(root.kind, keys) : 0
-            root.notify(n === 0 ? qsTr("There was nothing recorded to forget.")
-                        : n === 1 ? qsTr("Forgot where that file came from.")
-                        : qsTr("Forgot where %1 files came from.").arg(n),
+            root.notify(n === 0 ? i18n("There was nothing recorded to forget.")
+                        : n === 1 ? i18n("Forgot where that file came from.")
+                        : i18n("Forgot where %1 files came from.", n),
                         n > 0 ? "success" : "neutral")
         }
     }

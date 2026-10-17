@@ -27,7 +27,7 @@ Dialog {
     width: Math.min(600, parent ? parent.width - Theme.space.xxl * 2 : 600)
     height: Math.min(520, parent ? parent.height - Theme.space.xxl * 2 : 520)
     modal: true
-    title: qsTr("Choose Java")
+    title: i18n("Choose Java")
 
     header: DialogHeader {
         title: root.title
@@ -72,7 +72,7 @@ Dialog {
                         Layout.fillWidth: true
                         spacing: 2
                         Text {
-                            text: qsTr("Java %1").arg(String(row.version))
+                            text: i18n("Java %1", String(row.version))
                             color: row.chosen ? Theme.palette.accent : Theme.palette.textPrimary
                             font.family: Theme.font.family
                             font.pixelSize: Theme.type.body.pixelSize
@@ -90,7 +90,7 @@ Dialog {
                     StatusBadge {
                         visible: row.recommended
                         tone: "success"
-                        text: qsTr("Recommended")
+                        text: i18n("Recommended")
                     }
                 }
             }
@@ -106,7 +106,7 @@ Dialog {
                 visible: list.count === 0 && !!root.java && !root.java.detecting
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.Wrap
-                text: qsTr("No Java found on this computer. Download one, or browse for a Java you installed yourself.")
+                text: i18n("No Java found on this computer. Download one, or browse for a Java you installed yourself.")
                 color: Theme.palette.textTertiary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.label.pixelSize
@@ -121,7 +121,7 @@ Dialog {
             Layout.leftMargin: Theme.space.lg
             Layout.bottomMargin: Theme.space.lg
             flat: true
-            text: qsTr("Detect again")
+            text: i18n("Detect again")
             icon.source: Icons.url("refresh")
             enabled: !!root.java && !root.java.detecting
             onClicked: root.java.detect()
@@ -130,7 +130,7 @@ Dialog {
         Button {
             Layout.rightMargin: Theme.space.lg
             Layout.bottomMargin: Theme.space.lg
-            text: qsTr("Close")
+            text: i18n("Close")
             onClicked: root.close()
         }
     }

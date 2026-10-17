@@ -27,7 +27,7 @@ AbstractButton {
     implicitWidth: 200
     hoverEnabled: true
 
-    Accessible.name: signedIn ? qsTr("Account: %1").arg(name) : qsTr("Sign in")
+    Accessible.name: signedIn ? i18n("Account: %1", name) : i18n("Sign in")
 
     background: Rectangle {
         radius: Theme.radius.lg
@@ -67,7 +67,7 @@ AbstractButton {
 
             Text {
                 width: parent.width
-                text: control.signedIn ? control.name : qsTr("Sign in")
+                text: control.signedIn ? control.name : i18n("Sign in")
                 elide: Text.ElideRight
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family
@@ -77,9 +77,9 @@ AbstractButton {
 
             Text {
                 width: parent.width
-                text: !control.signedIn ? qsTr("Not signed in")
-                    : control.kind === "Microsoft" ? qsTr("Microsoft account")
-                    : control.kind === "Offline" ? qsTr("Offline account")
+                text: !control.signedIn ? i18n("Not signed in")
+                    : control.kind === "Microsoft" ? i18n("Microsoft account")
+                    : control.kind === "Offline" ? i18n("Offline account")
                     : control.kind
                 elide: Text.ElideRight
                 color: Theme.palette.textTertiary

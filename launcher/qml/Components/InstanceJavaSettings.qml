@@ -27,32 +27,32 @@ Column {
     OverrideGroup {
         id: memory
         width: parent.width
-        title: qsTr("Memory")
+        title: i18n("Memory")
         source: root.source
         gateKey: "OverrideMemory"
         keys: ["MinMemAlloc", "MaxMemAlloc", "PermGen"]
         MemorySetting {
             source: root.source
             enabled: memory.overriding
-            label: qsTr("Maximum memory")
+            label: i18n("Maximum memory")
             systemMiB: root.systemMemoryMiB
         }
         MemoryStartSetting {
             source: root.source
             enabled: memory.overriding
-            label: qsTr("Starting memory")
+            label: i18n("Starting memory")
         }
         SettingNumber {
             source: root.source
             key: "PermGen"
             visible: javaLocation.legacy
             enabled: memory.overriding
-            label: qsTr("PermGen size")
-            description: qsTr("Extra memory for Java older than 8. Newer Java ignores it.")
+            label: i18n("PermGen size")
+            description: i18n("Extra memory for Java older than 8. Newer Java ignores it.")
             from: 64
             to: 4096
             stepSize: 64
-            suffix: qsTr("MiB")
+            suffix: i18n("MiB")
         }
     }
 
@@ -65,23 +65,23 @@ Column {
         OverrideGroup {
             id: javaPath
             width: parent.width
-            title: qsTr("Java")
+            title: i18n("Java")
             source: root.source
             gateKey: "OverrideJavaLocation"
-            gateLabel: qsTr("Use a specific Java for this instance")
+            gateLabel: i18n("Use a specific Java for this instance")
             keys: ["JavaPath"]
             JavaPathRow {
                 id: javaLocation
                 source: root.source
                 enabled: javaPath.overriding
-                label: qsTr("Java executable")
+                label: i18n("Java executable")
             }
         }
 
         LinkButton {
             x: parent.width - width
             visible: !!JavaStore.controller
-            text: qsTr("Download or remove Java in Settings")
+            text: i18n("Download or remove Java in Settings")
             onClicked: JavaStore.navigateRequested("settings/java")
         }
     }
@@ -89,15 +89,15 @@ Column {
     OverrideGroup {
         id: javaArgs
         width: parent.width
-        title: qsTr("JVM arguments")
+        title: i18n("JVM arguments")
         source: root.source
         gateKey: "OverrideJavaArgs"
-        gateLabel: qsTr("Use custom JVM arguments for this instance")
+        gateLabel: i18n("Use custom JVM arguments for this instance")
         keys: ["JvmArgs"]
         JvmArgsRow {
             source: root.source
             enabled: javaArgs.overriding
-            label: qsTr("Arguments")
+            label: i18n("Arguments")
         }
     }
 
@@ -105,15 +105,15 @@ Column {
         id: javaVendor
         width: parent.width
         visible: !!JavaStore.controller && JavaStore.controller.downloaderAvailable
-        title: qsTr("Automatic Java")
+        title: i18n("Automatic Java")
         source: root.source
         gateKey: "OverrideJavaAutoDownloadVendor"
-        gateLabel: qsTr("Download Java from a different vendor for this instance")
+        gateLabel: i18n("Download Java from a different vendor for this instance")
         keys: ["JavaAutoDownloadVendor"]
         JavaVendorRow {
             source: root.source
             enabled: javaVendor.overriding
-            label: qsTr("Download from")
+            label: i18n("Download from")
         }
     }
 }

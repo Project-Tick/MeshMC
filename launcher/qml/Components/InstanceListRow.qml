@@ -183,7 +183,7 @@ Item {
                 Layout.preferredWidth: root.lastPlayedColumnWidth
                 horizontalAlignment: Text.AlignRight
                 text: !root.launching ? Format.lastPlayed(root.lastLaunch)
-                    : root.launchProgress >= 0 ? qsTr("%1%").arg(Math.round(root.launchProgress * 100)) : ""
+                    : root.launchProgress >= 0 ? i18n("%1%", Math.round(root.launchProgress * 100)) : ""
                 elide: Text.ElideRight
                 color: root.launching ? Theme.palette.accentText : Theme.palette.textTertiary
                 font.family: Theme.font.family
@@ -214,7 +214,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     size: Theme.control.height
                     iconName: "more"
-                    tip: qsTr("More")
+                    tip: i18n("More")
                     opacity: root.hovered && !root.launching ? 1 : 0
                     visible: opacity > 0
                     focusPolicy: Qt.NoFocus

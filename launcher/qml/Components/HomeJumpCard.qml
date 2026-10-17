@@ -206,7 +206,7 @@ Item {
             Tag {
                 id: crashBadge
                 visible: root.hasCrashed
-                text: qsTr("Crashed last time")
+                text: i18n("Crashed last time")
                 iconName: "alert-triangle"
                 onMedia: true
             }

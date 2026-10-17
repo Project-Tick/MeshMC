@@ -39,12 +39,12 @@ Item {
     readonly property var versionLabels: root.versions.map((v) => {
         var label = String(v.name || v.label)
         if (v.minecraft)
-            label = qsTr("%1, Minecraft %2").arg(label).arg(v.minecraft)
+            label = i18n("%1, Minecraft %2", label, v.minecraft)
         if (v.releaseType === "alpha")
-            label = qsTr("%1, alpha").arg(label)
+            label = i18n("%1, alpha", label)
         else if (v.releaseType === "beta")
-            label = qsTr("%1, beta").arg(label)
-        return v.current ? qsTr("%1 (installed)").arg(label) : label
+            label = i18n("%1, beta", label)
+        return v.current ? i18n("%1 (installed)", label) : label
     })
     readonly property int versionBoxWidth: 360
 
@@ -143,8 +143,8 @@ Item {
                     Layout.fillWidth: true
                     elide: Text.ElideRight
                     text: root.controller && root.controller.installedVersionName.length > 0
-                          ? qsTr("Installed %1").arg(root.controller.installedVersionName)
-                          : qsTr("Installed version unknown")
+                          ? i18n("Installed %1", root.controller.installedVersionName)
+                          : i18n("Installed version unknown")
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.body.pixelSize
@@ -152,7 +152,7 @@ Item {
             ]
 
             Button {
-                text: qsTr("Website")
+                text: i18n("Website")
                 icon.source: Icons.url("external-link")
                 visible: root.controller && root.controller.packUrl.length > 0
                 onClicked: Qt.openUrlExternally(root.controller.packUrl)
@@ -161,10 +161,10 @@ Item {
             // pack, including one with no catalogue id.
             HoverReason {
                 reason: root.controller && root.controller.running
-                        ? qsTr("The game is running. The pack can be updated once it closes.") : ""
+                        ? i18n("The game is running. The pack can be updated once it closes.") : ""
                 Button {
                     enabled: !root.updating && !!root.controller && !root.controller.running
-                    text: qsTr("Update from file…")
+                    text: i18n("Update from file…")
                     icon.source: Icons.url("archive")
                     onClicked: fileDialog.open()
                 }
@@ -179,8 +179,8 @@ Item {
             Text {
                 Layout.fillWidth: true
                 text: root.watcher
-                      ? (root.watcher.failed ? (root.watcher.error || qsTr("Update failed."))
-                                             : (root.watcher.status || qsTr("Updating…")))
+                      ? (root.watcher.failed ? (root.watcher.error || i18n("Update failed."))
+                                             : (root.watcher.status || i18n("Updating…")))
                       : ""
                 color: root.watcher && root.watcher.failed ? Theme.palette.danger : Theme.palette.textSecondary
                 elide: Text.ElideRight
@@ -200,7 +200,7 @@ Item {
             Text {
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
-                text: qsTr("MeshMC does not have a catalogue id on record for this pack, so it cannot list other versions here. You can still update it from a pack file, or install the pack again from Discover for a specific version.")
+                text: i18n("MeshMC does not have a catalogue id on record for this pack, so it cannot list other versions here. You can still update it from a pack file, or install the pack again from Discover for a specific version.")
                 color: Theme.palette.textSecondary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.body.pixelSize
@@ -215,14 +215,14 @@ Item {
             // message is a raw job string meant for the log, not the user.
             Text {
                 Layout.fillWidth: true
-                text: qsTr("Could not load the versions of this pack. Check your connection, then reload.")
+                text: i18n("Could not load the versions of this pack. Check your connection, then reload.")
                 color: Theme.palette.danger
                 elide: Text.ElideRight
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.label.pixelSize
             }
             Button {
-                text: qsTr("Reload")
+                text: i18n("Reload")
                 icon.source: Icons.url("refresh")
                 onClicked: root.controller.reload()
             }
@@ -233,7 +233,7 @@ Item {
             visible: !!root.controller && root.controller.hasPackId && root.controller.error.length === 0
                      && !root.controller.loading && root.versions.length === 0
             wrapMode: Text.Wrap
-            text: qsTr("The catalogue lists no other versions of this pack.")
+            text: i18n("The catalogue lists no other versions of this pack.")
             color: Theme.palette.textSecondary
             font.family: Theme.font.family
             font.pixelSize: Theme.type.body.pixelSize
@@ -247,7 +247,7 @@ Item {
             spacing: Theme.space.sm
 
             Text {
-                text: qsTr("Update to")
+                text: i18n("Update to")
                 color: Theme.palette.textSecondary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.label.pixelSize
@@ -256,7 +256,7 @@ Item {
                 id: versionBox
                 Layout.preferredWidth: root.versionBoxWidth
                 model: root.versionLabels
-                Accessible.name: qsTr("Version")
+                Accessible.name: i18n("Version")
             }
             Item { Layout.fillWidth: true }
             Button {
@@ -266,7 +266,7 @@ Item {
                 // one is picked (the newest, by default, when there is
                 // an update).
                 highlighted: enabled
-                text: qsTr("Update")
+                text: i18n("Update")
                 icon.source: Icons.url("download")
                 onClicked: root.watcher = root.controller.updateToVersion(versionBox.currentIndex)
             }
@@ -297,7 +297,7 @@ Item {
                     source: !root.picked ? ""
                             : root.picked.changelog.length > 0
                             ? root.picked.changelog
-                            : qsTr("No changelog available for this version.")
+                            : i18n("No changelog available for this version.")
                     onLinkActivated: (link) => root.openChangelogLink(link)
                 }
             }
@@ -313,7 +313,7 @@ Item {
 
     FileDialog {
         id: fileDialog
-        title: qsTr("Choose the pack file")
+        title: i18n("Choose the pack file")
         nameFilters: root.controller ? [root.controller.fileFilter] : []
         onAccepted: root.watcher = root.controller.updateFromFile(selectedFile)
     }
@@ -328,8 +328,8 @@ Item {
         anchors.centerIn: parent
         upperThird: true
         visible: !root.controller
-        title: qsTr("Not a managed pack")
-        body: qsTr("This instance was not installed from a catalogue MeshMC recognises.")
+        title: i18n("Not a managed pack")
+        body: i18n("This instance was not installed from a catalogue MeshMC recognises.")
         MeshIcon { iconName: "package"; size: 40; color: Theme.palette.textTertiary }
     }
 }

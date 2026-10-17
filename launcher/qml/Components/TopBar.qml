@@ -23,7 +23,7 @@ Item {
     // TotalPlayTime; it hides itself while that setting is off).
     property bool showPlayTime: false
     property string searchText: ""
-    property string searchPlaceholder: qsTr("Search")
+    property string searchPlaceholder: i18n("Search")
     property bool searchVisible: true
 
     // The account, on the title row's right, vertically centred on the

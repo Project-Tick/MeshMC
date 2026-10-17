@@ -31,6 +31,7 @@
 #include <tag_list.h>
 #include <tag_primitive.h>
 #include <tag_string.h>
+#include <KLocalizedString>
 
 namespace
 {
@@ -310,7 +311,7 @@ int ServersListModel::addServer()
 	const int row = m_servers.size();
 	beginInsertRows(QModelIndex(), row, row);
 	ServerEntry server;
-	server.name = tr("Minecraft Server");
+	server.name = i18n("Minecraft Server");
 	m_servers.append(server);
 	endInsertRows();
 	scheduleSave();

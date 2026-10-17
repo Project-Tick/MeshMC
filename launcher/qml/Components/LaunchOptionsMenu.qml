@@ -56,7 +56,7 @@ Menu {
     // Choosing among one account is no choice.
     readonly property bool offersPlayAs: root.accounts.length > 1
 
-    title: qsTr("Play options")
+    title: i18n("Play options")
 
     // Re-reads what to offer. Runs on its own whenever the menu opens;
     // call it first to size the menu before positioning it (PlayDock).
@@ -88,12 +88,12 @@ Menu {
     }
 
     MenuItem {
-        text: qsTr("Play offline")
+        text: i18n("Play offline")
         icon.source: Icons.url("play")
         onTriggered: root.launchModeRequested(root.instanceId, "offline")
     }
     MenuItem {
-        text: qsTr("Play demo")
+        text: i18n("Play demo")
         icon.source: Icons.url("clock")
         visible: root.supportsDemo
         height: visible ? implicitHeight : 0
@@ -102,13 +102,13 @@ Menu {
 
     Menu {
         id: playAsMenu
-        title: qsTr("Play as")
+        title: i18n("Play as")
         icon.source: Icons.url("user")
         Instantiator {
             model: root.accounts
             delegate: MenuItem {
                 required property var modelData
-                text: modelData.isDefault ? qsTr("%1 (default)").arg(modelData.name) : modelData.name
+                text: modelData.isDefault ? i18n("%1 (default)", modelData.name) : modelData.name
                 // The account's own head, in its own colours.
                 icon.source: "image://accountface/" + modelData.id
                 icon.color: "transparent"
@@ -123,10 +123,10 @@ Menu {
 
     Menu {
         id: profilerMenu
-        title: qsTr("Profiler")
+        title: i18n("Profiler")
         icon.source: Icons.url("sliders")
         MenuItem {
-            text: qsTr("None")
+            text: i18n("None")
             checkable: true
             checked: root.profiler.length === 0
             onTriggered: root.profilerChosen(root.instanceId, "")
@@ -137,7 +137,7 @@ Menu {
                 required property var modelData
                 // One that is not set up yet leads to where it is set up
                 // instead of being a dead, greyed-out entry.
-                text: modelData.ready ? modelData.name : qsTr("Set up %1…").arg(modelData.name)
+                text: modelData.ready ? modelData.name : i18n("Set up %1…", modelData.name)
                 // Checkable either way, so every entry's text lines up with
                 // "None"'s past the check mark's column.
                 checkable: true

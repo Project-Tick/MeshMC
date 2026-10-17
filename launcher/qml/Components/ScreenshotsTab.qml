@@ -49,7 +49,7 @@ Item {
         if (!m)
             return bare
         var taken = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5]), Number(m[6]))
-        return qsTr("%1, %2").arg(Format.calendarDate(taken)).arg(taken.toLocaleTimeString(Qt.locale(), Locale.ShortFormat))
+        return i18n("%1, %2", Format.calendarDate(taken), taken.toLocaleTimeString(Qt.locale(), Locale.ShortFormat))
     }
 
     // The selected screenshots, by path: {path: true}. Paths rather than rows
@@ -142,7 +142,7 @@ Item {
         }
         root.clearSelection()
         if (failed > 0)
-            toast.show(qsTr("Some screenshots could not be deleted."), "danger")
+            toast.show(i18n("Some screenshots could not be deleted."), "danger")
     }
 
     // A file name without its extension, for the rename box.
@@ -159,9 +159,9 @@ Item {
                 return
             root.uploading = false
             clipboard.copyText(url)
-            toast.show(count > 1 ? qsTr("Album link copied to your clipboard.")
-                                 : qsTr("Link copied to your clipboard."),
-                       "success", qsTr("Open"), () => Qt.openUrlExternally(url))
+            toast.show(count > 1 ? i18n("Album link copied to your clipboard.")
+                                 : i18n("Link copied to your clipboard."),
+                       "success", i18n("Open"), () => Qt.openUrlExternally(url))
         }
         function onFailed(message) {
             if (!root.uploading)
@@ -186,7 +186,7 @@ Item {
 
             leading: Text {
                 visible: root.selectedCount > 0
-                text: qsTr("%1 selected").arg(root.selectedCount)
+                text: i18n("%1 selected", root.selectedCount)
                 color: Theme.palette.textSecondary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.label.pixelSize
@@ -194,37 +194,37 @@ Item {
 
             Button {
                 visible: root.selectedCount > 0
-                text: qsTr("Clear selection")
+                text: i18n("Clear selection")
                 flat: true
                 onClicked: root.clearSelection()
             }
             Button {
                 visible: root.selectedCount === 0 && !!root.model && root.model.count > 1
-                text: qsTr("Select all")
+                text: i18n("Select all")
                 flat: true
                 onClicked: root.selectAll()
             }
             Button {
                 visible: root.selectedCount > 0 && root.canUpload
                 enabled: !!root.uploader && !root.uploader.busy
-                text: root.uploading ? qsTr("Uploading…") : qsTr("Upload")
+                text: root.uploading ? i18n("Uploading…") : i18n("Upload")
                 icon.source: Icons.url("arrow-up")
                 onClicked: root.upload(Object.keys(root.selected))
             }
             Button {
                 visible: root.selectedCount > 0
-                text: qsTr("Delete")
+                text: i18n("Delete")
                 icon.source: Icons.url("trash")
                 onClicked: {
                     deleteConfirm.paths = Object.keys(root.selected)
                     deleteConfirm.text = deleteConfirm.paths.length === 1
-                        ? qsTr("Move this screenshot to the trash?")
-                        : qsTr("Move %1 screenshots to the trash?").arg(deleteConfirm.paths.length)
+                        ? i18n("Move this screenshot to the trash?")
+                        : i18n("Move %1 screenshots to the trash?", deleteConfirm.paths.length)
                     deleteConfirm.open()
                 }
             }
             Button {
-                text: qsTr("Open folder")
+                text: i18n("Open folder")
                 icon.source: Icons.url("folder")
                 onClicked: root.openFolderRequested(root.directory)
             }
@@ -312,12 +312,12 @@ Item {
                                 size: Theme.control.heightSm
                                 flat: false
                                 iconName: "copy"
-                                tip: qsTr("Copy image")
+                                tip: i18n("Copy image")
                                 onClicked: {
                                     if (root.model.copyImage(cell.index))
-                                        toast.show(qsTr("Image copied."), "success")
+                                        toast.show(i18n("Image copied."), "success")
                                     else
-                                        toast.show(qsTr("The image could not be copied."), "danger")
+                                        toast.show(i18n("The image could not be copied."), "danger")
                                 }
                             }
                             IconButton {
@@ -325,7 +325,7 @@ Item {
                                 size: Theme.control.heightSm
                                 flat: false
                                 iconName: "more"
-                                tip: qsTr("More")
+                                tip: i18n("More")
                                 onClicked: tileMenu.popup(moreButton, moreButton.width - tileMenu.width, moreButton.height)
                             }
                         }
@@ -366,7 +366,7 @@ Item {
                                 // user's value; put it back.
                                 checked = Qt.binding(() => cell.picked)
                             }
-                            Accessible.name: qsTr("Select %1").arg(cell.name)
+                            Accessible.name: i18n("Select %1", cell.name)
                         }
                     }
 
@@ -380,22 +380,22 @@ Item {
                 Menu {
                     id: tileMenu
                     MenuItem {
-                        text: qsTr("Open")
+                        text: i18n("Open")
                         icon.source: Icons.url("external-link")
                         onTriggered: Qt.openUrlExternally(cell.url)
                     }
                     MenuItem {
-                        text: qsTr("Copy image")
+                        text: i18n("Copy image")
                         icon.source: Icons.url("copy")
                         onTriggered: {
                             if (root.model.copyImage(cell.index))
-                                toast.show(qsTr("Image copied."), "success")
+                                toast.show(i18n("Image copied."), "success")
                             else
-                                toast.show(qsTr("The image could not be copied."), "danger")
+                                toast.show(i18n("The image could not be copied."), "danger")
                         }
                     }
                     MenuItem {
-                        text: qsTr("Rename…")
+                        text: i18n("Rename…")
                         icon.source: Icons.url("edit")
                         onTriggered: {
                             renamePrompt.path = cell.path
@@ -408,20 +408,20 @@ Item {
                         visible: root.canUpload
                         height: visible ? implicitHeight : 0
                         enabled: !!root.uploader && !root.uploader.busy
-                        text: root.selectedCount > 1 && cell.picked ? qsTr("Upload selected to Imgur")
-                                                                    : qsTr("Upload to Imgur")
+                        text: root.selectedCount > 1 && cell.picked ? i18n("Upload selected to Imgur")
+                                                                    : i18n("Upload to Imgur")
                         icon.source: Icons.url("arrow-up")
                         onTriggered: root.upload(root.targets(cell.path))
                     }
                     MenuSeparator {}
                     MenuItem {
-                        text: root.selectedCount > 1 && cell.picked ? qsTr("Delete selected…") : qsTr("Delete")
+                        text: root.selectedCount > 1 && cell.picked ? i18n("Delete selected…") : i18n("Delete")
                         icon.source: Icons.url("trash")
                         onTriggered: {
                             var paths = root.targets(cell.path)
                             if (paths.length > 1) {
                                 deleteConfirm.paths = paths
-                                deleteConfirm.text = qsTr("Move %1 screenshots to the trash?").arg(paths.length)
+                                deleteConfirm.text = i18n("Move %1 screenshots to the trash?", paths.length)
                                 deleteConfirm.open()
                             } else {
                                 root.removeAll(paths)
@@ -457,16 +457,16 @@ Item {
     ConfirmDialog {
         id: deleteConfirm
         property var paths: []
-        title: qsTr("Delete screenshots")
-        confirmText: qsTr("Move to trash")
+        title: i18n("Delete screenshots")
+        confirmText: i18n("Move to trash")
         onConfirmed: root.removeAll(paths)
     }
 
     PromptDialog {
         id: renamePrompt
         property string path
-        title: qsTr("Rename screenshot")
-        confirmText: qsTr("Rename")
+        title: i18n("Rename screenshot")
+        confirmText: i18n("Rename")
         onSubmitted: (text) => {
             var row = root.rowOf(path)
             if (row >= 0 && root.model.rename(row, text)) {
@@ -474,7 +474,7 @@ Item {
                 root.clearSelection()
                 close()
             } else {
-                error = qsTr("That name cannot be used, or another screenshot already has it.")
+                error = i18n("That name cannot be used, or another screenshot already has it.")
             }
         }
     }
@@ -486,8 +486,8 @@ Item {
     EmptyState {
         anchors.centerIn: parent
         visible: !root.model || root.model.count === 0
-        title: qsTr("No screenshots yet")
-        body: qsTr("Press F2 in game; they will show up here.")
+        title: i18n("No screenshots yet")
+        body: i18n("Press F2 in game; they will show up here.")
         MeshIcon { iconName: "image"; size: 40; color: Theme.palette.textTertiary }
     }
 }

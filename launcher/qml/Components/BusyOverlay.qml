@@ -60,7 +60,7 @@ Rectangle {
             Text {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                text: root.text.length > 0 ? root.text : qsTr("Working…")
+                text: root.text.length > 0 ? root.text : i18n("Working…")
                 wrapMode: Text.Wrap
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family

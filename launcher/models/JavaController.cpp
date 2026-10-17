@@ -32,6 +32,7 @@
 #include "java/JavaUtils.h"
 #include "java/JavaVersion.h"
 #include "java/download/JavaRuntime.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -149,7 +150,7 @@ QString JavaController::argsWarning(const QString& args) const
 	if (!JavaArgs::setsMemoryFlags(args)) {
 		return QString();
 	}
-	return tr("Memory flags such as -Xmx and -Xms belong in the Memory "
+	return i18n("Memory flags such as -Xmx and -Xms belong in the Memory "
 			  "settings above. Remove them from these arguments.");
 }
 
@@ -212,7 +213,7 @@ void JavaController::test(const QString& token, const QString& path,
 		map[QStringLiteral("path")] = path;
 		map[QStringLiteral("ok")] = false;
 		map[QStringLiteral("error")] =
-			tr("Choose a Java executable first.");
+			i18n("Choose a Java executable first.");
 		finishTest(map);
 		return;
 	}
@@ -223,7 +224,7 @@ void JavaController::test(const QString& token, const QString& path,
 				if (result.validity != JavaCheckResult::Validity::Valid) {
 					QVariantMap map = describeCheck(result);
 					map[QStringLiteral("error")] =
-						tr("This file is not a working Java.");
+						i18n("This file is not a working Java.");
 					finishTest(map);
 					return;
 				}
@@ -247,9 +248,8 @@ void JavaController::startSecondStage(const JavaCheckResult& first)
 				QVariantMap map = describeCheck(result);
 				if (result.validity != JavaCheckResult::Validity::Valid) {
 					map[QStringLiteral("error")] =
-						tr("This Java does not start with your JVM "
-						   "arguments.\n%1")
-							.arg(result.errorLog.trimmed());
+						i18n("This Java does not start with your JVM "
+						   "arguments.\n%1", result.errorLog.trimmed());
 				}
 				finishTest(map);
 			});
@@ -329,22 +329,22 @@ QString JavaController::removeManagedUnder(const QString& rootDir,
 	const QFileInfo target(root);
 	if (root.isEmpty() || !target.exists() || !target.isDir() ||
 		target.isSymLink()) {
-		return tr("That Java is already gone.");
+		return i18n("That Java is already gone.");
 	}
 	// Exactly <rootDir>/<vendor>/<name>: nothing above or below, and
 	// nothing reached through a link.
 	QDir vendorDir(target.canonicalFilePath());
 	if (!vendorDir.cdUp()) {
-		return tr("MeshMC can only remove Java it downloaded itself.");
+		return i18n("MeshMC can only remove Java it downloaded itself.");
 	}
 	QDir baseDir(vendorDir.absolutePath());
 	if (!baseDir.cdUp() ||
 		baseDir.absolutePath() !=
 			QFileInfo(rootDir).canonicalFilePath()) {
-		return tr("MeshMC can only remove Java it downloaded itself.");
+		return i18n("MeshMC can only remove Java it downloaded itself.");
 	}
 	if (!QDir(target.canonicalFilePath()).removeRecursively()) {
-		return tr("Some files could not be removed. Close anything using "
+		return i18n("Some files could not be removed. Close anything using "
 				  "this Java and try again.");
 	}
 	return QString();

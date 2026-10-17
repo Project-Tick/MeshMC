@@ -48,9 +48,9 @@ Dialog {
     readonly property int memoryMaxMiB: 65536
 
     readonly property var formats: [
-        { id: "zip", label: qsTr("Zip") },
-        { id: "modrinth", label: qsTr("Modrinth") },
-        { id: "curseforge", label: qsTr("CurseForge") }
+        { id: "zip", label: i18n("Zip") },
+        { id: "modrinth", label: i18n("Modrinth") },
+        { id: "curseforge", label: i18n("CurseForge") }
     ]
 
     function start(fileUrl) {
@@ -72,7 +72,7 @@ Dialog {
     // Typing in a form is not something a stray click outside should
     // throw away, and an export in progress only stops through its button.
     closePolicy: root.exporting ? Popup.NoAutoClose : Popup.CloseOnEscape
-    title: root.controller ? qsTr("Export “%1”").arg(root.controller.instanceName) : qsTr("Export")
+    title: root.controller ? i18n("Export “%1”", root.controller.instanceName) : i18n("Export")
 
     header: DialogHeader {
         title: root.title
@@ -94,7 +94,7 @@ Dialog {
             if (ok) {
                 var path = root.controller.lastOutput
                 root.close()
-                root.exported(qsTr("Saved “%1”.").arg(path.substring(path.lastIndexOf("/") + 1)))
+                root.exported(i18n("Saved “%1”.", path.substring(path.lastIndexOf("/") + 1)))
             } else if (!root.stopping) {
                 root.failure = watcher.error
             }
@@ -113,7 +113,7 @@ Dialog {
             NoticeBar {
                 Layout.fillWidth: true
                 visible: !!root.controller && root.controller.running
-                text: qsTr("The game is running. Files it is writing now may be left out or cut short, so quit it first for a clean export.")
+                text: i18n("The game is running. Files it is writing now may be left out or cut short, so quit it first for a clean export.")
             }
 
             TabStrip {
@@ -127,10 +127,10 @@ Dialog {
             Text {
                 Layout.fillWidth: true
                 text: root.format === "modrinth"
-                      ? qsTr("A Modrinth pack (.mrpack). Mods from Modrinth are linked for download, and everything else is packed in.")
+                      ? i18n("A Modrinth pack (.mrpack). Mods from Modrinth are linked for download, and everything else is packed in.")
                       : root.format === "curseforge"
-                        ? qsTr("A CurseForge pack (.zip). Mods from CurseForge are linked for download, and everything else is packed in.")
-                        : qsTr("The whole instance in one .zip file, ready to import into MeshMC or another launcher.")
+                        ? i18n("A CurseForge pack (.zip). Mods from CurseForge are linked for download, and everything else is packed in.")
+                        : i18n("The whole instance in one .zip file, ready to import into MeshMC or another launcher.")
                 wrapMode: Text.Wrap
                 color: Theme.palette.textSecondary
                 font.family: Theme.font.family
@@ -148,7 +148,7 @@ Dialog {
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: Theme.space.xs
-                    FieldLabel { text: qsTr("Name") }
+                    FieldLabel { text: i18n("Name") }
                     TextField {
                         Layout.fillWidth: true
                         text: root.controller ? root.controller.packName : ""
@@ -160,7 +160,7 @@ Dialog {
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: Theme.space.xs
-                    FieldLabel { text: qsTr("Version") }
+                    FieldLabel { text: i18n("Version") }
                     TextField {
                         Layout.fillWidth: true
                         text: root.controller ? root.controller.packVersion : ""
@@ -174,7 +174,7 @@ Dialog {
                     Layout.columnSpan: 2
                     visible: root.format === "curseforge"
                     spacing: Theme.space.xs
-                    FieldLabel { text: qsTr("Author") }
+                    FieldLabel { text: i18n("Author") }
                     TextField {
                         Layout.fillWidth: true
                         text: root.controller ? root.controller.packAuthor : ""
@@ -187,11 +187,11 @@ Dialog {
                     Layout.columnSpan: 2
                     visible: root.format === "modrinth"
                     spacing: Theme.space.xs
-                    FieldLabel { text: qsTr("Summary") }
+                    FieldLabel { text: i18n("Summary") }
                     TextField {
                         Layout.fillWidth: true
                         text: root.controller ? root.controller.packSummary : ""
-                        placeholderText: qsTr("One line about the pack")
+                        placeholderText: i18n("One line about the pack")
                         selectByMouse: true
                         onTextEdited: root.controller.packSummary = text
                     }
@@ -206,7 +206,7 @@ Dialog {
                 CheckBox {
                     // Box edge on the content edge, under the fields.
                     leftPadding: 0
-                    text: qsTr("Mark disabled mods as optional")
+                    text: i18n("Mark disabled mods as optional")
                     checked: !!root.controller && root.controller.includeOptional
                     onToggled: root.controller.includeOptional = checked
                 }
@@ -216,7 +216,7 @@ Dialog {
                     CheckBox {
                         id: memoryBox
                         leftPadding: 0
-                        text: qsTr("Recommend memory")
+                        text: i18n("Recommend memory")
                         checked: !!root.controller && root.controller.recommendMemory
                         onToggled: root.controller.recommendMemory = checked
                     }
@@ -228,7 +228,7 @@ Dialog {
                         to: root.memoryMaxMiB
                         stepSize: root.memoryStepMiB
                         value: root.controller ? root.controller.recommendedMemory : root.memoryMinMiB
-                        textFromValue: (value, locale) => qsTr("%1 MiB").arg(Number(value).toLocaleString(locale, "f", 0))
+                        textFromValue: (value, locale) => i18n("%1 MiB", Number(value).toLocaleString(locale, "f", 0))
                         valueFromText: (text, locale) => Number.fromLocaleString(locale, text.replace(/[^0-9.,]/g, ""))
                         onValueModified: root.controller.recommendedMemory = value
                     }
@@ -239,14 +239,14 @@ Dialog {
                 Layout.fillWidth: true
                 Text {
                     Layout.fillWidth: true
-                    text: qsTr("Files")
+                    text: i18n("Files")
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.bodyStrong.pixelSize
                     font.weight: Theme.type.bodyStrong.weight
                 }
                 Text {
-                    text: qsTr("Unchecked files are left out")
+                    text: i18n("Unchecked files are left out")
                     color: Theme.palette.textTertiary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.caption.pixelSize
@@ -385,7 +385,7 @@ Dialog {
 
             Text {
                 Layout.fillWidth: true
-                text: root.watcher && root.watcher.status.length > 0 ? root.watcher.status : qsTr("Exporting…")
+                text: root.watcher && root.watcher.status.length > 0 ? root.watcher.status : i18n("Exporting…")
                 elide: Text.ElideMiddle
                 color: Theme.palette.textSecondary
                 font.family: Theme.font.family
@@ -401,7 +401,7 @@ Dialog {
         Text {
             Layout.fillWidth: true
             visible: root.failure.length > 0 || (root.format === "modrinth" && !!root.controller && !root.controller.ready)
-            text: root.failure.length > 0 ? root.failure : qsTr("A Modrinth pack needs a version.")
+            text: root.failure.length > 0 ? root.failure : i18n("A Modrinth pack needs a version.")
             wrapMode: Text.Wrap
             color: Theme.palette.danger
             font.family: Theme.font.family
@@ -419,7 +419,7 @@ Dialog {
             visible: !root.exporting
             highlighted: true
             enabled: !!root.controller && root.controller.ready
-            text: qsTr("Export…")
+            text: i18n("Export…")
             onClicked: {
                 saveDialog.selectedFile = root.controller.suggestedFileUrl()
                 saveDialog.open()
@@ -428,12 +428,12 @@ Dialog {
         Button {
             visible: !root.exporting
             flat: true
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             onClicked: root.close()
         }
         Button {
             visible: root.exporting
-            text: qsTr("Stop")
+            text: i18n("Stop")
             enabled: !root.stopping
             onClicked: {
                 root.stopping = true
@@ -444,11 +444,11 @@ Dialog {
 
     FileDialog {
         id: saveDialog
-        title: qsTr("Export to")
+        title: i18n("Export to")
         fileMode: FileDialog.SaveFile
         defaultSuffix: root.format === "modrinth" ? "mrpack" : "zip"
-        nameFilters: root.format === "modrinth" ? [qsTr("Modrinth packs (*.mrpack)")]
-                                                : [qsTr("Zip archives (*.zip)")]
+        nameFilters: root.format === "modrinth" ? [i18n("Modrinth packs (*.mrpack)")]
+                                                : [i18n("Zip archives (*.zip)")]
         onAccepted: root.start(selectedFile)
     }
 }

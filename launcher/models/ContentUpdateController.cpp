@@ -37,6 +37,7 @@
 #include "models/ContentInstallReview.h"
 #include "models/InstanceContentController.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 // ---------------------------------------------------------------------------
 // ContentUpdateList
@@ -345,22 +346,22 @@ QObject* ContentUpdateController::checkForUpdates(const QString& kind,
 												  const QStringList& keys)
 {
 	if (m_check) {
-		setLastError(tr("Already checking for updates."));
+		setLastError(i18n("Already checking for updates."));
 		return nullptr;
 	}
 	ModPlatform::ContentType type;
 	auto folder = m_lists ? m_lists->folderFor(kind) : nullptr;
 	if (!contentTypeFor(kind, type) || !folder) {
-		setLastError(tr("These cannot be updated from Modrinth or CurseForge."));
+		setLastError(i18n("These cannot be updated from Modrinth or CurseForge."));
 		return nullptr;
 	}
 	if (!m_lists->changesAllowed(kind)) {
-		setLastError(tr("The game is running. Check again once it has closed."));
+		setLastError(i18n("The game is running. Check again once it has closed."));
 		return nullptr;
 	}
 	const QString mc = mcVersion();
 	if (mc.isEmpty()) {
-		setLastError(tr("This instance has no Minecraft version set."));
+		setLastError(i18n("This instance has no Minecraft version set."));
 		return nullptr;
 	}
 
@@ -379,7 +380,7 @@ QObject* ContentUpdateController::checkForUpdates(const QString& kind,
 		}
 	}
 	if (!anyTracked) {
-		setLastError(tr("None of these were installed from Modrinth or "
+		setLastError(i18n("None of these were installed from Modrinth or "
 						"CurseForge, so there is nothing to check. Files "
 						"added from Add content can be checked."));
 		return nullptr;
@@ -393,7 +394,7 @@ QObject* ContentUpdateController::checkForUpdates(const QString& kind,
 	auto* task = new ModUpdateCheckTask(index, mc, loader(), type);
 	m_check = task;
 	auto* watcher = new TaskWatcher(Task::Ptr(task), this);
-	watcher->setTitle(tr("Checking for updates"));
+	watcher->setTitle(i18n("Checking for updates"));
 	QPointer<ModUpdateCheckTask> guard(task);
 	connect(watcher, &TaskWatcher::finished, this, [this, guard, keys](bool) {
 		/* Kept after an abort too: what was checked is checked. */
@@ -423,11 +424,11 @@ QObject* ContentUpdateController::applyUpdates()
 {
 	const auto items = m_updates->checkedItems();
 	if (items.isEmpty() || !m_updatesFolder) {
-		setLastError(tr("Nothing is ticked to update."));
+		setLastError(i18n("Nothing is ticked to update."));
 		return nullptr;
 	}
 	if (m_lists && !m_lists->changesAllowed(m_updatesKind)) {
-		setLastError(tr("The game is running. Update once it has closed."));
+		setLastError(i18n("The game is running. Update once it has closed."));
 		return nullptr;
 	}
 	setLastError(QString());
@@ -436,7 +437,8 @@ QObject* ContentUpdateController::applyUpdates()
 		new ContentDownloadTask(items, m_updatesFolder->dir().absolutePath());
 	task->setMetadataIndex(m_updatesFolder->metadataIndex());
 	QObject* watcher = watchDownload(
-		task, tr("Updating %n file(s)", "", int(items.size())), m_updatesFolder);
+		task, i18np("Updating %1 file", "Updating %1 files",
+			  int(items.size())), m_updatesFolder);
 	/* Applied: the same list must not be offered twice. */
 	m_updates->clear();
 	return watcher;
@@ -448,7 +450,7 @@ bool ContentUpdateController::loadVersions(const QString& kind,
 	ModPlatform::ContentType type;
 	auto folder = m_lists ? m_lists->folderFor(kind) : nullptr;
 	if (!contentTypeFor(kind, type) || !folder) {
-		setLastError(tr("These cannot be changed to another version here."));
+		setLastError(i18n("These cannot be changed to another version here."));
 		return false;
 	}
 	auto index = folder->metadataIndex();
@@ -460,22 +462,20 @@ bool ContentUpdateController::loadVersions(const QString& kind,
 		}
 	}
 	if (!entry.hasPlatformOrigin()) {
-		setLastError(tr("There is no record of where “%1” came from, so its "
+		setLastError(i18n("There is no record of where “%1” came from, so its "
 						"other versions cannot be listed. Install it from "
 						"Add content once and its version can be changed "
-						"from then on.")
-						 .arg(name.isEmpty() ? key : name));
+						"from then on.", name.isEmpty() ? key : name));
 		return false;
 	}
 	const bool modrinth = entry.platform == ModrinthApi::get().id();
 	const bool curseforge = entry.platform == FlameApi::get().id();
 	if (!modrinth && !curseforge) {
-		setLastError(tr("“%1” came from a source that cannot be browsed here.")
-						 .arg(name));
+		setLastError(i18n("“%1” came from a source that cannot be browsed here.", name));
 		return false;
 	}
 	if (curseforge && BuildConfig.CURSEFORGE_API_KEY.isEmpty()) {
-		setLastError(tr("This build has no CurseForge API key configured, so "
+		setLastError(i18n("This build has no CurseForge API key configured, so "
 						"CurseForge cannot be asked for versions."));
 		return false;
 	}
@@ -529,7 +529,7 @@ void ContentUpdateController::onVersionsSearchState()
 	if (model->rowCount(QModelIndex()) == 0) {
 		m_versionsLoading = false;
 		m_versionsError = model->lastError().isEmpty()
-							  ? tr("The project could not be found.")
+							  ? i18n("The project could not be found.")
 							  : model->lastError();
 		emit versionsChanged();
 		return;
@@ -557,7 +557,7 @@ void ContentUpdateController::onVersionsEntryUpdated(int row)
 		ContentBrowser::versionEntries(project->versions, mcVersion(), loaderName);
 	m_versionsLoading = false;
 	if (m_versions.isEmpty()) {
-		m_versionsError = tr("No version of it runs on this instance.");
+		m_versionsError = i18n("No version of it runs on this instance.");
 	}
 	emit versionsChanged();
 }
@@ -579,7 +579,7 @@ QObject* ContentUpdateController::reviewVersion(const QString& versionId)
 		return nullptr;
 	}
 	if (m_lists && !m_lists->changesAllowed(m_versionsKind)) {
-		setLastError(tr("The game is running. Change it once it has closed."));
+		setLastError(i18n("The game is running. Change it once it has closed."));
 		return nullptr;
 	}
 
@@ -609,17 +609,17 @@ QObject* ContentUpdateController::verifyDependencies()
 		return nullptr;
 	}
 	if (!m_lists->changesAllowed(QStringLiteral("mods"))) {
-		setLastError(tr("The game is running. Check again once it has closed."));
+		setLastError(i18n("The game is running. Check again once it has closed."));
 		return nullptr;
 	}
 	const QString mc = mcVersion();
 	if (mc.isEmpty()) {
-		setLastError(tr("This instance has no Minecraft version set."));
+		setLastError(i18n("This instance has no Minecraft version set."));
 		return nullptr;
 	}
 	const auto installed = resolvableEntries(index->all(), mc);
 	if (installed.isEmpty()) {
-		setLastError(tr("None of the mods were installed from Modrinth or "
+		setLastError(i18n("None of the mods were installed from Modrinth or "
 						"CurseForge, so there is nothing to look up. Mods "
 						"added from Add content can be checked."));
 		return nullptr;
@@ -627,7 +627,7 @@ QObject* ContentUpdateController::verifyDependencies()
 	setLastError(QString());
 
 	auto* review = ContentInstallReview::missingDependencies(
-		installed, tr("Missing dependencies"), mc, loader(), folder, this);
+		installed, i18n("Missing dependencies"), mc, loader(), folder, this);
 	review->start();
 	return review;
 }

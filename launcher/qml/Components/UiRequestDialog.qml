@@ -180,7 +180,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: !modelData.found
                         flat: true
-                        text: qsTr("Download")
+                        text: i18n("Download")
                         icon.source: Icons.url("external-link")
                         onClicked: root.request.openDownload(index)
                     }
@@ -188,7 +188,7 @@ Item {
             }
             Button {
                 flat: true
-                text: qsTr("Check again")
+                text: i18n("Check again")
                 icon.source: Icons.url("refresh")
                 onClicked: root.request.rescanDownloads()
             }
@@ -224,7 +224,7 @@ Item {
             }
             CheckBox {
                 id: trustBox
-                text: qsTr("I trust these files")
+                text: i18n("I trust these files")
                 enabled: !trustDelay.running
                 Timer {
                     id: trustDelay
@@ -252,7 +252,7 @@ Item {
             TextField {
                 id: profileNameField
                 width: parent.width
-                placeholderText: qsTr("Username")
+                placeholderText: i18n("Username")
                 selectByMouse: true
                 enabled: !(root.request && root.request.profileSubmitting)
                 onTextChanged: profileCheckDelay.restart()
@@ -286,7 +286,7 @@ Item {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.request ? (root.request.profileNameStatus === "available"
-                                          ? qsTr("Available") : root.request.profileNameError) : ""
+                                          ? i18n("Available") : root.request.profileNameError) : ""
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.caption.pixelSize
@@ -371,7 +371,7 @@ Item {
                             font.weight: Font.Medium
                         }
                         Tag {
-                            text: modelData.kind === "Microsoft" ? qsTr("Microsoft") : qsTr("Offline")
+                            text: modelData.kind === "Microsoft" ? i18n("Microsoft") : i18n("Offline")
                         }
                         MeshIcon {
                             Layout.rightMargin: Theme.space.sm
@@ -388,7 +388,7 @@ Item {
                 id: makeDefaultBox
                 // Its box on the account rows' left edge.
                 leftPadding: 0
-                text: qsTr("Make this the default account")
+                text: i18n("Make this the default account")
             }
         }
 
@@ -477,12 +477,12 @@ Item {
                 Button {
                     id: recommendedButton
                     flat: true
-                    text: qsTr("Recommended")
+                    text: i18n("Recommended")
                     onClicked: modsList.model.selectRecommended()
                 }
                 Button {
                     flat: true
-                    text: qsTr("None")
+                    text: i18n("None")
                     onClicked: modsList.model.clearAll()
                 }
             }
@@ -546,7 +546,7 @@ Item {
         Button {
             visible: root.kind === "pickAccount"
             highlighted: true
-            text: qsTr("Play")
+            text: i18n("Play")
             onClicked: accountPicker.play()
         }
 
@@ -554,19 +554,19 @@ Item {
         Button {
             visible: root.kind === "update"
             highlighted: true
-            text: qsTr("Install update")
+            text: i18n("Install update")
             onClicked: root.answer(() => root.request.answerUpdate("install"))
         }
         Button {
             visible: root.kind === "update"
             flat: true
-            text: qsTr("Skip this version")
+            text: i18n("Skip this version")
             onClicked: root.answer(() => root.request.answerUpdate("skip"))
         }
         Button {
             visible: root.kind === "update"
             flat: true
-            text: qsTr("Later")
+            text: i18n("Later")
             onClicked: root.answer(() => root.request.answerUpdate("later"))
         }
 
@@ -579,14 +579,14 @@ Item {
             visible: root.kind === "profileSetup"
             highlighted: true
             enabled: root.request && root.request.profileNameStatus === "available" && !root.request.profileSubmitting
-            text: root.request && root.request.profileSubmitting ? qsTr("Creating…") : qsTr("Create")
+            text: root.request && root.request.profileSubmitting ? i18n("Creating…") : i18n("Create")
             onClicked: root.request.submitProfileName(profileNameField.text.trim())
         }
         Button {
             visible: root.kind === "profileSetup"
             flat: true
             enabled: !(root.request && root.request.profileSubmitting)
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             onClicked: root.answer(() => root.request.reject())
         }
 
@@ -598,14 +598,14 @@ Item {
                    : root.kind === "text" ? textAnswer.text.trim().length > 0 : true
             highlighted: true
             text: root.request && root.request.acceptLabel.length > 0 ? root.request.acceptLabel
-                : root.kind === "message" ? qsTr("OK") : qsTr("Continue")
+                : root.kind === "message" ? i18n("OK") : i18n("Continue")
             onClicked: root.answer(() => root.kind === "text" ? root.request.accept(textAnswer.text.trim())
                                                               : root.request.accept())
         }
         Button {
             visible: root.kind !== "message" && root.kind !== "update" && root.kind !== "profileSetup" && root.kind !== "filePicker"
             flat: true
-            text: root.request && root.request.rejectLabel.length > 0 ? root.request.rejectLabel : qsTr("Cancel")
+            text: root.request && root.request.rejectLabel.length > 0 ? root.request.rejectLabel : i18n("Cancel")
             onClicked: root.answer(() => root.request.reject())
         }
     }
@@ -622,7 +622,7 @@ Item {
         fileMode: request && request.filePickerMode === "save" ? NativeDialogs.FileDialog.SaveFile
                                                                 : NativeDialogs.FileDialog.OpenFile
         nameFilters: request && request.filePickerFilter.length > 0
-                     ? request.filePickerFilter.split(";;") : [qsTr("All files (*)")]
+                     ? request.filePickerFilter.split(";;") : [i18n("All files (*)")]
 
         onAccepted: if (request) request.accept(selectedFile.toString())
         onRejected: if (request) request.reject()

@@ -34,10 +34,10 @@ TextField {
     // "512 MB" below a gigabyte, "6 GB" or "6.5 GB" above.
     function describe(mib) {
         if (mib < mibPerGib)
-            return qsTr("%1 MB").arg(mib)
+            return i18n("%1 MB", String(mib))
         var gib = mib / mibPerGib
         var decimals = mib % mibPerGib === 0 ? 0 : (mib % (mibPerGib / 2) === 0 ? 1 : 2)
-        return qsTr("%1 GB").arg(Number(gib).toLocaleString(Qt.locale(), "f", decimals))
+        return i18n("%1 GB", Number(gib).toLocaleString(Qt.locale(), "f", decimals))
     }
 
     // The amount the text stands for, snapped and clamped; -1 for no amount.

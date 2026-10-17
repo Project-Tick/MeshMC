@@ -33,6 +33,8 @@
 #include <QMimeData>
 #include <QUrl>
 
+#include <KLocalizedQmlContext>
+
 #include <functional>
 #include <memory>
 
@@ -155,6 +157,7 @@ class QmlModuleTest : public QObject
 	void rootComponentInstantiates()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		engine.addImportPath(QStringLiteral("qrc:/qt/qml"));
 
 		QQmlComponent component(
@@ -195,6 +198,7 @@ class QmlModuleTest : public QObject
 	void navigateOpensPagesAndSettingsSections()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		QObject shell;
 		auto root = createRoot(engine, &shell);
 		QVERIFY(root);
@@ -223,6 +227,7 @@ class QmlModuleTest : public QObject
 	void navigateRefusesAnUnknownInstance()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		QObject shell;
 		auto root = createRoot(engine, &shell);
 		QVERIFY(root);
@@ -238,6 +243,7 @@ class QmlModuleTest : public QObject
 	void navigateRequestFromTheShellIsFollowed()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		FakeShell shell;
 		auto root = createRoot(engine, &shell);
 		QVERIFY(root);
@@ -255,6 +261,7 @@ class QmlModuleTest : public QObject
 	void launchModeNeedsAnAccountExceptForTheDemo()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		FakeShell shell;
 		shell.m_accountCount = 0;
 		auto root = createRoot(engine, &shell);
@@ -280,6 +287,7 @@ class QmlModuleTest : public QObject
 	void nativeMenuBarStaysOffOutsideCocoa()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		QObject shell;
 		auto root = createRoot(engine, &shell);
 		QVERIFY(root);
@@ -292,6 +300,7 @@ class QmlModuleTest : public QObject
 	void pluginListSectionDrawsARowPerPlugin()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		engine.addImportPath(QStringLiteral("qrc:/qt/qml"));
 		QQmlComponent component(&engine);
 		// Plain literals rather than a raw string: moc stops parsing the
@@ -341,6 +350,7 @@ class QmlModuleTest : public QObject
 	void pluginSwitchesKeepFollowingTheirModel()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		engine.addImportPath(QStringLiteral("qrc:/qt/qml"));
 		QQmlComponent component(&engine);
 		component.setData(
@@ -387,6 +397,7 @@ class QmlModuleTest : public QObject
 	void skinArmsRadiosFollowTheSkin()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		engine.addImportPath(QStringLiteral("qrc:/qt/qml"));
 		QQmlComponent component(&engine);
 		component.setData(
@@ -502,6 +513,7 @@ class QmlModuleTest : public QObject
 	void importRequestOpensNewInstanceDialogInImportMode()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		FakeShell shell;
 		auto root = createRoot(engine, &shell);
 		QVERIFY(root);
@@ -526,6 +538,7 @@ class QmlModuleTest : public QObject
 	void windowDropOpensImportUnlessAPageAreaTakesIt()
 	{
 		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
 		FakeShell shell;
 		auto root = createRoot(engine, &shell);
 		QVERIFY(root);

@@ -67,14 +67,14 @@ Item {
         property var watcher: null
         onStarted: (name, watcher) => {
             duplicateDialog.watcher = watcher
-            toast.show(qsTr("Copying \u201c%1\u201d\u2026").arg(name))
+            toast.show(i18n("Copying “%1”…", name))
         }
-        onFailed: toast.show(qsTr("The instance could not be copied."), "danger")
+        onFailed: toast.show(i18n("The instance could not be copied."), "danger")
         Connections {
             target: duplicateDialog.watcher
             function onFinished(ok) {
-                toast.show(ok ? qsTr("Copy ready in your library.")
-                              : qsTr("Copy failed: %1").arg(duplicateDialog.watcher.error),
+                toast.show(ok ? i18n("Copy ready in your library.")
+                              : i18n("Copy failed: %1", duplicateDialog.watcher.error),
                            ok ? "success" : "danger")
                 duplicateDialog.watcher = null
             }
@@ -83,7 +83,7 @@ Item {
 
     ExportInstanceDialog {
         id: exportDialog
-        onExported: (message) => toast.show(message, "success", qsTr("Show in folder"), function () {
+        onExported: (message) => toast.show(message, "success", i18n("Show in folder"), function () {
             if (exportDialog.controller)
                 exportDialog.controller.showInFolder()
         })
@@ -91,7 +91,7 @@ Item {
 
     CreateShortcutDialog {
         id: shortcutDialog
-        onCreated: (message) => toast.show(message, "success", qsTr("Show in folder"), function () {
+        onCreated: (message) => toast.show(message, "success", i18n("Show in folder"), function () {
             if (shortcutDialog.controller)
                 shortcutDialog.controller.showInFolder()
         })

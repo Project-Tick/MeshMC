@@ -23,7 +23,7 @@ TabScroll {
     // PluginSurfaceModel for this instance's settings anchor, or null.
     property var pluginSurfaces: null
 
-    description: qsTr("Each group follows the launcher's settings until you switch it to custom for this instance.")
+    description: i18n("Each group follows the launcher's settings until you switch it to custom for this instance.")
 
     SettingsSource {
         id: store
@@ -33,7 +33,7 @@ TabScroll {
     NoticeBar {
         visible: root.running
         width: parent.width
-        text: qsTr("The game is running. Settings can be changed once it has closed.")
+        text: i18n("The game is running. Settings can be changed once it has closed.")
     }
 
     Column {
@@ -52,7 +52,7 @@ TabScroll {
         OverrideGroup {
             id: windowGroup
             width: parent.width
-            title: qsTr("Game window")
+            title: i18n("Game window")
             source: store
             gateKey: "OverrideWindow"
             keys: ["LaunchMaximized", "MinecraftWinWidth", "MinecraftWinHeight"]
@@ -61,32 +61,32 @@ TabScroll {
                 source: store
                 key: "LaunchMaximized"
                 enabled: windowGroup.overriding
-                label: qsTr("Start maximized")
+                label: i18n("Start maximized")
             }
             SettingNumber {
                 source: store
                 key: "MinecraftWinWidth"
                 enabled: windowGroup.overriding && !maximized.checked
-                label: qsTr("Window width")
+                label: i18n("Window width")
                 from: 1
                 to: 65536
-                suffix: qsTr("px")
+                suffix: i18n("px")
             }
             SettingNumber {
                 source: store
                 key: "MinecraftWinHeight"
                 enabled: windowGroup.overriding && !maximized.checked
-                label: qsTr("Window height")
+                label: i18n("Window height")
                 from: 1
                 to: 65536
-                suffix: qsTr("px")
+                suffix: i18n("px")
             }
         }
 
         OverrideGroup {
             id: consoleGroup
             width: parent.width
-            title: qsTr("Console")
+            title: i18n("Console")
             source: store
             gateKey: "OverrideConsole"
             keys: ["ShowConsole", "AutoCloseConsole", "ShowConsoleOnError"]
@@ -94,26 +94,26 @@ TabScroll {
                 source: store
                 key: "ShowConsole"
                 enabled: consoleGroup.overriding
-                label: qsTr("Show the console while playing")
+                label: i18n("Show the console while playing")
             }
             SettingSwitch {
                 source: store
                 key: "AutoCloseConsole"
                 enabled: consoleGroup.overriding
-                label: qsTr("Close the console when the game quits")
+                label: i18n("Close the console when the game quits")
             }
             SettingSwitch {
                 source: store
                 key: "ShowConsoleOnError"
                 enabled: consoleGroup.overriding
-                label: qsTr("Show the console when the game crashes")
+                label: i18n("Show the console when the game crashes")
             }
         }
 
         OverrideGroup {
             id: commands
             width: parent.width
-            title: qsTr("Custom commands")
+            title: i18n("Custom commands")
             source: store
             gateKey: "OverrideCommands"
             keys: ["PreLaunchCommand", "WrapperCommand", "PostExitCommand"]
@@ -121,21 +121,21 @@ TabScroll {
                 source: store
                 key: "PreLaunchCommand"
                 enabled: commands.overriding
-                label: qsTr("Before launch")
+                label: i18n("Before launch")
                 monospace: true
             }
             SettingText {
                 source: store
                 key: "WrapperCommand"
                 enabled: commands.overriding
-                label: qsTr("Wrapper")
+                label: i18n("Wrapper")
                 monospace: true
             }
             SettingText {
                 source: store
                 key: "PostExitCommand"
                 enabled: commands.overriding
-                label: qsTr("After exit")
+                label: i18n("After exit")
                 monospace: true
             }
         }
@@ -143,7 +143,7 @@ TabScroll {
         OverrideGroup {
             id: gameTime
             width: parent.width
-            title: qsTr("Play time")
+            title: i18n("Play time")
             source: store
             gateKey: "OverrideGameTime"
             keys: ["RecordGameTime", "ShowGameTime"]
@@ -151,54 +151,54 @@ TabScroll {
                 source: store
                 key: "RecordGameTime"
                 enabled: gameTime.overriding
-                label: qsTr("Record play time")
+                label: i18n("Record play time")
             }
             SettingSwitch {
                 source: store
                 key: "ShowGameTime"
                 enabled: gameTime.overriding
-                label: qsTr("Show play time")
+                label: i18n("Show play time")
             }
         }
 
         OverrideGroup {
             id: workarounds
             width: parent.width
-            title: qsTr("Native libraries")
+            title: i18n("Native libraries")
             source: store
             gateKey: "OverrideNativeWorkarounds"
-            gateLabel: qsTr("Use custom native library settings for this instance")
+            gateLabel: i18n("Use custom native library settings for this instance")
             keys: ["UseNativeGLFW", "UseNativeOpenAL"]
             SettingSwitch {
                 source: store
                 key: "UseNativeGLFW"
                 enabled: workarounds.overriding
-                label: qsTr("Use the system's GLFW")
-                description: qsTr("Only for systems where the bundled libraries don't work, such as some Linux setups.")
+                label: i18n("Use the system's GLFW")
+                description: i18n("Only for systems where the bundled libraries don't work, such as some Linux setups.")
             }
             SettingSwitch {
                 source: store
                 key: "UseNativeOpenAL"
                 enabled: workarounds.overriding
-                label: qsTr("Use the system's OpenAL")
+                label: i18n("Use the system's OpenAL")
             }
         }
 
         SettingsGroup {
             width: parent.width
-            title: qsTr("Data packs")
-            description: qsTr("A folder of data packs added to every world. Needs a loader mod such as Paxi or OpenLoader.")
+            title: i18n("Data packs")
+            description: i18n("A folder of data packs added to every world. Needs a loader mod such as Paxi or OpenLoader.")
             SettingSwitch {
                 id: globalPacks
                 source: store
                 key: "GlobalDataPacksEnabled"
-                label: qsTr("Use a shared data pack folder")
+                label: i18n("Use a shared data pack folder")
             }
             SettingText {
                 source: store
                 key: "GlobalDataPacksPath"
                 enabled: globalPacks.checked
-                label: qsTr("Folder, inside the game folder")
+                label: i18n("Folder, inside the game folder")
                 placeholder: "datapacks"
             }
         }
@@ -210,18 +210,18 @@ TabScroll {
 
         SettingsGroup {
             width: parent.width
-            title: qsTr("On launch")
+            title: i18n("On launch")
             SettingSwitch {
                 id: joinServer
                 source: store
                 key: "JoinServerOnLaunch"
-                label: qsTr("Join a server when the game starts")
+                label: i18n("Join a server when the game starts")
             }
             SettingText {
                 source: store
                 key: "JoinServerOnLaunchAddress"
                 enabled: joinServer.checked
-                label: qsTr("Server address")
+                label: i18n("Server address")
                 placeholder: "play.example.net"
             }
         }

@@ -24,10 +24,10 @@ Grid {
     signal picked(string scheme)
 
     readonly property var schemes: [
-        { id: "grass", label: qsTr("Grass"), note: qsTr("Graphite and grass green") },
-        { id: "amethyst", label: qsTr("Obsidian"), note: qsTr("Graphite and amethyst") },
-        { id: "ember", label: qsTr("Ember"), note: qsTr("Charcoal and lava") },
-        { id: "diamond", label: qsTr("Diamond"), note: qsTr("Navy and diamond blue") }
+        { id: "grass", label: i18n("Grass"), note: i18n("Graphite and grass green") },
+        { id: "amethyst", label: i18n("Obsidian"), note: i18n("Graphite and amethyst") },
+        { id: "ember", label: i18n("Ember"), note: i18n("Charcoal and lava") },
+        { id: "diamond", label: i18n("Diamond"), note: i18n("Navy and diamond blue") }
     ]
 
     // The narrowest tile whose longest note ("Graphite and grass green")
@@ -140,7 +140,7 @@ Grid {
                         color: card.colors.accent
                         Text {
                             anchors.centerIn: parent
-                            text: qsTr("Play")
+                            text: i18n("Play")
                             color: card.colors.textOnAccent
                             font.family: Theme.font.family
                             font.pixelSize: root.miniLabelSize

@@ -81,7 +81,7 @@ Item {
     readonly property int skeletonRows: 6
 
     readonly property var loaders: [
-        { value: "", label: qsTr("Any loader") },
+        { value: "", label: i18n("Any loader") },
         { value: "fabric", label: "Fabric" },
         { value: "forge", label: "Forge" },
         { value: "neoforge", label: "NeoForge" },
@@ -194,7 +194,7 @@ Item {
                     textRole: "label"
                     valueRole: "value"
                     currentIndex: root.providers.findIndex((p) => p.value === root.provider)
-                    Accessible.name: qsTr("Browse modpacks on")
+                    Accessible.name: i18n("Browse modpacks on")
                     onActivated: {
                         root.setProvider(currentValue)
                         currentIndex = Qt.binding(() => root.providers.findIndex((p) => p.value === root.provider))
@@ -205,7 +205,7 @@ Item {
                     id: searchField
                     Layout.fillWidth: true
                     Layout.minimumWidth: root.searchMinWidth
-                    placeholderText: qsTr("Search modpacks on %1").arg(root.providerName)
+                    placeholderText: i18n("Search modpacks on %1", root.providerName)
                     onTextEdited: debounce.restart()
                     onTextChanged: if (text.length === 0) debounce.restart()
                 }
@@ -218,7 +218,7 @@ Item {
                     model: root.active && root.active.sortOptions ? root.active.sortOptions : []
                     textRole: "label"
                     valueRole: "id"
-                    Accessible.name: qsTr("Sort modpacks by")
+                    Accessible.name: i18n("Sort modpacks by")
                     // Each provider has its own sorts and its own pick;
                     // re-read once the box has the new provider's entries
                     // (indexOfValue() needs them in place).
@@ -245,7 +245,7 @@ Item {
                     id: filtersButton
                     visible: root.loaderFilterAvailable
                     readonly property bool narrowed: !!root.active && root.active.loader.length > 0
-                    text: narrowed ? qsTr("Filters (1)") : qsTr("Filters")
+                    text: narrowed ? i18n("Filters (1)") : i18n("Filters")
                     icon.source: Icons.url("filter")
                     onClicked: filterPopup.opened ? filterPopup.close() : filterPopup.open()
 
@@ -263,7 +263,7 @@ Item {
                             Text {
                                 Layout.fillWidth: true
                                 Layout.bottomMargin: Theme.space.xs
-                                text: qsTr("Loader")
+                                text: i18n("Loader")
                                 color: Theme.palette.textPrimary
                                 font.family: Theme.font.family
                                 font.pixelSize: Theme.type.bodyStrong.pixelSize
@@ -298,11 +298,11 @@ Item {
 
                 Button {
                     id: importButton
-                    text: qsTr("Import")
+                    text: i18n("Import")
                     icon.source: Icons.url("archive")
                     ToolTip.visible: hovered
                     ToolTip.delay: 400
-                    ToolTip.text: qsTr("Import a pack exported from CurseForge, FTB, ATLauncher or Technic")
+                    ToolTip.text: i18n("Import a pack exported from CurseForge, FTB, ATLauncher or Technic")
                     onClicked: root.otherPlatformsRequested()
                 }
             }
@@ -415,11 +415,11 @@ Item {
         anchors.centerIn: parent
         visible: root.searched && !root.keyMissing && !root.openedPack && !!root.active
                  && !root.active.searching && root.active.count === 0
-        title: root.active && root.active.error.length > 0 ? qsTr("Couldn't reach %1").arg(root.providerName)
-                                                           : qsTr("No modpacks found")
+        title: root.active && root.active.error.length > 0 ? i18n("Couldn't reach %1", root.providerName)
+                                                           : i18n("No modpacks found")
         body: root.active && root.active.error.length > 0 ? root.active.error
-                                                          : qsTr("Try fewer words, or another loader.")
-        actionText: root.active && root.active.error.length > 0 ? qsTr("Try again") : ""
+                                                          : i18n("Try fewer words, or another loader.")
+        actionText: root.active && root.active.error.length > 0 ? i18n("Try again") : ""
         actionIcon: "refresh"
         onActionTriggered: root.runSearch()
 
@@ -440,9 +440,9 @@ Item {
         anchors.centerIn: parent
         width: parent.width
         visible: root.keyMissing && !root.openedPack
-        title: qsTr("CurseForge isn't available")
-        body: qsTr("This build has no CurseForge API key, so its modpacks can't be browsed here. Modrinth works as usual.")
-        actionText: qsTr("Browse Modrinth")
+        title: i18n("CurseForge isn't available")
+        body: i18n("This build has no CurseForge API key, so its modpacks can't be browsed here. Modrinth works as usual.")
+        actionText: i18n("Browse Modrinth")
         actionIcon: "compass"
         onActionTriggered: root.setProvider("modrinth")
         MeshIcon { iconName: "alert-triangle"; size: 40; color: Theme.palette.textTertiary }

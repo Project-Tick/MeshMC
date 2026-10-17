@@ -50,8 +50,8 @@ RowLayout {
         enabled: root.searchEnabled
         Layout.fillWidth: true
         Layout.minimumWidth: root.fieldMinWidth
-        placeholderText: qsTr("Find in log")
-        Accessible.name: qsTr("Find in log")
+        placeholderText: i18n("Find in log")
+        Accessible.name: i18n("Find in log")
 
         Keys.onReturnPressed: (event) => {
             if (event.modifiers & Qt.ShiftModifier)
@@ -69,8 +69,8 @@ RowLayout {
 
     Text {
         visible: root.text.length > 0 && root.searchEnabled
-        text: root.matchCount === 0 ? qsTr("No matches")
-                                    : qsTr("%1 of %2").arg(root.current + 1).arg(root.matchCount)
+        text: root.matchCount === 0 ? i18n("No matches")
+                                    : i18n("%1 of %2", root.current + 1, root.matchCount)
         color: Theme.palette.textTertiary
         font.family: Theme.font.family
         font.pixelSize: Theme.type.label.pixelSize
@@ -81,7 +81,7 @@ RowLayout {
         enabled: root.matchCount > 0
         flat: false
         iconName: "arrow-up"
-        tip: qsTr("Previous match")
+        tip: i18n("Previous match")
         onClicked: root.previous()
     }
     IconButton {
@@ -89,7 +89,7 @@ RowLayout {
         enabled: root.matchCount > 0
         flat: false
         iconName: "arrow-down"
-        tip: qsTr("Next match")
+        tip: i18n("Next match")
         onClicked: root.next()
     }
 }

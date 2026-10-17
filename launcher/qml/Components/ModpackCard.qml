@@ -71,17 +71,17 @@ AbstractButton {
             return ""
         var days = Math.floor((Date.now() - ms) / (24 * 60 * 60 * 1000))
         if (days < 1)
-            return qsTr("today")
+            return i18n("today")
         if (days === 1)
-            return qsTr("yesterday")
+            return i18n("yesterday")
         if (days < 30)
-            return qsTr("%1 days ago").arg(days)
+            return i18n("%1 days ago", days)
         if (days < 365) {
             var months = Math.max(1, Math.floor(days / 30))
-            return months === 1 ? qsTr("1 month ago") : qsTr("%1 months ago").arg(months)
+            return months === 1 ? i18n("1 month ago") : i18n("%1 months ago", months)
         }
         var years = Math.floor(days / 365)
-        return years === 1 ? qsTr("1 year ago") : qsTr("%1 years ago").arg(years)
+        return years === 1 ? i18n("1 year ago") : i18n("%1 years ago", years)
     }
 
     function titleCase(word) {
@@ -202,7 +202,7 @@ AbstractButton {
                     width: Math.max(0, parent.width - x)
                     anchors.baseline: titleText.baseline
                     visible: !root.skeleton && root.author.length > 0 && width > 0
-                    text: qsTr("by %1").arg(root.author)
+                    text: i18n("by %1", root.author)
                     elide: Text.ElideRight
                     color: Theme.palette.textTertiary
                     font.family: Theme.font.family
@@ -283,7 +283,7 @@ AbstractButton {
                 }
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: qsTr("%1 downloads").arg(Format.compactNumber(root.downloads))
+                    text: i18n("%1 downloads", Format.compactNumber(root.downloads))
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.caption.pixelSize
@@ -293,7 +293,7 @@ AbstractButton {
             Text {
                 Layout.alignment: Qt.AlignRight
                 visible: !root.skeleton && root.updatedText.length > 0
-                text: qsTr("Updated %1").arg(root.updatedText)
+                text: i18n("Updated %1", root.updatedText)
                 color: Theme.palette.textTertiary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.caption.pixelSize

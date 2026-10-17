@@ -25,6 +25,7 @@
 #include <QProcess>
 
 #include "minecraft/World.h"
+#include <KLocalizedString>
 
 namespace WorldTools
 {
@@ -79,11 +80,11 @@ namespace WorldTools
 	{
 		const QString program = mceditProgram(mceditPath);
 		if (program.isEmpty()) {
-			return QObject::tr("MCEdit was not found. Set its folder in "
+			return i18n("MCEdit was not found. Set its folder in "
 							   "Settings, under External tools.");
 		}
 		if (!QFileInfo(worldFolder).isDir()) {
-			return QObject::tr("This world's folder could not be found.");
+			return i18n("This world's folder could not be found.");
 		}
 #ifdef Q_OS_MACOS
 		const bool started = QProcess::startDetached(
@@ -94,7 +95,7 @@ namespace WorldTools
 			QProcess::startDetached(program, {worldFolder}, mceditPath);
 #endif
 		return started ? QString()
-					   : QObject::tr("MCEdit could not be started. It may need "
+					   : i18n("MCEdit could not be started. It may need "
 									 "to be installed again.");
 	}
 } // namespace WorldTools

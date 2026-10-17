@@ -39,6 +39,7 @@
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -93,15 +94,13 @@ namespace
 			QStringList labels;
 			for (const auto& version : choices) {
 				labels.append(version->isRecommended()
-								  ? QObject::tr("%1 (recommended)")
-										.arg(version->descriptor())
+								  ? i18n("%1 (recommended)", version->descriptor())
 								  : version->descriptor());
 			}
 			const int picked = host->choose(
-				QObject::tr("Choose a loader version"),
-				QObject::tr("%1 can run on more than one version of its "
-							"loader. Pick one to continue.")
-					.arg(m_packName),
+				i18n("Choose a loader version"),
+				i18n("%1 can run on more than one version of its "
+							"loader. Pick one to continue.", m_packName),
 				UiHost::Severity::Question, labels);
 			return picked >= 0 && picked < choices.size()
 					   ? choices.at(picked)->descriptor()
@@ -119,9 +118,9 @@ AtlModpackModel::AtlModpackModel(QObject* parent)
 {
 	/* The widget page's three sorts. */
 	const QList<QPair<QString, QString>> sorts = {
-		{QStringLiteral("popularity"), tr("Sort by Popularity")},
-		{QStringLiteral("gameVersion"), tr("Sort by Game Version")},
-		{QStringLiteral("name"), tr("Sort by Name")},
+		{QStringLiteral("popularity"), i18n("Sort by Popularity")},
+		{QStringLiteral("gameVersion"), i18n("Sort by Game Version")},
+		{QStringLiteral("name"), i18n("Sort by Name")},
 	};
 	for (const auto& sort : sorts) {
 		QVariantMap entry;
@@ -425,7 +424,7 @@ void AtlModpackModel::search()
 		m_packs = parseCatalogue(m_response);
 		m_loaded = true;
 		if (m_packs.isEmpty()) {
-			setError(tr("ATLauncher sent back no modpacks."));
+			setError(i18n("ATLauncher sent back no modpacks."));
 		}
 		refilter();
 		setLoading(false);
@@ -462,7 +461,7 @@ void AtlModpackModel::loadDetail(const QString& projectId)
 	m_detail->reset(projectId);
 	const ATLauncher::IndexedPack* pack = packFor(projectId);
 	if (!pack) {
-		m_detail->setError(tr("This modpack is not in the loaded list."));
+		m_detail->setError(i18n("This modpack is not in the loaded list."));
 		m_detail->setLoading(false);
 		return;
 	}

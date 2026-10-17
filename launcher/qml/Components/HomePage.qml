@@ -275,7 +275,7 @@ Item {
                             spacing: Theme.space.lg
 
                             Button {
-                                text: qsTr("Open")
+                                text: i18n("Open")
                                 icon.source: Icons.url("arrow-right")
                                 onClicked: if (root.featured) root.openInstanceRequested(root.featured.itemId)
                             }
@@ -288,7 +288,7 @@ Item {
                                 HeroFact {
                                     iconName: root.featured && root.featured.itemCrashed ? "alert-triangle" : "clock"
                                     text: !root.featured ? ""
-                                        : root.featured.itemCrashed ? qsTr("Crashed last time")
+                                        : root.featured.itemCrashed ? i18n("Crashed last time")
                                         : Format.lastPlayed(root.featured.itemLastLaunch)
                                 }
                                 HeroFact {
@@ -310,7 +310,7 @@ Item {
 
                 SectionHeading {
                     visible: root.jumpAvailable > 0
-                    text: qsTr("Jump back in")
+                    text: i18n("Jump back in")
                 }
 
                 Row {
@@ -397,7 +397,7 @@ Item {
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("New here? Start with Discover.")
+                        text: i18n("New here? Start with Discover.")
                         color: Theme.palette.textSecondary
                         font.family: Theme.font.family
                         font.pixelSize: Theme.type.body.pixelSize
@@ -405,7 +405,7 @@ Item {
                     Button {
                         anchors.verticalCenter: parent.verticalCenter
                         flat: true
-                        text: qsTr("Discover")
+                        text: i18n("Discover")
                         onClicked: root.discoverRequested()
                     }
                 }
@@ -420,7 +420,7 @@ Item {
                 spacing: Theme.space.md
 
                 SectionHeading {
-                    text: qsTr("Recent worlds")
+                    text: i18n("Recent worlds")
                 }
 
                 Grid {
@@ -463,9 +463,9 @@ Item {
             EmptyState {
                 visible: !root.hasLibrary
                 width: parent.width
-                title: qsTr("Your library is empty")
-                body: qsTr("An instance is one Minecraft setup: a version, a mod loader and its mods. Create one to start playing.")
-                actionText: qsTr("Create your first instance")
+                title: i18n("Your library is empty")
+                body: i18n("An instance is one Minecraft setup: a version, a mod loader and its mods. Create one to start playing.")
+                actionText: i18n("Create your first instance")
                 actionIcon: "plus"
                 onActionTriggered: root.createRequested()
 

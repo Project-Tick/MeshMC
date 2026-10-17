@@ -29,6 +29,7 @@
 #include "minecraft/Component.h"
 #include "minecraft/PackProfile.h"
 #include "models/NewInstanceController.h"
+#include <KLocalizedString>
 
 LoaderInstaller::LoaderInstaller(PackProfile* profile, QObject* parent)
 	: QObject(parent), m_profile(profile),
@@ -114,9 +115,8 @@ void LoaderInstaller::selectLoader(const QString& uid)
 		Version(mcVersion) < Version(loader->earliestMinecraft)) {
 		m_supported = false;
 		m_unsupportedReason =
-			tr("%1 does not run on Minecraft %2. The earliest version it "
-			   "supports is %3.")
-				.arg(loader->brandName, mcVersion, loader->earliestMinecraft);
+			i18n("%1 does not run on Minecraft %2. The earliest version it "
+			   "supports is %3.", loader->brandName, mcVersion, loader->earliestMinecraft);
 		m_versions->setSourceModel(nullptr);
 		emit selectedUidChanged();
 		return;

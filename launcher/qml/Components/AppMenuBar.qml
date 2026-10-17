@@ -30,26 +30,26 @@ MenuBar {
     signal checkForUpdatesRequested()
 
     Menu {
-        title: qsTr("File")
+        title: i18n("File")
         MenuItem {
-            text: qsTr("New instance…")
+            text: i18n("New instance…")
             onTriggered: root.newInstanceRequested("create")
         }
         MenuItem {
-            text: qsTr("Import instance…")
+            text: i18n("Import instance…")
             onTriggered: root.newInstanceRequested("import")
         }
         MenuSeparator {}
         MenuItem {
             // Moved into the application menu by macOS, as "Settings…".
-            text: qsTr("Settings…")
+            text: i18n("Settings…")
             onTriggered: root.navigateRequested("settings")
         }
     }
 
     Menu {
         id: helpMenu
-        title: qsTr("Help")
+        title: i18n("Help")
 
         Instantiator {
             model: root.about ? root.about.helpLinks : []
@@ -65,12 +65,12 @@ MenuBar {
         MenuItem {
             visible: root.updaterAvailable
             height: visible ? implicitHeight : 0
-            text: qsTr("Check for updates…")
+            text: i18n("Check for updates…")
             onTriggered: root.checkForUpdatesRequested()
         }
         MenuItem {
             // Moved into the application menu by macOS.
-            text: qsTr("About MeshMC")
+            text: i18n("About MeshMC")
             onTriggered: root.navigateRequested("settings/about")
         }
     }

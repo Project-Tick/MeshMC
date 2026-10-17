@@ -39,25 +39,25 @@ SettingsScroll {
         }
     }
 
-    title: qsTr("About")
-    description: qsTr("The version you are running, where to get help, and the people and licences behind MeshMC.")
+    title: i18n("About")
+    description: i18n("The version you are running, where to get help, and the people and licences behind MeshMC.")
 
     SettingsGroup {
         width: parent.width
         title: root.about ? root.about.name : ""
-        FactRow { label: qsTr("Version"); value: root.about ? root.about.version : "" }
-        FactRow { label: qsTr("Platform"); value: root.about ? root.about.platform : "" }
-        FactRow { label: qsTr("Built"); value: root.about ? root.about.buildDate : "" }
-        FactRow { label: qsTr("Commit"); value: root.about ? root.about.commit : ""; monospace: true }
-        FactRow { label: qsTr("Version channel"); value: root.about ? root.about.channel : "" }
-        FactRow { label: qsTr("Update channel"); value: root.about ? root.about.updateChannel : "" }
+        FactRow { label: i18n("Version"); value: root.about ? root.about.version : "" }
+        FactRow { label: i18n("Platform"); value: root.about ? root.about.platform : "" }
+        FactRow { label: i18n("Built"); value: root.about ? root.about.buildDate : "" }
+        FactRow { label: i18n("Commit"); value: root.about ? root.about.commit : ""; monospace: true }
+        FactRow { label: i18n("Version channel"); value: root.about ? root.about.channel : "" }
+        FactRow { label: i18n("Update channel"); value: root.about ? root.about.updateChannel : "" }
         SettingRow {
             visible: !!root.about && root.about.sourceUrl.length > 0
-            label: qsTr("Source code")
+            label: i18n("Source code")
             description: root.about ? root.about.sourceUrl : ""
             IconButton {
                 iconName: "external-link"
-                tip: qsTr("Open in browser")
+                tip: i18n("Open in browser")
                 flat: false
                 onClicked: Qt.openUrlExternally(root.about.sourceUrl)
             }
@@ -67,7 +67,7 @@ SettingsScroll {
     SettingsGroup {
         width: parent.width
         visible: helpRepeater.count > 0
-        title: qsTr("Help")
+        title: i18n("Help")
         Repeater {
             id: helpRepeater
             model: root.about ? root.about.helpLinks : []
@@ -77,7 +77,7 @@ SettingsScroll {
                 description: modelData.url
                 IconButton {
                     iconName: "external-link"
-                    tip: qsTr("Open in browser")
+                    tip: i18n("Open in browser")
                     flat: false
                     onClicked: Qt.openUrlExternally(modelData.url)
                 }
@@ -88,7 +88,7 @@ SettingsScroll {
     SettingsGroup {
         width: parent.width
         visible: credits.text.length > 0
-        title: qsTr("Credits")
+        title: i18n("Credits")
         Text {
             id: credits
             width: parent.width
@@ -110,13 +110,13 @@ SettingsScroll {
     SettingsGroup {
         width: parent.width
         visible: !!root.about && root.about.licenseText.length > 0
-        title: qsTr("Licences")
+        title: i18n("Licences")
         description: root.about ? root.about.copyright : ""
         SettingRow {
-            label: qsTr("MeshMC and the libraries it uses")
-            description: qsTr("The full text of every licence.")
+            label: i18n("MeshMC and the libraries it uses")
+            description: i18n("The full text of every licence.")
             Button {
-                text: root.licencesOpen ? qsTr("Hide") : qsTr("Show")
+                text: root.licencesOpen ? i18n("Hide") : i18n("Show")
                 onClicked: root.licencesOpen = !root.licencesOpen
             }
         }

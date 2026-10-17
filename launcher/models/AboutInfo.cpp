@@ -24,6 +24,7 @@
 #include <QVariantMap>
 
 #include "BuildConfig.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -98,7 +99,7 @@ QString AboutInfo::creditsHtml() const
 	if (html.isEmpty()) {
 		return html;
 	}
-	return html.arg(tr("MeshMC Developers"), tr("MultiMC Developers"));
+	return html.arg(i18n("MeshMC Developers"), i18n("MultiMC Developers"));
 }
 
 QString AboutInfo::licenseText() const
@@ -113,7 +114,7 @@ QVariantList AboutInfo::helpLinksFor(const QString& bugTrackerUrl)
 		QString label;
 		const QString& url;
 	} candidates[] = {
-		{ "bug", tr("Report a bug"), bugTrackerUrl },
+		{ "bug", i18n("Report a bug"), bugTrackerUrl },
 	};
 
 	QVariantList links;

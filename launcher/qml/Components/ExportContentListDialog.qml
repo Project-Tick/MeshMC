@@ -25,7 +25,7 @@ Dialog {
     property var controller: null
     property string kind: "mods"
     property var keys: []
-    property string noun: qsTr("mods")
+    property string noun: i18n("mods")
     // The instance's name, for the suggested file name.
     property string listName: ""
 
@@ -49,26 +49,26 @@ Dialog {
     readonly property int previewMinHeight: 120
 
     readonly property var formats: [
-        { value: "html", label: qsTr("HTML") },
-        { value: "markdown", label: qsTr("Markdown") },
-        { value: "plaintext", label: qsTr("Plain text") },
-        { value: "json", label: qsTr("JSON") },
-        { value: "csv", label: qsTr("CSV") },
-        { value: "custom", label: qsTr("Custom") }
+        { value: "html", label: i18n("HTML") },
+        { value: "markdown", label: i18n("Markdown") },
+        { value: "plaintext", label: i18n("Plain text") },
+        { value: "json", label: i18n("JSON") },
+        { value: "csv", label: i18n("CSV") },
+        { value: "custom", label: i18n("Custom") }
     ]
     readonly property var fieldOptions: [
-        { value: "version", label: qsTr("Version") },
-        { value: "authors", label: qsTr("Authors") },
-        { value: "url", label: qsTr("Link") },
-        { value: "filename", label: qsTr("File name") }
+        { value: "version", label: i18n("Version") },
+        { value: "authors", label: i18n("Authors") },
+        { value: "url", label: i18n("Link") },
+        { value: "filename", label: i18n("File name") }
     ]
     readonly property var placeholders: [
-        { value: "{name}", label: qsTr("Name") },
-        { value: "{version}", label: qsTr("Version") },
-        { value: "{authors}", label: qsTr("Authors") },
-        { value: "{url}", label: qsTr("Link") },
-        { value: "{filename}", label: qsTr("File name") },
-        { value: "{mod_id}", label: qsTr("Mod ID") }
+        { value: "{name}", label: i18n("Name") },
+        { value: "{version}", label: i18n("Version") },
+        { value: "{authors}", label: i18n("Authors") },
+        { value: "{url}", label: i18n("Link") },
+        { value: "{filename}", label: i18n("File name") },
+        { value: "{mod_id}", label: i18n("Mod ID") }
     ]
 
     function toggleField(value, on) {
@@ -83,7 +83,7 @@ Dialog {
     width: Math.min(640, parent ? parent.width - Theme.space.xxl * 2 : 640)
     height: Math.min(620, parent ? parent.height - Theme.space.xxl * 2 : 620)
     modal: true
-    title: root.keys.length > 0 ? qsTr("Export %1 selected").arg(root.keys.length) : qsTr("Export list")
+    title: root.keys.length > 0 ? i18n("Export %1 selected", root.keys.length) : i18n("Export list")
 
     header: DialogHeader {
         title: root.title
@@ -99,7 +99,7 @@ Dialog {
             Layout.fillWidth: true
             spacing: Theme.space.md
             Text {
-                text: qsTr("Format")
+                text: i18n("Format")
                 color: Theme.palette.textSecondary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.label.pixelSize
@@ -149,7 +149,7 @@ Dialog {
                 id: templateField
                 Layout.fillWidth: true
                 text: root.lineTemplate
-                placeholderText: qsTr("One line per item, for example {name} {version}")
+                placeholderText: i18n("One line per item, for example {name} {version}")
                 font.family: Theme.font.mono
                 selectByMouse: true
                 onTextEdited: root.lineTemplate = text
@@ -166,7 +166,7 @@ Dialog {
                         icon.source: Icons.url("plus")
                         ToolTip.visible: hovered
                         ToolTip.delay: 400
-                        ToolTip.text: qsTr("Insert %1").arg(modelData.value)
+                        ToolTip.text: i18n("Insert %1", modelData.value)
                         onClicked: {
                             templateField.insert(templateField.cursorPosition, modelData.value)
                             root.lineTemplate = templateField.text
@@ -181,7 +181,7 @@ Dialog {
             Layout.fillWidth: true
             Text {
                 Layout.fillWidth: true
-                text: qsTr("Preview")
+                text: i18n("Preview")
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.bodyStrong.pixelSize
@@ -189,8 +189,8 @@ Dialog {
             }
             Text {
                 visible: !root.custom || root.lineTemplate.length > 0
-                text: root.keys.length > 0 ? qsTr("%1 selected %2").arg(root.keys.length).arg(root.noun)
-                                           : qsTr("All %1").arg(root.noun)
+                text: root.keys.length > 0 ? i18n("%1 selected %2", root.keys.length, root.noun)
+                                           : i18n("All %1", root.noun)
                 color: Theme.palette.textTertiary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.caption.pixelSize
@@ -224,7 +224,7 @@ Dialog {
 
         Text {
             Layout.fillWidth: true
-            text: qsTr("Built from what each file says about itself, so some may have no link or authors.")
+            text: i18n("Built from what each file says about itself, so some may have no link or authors.")
             wrapMode: Text.Wrap
             color: Theme.palette.textTertiary
             font.family: Theme.font.family
@@ -241,7 +241,7 @@ Dialog {
         Button {
             highlighted: true
             enabled: root.output.length > 0
-            text: qsTr("Save…")
+            text: i18n("Save…")
             icon.source: Icons.url("download")
             onClicked: {
                 if (root.controller)
@@ -251,7 +251,7 @@ Dialog {
         }
         Button {
             enabled: root.output.length > 0
-            text: qsTr("Copy")
+            text: i18n("Copy")
             icon.source: Icons.url("copy")
             onClicked: {
                 clipboardHelper.text = root.output
@@ -263,7 +263,7 @@ Dialog {
         }
         Button {
             flat: true
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             onClicked: root.close()
         }
     }
@@ -277,13 +277,13 @@ Dialog {
 
     FileDialog {
         id: saveDialog
-        title: qsTr("Save list")
+        title: i18n("Save list")
         fileMode: FileDialog.SaveFile
         defaultSuffix: root.controller ? root.controller.exportExtension(root.format).slice(1) : "txt"
         nameFilters: root.controller
-                     ? [qsTr("%1 files (*%2)").arg(formatBox.currentText).arg(root.controller.exportExtension(root.format)),
-                        qsTr("All files (*)")]
-                     : [qsTr("All files (*)")]
+                     ? [i18n("%1 files (*%2)", formatBox.currentText, root.controller.exportExtension(root.format)),
+                        i18n("All files (*)")]
+                     : [i18n("All files (*)")]
         onAccepted: {
             if (!root.controller)
                 return

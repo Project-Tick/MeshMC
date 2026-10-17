@@ -43,7 +43,7 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
             leftPadding: Theme.space.lg
             rightPadding: Theme.space.lg
-            text: qsTr("Nothing downloaded yet.")
+            text: i18n("Nothing downloaded yet.")
             color: Theme.palette.textTertiary
             font.family: Theme.font.family
             font.pixelSize: Theme.type.body.pixelSize
@@ -101,12 +101,12 @@ Rectangle {
                     StatusBadge {
                         visible: row.inUse
                         tone: "success"
-                        text: qsTr("In use")
+                        text: i18n("In use")
                     }
                     IconButton {
                         id: more
                         iconName: "more"
-                        tip: qsTr("More")
+                        tip: i18n("More")
                         onClicked: {
                             root.target = row.modelData
                             menu.popup(more, more.width - menu.width, more.height)
@@ -120,14 +120,14 @@ Rectangle {
     Menu {
         id: menu
         MenuItem {
-            text: qsTr("Use this Java")
+            text: i18n("Use this Java")
             icon.source: Icons.url("check")
             enabled: !!root.target && root.target.javaPath !== root.currentPath
             onTriggered: root.useRequested(root.target.javaPath)
         }
         MenuSeparator {}
         MenuItem {
-            text: qsTr("Remove…")
+            text: i18n("Remove…")
             icon.source: Icons.url("trash")
             onTriggered: confirm.open()
         }
@@ -135,11 +135,12 @@ Rectangle {
 
     ConfirmDialog {
         id: confirm
-        title: qsTr("Remove this Java?")
+        title: i18n("Remove this Java?")
         text: root.target
-              ? qsTr("%1 will be deleted from this computer. Instances using it fall back to automatic Java.").arg(root.target.name)
+              ? i18n("%1 will be deleted from this computer. Instances using it fall back to automatic Java.",
+                     root.target.name)
               : ""
-        confirmText: qsTr("Remove")
+        confirmText: i18n("Remove")
         onConfirmed: {
             var error = root.java.removeManaged(root.target.root)
             if (error.length > 0)

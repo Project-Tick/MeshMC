@@ -161,28 +161,28 @@ Item {
     readonly property var tabList: {
         const tabs = []
         if (!root.isLegacy)
-            tabs.push({ id: "content", label: qsTr("Content"), count: root.modsModel ? contentTab.count : -1 })
-        tabs.push({ id: "worlds", label: qsTr("Worlds"), count: root.worldsModel ? worldsTab.count : -1 })
-        tabs.push({ id: "screenshots", label: qsTr("Screenshots"), count: root.shotsModel ? root.shotsModel.count : -1 })
-        tabs.push({ id: "log", label: qsTr("Log") })
+            tabs.push({ id: "content", label: i18n("Content"), count: root.modsModel ? contentTab.count : -1 })
+        tabs.push({ id: "worlds", label: i18n("Worlds"), count: root.worldsModel ? worldsTab.count : -1 })
+        tabs.push({ id: "screenshots", label: i18n("Screenshots"), count: root.shotsModel ? root.shotsModel.count : -1 })
+        tabs.push({ id: "log", label: i18n("Log") })
         if (!root.isLegacy)
-            tabs.push({ id: "settings", label: qsTr("Settings") })
+            tabs.push({ id: "settings", label: i18n("Settings") })
         if (root.managedPackModel)
-            tabs.push({ id: "managedpack", label: qsTr("Modpack"), more: true })
+            tabs.push({ id: "managedpack", label: i18n("Modpack"), more: true })
         if (!root.isLegacy)
-            tabs.push({ id: "version", label: qsTr("Version"), more: true })
+            tabs.push({ id: "version", label: i18n("Version"), more: true })
         if (root.isMinecraft) {
-            tabs.push({ id: "datapacks", label: qsTr("Data packs"), more: true })
-            tabs.push({ id: "servers", label: qsTr("Servers"), more: true })
+            tabs.push({ id: "datapacks", label: i18n("Data packs"), more: true })
+            tabs.push({ id: "servers", label: i18n("Servers"), more: true })
         }
-        tabs.push({ id: "backups", label: qsTr("Backups"), more: true })
+        tabs.push({ id: "backups", label: i18n("Backups"), more: true })
         if (root.isMinecraft)
-            tabs.push({ id: "gameoptions", label: qsTr("Game options"), more: true })
-        tabs.push({ id: "notes", label: qsTr("Notes"), more: true })
+            tabs.push({ id: "gameoptions", label: i18n("Game options"), more: true })
+        tabs.push({ id: "notes", label: i18n("Notes"), more: true })
         if (pluginPages.count > 0)
             tabs.push({ id: "plugins", more: true,
                         label: pluginPages.count === 1 && pluginPages.firstTitle.length > 0
-                               ? pluginPages.firstTitle : qsTr("Plugins") })
+                               ? pluginPages.firstTitle : i18n("Plugins") })
         return tabs
     }
     // What is on screen: `tab` when this instance has it, else the first tab.
@@ -231,7 +231,7 @@ Item {
             // instance's Content.
             Button {
                 flat: true
-                text: root.browsing && root.headerCard ? root.headerCard.name : qsTr("Library")
+                text: root.browsing && root.headerCard ? root.headerCard.name : i18n("Library")
                 icon.source: Icons.url("chevron-left")
                 leftPadding: Theme.space.sm
                 // Pulled out by its padding and the empty third of the
@@ -412,7 +412,7 @@ Item {
             }
 
             SettingsScroll {
-                title: qsTr("Plugins")
+                title: i18n("Plugins")
                 PluginSurfaces {
                     id: pluginPages
                     width: parent.width
@@ -470,7 +470,7 @@ Item {
             height: visible ? implicitHeight : 0
         }
         MenuItem {
-            text: qsTr("Open folder")
+            text: i18n("Open folder")
             icon.source: Icons.url("folder")
             onTriggered: root.openPathRequested(root.details ? root.details.instanceRoot : "")
         }
@@ -478,7 +478,7 @@ Item {
             // A hidden item still takes its row in a Menu; zero it as well.
             visible: instanceMenu.isMinecraft && root.details.gameRoot !== root.details.instanceRoot
             height: visible ? implicitHeight : 0
-            text: qsTr("Open .minecraft folder")
+            text: i18n("Open .minecraft folder")
             icon.source: Icons.url("folder")
             onTriggered: root.openPathRequested(root.details ? root.details.gameRoot : "")
         }
@@ -486,7 +486,7 @@ Item {
             // A hidden item still takes its row in a Menu; zero it as well.
             visible: instanceMenu.isMinecraft
             height: visible ? implicitHeight : 0
-            text: qsTr("Open mods folder")
+            text: i18n("Open mods folder")
             icon.source: Icons.url("folder")
             onTriggered: root.openPathRequested(root.details ? root.details.modsDir : "")
         }
@@ -497,28 +497,28 @@ Item {
         MenuItem {
             visible: root.manageable
             height: visible ? implicitHeight : 0
-            text: qsTr("Rename…")
+            text: i18n("Rename…")
             icon.source: Icons.url("edit")
             onTriggered: root.renameRequested(root.instanceId, instanceMenu.name)
         }
         MenuItem {
             visible: root.manageable
             height: visible ? implicitHeight : 0
-            text: qsTr("Change icon…")
+            text: i18n("Change icon…")
             icon.source: Icons.url("image")
             onTriggered: root.iconRequested(root.instanceId, instanceMenu.iconKey)
         }
         MenuItem {
             visible: root.manageable
             height: visible ? implicitHeight : 0
-            text: qsTr("Change group…")
+            text: i18n("Change group…")
             icon.source: Icons.url("folder-input")
             onTriggered: root.groupRequested(root.instanceId, instanceMenu.group)
         }
         MenuItem {
             visible: root.manageable
             height: visible ? implicitHeight : 0
-            text: qsTr("Duplicate…")
+            text: i18n("Duplicate…")
             icon.source: Icons.url("copy")
             onTriggered: exportFlows.canDuplicate
                          ? exportFlows.duplicateInstance(root.instanceId, instanceMenu.name, instanceMenu.group, instanceMenu.iconKey)
@@ -527,14 +527,14 @@ Item {
         MenuItem {
             visible: exportFlows.canExport
             height: visible ? implicitHeight : 0
-            text: qsTr("Export…")
+            text: i18n("Export…")
             icon.source: Icons.url("archive")
             onTriggered: exportFlows.exportInstance(root.instanceId)
         }
         MenuItem {
             visible: exportFlows.canCreateShortcut
             height: visible ? implicitHeight : 0
-            text: qsTr("Create shortcut…")
+            text: i18n("Create shortcut…")
             icon.source: Icons.url("external-link")
             onTriggered: exportFlows.createShortcut(root.instanceId)
         }
@@ -545,7 +545,7 @@ Item {
         MenuItem {
             visible: root.manageable
             height: visible ? implicitHeight : 0
-            text: qsTr("Delete…")
+            text: i18n("Delete…")
             icon.source: Icons.url("trash")
             onTriggered: root.deleteRequested(root.instanceId, instanceMenu.name)
         }

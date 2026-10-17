@@ -20,7 +20,7 @@ SettingsGroup {
     property string gateKey
     // The keys this group overrides, reset when the override is turned off.
     property var keys: []
-    property string gateLabel: qsTr("Use custom settings for this instance")
+    property string gateLabel: i18n("Use custom settings for this instance")
     readonly property bool overriding: gate.checked
 
     SettingSwitch {

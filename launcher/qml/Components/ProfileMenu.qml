@@ -120,8 +120,8 @@ Popup {
                 }
                 Text {
                     width: parent.width
-                    text: root.kind === "Microsoft" ? qsTr("Microsoft account")
-                        : root.kind === "Offline" ? qsTr("Offline account") : root.kind
+                    text: root.kind === "Microsoft" ? i18n("Microsoft account")
+                        : root.kind === "Offline" ? i18n("Offline account") : root.kind
                     elide: Text.ElideRight
                     color: Theme.palette.textTertiary
                     font.family: Theme.font.family
@@ -190,21 +190,21 @@ Popup {
         ItemDelegate {
             Layout.fillWidth: true
             hoverEnabled: true
-            text: qsTr("Skin and cape")
+            text: i18n("Skin and cape")
             icon.source: Icons.url("image")
             onClicked: { root.close(); root.openAccountsRequested() }
         }
         ItemDelegate {
             Layout.fillWidth: true
             hoverEnabled: true
-            text: qsTr("Manage accounts")
+            text: i18n("Manage accounts")
             icon.source: Icons.url("users")
             onClicked: { root.close(); root.openAccountsRequested() }
         }
         ItemDelegate {
             Layout.fillWidth: true
             hoverEnabled: true
-            text: qsTr("Add account")
+            text: i18n("Add account")
             icon.source: Icons.url("plus")
             onClicked: { root.close(); root.openAccountsRequested() }
         }
@@ -214,7 +214,7 @@ Popup {
         ItemDelegate {
             Layout.fillWidth: true
             hoverEnabled: true
-            text: qsTr("Sign out")
+            text: i18n("Sign out")
             icon.source: Icons.url("log-out")
             onClicked: {
                 root.close()
@@ -225,9 +225,9 @@ Popup {
 
     ConfirmDialog {
         id: signOutDialog
-        title: qsTr("Sign out")
-        text: qsTr("Sign out of “%1”? You can sign in again at any time.").arg(root.name)
-        confirmText: qsTr("Sign out")
+        title: i18n("Sign out")
+        text: i18n("Sign out of “%1”? You can sign in again at any time.", root.name)
+        confirmText: i18n("Sign out")
         onConfirmed: if (root.controller && root.defaultRow >= 0) root.controller.remove(root.defaultRow)
     }
 }

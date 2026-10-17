@@ -37,6 +37,7 @@
 #include "models/ContentFilterModel.h"
 #include "models/ContentUpdateController.h"
 #include "settings/Setting.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -499,14 +500,14 @@ bool InstanceContentController::saveText(const QString& fileUrlOrPath,
 {
 	const QString path = localPath(fileUrlOrPath);
 	if (path.isEmpty()) {
-		setLastError(tr("No file was chosen."));
+		setLastError(i18n("No file was chosen."));
 		return false;
 	}
 	try {
 		FS::write(path, text.toUtf8());
 	} catch (const FS::FileSystemException& e) {
 		qWarning() << "Could not save the exported list:" << e.cause();
-		setLastError(tr("The file could not be written. Check that the "
+		setLastError(i18n("The file could not be written. Check that the "
 						"folder exists and can be written to."));
 		return false;
 	}

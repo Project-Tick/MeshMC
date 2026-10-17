@@ -35,6 +35,7 @@
 #include "settings/SettingsObject.h"
 #include "tasks/Task.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 ManagedPackController::Provider
 ManagedPackController::providerFromString(const QString& provider)
@@ -181,7 +182,7 @@ void ManagedPackController::fetchVersions()
 			break;
 		}
 		case Provider::Unknown:
-			setError(tr("Unknown pack provider."));
+			setError(i18n("Unknown pack provider."));
 			return;
 	}
 
@@ -243,7 +244,7 @@ void ManagedPackController::applyVersions(quint64 generation,
 	}
 
 	if (!parsed || m_versions.isEmpty()) {
-		setError(tr("Failed to read the available versions."));
+		setError(i18n("Failed to read the available versions."));
 		return;
 	}
 
@@ -354,13 +355,13 @@ QString ManagedPackController::fileFilterFor(Provider provider)
 {
 	switch (provider) {
 		case Provider::Modrinth:
-			return tr("Modrinth pack") + QStringLiteral(" (*.mrpack *.zip)");
+			return i18n("Modrinth pack") + QStringLiteral(" (*.mrpack *.zip)");
 		case Provider::CurseForge:
-			return tr("CurseForge pack") + QStringLiteral(" (*.zip)");
+			return i18n("CurseForge pack") + QStringLiteral(" (*.zip)");
 		case Provider::Unknown:
 			break;
 	}
-	return tr("Modpack") + QStringLiteral(" (*.zip *.mrpack)");
+	return i18n("Modpack") + QStringLiteral(" (*.zip *.mrpack)");
 }
 
 QObject* ManagedPackController::updateFromFile(const QUrl& file)
@@ -371,7 +372,7 @@ QObject* ManagedPackController::updateFromFile(const QUrl& file)
 		return nullptr;
 	}
 	return startUpdate(QUrl::fromLocalFile(path), false, QString(), QString(),
-					   tr("Update from file"));
+					   i18n("Update from file"));
 }
 
 QObject* ManagedPackController::startUpdate(const QUrl& url, bool trusted,

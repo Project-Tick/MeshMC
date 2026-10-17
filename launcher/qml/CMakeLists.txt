@@ -79,6 +79,7 @@ target_link_libraries(MeshMC_qml PUBLIC
     MeshMC_qml_componentsplugin
     Qt${QT_VERSION_MAJOR}::Quick
     Qt${QT_VERSION_MAJOR}::QuickControls2
+    KF${QT_VERSION_MAJOR}::I18nQml
 )
 
 # The cat's module and plugin, linked the same way as the three above, plus

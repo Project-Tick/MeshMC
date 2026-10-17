@@ -19,20 +19,20 @@ QtObject {
     function lastPlayed(lastLaunchMs) {
         var ms = Number(lastLaunchMs)
         if (!(ms > 0))
-            return qsTr("Never played")
+            return i18n("Never played")
         var minutes = Math.floor((Date.now() - ms) / 60000)
         if (minutes < 1)
-            return qsTr("Just now")
+            return i18n("Just now")
         if (minutes < 60)
-            return qsTr("%1 min ago").arg(minutes)
+            return i18n("%1 min ago", minutes)
         var hours = Math.floor(minutes / 60)
         if (hours < 24)
-            return qsTr("%1 h ago").arg(hours)
+            return i18n("%1 h ago", hours)
         var days = Math.floor(hours / 24)
         if (days === 1)
-            return qsTr("Yesterday")
+            return i18n("Yesterday")
         if (days < 30)
-            return qsTr("%1 days ago").arg(days)
+            return i18n("%1 days ago", days)
         return root.calendarDate(new Date(ms))
     }
 
@@ -53,10 +53,10 @@ QtObject {
         var minutes = Math.floor(s / 60) % 60
         var hours = Math.floor(s / 3600)
         if (hours === 0)
-            return qsTr("%1 min").arg(minutes)
+            return i18n("%1 min", minutes)
         if (minutes === 0)
-            return qsTr("%1 h").arg(hours)
-        return qsTr("%1 h %2 min").arg(hours).arg(minutes)
+            return i18n("%1 h", hours)
+        return i18n("%1 h %2 min", hours, minutes)
     }
 
     // "Fabric 1.21.4", or "1.21.4" for vanilla (loader is empty then).
@@ -67,7 +67,7 @@ QtObject {
         if (gameVersion && gameVersion.length > 0)
             parts.push(gameVersion)
         else if (parts.length === 0)
-            parts.push(qsTr("Minecraft"))
+            parts.push(i18n("Minecraft"))
         return parts.join(" ")
     }
 

@@ -111,7 +111,7 @@ Item {
                     spacing: Theme.space.sm
                     Tag {
                         iconName: root.isMSA ? "user" : "users"
-                        text: root.isMSA ? qsTr("Microsoft") : qsTr("Offline")
+                        text: root.isMSA ? i18n("Microsoft") : i18n("Offline")
                     }
                     StatusBadge {
                         anchors.verticalCenter: parent.verticalCenter
@@ -127,13 +127,13 @@ Item {
             // rather than bare refresh and bin glyphs.
             Button {
                 visible: !root.isDefault
-                text: qsTr("Use this account")
+                text: i18n("Use this account")
                 onClicked: root.makeDefaultRequested()
             }
             Button {
                 // "and", not "&": a Button reads "&" as a keyboard
                 // mnemonic and underlines the next letter.
-                text: qsTr("Skin and cape")
+                text: i18n("Skin and cape")
                 icon.source: Icons.url("image")
                 onClicked: root.manageSkinRequested()
             }
@@ -141,7 +141,7 @@ Item {
                 id: moreButton
                 flat: false
                 iconName: "more"
-                tip: qsTr("More")
+                tip: i18n("More")
                 onClicked: rowMenu.popup(moreButton, 0, moreButton.height + Theme.space.xs)
 
                 Menu {
@@ -151,12 +151,12 @@ Item {
                         // zero it as well.
                         visible: root.isMSA
                         height: visible ? implicitHeight : 0
-                        text: qsTr("Sign in again")
+                        text: i18n("Sign in again")
                         icon.source: Icons.url("refresh")
                         onTriggered: root.refreshRequested()
                     }
                     MenuItem {
-                        text: qsTr("Remove account\u2026")
+                        text: i18n("Remove account…")
                         icon.source: Icons.url("trash")
                         onTriggered: root.removeRequested()
                     }

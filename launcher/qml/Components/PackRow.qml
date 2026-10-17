@@ -150,7 +150,7 @@ Item {
                     padding: 0
                     visible: owner.selecting || hover.hovered || activeFocus
                     checked: row.selected
-                    Accessible.name: qsTr("Select %1").arg(row.name)
+                    Accessible.name: i18n("Select %1", row.name)
                     onToggled: {
                         owner.toggle(row.key)
                         checked = Qt.binding(() => row.selected)
@@ -187,7 +187,7 @@ Item {
                 Switch {
                     checked: row.itemEnabled
                     enabled: owner.unlocked
-                    Accessible.name: qsTr("Enable %1").arg(row.name)
+                    Accessible.name: i18n("Enable %1", row.name)
                     onToggled: {
                         owner.controller.setEnabled(owner.kind, [row.key], checked)
                         checked = Qt.binding(() => row.itemEnabled)
@@ -198,7 +198,7 @@ Item {
             IconButton {
                 id: moreButton
                 iconName: "more"
-                tip: qsTr("More")
+                tip: i18n("More")
                 onClicked: rowMenu.popup(moreButton, moreButton.width - rowMenu.width, moreButton.height)
             }
         }
@@ -217,7 +217,7 @@ Item {
 
         Text {
             Layout.fillWidth: true
-            text: row.model.description || qsTr("No description.")
+            text: row.model.description || i18n("No description.")
             wrapMode: Text.Wrap
             maximumLineCount: 6
             elide: Text.ElideRight
@@ -236,7 +236,7 @@ Item {
 
             FactLabel {
                 visible: authorsValue.visible
-                text: qsTr("Authors")
+                text: i18n("Authors")
             }
             FactValue {
                 id: authorsValue
@@ -245,18 +245,18 @@ Item {
             }
             FactLabel {
                 visible: versionValue.visible
-                text: qsTr("Version")
+                text: i18n("Version")
             }
             FactValue {
                 id: versionValue
                 visible: text.length > 0
                 text: row.version ? String(row.version) : ""
             }
-            FactLabel { text: qsTr("File") }
+            FactLabel { text: i18n("File") }
             FactValue { text: row.model.fileName || "" }
             FactLabel {
                 visible: sourceValue.visible
-                text: qsTr("Installed from")
+                text: i18n("Installed from")
             }
             FactValue {
                 id: sourceValue
@@ -271,14 +271,14 @@ Item {
             Button {
                 id: homepageButton
                 visible: row.homepage.length > 0
-                text: qsTr("Homepage")
+                text: i18n("Homepage")
                 icon.source: Icons.url("external-link")
                 onClicked: Qt.openUrlExternally(row.homepage)
             }
             Button {
                 id: configsButton
                 visible: owner.kind === "mods" || owner.kind === "coremods"
-                text: qsTr("Configs folder")
+                text: i18n("Configs folder")
                 icon.source: Icons.url("folder")
                 onClicked: owner.openFolderRequested(owner.controller ? owner.controller.configsDir : "")
             }
@@ -289,23 +289,23 @@ Item {
         id: rowMenu
         MenuItem {
             enabled: owner.unlocked
-            text: row.itemEnabled ? qsTr("Disable") : qsTr("Enable")
+            text: row.itemEnabled ? i18n("Disable") : i18n("Enable")
             onTriggered: owner.controller.setEnabled(owner.kind, [row.key], !row.itemEnabled)
         }
         MenuItem {
-            text: row.expanded ? qsTr("Hide details") : qsTr("Details")
+            text: row.expanded ? i18n("Hide details") : i18n("Details")
             icon.source: Icons.url("info")
             onTriggered: owner.expandedKey = row.expanded ? "" : row.key
         }
         MenuItem {
-            text: row.selected ? qsTr("Deselect") : qsTr("Select")
+            text: row.selected ? i18n("Deselect") : i18n("Select")
             icon.source: Icons.url("check")
             onTriggered: owner.toggle(row.key)
         }
         MenuSeparator {}
         MenuItem {
             enabled: row.homepage.length > 0
-            text: qsTr("View homepage")
+            text: i18n("View homepage")
             icon.source: Icons.url("external-link")
             onTriggered: Qt.openUrlExternally(row.homepage)
         }
@@ -313,7 +313,7 @@ Item {
             // A hidden item still takes its row in a Menu; zero it.
             visible: owner.kind === "mods" || owner.kind === "coremods"
             height: visible ? implicitHeight : 0
-            text: qsTr("Open configs folder")
+            text: i18n("Open configs folder")
             icon.source: Icons.url("folder")
             onTriggered: owner.openFolderRequested(owner.controller ? owner.controller.configsDir : "")
         }
@@ -326,7 +326,7 @@ Item {
             visible: owner.updatable
             height: visible ? implicitHeight : 0
             enabled: owner.unlocked && row.source.length > 0
-            text: qsTr("Change version…")
+            text: i18n("Change version…")
             icon.source: Icons.url("layers")
             onTriggered: owner.changeVersionRequested(row.key)
         }
@@ -334,14 +334,14 @@ Item {
             visible: owner.updatable
             height: visible ? implicitHeight : 0
             enabled: row.source.length > 0
-            text: qsTr("Reset metadata…")
+            text: i18n("Reset metadata…")
             icon.source: Icons.url("refresh")
             onTriggered: owner.resetMetadataRequested(row.key, row.name)
         }
         MenuSeparator {}
         MenuItem {
             enabled: owner.unlocked
-            text: qsTr("Remove…")
+            text: i18n("Remove…")
             icon.source: Icons.url("trash")
             onTriggered: owner.confirmRemove(row.key, row.name)
         }

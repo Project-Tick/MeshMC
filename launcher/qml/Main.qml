@@ -251,7 +251,7 @@ ApplicationWindow {
             return
         }
         if (newInstanceDialog.creating) {
-            toast.show(qsTr("Another instance is still being set up. Try again once it is in your library."))
+            toast.show(i18n("Another instance is still being set up. Try again once it is in your library."))
             return
         }
         newInstanceDialog.mode = "import"
@@ -318,7 +318,7 @@ ApplicationWindow {
         if (!root.shell || root.shell.accountCount !== 0)
             return false
         root.navigate("accounts")
-        toast.show(qsTr("Sign in with the Microsoft account that owns Minecraft to play."))
+        toast.show(i18n("Sign in with the Microsoft account that owns Minecraft to play."))
         return true
     }
 
@@ -444,7 +444,7 @@ ApplicationWindow {
     }
     function askDelete(id, name) {
         deleteDialog.targetId = id
-        deleteDialog.text = qsTr("Delete \u201c%1\u201d? Its folder \u2014 worlds, mods, screenshots \u2014 is removed for good.").arg(name)
+        deleteDialog.text = i18n("Delete “%1”? Its folder — worlds, mods, screenshots — is removed for good.", name)
         deleteDialog.open()
     }
 
@@ -486,12 +486,12 @@ ApplicationWindow {
             // to its icon rail there instead of standing beside it.
             collapsed: root.width < 1000 || root.page === "settings" || SettingsStore.bool("UiSidebarCollapsed")
             items: [
-                { id: "home", icon: "home", label: qsTr("Home") },
-                { id: "library", icon: "library", label: qsTr("Library") },
-                { id: "discover", icon: "compass", label: qsTr("Discover") }
+                { id: "home", icon: "home", label: i18n("Home") },
+                { id: "library", icon: "library", label: i18n("Library") },
+                { id: "discover", icon: "compass", label: i18n("Discover") }
             ]
             footerItems: [
-                { id: "settings", icon: "settings", label: qsTr("Settings") }
+                { id: "settings", icon: "settings", label: i18n("Settings") }
             ]
             currentId: root.page === "instance" ? "library" : root.page === "accounts" ? "" : root.page
             barBeside: pageHost.dockVisible && !root.dockSuppressed
@@ -514,16 +514,16 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 // The instance page has its own banner and way back.
                 visible: root.page !== "instance"
-                title: root.page === "home" ? qsTr("Home")
-                     : root.page === "settings" ? qsTr("Settings")
-                     : root.page === "discover" ? qsTr("Discover")
-                     : root.page === "accounts" ? qsTr("Accounts") : qsTr("Library")
+                title: root.page === "home" ? i18n("Home")
+                     : root.page === "settings" ? i18n("Settings")
+                     : root.page === "discover" ? i18n("Discover")
+                     : root.page === "accounts" ? i18n("Accounts") : i18n("Library")
                 count: root.page === "library" && root.instanceModel && root.instanceModel.count !== undefined
                        ? root.instanceModel.count : -1
                 searchVisible: root.page === "library"
                 // The library title row also carries the total play time.
                 showPlayTime: root.page === "library"
-                searchPlaceholder: qsTr("Search instances")
+                searchPlaceholder: i18n("Search instances")
                 onSearchTextChanged: root.instanceModel.filterText = searchText
 
                 accountName: root.shell && root.shell.accountName ? root.shell.accountName : ""
@@ -537,9 +537,9 @@ ApplicationWindow {
                     visible: root.page === "library"
                     implicitWidth: 152
                     model: [
-                        { value: "Name", label: qsTr("Name") },
-                        { value: "LastLaunch", label: qsTr("Last played") },
-                        { value: "TotalTimePlayed", label: qsTr("Time played") }
+                        { value: "Name", label: i18n("Name") },
+                        { value: "LastLaunch", label: i18n("Last played") },
+                        { value: "TotalTimePlayed", label: i18n("Time played") }
                     ]
                     textRole: "label"
                     valueRole: "value"
@@ -559,7 +559,7 @@ ApplicationWindow {
                     Component.onCompleted: sync()
                     onActivated: SettingsStore.setValue("InstSortMode", currentValue)
 
-                    Accessible.name: qsTr("Sort instances by")
+                    Accessible.name: i18n("Sort instances by")
                 }
 
                 // Grid or list: two icon buttons, the current view lit.
@@ -571,7 +571,7 @@ ApplicationWindow {
 
                 Button {
                     visible: root.page === "library"
-                    text: qsTr("New instance")
+                    text: i18n("New instance")
                     icon.source: Icons.url("plus")
                     onClicked: root.openNewInstance()
                 }
@@ -827,23 +827,23 @@ ApplicationWindow {
     PromptDialog {
         id: renameDialog
         property string targetId
-        title: qsTr("Rename instance")
-        confirmText: qsTr("Rename")
+        title: i18n("Rename instance")
+        confirmText: i18n("Rename")
         onSubmitted: (text) => {
             if (root.shell.renameInstance(targetId, text))
                 close()
             else
-                error = qsTr("That name cannot be used.")
+                error = i18n("That name cannot be used.")
         }
     }
 
     PromptDialog {
         id: groupDialog
         property string targetId
-        title: qsTr("Move to group")
-        label: qsTr("Type a new group or pick an existing one.")
-        placeholder: qsTr("No group")
-        confirmText: qsTr("Move")
+        title: i18n("Move to group")
+        label: i18n("Type a new group or pick an existing one.")
+        placeholder: i18n("No group")
+        confirmText: i18n("Move")
         allowEmpty: true
         onSubmitted: (text) => {
             root.shell.setInstanceGroup(targetId, text)
@@ -854,8 +854,8 @@ ApplicationWindow {
     ConfirmDialog {
         id: deleteDialog
         property string targetId
-        title: qsTr("Delete instance")
-        confirmText: qsTr("Delete instance")
+        title: i18n("Delete instance")
+        confirmText: i18n("Delete instance")
         onConfirmed: {
             if (root.shell.deleteInstance(targetId)) {
                 if (root.selectedId === targetId)
@@ -868,17 +868,17 @@ ApplicationWindow {
                 var library = root.shell.library
                 if (library && library.canUndoDelete) {
                     var trashedName = library.lastDeletedName
-                    toast.show(qsTr("Instance deleted."), "success", qsTr("Undo"), function () {
+                    toast.show(i18n("Instance deleted."), "success", i18n("Undo"), function () {
                         if (library.undoDelete())
-                            toast.show(qsTr("“%1” is back in your library.").arg(trashedName), "success")
+                            toast.show(i18n("“%1” is back in your library.", trashedName), "success")
                         else
-                            toast.show(qsTr("“%1” could not be put back. It is still in the trash.").arg(trashedName), "danger")
+                            toast.show(i18n("“%1” could not be put back. It is still in the trash.", trashedName), "danger")
                     })
                 } else {
-                    toast.show(qsTr("Instance deleted."), "success")
+                    toast.show(i18n("Instance deleted."), "success")
                 }
             } else {
-                toast.show(qsTr("The instance could not be deleted. Is it running?"), "danger")
+                toast.show(i18n("The instance could not be deleted. Is it running?"), "danger")
             }
         }
     }

@@ -117,7 +117,7 @@ Item {
                 return
             root.uploading = false
             clipboard.copyText(url)
-            toast.show(qsTr("Link copied to your clipboard."), "success", qsTr("Open"),
+            toast.show(i18n("Link copied to your clipboard."), "success", i18n("Open"),
                        () => Qt.openUrlExternally(url))
         }
         function onFailed(message) {
@@ -163,7 +163,7 @@ Item {
                 onActivated: (index) => root.logs.selectFile(textAt(index))
                 // Says what it is for before a file is picked, rather than
                 // sitting there empty.
-                displayText: currentIndex < 0 && count > 0 ? qsTr("Choose a log file") : currentText
+                displayText: currentIndex < 0 && count > 0 ? i18n("Choose a log file") : currentText
             }
 
             LogFindBar {
@@ -184,20 +184,20 @@ Item {
 
             Button {
                 enabled: root.hasFile
-                text: qsTr("Copy")
+                text: i18n("Copy")
                 icon.source: Icons.url("copy")
                 display: root.compact ? AbstractButton.IconOnly : AbstractButton.TextBesideIcon
                 ToolTip.visible: root.compact && hovered
                 ToolTip.text: text
                 onClicked: {
                     clipboard.copyText(root.logs.content)
-                    toast.show(qsTr("Log copied."), "success")
+                    toast.show(i18n("Log copied."), "success")
                 }
             }
             Button {
                 visible: !!root.uploader
                 enabled: root.hasFile && !!root.uploader && !root.uploader.busy
-                text: root.uploading ? qsTr("Uploading…") : qsTr("Upload")
+                text: root.uploading ? i18n("Uploading…") : i18n("Upload")
                 icon.source: Icons.url("arrow-up")
                 display: root.compact ? AbstractButton.IconOnly : AbstractButton.TextBesideIcon
                 ToolTip.visible: root.compact && hovered
@@ -209,7 +209,7 @@ Item {
             }
             Button {
                 enabled: !!root.logs
-                text: qsTr("Open folder")
+                text: i18n("Open folder")
                 icon.source: Icons.url("folder")
                 display: root.compact ? AbstractButton.IconOnly : AbstractButton.TextBesideIcon
                 ToolTip.visible: root.compact && hovered
@@ -221,40 +221,42 @@ Item {
                 enabled: !!root.logs && fileCombo.count > 0
                 flat: false
                 iconName: "more"
-                tip: qsTr("More")
+                tip: i18n("More")
                 onClicked: moreMenu.popup(moreButton, moreButton.width - moreMenu.width, moreButton.height)
 
                 Menu {
                     id: moreMenu
                     MenuItem {
-                        text: qsTr("Wrap lines")
+                        text: i18n("Wrap lines")
                         checkable: true
                         checked: findBar.wrap
                         onToggled: findBar.wrap = checked
                     }
                     MenuItem {
                         enabled: root.hasFile
-                        text: qsTr("Reload")
+                        text: i18n("Reload")
                         icon.source: Icons.url("refresh")
                         onTriggered: root.logs.reload()
                     }
                     MenuSeparator {}
                     MenuItem {
-                        text: qsTr("Delete this file…")
+                        text: i18n("Delete this file…")
                         icon.source: Icons.url("trash")
                         enabled: root.hasFile
                         onTriggered: {
-                            deleteFileConfirm.text = qsTr("Delete “%1”? It cannot be recovered from the launcher.").arg(root.logs.currentFile)
+                            deleteFileConfirm.text = i18n("Delete “%1”? It cannot be recovered from the launcher.",
+                                                          root.logs.currentFile)
                             deleteFileConfirm.open()
                         }
                     }
                     MenuItem {
-                        text: qsTr("Delete all…")
+                        text: i18n("Delete all…")
                         icon.source: Icons.url("trash")
                         onTriggered: {
                             deleteAllConfirm.text = fileCombo.count === 1
-                                ? qsTr("Delete the log file? It cannot be recovered from the launcher.")
-                                : qsTr("Delete all %1 log files? They cannot be recovered from the launcher.").arg(fileCombo.count)
+                                ? i18n("Delete the log file? It cannot be recovered from the launcher.")
+                                : i18n("Delete all %1 log files? They cannot be recovered from the launcher.",
+                                       fileCombo.count)
                             deleteAllConfirm.open()
                         }
                     }
@@ -284,10 +286,10 @@ Item {
                 anchors.centerIn: parent
                 upperThird: true
                 visible: !root.hasFile
-                title: fileCombo.count > 0 ? qsTr("No file selected") : qsTr("No logs")
+                title: fileCombo.count > 0 ? i18n("No file selected") : i18n("No logs")
                 body: fileCombo.count > 0
-                      ? qsTr("Pick a file above to view it.")
-                      : qsTr("There are no log files here yet.")
+                      ? i18n("Pick a file above to view it.")
+                      : i18n("There are no log files here yet.")
                 MeshIcon { iconName: "terminal"; size: 40; color: Theme.palette.textTertiary }
             }
         }
@@ -297,20 +299,20 @@ Item {
 
     ConfirmDialog {
         id: deleteFileConfirm
-        title: qsTr("Delete log file")
-        confirmText: qsTr("Delete")
+        title: i18n("Delete log file")
+        confirmText: i18n("Delete")
         onConfirmed: if (root.logs && !root.logs.deleteCurrent())
-                         toast.show(qsTr("The file could not be deleted."), "danger")
+                         toast.show(i18n("The file could not be deleted."), "danger")
     }
 
     ConfirmDialog {
         id: deleteAllConfirm
-        title: qsTr("Delete logs")
-        confirmText: qsTr("Delete all")
+        title: i18n("Delete logs")
+        confirmText: i18n("Delete all")
         onConfirmed: if (root.logs) {
             var failed = root.logs.deleteAll()
             if (failed.length > 0)
-                toast.show(qsTr("Some files could not be deleted. They may be in use."), "danger")
+                toast.show(i18n("Some files could not be deleted. They may be in use."), "danger")
         }
     }
 

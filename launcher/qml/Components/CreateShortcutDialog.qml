@@ -41,9 +41,9 @@ Dialog {
             root.failure = root.controller.error
             return
         }
-        var message = root.location === "desktop" ? qsTr("Shortcut added to your desktop.")
-                    : root.location === "applications" ? qsTr("Shortcut added to Applications.")
-                    : qsTr("Shortcut created.")
+        var message = root.location === "desktop" ? i18n("Shortcut added to your desktop.")
+                    : root.location === "applications" ? i18n("Shortcut added to Applications.")
+                    : i18n("Shortcut created.")
         root.close()
         root.created(message)
     }
@@ -53,7 +53,7 @@ Dialog {
     width: Math.min(root.dialogWidth, parent ? parent.width - Theme.space.xxl * 2 : root.dialogWidth)
     modal: true
     closePolicy: Popup.CloseOnEscape
-    title: qsTr("Create shortcut")
+    title: i18n("Create shortcut")
 
     header: DialogHeader {
         title: root.title
@@ -76,7 +76,8 @@ Dialog {
 
         Text {
             Layout.fillWidth: true
-            text: root.controller ? qsTr("Starts “%1” straight away, without opening MeshMC first.").arg(root.controller.instanceName) : ""
+            text: root.controller ? i18n("Starts “%1” straight away, without opening MeshMC first.",
+                                         root.controller.instanceName) : ""
             wrapMode: Text.Wrap
             color: Theme.palette.textSecondary
             font.family: Theme.font.family
@@ -86,7 +87,7 @@ Dialog {
         ColumnLayout {
             Layout.fillWidth: true
             spacing: Theme.space.xs
-            FieldLabel { text: qsTr("Name") }
+            FieldLabel { text: i18n("Name") }
             TextField {
                 id: nameField
                 Layout.fillWidth: true
@@ -100,19 +101,19 @@ Dialog {
         ColumnLayout {
             Layout.fillWidth: true
             spacing: Theme.space.xs
-            FieldLabel { text: qsTr("Place it in") }
+            FieldLabel { text: i18n("Place it in") }
             ComboBox {
                 Layout.fillWidth: true
                 // "Other" is the one that asks for a folder afterwards.
                 model: root.locations.map((l) => ({
                     value: l.value,
-                    label: l.value === "other" ? qsTr("Choose folder…") : l.label
+                    label: l.value === "other" ? i18n("Choose folder…") : l.label
                 }))
                 textRole: "label"
                 valueRole: "value"
                 currentIndex: indexOfValue(root.location)
                 onActivated: root.location = currentValue
-                Accessible.name: qsTr("Place it in")
+                Accessible.name: i18n("Place it in")
             }
         }
 
@@ -122,13 +123,13 @@ Dialog {
             CheckBox {
                 id: serverBox
                 leftPadding: 0
-                text: qsTr("Join a server when it starts")
+                text: i18n("Join a server when it starts")
             }
             TextField {
                 id: serverField
                 Layout.fillWidth: true
                 visible: serverBox.checked
-                placeholderText: qsTr("Server address, for example play.example.net")
+                placeholderText: i18n("Server address, for example play.example.net")
                 selectByMouse: true
             }
         }
@@ -141,7 +142,7 @@ Dialog {
             CheckBox {
                 id: accountBox
                 leftPadding: 0
-                text: qsTr("Play as a different account")
+                text: i18n("Play as a different account")
             }
             ComboBox {
                 id: accountPicker
@@ -153,7 +154,7 @@ Dialog {
 
         Text {
             Layout.fillWidth: true
-            text: qsTr("Deleting the instance deletes its shortcuts too, as long as they stay where they were made.")
+            text: i18n("Deleting the instance deletes its shortcuts too, as long as they stay where they were made.")
             wrapMode: Text.Wrap
             color: Theme.palette.textTertiary
             font.family: Theme.font.family
@@ -180,7 +181,7 @@ Dialog {
         Button {
             highlighted: true
             enabled: !!root.controller && root.complete
-            text: root.location === "other" ? qsTr("Create…") : qsTr("Create")
+            text: root.location === "other" ? i18n("Create…") : i18n("Create")
             onClicked: {
                 root.failure = ""
                 if (root.location !== "other") {
@@ -194,14 +195,14 @@ Dialog {
         }
         Button {
             flat: true
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             onClicked: root.close()
         }
     }
 
     FileDialog {
         id: saveDialog
-        title: qsTr("Save shortcut")
+        title: i18n("Save shortcut")
         fileMode: FileDialog.SaveFile
         defaultSuffix: root.controller && root.controller.fileSuffix.length > 0 ? root.controller.fileSuffix.slice(1) : ""
         onAccepted: root.create(String(selectedFile))

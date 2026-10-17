@@ -36,6 +36,7 @@
 #include "net/Download.h"
 #include "net/NetJob.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -77,11 +78,11 @@ namespace
 		void executeTask() override
 		{
 			m_temp = temporarySkinPath();
-			m_job.reset(new NetJob(SkinsController::tr("Download skin"),
+			m_job.reset(new NetJob(i18n("Download skin"),
 								   LAUNCHER->network()));
 			m_job->addNetAction(Net::Download::makeFile(m_url, m_temp));
 			connect(m_job.get(), &Task::finished, this, [this]() { finish(); });
-			setStatus(SkinsController::tr("Downloading the skin…"));
+			setStatus(i18n("Downloading the skin…"));
 			m_job->start();
 		}
 
@@ -92,13 +93,13 @@ namespace
 			if (!downloaded || !SkinEntry(m_temp).isUsable()) {
 				QFile::remove(m_temp);
 				emitFailed(downloaded
-							   ? SkinsController::tr("That link is not a skin. Skins are 64x64 or 64x32 PNG files.")
-							   : SkinsController::tr("The skin could not be downloaded."));
+							   ? i18n("That link is not a skin. Skins are 64x64 or 64x32 PNG files.")
+							   : i18n("The skin could not be downloaded."));
 				return;
 			}
 			if (!m_library) {
 				QFile::remove(m_temp);
-				emitFailed(SkinsController::tr("The skin library was closed."));
+				emitFailed(i18n("The skin library was closed."));
 				return;
 			}
 			const QString base = QFileInfo(m_url.fileName()).completeBaseName();
@@ -135,7 +136,7 @@ namespace
 		void executeTask() override
 		{
 			if (!m_library) {
-				emitFailed(SkinsController::tr("The skin library was closed."));
+				emitFailed(i18n("The skin library was closed."));
 				return;
 			}
 			m_target = freeSkinPath(QDir(m_library->directory()), m_username);
@@ -148,7 +149,7 @@ namespace
 					[this](const QString& reason) {
 						QFile::remove(m_target);
 						emitFailed(reason.isEmpty()
-									   ? SkinsController::tr("No skin was found for that name.")
+									   ? i18n("No skin was found for that name.")
 									   : reason);
 					});
 			m_import->start();
@@ -160,7 +161,7 @@ namespace
 			SkinEntry imported(m_target);
 			if (!imported.isUsable() || !m_library) {
 				QFile::remove(m_target);
-				emitFailed(SkinsController::tr("That player's skin could not be read."));
+				emitFailed(i18n("That player's skin could not be read."));
 				return;
 			}
 			imported.setArms(m_import->arms());
@@ -320,7 +321,7 @@ QString SkinsController::importFile(const QString& fileUrlOrPath)
 	// importFile() trusts a ".png" name; a skin is checked here either way,
 	// so a wrong-sized PNG is refused now instead of listed and never used.
 	if (!SkinEntry(path).isUsable()) {
-		return tr("Skins are 64x64 or 64x32 PNG files.");
+		return i18n("Skins are 64x64 or 64x32 PNG files.");
 	}
 	return m_library->importFile(path);
 }
@@ -336,7 +337,7 @@ QObject* SkinsController::importFromUrl(const QString& link)
 		return nullptr;
 	}
 	return watch(new SkinUrlImportTask(url, m_library.get()),
-				 tr("Skin from a link"), this);
+				 i18n("Skin from a link"), this);
 }
 
 QObject* SkinsController::importFromUsername(const QString& username)
@@ -346,7 +347,7 @@ QObject* SkinsController::importFromUsername(const QString& username)
 		return nullptr;
 	}
 	return watch(new SkinUsernameImportTask(name, m_library.get()),
-				 tr("Skin of %1").arg(name), this);
+				 i18n("Skin of %1", name), this);
 }
 
 bool SkinsController::rename(const QString& name, const QString& newName)
@@ -365,15 +366,15 @@ QString SkinsController::remove(const QString& name)
 {
 	const int row = m_library->indexOfName(name);
 	if (row < 0) {
-		return tr("That skin is not in the library any more.");
+		return i18n("That skin is not in the library any more.");
 	}
 	if (row == m_library->indexOfAccountSkin()) {
-		return tr("This is the skin you are wearing, so it cannot be deleted.");
+		return i18n("This is the skin you are wearing, so it cannot be deleted.");
 	}
 	if (m_library->remove(name, true) || m_library->remove(name, false)) {
 		return QString();
 	}
-	return tr("The skin's file could not be deleted.");
+	return i18n("The skin's file could not be deleted.");
 }
 
 void SkinsController::setSlim(const QString& name, bool slim)

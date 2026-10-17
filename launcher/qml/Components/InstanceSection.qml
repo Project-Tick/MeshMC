@@ -229,7 +229,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             size: Theme.control.heightSm
             iconName: "more"
-            tip: qsTr("Group options")
+            tip: i18n("Group options")
             onClicked: root.openGroupMenu()
         }
 
@@ -268,12 +268,12 @@ Column {
     Menu {
         id: groupMenu
         MenuItem {
-            text: qsTr("Rename group\u2026")
+            text: i18n("Rename group…")
             icon.source: Icons.url("edit")
             onTriggered: root.renameGroupRequested(root.group)
         }
         MenuItem {
-            text: qsTr("Delete group\u2026")
+            text: i18n("Delete group…")
             icon.source: Icons.url("trash")
             onTriggered: root.deleteGroupRequested(root.group)
         }

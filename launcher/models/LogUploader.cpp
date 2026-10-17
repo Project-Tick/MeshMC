@@ -26,6 +26,7 @@
 #include "core/LauncherContext.h"
 #include "net/PasteUpload.h"
 #include "settings/SettingsObject.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -54,11 +55,11 @@ QString LogUploader::resolveApiKey(const QString& setting,
 QString LogUploader::validate(const QString& text, const QString& apiKey)
 {
 	if (text.trimmed().isEmpty()) {
-		return tr("There is nothing in this log to upload.");
+		return i18n("There is nothing in this log to upload.");
 	}
 	PasteUpload probe(text, apiKey);
 	if (!probe.validateText()) {
-		return tr("This log is too big to upload. Open the folder and share "
+		return i18n("This log is too big to upload. Open the folder and share "
 				  "the file by hand.");
 	}
 	return QString();
@@ -69,7 +70,7 @@ QString LogUploader::readLogFile(const QString& path, QString* error)
 	QFile file(path);
 	if (!file.open(QFile::ReadOnly)) {
 		if (error) {
-			*error = tr("The log file could not be read.");
+			*error = i18n("The log file could not be read.");
 		}
 		return QString();
 	}
@@ -80,7 +81,7 @@ QString LogUploader::readLogFile(const QString& path, QString* error)
 	QByteArray plain;
 	if (!GZip::unzip(raw, plain)) {
 		if (error) {
-			*error = tr("The log file could not be read.");
+			*error = i18n("The log file could not be read.");
 		}
 		return QString();
 	}
@@ -113,7 +114,7 @@ void LogUploader::start(const QString& text)
 {
 	auto* launcher = LauncherContext::instance();
 	if (!launcher || !launcher->settings()) {
-		emit failed(tr("Uploading is not available right now."));
+		emit failed(i18n("Uploading is not available right now."));
 		return;
 	}
 	const QString key = resolveApiKey(
@@ -146,7 +147,7 @@ void LogUploader::finish(bool ok, const QString& urlOrError)
 		emit uploaded(urlOrError);
 	} else {
 		emit failed(urlOrError.isEmpty()
-						? tr("The upload failed. Check your connection and try again.")
-						: tr("The upload failed: %1").arg(urlOrError));
+						? i18n("The upload failed. Check your connection and try again.")
+						: i18n("The upload failed: %1", urlOrError));
 	}
 }

@@ -97,7 +97,7 @@ AbstractButton {
             size: Theme.control.heightSm
             visible: tile.menuEnabled && (tile.hovered || moreButton.hovered)
             iconName: "more"
-            tip: qsTr("More")
+            tip: i18n("More")
             onClicked: tile.menuRequested()
         }
     }

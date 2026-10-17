@@ -29,6 +29,7 @@
 #include "core/UiHost.h"
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -79,7 +80,7 @@ QString FolderSettingsController::instanceDirWarning(const QString& rawDir,
 													 bool flatpak)
 {
 	if (FS::checkProblemticPathJava(QDir(cookedDir))) {
-		return tr("This folder's path contains a \"!\". Java is known to "
+		return i18n("This folder's path contains a \"!\". Java is known to "
 				  "have trouble with that, so your instances probably will "
 				  "not start.");
 	}
@@ -90,10 +91,9 @@ QString FolderSettingsController::instanceDirWarning(const QString& rawDir,
 	 * launcher can no longer see it and the instances in it read as
 	 * deleted. */
 	if (flatpak && rawDir.startsWith(QLatin1String("/run/user"))) {
-		return tr("This folder was shared with %1 only for this session. "
+		return i18n("This folder was shared with %1 only for this session. "
 				  "After a restart %1 will no longer be able to open it. "
-				  "Granting it access with Flatseal is recommended.")
-			.arg(QStringLiteral("MeshMC"));
+				  "Granting it access with Flatseal is recommended.", QStringLiteral("MeshMC"));
 	}
 	return QString();
 }
@@ -104,11 +104,11 @@ QString FolderSettingsController::duplicateDirMessage(
 {
 	if (cookedDir.compare(FS::NormalizePath(primaryDir),
 						  Qt::CaseInsensitive) == 0) {
-		return tr("This is already your main instance folder.");
+		return i18n("This is already your main instance folder.");
 	}
 	for (const QString& dir : additionalDirs) {
 		if (cookedDir.compare(dir, Qt::CaseInsensitive) == 0) {
-			return tr("This folder has already been added.");
+			return i18n("This folder has already been added.");
 		}
 	}
 	return QString();
@@ -130,10 +130,10 @@ bool FolderSettingsController::setFolder(const QString& key, const QUrl& url)
 			instanceDirWarning(raw, cooked, DesktopServices::isFlatpak());
 		if (!warning.isEmpty() &&
 			!LAUNCHER->uiHost()->confirm(
-				tr("Use this folder?"), warning + QStringLiteral("\n\n") +
-											tr("Do you want to use it anyway?"),
-				UiHost::Severity::Warning, tr("Use it anyway"),
-				tr("Cancel"))) {
+				i18n("Use this folder?"), warning + QStringLiteral("\n\n") +
+											i18n("Do you want to use it anyway?"),
+				UiHost::Severity::Warning, i18n("Use it anyway"),
+				i18n("Cancel"))) {
 			return false;
 		}
 	}
@@ -159,7 +159,7 @@ bool FolderSettingsController::addAdditionalDir(const QUrl& url)
 		cooked, LAUNCHER->settings()->get("InstanceDir").toString(),
 		additionalDirs());
 	if (!duplicate.isEmpty()) {
-		LAUNCHER->uiHost()->message(tr("Folder already in use"), duplicate,
+		LAUNCHER->uiHost()->message(i18n("Folder already in use"), duplicate,
 									UiHost::Severity::Warning);
 		return false;
 	}
@@ -168,10 +168,10 @@ bool FolderSettingsController::addAdditionalDir(const QUrl& url)
 		instanceDirWarning(raw, cooked, DesktopServices::isFlatpak());
 	if (!warning.isEmpty() &&
 		!LAUNCHER->uiHost()->confirm(
-			tr("Use this folder?"),
+			i18n("Use this folder?"),
 			warning + QStringLiteral("\n\n") +
-				tr("Do you want to use it anyway?"),
-			UiHost::Severity::Warning, tr("Use it anyway"), tr("Cancel"))) {
+				i18n("Do you want to use it anyway?"),
+			UiHost::Severity::Warning, i18n("Use it anyway"), i18n("Cancel"))) {
 		return false;
 	}
 

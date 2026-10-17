@@ -17,8 +17,8 @@ import MeshMC.Theme
 SettingsScroll {
     id: root
 
-    title: qsTr("Proxy")
-    description: qsTr("How MeshMC reaches the internet. Only MeshMC's own downloads use it; Minecraft ignores proxy settings.")
+    title: i18n("Proxy")
+    description: i18n("How MeshMC reaches the internet. Only MeshMC's own downloads use it; Minecraft ignores proxy settings.")
 
     readonly property string proxyType: SettingsStore.string("ProxyType")
     readonly property bool needsAddress: root.proxyType === "SOCKS5" || root.proxyType === "HTTP"
@@ -58,17 +58,17 @@ SettingsScroll {
 
     SettingsGroup {
         width: parent.width
-        title: qsTr("Type")
-        description: root.justApplied ? qsTr("Applied.") : ""
+        title: i18n("Type")
+        description: root.justApplied ? i18n("Applied.") : ""
         SettingChoice {
             key: "ProxyType"
-            label: qsTr("Proxy type")
+            label: i18n("Proxy type")
             radio: true
             options: [
-                { value: "None", label: qsTr("None") },
-                { value: "Default", label: qsTr("System") },
-                { value: "SOCKS5", label: qsTr("SOCKS5") },
-                { value: "HTTP", label: qsTr("HTTP") }
+                { value: "None", label: i18n("None") },
+                { value: "Default", label: i18n("System") },
+                { value: "SOCKS5", label: i18n("SOCKS5") },
+                { value: "HTTP", label: i18n("HTTP") }
             ]
         }
     }
@@ -76,15 +76,15 @@ SettingsScroll {
     SettingsGroup {
         width: parent.width
         visible: root.needsAddress
-        title: qsTr("Address and port")
+        title: i18n("Address and port")
         SettingText {
             key: "ProxyAddr"
-            label: qsTr("Host")
+            label: i18n("Host")
             placeholder: "127.0.0.1"
         }
         SettingNumber {
             key: "ProxyPort"
-            label: qsTr("Port")
+            label: i18n("Port")
             from: 1
             to: 65535
         }
@@ -93,15 +93,15 @@ SettingsScroll {
     SettingsGroup {
         width: parent.width
         visible: root.needsAddress
-        title: qsTr("Authentication")
-        description: qsTr("Stored in plain text in MeshMC's configuration file.")
+        title: i18n("Authentication")
+        description: i18n("Stored in plain text in MeshMC's configuration file.")
         SettingText {
             key: "ProxyUser"
-            label: qsTr("Username")
+            label: i18n("Username")
         }
         SettingText {
             key: "ProxyPass"
-            label: qsTr("Password")
+            label: i18n("Password")
             secret: true
         }
     }

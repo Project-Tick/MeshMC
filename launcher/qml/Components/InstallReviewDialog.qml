@@ -54,7 +54,7 @@ Dialog {
     height: Math.min(root.maxHeight, implicitHeight, parent ? parent.height - Theme.space.xxl * 2 : root.maxHeight)
     modal: true
     closePolicy: Popup.CloseOnEscape
-    title: !root.review ? "" : root.picked ? qsTr("Install %1").arg(root.review.title) : root.review.title
+    title: !root.review ? "" : root.picked ? i18n("Install %1", root.review.title) : root.review.title
 
     header: DialogHeader {
         title: root.title
@@ -75,9 +75,9 @@ Dialog {
         Text {
             Layout.fillWidth: true
             text: !root.review ? ""
-                  : !root.picked ? qsTr("Mods in this instance need these, and they are not installed.")
-                  : root.review.dependencyCount > 0 ? qsTr("It needs these to run. Untick any you do not want.")
-                  : qsTr("Nothing else needs to come with it.")
+                  : !root.picked ? i18n("Mods in this instance need these, and they are not installed.")
+                  : root.review.dependencyCount > 0 ? i18n("It needs these to run. Untick any you do not want.")
+                  : i18n("Nothing else needs to come with it.")
             wrapMode: Text.Wrap
             color: Theme.palette.textSecondary
             font.family: Theme.font.family
@@ -109,7 +109,7 @@ Dialog {
                     id: sectionLabel
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: Theme.space.xxs
-                    text: parent.shown ? qsTr("Needed to run it") : ""
+                    text: parent.shown ? i18n("Needed to run it") : ""
                     color: Theme.palette.textTertiary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.caption.pixelSize
@@ -133,12 +133,12 @@ Dialog {
                 checkable: isDependency
                 checked: model.checked
                 title: name
-                subtitle: maybeInstalled ? qsTr("Another version is already installed")
-                        : browserOnly ? qsTr("The author only allows downloads from their own page")
-                        : isDependency && requiredBy.length > 0 ? qsTr("Needed by %1").arg(requiredBy)
+                subtitle: maybeInstalled ? i18n("Another version is already installed")
+                        : browserOnly ? i18n("The author only allows downloads from their own page")
+                        : isDependency && requiredBy.length > 0 ? i18n("Needed by %1", requiredBy)
                         : fileName
                 subtitleWarning: maybeInstalled || browserOnly
-                tags: (versionType === "beta" ? [qsTr("Beta")] : versionType === "alpha" ? [qsTr("Alpha")] : [])
+                tags: (versionType === "beta" ? [i18n("Beta")] : versionType === "alpha" ? [i18n("Alpha")] : [])
                       .concat(provider.length > 0 ? [provider] : [])
                 onToggled: (on) => root.review.setChecked(index, on)
             }
@@ -148,8 +148,8 @@ Dialog {
             Layout.fillWidth: true
             visible: !!root.review && root.review.unresolved.length > 0
             text: root.review
-                  ? qsTr("No compatible version was found for %1. It may not work without it.")
-                        .arg(root.review.unresolved.join(", "))
+                  ? i18n("No compatible version was found for %1. It may not work without it.",
+                         root.review.unresolved.join(", "))
                   : ""
         }
     }
@@ -170,7 +170,7 @@ Dialog {
                 // Box edge on the content edge.
                 leftPadding: 0
                 visible: !!root.review && root.review.dependencyCount > 1
-                text: qsTr("All dependencies")
+                text: i18n("All dependencies")
                 checkState: root.allState()
                 onClicked: {
                     root.review.setAllDependenciesChecked(root.review.checkedDependencyCount !== root.review.dependencyCount)
@@ -180,15 +180,15 @@ Dialog {
             Item { Layout.fillWidth: true }
             Button {
                 flat: true
-                text: qsTr("Cancel")
+                text: i18n("Cancel")
                 onClicked: root.close()
             }
             Button {
                 highlighted: true
                 enabled: !!root.review && root.review.ready && root.review.checkedCount > 0
-                text: !root.review ? qsTr("Install")
-                      : root.review.checkedCount > 1 ? qsTr("Install %1 files").arg(root.review.checkedCount)
-                      : qsTr("Install")
+                text: !root.review ? i18n("Install")
+                      : root.review.checkedCount > 1 ? i18n("Install %1 files", root.review.checkedCount)
+                      : i18n("Install")
                 icon.source: Icons.url("download")
                 onClicked: {
                     const watcher = root.review.install()

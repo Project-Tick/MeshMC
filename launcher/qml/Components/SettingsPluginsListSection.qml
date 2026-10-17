@@ -23,13 +23,13 @@ SettingsScroll {
     readonly property bool shown: !!root.pluginList
     readonly property int count: root.pluginList ? root.pluginList.count : 0
 
-    title: qsTr("Installed plugins")
-    description: qsTr("Plugins add features to MeshMC. Turning one on or off takes effect the next time MeshMC starts.")
+    title: i18n("Installed plugins")
+    description: i18n("Plugins add features to MeshMC. Turning one on or off takes effect the next time MeshMC starts.")
 
     Text {
         width: parent.width
         visible: root.count === 0
-        text: qsTr("No plugins are installed.")
+        text: i18n("No plugins are installed.")
         wrapMode: Text.Wrap
         color: Theme.palette.textSecondary
         font.family: Theme.font.family
@@ -40,7 +40,7 @@ SettingsScroll {
         width: parent.width
         visible: root.count > 0
         description: root.pluginList && root.pluginList.restartNeeded
-                     ? qsTr("Restart MeshMC to apply your changes.") : ""
+                     ? i18n("Restart MeshMC to apply your changes.") : ""
 
         Repeater {
             model: root.pluginList
@@ -51,13 +51,13 @@ SettingsScroll {
                 // also SettingRow properties of their own.
                 required property var model
 
-                label: model.version.length > 0 ? qsTr("%1 %2").arg(model.name).arg(model.version) : model.name
+                label: model.version.length > 0 ? i18n("%1 %2", model.name, model.version) : model.name
                 // What it does, then who made it and under which licence,
                 // what it needs, and why it did not load when it did not.
                 description: [model.description,
-                              model.author.length > 0 ? qsTr("By %1").arg(model.author) : "",
-                              model.license.length > 0 ? qsTr("Licence: %1").arg(model.license) : "",
-                              model.dependencies.length > 0 ? qsTr("Needs %1").arg(model.dependencies) : "",
+                              model.author.length > 0 ? i18n("By %1", model.author) : "",
+                              model.license.length > 0 ? i18n("Licence: %1", model.license) : "",
+                              model.dependencies.length > 0 ? i18n("Needs %1", model.dependencies) : "",
                               model.statusDetail].filter(s => s.length > 0).join("\n")
 
                 Row {
@@ -74,14 +74,14 @@ SettingsScroll {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: pluginRow.model.sourceUrl.length > 0
                         iconName: "external-link"
-                        tip: qsTr("Source code")
+                        tip: i18n("Source code")
                         onClicked: Qt.openUrlExternally(pluginRow.model.sourceUrl)
                     }
                     Switch {
                         anchors.verticalCenter: parent.verticalCenter
                         checked: pluginRow.model.enabled
                         enabled: pluginRow.model.canToggle
-                        Accessible.name: qsTr("Use %1").arg(pluginRow.model.name)
+                        Accessible.name: i18n("Use %1", pluginRow.model.name)
                         onToggled: {
                             root.pluginList.setEnabled(pluginRow.index, checked)
                             // A click assigns `checked` and drops the binding; put it

@@ -20,7 +20,7 @@ ComboBox {
     property var logs: null
     // Whether the live log is the one on show.
     property bool live: true
-    readonly property string liveLabel: qsTr("Live game log")
+    readonly property string liveLabel: i18n("Live game log")
     // The file names, in the model's order.
     property var files: []
 
@@ -51,8 +51,8 @@ ComboBox {
     // Follows the Log tab's state rather than owning the choice.
     currentIndex: root.live ? 0 : (root.logs ? root.files.indexOf(root.logs.currentFile) + 1 : -1) || -1
     // Before any file is picked in the file view the box invites a choice.
-    displayText: currentIndex < 0 ? qsTr("Choose a log file") : currentText
-    Accessible.name: qsTr("Log")
+    displayText: currentIndex < 0 ? i18n("Choose a log file") : currentText
+    Accessible.name: i18n("Log")
 
     onActivated: (index) => {
         if (index === 0)

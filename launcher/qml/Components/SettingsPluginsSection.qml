@@ -17,8 +17,8 @@ SettingsScroll {
     // Read by SettingsPage.qml's section list.
     readonly property bool shown: pluginsView.count > 0
 
-    title: qsTr("Plugins")
-    description: qsTr("Settings the installed plugins have added.")
+    title: i18n("Plugins")
+    description: i18n("Settings the installed plugins have added.")
     PluginSurfaces {
         id: pluginsView
         width: parent.width

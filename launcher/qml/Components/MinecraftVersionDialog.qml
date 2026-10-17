@@ -33,7 +33,7 @@ Dialog {
     width: Math.min(560, parent ? parent.width - Theme.space.xxl * 2 : 560)
     height: Math.min(600, parent ? parent.height - Theme.space.xxl * 2 : 600)
     modal: true
-    title: qsTr("Change Minecraft version")
+    title: i18n("Change Minecraft version")
 
     header: DialogHeader {
         title: root.title
@@ -55,12 +55,12 @@ Dialog {
             spacing: Theme.space.md
 
             CheckBox {
-                text: qsTr("Snapshots")
+                text: i18n("Snapshots")
                 checked: !!root.versions && root.versions.showSnapshots
                 onToggled: if (root.versions) root.versions.showSnapshots = checked
             }
             CheckBox {
-                text: qsTr("Old versions")
+                text: i18n("Old versions")
                 checked: !!root.versions && root.versions.showOldVersions
                 onToggled: if (root.versions) root.versions.showOldVersions = checked
             }
@@ -121,10 +121,10 @@ Dialog {
             EmptyState {
                 anchors.centerIn: parent
                 visible: !!root.versions && !root.versions.loading && root.versions.count === 0
-                title: qsTr("No versions found")
+                title: i18n("No versions found")
                 body: root.versions && root.versions.error.length > 0
                       ? root.versions.error
-                      : qsTr("Try turning on snapshots or old versions.")
+                      : i18n("Try turning on snapshots or old versions.")
                 MeshIcon { iconName: "cube"; size: 40; color: Theme.palette.textTertiary }
             }
         }
@@ -137,12 +137,12 @@ Dialog {
         topPadding: 0
 
         Button {
-            text: qsTr("Change")
+            text: i18n("Change")
             enabled: list.currentIndex >= 0
             onClicked: root.doChange(list.currentItem ? list.currentItem.versionId : "")
         }
         Button {
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             flat: true
             onClicked: root.close()
         }

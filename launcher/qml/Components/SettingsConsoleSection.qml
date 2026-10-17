@@ -9,54 +9,54 @@ import QtQuick
  * does while you play, and how much of the log is kept.
  */
 SettingsScroll {
-    title: qsTr("Console")
-    description: qsTr("What the game's log window does while you play, and how much of it is kept.")
+    title: i18n("Console")
+    description: i18n("What the game's log window does while you play, and how much of it is kept.")
     SettingsGroup {
         width: parent.width
-        title: qsTr("Game console")
+        title: i18n("Game console")
         SettingSwitch {
             key: "ShowConsole"
-            label: qsTr("Show the console while playing")
+            label: i18n("Show the console while playing")
         }
         SettingSwitch {
             key: "AutoCloseConsole"
-            label: qsTr("Close the console when the game quits")
+            label: i18n("Close the console when the game quits")
         }
         SettingSwitch {
             key: "ShowConsoleOnError"
-            label: qsTr("Show the console when the game crashes")
+            label: i18n("Show the console when the game crashes")
         }
     }
     SettingsGroup {
         width: parent.width
-        title: qsTr("Font")
+        title: i18n("Font")
         ConsoleFontRow {
-            label: qsTr("Font")
-            description: qsTr("Used for the game's log. A monospaced font lines columns up best.")
+            label: i18n("Font")
+            description: i18n("Used for the game's log. A monospaced font lines columns up best.")
         }
         SettingNumber {
             key: "ConsoleFontSize"
-            label: qsTr("Font size")
+            label: i18n("Font size")
             from: 6
             to: 48
-            suffix: qsTr("pt")
+            suffix: i18n("pt")
         }
         ConsolePreview {}
     }
     SettingsGroup {
         width: parent.width
-        title: qsTr("Log history")
+        title: i18n("Log history")
         SettingNumber {
             key: "ConsoleMaxLines"
-            label: qsTr("Lines to keep")
+            label: i18n("Lines to keep")
             from: 10000
             to: 1000000
             stepSize: 10000
         }
         SettingSwitch {
             key: "ConsoleOverflowStop"
-            label: qsTr("Stop logging when the limit is reached")
-            description: qsTr("Otherwise the oldest lines are dropped to make room.")
+            label: i18n("Stop logging when the limit is reached")
+            description: i18n("Otherwise the oldest lines are dropped to make room.")
         }
     }
 }

@@ -43,7 +43,7 @@ AbstractButton {
     // reliable way to broadcast "now".
     property int burstSeed: 0
 
-    text: busy ? qsTr("Starting…") : running ? qsTr("Stop") : qsTr("Play")
+    text: busy ? i18n("Starting…") : running ? i18n("Stop") : i18n("Play")
     hoverEnabled: true
     implicitHeight: size
     implicitWidth: round ? size : Math.max(size * 3, label.implicitWidth + Theme.icon.md + Theme.space.xl * 2 + Theme.space.sm)

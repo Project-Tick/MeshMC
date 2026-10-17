@@ -54,20 +54,20 @@ Item {
     // own kept logs, the circling arrows of "check again" for updates, and
     // "i" for about.
     readonly property var sections: [
-        { id: "general", icon: "settings", label: qsTr("General") },
-        { id: "java", icon: "server", label: qsTr("Java & memory") },
-        { id: "minecraft", icon: "cube", label: qsTr("Minecraft") },
-        { id: "console", icon: "list", label: qsTr("Console") },
-        { id: "appearance", icon: "sun", label: qsTr("Appearance") },
-        { id: "commands", icon: "terminal", label: qsTr("Custom commands") },
-        { id: "plugins-list", icon: "grid", label: qsTr("Installed plugins") },
-        { id: "plugins", icon: "package", label: qsTr("Plugins") },
-        { id: "proxy", icon: "globe", label: qsTr("Proxy") },
-        { id: "external-tools", icon: "external-link", label: qsTr("External tools") },
-        { id: "log-upload", icon: "arrow-up", label: qsTr("Log upload") },
-        { id: "launcher-logs", icon: "archive", label: qsTr("Launcher logs") },
-        { id: "updates", icon: "refresh", label: qsTr("Updates") },
-        { id: "about", icon: "info", label: qsTr("About") }
+        { id: "general", icon: "settings", label: i18n("General") },
+        { id: "java", icon: "server", label: i18n("Java & memory") },
+        { id: "minecraft", icon: "cube", label: i18n("Minecraft") },
+        { id: "console", icon: "list", label: i18n("Console") },
+        { id: "appearance", icon: "sun", label: i18n("Appearance") },
+        { id: "commands", icon: "terminal", label: i18n("Custom commands") },
+        { id: "plugins-list", icon: "grid", label: i18n("Installed plugins") },
+        { id: "plugins", icon: "package", label: i18n("Plugins") },
+        { id: "proxy", icon: "globe", label: i18n("Proxy") },
+        { id: "external-tools", icon: "external-link", label: i18n("External tools") },
+        { id: "log-upload", icon: "arrow-up", label: i18n("Log upload") },
+        { id: "launcher-logs", icon: "archive", label: i18n("Launcher logs") },
+        { id: "updates", icon: "refresh", label: i18n("Updates") },
+        { id: "about", icon: "info", label: i18n("About") }
     ]
     readonly property int sectionIndex: {
         // A section that keeps itself out of the list (no updater in this

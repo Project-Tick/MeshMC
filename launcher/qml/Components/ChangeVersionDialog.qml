@@ -39,7 +39,7 @@ Dialog {
     height: Math.min(root.preferredHeight, parent ? parent.height - Theme.space.xxl * 2 : root.preferredHeight)
     modal: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    title: root.controller ? qsTr("Change version of %1").arg(root.controller.versionsTitle) : ""
+    title: root.controller ? i18n("Change version of %1", root.controller.versionsTitle) : ""
 
     header: DialogHeader {
         title: root.title
@@ -60,7 +60,7 @@ Dialog {
 
         Text {
             Layout.fillWidth: true
-            text: qsTr("Versions that run on this instance come first. Anything the new version needs is listed before it installs.")
+            text: i18n("Versions that run on this instance come first. Anything the new version needs is listed before it installs.")
             wrapMode: Text.Wrap
             color: Theme.palette.textSecondary
             font.family: Theme.font.family
@@ -108,7 +108,7 @@ Dialog {
                 anchors.centerIn: parent
                 width: parent.width
                 visible: !root.loading && root.versions.length === 0
-                title: qsTr("No versions")
+                title: i18n("No versions")
                 body: root.controller ? root.controller.versionsError : ""
                 MeshIcon { iconName: "layers"; size: 40; color: Theme.palette.textTertiary }
             }
@@ -124,7 +124,7 @@ Dialog {
         Button {
             highlighted: true
             enabled: !root.loading && root.pickedVersion >= 0 && !root.pickedInstalled
-            text: root.pickedInstalled ? qsTr("Already installed") : qsTr("Install this version")
+            text: root.pickedInstalled ? i18n("Already installed") : i18n("Install this version")
             icon.source: Icons.url("download")
             onClicked: {
                 const review = root.controller.reviewVersion(root.versions[root.pickedVersion].id)
@@ -135,7 +135,7 @@ Dialog {
         }
         Button {
             flat: true
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             onClicked: root.close()
         }
     }

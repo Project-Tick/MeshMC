@@ -83,7 +83,7 @@ Item {
     // AccountsController::skinDemoRequested()'s own comment for why -1.
     Component.onCompleted: {
         if (root.controller && root.controller.skinDemoRequested)
-            root.openSkinEditor(-1, "", qsTr("Demo"))
+            root.openSkinEditor(-1, "", i18n("Demo"))
     }
     function startMicrosoftLogin() {
         if (!root.controller)
@@ -198,7 +198,7 @@ Item {
         root.capeError = ""
         var w = root.controller.changeCape(root.heroRow, capeId)
         if (!w) {
-            root.capeError = qsTr("The cape could not be changed.")
+            root.capeError = i18n("The cape could not be changed.")
             return
         }
         root.capeWatcher = w
@@ -206,7 +206,7 @@ Item {
             if (root.capeWatcher !== w)
                 return
             if (!ok)
-                root.capeError = w.error.length > 0 ? w.error : qsTr("The cape could not be changed.")
+                root.capeError = w.error.length > 0 ? w.error : i18n("The cape could not be changed.")
             else if (capeId.length > 0)
                 heroPreview.showBack()
         })
@@ -237,7 +237,7 @@ Item {
             // state, the offline dialog).
             Text {
                 Layout.fillWidth: true
-                text: qsTr("Games launch with the default account.")
+                text: i18n("Games launch with the default account.")
                 wrapMode: Text.Wrap
                 color: Theme.palette.textTertiary
                 font.family: Theme.font.family
@@ -249,12 +249,12 @@ Item {
             // which is then the screen's one primary action instead.
             Button {
                 highlighted: !root.heroItem || root.heroIsDefault
-                text: qsTr("Sign in with Microsoft")
+                text: i18n("Sign in with Microsoft")
                 icon.source: Icons.url("user")
                 onClicked: root.startMicrosoftLogin()
             }
             Button {
-                text: qsTr("Add offline account")
+                text: i18n("Add offline account")
                 onClicked: offlineDialog.open()
             }
         }
@@ -324,11 +324,11 @@ Item {
                         spacing: Theme.space.sm
                         Tag {
                             iconName: root.heroIsDefault ? "check" : "user"
-                            text: root.heroIsDefault ? qsTr("Default account") : qsTr("Suggested default")
+                            text: root.heroIsDefault ? i18n("Default account") : i18n("Suggested default")
                         }
                         Tag {
                             iconName: root.heroIsMSA ? "user" : "users"
-                            text: root.heroIsMSA ? qsTr("Microsoft") : qsTr("Offline")
+                            text: root.heroIsMSA ? i18n("Microsoft") : i18n("Offline")
                         }
                         StatusBadge {
                             anchors.verticalCenter: parent.verticalCenter
@@ -344,7 +344,7 @@ Item {
                         // "Custom": the player already wears the game's
                         // default skin here, offline or not. Short enough
                         // to stay one line at the narrowest window.
-                        text: qsTr("Offline only: online-mode servers and custom skins need a Microsoft account.")
+                        text: i18n("Offline only: online-mode servers and custom skins need a Microsoft account.")
                         wrapMode: Text.Wrap
                         color: Theme.palette.textTertiary
                         font.family: Theme.font.family
@@ -361,13 +361,13 @@ Item {
                         Button {
                             visible: !root.heroIsDefault
                             highlighted: true
-                            text: qsTr("Use this account")
+                            text: i18n("Use this account")
                             onClicked: root.controller.setDefault(root.heroRow)
                         }
                         Button {
                             // "and", not "&": a Button reads "&" as a
                             // keyboard mnemonic and underlines the next letter.
-                            text: qsTr("Skin and cape")
+                            text: i18n("Skin and cape")
                             icon.source: Icons.url("image")
                             onClicked: root.heroIsMSA ? root.openSkinEditor(root.heroRow, root.heroAccountId, root.heroName)
                                                        : offlineSkinDialog.open()
@@ -378,7 +378,7 @@ Item {
                             id: heroMoreButton
                             flat: false
                             iconName: "more"
-                            tip: qsTr("More")
+                            tip: i18n("More")
                             onClicked: heroMenu.popup(heroMoreButton, 0, heroMoreButton.height + Theme.space.xs)
 
                             Menu {
@@ -388,16 +388,17 @@ Item {
                                     // Menu; zero it as well.
                                     visible: root.heroIsMSA
                                     height: visible ? implicitHeight : 0
-                                    text: qsTr("Sign in again")
+                                    text: i18n("Sign in again")
                                     icon.source: Icons.url("refresh")
                                     onTriggered: root.controller.refresh(root.heroRow)
                                 }
                                 MenuItem {
-                                    text: qsTr("Remove account\u2026")
+                                    text: i18n("Remove account…")
                                     icon.source: Icons.url("trash")
                                     onTriggered: {
                                         removeDialog.row = root.heroRow
-                                        removeDialog.text = qsTr("Remove “%1” from MeshMC? You can sign in again at any time.").arg(root.heroName)
+                                        removeDialog.text = i18n("Remove “%1” from MeshMC? You can sign in again at any time.",
+                                                                 root.heroName)
                                         removeDialog.open()
                                     }
                                 }
@@ -417,7 +418,7 @@ Item {
                             spacing: Theme.space.sm
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Cape")
+                                text: i18n("Cape")
                                 color: Theme.palette.textSecondary
                                 font.family: Theme.font.family
                                 font.pixelSize: Theme.type.label.pixelSize
@@ -438,7 +439,7 @@ Item {
 
                             CapeTile {
                                 compact: true
-                                label: qsTr("No cape")
+                                label: i18n("No cape")
                                 isNoCapeOption: true
                                 selected: !root.heroSkin.currentCapeId
                                 enabled: !root.capeBusy
@@ -478,7 +479,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             visible: list.count > 1
             collapsible: false
-            title: qsTr("Other accounts")
+            title: i18n("Other accounts")
             count: list.count - 1
         }
 
@@ -509,7 +510,7 @@ Item {
                     onManageSkinRequested: isMSA ? root.openSkinEditor(index, accountId, shownName) : offlineSkinDialog.open()
                     onRemoveRequested: {
                         removeDialog.row = index
-                        removeDialog.text = qsTr("Remove “%1” from MeshMC? You can sign in again at any time.").arg(shownName)
+                        removeDialog.text = i18n("Remove “%1” from MeshMC? You can sign in again at any time.", shownName)
                         removeDialog.open()
                     }
                 }
@@ -531,9 +532,9 @@ Item {
 
         EmptyState {
             anchors.horizontalCenter: parent.horizontalCenter
-            title: qsTr("No accounts yet")
-            body: qsTr("Sign in with the Microsoft account that owns Minecraft to start playing online.")
-            actionText: qsTr("Sign in with Microsoft")
+            title: i18n("No accounts yet")
+            body: i18n("Sign in with the Microsoft account that owns Minecraft to start playing online.")
+            actionText: i18n("Sign in with Microsoft")
             actionIcon: "user"
             onActionTriggered: root.startMicrosoftLogin()
 
@@ -559,7 +560,7 @@ Item {
         Button {
             anchors.horizontalCenter: parent.horizontalCenter
             flat: true
-            text: qsTr("Add offline account")
+            text: i18n("Add offline account")
             onClicked: offlineDialog.open()
         }
     }
@@ -567,8 +568,8 @@ Item {
     ConfirmDialog {
         id: removeDialog
         property int row: -1
-        title: qsTr("Remove account")
-        confirmText: qsTr("Remove")
+        title: i18n("Remove account")
+        confirmText: i18n("Remove")
         onConfirmed: if (root.controller) root.controller.remove(row)
     }
 
@@ -578,7 +579,7 @@ Item {
         anchors.centerIn: parent
         width: Math.min(root.offlineDialogWidth, parent ? parent.width - Theme.space.xxl * 2 : root.offlineDialogWidth)
         modal: true
-        title: qsTr("Add offline account")
+        title: i18n("Add offline account")
         onOpened: {
             usernameField.text = ""
             offlineError.text = ""
@@ -589,7 +590,7 @@ Item {
             spacing: Theme.space.sm
             Text {
                 width: parent.width
-                text: qsTr("The name shown in game. Offline accounts cannot join online-mode servers.")
+                text: i18n("The name shown in game. Offline accounts cannot join online-mode servers.")
                 wrapMode: Text.Wrap
                 color: Theme.palette.textSecondary
                 font.family: Theme.font.family
@@ -598,7 +599,7 @@ Item {
             TextField {
                 id: usernameField
                 width: parent.width
-                placeholderText: qsTr("Username")
+                placeholderText: i18n("Username")
                 selectByMouse: true
                 onAccepted: addButton.clicked()
             }
@@ -620,18 +621,18 @@ Item {
             topPadding: 0
             Button {
                 id: addButton
-                text: qsTr("Add account")
+                text: i18n("Add account")
                 highlighted: true
                 enabled: usernameField.text.trim().length > 0
                 onClicked: {
                     if (root.controller && root.controller.addOffline(usernameField.text))
                         offlineDialog.close()
                     else
-                        offlineError.text = qsTr("Offline accounts need a Microsoft account that owns the game first, and a name no other offline account uses.")
+                        offlineError.text = i18n("Offline accounts need a Microsoft account that owns the game first, and a name no other offline account uses.")
                 }
             }
             Button {
-                text: qsTr("Cancel")
+                text: i18n("Cancel")
                 flat: true
                 onClicked: offlineDialog.close()
             }
@@ -645,7 +646,7 @@ Item {
         width: Math.min(root.loginDialogWidth, parent ? parent.width - Theme.space.xxl * 2 : root.loginDialogWidth)
         modal: true
         closePolicy: Popup.NoAutoClose
-        title: qsTr("Sign in with Microsoft")
+        title: i18n("Sign in with Microsoft")
 
         readonly property bool done: !!root.login && root.login.succeeded
         readonly property bool failed: !!root.login && root.login.failed
@@ -672,10 +673,10 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     // The rest of the dialog's width, beside the spinner.
                     width: loginDialog.availableWidth - root.loginIndicatorSize - parent.spacing
-                    text: loginDialog.done ? qsTr("Signed in. You're ready to play.")
-                        : loginDialog.failed ? (root.login.error || qsTr("Sign-in failed."))
+                    text: loginDialog.done ? i18n("Signed in. You're ready to play.")
+                        : loginDialog.failed ? (root.login.error || i18n("Sign-in failed."))
                         : (root.login && root.login.status.length > 0 ? root.login.status
-                                                                       : qsTr("Continue in your browser…"))
+                                                                       : i18n("Continue in your browser…"))
                     wrapMode: Text.Wrap
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
@@ -686,7 +687,7 @@ Item {
             Text {
                 width: parent.width
                 visible: !loginDialog.done && !loginDialog.failed
-                text: qsTr("A browser window opened on Microsoft's sign-in page. Sign in there; this window updates by itself.")
+                text: i18n("A browser window opened on Microsoft's sign-in page. Sign in there; this window updates by itself.")
                 wrapMode: Text.Wrap
                 color: Theme.palette.textTertiary
                 font.family: Theme.font.family
@@ -702,26 +703,26 @@ Item {
             Button {
                 visible: loginDialog.done
                 highlighted: true
-                text: qsTr("Done")
+                text: i18n("Done")
                 onClicked: { loginDialog.close(); root.login = null }
             }
             Button {
                 visible: loginDialog.failed
                 highlighted: true
-                text: qsTr("Try again")
+                text: i18n("Try again")
                 onClicked: { root.login = root.controller.loginMicrosoft() }
             }
             Button {
                 visible: !loginDialog.done && !loginDialog.failed && !!root.login
                          && root.login.browserUrl.toString().length > 0
-                text: qsTr("Open browser again")
+                text: i18n("Open browser again")
                 icon.source: Icons.url("external-link")
                 onClicked: root.login.openBrowser()
             }
             Button {
                 visible: !loginDialog.done
                 flat: true
-                text: qsTr("Cancel")
+                text: i18n("Cancel")
                 onClicked: {
                     if (root.login && root.login.running)
                         root.login.cancel()
@@ -748,12 +749,12 @@ Item {
         // made this text-only dialog's height depend on itself.
         width: root.skinNoticeWidth
         modal: true
-        title: qsTr("Skin and cape")
+        title: i18n("Skin and cape")
 
         contentItem: Text {
             width: parent.width
             wrapMode: Text.Wrap
-            text: qsTr("Skins and capes belong to a Microsoft account. Sign in with the Microsoft account that owns Minecraft to change how this character looks.")
+            text: i18n("Skins and capes belong to a Microsoft account. Sign in with the Microsoft account that owns Minecraft to change how this character looks.")
             color: Theme.palette.textSecondary
             font.family: Theme.font.family
             font.pixelSize: Theme.type.body.pixelSize
@@ -765,7 +766,7 @@ Item {
             padding: Theme.space.lg
             topPadding: 0
             Button {
-                text: qsTr("Close")
+                text: i18n("Close")
                 onClicked: offlineSkinDialog.close()
             }
         }

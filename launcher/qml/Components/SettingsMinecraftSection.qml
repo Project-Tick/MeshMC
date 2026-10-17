@@ -9,60 +9,60 @@ import QtQuick
  * tracking, and native library overrides, launcher-wide.
  */
 SettingsScroll {
-    title: qsTr("Minecraft")
-    description: qsTr("The game window, play time tracking, and native library overrides.")
+    title: i18n("Minecraft")
+    description: i18n("The game window, play time tracking, and native library overrides.")
     SettingsGroup {
         width: parent.width
-        title: qsTr("Game window")
+        title: i18n("Game window")
         SettingSwitch {
             id: maximized
             key: "LaunchMaximized"
-            label: qsTr("Start maximized")
+            label: i18n("Start maximized")
         }
         SettingNumber {
             key: "MinecraftWinWidth"
             enabled: !maximized.checked
-            label: qsTr("Window width")
+            label: i18n("Window width")
             from: 1
             to: 65536
-            suffix: qsTr("px")
+            suffix: i18n("px")
         }
         SettingNumber {
             key: "MinecraftWinHeight"
             enabled: !maximized.checked
-            label: qsTr("Window height")
+            label: i18n("Window height")
             from: 1
             to: 65536
-            suffix: qsTr("px")
+            suffix: i18n("px")
         }
     }
     SettingsGroup {
         width: parent.width
-        title: qsTr("Play time")
+        title: i18n("Play time")
         SettingSwitch {
             key: "RecordGameTime"
-            label: qsTr("Record play time")
+            label: i18n("Record play time")
         }
         SettingSwitch {
             key: "ShowGameTime"
-            label: qsTr("Show play time per instance")
+            label: i18n("Show play time per instance")
         }
         SettingSwitch {
             key: "ShowGlobalGameTime"
-            label: qsTr("Show total play time")
+            label: i18n("Show total play time")
         }
     }
     SettingsGroup {
         width: parent.width
-        title: qsTr("Native libraries")
-        description: qsTr("Only for systems where the bundled libraries don't work, such as some Linux setups.")
+        title: i18n("Native libraries")
+        description: i18n("Only for systems where the bundled libraries don't work, such as some Linux setups.")
         SettingSwitch {
             key: "UseNativeGLFW"
-            label: qsTr("Use the system's GLFW")
+            label: i18n("Use the system's GLFW")
         }
         SettingSwitch {
             key: "UseNativeOpenAL"
-            label: qsTr("Use the system's OpenAL")
+            label: i18n("Use the system's OpenAL")
         }
     }
 }

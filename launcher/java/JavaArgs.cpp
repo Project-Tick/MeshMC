@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QRegularExpression>
+#include <KLocalizedString>
 
 bool JavaArgs::setsMemoryFlags(const QString& jvmargs)
 {
@@ -33,7 +34,7 @@ bool JavaArgs::setsMemoryFlags(const QString& jvmargs)
 QString JavaArgs::memoryFlagWarning(const QString& jvmargs)
 {
 	if (setsMemoryFlags(jvmargs)) {
-		return QObject::tr(
+		return i18n(
 			"You tried to manually set a JVM memory option (using "
 			"\"-XX:PermSize\", \"-XX-MaxHeapSize\", "
 			"\"-XX:InitialHeapSize\",  \"-Xmx\" or \"-Xms\").\n"

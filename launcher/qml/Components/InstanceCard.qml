@@ -195,7 +195,7 @@ Item {
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: root.launching ? qsTr("Starting…") : qsTr("Running")
+                        text: root.launching ? i18n("Starting…") : i18n("Running")
                         color: Theme.media.text
                         font.family: Theme.font.family
                         font.pixelSize: Theme.type.caption.pixelSize
@@ -213,7 +213,7 @@ Item {
                 anchors.margins: Theme.space.sm
                 size: Theme.control.heightSm
                 iconName: "more"
-                tip: qsTr("More")
+                tip: i18n("More")
                 icon.color: Theme.media.text
                 opacity: root.hovered ? 1 : 0
                 visible: opacity > 0
@@ -325,7 +325,7 @@ Item {
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 visible: text.length > 0 && versionText.implicitWidth + Theme.space.sm + implicitWidth <= parent.width
-                text: root.launching ? (root.launchProgress >= 0 ? qsTr("%1%").arg(Math.round(root.launchProgress * 100)) : "")
+                text: root.launching ? (root.launchProgress >= 0 ? i18n("%1%", Math.round(root.launchProgress * 100)) : "")
                                      : Format.lastPlayed(root.lastLaunch)
                 color: root.launching ? Theme.palette.accentText : Theme.palette.textTertiary
                 // Digits of one width, so the number does not jitter.

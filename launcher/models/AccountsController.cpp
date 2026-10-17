@@ -38,6 +38,7 @@
 #include "tasks/SequentialTask.h"
 #include "tasks/Task.h"
 #include "tasks/TaskWatcher.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -321,7 +322,7 @@ QString AccountsController::validateSkinFile(const QString& path) const
 {
 	SkinEntry entry(toLocalPath(path));
 	if (!entry.isUsable()) {
-		return tr("Skin images must be 64x64 or 64x32 pixel PNG files.");
+		return i18n("Skin images must be 64x64 or 64x32 pixel PNG files.");
 	}
 	return QString();
 }
@@ -347,14 +348,14 @@ QObject* AccountsController::changeSkin(int row, const QString& path, bool slim)
 	 * minus the cape change: this uploads a picked file directly rather
 	 * than editing a local skin-library entry that already carries a cape
 	 * choice, so there is nothing here to carry over. */
-	auto* job = new SequentialTask(nullptr, tr("Change skin"));
+	auto* job = new SequentialTask(nullptr, i18n("Change skin"));
 	job->addTask(Task::Ptr(new SkinUpload(
 		nullptr, account->accessToken(), texture,
 		slim ? SkinUpload::ALEX : SkinUpload::STEVE)));
 	job->addTask(account->refresh());
 
 	auto* watcher = new TaskWatcher(Task::Ptr(job), this);
-	watcher->setTitle(tr("Change skin"));
+	watcher->setTitle(i18n("Change skin"));
 	job->start();
 	return watcher;
 }
@@ -369,12 +370,12 @@ QObject* AccountsController::resetSkin(int row)
 		return nullptr;
 	}
 
-	auto* job = new SequentialTask(nullptr, tr("Reset skin"));
+	auto* job = new SequentialTask(nullptr, i18n("Reset skin"));
 	job->addTask(Task::Ptr(new SkinDelete(nullptr, account->accessToken())));
 	job->addTask(account->refresh());
 
 	auto* watcher = new TaskWatcher(Task::Ptr(job), this);
-	watcher->setTitle(tr("Reset skin"));
+	watcher->setTitle(i18n("Reset skin"));
 	job->start();
 	return watcher;
 }
@@ -389,13 +390,13 @@ QObject* AccountsController::changeCape(int row, const QString& capeId)
 		return nullptr;
 	}
 
-	auto* job = new SequentialTask(nullptr, tr("Change cape"));
+	auto* job = new SequentialTask(nullptr, i18n("Change cape"));
 	job->addTask(
 		Task::Ptr(new CapeChange(nullptr, account->accessToken(), capeId)));
 	job->addTask(account->refresh());
 
 	auto* watcher = new TaskWatcher(Task::Ptr(job), this);
-	watcher->setTitle(tr("Change cape"));
+	watcher->setTitle(i18n("Change cape"));
 	job->start();
 	return watcher;
 }
@@ -440,7 +441,7 @@ MicrosoftLoginController::MicrosoftLoginController(
 		// warning dialog is not reproduced here: BUILD_PLATFORM is never
 		// actually set to that value by this fork's build, so it never
 		// fires today.)
-		m_error = tr(
+		m_error = i18n(
 			"Microsoft login is not available: no client id is configured "
 			"for this build.");
 		m_failed = true;
@@ -448,7 +449,7 @@ MicrosoftLoginController::MicrosoftLoginController(
 	}
 
 	m_running = true;
-	m_status = tr("Opening your browser for Microsoft login...");
+	m_status = i18n("Opening your browser for Microsoft login...");
 
 	m_account = MinecraftAccount::createBlankMSA();
 	m_task = m_account->loginMSA();

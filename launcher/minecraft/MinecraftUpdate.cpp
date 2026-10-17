@@ -38,6 +38,7 @@
 
 #include <meta/Index.h>
 #include <meta/Version.h>
+#include <KLocalizedString>
 
 MinecraftUpdate::MinecraftUpdate(MinecraftInstance* inst, QObject* parent)
 	: SequentialTask(parent, QStringLiteral("MinecraftUpdate")), m_inst(inst)
@@ -48,7 +49,7 @@ void MinecraftUpdate::executeTask()
 {
 	// create folders
 	{
-		addStage(Task::Ptr(new FoldersTask(m_inst)), tr("Preparing folders"));
+		addStage(Task::Ptr(new FoldersTask(m_inst)), i18n("Preparing folders"));
 	}
 
 	// add metadata update task if necessary
@@ -57,26 +58,26 @@ void MinecraftUpdate::executeTask()
 		components->reload(Net::Mode::Online);
 		auto task = components->getCurrentTask();
 		if (task) {
-			addStage(task, tr("Loading version info"));
+			addStage(task, i18n("Loading version info"));
 		}
 	}
 
 	// libraries download
 	{
 		addStage(Task::Ptr(new LibrariesTask(m_inst)),
-				 tr("Downloading libraries"));
+				 i18n("Downloading libraries"));
 	}
 
 	// FML libraries download and copy into the instance
 	{
 		addStage(Task::Ptr(new FMLLibrariesTask(m_inst)),
-				 tr("Downloading Forge libraries"));
+				 i18n("Downloading Forge libraries"));
 	}
 
 	// assets update
 	{
 		addStage(Task::Ptr(new AssetUpdateTask(m_inst)),
-				 tr("Downloading assets"));
+				 i18n("Downloading assets"));
 	}
 
 	SequentialTask::executeTask();

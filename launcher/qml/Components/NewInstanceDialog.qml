@@ -63,7 +63,7 @@ Dialog {
     // provider); the unmodified game gets the grass block, the default
     // instance icon.
     readonly property var loaders: [
-        { value: "", label: qsTr("Vanilla"), iconKey: "grass" },
+        { value: "", label: i18n("Vanilla"), iconKey: "grass" },
         { value: "fabric", label: "Fabric", iconKey: "fabricmc" },
         { value: "quilt", label: "Quilt", iconKey: "quilt_mark" },
         { value: "forge", label: "Forge", iconKey: "forge_mark" },
@@ -89,7 +89,7 @@ Dialog {
             return
         var suggested = root.controller.suggestedName()
         if (suggested.length > 0 && root.controller.loader.length === 0)
-            suggested = qsTr("Minecraft %1").arg(suggested)
+            suggested = i18n("Minecraft %1", suggested)
         nameField.text = suggested
     }
 
@@ -120,10 +120,10 @@ Dialog {
 
     function typeLabel(type) {
         switch (type) {
-        case "release": return qsTr("Release")
-        case "snapshot": return qsTr("Snapshot")
-        case "old_beta": return qsTr("Beta")
-        case "old_alpha": return qsTr("Alpha")
+        case "release": return i18n("Release")
+        case "snapshot": return i18n("Snapshot")
+        case "old_beta": return i18n("Beta")
+        case "old_alpha": return i18n("Alpha")
         default: return type
         }
     }
@@ -140,7 +140,7 @@ Dialog {
     topPadding: 0
     modal: true
     closePolicy: root.creating ? Popup.NoAutoClose : Popup.CloseOnEscape
-    title: root.mode === "import" ? qsTr("Import instance") : qsTr("New instance")
+    title: root.mode === "import" ? i18n("Import instance") : i18n("New instance")
 
     // The plain title every dialog has; no logo or icon tile in front.
     header: DialogHeader {
@@ -215,8 +215,8 @@ Dialog {
             Layout.fillWidth: true
             enabled: !root.creating
             tabs: [
-                { id: "create", label: qsTr("Create") },
-                { id: "import", label: qsTr("Import") }
+                { id: "create", label: i18n("Create") },
+                { id: "import", label: i18n("Import") }
             ]
             current: root.mode
             onActivated: (id) => root.mode = id
@@ -235,9 +235,9 @@ Dialog {
                 Layout.preferredHeight: nameColumn.height
                 enabled: !root.creating
                 hoverEnabled: true
-                Accessible.name: qsTr("Instance icon")
+                Accessible.name: i18n("Instance icon")
                 ToolTip.visible: hovered
-                ToolTip.text: qsTr("Change icon")
+                ToolTip.text: i18n("Change icon")
                 onClicked: iconPicker.open()
 
                 // A control, so a control's corner; hover moves the border
@@ -284,7 +284,7 @@ Dialog {
                 Layout.alignment: Qt.AlignBottom
                 spacing: Theme.space.xs
                 Text {
-                    text: qsTr("Name")
+                    text: i18n("Name")
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.label.pixelSize
@@ -295,7 +295,7 @@ Dialog {
                     width: parent.width
                     enabled: !root.creating
                     selectByMouse: true
-                    placeholderText: root.mode === "import" ? qsTr("Named after the pack") : ""
+                    placeholderText: root.mode === "import" ? i18n("Named after the pack") : ""
                     onTextEdited: root.nameEdited = text.length > 0
                 }
             }
@@ -305,7 +305,7 @@ Dialog {
                 Layout.alignment: Qt.AlignBottom
                 spacing: Theme.space.xs
                 Text {
-                    text: qsTr("Group")
+                    text: i18n("Group")
                     color: Theme.palette.textSecondary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.label.pixelSize
@@ -316,7 +316,7 @@ Dialog {
                     width: parent.width
                     enabled: !root.creating
                     selectByMouse: true
-                    placeholderText: qsTr("No group")
+                    placeholderText: i18n("No group")
                     text: ""
                 }
             }
@@ -346,20 +346,20 @@ Dialog {
 
             Text {
                 Layout.fillWidth: true
-                text: qsTr("Minecraft version")
+                text: i18n("Minecraft version")
                 color: Theme.palette.textPrimary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.title.pixelSize
                 font.weight: Font.Bold
             }
             Switch {
-                text: qsTr("Snapshots")
+                text: i18n("Snapshots")
                 enabled: !!root.controller
                 checked: root.controller ? root.controller.minecraftVersions.showSnapshots : false
                 onToggled: root.controller.minecraftVersions.showSnapshots = checked
             }
             Switch {
-                text: qsTr("Old versions")
+                text: i18n("Old versions")
                 enabled: !!root.controller
                 checked: root.controller ? root.controller.minecraftVersions.showOldVersions : false
                 onToggled: root.controller.minecraftVersions.showOldVersions = checked
@@ -430,7 +430,7 @@ Dialog {
                         // turn green on the green selected row.
                         StatusBadge {
                             visible: versionRow.recommended
-                            text: qsTr("Recommended")
+                            text: i18n("Recommended")
                         }
                         Item { Layout.fillWidth: true }
                         Text {
@@ -491,7 +491,7 @@ Dialog {
                 spacing: Theme.space.md
 
                 Text {
-                    text: qsTr("Mod loader")
+                    text: i18n("Mod loader")
                     color: Theme.palette.textPrimary
                     font.family: Theme.font.family
                     font.pixelSize: Theme.type.title.pixelSize
@@ -506,8 +506,8 @@ Dialog {
                     model: root.controller ? root.controller.loaderVersions : null
                     textRole: "version"
                     valueRole: "versionId"
-                    displayText: root.controller && root.controller.loaderLoading ? qsTr("Loading\u2026")
-                               : count === 0 ? qsTr("None for this version")
+                    displayText: root.controller && root.controller.loaderLoading ? i18n("Loading…")
+                               : count === 0 ? i18n("None for this version")
                                : currentIndex >= 0 ? currentText
                                : root.controller ? root.controller.selectedLoaderVersion : ""
                     // The controller may have picked a version before the rows
@@ -649,7 +649,7 @@ Dialog {
 
                     Text {
                         Layout.alignment: Qt.AlignHCenter
-                        text: qsTr("Drop a .zip or .mrpack file here")
+                        text: i18n("Drop a .zip or .mrpack file here")
                         color: Theme.palette.textSecondary
                         font.family: Theme.font.family
                         font.pixelSize: Theme.type.body.pixelSize
@@ -664,7 +664,7 @@ Dialog {
                             Layout.fillWidth: true
                             enabled: !root.creating
                             selectByMouse: true
-                            placeholderText: qsTr("Or paste a direct download link (https://…)")
+                            placeholderText: i18n("Or paste a direct download link (https://…)")
                             onTextEdited: {
                                 root.importSource = text
                                 root.refreshImportName()
@@ -676,7 +676,7 @@ Dialog {
                         // visibly left of the drop zone's middle.
                         Button {
                             enabled: !root.creating
-                            text: qsTr("Browse…")
+                            text: i18n("Browse…")
                             icon.source: Icons.url("folder")
                             onClicked: importFileDialog.open()
                         }
@@ -688,7 +688,7 @@ Dialog {
                         visible: !root.creating && root.importSource.trim().length > 0
                                  && !!root.controller
                                  && !root.controller.isImportSourceValid(root.importSource.trim())
-                        text: qsTr("This doesn't look like a modpack file or link. Pick a .zip, .mrpack or .jar file, or paste a direct download link.")
+                        text: i18n("This doesn't look like a modpack file or link. Pick a .zip, .mrpack or .jar file, or paste a direct download link.")
                         color: Theme.palette.danger
                         font.family: Theme.font.family
                         font.pixelSize: Theme.type.caption.pixelSize
@@ -699,7 +699,7 @@ Dialog {
             Text {
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
-                text: qsTr("Packs exported from CurseForge, FTB, ATLauncher or Technic import the same way, from their .zip file.")
+                text: i18n("Packs exported from CurseForge, FTB, ATLauncher or Technic import the same way, from their .zip file.")
                 color: Theme.palette.textTertiary
                 font.family: Theme.font.family
                 font.pixelSize: Theme.type.caption.pixelSize
@@ -709,8 +709,8 @@ Dialog {
 
         FileDialog {
             id: importFileDialog
-            title: qsTr("Choose an instance to import")
-            nameFilters: [qsTr("Modpack archives (*.zip *.mrpack)"), qsTr("All files (*)")]
+            title: i18n("Choose an instance to import")
+            nameFilters: [i18n("Modpack archives (*.zip *.mrpack)"), i18n("All files (*)")]
             onAccepted: root.setImportSource(selectedFile.toString())
         }
     }
@@ -728,9 +728,9 @@ Dialog {
             Text {
                 width: parent.width
                 text: root.watcher && root.watcher.failed ? (root.watcher.error ||
-                          (root.mode === "import" ? qsTr("Importing the instance failed.") : qsTr("Creating the instance failed.")))
+                          (root.mode === "import" ? i18n("Importing the instance failed.") : i18n("Creating the instance failed.")))
                     : root.watcher ? (root.watcher.status ||
-                          (root.mode === "import" ? qsTr("Importing…") : qsTr("Creating…"))) : ""
+                          (root.mode === "import" ? i18n("Importing…") : i18n("Creating…"))) : ""
                 elide: Text.ElideRight
                 color: root.watcher && root.watcher.failed ? Theme.palette.danger : Theme.palette.textSecondary
                 font.family: Theme.font.family
@@ -748,7 +748,7 @@ Dialog {
         Button {
             Layout.bottomMargin: Theme.space.lg
             flat: true
-            text: qsTr("Cancel")
+            text: i18n("Cancel")
             enabled: !root.creating
             onClicked: root.close()
         }
@@ -757,7 +757,7 @@ Dialog {
             Layout.bottomMargin: Theme.space.lg
             highlighted: true
             visible: root.mode !== "import"
-            text: root.creating ? qsTr("Creating…") : qsTr("Create")
+            text: root.creating ? i18n("Creating…") : i18n("Create")
             icon.source: Icons.url("plus")
             enabled: !root.creating && !!root.controller
                      && root.controller.selectedMinecraftVersion.length > 0
@@ -771,7 +771,7 @@ Dialog {
             Layout.bottomMargin: Theme.space.lg
             highlighted: true
             visible: root.mode === "import"
-            text: root.creating ? qsTr("Importing…") : qsTr("Import")
+            text: root.creating ? i18n("Importing…") : i18n("Import")
             icon.source: Icons.url("download")
             enabled: !root.creating && !!root.controller
                      && root.importSource.trim().length > 0
