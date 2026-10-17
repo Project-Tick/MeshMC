@@ -33,6 +33,7 @@
 #include "core/LauncherContext.h"
 #include "icons/IconList.h"
 #include "modplatform/ContentApi.h"
+#include "modplatform/PackArtwork.h"
 #include "modplatform/modrinth/ModrinthApi.h"
 #include "net/Download.h"
 #include "net/HttpMetaCache.h"
@@ -545,6 +546,12 @@ void ModrinthModpackModel::fetchDetailBody(const QString& projectId,
 							}
 							QVariantMap entry;
 							entry[QStringLiteral("url")] = url;
+							/* "url" is a 350-pixel thumbnail, which is
+							 * what the strip shows; the upload itself is
+							 * kept for whatever needs it bigger - the
+							 * cover an install records (PackArtwork). */
+							entry[QStringLiteral("rawUrl")] =
+								Json::ensureString(imageObj, "raw_url", QString());
 							entry[QStringLiteral("featured")] =
 								Json::ensureBoolean(imageObj, "featured", false);
 							entry[QStringLiteral("title")] =
@@ -745,10 +752,15 @@ QObject* ModrinthModpackModel::install(const QString& projectId,
 
 	QString downloadUrl;
 	QString versionLabel;
+	QString coverUrl;
 	if (m_detail->projectId() == projectId) {
 		if (packTitle.isEmpty()) {
 			packTitle = m_detail->title();
 		}
+		/* Only the project's own gallery: a search hit's images are
+		 * thumbnails, and an empty gallery here may just be a project
+		 * fetch that failed - PackArtwork looks the pack up instead. */
+		coverUrl = PackArtwork::coverFromGallery(m_detail->gallery());
 		for (const QVariant& versionVariant : m_detail->versions()) {
 			const QVariantMap versionMap = versionVariant.toMap();
 			if (versionMap.value(QStringLiteral("id")).toString() ==
@@ -790,6 +802,7 @@ QObject* ModrinthModpackModel::install(const QString& projectId,
 	hint.versionId = versionId;
 	hint.versionLabel = versionLabel;
 	hint.iconUrl = iconUrl;
+	hint.coverUrl = coverUrl;
 	if (!packSlug.isEmpty()) {
 		hint.sourceUrl =
 			QStringLiteral("https://modrinth.com/modpack/%1").arg(packSlug);

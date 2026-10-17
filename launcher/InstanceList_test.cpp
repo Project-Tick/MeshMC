@@ -27,6 +27,7 @@
 
 #include "InstanceList.h"
 #include "NullInstance.h"
+#include "modplatform/PackArtwork.h"
 #include "settings/INISettingsObject.h"
 #include "tasks/Task.h"
 #include "tasks/TaskWatcher.h"
@@ -74,6 +75,14 @@ SettingsObjectPtr makeGlobalSettings(QTemporaryDir& dir)
 	settings->registerSetting("ConsoleMaxLines", 100000);
 	settings->registerSetting("ConsoleOverflowStop", true);
 	return settings;
+}
+
+/* A catalogue reply, written with single quotes so it reads as JSON here
+ * without a backslash before every quote (and without raw string
+ * literals, which moc cannot read past). */
+QByteArray reply(const char* json)
+{
+	return QByteArray(json).replace('\'', '"');
 }
 
 /* A Task that only ends when told to, standing in for an install. */
@@ -244,6 +253,298 @@ class InstanceListTest : public QObject
 				 QString());
 		QCOMPARE(list.data(pack, InstanceList::PackArtRole).toString(),
 				 QStringLiteral("https://cdn.example.org/icon.png"));
+	}
+
+	/* PackCoverRole: empty for an instance not installed from a platform;
+	 * for a platform pack whose recorded cover is already in the cache
+	 * folder, that file - straight away, so a card never flashes its
+	 * fallback first. No LauncherContext here, so nothing is fetched. */
+	void packCoverRoleAnswersACachedCoverAtOnce()
+	{
+		QTemporaryDir globalDir;
+		QVERIFY(globalDir.isValid());
+		QTemporaryDir instsDir;
+		QVERIFY(instsDir.isValid());
+		QTemporaryDir coverDir;
+		QVERIFY(coverDir.isValid());
+		SettingsObjectPtr globalSettings = makeGlobalSettings(globalDir);
+
+		const QString coverUrl =
+			QStringLiteral("https://cdn.example.org/gallery/cover.png");
+		const QString plainRoot = QDir(instsDir.path()).filePath("plain");
+		const QString packRoot = QDir(instsDir.path()).filePath("pack");
+		QVERIFY(QDir().mkpath(plainRoot));
+		QVERIFY(QDir().mkpath(packRoot));
+		QVERIFY(writeFile(QDir(plainRoot).filePath("instance.cfg"),
+						   "InstanceType=NullTest\n"
+						   "PackCoverUrl=https://cdn.example.org/gallery/cover.png\n",
+						   QDateTime::currentDateTime()));
+		QVERIFY(writeFile(QDir(packRoot).filePath("instance.cfg"),
+						   "InstanceType=NullTest\n"
+						   "PackProvider=modrinth\n"
+						   "PackId=abcdEFGH\n"
+						   "PackCoverUrl=https://cdn.example.org/gallery/cover.png\n",
+						   QDateTime::currentDateTime()));
+		const QString cached =
+			PackArtwork::cachePath(coverDir.path(), coverUrl);
+		QVERIFY(writeFile(cached, "png", QDateTime::currentDateTime()));
+
+		InstanceList list(globalSettings, {instsDir.path()});
+		list.setPackCoverDir(coverDir.path());
+		QCOMPARE(list.loadList(), InstanceList::NoError);
+
+		QCOMPARE(list.roleNames().value(InstanceList::PackCoverRole),
+				 QByteArray("packCover"));
+		const QModelIndex plain = list.getInstanceIndexById("plain");
+		const QModelIndex pack = list.getInstanceIndexById("pack");
+		QVERIFY(plain.isValid());
+		QVERIFY(pack.isValid());
+		// Not a platform pack: whatever its config says, no pack cover.
+		QCOMPARE(list.data(plain, InstanceList::PackCoverRole).toString(),
+				 QString());
+		const QString expected = QUrl::fromLocalFile(cached).toString();
+		QCOMPARE(list.data(pack, InstanceList::PackCoverRole).toString(),
+				 expected);
+		// And from memory afterwards, even once the file is gone.
+		QVERIFY(QFile::remove(cached));
+		QCOMPARE(list.data(pack, InstanceList::PackCoverRole).toString(),
+				 expected);
+	}
+
+	/* A recorded cover that is not downloaded yet, with no launcher to
+	 * download it: empty, without blocking or failing, and still empty
+	 * once the deferred work has had its turn. */
+	void packCoverRoleEmptyUntilDownloaded()
+	{
+		QTemporaryDir globalDir;
+		QVERIFY(globalDir.isValid());
+		QTemporaryDir instsDir;
+		QVERIFY(instsDir.isValid());
+		QTemporaryDir coverDir;
+		QVERIFY(coverDir.isValid());
+		SettingsObjectPtr globalSettings = makeGlobalSettings(globalDir);
+
+		const QString packRoot = QDir(instsDir.path()).filePath("pack");
+		QVERIFY(QDir().mkpath(packRoot));
+		QVERIFY(writeFile(QDir(packRoot).filePath("instance.cfg"),
+						   "InstanceType=NullTest\n"
+						   "PackProvider=curseforge\n"
+						   "PackId=925200\n"
+						   "PackCoverUrl=https://media.example.org/shot.jpg\n",
+						   QDateTime::currentDateTime()));
+
+		InstanceList list(globalSettings, {instsDir.path()});
+		list.setPackCoverDir(coverDir.path());
+		QCOMPARE(list.loadList(), InstanceList::NoError);
+		const QModelIndex pack = list.getInstanceIndexById("pack");
+		QVERIFY(pack.isValid());
+
+		QSignalSpy dataChangedSpy(&list, &InstanceList::dataChanged);
+		QCOMPARE(list.data(pack, InstanceList::PackCoverRole).toString(),
+				 QString());
+		QTest::qWait(50);
+		QCOMPARE(list.data(pack, InstanceList::PackCoverRole).toString(),
+				 QString());
+		QVERIFY(dataChangedSpy.isEmpty());
+	}
+
+	/* PackCoverUrl tells "never looked" (absent) from "looked, none"
+	 * (empty), and the second survives the instance being read again -
+	 * which is what keeps a pack with no cover from being looked up on
+	 * every launch. */
+	void packCoverRecordDistinguishesNoneFromUnknown()
+	{
+		QTemporaryDir globalDir;
+		QVERIFY(globalDir.isValid());
+		QTemporaryDir instsDir;
+		QVERIFY(instsDir.isValid());
+		SettingsObjectPtr globalSettings = makeGlobalSettings(globalDir);
+
+		const QString packRoot = QDir(instsDir.path()).filePath("pack");
+		QVERIFY(QDir().mkpath(packRoot));
+		QVERIFY(writeFile(QDir(packRoot).filePath("instance.cfg"),
+						   "InstanceType=NullTest\n"
+						   "PackProvider=modrinth\n"
+						   "PackId=abcdEFGH\n",
+						   QDateTime::currentDateTime()));
+		{
+			InstanceList list(globalSettings, {instsDir.path()});
+			QCOMPARE(list.loadList(), InstanceList::NoError);
+			InstancePtr inst = list.getInstanceById("pack");
+			QVERIFY(inst);
+			QVERIFY(!inst->hasManagedPackCoverRecord());
+			QCOMPARE(inst->managedPackCoverUrl(), QString());
+			inst->setManagedPackCoverUrl(QString());
+			QVERIFY(inst->hasManagedPackCoverRecord());
+			inst->saveNow();
+		}
+		InstanceList reread(globalSettings, {instsDir.path()});
+		QCOMPARE(reread.loadList(), InstanceList::NoError);
+		InstancePtr inst = reread.getInstanceById("pack");
+		QVERIFY(inst);
+		QVERIFY(inst->hasManagedPackCoverRecord());
+		QCOMPARE(inst->managedPackCoverUrl(), QString());
+	}
+
+	/* What a catalogue's record of a pack gives, per platform. */
+	void packArtworkParsesEachCatalogue()
+	{
+		// Modrinth: the featured image, at full size, over the first one.
+		const PackArtwork::Found modrinth = PackArtwork::parseLookup(
+			QStringLiteral("modrinth"),
+			reply("{'id': 'abcdEFGH', 'title': 'Some Pack',"
+				"'icon_url': 'https://cdn.modrinth.com/data/abcdEFGH/icon.webp',"
+				"'gallery': ["
+				"{'url': 'https://cdn.modrinth.com/a_350.webp',"
+				"'raw_url': 'https://cdn.modrinth.com/a.png', 'featured': false},"
+				"{'url': 'https://cdn.modrinth.com/b_350.webp',"
+				"'raw_url': 'https://cdn.modrinth.com/b.png', 'featured': true}]}"));
+		QVERIFY(modrinth.recognised);
+		QCOMPARE(modrinth.title, QStringLiteral("Some Pack"));
+		QCOMPARE(modrinth.cover, QStringLiteral("https://cdn.modrinth.com/b.png"));
+		QCOMPARE(modrinth.logo,
+				 QStringLiteral("https://cdn.modrinth.com/data/abcdEFGH/icon.webp"));
+
+		// None featured: the first; no raw_url: the url.
+		const PackArtwork::Found unfeatured = PackArtwork::parseLookup(
+			QStringLiteral("modrinth"),
+			reply("{'id': 'x', 'gallery': [{'url': 'https://cdn.modrinth.com/first.jpg'},"
+				"{'url': 'https://cdn.modrinth.com/second.jpg'}]}"));
+		QCOMPARE(unfeatured.cover,
+				 QStringLiteral("https://cdn.modrinth.com/first.jpg"));
+
+		// A project with no gallery is still a record: "none".
+		const PackArtwork::Found bare = PackArtwork::parseLookup(
+			QStringLiteral("modrinth"), reply("{'id': 'x', 'gallery': []}"));
+		QVERIFY(bare.recognised);
+		QCOMPARE(bare.cover, QString());
+
+		// An error body is not: nothing may be recorded from it.
+		QVERIFY(!PackArtwork::parseLookup(QStringLiteral("modrinth"),
+										  reply("{'error': 'not_found'}"))
+					 .recognised);
+		QVERIFY(!PackArtwork::parseLookup(QStringLiteral("modrinth"),
+										  "<html>gateway</html>")
+					 .recognised);
+
+		// CurseForge (also spelled "flame"): the first screenshot.
+		const PackArtwork::Found flame = PackArtwork::parseLookup(
+			QStringLiteral("Flame"),
+			reply("{'data': {'id': 925200, 'name': 'All the Mods 10',"
+				"'logo': {'url': 'https://media.forgecdn.net/logo.png'},"
+				"'screenshots': [{'url': 'https://media.forgecdn.net/one.png'},"
+				"{'url': 'https://media.forgecdn.net/two.png'}]}}"));
+		QVERIFY(flame.recognised);
+		QCOMPARE(flame.title, QStringLiteral("All the Mods 10"));
+		QCOMPARE(flame.cover, QStringLiteral("https://media.forgecdn.net/one.png"));
+		QCOMPARE(flame.logo, QStringLiteral("https://media.forgecdn.net/logo.png"));
+
+		// modpacks.ch: the splash art, and the square art as the logo.
+		const PackArtwork::Found ftb = PackArtwork::parseLookup(
+			QStringLiteral("modpacksch"),
+			reply("{'name': 'FTB Pack', 'art': ["
+				"{'type': 'square', 'url': 'https://cdn.example/square.png'},"
+				"{'type': 'splash', 'url': 'https://cdn.example/splash.png'}]}"));
+		QVERIFY(ftb.recognised);
+		QCOMPARE(ftb.cover, QStringLiteral("https://cdn.example/splash.png"));
+		QCOMPARE(ftb.logo, QStringLiteral("https://cdn.example/square.png"));
+		QVERIFY(!PackArtwork::parseLookup(QStringLiteral("modpacksch"),
+										  reply("{'status': 'error'}"))
+					 .recognised);
+
+		// Platforms with no such record.
+		QVERIFY(!PackArtwork::parseLookup(QStringLiteral("atlauncher"), "{}")
+					 .recognised);
+	}
+
+	void packArtworkLooksUpOnlyWhereThereIsARecord()
+	{
+		const QUrl modrinth =
+			PackArtwork::lookupUrl(QStringLiteral("modrinth"), QStringLiteral("abcdEFGH"));
+		QVERIFY(modrinth.isValid());
+		QVERIFY(modrinth.toString().endsWith(QLatin1String("/project/abcdEFGH")));
+		QVERIFY(PackArtwork::lookupUrl(QStringLiteral("modpacksch"), QStringLiteral("23"))
+					.toString()
+					.endsWith(QLatin1String("public/modpack/23")));
+		QVERIFY(PackArtwork::lookupUrl(QStringLiteral("modrinth"), QString()).isEmpty());
+		QVERIFY(PackArtwork::lookupUrl(QStringLiteral("atlauncher"),
+									   QStringLiteral("SkyFactory4"))
+					.isEmpty());
+		QVERIFY(PackArtwork::lookupUrl(QStringLiteral("technic"),
+									   QStringLiteral("tekkit"))
+					.isEmpty());
+		// ATLauncher's logo is named by the pack's safe name alone.
+		QVERIFY(PackArtwork::derivedLogoUrl(QStringLiteral("atlauncher"),
+											QStringLiteral("SkyFactory4"))
+					.endsWith(QLatin1String("launcher/images/skyfactory4.png")));
+		QCOMPARE(PackArtwork::derivedLogoUrl(QStringLiteral("modrinth"),
+											 QStringLiteral("abcdEFGH")),
+				 QString());
+	}
+
+	/* A Discover gallery as the modpack models hand it to QML. */
+	void packArtworkPicksTheGalleryCover()
+	{
+		const QVariantMap first{{"url", "https://cdn/a_350.webp"},
+								{"rawUrl", "https://cdn/a.png"},
+								{"featured", false}};
+		const QVariantMap featured{{"url", "https://cdn/b_350.webp"},
+								   {"rawUrl", "https://cdn/b.png"},
+								   {"featured", true}};
+		const QVariantMap plain{{"url", "https://cdn/c.jpg"}, {"featured", false}};
+		QCOMPARE(PackArtwork::coverFromGallery({first, featured}),
+				 QStringLiteral("https://cdn/b.png"));
+		QCOMPARE(PackArtwork::coverFromGallery({first}),
+				 QStringLiteral("https://cdn/a.png"));
+		QCOMPARE(PackArtwork::coverFromGallery({plain}),
+				 QStringLiteral("https://cdn/c.jpg"));
+		QCOMPARE(PackArtwork::coverFromGallery({}), QString());
+	}
+
+	void packArtworkCachePathFollowsTheUrl()
+	{
+		const QString a = PackArtwork::cachePath(QStringLiteral("/c"),
+												 QStringLiteral("https://cdn/a.png"));
+		const QString b = PackArtwork::cachePath(QStringLiteral("/c"),
+												 QStringLiteral("https://cdn/b.png"));
+		QVERIFY(a != b);
+		QVERIFY(a.startsWith(QLatin1String("/c/")));
+		QVERIFY(a.endsWith(QLatin1String(".png")));
+		QCOMPARE(PackArtwork::cachePath(QStringLiteral("/c"),
+										QStringLiteral("https://cdn/a.png")),
+				 a);
+		// No usable extension: the reader goes by the content instead.
+		QVERIFY(!PackArtwork::cachePath(QStringLiteral("/c"),
+										QStringLiteral("https://cdn/image?id=3"))
+					 .contains(QLatin1Char('.')));
+	}
+
+	/* Only the icons an install falls back to may give way to the pack's
+	 * logo - never one the user picked. */
+	void packArtworkReplacesOnlyStockIcons()
+	{
+		QVERIFY(PackArtwork::isStockIconKey("modrinth", "default"));
+		QVERIFY(PackArtwork::isStockIconKey("modrinth", ""));
+		QVERIFY(PackArtwork::isStockIconKey("modrinth", "modrinth"));
+		QVERIFY(PackArtwork::isStockIconKey("curseforge", "flame"));
+		QVERIFY(PackArtwork::isStockIconKey("flame", "flame"));
+		QVERIFY(PackArtwork::isStockIconKey("curseforge", "ftb_logo"));
+		QVERIFY(PackArtwork::isStockIconKey("modpacksch", "ftb_logo"));
+		QVERIFY(PackArtwork::isStockIconKey("atlauncher", "grass"));
+
+		QVERIFY(!PackArtwork::isStockIconKey("modrinth", "gold"));
+		QVERIFY(!PackArtwork::isStockIconKey("modrinth", "flame"));
+		QVERIFY(!PackArtwork::isStockIconKey("modrinth", "grass"));
+		QVERIFY(!PackArtwork::isStockIconKey("curseforge", "steve"));
+		// A pack logo installed already is the pack's own.
+		QVERIFY(!PackArtwork::isStockIconKey("modrinth", "modrinth_abcdEFGH"));
+		QVERIFY(!PackArtwork::isStockIconKey("curseforge", "curseforge_925200"));
+
+		QCOMPARE(PackArtwork::iconKeyFor("Flame", "925200"),
+				 QStringLiteral("curseforge_925200"));
+		// The key is the file name up to its first dot.
+		QCOMPARE(PackArtwork::iconKeyFor("atlauncher", "Sky.Factory 4"),
+				 QStringLiteral("atlauncher_Sky_Factory_4"));
 	}
 
 	void coverImageRoleScansAsynchronouslyAndCachesResult()

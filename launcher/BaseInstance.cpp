@@ -86,6 +86,12 @@ BaseInstance::BaseInstance(SettingsObjectPtr globalSettings,
 	 * back rather than showing a blank field. */
 	m_settings->registerSetting("PackName", "");
 
+	/* The pack's cover photo, as its catalogue serves it - see
+	 * managedPackCoverUrl(). Registered with no default on purpose, so
+	 * that "never looked" (absent, an invalid QVariant) and "looked, the
+	 * pack has none" (present and empty) stay two different answers. */
+	m_settings->registerSetting(QStringLiteral("PackCoverUrl"), QVariant());
+
 	/* An update source the user supplied by hand, for instances with
 	 * no catalogue entry (drag-dropped zips, hand-made instances).
 	 * Remembered so the field is still filled in next time the page
@@ -342,6 +348,35 @@ QString BaseInstance::managedPackVersionName() const
 QString BaseInstance::managedPackSourceUrl() const
 {
 	return m_settings->get("PackSourceUrl").toString().trimmed();
+}
+
+QString BaseInstance::managedPackIconUrl() const
+{
+	return m_settings->get("PackIconUrl").toString().trimmed();
+}
+
+void BaseInstance::setManagedPackIconUrl(const QString& url)
+{
+	m_settings->set("PackIconUrl", url.trimmed());
+}
+
+QString BaseInstance::managedPackCoverUrl() const
+{
+	return m_settings->get("PackCoverUrl").toString().trimmed();
+}
+
+bool BaseInstance::hasManagedPackCoverRecord() const
+{
+	/* Absent reads back as the registered default, which is no value at
+	 * all; anything written - an empty string included - is a value. */
+	return m_settings->get("PackCoverUrl").isValid();
+}
+
+void BaseInstance::setManagedPackCoverUrl(const QString& url)
+{
+	/* Always a QString, never an invalid QVariant: an empty one is the
+	 * record that the pack was looked at and has no cover. */
+	m_settings->set("PackCoverUrl", QString(url.trimmed()));
 }
 
 bool BaseInstance::isManagedPack() const

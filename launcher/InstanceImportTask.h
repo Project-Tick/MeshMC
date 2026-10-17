@@ -66,6 +66,7 @@ class InstanceImportTask : public InstanceTask
 		QString versionId;	  /* version id (Modrinth) / file id (CF) */
 		QString versionLabel; /* human "1.2.3" */
 		QString iconUrl;	  /* upstream icon */
+		QString coverUrl;	  /* upstream cover photo, if known */
 		QString sourceUrl;	  /* canonical pack page */
 		bool isEmpty() const
 		{

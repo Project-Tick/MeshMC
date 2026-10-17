@@ -2020,6 +2020,12 @@ void InstanceImportTask::writePackSourceToInstance(BaseInstance& instance,
 	s->set("PackVersionId", versionId);
 	s->set("PackVersionLabel", versionLabel);
 	s->set("PackIconUrl", hint.iconUrl);
+	/* Unlike the keys above, only written when there is one: an absent
+	 * cover is what tells PackArtwork to look the pack up, and a pack
+	 * page without its gallery (or a pack from a file) has not looked. */
+	if (!hint.coverUrl.isEmpty()) {
+		instance.setManagedPackCoverUrl(hint.coverUrl);
+	}
 	s->set("PackSourceUrl", hint.sourceUrl);
 	s->set("PackInstalledAt",
 		   QDateTime::currentDateTimeUtc().toString(Qt::ISODate));

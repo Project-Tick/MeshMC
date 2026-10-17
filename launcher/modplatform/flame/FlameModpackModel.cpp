@@ -37,6 +37,7 @@
 #include "icons/IconList.h"
 #include "modplatform/ContentApi.h"
 #include "modplatform/ContentType.h"
+#include "modplatform/PackArtwork.h"
 #include "modplatform/VersionPicker.h"
 #include "modplatform/flame/FlameApi.h"
 #include "modplatform/modrinth/ModrinthModpackModel.h"
@@ -735,6 +736,11 @@ QObject* FlameModpackModel::install(const QString& projectId,
 	hint.versionId = versionId;
 	hint.versionLabel = versionLabel;
 	hint.iconUrl = base.logoUrl;
+	/* The gallery loadDetail() built from the search hit's screenshots,
+	 * full size, first one featured. */
+	if (m_detail->projectId() == projectId) {
+		hint.coverUrl = PackArtwork::coverFromGallery(m_detail->gallery());
+	}
 	hint.sourceUrl = base.websiteUrl;
 	importTask->setPackSourceHint(hint);
 

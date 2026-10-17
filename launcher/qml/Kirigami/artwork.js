@@ -6,10 +6,11 @@
 
 /*
  * The picture on an instance's card, and on a world without an icon of its
- * own: the instance's pack art when it is a platform pack (InstanceList's
- * packArt role: the pack's logo), else its newest screenshot (coverImage),
- * else one of the launcher's own rendered scenes, picked from the id so an
- * instance keeps its scene.
+ * own: the pack's cover photo when the instance is a platform pack
+ * (InstanceList's packCover role: the picture its catalogue leads with,
+ * cached on disk), else its newest screenshot (coverImage), else the
+ * pack's logo (packArt), else one of the launcher's own rendered scenes,
+ * picked from the id so an instance keeps its scene.
  *
  * The pictures are this module's own resources (art/, see CMakeLists.txt).
  */
@@ -40,14 +41,20 @@ function worldUrl(seed) {
 }
 
 // What an instance's card shows: {source, logo}. `logo` is true for pack
-// art, a square logo to be shown whole rather than cropped like a picture.
+// art, a square logo to be shown whole rather than cropped like a picture;
+// the pack's cover is a photo, and cropped like one. The logo comes after
+// the screenshot: a picture of the game fills the card, a logo only sits
+// in the middle of it.
 // @p entry has InstanceList's roles.
 function cover(entry) {
-    var packArt = String(entry.packArt || "")
-    if (packArt.length > 0)
-        return { source: packArt, logo: true }
+    var photo = String(entry.packCover || "")
+    if (photo.length > 0)
+        return { source: photo, logo: false }
     var shot = String(entry.coverImage || "")
     if (shot.length > 0)
         return { source: shot, logo: false }
+    var packArt = String(entry.packArt || "")
+    if (packArt.length > 0)
+        return { source: packArt, logo: true }
     return { source: sceneUrl(entry.instanceId), logo: false }
 }

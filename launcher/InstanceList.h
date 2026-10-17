@@ -33,6 +33,7 @@
 
 class QFileSystemWatcher;
 class InstanceTask;
+class PackArtwork;
 class TaskWatcher;
 class LaunchProgressTracker;
 using InstanceId = QString;
@@ -162,14 +163,24 @@ class InstanceList : public QAbstractListModel
 		 * instance in add()) turns into a row-wide dataChanged(); no
 		 * separate notification wiring is needed here. */
 		HasCrashedRole,
-		/* The pack's own picture, for the cover (ahead of a screenshot)
-		 * of an instance installed from a platform (BaseInstance::
-		 * isManagedPack()): "image://instanceicon/<key>" when its icon is
+		/* The pack's logo, for the cover of an instance installed from a
+		 * platform (BaseInstance::isManagedPack()) that has neither a
+		 * PackCoverRole photo nor a screenshot to show:
+		 * "image://instanceicon/<key>" when its icon is
 		 * an icon file (the pack's logo, which the install put in the
 		 * icons folder), else the logo's upstream URL (PackIconUrl), else
 		 * an empty string - as it is for every other instance, which
 		 * gets one of the rendered fallback scenes instead. */
-		PackArtRole
+		PackArtRole,
+		/* file:// URL of the pack's cover photo, for an instance installed
+		 * from a platform: the picture its catalogue leads with (Modrinth's
+		 * featured gallery image, CurseForge's first screenshot, FTB's
+		 * splash art), cached on disk by PackArtwork - see
+		 * PackArtwork::coverFor(). Empty for every other instance, for a
+		 * pack with none, and while the first download is still on its
+		 * way, after which dataChanged is emitted for the row. A cover
+		 * already on disk is there from the first ask. */
+		PackCoverRole
 	};
 	/*!
 	 * \brief Error codes returned by functions in the InstanceList class.
@@ -384,6 +395,10 @@ class InstanceList : public QAbstractListModel
 	 */
 	static QString newestScreenshotUrl(const QString& screenshotsDir);
 
+	/* Where PackCoverRole's photos are kept. Defaults to the launcher's
+	 * cache folder; tests, which have no launcher, point it elsewhere. */
+	void setPackCoverDir(const QString& dir);
+
 	Qt::DropActions supportedDragActions() const override;
 
 	Qt::DropActions supportedDropActions() const override;
@@ -522,4 +537,7 @@ class InstanceList : public QAbstractListModel
 	/* Bumped for an id whenever emitIsRunningChanged() invalidates its
 	 * cached cover - see scheduleCoverImageScan()'s doc comment for why. */
 	QHash<InstanceId, int> m_coverImageGeneration;
+	/* The pack pictures of platform-pack instances: PackCoverRole, and
+	 * the logo that replaces a stock icon. Parented to this list. */
+	PackArtwork* m_packArtwork = nullptr;
 };

@@ -407,6 +407,20 @@ namespace ModpacksCH
 		instanceSettings->set("PackName", m_pack.name);
 		instanceSettings->set("PackVersionId", QString::number(m_version.id));
 		instanceSettings->set("PackVersionLabel", m_version.name);
+		/* The pack's art, which the pack record in hand already names:
+		 * the square logo, and the splash as the cover photo (see
+		 * PackArtwork). Only what is there is written - an absent cover
+		 * is what has PackArtwork look the pack up later. */
+		for (const auto& art : m_pack.art) {
+			if (art.url.isEmpty()) {
+				continue;
+			}
+			if (art.type == QLatin1String("square")) {
+				instance.setManagedPackIconUrl(art.url);
+			} else if (art.type == QLatin1String("splash")) {
+				instance.setManagedPackCoverUrl(art.url);
+			}
+		}
 		instanceSettings->set(
 			"PackInstalledAt",
 			QDateTime::currentDateTimeUtc().toString(Qt::ISODate));

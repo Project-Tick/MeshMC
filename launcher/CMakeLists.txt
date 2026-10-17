@@ -834,6 +834,8 @@ set(CONTENT_DOWNLOAD_SOURCES
     modplatform/ModUpdateCheckTask.cpp
     modplatform/BrandLogos.h
     modplatform/BrandLogos.cpp
+    modplatform/PackArtwork.h
+    modplatform/PackArtwork.cpp
 )
 
 add_unit_test(PackContents
@@ -1912,6 +1914,16 @@ add_unit_test(QmlUiHost
     SOURCES qml/QmlUiHost_test.cpp
     LIBS MeshMC_logic Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Gui
     )
+
+# Runs the Kirigami interface's artwork.js in a bare QJSEngine: which of an
+# instance's pictures its card shows, in which order. Reads the script from
+# the source tree, so it needs nothing of the module built.
+add_unit_test(QmlArtwork
+    SOURCES qml/QmlArtwork_test.cpp
+    LIBS Qt${QT_VERSION_MAJOR}::Qml
+    )
+target_compile_definitions(QmlArtwork_test PRIVATE
+    ARTWORK_JS="${CMAKE_CURRENT_SOURCE_DIR}/qml/Kirigami/artwork.js")
 
 add_executable(MeshMC MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
 # Keyword signature: qt_import_qml_plugins below links with PRIVATE, and CMake

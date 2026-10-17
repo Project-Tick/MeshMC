@@ -57,6 +57,7 @@
 #include "icons/IconList.h"
 #include "launch/LaunchProgressTracker.h"
 #include "launch/LaunchTask.h"
+#include "modplatform/PackArtwork.h"
 #include "tasks/TaskWatcher.h"
 
 const static int GROUP_FILE_FORMAT_VERSION = 1;
@@ -73,6 +74,15 @@ InstanceList::InstanceList(SettingsObjectPtr settings,
 	m_watcher = new QFileSystemWatcher(this);
 	connect(m_watcher, &QFileSystemWatcher::directoryChanged, this,
 			&InstanceList::instanceDirContentsChanged);
+
+	m_packArtwork = new PackArtwork(this);
+	connect(m_packArtwork, &PackArtwork::coverChanged, this,
+			[this](const QString& id) {
+				const int row = getInstIndex(getInstanceById(id).get());
+				if (row != -1) {
+					emit dataChanged(index(row), index(row), {PackCoverRole});
+				}
+			});
 
 	applyInstanceDirs(resolveInstanceDirs(instDirs));
 }
@@ -303,6 +313,11 @@ QVariant InstanceList::data(const QModelIndex& index, int role) const
 			return pdata->instanceRoot();
 		}
 		case Qt::DecorationRole: {
+			/* Every view that shows the instance's icon asks for this, so it
+			 * is where a platform pack's logo is sent for when the icon is
+			 * still the stock one - see PackArtwork::ensure(). A no-op for
+			 * every other instance, and after the first ask. */
+			m_packArtwork->ensure(pdata);
 			return pdata->iconKey();
 		}
 		// HACK: see InstanceView.h in gui!
@@ -376,6 +391,9 @@ QVariant InstanceList::data(const QModelIndex& index, int role) const
 			}
 			return pdata->settings()->get("PackIconUrl").toString();
 		}
+		case PackCoverRole: {
+			return m_packArtwork->coverFor(pdata);
+		}
 		default:
 			break;
 	}
@@ -402,6 +420,7 @@ QHash<int, QByteArray> InstanceList::roleNames() const
 	roles.insert(CoverImageRole, "coverImage");
 	roles.insert(HasCrashedRole, "hasCrashed");
 	roles.insert(PackArtRole, "packArt");
+	roles.insert(PackCoverRole, "packCover");
 	return roles;
 }
 
@@ -852,6 +871,7 @@ InstanceList::InstListError InstanceList::loadList()
 			m_coverImageCache.remove(removedId);
 			m_coverImageScansPending.remove(removedId);
 			m_coverImageGeneration.remove(removedId);
+			m_packArtwork->forget(removedId);
 			currentItem = removedItem.second;
 			if (back_bookmark == -1) {
 				// no bookmark yet
@@ -1017,6 +1037,11 @@ void InstanceList::scheduleCoverImageScan(const InstanceId& id,
 	watcher->setFuture(QtConcurrent::run(QThreadPool::globalInstance(),
 										 &InstanceList::newestScreenshotUrl,
 										 screenshotsDir));
+}
+
+void InstanceList::setPackCoverDir(const QString& dir)
+{
+	m_packArtwork->setCacheDir(dir);
 }
 
 QString InstanceList::newestScreenshotUrl(const QString& screenshotsDir)

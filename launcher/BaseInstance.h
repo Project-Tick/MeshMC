@@ -176,6 +176,20 @@ class BaseInstance : public QObject,
 	QString managedPackVersionName() const;
 	/* Canonical pack page recorded at import time, if any. */
 	QString managedPackSourceUrl() const;
+	/* The pack's logo upstream (PackIconUrl), if one was recorded. */
+	QString managedPackIconUrl() const;
+	void setManagedPackIconUrl(const QString& url);
+	/* The pack's cover photo upstream (PackCoverUrl): the picture its
+	 * catalogue leads with, which PackArtwork caches for the instance's
+	 * card. Empty when none is known. */
+	QString managedPackCoverUrl() const;
+	/* Whether a cover has been recorded at all - by the install, or by
+	 * PackArtwork's lookup - even if what was recorded is "none". False
+	 * means nobody has asked the catalogue yet. */
+	bool hasManagedPackCoverRecord() const;
+	/* Records @p url as the pack's cover; an empty one records that the
+	 * pack has none, so it is not looked up again. */
+	void setManagedPackCoverUrl(const QString& url);
 
 	/* True when this instance came from a catalogue at all, i.e. a
 	 * provider is recorded.
