@@ -209,6 +209,12 @@ class Application : public QApplication, public LauncherContext
 	 * before it is ready waits through runWhenQmlPresenterReady(). */
 	bool qmlShellChosen() const;
 
+	/* The startup choice alone (the MeshMC_QML_UI default, or MESHMC_QML_UI
+	 * in the environment), readable before an Application exists: main()
+	 * sets up the KDE icon theme for the QML shell ahead of the
+	 * QApplication, which KIconTheme::initTheme() requires. */
+	static bool qmlShellRequested();
+
 	/* Runs @p call now, unless the QML shell is chosen but its presenter
 	 * is not ready yet (qmlShellChosen() && !usingQmlShell()): then it is
 	 * queued with the startup update reports (m_pendingQmlPresenterCalls)

@@ -471,6 +471,13 @@ class QmlShell : public QObject
 	 * optional-mods question (UiHost::chooseOptionalMods()). Through the same QmlUiHost calls the
 	 * real code makes. No-op for any other kind. */
 	Q_INVOKABLE void debugShowRequest(const QString& kind);
+	/* Preview/dev-only, for review snapshots in either colour scheme
+	 * (DevRoute.qml's "theme=light|dark", "system" to follow the desktop
+	 * again): asks the platform for that scheme through QStyleHints, which
+	 * re-colours the window's palette and with it Kirigami.Theme, as the
+	 * desktop's own switch would. Needs Qt 6.8 and a platform that can
+	 * (macOS, Windows, Wayland); a no-op otherwise. */
+	Q_INVOKABLE void debugColorScheme(const QString& mode);
 
 	QStringList groups() const;
 	QObject* iconsModel() const;

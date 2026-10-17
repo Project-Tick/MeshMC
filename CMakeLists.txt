@@ -218,7 +218,26 @@ find_package(KF${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
     # KirigamiPlatform's C++ side, which the "system" colour scheme reads
     # Plasma's colours through (launcher/qml/Theme/KirigamiColors.cpp).
     Kirigami
+    # The KDE interface (launcher/qml/Kirigami): the application's KAboutData,
+    # which its About page reads, and Breeze icons by name on every platform
+    # -- KIconThemes' engine and theme setup, and the icons themselves built
+    # into a library so macOS and Windows have them too.
+    CoreAddons
+    IconThemes
+    BreezeIcons
 )
+
+# Only loaded at runtime, by name: the Qt Quick Controls style the KDE
+# interface asks for (org.kde.desktop, see QmlShell::load()) and the
+# Kirigami Addons modules its pages import. Neither is linked.
+find_package(KF${QT_VERSION_MAJOR}QQC2DesktopStyle ${KF_MIN_VERSION})
+set_package_properties(KF${QT_VERSION_MAJOR}QQC2DesktopStyle PROPERTIES
+    TYPE RUNTIME
+    PURPOSE "The org.kde.desktop controls style of the KDE interface")
+find_package(KF${QT_VERSION_MAJOR}KirigamiAddons)
+set_package_properties(KF${QT_VERSION_MAJOR}KirigamiAddons PROPERTIES
+    TYPE RUNTIME
+    PURPOSE "Context menus and the About page of the KDE interface")
 
 # Qt Quick 3D, for the optional roaming cat companion (launcher/qml/Cat/) --
 # never added to the required components above: unlike everything there, the

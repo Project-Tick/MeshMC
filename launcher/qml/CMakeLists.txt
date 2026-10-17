@@ -24,6 +24,9 @@
 add_subdirectory(Theme)
 add_subdirectory(Style)
 add_subdirectory(Components)
+# The KDE interface QmlShell loads (see Kirigami/CMakeLists.txt). It needs none
+# of the three above; they stay for the pages still to be ported from them.
+add_subdirectory(Kirigami)
 
 # The roaming 3D cat, only when Qt Quick3D was found (see the top-level
 # CMakeLists.txt's find_package(... OPTIONAL_COMPONENTS Quick3D) and the
@@ -65,7 +68,15 @@ target_link_libraries(MeshMC_qml PUBLIC
     MeshMC_qml_theme
     MeshMC_qml_style
     MeshMC_qml_components
+    MeshMC_qml_kirigami
     MeshMC_core
+)
+
+# QmlShell's KDE application setup: the KAboutData the About page reads, and
+# the Breeze icons it asks for by name (BreezeIcons::initIcons()).
+target_link_libraries(MeshMC_qml PRIVATE
+    KF${QT_VERSION_MAJOR}::CoreAddons
+    KF${QT_VERSION_MAJOR}::BreezeIcons
 )
 
 # The plugin targets, and not just the modules' backing libraries, have to reach
@@ -77,6 +88,7 @@ target_link_libraries(MeshMC_qml PUBLIC
     MeshMC_qml_themeplugin
     MeshMC_qml_styleplugin
     MeshMC_qml_componentsplugin
+    MeshMC_qml_kirigamiplugin
     Qt${QT_VERSION_MAJOR}::Quick
     Qt${QT_VERSION_MAJOR}::QuickControls2
     KF${QT_VERSION_MAJOR}::I18nQml

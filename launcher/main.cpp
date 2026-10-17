@@ -25,6 +25,7 @@
 
 #include <QDir>
 #include <QProcessEnvironment>
+#include <KIconTheme>
 #include <KLocalizedString>
 
 #include <atomic>
@@ -348,6 +349,15 @@ int main(int argc, char* argv[])
 		}
 	}
 #endif
+
+	/* The QML shell is a KDE application, and asks for its icons by their
+	 * freedesktop names: KIconThemes' engine and the user's icon theme
+	 * (Breeze unless set otherwise) on every platform, not only on Plasma.
+	 * It has to happen before the QApplication exists. The widget window
+	 * keeps its own icon themes (ThemeManager), so it is left as it was. */
+	if (Application::qmlShellRequested()) {
+		KIconTheme::initTheme();
+	}
 
 	Application app(argc, argv);
 

@@ -1455,7 +1455,13 @@ void Application::initSubsystems()
 		}
 	});
 
-	{
+	/* The QML shell is a KDE application and looks like the desktop: KDE's
+	 * controls style, the system palette and the icon theme KIconThemes set
+	 * up (see main() and QmlShell::load()). A widget theme would restyle and
+	 * recolour it, and point QIcon at the classic window's icon set, so it
+	 * is only applied for the widget window -- including when the QML shell
+	 * fails to load and that window takes over (see ensureQmlShell()). */
+	if (!qmlShellRequested()) {
 		m_themeManager->applyCurrentlySelectedTheme(true);
 		qDebug() << "<> Theme applied.";
 	}
@@ -2355,6 +2361,11 @@ namespace
 	}
 } // namespace
 
+bool Application::qmlShellRequested()
+{
+	return useQmlShell();
+}
+
 bool Application::ensureQmlShell()
 {
 	if (m_qmlShell) {
@@ -2506,6 +2517,8 @@ bool Application::ensureQmlShell()
 		qWarning() << "QML shell failed to load; using the widget window";
 		m_qmlShell.reset();
 		m_qmlShellLoadFailed = true;
+		// Held back for the QML shell at startup (end of the constructor).
+		m_themeManager->applyCurrentlySelectedTheme(true);
 
 		/* The QmlUiHost that would have shown these never came up.
 		 * uiHost() now falls back to the widget host and qmlShellChosen()

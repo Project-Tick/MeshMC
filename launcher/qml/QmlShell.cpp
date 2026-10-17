@@ -21,11 +21,14 @@
 
 #include <QCoreApplication>
 #include <QCursor>
+#include <QGuiApplication>
+#include <QStyleHints>
 #include <QElapsedTimer>
 #include <QDebug>
 #include <QEvent>
 #include <QFileInfo>
 #include <QHostInfo>
+#include <QIcon>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMouseEvent>
@@ -87,14 +90,42 @@
 #include "minecraft/mod/ModIconCache.h"
 #include "minecraft/auth/MinecraftAccount.h"
 #include "minecraft/skins/DefaultSkins.h"
+#include <BreezeIcons>
+#include <KAboutData>
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
 
 namespace
 {
 	/* Spelled out rather than loadFromModule(), which is Qt 6.5+; the floor is
-	 * 6.4. The module sets RESOURCE_PREFIX "/qt/qml" so this path is stable. */
-	const QUrl kRootUrl(QStringLiteral("qrc:/qt/qml/MeshMC/Main.qml"));
+	 * 6.4. The module sets RESOURCE_PREFIX "/qt/qml" so this path is stable.
+	 * The KDE interface (launcher/qml/Kirigami); the custom design's
+	 * MeshMC/Main.qml is still built, but no longer loaded. */
+	const QUrl kRootUrl(QStringLiteral("qrc:/qt/qml/MeshMC/Kirigami/Main.qml"));
+
+	/* The application as KDE frameworks describe it: FormCard's AboutPage
+	 * reads this (org.kde.coreaddons' AboutData), and KAboutData::
+	 * setApplicationData() writes its names back into QCoreApplication --
+	 * so they repeat what Application already set, and nothing the launcher
+	 * keeps on disk moves. The desktop file name is the one
+	 * packaging/linux installs, which Wayland uses as the window's app id. */
+	void setUpAboutData(const AboutInfo& info)
+	{
+		KAboutData about(QCoreApplication::applicationName(), info.name(),
+						 info.version(), i18n("A launcher for Minecraft"),
+						 KAboutLicense::Apache_V2,
+						 i18n("© 2012-2021 MultiMC Contributors\n© 2026 Project Tick"),
+						 QString(), info.sourceUrl(), BuildConfig.BUG_TRACKER_URL);
+		about.setOrganizationDomain(QCoreApplication::organizationDomain().toUtf8());
+		about.setDesktopFileName(QStringLiteral("org.projecttick.MeshMC"));
+		// The launcher's logo (resources/meshmc/meshmc.qrc), for the About
+		// page's header.
+		about.setProgramLogo(QIcon(QStringLiteral(":/org.projecttick.MeshMC.svg")));
+		about.addAuthor(i18n("MeshMC Developers"), QString(), QString(),
+						info.sourceUrl());
+		about.addCredit(i18n("MultiMC Developers"));
+		KAboutData::setApplicationData(about);
+	}
 
 	/* Function-local static rather than a plain namespace-scope QmlShell
 	 * member: this is a process-wide seam Application installs once, not
@@ -436,6 +467,21 @@ void QmlShell::debugClick(const QString& spec)
 	}
 	at(delay + hoverMs + stepMs * (steps + 1), QEvent::MouseButtonRelease, point + offset, button,
 	   Qt::NoButton);
+}
+
+void QmlShell::debugColorScheme(const QString& mode)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	Qt::ColorScheme scheme = Qt::ColorScheme::Unknown;
+	if (mode == QLatin1String("dark")) {
+		scheme = Qt::ColorScheme::Dark;
+	} else if (mode == QLatin1String("light")) {
+		scheme = Qt::ColorScheme::Light;
+	}
+	QGuiApplication::styleHints()->setColorScheme(scheme);
+#else
+	Q_UNUSED(mode);
+#endif
 }
 
 void QmlShell::debugShowRequest(const QString& kind)
@@ -1161,18 +1207,29 @@ bool QmlShell::load()
 
 	/* Must be chosen before the first engine exists: Qt Quick Controls binds
 	 * its style when QtQuick.Controls is first imported, and cannot switch
-	 * afterwards. The style falls back to Basic for anything it does not
-	 * define itself. */
-	QQuickStyle::setStyle(QStringLiteral("MeshMC.Style"));
+	 * afterwards. KDE's own desktop style, as every Kirigami application
+	 * asks for it -- unless the user picked one with QT_QUICK_CONTROLS_STYLE,
+	 * which Qt then applies by itself. */
+	if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE"))
+		QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
+
+	/* Breeze icons by their freedesktop names wherever the system has no
+	 * icon theme of its own: initIcons() puts the icons compiled into
+	 * KF6BreezeIcons under :/icons and makes Breeze QIcon's fallback theme.
+	 * KIconThemes does the same from KIconTheme::initTheme() (see main())
+	 * when it was built with them; this covers a build without. */
+	BreezeIcons::initIcons();
+	setUpAboutData(*m_about);
 
 	m_engine = std::make_unique<QQmlApplicationEngine>();
 	m_engine->addImportPath(QStringLiteral("qrc:/qt/qml"));
 	/* Kirigami takes its platform integration -- Kirigami.Theme's colours,
 	 * Kirigami.Units' animation speed -- from the plugin named by the style
-	 * above, and MeshMC.Style names none. On a Plasma session, name the
-	 * desktop's own (see KirigamiColors::desktopPlugin()) through the engine
-	 * property Kirigami reads for exactly this, so both follow the user's
-	 * Plasma settings; anywhere else Kirigami keeps its built-in fallback. */
+	 * above: org.kde.desktop names its own. A style forced through
+	 * QT_QUICK_CONTROLS_STYLE may name none; on a Plasma session, name the
+	 * desktop's (see KirigamiColors::desktopPlugin()) through the engine
+	 * property Kirigami reads for exactly this, so both still follow the
+	 * user's Plasma settings. */
 	if (const QString plugin = KirigamiColors::desktopPlugin(); !plugin.isEmpty())
 		m_engine->setProperty("_kirigamiTheme", plugin);
 	/* i18n(), i18nc(), i18np() and i18ncp() for every .qml file, translated

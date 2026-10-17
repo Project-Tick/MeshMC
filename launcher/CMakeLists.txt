@@ -1890,6 +1890,15 @@ add_unit_test(QmlModule
 # links and then fails at runtime with 'plugin "MeshMC_qmlplugin" not found'.
 qt_import_qml_plugins(QmlModule_test)
 
+# The same proof for the KDE interface (MeshMC.Kirigami), which QmlShell
+# loads, plus its window's navigation. Linked the same way, for the same
+# reasons, as QmlModule above.
+add_unit_test(KirigamiShell
+    SOURCES qml/KirigamiShell_test.cpp
+    LIBS MeshMC_qml MeshMC_qmlplugin KF${QT_VERSION_MAJOR}::IconThemes Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Gui
+    )
+qt_import_qml_plugins(KirigamiShell_test)
+
 # MeshMC_logic rather than the core: the built-in icons are compiled from
 # meshmc.qrc into MeshMC_logic, and a test where every key falls back to the
 # default icon would prove nothing.
@@ -1941,6 +1950,8 @@ add_executable(MeshMC MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
 # Keyword signature: qt_import_qml_plugins below links with PRIVATE, and CMake
 # refuses to mix the two forms on one target.
 target_link_libraries(MeshMC PRIVATE MeshMC_logic)
+# main() sets up KIconThemes for the QML shell before the QApplication exists.
+target_link_libraries(MeshMC PRIVATE KF${QT_VERSION_MAJOR}::IconThemes)
 # The root QML module's own plugin, by name, for the same reason as in
 # QmlModule_test above: qt_import_qml_plugins below may do nothing on a
 # distribution's Qt, and the shell would then fall back to the widgets.
