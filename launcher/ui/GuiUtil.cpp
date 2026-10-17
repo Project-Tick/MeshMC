@@ -43,7 +43,7 @@ QString GuiUtil::uploadPaste(const QString& text, QWidget* parentWidget)
 		APIKeySetting = BuildConfig.PASTE_EE_KEY;
 	}
 	std::unique_ptr<PasteUpload> paste(
-		new PasteUpload(parentWidget, text, APIKeySetting));
+		new PasteUpload(text, APIKeySetting));
 
 	if (!paste->validateText()) {
 		CustomMessageBox::selectable(

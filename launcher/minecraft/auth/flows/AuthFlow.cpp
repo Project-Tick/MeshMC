@@ -26,7 +26,6 @@
 #include "AuthFlow.h"
 #include "katabasis/Globals.h"
 
-#include <Application.h>
 #include <KLocalizedString>
 
 AuthFlow::AuthFlow(AccountData* data, QObject* parent)

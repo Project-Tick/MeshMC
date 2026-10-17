@@ -28,13 +28,50 @@
 #include <QFileSystemWatcher>
 #include <QSet>
 #include <QDebug>
+#include <QImage>
+#include <QPixmap>
 
 #define MAX_SIZE 1024
+
+namespace
+{
+/* Rendered artwork for builtin keys: one 256 px PNG per key, same names as
+ * the old pixel-art set (grass, tnt, creeper...), so every instance that
+ * stores one of those keys picks the new look up with no migration.
+ *
+ * The folder is listed in meshmc.qrc but deliberately NOT in index.theme.
+ * Inside an icon theme Qt mixes the PNG and SVG entries of a name and picks
+ * one per requested size and device pixel ratio; at some sizes the old
+ * scalable/instances SVG (or flame's 32/128 px PNGs) would still win. A
+ * builtin key with a file here therefore holds QIcon(file) directly --
+ * QIcon smooth-downscales its single 256 px image to whatever size is asked
+ * for -- and only keys without one keep going through QIcon::fromTheme().
+ * The path is not stored as the icon's filename, so getFilePath() of a
+ * builtin stays empty exactly as before (export, plugins). A user icon of
+ * the same key (IconType::FileBased) still outranks either. */
+const QString kRenderedBuiltinDir =
+	QStringLiteral(":/icons/meshmc/256x256/instances/");
+
+void setBuiltinImage(MMCIcon& entry, const QString& key)
+{
+	const QString rendered = kRenderedBuiltinDir + key + QStringLiteral(".png");
+	if (QFile::exists(rendered)) {
+		entry.replace(Builtin, QIcon(rendered));
+	} else {
+		entry.replace(Builtin, key);
+	}
+}
+} // namespace
 
 IconList::IconList(const QStringList& builtinPaths, QString path,
 				   QObject* parent)
 	: QAbstractListModel(parent)
 {
+	// Connected first, so the stale colour is gone before anyone else
+	// hears about the change and asks for it again.
+	connect(this, &IconList::iconUpdated, this,
+			[this](const QString& key) { m_tintCache.remove(key); });
+
 	QSet<QString> builtinNames;
 
 	// add builtin icons
@@ -237,6 +274,8 @@ QVariant IconList::data(const QModelIndex& index, int role) const
 			return icons[row].name();
 		case Qt::UserRole:
 			return icons[row].m_key;
+		case IsBuiltinRole:
+			return icons[row].isBuiltIn();
 		default:
 			return QVariant();
 	}
@@ -245,6 +284,15 @@ QVariant IconList::data(const QModelIndex& index, int role) const
 int IconList::rowCount(const QModelIndex& parent) const
 {
 	return icons.size();
+}
+
+QHash<int, QByteArray> IconList::roleNames() const
+{
+	auto roles = QAbstractListModel::roleNames();
+	roles.insert(Qt::DisplayRole, "name");
+	roles.insert(Qt::UserRole, "key");
+	roles.insert(IsBuiltinRole, "isBuiltin");
+	return roles;
 }
 
 void IconList::installIcons(const QStringList& iconFiles)
@@ -310,7 +358,7 @@ bool IconList::addThemeIcon(const QString& key)
 	auto iter = name_index.find(key);
 	if (iter != name_index.end()) {
 		auto& oldOne = icons[*iter];
-		oldOne.replace(Builtin, key);
+		setBuiltinImage(oldOne, key);
 		dataChanged(index(*iter), index(*iter));
 		return true;
 	} else {
@@ -320,7 +368,7 @@ bool IconList::addThemeIcon(const QString& key)
 			MMCIcon mmc_icon;
 			mmc_icon.m_name = key;
 			mmc_icon.m_key = key;
-			mmc_icon.replace(Builtin, key);
+			setBuiltinImage(mmc_icon, key);
 			icons.push_back(mmc_icon);
 			name_index[key] = icons.size() - 1;
 		}
@@ -389,6 +437,39 @@ QIcon IconList::getIcon(const QString& key) const
 	if (icon_index != -1)
 		return icons[icon_index].icon();
 	return QIcon();
+}
+
+QColor IconList::tint(const QString& key) const
+{
+	const auto cached = m_tintCache.constFind(key);
+	if (cached != m_tintCache.constEnd()) {
+		return *cached;
+	}
+
+	const QImage image = getIcon(key)
+							 .pixmap(QSize(32, 32))
+							 .toImage()
+							 .convertToFormat(QImage::Format_ARGB32);
+	double red = 0, green = 0, blue = 0, total = 0;
+	for (int y = 0; y < image.height(); ++y) {
+		const auto* line = reinterpret_cast<const QRgb*>(image.constScanLine(y));
+		for (int x = 0; x < image.width(); ++x) {
+			const QColor pixel = QColor::fromRgba(line[x]);
+			const double weight =
+				pixel.alphaF() * (0.25 + qMax(0.0f, pixel.hsvSaturationF()));
+			red += pixel.redF() * weight;
+			green += pixel.greenF() * weight;
+			blue += pixel.blueF() * weight;
+			total += weight;
+		}
+	}
+
+	const QColor result = total > 0
+							  ? QColor::fromRgbF(red / total, green / total,
+												 blue / total)
+							  : QColor();
+	m_tintCache.insert(key, result);
+	return result;
 }
 
 int IconList::getIconIndex(const QString& key) const

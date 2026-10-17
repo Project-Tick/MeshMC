@@ -26,7 +26,7 @@
 
 #include "net/Download.h"
 
-#include "Application.h"
+#include "core/LauncherContext.h"
 
 NotificationChecker::NotificationChecker(QObject* parent) : QObject(parent) {}
 
@@ -70,9 +70,9 @@ void NotificationChecker::checkForNotifications()
 		return;
 	}
 	m_checkJob =
-		new NetJob("Checking for notifications", APPLICATION->network());
+		new NetJob("Checking for notifications", LAUNCHER->network());
 	auto entry =
-		APPLICATION->metacache()->resolveEntry("root", "notifications.json");
+		LAUNCHER->metacache()->resolveEntry("root", "notifications.json");
 	entry->setStale(true);
 	m_checkJob->addNetAction(
 		m_download = Net::Download::makeCached(m_notificationsUrl, entry));
@@ -141,4 +141,23 @@ bool NotificationChecker::entryApplies(
 	bool toApplies = entry.to.isEmpty() || entry.to == m_appFullVersion ||
 					 !versionLessThan(entry.to, m_appFullVersion);
 	return channelApplies && platformApplies && fromApplies && toApplies;
+}
+
+QList<int> NotificationChecker::parseShownIds(const QString& setting)
+{
+	QList<int> ids;
+	const QStringList parts = setting.split(',', Qt::SkipEmptyParts);
+	for (const QString& part : parts) {
+		ids.append(part.toInt());
+	}
+	return ids;
+}
+
+QString NotificationChecker::formatShownIds(const QList<int>& ids)
+{
+	QStringList parts;
+	for (int id : ids) {
+		parts.append(QString::number(id));
+	}
+	return parts.join(',');
 }

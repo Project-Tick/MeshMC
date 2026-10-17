@@ -22,6 +22,7 @@
 #include "plugin/MMCOFormat.h"
 #include "plugin/PluginAPI.h"
 
+#include <QObject>
 #include <QString>
 #include <QStringList>
 #include <QVector>
@@ -57,7 +58,41 @@ enum class PluginDisableReason {
 	DependencyCycle,   /* This module is part of a dependency cycle */
 	SupersededByCore,  /* Functionality moved into the launcher itself —
 						  see plugin/CoreSupersededPlugins.h */
+	AbiTooOld,		   /* Built against an ABI older than
+						  MMCO_ABI_VERSION_MIN -- the module predates a
+						  floor raise and needs the author to update it */
+	AbiTooNew,		   /* Built against an ABI newer than
+						  MMCO_ABI_VERSION -- built for a MeshMC newer
+						  than this one */
 };
+
+/* A short label for @p reason, as the plugin lists show it (the widget
+ * PluginsDialog and the QML "Installed plugins" section). Translated in
+ * the QObject context, where these strings have always lived. */
+inline QString pluginDisableReasonLabel(PluginDisableReason reason)
+{
+	switch (reason) {
+		case PluginDisableReason::None:
+			return QObject::tr("OK");
+		case PluginDisableReason::UserDisabled:
+			return QObject::tr("Disabled by user");
+		case PluginDisableReason::SignatureRequired:
+			return QObject::tr("Signature required");
+		case PluginDisableReason::SignatureInvalid:
+			return QObject::tr("Invalid signature");
+		case PluginDisableReason::DependencyMissing:
+			return QObject::tr("Missing dependency");
+		case PluginDisableReason::DependencyCycle:
+			return QObject::tr("Dependency cycle");
+		case PluginDisableReason::SupersededByCore:
+			return QObject::tr("Built into MeshMC");
+		case PluginDisableReason::AbiTooOld:
+			return QObject::tr("Plugin ABI too old");
+		case PluginDisableReason::AbiTooNew:
+			return QObject::tr("Plugin ABI too new");
+	}
+	return QString();
+}
 
 struct PluginDependencyRecord {
 	QString name;

@@ -116,27 +116,21 @@ runs:
         esac
 
         echo "VCPKG_TRIPLET=$vcpkg_arch-$vcpkg_platform" >> "$GITHUB_ENV"
-
-    - name: Install Qt 5
-      if: ${{ inputs.msystem == '' && inputs.qt-major == '5' && runner.os != 'macOS' }}
-      uses: jurplel/install-qt-action@v4
-      with:
-        aqtversion: "==3.1.*"
-        version: ${{ inputs.qt-version }}
-        modules: qtnetworkauth
-        cache: ${{ inputs.build-type == 'Debug' }}
-
     - name: Install Qt 6
       if: ${{ inputs.msystem == '' && inputs.qt-major == '6' }}
       uses: jurplel/install-qt-action@v4
       with:
         aqtversion: "==3.1.*"
         version: ${{ inputs.qt-version }}
-        modules: qtimageformats qtnetworkauth
+        # qtquick3d is the optional 3D cat companion's only extra Qt
+        # dependency (see launcher/qml/Cat/CMakeLists.txt); qtshadertools is
+        # listed alongside it because Quick3D bakes its shader variants
+        # through it at runtime, not only at build time, so it has to be
+        # present even though nothing here compiles a shader directly.
+        modules: qtimageformats qtnetworkauth qtquick3d qtshadertools
         cache: ${{ inputs.build-type == 'Debug' }}
 
     - name: Setup bundled OpenSSL
       uses: ./.github/actions/setup-openssl
       with:
-        qt-major: ${{ inputs.qt-major }}
         msystem: ${{ inputs.msystem }}

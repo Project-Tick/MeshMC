@@ -82,7 +82,7 @@ void XboxProfileStep::onRequestDone(QNetworkReply::NetworkError error,
 	if (error != QNetworkReply::NoError) {
 		qWarning() << "Reply error:" << error;
 #ifndef NDEBUG
-		qCDebug(minecraftauthLog) << data;
+		qCDebug(minecraftauthLog) << Parsers::redactTokens(data);
 #endif
 		finished(AccountTaskState::STATE_FAILED_SOFT,
 				 i18n("Failed to retrieve the Xbox profile."));
@@ -90,7 +90,7 @@ void XboxProfileStep::onRequestDone(QNetworkReply::NetworkError error,
 	}
 
 #ifndef NDEBUG
-	qCDebug(minecraftauthLog) << "XBox profile: " << data;
+	qCDebug(minecraftauthLog) << "XBox profile: " << Parsers::redactTokens(data);
 #endif
 
 	emit finished(AccountTaskState::STATE_WORKING, i18n("Got Xbox profile"));

@@ -54,6 +54,17 @@ class ModFolderModel : public QAbstractListModel
 		DateColumn,
 		NUM_COLUMNS
 	};
+	/* Named roles, so a QML ListView (which only ever sees column 0) can
+	 * still get at what the widget views show as columns 1..3. */
+	enum ModelRoles {
+		NameRole = Qt::UserRole,
+		VersionRole,
+		DateRole,
+		EnabledRole,
+		/// "image://modicon/<key>" (see qml/ModIconProvider.h) for a file
+		/// whose logo is cached, "" otherwise.
+		IconUrlRole
+	};
 	enum ModStatusAction { Disable, Enable, Toggle };
 	ModFolderModel(const QString& dir);
 
@@ -61,6 +72,7 @@ class ModFolderModel : public QAbstractListModel
 						  int role = Qt::DisplayRole) const override;
 	virtual bool setData(const QModelIndex& index, const QVariant& value,
 						 int role = Qt::EditRole) override;
+	QHash<int, QByteArray> roleNames() const override;
 	Qt::DropActions supportedDropActions() const override;
 
 	/// flags, mostly to support drag&drop
@@ -149,6 +161,11 @@ class ModFolderModel : public QAbstractListModel
   private:
 	bool setModStatus(int index, ModStatusAction action);
 
+	/* Shared by the Qt::DisplayRole VersionColumn case and the named
+	 * VersionRole, so QML gets the same "Folder"/"File" placeholder the
+	 * Version column shows for those mod types. */
+	QVariant versionData(int row) const;
+
   protected:
 	void resolveMod(Mod& m);
 
@@ -182,4 +199,6 @@ class ModFolderModel : public QAbstractListModel
 	int nextResolutionTicket = 0;
 	QList<Mod> mods;
 	std::shared_ptr<ModMetadataIndex> m_metadata;
+	/// Where resolved files' logos are cached (ModIconCache::directory()).
+	QString m_iconCacheDir;
 };

@@ -33,6 +33,7 @@
 
 class QFileSystemWatcher;
 class InstanceTask;
+class LaunchProgressTracker;
 using InstanceId = QString;
 using GroupId = QString;
 using InstanceLocator = std::pair<InstancePtr, int>;
@@ -89,6 +90,7 @@ class InstanceList : public QAbstractListModel
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	QVariant data(const QModelIndex& index, int role) const override;
 	Qt::ItemFlags flags(const QModelIndex& index) const override;
+	QHash<int, QByteArray> roleNames() const override;
 
 	bool setData(const QModelIndex& index, const QVariant& value,
 				 int role) override;
@@ -97,6 +99,76 @@ class InstanceList : public QAbstractListModel
 		GroupRole = Qt::UserRole,
 		InstancePointerRole = 0x34B1CB48, ///< Return pointer to real instance
 		InstanceIDRole = 0x34B1CB49		  ///< Return id if the instance
+	};
+
+	/* GroupRole is pinned to Qt::UserRole on purpose: InstanceView.h (the
+	 * still-shipping QtWidgets instance grid) independently declares
+	 * InstanceViewRoles::GroupRole = Qt::UserRole, ProgressValueRole =
+	 * Qt::UserRole + 1 and ProgressMaximumRole = Qt::UserRole + 2, and
+	 * reads those numerically rather than through this enum. Renumbering
+	 * GroupRole here would desync the two, and a new role at +1 or +2
+	 * would silently collide with the progress roles. QmlRoles below
+	 * therefore starts at Qt::UserRole + 10, leaving 257 and 258 reserved
+	 * for InstanceView.h until the widget grid is deleted. */
+	static_assert(int(GroupRole) == int(Qt::UserRole),
+				  "GroupRole is numerically pinned to InstanceViewRoles::GroupRole "
+				  "in InstanceView.h; do not renumber");
+
+	/* Roles added for the QML instance list. instanceId, name, iconKey,
+	 * instanceRoot and group are named in roleNames() but reuse the
+	 * InstanceIDRole/Qt::DisplayRole/Qt::DecorationRole/Qt::ToolTipRole/
+	 * GroupRole cases already handled in data() - only the ten below are
+	 * genuinely new. InstancePointerRole is deliberately left unnamed: it
+	 * is a raw void*, and QML has no way to dereference one; a QML
+	 * delegate reaches an instance by instanceId instead. */
+	enum QmlRoles {
+		IsRunningRole = Qt::UserRole + 10,
+		CanLaunchRole,
+		LastLaunchRole,
+		TotalTimePlayedRole,
+		GameVersionRole,
+		LoaderRole,
+		IconTintRole,
+		/* Human-readable status/step text of the instance's active
+		 * launch task (e.g. "Downloading assets..."). Empty when no
+		 * launch is in progress, and empty again once the game is
+		 * running - pair it with LaunchProgressRole to tell those two
+		 * apart. */
+		LaunchStatusRole,
+		/* 0..1 while the active launch task reports determinate
+		 * progress; -1 while it is indeterminate; and -1 as well when
+		 * nothing is happening at all, in which case LaunchStatusRole
+		 * is also empty. */
+		LaunchProgressRole,
+		/* file:// URL of the newest image in the instance's screenshots
+		 * folder (the same folder InstanceDetails::screenshotsDir()
+		 * resolves for the Screenshots tab), or an empty string when it
+		 * has none or has not been looked up yet. The lookup
+		 * (newestScreenshotUrl(), a directory scan) runs on a QThreadPool
+		 * worker thread rather than inside data() itself - see
+		 * scheduleCoverImageScan() - so data() always returns immediately:
+		 * the cached value from m_coverImageCache if there is one, or an
+		 * empty string while the first scan for that row is still in
+		 * flight. The cache entry is dropped and dataChanged is emitted for
+		 * the row when the instance stops running, since a play session
+		 * commonly leaves new screenshots behind - see
+		 * emitIsRunningChanged(). */
+		CoverImageRole,
+		/* Whether the instance's last launch crashed - BaseInstance::
+		 * hasCrashed(), set by LaunchTask around the game process exit.
+		 * setCrashed() already emits BaseInstance::propertiesChanged(),
+		 * which InstanceList::propertiesChanged() (connected for every
+		 * instance in add()) turns into a row-wide dataChanged(); no
+		 * separate notification wiring is needed here. */
+		HasCrashedRole,
+		/* The pack's own picture, for the cover (ahead of a screenshot)
+		 * of an instance installed from a platform (BaseInstance::
+		 * isManagedPack()): "image://instanceicon/<key>" when its icon is
+		 * an icon file (the pack's logo, which the install put in the
+		 * icons folder), else the logo's upstream URL (PackIconUrl), else
+		 * an empty string - as it is for every other instance, which
+		 * gets one of the rendered fallback scenes instead. */
+		PackArtRole
 	};
 	/*!
 	 * \brief Error codes returned by functions in the InstanceList class.
@@ -142,6 +214,15 @@ class InstanceList : public QAbstractListModel
 	void setInstanceGroup(const InstanceId& id, const GroupId& name);
 
 	void deleteGroup(const GroupId& name);
+
+	/**
+	 * Move every instance in group @p from into group @p to, keeping
+	 * whether the group was collapsed. Renaming onto a group that already
+	 * exists merges the two. Does nothing for an empty name on either side:
+	 * "no group" has no name to change, and renaming a group to nothing is
+	 * what deleteGroup() does.
+	 */
+	void renameGroup(const GroupId& from, const GroupId& to);
 
 	/// Delete an instance and its shortcuts for good.
 	void deleteInstance(const InstanceId& id);
@@ -271,6 +352,29 @@ class InstanceList : public QAbstractListModel
 
 	int getTotalPlayTime();
 
+	/* Newest-modified png/jpg/jpeg directly inside @p screenshotsDir, as a
+	 * file:// URL Image.source can load, or an empty string if the
+	 * directory has none (including if it does not exist). A one-shot
+	 * scan with no watcher of its own - CoverImageRole's cache in data()
+	 * is what keeps this from running on every paint. Pure (no access to
+	 * this InstanceList or any QObject), so scheduleCoverImageScan() can
+	 * also run it on a QThreadPool worker thread instead of calling it
+	 * straight from data().
+	 *
+	 * Mirrors ScreenshotListModel::listEntries()'s newest-first ordering
+	 * (mtime descending, file name as a tiebreak) so the cover always
+	 * agrees with what the Screenshots tab shows as its first entry, but
+	 * does not call into it: that model's directory scan is private, and
+	 * building a full ScreenshotListModel (with its own QFileSystemWatcher)
+	 * just to read one path back out would be a heavier and stranger tool
+	 * than a plain directory listing needs.
+	 *
+	 * Exposed as a static, pure function - rather than folded straight
+	 * into data() - so this lookup can be unit-tested on its own, without
+	 * constructing a full InstanceList plus a BaseInstance.
+	 */
+	static QString newestScreenshotUrl(const QString& screenshotsDir);
+
 	Qt::DropActions supportedDragActions() const override;
 
 	Qt::DropActions supportedDropActions() const override;
@@ -338,6 +442,29 @@ class InstanceList : public QAbstractListModel
 	 * watcher onto them. */
 	void applyInstanceDirs(const QStringList& resolved);
 
+	/* Wire @p inst's launch-progress reporting for the QML roles:
+	 * a LaunchProgressTracker (parented to the instance, so it goes away
+	 * with it) watches whichever LaunchTask is current, and dataChanged
+	 * is emitted for this instance's row whenever that changes or
+	 * isRunning() does. Called once, from add(). */
+	void trackLaunchProgress(BaseInstance* inst);
+	void emitLaunchProgressChanged(BaseInstance* inst);
+	/* Emits IsRunningRole's dataChanged, and - when @p inst just stopped -
+	 * also drops its m_coverImageCache entry and emits dataChanged for
+	 * CoverImageRole, since a session that just ended is exactly when a
+	 * new screenshot is likely to have appeared. */
+	void emitIsRunningChanged(BaseInstance* inst);
+	/* Starts a background scan of @p screenshotsDir for CoverImageRole's
+	 * data() case, unless one for @p id is already running. Runs
+	 * newestScreenshotUrl() on a QThreadPool worker thread; when it
+	 * finishes, the result is stored in m_coverImageCache and dataChanged
+	 * is emitted for that row's CoverImageRole - unless m_coverImageGeneration
+	 * moved on for @p id while the scan was in flight (the instance stopped
+	 * running - see emitIsRunningChanged()), in which case the result is
+	 * discarded as stale and a fresh scan is started in its place. */
+	void scheduleCoverImageScan(const InstanceId& id,
+								const QString& screenshotsDir);
+
   private:
 	int m_watchLevel = 0;
 	int totalPlayTime = 0;
@@ -366,4 +493,24 @@ class InstanceList : public QAbstractListModel
 	QList<TrashedInstance> m_trashHistory;
 	bool m_groupsLoaded = false;
 	bool m_instancesProbed = false;
+	/* One tracker per instance, for LaunchStatusRole/LaunchProgressRole -
+	 * see trackLaunchProgress(). The tracker itself is owned by the
+	 * instance (QObject parenting); this is only a lookup table for
+	 * data(), kept in sync with the instance's destroyed() signal. */
+	QHash<BaseInstance*, LaunchProgressTracker*> m_launchTrackers;
+	/* Newest-screenshot URL per instance id, for CoverImageRole - filled
+	 * lazily by data() rather than scanned for every row on every paint,
+	 * and dropped for a row when its instance stops running (see
+	 * emitIsRunningChanged()). Mutable because data() is const; an id
+	 * absent from this map simply has not been looked up yet, and a
+	 * present empty string means "looked up, no screenshot found". */
+	mutable QHash<InstanceId, QString> m_coverImageCache;
+	/* Ids with a CoverImageRole scan currently running on a worker thread -
+	 * see scheduleCoverImageScan(). Guards against data() queuing a second
+	 * QtConcurrent::run() for the same id while the first has not returned;
+	 * mutable for the same reason m_coverImageCache is. */
+	mutable QSet<InstanceId> m_coverImageScansPending;
+	/* Bumped for an id whenever emitIsRunningChanged() invalidates its
+	 * cached cover - see scheduleCoverImageScan()'s doc comment for why. */
+	QHash<InstanceId, int> m_coverImageGeneration;
 };

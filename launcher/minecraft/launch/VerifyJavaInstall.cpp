@@ -33,7 +33,7 @@
 #include <minecraft/PackProfile.h>
 #include <minecraft/VersionFilterData.h>
 
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include "FileSystem.h"
 #include "Json.h"
 #include "java/JavaUtils.h"
@@ -58,7 +58,7 @@ namespace
 	std::optional<JavaVersion> probeJavaVersion(const QString& javaPath)
 	{
 		const auto checkerJar =
-			FS::PathCombine(APPLICATION->getJarsPath(), "JavaCheck.jar");
+			FS::PathCombine(LAUNCHER->getJarsPath(), "JavaCheck.jar");
 		if (!QFileInfo::exists(checkerJar)) {
 			return std::nullopt;
 		}
@@ -217,7 +217,7 @@ void VerifyJavaInstall::fetchVersionList(int requiredMajor)
 	QString uid = m_preferredVendor;
 	QString url = QString("%1%2/index.json").arg(BuildConfig.META_URL, uid);
 
-	m_fetchJob = new NetJob(i18n("Fetch Java versions"), APPLICATION->network());
+	m_fetchJob = new NetJob(i18n("Fetch Java versions"), LAUNCHER->network());
 	auto dl = Net::Download::makeByteArray(QUrl(url), &m_fetchData);
 	m_fetchJob->addNetAction(dl);
 
@@ -279,7 +279,7 @@ void VerifyJavaInstall::fetchRuntimes(const QString& versionId,
 		QString("%1%2/%3.json").arg(BuildConfig.META_URL, uid, versionId);
 
 	m_fetchJob =
-		new NetJob(i18n("Fetch Java runtime details"), APPLICATION->network());
+		new NetJob(i18n("Fetch Java runtime details"), LAUNCHER->network());
 	auto dl = Net::Download::makeByteArray(QUrl(url), &m_fetchData);
 	m_fetchJob->addNetAction(dl);
 

@@ -22,7 +22,7 @@
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include <KLocalizedString>
 
 LibrariesTask::LibrariesTask(MinecraftInstance* inst)
@@ -41,10 +41,10 @@ void LibrariesTask::executeTask()
 	auto profile = components->getProfile();
 
 	auto job = new NetJob(i18n("Libraries for instance %1", inst->name()),
-						  APPLICATION->network());
+						  LAUNCHER->network());
 	downloadJob.reset(job);
 
-	auto metacache = APPLICATION->metacache();
+	auto metacache = LAUNCHER->metacache();
 
 	auto processArtifactPool = [&](const QList<LibraryPtr>& pool,
 								   QStringList& errors,

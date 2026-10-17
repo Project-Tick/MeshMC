@@ -19,7 +19,7 @@
 
 #include "PasteUpload.h"
 #include "BuildConfig.h"
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include "Logging.h"
 
 #include <QDir>
@@ -98,8 +98,7 @@ static QString applyFilters(QString logContent)
 	return logContent;
 }
 
-PasteUpload::PasteUpload(QWidget* window, QString text, QString key)
-	: m_window(window)
+PasteUpload::PasteUpload(QString text, QString key)
 {
 	m_key = key;
 	QString censoredText = applyFilters(text);
@@ -134,7 +133,7 @@ void PasteUpload::executeTask()
 						 QByteArray::number(m_jsonContent.size()));
 	request.setRawHeader("X-Auth-Token", m_key.toStdString().c_str());
 
-	QNetworkReply* rep = APPLICATION->network()->post(request, m_jsonContent);
+	QNetworkReply* rep = LAUNCHER->network()->post(request, m_jsonContent);
 
 	m_reply = std::shared_ptr<QNetworkReply>(rep);
 	setStatus(i18n("Uploading to paste.ee"));

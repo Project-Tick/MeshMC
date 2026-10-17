@@ -73,11 +73,11 @@ void MeshMCLoginStep::onRequestDone(QNetworkReply::NetworkError error,
 	auto requestor = qobject_cast<AuthRequest*>(QObject::sender());
 	requestor->deleteLater();
 
-	qCDebug(minecraftauthLog) << data;
+	qCDebug(minecraftauthLog) << Parsers::redactTokens(data);
 	if (error != QNetworkReply::NoError) {
 		qWarning() << "Reply error:" << error;
 #ifndef NDEBUG
-		qCDebug(minecraftauthLog) << data;
+		qCDebug(minecraftauthLog) << Parsers::redactTokens(data);
 #endif
 		emit finished(AccountTaskState::STATE_FAILED_SOFT,
 					  i18n("Failed to get Minecraft access token: %1", requestor->errorString_));
@@ -87,7 +87,7 @@ void MeshMCLoginStep::onRequestDone(QNetworkReply::NetworkError error,
 	if (!Parsers::parseMojangResponse(data, m_data->yggdrasilToken)) {
 		qWarning() << "Could not parse login_with_xbox response...";
 #ifndef NDEBUG
-		qCDebug(minecraftauthLog) << data;
+		qCDebug(minecraftauthLog) << Parsers::redactTokens(data);
 #endif
 		emit finished(
 			AccountTaskState::STATE_FAILED_SOFT,

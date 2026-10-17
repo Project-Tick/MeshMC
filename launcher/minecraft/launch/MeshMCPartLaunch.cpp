@@ -28,7 +28,8 @@
 #include "minecraft/MinecraftInstance.h"
 #include "FileSystem.h"
 #include "Commandline.h"
-#include "Application.h"
+#include "Logging.h"
+#include "core/LauncherContext.h"
 
 MeshMCPartLaunch::MeshMCPartLaunch(LaunchTask* parent) : LaunchStep(parent)
 {
@@ -66,6 +67,7 @@ bool fitsInLocal8bit(const QString& string)
 
 void MeshMCPartLaunch::executeTask()
 {
+	setStatus(i18n("Starting Minecraft"));
 	auto instance = m_parent->instance();
 	std::shared_ptr<MinecraftInstance> minecraftInstance =
 		std::dynamic_pointer_cast<MinecraftInstance>(instance);
@@ -89,7 +91,7 @@ void MeshMCPartLaunch::executeTask()
 
 	auto classPath = minecraftInstance->getClassPath();
 	classPath.prepend(
-		FS::PathCombine(APPLICATION->getJarsPath(), "NewLaunch.jar"));
+		FS::PathCombine(LAUNCHER->getJarsPath(), "NewLaunch.jar"));
 
 	auto natPath = minecraftInstance->getNativePath();
 #ifdef Q_OS_WIN

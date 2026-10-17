@@ -14,7 +14,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(MeshMC_QT_VERSION_MAJOR "6" CACHE STRING "Major Qt version to build against (5 or 6)")
     set(QT_VERSION_MAJOR "${MeshMC_QT_VERSION_MAJOR}")
 
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Gui Network)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Network)
     find_package(MeshMC_SDK REQUIRED)
 
     set(MESHMC_PLUGIN_STAGING_DIR "${CMAKE_BINARY_DIR}/mmcmodules" CACHE PATH
@@ -40,13 +40,11 @@ set(WIKI_SOURCES
     OfflineWikiPlugin.cpp
     WikiRepoBundle.h
     WikiRepoBundle.cpp
-    WikiPage.h
-    WikiPage.cpp
 )
 
-# We use QTextBrowser for the article viewer (rich HTML/Markdown that
-# works without QtWebEngine). This keeps the plugin small and avoids
-# pulling Chromium into the launcher's distributable.
+# The article viewer is a declarative "mmco-ui/1" surface (ABI 5); the
+# host renders the Markdown article body, so this plugin has no QWidget
+# code of its own and does not link Qt::Widgets directly.
 add_library(OfflineWiki MODULE ${WIKI_SOURCES})
 
 target_link_libraries(OfflineWiki PRIVATE

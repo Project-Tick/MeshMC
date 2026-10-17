@@ -24,6 +24,7 @@
 #include <QDebug>
 
 #include "Logging.h"
+#include "minecraft/skins/DefaultSkins.h"
 
 namespace Parsers
 {
@@ -99,12 +100,62 @@ namespace Parsers
 	// 2148916238 = child account not linked to a family
 	*/
 
+	namespace
+	{
+		bool isTokenKey(const QString& key)
+		{
+			static const QStringList keys = {
+				QStringLiteral("token"), QStringLiteral("access_token"),
+				QStringLiteral("refresh_token"), QStringLiteral("id_token"),
+				QStringLiteral("identitytoken")};
+			return keys.contains(key.toLower());
+		}
+
+		QJsonValue redacted(const QJsonValue& value)
+		{
+			if (value.isArray()) {
+				QJsonArray out;
+				for (const QJsonValue& item : value.toArray()) {
+					out.append(redacted(item));
+				}
+				return out;
+			}
+			if (!value.isObject()) {
+				return value;
+			}
+			QJsonObject out = value.toObject();
+			for (auto it = out.begin(); it != out.end(); ++it) {
+				it.value() = isTokenKey(it.key())
+								 ? QJsonValue(QStringLiteral("<redacted>"))
+								 : redacted(it.value());
+			}
+			return out;
+		}
+	} // namespace
+
+	QByteArray redactTokens(const QByteArray& data)
+	{
+		// Enough of an error page to tell what it was.
+		constexpr int maxRawBytes = 256;
+		QJsonParseError error;
+		const QJsonDocument doc = QJsonDocument::fromJson(data, &error);
+		if (error.error != QJsonParseError::NoError) {
+			return data.left(maxRawBytes);
+		}
+		if (doc.isArray()) {
+			return QJsonDocument(redacted(doc.array()).toArray())
+				.toJson(QJsonDocument::Compact);
+		}
+		return QJsonDocument(redacted(doc.object()).toObject())
+			.toJson(QJsonDocument::Compact);
+	}
+
 	bool parseXTokenResponse(QByteArray& data, Katabasis::Token& output,
 							 QString name)
 	{
 		qCDebug(minecraftauthLog) << "Parsing" << name << ":";
 #ifndef NDEBUG
-		qCDebug(minecraftauthLog) << data;
+		qCDebug(minecraftauthLog) << redactTokens(data);
 #endif
 		QJsonParseError jsonError;
 		QJsonDocument doc = QJsonDocument::fromJson(data, &jsonError);
@@ -171,7 +222,7 @@ namespace Parsers
 	{
 		qCDebug(minecraftauthLog) << "Parsing Minecraft profile...";
 #ifndef NDEBUG
-		qCDebug(minecraftauthLog) << data;
+		qCDebug(minecraftauthLog) << redactTokens(data);
 #endif
 
 		QJsonParseError jsonError;
@@ -194,6 +245,9 @@ namespace Parsers
 			return false;
 		}
 
+		/* Reset for the same reason as the capes below: without an ACTIVE
+		 * skin in this response, the previous refresh's skin would stay. */
+		output.skin = Skin();
 		auto skinsArray = obj.value("skins").toArray();
 		for (auto skin : skinsArray) {
 			auto skinObj = skin.toObject();
@@ -220,6 +274,10 @@ namespace Parsers
 		}
 		auto capesArray = obj.value("capes").toArray();
 
+		/* `output` is the account's stored profile, parsed into again on every
+		 * refresh: without this the cape list grew by a full copy each time
+		 * (and was saved that way). */
+		output.capes.clear();
 		QString currentCape;
 		for (auto cape : capesArray) {
 			auto capeObj = cape.toObject();
@@ -255,7 +313,7 @@ namespace Parsers
 	{
 		qCDebug(minecraftauthLog) << "Parsing Minecraft entitlements...";
 #ifndef NDEBUG
-		qCDebug(minecraftauthLog) << data;
+		qCDebug(minecraftauthLog) << redactTokens(data);
 #endif
 
 		QJsonParseError jsonError;
@@ -293,7 +351,7 @@ namespace Parsers
 	{
 		qCDebug(minecraftauthLog) << "Parsing Rollout response...";
 #ifndef NDEBUG
-		qCDebug(minecraftauthLog) << data;
+		qCDebug(minecraftauthLog) << redactTokens(data);
 #endif
 
 		QJsonParseError jsonError;
@@ -330,7 +388,7 @@ namespace Parsers
 		QJsonParseError jsonError;
 		qCDebug(minecraftauthLog) << "Parsing Mojang response...";
 #ifndef NDEBUG
-		qCDebug(minecraftauthLog) << data;
+		qCDebug(minecraftauthLog) << redactTokens(data);
 #endif
 		QJsonDocument doc = QJsonDocument::fromJson(data, &jsonError);
 		if (jsonError.error) {
@@ -368,19 +426,6 @@ namespace Parsers
 
 	namespace
 	{
-		/* Skins of the MHF_Steve and MHF_Alex accounts.
-		 *
-		 * The session server omits the SKIN texture entirely for players who
-		 * never set one, so there is no URL to read. These two are the
-		 * canonical default skins, and pointing at them is the only way to
-		 * show such a player as the game shows them. */
-		const char* const kDefaultSkinUrlClassic =
-			"https://textures.minecraft.net/texture/"
-			"1a4af718455d4aab528e7a61f86fa25e6a369d1768dcb13f7df319a713eb810b";
-		const char* const kDefaultSkinUrlSlim =
-			"https://textures.minecraft.net/texture/"
-			"83cee5ca6afcdb171285aa00e8049c297b2dbeba0efb8ff970a5677a1b644032";
-
 		/* Which of the two default skins a player without a custom one gets.
 		 *
 		 * The game decides this from the Java hashCode of the profile UUID:
@@ -499,8 +544,11 @@ namespace Parsers
 		const bool classic = defaultsToClassicModel(output.id);
 		skinOut.variant = classic ? QStringLiteral("CLASSIC")
 								  : QStringLiteral("SLIM");
-		skinOut.url = classic ? QLatin1String(kDefaultSkinUrlClassic)
-							  : QLatin1String(kDefaultSkinUrlSlim);
+		/* The session server omits the SKIN texture entirely for players
+		 * who never set one, so there is no URL to read: point at the
+		 * canonical default skins (MHF_Steve and MHF_Alex), the only way to
+		 * show such a player as the game shows them. */
+		skinOut.url = DefaultSkins::fallbackUrl(!classic);
 		/* The endpoint does not expose texture ids at all. Nothing downstream
 		 * of here needs one, so it is left empty rather than invented. */
 

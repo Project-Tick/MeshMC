@@ -23,7 +23,7 @@
 #include "minecraft/launch/PrintInstanceInfo.h"
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include <QRegularExpression>
 
 #include "MMCStrings.h"
@@ -243,6 +243,14 @@ MinecraftInstance::MinecraftInstance(SettingsObjectPtr globalSettings,
 	m_components->setOldConfigVersion(
 		"com.mumfrey.liteloader",
 		m_settings->get("LiteloaderVersion").toString());
+
+	/* Refreshes anything reading gameVersion()/modLoaderName() - the QML
+	 * instance list, in particular - when the profile changes underneath
+	 * it. minecraftChanged() already exists for this (VersionPage listens
+	 * to the same signal to refresh itself); propertiesChanged() is what
+	 * InstanceList already listens to for every instance. */
+	connect(m_components.get(), &PackProfile::minecraftChanged, this,
+			[this] { emit propertiesChanged(this); });
 }
 
 void MinecraftInstance::saveNow()
@@ -292,6 +300,32 @@ QString MinecraftInstance::minecraftVersion() const
 	 * never wait on the network. */
 	components->reload(Net::Mode::Offline);
 	return components->getComponentVersion("net.minecraft");
+}
+
+QString MinecraftInstance::modLoaderName() const
+{
+	auto components = getPackProfile();
+	if (!components) {
+		return QString();
+	}
+
+	/* Piggybacks on minecraftVersion()'s lazy load instead of reloading a
+	 * second time: once it has run, the profile is either loaded or the
+	 * load failed, and either way there is nothing more a second attempt
+	 * here would achieve. */
+	minecraftVersion();
+
+	const int rows = components->rowCount();
+	for (int i = 0; i < rows; ++i) {
+		Component* component = components->getComponent(i);
+		if (!component || !component->isEnabled()) {
+			continue;
+		}
+		if (const ModLoaderInfo* loader = modLoaderForUid(component->getID())) {
+			return loader->brandName;
+		}
+	}
+	return QString();
 }
 
 bool MinecraftInstance::supportsDemo() const
@@ -991,7 +1025,7 @@ MinecraftInstance::createLaunchTask(AuthSessionPtr session,
 		std::dynamic_pointer_cast<MinecraftInstance>(shared_from_this()));
 	auto pptr = process.get();
 
-	APPLICATION->icons()->saveIcon(
+	LAUNCHER->icons()->saveIcon(
 		iconKey(), FS::PathCombine(gameRoot(), "icon.png"), "PNG");
 
 	// print a header
@@ -1045,9 +1079,17 @@ MinecraftInstance::createLaunchTask(AuthSessionPtr session,
 		process->appendStep(step);
 	}
 
-	// if we aren't in offline mode,.
-	if (session->status != AuthSession::PlayableOffline) {
-		if (!session->demo) {
+	/* The game's files come from the network unless this is an offline
+	 * launch. An offline *account* is not that: it has no sign-in to claim,
+	 * but a new instance still has to be downloaded once, so
+	 * AuthSession::fetch_game_files keeps the update online for it. A
+	 * signed-in account in offline mode (status PlayableOffline without it)
+	 * stays strictly offline. */
+	const bool updateOnline = session->status != AuthSession::PlayableOffline ||
+							  session->fetch_game_files;
+	if (updateOnline) {
+		// Only a signed-in session has anything to claim.
+		if (!session->demo && session->status != AuthSession::PlayableOffline) {
 			process->appendStep(new ClaimAccount(pptr, session));
 		}
 		process->appendStep(new Update(pptr, Net::Mode::Online));

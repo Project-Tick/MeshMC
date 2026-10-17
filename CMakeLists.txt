@@ -143,28 +143,40 @@ endif()
 
 # Find the required Qt parts
 #
-# MeshMC supports building against either Qt 5 or Qt 6. Every subdirectory
-# refers to Qt through the ${QT_VERSION_MAJOR} indirection set up here rather
-# than hardcoding Qt5::/Qt6::, so this is the single place that decides which
-# major version the whole build uses.
-set(MeshMC_QT_VERSION_MAJOR "6" CACHE STRING "Major Qt version to build against (5 or 6)")
-set_property(CACHE MeshMC_QT_VERSION_MAJOR PROPERTY STRINGS "5" "6")
+# MeshMC builds against Qt 6 only. Qt 5 support was dropped with the move to a
+# QML user interface: Qt Quick Controls, qt_add_qml_module and the QML tooling
+# the UI relies on are Qt 6 APIs.
+#
+# Every subdirectory still reaches Qt through the ${QT_VERSION_MAJOR}
+# indirection rather than hardcoding Qt6::, so this stays the single place that
+# names the major version.
+set(QT_VERSION_MAJOR 6)
 
-if(NOT MeshMC_QT_VERSION_MAJOR STREQUAL "5" AND NOT MeshMC_QT_VERSION_MAJOR STREQUAL "6")
-    message(FATAL_ERROR "MeshMC_QT_VERSION_MAJOR must be either 5 or 6. Got: ${MeshMC_QT_VERSION_MAJOR}")
+# Still a cache variable so that scripts and CI invocations that pass
+# -DMeshMC_QT_VERSION_MAJOR=5 fail loudly instead of quietly building Qt 6 when
+# they asked for something else.
+# The QML user interface is always built; this only picks which interface the
+# launcher opens by default. MESHMC_QML_UI=1 or =0 in the environment overrides
+# it at run time.
+option(MeshMC_QML_UI "Open the QML user interface instead of the QtWidgets one by default (preview)" OFF)
+
+set(MeshMC_QT_VERSION_MAJOR "6" CACHE STRING "Major Qt version to build against (6 only)")
+set_property(CACHE MeshMC_QT_VERSION_MAJOR PROPERTY STRINGS "6")
+
+if(NOT MeshMC_QT_VERSION_MAJOR STREQUAL "6")
+    message(FATAL_ERROR
+        "MeshMC requires Qt 6; Qt ${MeshMC_QT_VERSION_MAJOR} is no longer supported. "
+        "The QML user interface depends on Qt 6 modules.")
 endif()
-
-set(QT_VERSION_MAJOR "${MeshMC_QT_VERSION_MAJOR}")
 
 # OpenSSL libraries to copy into the package (Windows). Qt loads OpenSSL at
 # runtime instead of linking it, so nothing in the normal deployment chain
 # picks it up; see the "OpenSSL runtime (Windows)" block in
 # launcher/CMakeLists.txt for why this is spelled out by hand.
 #
-# Which files are correct depends on the Qt build: the official Qt 5.15
-# binaries need the 1.1.1 ABI (libssl-1_1-x64.dll, libcrypto-1_1-x64.dll),
-# MSYS2's Qt needs 3.x (libssl-3-x64.dll, libcrypto-3-x64.dll). CI fills this
-# in; leaving it empty only affects packaging, not the build.
+# Which files are correct depends on the Qt build: MSYS2's Qt needs the 3.x
+# ABI (libssl-3-x64.dll, libcrypto-3-x64.dll). CI fills this in; leaving it
+# empty only affects packaging, not the build.
 set(MeshMC_BUNDLE_OPENSSL_LIBS "" CACHE STRING
     "Semicolon-separated list of OpenSSL runtime libraries to ship inside the package")
 
@@ -191,12 +203,33 @@ find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
     Test
     Xml
     OpenGL
+    # Qt 6 split QOpenGLWidget out of QtWidgets into its own module.
+    OpenGLWidgets
+    # The QML user interface.
+    Qml
+    Quick
+    QuickControls2
 )
 
 find_package(KF${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS 
     I18n
     GuiAddons
 )
+
+# Qt Quick 3D, for the optional roaming cat companion (launcher/qml/Cat/) --
+# never added to the required components above: unlike everything there, the
+# 6.4 floor must keep building without it, so it is looked for but not
+# required. MeshMC_ENABLE_CAT defaults to whatever was found, and is the one
+# switch that decides whether launcher/qml/CMakeLists.txt descends into
+# Cat/ at all; turning it OFF by hand skips the cat even when Quick3D is
+# present, but it can never turn ON what was not found.
+find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS Quick3D)
+option(MeshMC_ENABLE_CAT "Build the roaming 3D cat companion (needs Qt Quick 3D)" ${Qt${QT_VERSION_MAJOR}Quick3D_FOUND})
+if(MeshMC_ENABLE_CAT AND NOT Qt${QT_VERSION_MAJOR}Quick3D_FOUND)
+    message(WARNING "MeshMC_ENABLE_CAT is ON but Qt Quick3D was not found; building without the cat.")
+    set(MeshMC_ENABLE_CAT OFF)
+endif()
+message(STATUS "Cat companion (Qt Quick3D): ${MeshMC_ENABLE_CAT}")
 
 if(UNIX)
     find_package(PkgConfig)
@@ -214,6 +247,11 @@ include(QMakeQuery)
 QUERY_QMAKE(QT_INSTALL_PLUGINS QT_PLUGINS_DIR)
 QUERY_QMAKE(QT_INSTALL_LIBS QT_LIBS_DIR)
 QUERY_QMAKE(QT_INSTALL_LIBEXECS QT_LIBEXECS_DIR)
+# Where Qt's own QML modules (QtQuick, QtQuick.Controls, ...) live in the Qt
+# installation used for the build. Needed at packaging time: our own QML
+# modules are compiled into the launcher, but Qt's are not, and have to be
+# deployed and pointed at explicitly (see launcher/CMakeLists.txt).
+QUERY_QMAKE(QT_INSTALL_QML QT_QML_DIR)
 
 # Map missing multi-config configurations to available ones.
 # Monorepo libraries are built with single-config (Ninja), but MeshMC uses
@@ -440,6 +478,18 @@ if(UNIX AND APPLE)
     set(PLUGIN_DEST_DIR "MeshMC.app/Contents/MacOS")
     set(RESOURCES_DEST_DIR "MeshMC.app/Contents/Resources")
     set(JARS_DEST_DIR "MeshMC.app/Contents/Resources/jars")
+    # Where Qt's own QML modules land inside the bundle. Contents/Resources
+    # (rather than next to PLUGIN_DEST_DIR in Contents/MacOS) so it matches
+    # what qt.conf's QmlImports key below is written relative to.
+    set(QML_DEST_DIR "MeshMC.app/Contents/Resources/qml")
+    # qt.conf's [Paths] entries are, on macOS, resolved relative to the
+    # bundle's Contents/ directory (verified empirically: a value of
+    # "Foo.app/Contents/MacOS" written into Contents/Resources/qt.conf came
+    # out as Contents/Foo.app/Contents/MacOS, one "Contents/" too many) --
+    # not relative to CMAKE_INSTALL_PREFIX like PLUGIN_DEST_DIR/QML_DEST_DIR
+    # (used for actual install() DESTINATION arguments) have to be.
+    set(QT_CONF_PLUGINS_DEST "MacOS")
+    set(QT_CONF_QML_DEST "Resources/qml")
     set(BUNDLE_DEST_DIR ".")
     set(MMCO_MODULES_DEST_DIR
         "MeshMC.app/Contents/Resources/mmcmodules")
@@ -553,6 +603,15 @@ elseif(WIN32)
     set(PLUGIN_DEST_DIR ".")
     set(FRAMEWORK_DEST_DIR ".")
     set(RESOURCES_DEST_DIR ".")
+    # windeployqt's own default destination for the Qt QML modules it deploys
+    # (see the --qmldir call in launcher/CMakeLists.txt); qt.conf's
+    # QmlImports key below points here too.
+    set(QML_DEST_DIR "qml")
+    # On Windows qt.conf's [Paths] entries are relative to qt.conf's own
+    # directory (RESOURCES_DEST_DIR, "."), same as PLUGIN_DEST_DIR/QML_DEST_DIR
+    # already are -- no bundle-style adjustment needed here.
+    set(QT_CONF_PLUGINS_DEST "${PLUGIN_DEST_DIR}")
+    set(QT_CONF_QML_DEST "${QML_DEST_DIR}")
     set(JARS_DEST_DIR "jars")
     # Windows keeps the flat layout it has always used: .mmco files
     # next to meshmc.exe under <install>/mmcmodules. Variable exists

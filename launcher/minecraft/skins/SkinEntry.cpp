@@ -189,16 +189,14 @@ namespace
 		return widened;
 	}
 
-	/* Read a skin PNG and put it into the one shape the rest of the code
-	 * expects: 64x64, ARGB32, base layer opaque.
+	/* Put a skin image into the one shape the rest of the code expects:
+	 * 64x64, ARGB32, base layer opaque.
 	 *
 	 * Anything that is not a skin is handed back untouched, so that
 	 * SkinEntry::isUsable() can reject it on its original dimensions rather
 	 * than on something this function invented. */
-	QImage loadNormalisedTexture(const QString& path)
+	QImage normaliseTexture(QImage skin)
 	{
-		QImage skin(path);
-
 		const int width = skin.width();
 		const int height = skin.height();
 		if (width != 64 || (height != 32 && height != 64)) {
@@ -218,6 +216,11 @@ namespace
 		}
 		makeBaseLayerOpaque(skin);
 		return skin;
+	}
+
+	QImage loadNormalisedTexture(const QString& path)
+	{
+		return normaliseTexture(QImage(path));
 	}
 
 	/* Flat 36x36 sprite: the model seen from the front on the left half and
@@ -309,6 +312,14 @@ SkinEntry::SkinEntry(const QDir& libraryDir, const QJsonObject& record)
 		QLatin1String("SLIM")) {
 		m_arms = Arms::Slim;
 	}
+	/* Indexes written before "wornModel" kept the worn skin's width in step
+	 * with the profile on every rescan, so its own width is what was worn. */
+	const QString wornModel =
+		record.value(QStringLiteral("wornModel")).toString();
+	m_wornArms = wornModel.isEmpty()
+					 ? m_arms
+					 : (wornModel == QLatin1String("SLIM") ? Arms::Slim
+														   : Arms::Classic);
 
 	/* The index stores the display name, not a path: the library directory is
 	 * relocatable and the ".png" is an implementation detail of how entries
@@ -388,5 +399,13 @@ QJsonObject SkinEntry::toRecord() const
 	record[QStringLiteral("capeId")] = m_capeId;
 	record[QStringLiteral("url")] = m_textureUrl;
 	record[QStringLiteral("model")] = armsToken();
+	record[QStringLiteral("wornModel")] = m_wornArms == Arms::Slim
+											  ? QStringLiteral("SLIM")
+											  : QStringLiteral("CLASSIC");
 	return record;
+}
+
+QImage SkinEntry::normalisedTexture(const QImage& image)
+{
+	return normaliseTexture(image);
 }

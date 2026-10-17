@@ -73,15 +73,16 @@
 #include <net/NetJob.h>
 #include <net/Download.h>
 #include <notifications/NotificationChecker.h>
+#include "core/InstancePathProblems.h"
 #include <tools/BaseProfiler.h>
 
 #include <updater/ExternalUpdater.h>
 #include <DesktopServices.h>
 #include <FileSystem.h>
 #include "InstanceWindow.h"
-#include "InstancePageProvider.h"
-#include "JavaCommon.h"
-#include "LaunchController.h"
+#include "ui/InstancePageProvider.h"
+#include "ui/JavaCommon.h"
+#include "ui/LaunchController.h"
 
 #include "ui/instanceview/InstanceProxyModel.h"
 #include "ui/instanceview/InstanceView.h"
@@ -547,18 +548,11 @@ MainWindow::MainWindow(QWidget* parent)
 		}
 	}
 
-	{
-		auto checker = new NotificationChecker();
-		checker->setNotificationsUrl(QUrl(BuildConfig.NOTIFICATION_URL));
-		checker->setApplicationChannel(BuildConfig.VERSION_CHANNEL);
-		checker->setApplicationPlatform(BuildConfig.BUILD_PLATFORM);
-		checker->setApplicationFullVersion(BuildConfig.FULL_VERSION_STR);
-		m_notificationChecker.reset(checker);
-		connect(m_notificationChecker.get(),
-				&NotificationChecker::notificationCheckFinished, this,
-				&MainWindow::notificationsChanged);
-		checker->checkForNotifications();
-	}
+	// The check itself belongs to the application, which starts it once
+	// this window is up (Application::startBackgroundChecks()).
+	connect(APPLICATION->notificationChecker(),
+			&NotificationChecker::notificationCheckFinished, this,
+			&MainWindow::notificationsChanged);
 
 	// Toolbar movability, restored from settings. The layout the user drags the
 	// toolbars into is persisted separately by saveState()/restoreState().
@@ -1114,28 +1108,11 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* ev)
 	return QMainWindow::eventFilter(obj, ev);
 }
 
-QList<int> stringToIntList(const QString& string)
-{
-	QStringList split = string.split(',', Qt::SkipEmptyParts);
-	QList<int> out;
-	for (int i = 0; i < split.size(); ++i) {
-		out.append(split.at(i).toInt());
-	}
-	return out;
-}
-QString intListToString(const QList<int>& list)
-{
-	QStringList slist;
-	for (int i = 0; i < list.size(); ++i) {
-		slist.append(QString::number(list.at(i)));
-	}
-	return slist.join(',');
-}
 void MainWindow::notificationsChanged()
 {
 	QList<NotificationChecker::NotificationEntry> entries =
-		m_notificationChecker->notificationEntries();
-	QList<int> shownNotifications = stringToIntList(
+		APPLICATION->notificationChecker()->notificationEntries();
+	QList<int> shownNotifications = NotificationChecker::parseShownIds(
 		APPLICATION->settings()->get("ShownNotifications").toString());
 	for (auto it = entries.begin(); it != entries.end(); ++it) {
 		NotificationChecker::NotificationEntry entry = *it;
@@ -1146,8 +1123,9 @@ void MainWindow::notificationsChanged()
 			}
 		}
 	}
-	APPLICATION->settings()->set("ShownNotifications",
-								 intListToString(shownNotifications));
+	APPLICATION->settings()->set(
+		"ShownNotifications",
+		NotificationChecker::formatShownIds(shownNotifications));
 }
 
 void MainWindow::runModalTask(Task* task)
@@ -1168,13 +1146,6 @@ void MainWindow::runModalTask(Task* task)
 	ProgressDialog loadDialog(this);
 	loadDialog.setSkipButton(true, i18n("Abort"));
 	loadDialog.execWithTask(task);
-}
-
-void MainWindow::instanceFromInstanceTask(InstanceTask* rawTask)
-{
-	unique_qobject_ptr<Task> task(
-		APPLICATION->instances()->wrapInstanceTask(rawTask));
-	runModalTask(task.get());
 }
 
 void MainWindow::on_actionCopyInstance_triggered()
@@ -1248,7 +1219,14 @@ void MainWindow::addInstance(QString url)
 						.toString();
 	}
 
-	NewInstanceDialog newInstDlg(groupName, url, this);
+	createInstanceFromDialog(this, groupName, url);
+}
+
+void MainWindow::createInstanceFromDialog(QWidget* parent,
+										  const QString& groupName,
+										  const QString& url)
+{
+	NewInstanceDialog newInstDlg(groupName, url, parent);
 	if (!newInstDlg.exec())
 		return;
 
@@ -1262,9 +1240,29 @@ void MainWindow::addInstance(QString url)
 								 newInstDlg.instDir());
 
 	InstanceTask* creationTask = newInstDlg.extractTask();
-	if (creationTask) {
-		instanceFromInstanceTask(creationTask);
+	if (!creationTask) {
+		return;
 	}
+
+	unique_qobject_ptr<Task> task(
+		APPLICATION->instances()->wrapInstanceTask(creationTask));
+	connect(task.get(), &Task::failed, [parent](QString reason) {
+		CustomMessageBox::selectable(parent, i18n("Error"), reason,
+									 QMessageBox::Critical)
+			->show();
+	});
+	connect(task.get(), &Task::succeeded, [parent, rawTask = task.get()]() {
+		QStringList warnings = rawTask->warnings();
+		if (warnings.count()) {
+			CustomMessageBox::selectable(parent, i18n("Warnings"),
+										 warnings.join('\n'),
+										 QMessageBox::Warning)
+				->show();
+		}
+	});
+	ProgressDialog loadDialog(parent);
+	loadDialog.setSkipButton(true, i18n("Abort"));
+	loadDialog.execWithTask(task.get());
 }
 
 void MainWindow::on_actionAddInstance_triggered()
@@ -1943,58 +1941,17 @@ void MainWindow::selectionBad()
 
 void MainWindow::checkInstancePathForProblems()
 {
-	/* Every configured instance folder is checked, not just the primary
-	 * one. None of these problems care which of our folders an instance
-	 * came out of - Java chokes on '!' in a path wherever that path is,
-	 * and an unextracted archive is no less temporary for being the second
-	 * folder in the list. Checking one and staying quiet about the rest
-	 * would leave the user with instances that fail for a reason we
-	 * already knew how to name.
-	 *
-	 * Each message names the folder it is about, because with more than
-	 * one configured "your instance folder" is no longer an answer.
-	 */
-	auto tempFolderText = i18n("This is a problem: <br/>"
-							 " - MeshMC will likely be deleted without warning "
-							 "by the operating system <br/>"
-							 " - close MeshMC now and extract it to a real "
-							 "location, not a temporary folder");
-
-	const QStringList instanceFolders =
-		APPLICATION->instances()->instanceDirs();
-	for (const QString& instanceFolder : instanceFolders) {
-		if (FS::checkProblemticPathJava(QDir(instanceFolder))) {
-			QMessageBox warning(this);
-			warning.setText(
-				i18n("Your instance folder \'%1\' contains \'!\' and this is "
-				   "known to cause Java problems!", instanceFolder));
-			warning.setInformativeText(
-				i18n("You have now two options: <br/>"
-				   " - change the instance folder in the settings <br/>"
-				   " - move this installation of MeshMC to a different folder"));
-			warning.setDefaultButton(QMessageBox::Ok);
-			warning.exec();
-		}
-
-		QString pathfoldername = QDir(instanceFolder).absolutePath();
-		if (pathfoldername.contains("Rar$", Qt::CaseInsensitive)) {
-			QMessageBox warning(this);
-			warning.setText(
-				i18n("Your instance folder \'%1\' contains \'Rar$\' - that "
-				   "means you haven't extracted MeshMC archive!", instanceFolder));
-			warning.setInformativeText(tempFolderText);
-			warning.setDefaultButton(QMessageBox::Ok);
-			warning.exec();
-		} else if (pathfoldername.startsWith(QDir::tempPath()) ||
-				   pathfoldername.contains("/TempState/")) {
-			QMessageBox warning(this);
-			warning.setText(
-				i18n("Your instance folder \'%1\' is in a temporary folder: "
-				   "\'%2\'!", instanceFolder, QDir::tempPath()));
-			warning.setInformativeText(tempFolderText);
-			warning.setDefaultButton(QMessageBox::Ok);
-			warning.exec();
-		}
+	/* Every configured instance folder is checked, and each message names
+	 * the folder it is about -- see core/InstancePathProblems.h, which the
+	 * QML shell shares (Application::reportInstancePathProblems()). */
+	const auto problems = instancePathProblems(
+		APPLICATION->instances()->instanceDirs(), QDir::tempPath());
+	for (const auto& problem : problems) {
+		QMessageBox warning(this);
+		warning.setText(problem.text);
+		warning.setInformativeText(problem.advice);
+		warning.setDefaultButton(QMessageBox::Ok);
+		warning.exec();
 	}
 }
 

@@ -297,9 +297,15 @@ struct MMCOGlobalSettingsPagesEvent {
  * Handles are valid for the lifetime of the main window. Plugins should
  * NOT take ownership of them or delete them. Cast them through Qt's
  * normal qobject_cast<>() to the documented concrete type.
+ *
+ * Under the QML shell (MESHMC_QML_UI / MeshMC_QML_UI) there is no
+ * MainWindow and none of these widgets exist: the hook still fires once,
+ * right after the shell's root window is shown, but every field below is
+ * null. Use main_window_show/hide/is_visible and
+ * main_window_install_close_filter instead, which work under either UI.
  */
 struct MMCOUiMainReadyPayload {
-	void* main_window;		 /* Opaque: QMainWindow* (MainWindow*)  */
+	void* main_window;		 /* Opaque: QMainWindow* (MainWindow*); null under the QML shell */
 };
 
 /*

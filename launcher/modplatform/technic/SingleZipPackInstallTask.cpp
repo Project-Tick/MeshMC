@@ -26,7 +26,7 @@
 #include "TechnicPackProcessor.h"
 #include "FileSystem.h"
 
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include <KLocalizedString>
 
 Technic::SingleZipPackInstallTask::SingleZipPackInstallTask(
@@ -49,10 +49,10 @@ void Technic::SingleZipPackInstallTask::executeTask()
 	setStatus(i18n("Downloading modpack:\n%1", m_sourceUrl.toString()));
 
 	const QString path = m_sourceUrl.host() + '/' + m_sourceUrl.path();
-	auto entry = APPLICATION->metacache()->resolveEntry("general", path);
+	auto entry = LAUNCHER->metacache()->resolveEntry("general", path);
 	entry->setStale(true);
 	m_archiveEntry = entry;
-	m_filesNetJob = new NetJob(i18n("Modpack download"), APPLICATION->network());
+	m_filesNetJob = new NetJob(i18n("Modpack download"), LAUNCHER->network());
 	m_filesNetJob->addNetAction(Net::Download::makeCached(m_sourceUrl, entry));
 	m_archivePath = entry->getFullPath();
 	auto job = m_filesNetJob.get();
@@ -139,7 +139,7 @@ void Technic::SingleZipPackInstallTask::extractFinished()
 			if (!QFile::remove(m_archivePath)) {
 				qWarning() << "Could not remove" << m_archivePath;
 			}
-			APPLICATION->metacache()->evictEntry(m_archiveEntry);
+			LAUNCHER->metacache()->evictEntry(m_archiveEntry);
 			m_archiveEntry.reset();
 		}
 		emitFailed(i18n("Failed to extract modpack. The downloaded archive is "

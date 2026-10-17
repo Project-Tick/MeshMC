@@ -25,8 +25,8 @@
 #include <QJsonObject>
 #include <QUrl>
 
-#include "Application.h"
 #include "Json.h"
+#include "core/LauncherContext.h"
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/ContentType.h"
 #include "modplatform/VersionPicker.h"
@@ -145,6 +145,8 @@ namespace
 		out.name = entry.name;
 		out.platform = entry.platform;
 		out.item = item;
+		out.currentVersionNumber = entry.versionNumber;
+		out.newVersionNumber = Json::ensureString(vObj, "version_number", "");
 		return true;
 	}
 
@@ -204,6 +206,10 @@ namespace
 		out.name = entry.name;
 		out.platform = entry.platform;
 		out.item = item;
+		/* CurseForge has no bare version number; its display name is
+		 * what its own site shows for the file. */
+		out.currentVersionNumber = entry.versionNumber;
+		out.newVersionNumber = Json::ensureString(fObj, "displayName", "");
 		return true;
 	}
 } // namespace
@@ -256,7 +262,7 @@ void ModUpdateCheckTask::executeTask()
 		auto response = std::make_shared<QByteArray>();
 		NetJob* job = new NetJob(
 			QString("UpdateCheck(%1:%2)").arg(e.platform, e.projectId),
-			APPLICATION->network());
+			LAUNCHER->network());
 		job->addNetAction(
 			Net::Download::makeByteArray(QUrl(url), response.get()));
 

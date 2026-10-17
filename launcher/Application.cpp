@@ -19,9 +19,18 @@
 
 #include "Application.h"
 #include "BuildConfig.h"
+#include "plugin/PluginAuthRequestDecorator.h"
+#include "ui/WidgetUiHost.h"
+#include "qml/QmlShell.h"
+#include "qml/QmlUiHost.h"
+#include "models/UpdateSettingsController.h"
 #include "plugin/PluginManager.h"
+#include "plugin/PluginSurfaceModel.h"
+#include "plugin/PluginListModel.h"
 
 #include "ui/MainWindow.h"
+#include "notifications/NotificationChecker.h"
+#include "core/InstancePathProblems.h"
 #include "ui/InstanceWindow.h"
 #include "ui/MacMenuBar.h"
 
@@ -381,6 +390,12 @@ namespace
 
 Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 {
+	/* Before anything else: things constructed further down this function
+	 * already reach services through LAUNCHER->, and they would see a null
+	 * context otherwise. */
+	LauncherContext::setInstance(this);
+	m_uiHost = std::make_unique<WidgetUiHost>();
+
 	initPlatform();
 	if (m_status != StartingUp)
 		return;
@@ -473,6 +488,8 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 	// Do NOT pass `this` as QObject parent, or the PluginManager
 	// will be double-freed (once by unique_ptr, once by ~QObject).
 	m_pluginManager = std::make_unique<PluginManager>(this, nullptr);
+	m_authRequestDecorator =
+		std::make_unique<PluginAuthRequestDecorator>(m_pluginManager.get());
 	m_pluginManager->initializeAll();
 
 	if (createSetupWizard()) {
@@ -933,6 +950,19 @@ void Application::initSettings()
 	// Theming
 	m_settings->registerSetting("IconTheme", QString("breeze_dark"));
 	m_settings->registerSetting("ApplicationTheme", QString("system"));
+	// The QML interface's own light/dark choice; the widget theme above
+	// keeps its separate list of themes.
+	m_settings->registerSetting("UiThemeMode", QString("dark"));
+	// Colour scheme of the QML interface: amethyst, ember or diamond.
+	m_settings->registerSetting("UiPalette", QString("grass"));
+	// The QML interface's font (Settings > Appearance).
+	m_settings->registerSetting("UiFontFamily", QString("Inter"));
+	m_settings->registerSetting("UiSidebarCollapsed", false);
+	// Stops decorative loops (Play sheen, the cat's idle moves) for people
+	// who find motion distracting.
+	m_settings->registerSetting("UiReduceMotion", false);
+	m_settings->registerSetting("CatEnabled", true);
+	m_settings->registerSetting("CatVariant", QString("calico"));
 
 	/* Screen-top menu bar. Only macOS has one; elsewhere the setting is
 	 * carried but never acted on. The second key is what this shipped as
@@ -1199,6 +1229,28 @@ void Application::initSubsystems()
 		qDebug() << "<> Network done.";
 	}
 
+	/* Notifications belong to the application rather than to a window, so
+	 * the QML shell has them too. Nothing is fetched yet -- see
+	 * startBackgroundChecks(). */
+	{
+		auto* notifications = new NotificationChecker();
+		notifications->setNotificationsUrl(QUrl(BuildConfig.NOTIFICATION_URL));
+		notifications->setApplicationChannel(BuildConfig.VERSION_CHANNEL);
+		notifications->setApplicationPlatform(BuildConfig.BUILD_PLATFORM);
+		notifications->setApplicationFullVersion(BuildConfig.FULL_VERSION_STR);
+		m_notificationChecker.reset(notifications);
+		/* MainWindow shows its own dialogs for these; the QML shell asks
+		 * through UiHost, once its presenter can answer. */
+		connect(m_notificationChecker.get(),
+				&NotificationChecker::notificationCheckFinished, this,
+				[this]() {
+					if (qmlShellChosen()) {
+						runWhenQmlPresenterReady(
+							[this]() { showNotificationsThroughUiHost(); });
+					}
+				});
+	}
+
 	// load translations
 	{
 		m_translations.reset(new TranslationsModel("translations"));
@@ -1210,29 +1262,39 @@ void Application::initSubsystems()
 
 	// The updater is created before the main window on purpose: MainWindow's
 	// constructor connects to it, so an updater made afterwards would be one
-	// nothing is listening to. Its dialogs therefore have no parent yet,
-	// which only matters for the "On Launch" check below.
+	// nothing is listening to. There is therefore no window to anchor its
+	// dialogs to yet, which only matters for the "On Launch" check below.
 	if (updaterEnabled()) {
 		qDebug() << "Initializing the updater";
+		[[maybe_unused]] const auto startUpdater =
+			[this](ExternalUpdater* updater) {
+				m_updater.reset(updater);
+				// A build follows the channel it was published on unless the
+				// user has said otherwise, so a stable install is never
+				// handed a pre-release by default.
+				m_updater->setBetaAllowed(BuildConfig.UPDATE_CHANNEL ==
+										  QLatin1String("beta"));
+				qDebug() << "<> Updater started.";
+				connectUpdaterToQmlShell();
+			};
 #if defined(Q_OS_MAC)
 #if defined(MESHMC_SPARKLE_ENABLED)
-		m_updater.reset(new MacSparkleUpdater());
+		startUpdater(new MacSparkleUpdater());
 #endif
 #else
-		m_updater.reset(new MeshMCExternalUpdater(
-			m_mainWindow, m_rootPath, m_dataPath,
-			// Migrates the launcher's old "check on start" setting into the
-			// updater's config, once. See the constructor.
-			m_settings->get("AutoUpdate").toBool()));
+		/* Its "On Launch" check runs, and asks about what it finds, inside
+		 * its constructor. Under the QML shell nothing can answer yet and
+		 * uiHost() would hand it the widget dialogs, so it is made once the
+		 * QML presenter is up (or, if the QML shell fails to load, just
+		 * before the widget window). Under the widget UI this runs now. */
+		runWhenQmlPresenterReady([this, startUpdater]() {
+			startUpdater(new MeshMCExternalUpdater(
+				m_rootPath, m_dataPath,
+				// Migrates the launcher's old "check on start" setting into
+				// the updater's config, once. See the constructor.
+				m_settings->get("AutoUpdate").toBool()));
+		});
 #endif
-		if (m_updater) {
-			// A build follows the channel it was published on unless the user
-			// has said otherwise, so a stable install is never handed a
-			// pre-release by default.
-			m_updater->setBetaAllowed(BuildConfig.UPDATE_CHANNEL ==
-									  QLatin1String("beta"));
-			qDebug() << "<> Updater started.";
-		}
 	} else {
 		qDebug() << "<> Updater not available for this build.";
 	}
@@ -1395,8 +1457,21 @@ void Application::initSubsystems()
 	}
 }
 
+namespace
+{
+	// Defined further down, next to showMainWindow() -- forward-declared
+	// here so createSetupWizard() can skip the widget wizard when the QML
+	// shell will handle onboarding itself (see QmlShell::recomputeSetupSteps(),
+	// which runs the same rules below).
+	bool useQmlShell();
+} // namespace
+
 bool Application::createSetupWizard()
 {
+	if (useQmlShell()) {
+		return false;
+	}
+
 	bool javaRequired = [&]() {
 		QString currentHostName = QHostInfo::localHostName();
 		QString oldHostName = settings()->get("LastHostname").toString();
@@ -1579,6 +1654,14 @@ void Application::performMainStartupAction()
 				qDebug() << "   Launching with account" << m_profileToUse;
 			}
 
+			/* A launch straight from the command line opens no main
+			 * window, as with the widget UI. Under the QML shell the shell
+			 * is still loaded, only hidden, so that the launch asks its
+			 * questions there -- the window shows itself for them, see
+			 * ensureQmlShell() -- and never through widget dialogs. */
+			if (useQmlShell()) {
+				ensureQmlShell();
+			}
 			launch(inst, LaunchMode::Normal, serverToJoin, accountToUse);
 			return;
 		}
@@ -1590,7 +1673,25 @@ void Application::performMainStartupAction()
 	}
 	if (!m_zipToImport.isEmpty()) {
 		qDebug() << "<> Importing instance from zip:" << m_zipToImport;
-		m_mainWindow->droppedURLs({m_zipToImport});
+		importFromUrl(m_zipToImport);
+	}
+}
+
+void Application::importFromUrl(const QUrl& url)
+{
+	/* An import asks its questions in a window: MainWindow's own import
+	 * route, or the QML shell's New instance dialog. A launcher started
+	 * with --launch has neither on screen, and a second process can still
+	 * send it an "import" message, so bring the usual window up first. */
+	if (!m_mainWindow && !m_qmlWindowShown) {
+		showMainWindow();
+	}
+	if (m_qmlShell) {
+		// Same local-file/URL split MainWindow::droppedURLs() makes.
+		m_qmlShell->requestImport(url.isLocalFile() ? url.toLocalFile()
+													: url.toString());
+	} else if (m_mainWindow) {
+		m_mainWindow->droppedURLs({url});
 	}
 }
 
@@ -1605,6 +1706,11 @@ void Application::showFatalErrorMessage(const QString& title,
 
 Application::~Application()
 {
+	/* Stop handing out a context that is being torn down. Anything still
+	 * running past this point has to cope with LAUNCHER being null, which is
+	 * what the accessor documents. */
+	LauncherContext::setInstance(nullptr);
+
 	// Shut down plugin system before tearing down the rest.
 	// shutdownAll() was already called from aboutToQuit; this
 	// is a no-op guard for any other exit path.
@@ -1648,7 +1754,7 @@ void Application::messageReceived(const QByteArray& message)
 					   << "message without a zip path/URL.";
 			return;
 		}
-		m_mainWindow->droppedURLs({QUrl(path)});
+		importFromUrl(QUrl(path));
 	} else if (command == "launch") {
 		QString id = received.args["id"];
 		QString server = received.args["server"];
@@ -1750,6 +1856,18 @@ bool Application::launch(InstancePtr instance, LaunchMode mode,
 						 MinecraftServerTargetPtr serverToJoin,
 						 MinecraftAccountPtr accountToUse)
 {
+	/* LaunchController asks everything (which account, a profile name, an
+	 * offline player name, ...) through UiHost. Under the QML shell those
+	 * questions must wait for its presenter instead of falling back to the
+	 * widget host, so a launch that comes in before then is held until it
+	 * is up -- see qmlShellChosen(). */
+	if (qmlShellChosen() && !usingQmlShell()) {
+		runWhenQmlPresenterReady(
+			[this, instance, mode, serverToJoin, accountToUse]() {
+				launch(instance, mode, serverToJoin, accountToUse);
+			});
+		return true;
+	}
 	if (m_updateRunning) {
 		qDebug() << "Cannot launch instances while an update is running. "
 					"Please try again when updates are completed.";
@@ -1800,10 +1918,25 @@ bool Application::launch(InstancePtr instance, LaunchMode mode,
 		controller->start();
 		return true;
 	} else if (instance->isRunning()) {
-		showInstanceWindow(instance, "console");
+		// Same widget behaviour as before (showInstanceWindow(instance,
+		// "console")) when the QML shell is off - see showInstanceLog()'s
+		// own doc comment; under it, this raises the QML window on the
+		// instance's Log tab instead of a widget InstanceWindow.
+		showInstanceLog(instance);
 		return true;
 	} else if (instance->canEdit()) {
-		showInstanceWindow(instance);
+		// Same reasoning as the isRunning() branch above, but not through
+		// showInstanceLog(): its widget fallback is always
+		// showInstanceWindow(instance, "console"), while this branch's
+		// own widget behaviour opens on the window's own default page
+		// instead (showInstanceWindow(instance), no explicit page) - kept
+		// exactly as it was when the QML shell is off.
+		if (qmlShellChosen()) {
+			showQmlShellWindow(false);
+			m_qmlShell->showInstanceLogRequested(instance->id());
+		} else {
+			showInstanceWindow(instance);
+		}
 		return true;
 	}
 	return false;
@@ -1901,11 +2034,30 @@ void Application::triggerUpdateCheck()
 	m_updater->checkForUpdates();
 }
 
+void Application::connectUpdaterToQmlShell()
+{
+	if (!m_qmlShell) {
+		return;
+	}
+	m_qmlShell->setUpdaterAvailable(updaterEnabled() && m_updater);
+	/* The Updates settings read and write the updater's own schedule;
+	 * without a backend that section hides itself. */
+	if (m_updater && updaterEnabled()) {
+		ExternalUpdater* updater = m_updater.get();
+		m_qmlShell->updateSettingsController()->setBackend(
+			{[updater] { return updater->getAutomaticallyChecksForUpdates(); },
+			 [updater](bool v) { updater->setAutomaticallyChecksForUpdates(v); },
+			 [updater] { return updater->getUpdateCheckInterval(); },
+			 [updater](double s) { updater->setUpdateCheckInterval(s); },
+			 [this] { triggerUpdateCheck(); }});
+	}
+}
+
 bool Application::reportUpdateMarkers()
 {
 	const QString updateLog = UpdateLockFile::updateLogPath(m_dataPath);
 
-	const auto logContents = [&updateLog]() -> QString {
+	const auto logContents = [updateLog]() -> QString {
 		QFile file(updateLog);
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 			return {};
@@ -1913,6 +2065,16 @@ bool Application::reportUpdateMarkers()
 		file.close();
 		return contents;
 	};
+
+	/* This runs from init(), before useQmlShell()/showMainWindow() has
+	 * chosen a UI -- so under the QML shell there is no window yet to
+	 * answer a UiHost call either (see QmlUiHost's PRESENTER READINESS
+	 * comment). Queue what would have been a QMessageBox instead of
+	 * showing one, and let showMainWindow() run the queue once its
+	 * QmlUiHost reports presenterReady() -- see m_pendingQmlPresenterCalls
+	 * (the same queue runWhenQmlPresenterReady() adds to).
+	 * The classic path below is entirely unchanged when this is false. */
+	const bool qml = useQmlShell();
 
 	// A lock left behind means an update started and never finished, so this
 	// installation may be a mix of two versions. That is not something to
@@ -1922,83 +2084,122 @@ bool Application::reportUpdateMarkers()
 		UpdateLockFile::Contents lock;
 		UpdateLockFile::read(lockPath, &lock);
 
-		QMessageBox box(QMessageBox::Warning, i18n("Update In Progress"),
-						i18n("This installation has an update lock file at: %1\n"
-						   "\n"
-						   "Timestamp: %2\n"
-						   "Updating from version %3 to %4\n"
-						   "Target install path: %5\n"
-						   "Data path: %6\n"
-						   "\n"
-						   "This usually means an update attempt failed. "
-						   "Please make sure your installation still works "
-						   "before continuing.\n"
-						   "The updater log at:\n"
-						   "%7\n"
-						   "has the details of the last attempt.\n"
-						   "\n"
-						   "To delete this lock and continue, choose "
-						   "\"Ignore\".", QDir::toNativeSeparators(lockPath), lock.timestamp.toString(Qt::ISODate), lock.from, lock.to, lock.target, lock.dataPath, QDir::toNativeSeparators(updateLog)),
-						QMessageBox::Ignore | QMessageBox::Abort);
-		box.setDefaultButton(QMessageBox::Abort);
-		box.setModal(true);
-		box.setDetailedText(logContents());
-		box.setMinimumWidth(460);
-		box.adjustSize();
+		const QString text =
+			i18n("This installation has an update lock file at: %1\n"
+			   "\n"
+			   "Timestamp: %2\n"
+			   "Updating from version %3 to %4\n"
+			   "Target install path: %5\n"
+			   "Data path: %6\n"
+			   "\n"
+			   "This usually means an update attempt failed. "
+			   "Please make sure your installation still works "
+			   "before continuing.\n"
+			   "The updater log at:\n"
+			   "%7\n"
+			   "has the details of the last attempt.\n"
+			   "\n"
+			   "To delete this lock and continue, choose "
+			   "\"Ignore\".", QDir::toNativeSeparators(lockPath), lock.timestamp.toString(Qt::ISODate), lock.from, lock.to, lock.target, lock.dataPath, QDir::toNativeSeparators(updateLog));
 
-		if (box.exec() != QMessageBox::Ignore) {
-			qDebug() << "Exiting because an update lock file is present.";
-			return false;
+		if (qml) {
+			m_pendingQmlPresenterCalls.append([this, lockPath, text]() {
+				const bool ignore = uiHost()->confirm(
+					i18n("Update In Progress"), text, UiHost::Severity::Warning,
+					i18n("Ignore"), i18n("Quit"));
+				if (!ignore) {
+					qDebug()
+						<< "Quitting because an update lock file is present.";
+					quit();
+					return;
+				}
+				QFile::remove(lockPath);
+			});
+		} else {
+			QMessageBox box(QMessageBox::Warning, i18n("Update In Progress"),
+							text, QMessageBox::Ignore | QMessageBox::Abort);
+			box.setDefaultButton(QMessageBox::Abort);
+			box.setModal(true);
+			box.setDetailedText(logContents());
+			box.setMinimumWidth(460);
+			box.adjustSize();
+
+			if (box.exec() != QMessageBox::Ignore) {
+				qDebug() << "Exiting because an update lock file is present.";
+				return false;
+			}
+			QFile::remove(lockPath);
 		}
-		QFile::remove(lockPath);
 	}
 
 	const QString failMarker = UpdateLockFile::markerPath(
 		m_dataPath, QLatin1String(UpdateLockFile::kFailMarkerName));
 	if (QFileInfo::exists(failMarker)) {
-		QMessageBox box(QMessageBox::Warning, i18n("Update Failed"),
-						i18n("An update attempt failed.\n"
-						   "\n"
-						   "Please make sure your installation still works "
-						   "before continuing.\n"
-						   "The updater log at:\n"
-						   "%1\n"
-						   "has the details of the last attempt.", QDir::toNativeSeparators(updateLog)),
-						QMessageBox::Ignore | QMessageBox::Abort);
-		box.setDefaultButton(QMessageBox::Abort);
-		box.setModal(true);
-		box.setDetailedText(logContents());
-		box.setMinimumWidth(460);
-		box.adjustSize();
+		const QString text = i18n("An update attempt failed.\n"
+								"\n"
+								"Please make sure your installation still "
+								"works before continuing.\n"
+								"The updater log at:\n"
+								"%1\n"
+								"has the details of the last attempt.", QDir::toNativeSeparators(updateLog));
 
-		if (box.exec() != QMessageBox::Ignore) {
-			qDebug() << "Exiting because the last update failed.";
-			return false;
+		if (qml) {
+			m_pendingQmlPresenterCalls.append([this, failMarker, text]() {
+				const bool ignore = uiHost()->confirm(
+					i18n("Update Failed"), text, UiHost::Severity::Warning,
+					i18n("Ignore"), i18n("Quit"));
+				if (!ignore) {
+					qDebug() << "Quitting because the last update failed.";
+					quit();
+					return;
+				}
+				QFile::remove(failMarker);
+			});
+		} else {
+			QMessageBox box(QMessageBox::Warning, i18n("Update Failed"), text,
+							QMessageBox::Ignore | QMessageBox::Abort);
+			box.setDefaultButton(QMessageBox::Abort);
+			box.setModal(true);
+			box.setDetailedText(logContents());
+			box.setMinimumWidth(460);
+			box.adjustSize();
+
+			if (box.exec() != QMessageBox::Ignore) {
+				qDebug() << "Exiting because the last update failed.";
+				return false;
+			}
+			QFile::remove(failMarker);
 		}
-		QFile::remove(failMarker);
 	}
 
 	const QString successMarker = UpdateLockFile::markerPath(
 		m_dataPath, QLatin1String(UpdateLockFile::kSuccessMarkerName));
 	if (QFileInfo::exists(successMarker)) {
-		// Shown without blocking startup: the news is good, and the details
-		// are there for anyone who wants them.
-		auto* box = new QMessageBox(
-			QMessageBox::Information, i18n("Update Succeeded"),
-			i18n("The update succeeded.\n"
-			   "\n"
-			   "You are now running %1.\n"
-			   "The updater log at:\n"
-			   "%2\n"
-			   "has the details.", BuildConfig.printableVersionString(), QDir::toNativeSeparators(updateLog)),
-			QMessageBox::Ok);
-		box->setDefaultButton(QMessageBox::Ok);
-		box->setDetailedText(logContents());
-		box->setAttribute(Qt::WA_DeleteOnClose);
-		box->setMinimumWidth(460);
-		box->adjustSize();
-		box->open();
+		const QString text = i18n("The update succeeded.\n"
+								"\n"
+								"You are now running %1.\n"
+								"The updater log at:\n"
+								"%2\n"
+								"has the details.", BuildConfig.printableVersionString(), QDir::toNativeSeparators(updateLog));
 
+		if (qml) {
+			m_pendingQmlPresenterCalls.append([this, text]() {
+				uiHost()->message(i18n("Update Succeeded"), text,
+								  UiHost::Severity::Information);
+			});
+		} else {
+			// Shown without blocking startup: the news is good, and the
+			// details are there for anyone who wants them.
+			auto* box = new QMessageBox(QMessageBox::Information,
+										i18n("Update Succeeded"), text,
+										QMessageBox::Ok);
+			box->setDefaultButton(QMessageBox::Ok);
+			box->setDetailedText(logContents());
+			box->setAttribute(Qt::WA_DeleteOnClose);
+			box->setMinimumWidth(460);
+			box->adjustSize();
+			box->open();
+		}
 		QFile::remove(successMarker);
 	}
 
@@ -2030,7 +2231,10 @@ void Application::controllerSucceeded()
 	// quit when there are no more windows.
 	if (shouldExitNow()) {
 		m_status = Status::Succeeded;
-		exit(0);
+		// Qualified explicitly so a future refactor of this class cannot
+		// silently turn this into ::exit() (libc, no Qt shutdown) by adding
+		// a member or free function named exit() that shadows this call.
+		QCoreApplication::exit(0);
 	}
 }
 
@@ -2050,7 +2254,8 @@ void Application::controllerFailed(const QString& error)
 	// quit when there are no more windows.
 	if (shouldExitNow()) {
 		m_status = Status::Failed;
-		exit(1);
+		// See controllerSucceeded()'s exit(0) for why this is qualified.
+		QCoreApplication::exit(1);
 	}
 }
 
@@ -2081,6 +2286,14 @@ namespace
 				evt.page_list_handle = &pages;
 				APPLICATION->pluginManager()->dispatchHook(
 					MMCO_HOOK_UI_GLOBAL_SETTINGS_PAGES, &evt);
+
+				/* ABI 5 — every MMCO_UI_ANCHOR_GLOBAL_SETTINGS surface
+				 * (ui_surface_create) is stacked as a titled section
+				 * inside one host-built "Plugins" page, appended here
+				 * alongside whatever the raw hook above still added. */
+				if (BasePage* pluginsPage =
+						APPLICATION->pluginManager()->createGlobalSettingsPluginsPage())
+					pages.append(pluginsPage);
 			}
 			return pages;
 		}
@@ -2117,8 +2330,269 @@ void Application::registerGlobalSettingsPage(std::function<BasePage*()> creator)
 	}
 }
 
+namespace
+{
+	/* The QML user interface is a preview. It is always compiled -- so it
+	 * cannot rot unnoticed -- but only shown when asked for. The build option
+	 * MeshMC_QML_UI picks the default; MESHMC_QML_UI in the environment
+	 * overrides it either way, so both interfaces can be compared from the
+	 * same binary. */
+	bool useQmlShell()
+	{
+#ifdef MESHMC_QML_UI_DEFAULT
+		bool fallback = true;
+#else
+		bool fallback = false;
+#endif
+		const QByteArray env = qgetenv("MESHMC_QML_UI");
+		if (env.isEmpty())
+			return fallback;
+		return env != "0";
+	}
+} // namespace
+
+bool Application::ensureQmlShell()
+{
+	if (m_qmlShell) {
+		return true;
+	}
+	// Not tried again: the widget window has taken over by now.
+	if (m_qmlShellLoadFailed) {
+		return false;
+	}
+	m_qmlShell = std::make_unique<QmlShell>();
+
+	/* QmlShell cannot see PluginManager (MeshMC_qml does not link
+	 * MeshMC_logic, which is where the plugin host lives) -- this
+	 * factory is the bridge, installed once here the same way the
+	 * signal connections below wire up the widget-side actions
+	 * QmlShell itself cannot reach. Harmless to install again for a
+	 * second shell: it is process-wide state, and this whole function
+	 * only runs once per m_qmlShell. */
+	QmlShell::setPluginSurfaceFactory(
+		[this](int anchor, const QString& anchorContext) -> QObject* {
+			if (!m_pluginManager) {
+				return nullptr;
+			}
+			return QmlShell::expose(new PluginSurfaceModel(
+				m_pluginManager.get(), anchor, anchorContext));
+		});
+
+	/* The same list the widget launch menu's profiler entries come from,
+	 * checked afresh each time a QML "Play options" menu opens. */
+	m_qmlShell->setProfilersProvider([this]() {
+		QVariantList list;
+		for (auto it = m_profilers.constBegin(); it != m_profilers.constEnd();
+			 ++it) {
+			QString error;
+			list.append(QVariantMap{
+				{ QStringLiteral("key"), it.key() },
+				{ QStringLiteral("name"), it.value()->name() },
+				{ QStringLiteral("ready"), it.value()->check(&error) },
+			});
+		}
+		return list;
+	});
+
+	/* Settings' "Installed plugins": nothing to list without the plugin
+	 * host (MeshMC_PLUGINS off). */
+	m_qmlShell->setPluginListFactory([this]() -> QObject* {
+		return m_pluginManager ? new PluginListModel(m_pluginManager.get())
+							   : nullptr;
+	});
+
+	/* Counted and closed through the same path as MainWindow, so the
+	 * launcher quits when its last window goes, as it always has -- but
+	 * only while showQmlShellWindow() counts it as open: a hidden shell
+	 * (see performMainStartupAction()) is not a window anyone closed. */
+	connect(m_qmlShell.get(), &QmlShell::closed, this, [this]() {
+		if (!m_qmlWindowShown) {
+			return;
+		}
+		m_qmlWindowShown = false;
+		on_windowClose();
+	});
+
+	/* QmlShell cannot see widget code, so it only emits these
+	 * signals; the actual actions - the same ones the widget menus
+	 * already run - are wired up here. */
+	connect(m_qmlShell.get(), &QmlShell::launchRequested, this,
+			[this](const QString& id) {
+				if (auto inst = instances()->getInstanceById(id)) {
+					launch(inst);
+				}
+			});
+	connect(m_qmlShell.get(), &QmlShell::launchModeRequested, this,
+			[this](const QString& id, const QString& mode) {
+				auto inst = instances()->getInstanceById(id);
+				if (!inst) {
+					return;
+				}
+				if (mode == QLatin1String("offline")) {
+					launch(inst, LaunchMode::Offline);
+				} else if (mode == QLatin1String("demo")) {
+					// Same check as the widget launch menu's Launch Demo.
+					auto minecraft =
+						std::dynamic_pointer_cast<MinecraftInstance>(inst);
+					if (!minecraft || !minecraft->supportsDemo()) {
+						qWarning() << "Application: no demo launch for" << id
+								   << "-- its Minecraft version has no demo";
+						return;
+					}
+					launch(inst, LaunchMode::Demo);
+				} else {
+					launch(inst);
+				}
+			});
+	connect(m_qmlShell.get(), &QmlShell::launchAsRequested, this,
+			[this](const QString& id, const QString& accountId) {
+				auto inst = instances()->getInstanceById(id);
+				if (!inst) {
+					return;
+				}
+				// The id QmlShell::launchOptions() hands out.
+				MinecraftAccountPtr account;
+				for (int i = 0; i < m_accounts->count(); ++i) {
+					const auto candidate = m_accounts->at(i);
+					const QString candidateId =
+						candidate->profileId().isEmpty()
+							? candidate->internalId()
+							: candidate->profileId();
+					if (candidateId == accountId) {
+						account = candidate;
+						break;
+					}
+				}
+				if (!account) {
+					qWarning() << "Application: no account" << accountId
+							   << "to launch" << id << "with";
+					return;
+				}
+				launch(inst, LaunchMode::Normal, nullptr, account);
+			});
+	/* "Check for updates" (the macOS menu bar, the Updates settings):
+	 * QmlShell cannot reach the updater itself. */
+	connect(m_qmlShell.get(), &QmlShell::checkForUpdatesRequested, this,
+			&Application::triggerUpdateCheck);
+	connectUpdaterToQmlShell();
+	connect(m_qmlShell.get(), &QmlShell::killRequested, this,
+			[this](const QString& id) {
+				if (auto inst = instances()->getInstanceById(id)) {
+					kill(inst);
+				}
+			});
+	connect(m_qmlShell.get(), &QmlShell::joinServerRequested, this,
+			[this](const QString& id, const QString& address) {
+				if (auto inst = instances()->getInstanceById(id)) {
+					launch(inst, LaunchMode::Normal,
+						   std::make_shared<MinecraftServerTarget>(
+							   MinecraftServerTarget::parse(address, false)));
+				}
+			});
+	connect(m_qmlShell.get(), &QmlShell::folderRequested, this,
+			[this](const QString& id) {
+				if (auto inst = instances()->getInstanceById(id)) {
+					DesktopServices::openDirectory(inst->instanceRoot(), true);
+				}
+			});
+
+	if (!m_qmlShell->load()) {
+		/* A QML load failure must not leave the user with nothing on
+		 * screen: showMainWindow() falls through to the widget window. */
+		qWarning() << "QML shell failed to load; using the widget window";
+		m_qmlShell.reset();
+		m_qmlShellLoadFailed = true;
+
+		/* The QmlUiHost that would have shown these never came up.
+		 * uiHost() now falls back to the widget host and qmlShellChosen()
+		 * is false since the load failed, so they still reach the user
+		 * (a held launch takes the widget path) instead of being silently
+		 * dropped. */
+		runPendingQmlPresenterCalls();
+		return false;
+	}
+
+	/* Runs whatever waited for the presenter -- reportUpdateMarkers() at
+	 * init(), runWhenQmlPresenterReady() since (see
+	 * m_pendingQmlPresenterCalls) -- the moment QmlUiHost can actually
+	 * show a request. Wired here rather than right after QmlShell's
+	 * construction above: QmlShell only builds its QmlUiHost inside
+	 * load(), so m_qmlShell->uiHost() is null before this point and the
+	 * qobject_cast below would always fail silently. */
+	if (auto* host = qobject_cast<QmlUiHost*>(m_qmlShell->uiHost())) {
+		connect(host, &QmlUiHost::presenterReadyChanged, this,
+				[this, host]() {
+					if (host->presenterReady()) {
+						runPendingQmlPresenterCalls();
+					}
+				});
+
+		/* The window may still be hidden -- a launch straight from the
+		 * command line keeps it so (see performMainStartupAction()). A
+		 * question, or a wait the user should see, brings it up. */
+		const auto reveal = [this, host]() {
+			if (!m_qmlWindowShown && (host->current() || host->busy())) {
+				showQmlShellWindow(false);
+			}
+		};
+		connect(host, &QmlUiHost::currentChanged, this, reveal);
+		connect(host, &QmlUiHost::busyChanged, this, reveal);
+
+		/* presenterReady() is normally already true here (the QML window
+		 * finished its Component.onCompleted during load()), so
+		 * presenterReadyChanged() would never fire again to trigger the
+		 * flush. Run the queue once here too; the lambda above is a no-op
+		 * if it later fires with nothing left queued. */
+		if (host->presenterReady()) {
+			runPendingQmlPresenterCalls();
+		}
+	}
+	return true;
+}
+
+void Application::showQmlShellWindow(bool minimized)
+{
+	if (!m_qmlShell || !m_qmlShell->show(minimized) || m_qmlWindowShown) {
+		return;
+	}
+	m_qmlWindowShown = true;
+	m_openWindows++;
+
+	/* The widget MainWindow fires MMCO_HOOK_UI_MAIN_READY itself, from
+	 * its own constructor (see ui/MainWindow.cpp) -- the QML shell has no
+	 * equivalent place to hang that off of, so this is it: once, the
+	 * first time the shell's root window is on screen, with every widget
+	 * handle in the payload null (see PluginHooks.h). Plugins are already
+	 * initialised by this point -- initializeAll() runs during
+	 * Application::init(), well before any window is shown -- so every
+	 * hook registration this dispatch could reach is already in place. */
+	if (!m_qmlMainReadyDispatched) {
+		m_qmlMainReadyDispatched = true;
+		if (m_pluginManager) {
+			MMCOUiMainReadyPayload mainReady{};
+			m_pluginManager->dispatchHook(MMCO_HOOK_UI_MAIN_READY,
+										  &mainReady);
+		}
+	}
+}
+
+void Application::navigateQmlShell(const QString& target)
+{
+	if (!m_qmlShell) {
+		return;
+	}
+	showQmlShellWindow(false);
+	m_qmlShell->requestNavigate(target);
+}
+
 MainWindow* Application::showMainWindow(bool minimized)
 {
+	if (useQmlShell() && ensureQmlShell()) {
+		showQmlShellWindow(minimized);
+		startBackgroundChecks();
+		return nullptr;
+	}
+
 	if (m_mainWindow) {
 		m_mainWindow->setWindowState(m_mainWindow->windowState() &
 									 ~Qt::WindowMinimized);
@@ -2146,7 +2620,68 @@ MainWindow* Application::showMainWindow(bool minimized)
 				&Application::on_windowClose);
 		m_openWindows++;
 	}
+	startBackgroundChecks();
 	return m_mainWindow;
+}
+
+void Application::startBackgroundChecks()
+{
+	if (m_backgroundChecksStarted) {
+		return;
+	}
+	m_backgroundChecksStarted = true;
+	m_notificationChecker->checkForNotifications();
+	if (qmlShellChosen()) {
+		runWhenQmlPresenterReady([this]() { reportInstancePathProblems(); });
+	}
+}
+
+void Application::showNotificationsThroughUiHost()
+{
+	QList<int> shown = NotificationChecker::parseShownIds(
+		m_settings->get("ShownNotifications").toString());
+	bool changed = false;
+	for (const auto& entry : m_notificationChecker->notificationEntries()) {
+		if (shown.contains(entry.id)) {
+			continue;
+		}
+		UiHost::Severity severity = UiHost::Severity::Information;
+		if (entry.type == NotificationChecker::NotificationEntry::Critical) {
+			severity = UiHost::Severity::Critical;
+		} else if (entry.type ==
+				   NotificationChecker::NotificationEntry::Warning) {
+			severity = UiHost::Severity::Warning;
+		}
+		// NotificationDialog's two buttons; backing out is "Close".
+		const int choice = uiHost()->choose(
+			i18n("Notification"), entry.message, severity,
+			{ i18n("Close"), i18n("Don't show again") });
+		if (choice == 1) {
+			shown.append(entry.id);
+			changed = true;
+		}
+	}
+	if (changed) {
+		m_settings->set("ShownNotifications",
+						NotificationChecker::formatShownIds(shown));
+	}
+}
+
+void Application::reportInstancePathProblems()
+{
+	const auto problems =
+		instancePathProblems(instances()->instanceDirs(), QDir::tempPath());
+	for (const auto& problem : problems) {
+		uiHost()->message(i18n("Check your instance folder"),
+						  problem.text + QStringLiteral("<br/><br/>") +
+							  problem.advice,
+						  UiHost::Severity::Warning);
+	}
+}
+
+QWindow* Application::qmlShellWindow() const
+{
+	return m_qmlShell ? m_qmlShell->window() : nullptr;
 }
 
 InstanceWindow* Application::showInstanceWindow(InstancePtr instance,
@@ -2207,7 +2742,8 @@ void Application::on_windowClose()
 	}
 	// quit when there are no more windows.
 	if (shouldExitNow()) {
-		exit(0);
+		// See controllerSucceeded()'s exit(0) for why this is qualified.
+		QCoreApplication::exit(0);
 	}
 }
 
@@ -2330,4 +2866,92 @@ QString Application::getJarsPath()
 const QString Application::javaPath()
 {
     return m_settings->get("JavaDir").toString();
+}
+
+AuthRequestDecorator* Application::authRequestDecorator() const
+{
+	return m_authRequestDecorator.get();
+}
+
+UiHost* Application::uiHost() const
+{
+	/* Prefer the QML shell's own UiHost while it is the active UI (see
+	 * useQmlShell() and showMainWindow()): m_qmlShell is only non-null
+	 * once its show() has succeeded, and uiHostInterface() on it is only
+	 * non-null once show() has created it *and* some QML item has called
+	 * setPresenterReady(true) on it (see QmlUiHost's class comment) --
+	 * both conditions this checks implicitly by falling through to the
+	 * widget host otherwise. Every call site reaches this fresh
+	 * (LAUNCHER->uiHost()->...) rather than caching the pointer, so
+	 * switching which one answers from one call to the next is safe. */
+	if (m_qmlShell) {
+		if (auto* host = m_qmlShell->uiHostInterface()) {
+			return host;
+		}
+	}
+	return m_uiHost.get();
+}
+
+NotificationChecker* Application::notificationChecker() const
+{
+	return m_notificationChecker.get();
+}
+
+bool Application::usingQmlShell() const
+{
+	return m_qmlShell && m_qmlShell->uiHostInterface() != nullptr;
+}
+
+bool Application::qmlShellChosen() const
+{
+	/* The decision, not the object: plugins initialise and the updater
+	 * starts before ensureQmlShell() has made the shell, and they must
+	 * already wait for it (or be declined) rather than take the widget
+	 * path. False again once the QML shell has failed to load. */
+	return m_qmlShell != nullptr || (useQmlShell() && !m_qmlShellLoadFailed);
+}
+
+void Application::runWhenQmlPresenterReady(std::function<void()> call)
+{
+	if (qmlShellChosen() && !usingQmlShell()) {
+		m_pendingQmlPresenterCalls.append(std::move(call));
+		return;
+	}
+	call();
+}
+
+void Application::runPendingQmlPresenterCalls()
+{
+	/* Taken out first: a call may queue again (a launch while the
+	 * presenter has gone away again, say), and that must land in the
+	 * next batch rather than in the list being walked. */
+	const auto pending = std::move(m_pendingQmlPresenterCalls);
+	m_pendingQmlPresenterCalls.clear();
+	for (const auto& call : pending) {
+		call();
+	}
+}
+
+void Application::showInstanceLog(InstancePtr instance)
+{
+	if (!instance) {
+		return;
+	}
+	if (qmlShellChosen()) {
+		// Chosen but not made yet: shown once it is.
+		if (!m_qmlShell) {
+			runWhenQmlPresenterReady(
+				[this, instance]() { showInstanceLog(instance); });
+			return;
+		}
+		// The request can arrive with the QML window minimized or behind
+		// others (a background crash, or - see launch()'s own
+		// isRunning()/canEdit() branches - a second Play click while
+		// nothing new needs launching): raise it the same way clicking
+		// the dock/taskbar icon would, so the log actually gets seen.
+		showQmlShellWindow(false);
+		m_qmlShell->showInstanceLogRequested(instance->id());
+		return;
+	}
+	showInstanceWindow(instance, "console");
 }

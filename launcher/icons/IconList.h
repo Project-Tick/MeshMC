@@ -25,6 +25,8 @@
 #include <QFile>
 #include <QDir>
 #include <QtGui/QIcon>
+#include <QColor>
+#include <QHash>
 #include <memory>
 
 #include "MMCIcon.h"
@@ -38,11 +40,23 @@ class IconList : public QAbstractListModel
 {
 	Q_OBJECT
   public:
+	/* QML-only role, additive alongside the Qt::DisplayRole/UserRole a
+	 * QListView already gets from data() -- see roleNames(). Numbered like
+	 * InstanceList's own QML-only roles (Qt::UserRole + 10 and up) to leave
+	 * room without colliding if Qt::UserRole itself is ever repurposed
+	 * here. */
+	enum Roles { IsBuiltinRole = Qt::UserRole + 10 };
+
 	explicit IconList(const QStringList& builtinPaths, QString path,
 					  QObject* parent = 0);
 	virtual ~IconList() {};
 
 	QIcon getIcon(const QString& key) const;
+	/* The icon's characteristic colour, for tinting whatever surrounds it:
+	 * an average weighted by opacity and saturation, so a mostly grey icon
+	 * with a coloured accent is tinted by the accent. Cached per key until
+	 * the icon changes; invalid if the icon has no visible pixels. */
+	QColor tint(const QString& key) const;
 	int getIconIndex(const QString& key) const;
 	QString getDirectory() const;
 
@@ -50,6 +64,11 @@ class IconList : public QAbstractListModel
 						  int role = Qt::DisplayRole) const override;
 	virtual int
 	rowCount(const QModelIndex& parent = QModelIndex()) const override;
+	/* Names Qt::DisplayRole/Qt::UserRole/IsBuiltinRole as `name`/`key`/
+	 * `isBuiltin` so a QML delegate (an icon picker grid) can bind to them
+	 * by name, the way every other QML-facing model here does. Additive:
+	 * the numeric roles a QListView already gets from data() do not move. */
+	virtual QHash<int, QByteArray> roleNames() const override;
 
 	virtual QStringList mimeTypes() const override;
 	virtual Qt::DropActions supportedDropActions() const override;
@@ -97,4 +116,5 @@ class IconList : public QAbstractListModel
 	QMap<QString, int> name_index;
 	QVector<MMCIcon> icons;
 	QDir m_dir;
+	mutable QHash<QString, QColor> m_tintCache;
 };

@@ -34,7 +34,7 @@
 
 #include "POTranslator.h"
 
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include <KLocalizedString>
 
 const static QLatin1String defaultLangCode("en_US");
@@ -340,6 +340,13 @@ QVariant TranslationsModel::data(const QModelIndex& index, int role) const
 		}
 		case Qt::UserRole:
 			return lang.key;
+		// Column-independent roles for QML consumers - same data as the
+		// column-based Qt::DisplayRole cases above, valid regardless of
+		// which column `index` happens to point at.
+		case NameRole:
+			return lang.languageName();
+		case CompletenessRole:
+			return QString::asprintf("%3.1f %%", lang.percentTranslated());
 		default:
 			return QVariant();
 	}
@@ -380,6 +387,15 @@ int TranslationsModel::rowCount(const QModelIndex& parent) const
 int TranslationsModel::columnCount(const QModelIndex& parent) const
 {
 	return 2;
+}
+
+QHash<int, QByteArray> TranslationsModel::roleNames() const
+{
+	QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+	roles.insert(Qt::UserRole, "languageKey");
+	roles.insert(NameRole, "name");
+	roles.insert(CompletenessRole, "completeness");
+	return roles;
 }
 
 Language* TranslationsModel::findLanguage(const QString& key)
@@ -509,9 +525,9 @@ void TranslationsModel::downloadIndex()
 		return;
 	}
 	qDebug() << "Downloading Translations Index...";
-	d->m_index_job = new NetJob("Translations Index", APPLICATION->network());
+	d->m_index_job = new NetJob("Translations Index", LAUNCHER->network());
 	MetaEntryPtr entry =
-		APPLICATION->metacache()->resolveEntry("translations", "index_v2.json");
+		LAUNCHER->metacache()->resolveEntry("translations", "index_v2.json");
 	entry->setStale(true);
 	d->m_index_task = Net::Download::makeCached(
 		QUrl("https://i18n.projecttick.org/index_v2.json"), entry);
@@ -552,7 +568,7 @@ void TranslationsModel::downloadTranslation(QString key)
 	}
 
 	d->m_downloadingTranslation = key;
-	MetaEntryPtr entry = APPLICATION->metacache()->resolveEntry(
+	MetaEntryPtr entry = LAUNCHER->metacache()->resolveEntry(
 		"translations", "mmc_" + key + ".qm");
 	entry->setStale(true);
 
@@ -563,7 +579,7 @@ void TranslationsModel::downloadTranslation(QString key)
 		new Net::ChecksumValidator(QCryptographicHash::Sha1, rawHash));
 	dl->m_total_progress = lang->file_size;
 
-	d->m_dl_job = new NetJob("Translation for " + key, APPLICATION->network());
+	d->m_dl_job = new NetJob("Translation for " + key, LAUNCHER->network());
 	d->m_dl_job->addNetAction(dl);
 
 	connect(d->m_dl_job.get(), &NetJob::succeeded, this,

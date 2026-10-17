@@ -27,7 +27,7 @@
 #include "Json.h"
 
 #include "BuildConfig.h"
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include <KLocalizedString>
 
 class ParsingValidator : public Net::Validator
@@ -111,10 +111,10 @@ void Meta::BaseEntity::load(Net::Mode loadType)
 	}
 	m_updateTask =
 		new NetJob(i18n("Download of meta file %1", localFilename()),
-				   APPLICATION->network());
+				   LAUNCHER->network());
 	auto url = this->url();
 	auto entry =
-		APPLICATION->metacache()->resolveEntry("meta", localFilename());
+		LAUNCHER->metacache()->resolveEntry("meta", localFilename());
 	entry->setStale(true);
 	auto dl = Net::Download::makeCached(url, entry);
 	/*

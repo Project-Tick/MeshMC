@@ -22,7 +22,7 @@
 #include <QNetworkRequest>
 #include <QHttpMultiPart>
 
-#include "Application.h"
+#include "core/LauncherContext.h"
 #include <KLocalizedString>
 
 CapeChange::CapeChange(QObject* parent, QString token, QString cape)
@@ -38,7 +38,7 @@ void CapeChange::setCape(QString& cape)
 	request.setRawHeader("Authorization",
 						 QString("Bearer %1").arg(m_token).toLocal8Bit());
 	QNetworkReply* rep =
-		APPLICATION->network()->put(request, requestString.toUtf8());
+		LAUNCHER->network()->put(request, requestString.toUtf8());
 
 	setStatus(i18n("Equipping cape"));
 
@@ -56,7 +56,7 @@ void CapeChange::clearCape()
 	auto requestString = QString("{\"capeId\":\"%1\"}").arg(m_capeId);
 	request.setRawHeader("Authorization",
 						 QString("Bearer %1").arg(m_token).toLocal8Bit());
-	QNetworkReply* rep = APPLICATION->network()->deleteResource(request);
+	QNetworkReply* rep = LAUNCHER->network()->deleteResource(request);
 
 	setStatus(i18n("Removing cape"));
 
