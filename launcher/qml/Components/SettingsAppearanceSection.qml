@@ -120,7 +120,7 @@ SettingsScroll {
         SettingRow {
             wide: true
             label: i18n("Palette")
-            description: i18n("The launcher's colours. Each palette has a dark and a light variant.")
+            description: i18n("The launcher's colours. System uses your desktop's own; the others each have a dark and a light variant.")
             PalettePicker {
                 current: Theme.scheme
                 onPicked: (scheme) => {
@@ -132,6 +132,10 @@ SettingsScroll {
         SettingChoice {
             key: "UiThemeMode"
             label: i18n("Mode")
+            // The System palette is light or dark with the desktop, so a
+            // mode of its own would have nothing to switch.
+            enabled: Theme.scheme !== "system"
+            description: enabled ? "" : i18n("Follows your desktop while the palette is System.")
             showDivider: true
             options: [
                 { value: "system", label: i18n("System") },

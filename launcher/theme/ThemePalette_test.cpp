@@ -17,9 +17,11 @@
  * limitations under the License.
  */
 
+#include <QPalette>
 #include <QTest>
 
 #include "theme/Contrast.h"
+#include "theme/SystemPalette.h"
 #include "theme/ThemePalette.h"
 
 /*
@@ -167,6 +169,93 @@ void checkTheme(const ThemePalette& p, const QString& themeName)
 	}
 }
 
+/// Qt's own light palette, the one the offscreen platform (and so CI)
+/// hands every application: grey window, white views, a mid blue whose
+/// white label only reaches ~3.6:1 as the desktop gives it.
+QPalette genericLightPalette()
+{
+	QPalette p;
+	p.setColor(QPalette::Window, QColor(0xEF, 0xEF, 0xEF));
+	p.setColor(QPalette::Base, QColor(0xFF, 0xFF, 0xFF));
+	p.setColor(QPalette::WindowText, QColor(0x00, 0x00, 0x00));
+	p.setColor(QPalette::Disabled, QPalette::WindowText, QColor(0xBE, 0xBE, 0xBE));
+	p.setColor(QPalette::PlaceholderText, QColor(0x00, 0x00, 0x00, 0x80));
+	p.setColor(QPalette::Highlight, QColor(0x30, 0x8C, 0xC6));
+	p.setColor(QPalette::HighlightedText, QColor(0xFF, 0xFF, 0xFF));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+	p.setColor(QPalette::Accent, QColor(0x30, 0x8C, 0xC6));
+#endif
+	p.setColor(QPalette::ToolTipBase, QColor(0xFF, 0xFF, 0xDC));
+	p.setColor(QPalette::ToolTipText, QColor(0x00, 0x00, 0x00));
+	return p;
+}
+
+/// macOS in dark mode with the Graphite accent, as Qt's Cocoa platform
+/// reports it: translucent text colours, a grey accent separate from the
+/// selection tint, and a translucent white tooltip paired with black text.
+QPalette macDarkPalette()
+{
+	QPalette p;
+	p.setColor(QPalette::Window, QColor(0x1E, 0x1E, 0x1E));
+	p.setColor(QPalette::Base, QColor(0x17, 0x17, 0x17));
+	p.setColor(QPalette::WindowText, QColor(0xFF, 0xFF, 0xFF, 0xD8));
+	p.setColor(QPalette::Disabled, QPalette::WindowText, QColor(0xFF, 0xFF, 0xFF, 0x3F));
+	p.setColor(QPalette::PlaceholderText, QColor(0xFF, 0xFF, 0xFF, 0x8C));
+	p.setColor(QPalette::Highlight, QColor(0x56, 0x56, 0x56));
+	p.setColor(QPalette::HighlightedText, QColor(0xFF, 0xFF, 0xFF, 0xD8));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+	p.setColor(QPalette::Accent, QColor(0x79, 0x79, 0x79));
+#endif
+	p.setColor(QPalette::ToolTipBase, QColor(0xFF, 0xFF, 0xFF, 0x3F));
+	p.setColor(QPalette::ToolTipText, QColor(0x00, 0x00, 0x00));
+	return p;
+}
+
+/// macOS in light mode: window and views are both white, so the canvas
+/// step has to be made rather than taken.
+QPalette macLightPalette()
+{
+	QPalette p;
+	p.setColor(QPalette::Window, QColor(0xFF, 0xFF, 0xFF));
+	p.setColor(QPalette::Base, QColor(0xFF, 0xFF, 0xFF));
+	p.setColor(QPalette::WindowText, QColor(0x00, 0x00, 0x00, 0xD8));
+	p.setColor(QPalette::Disabled, QPalette::WindowText, QColor(0x00, 0x00, 0x00, 0x3F));
+	p.setColor(QPalette::PlaceholderText, QColor(0x00, 0x00, 0x00, 0x7F));
+	p.setColor(QPalette::Highlight, QColor(0xD9, 0xD9, 0xD9));
+	p.setColor(QPalette::HighlightedText, QColor(0x00, 0x00, 0x00, 0xD8));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+	p.setColor(QPalette::Accent, QColor(0x0A, 0x60, 0xFF));
+#endif
+	p.setColor(QPalette::ToolTipBase, QColor(0xFF, 0xFF, 0xFF));
+	p.setColor(QPalette::ToolTipText, QColor(0x00, 0x00, 0x00));
+	return p;
+}
+
+/// Plasma's Breeze, as Kirigami's platform theme reads it on a Plasma
+/// session (Window, View, Selection and Tooltip colour sets, and the
+/// Window set's status colours) -- what KirigamiColors fills in there.
+SystemColors breeze(bool dark)
+{
+	SystemColors s;
+	s.window = dark ? QColor(0x20, 0x23, 0x26) : QColor(0xEF, 0xF0, 0xF1);
+	s.view = dark ? QColor(0x14, 0x16, 0x18) : QColor(0xFF, 0xFF, 0xFF);
+	s.text = dark ? QColor(0xFC, 0xFC, 0xFC) : QColor(0x23, 0x26, 0x29);
+	s.placeholderText = dark ? QColor(0x6E, 0x71, 0x75) : QColor(0xA0, 0xA1, 0xA3);
+	s.disabledText = s.placeholderText;
+	s.accent = QColor(0x3D, 0xAE, 0xE9);
+	s.accentLabel = dark ? QColor(0xFC, 0xFC, 0xFC) : QColor(0xFF, 0xFF, 0xFF);
+	s.highlight = s.accent;
+	s.highlightedText = s.accentLabel;
+	s.focus = s.accent;
+	s.tooltip = dark ? QColor(0x29, 0x2C, 0x30) : QColor(0xF7, 0xF7, 0xF7);
+	s.tooltipText = s.text;
+	s.positive = QColor(0x27, 0xAE, 0x60);
+	s.neutral = QColor(0xF6, 0x74, 0x00);
+	s.negative = QColor(0xDA, 0x44, 0x53);
+	s.info = QColor(0x3D, 0xAE, 0xE9);
+	return s;
+}
+
 } // namespace
 
 class ThemePaletteTest : public QObject
@@ -195,6 +284,59 @@ class ThemePaletteTest : public QObject
 		}
 		QCOMPARE(ThemePalette::schemeFromName(QStringLiteral("nonsense")),
 				 S::Amethyst);
+	}
+
+	/// The "system" scheme, from a light and a dark QPalette (what macOS,
+	/// Windows and non-KDE desktops give) and from Plasma's Breeze as
+	/// Kirigami gives it, clears every bar the named schemes do -- however
+	/// far off them the desktop's own colours start.
+	void test_systemScheme()
+	{
+		const struct
+		{
+			QString name;
+			SystemColors colors;
+			bool dark;
+		} systems[] = {
+			{"system generic light", SystemColors::fromPalette(genericLightPalette()), false},
+			{"system mac dark", SystemColors::fromPalette(macDarkPalette()), true},
+			{"system mac light", SystemColors::fromPalette(macLightPalette()), false},
+			{"system breeze light", breeze(false), false},
+			{"system breeze dark", breeze(true), true},
+		};
+		for (const auto& system : systems) {
+			QCOMPARE(system.colors.isDark(), system.dark);
+			checkTheme(ThemePalette::fromSystem(system.colors), system.name);
+		}
+	}
+
+	/// Where the desktop's colours already work, they come through as they
+	/// are: its own backgrounds as the page and its layers, and its accent's
+	/// hue, only deepened as far as its white label needs.
+	void test_systemSchemeKeepsTheDesktopsColours()
+	{
+		const ThemePalette light = ThemePalette::fromSystem(breeze(false));
+		QCOMPARE(light.canvas, QColor(0xEF, 0xF0, 0xF1));
+		QCOMPARE(light.surfaceRaised, QColor(0xFF, 0xFF, 0xFF));
+		QCOMPARE(light.textPrimary, QColor(0x23, 0x26, 0x29));
+		QCOMPARE(light.textOnAccent, QColor(0xFF, 0xFF, 0xFF));
+
+		const ThemePalette dark = ThemePalette::fromSystem(breeze(true));
+		QCOMPARE(dark.canvas, QColor(0x14, 0x16, 0x18));
+		QCOMPARE(dark.surface, QColor(0x20, 0x23, 0x26));
+		QCOMPARE(dark.textPrimary, QColor(0xFC, 0xFC, 0xFC));
+
+		// Hue is kept to within rounding; only lightness moves.
+		const int breezeHue = QColor(0x3D, 0xAE, 0xE9).hslHue();
+		QVERIFY(qAbs(light.accent.hslHue() - breezeHue) <= 2);
+		QVERIFY(qAbs(dark.accentText.hslHue() - breezeHue) <= 2);
+
+		// White and view backgrounds that are one colour (macOS light) still
+		// make a page under the cards.
+		const ThemePalette mac = ThemePalette::fromSystem(
+			SystemColors::fromPalette(macLightPalette()));
+		QCOMPARE(mac.surfaceRaised, QColor(0xFF, 0xFF, 0xFF));
+		QVERIFY(mac.canvas != mac.surfaceRaised);
 	}
 
 	/// The two themes have to disagree somewhere, and a palette has to

@@ -214,6 +214,10 @@ find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
 find_package(KF${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS 
     I18n
     GuiAddons
+    # The QML shell's window, icons and motion (org.kde.kirigami), and
+    # KirigamiPlatform's C++ side, which the "system" colour scheme reads
+    # Plasma's colours through (launcher/qml/Theme/KirigamiColors.cpp).
+    Kirigami
 )
 
 # Qt Quick 3D, for the optional roaming cat companion (launcher/qml/Cat/) --

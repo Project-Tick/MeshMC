@@ -953,8 +953,11 @@ void Application::initSettings()
 	// The QML interface's own light/dark choice; the widget theme above
 	// keeps its separate list of themes.
 	m_settings->registerSetting("UiThemeMode", QString("dark"));
-	// Colour scheme of the QML interface: amethyst, ember or diamond.
-	m_settings->registerSetting("UiPalette", QString("grass"));
+	// Colour scheme of the QML interface: system (the desktop's own colours,
+	// the default), grass, amethyst, ember or diamond. A scheme someone picked
+	// is written to the config, so it stays theirs; only the unpicked default
+	// moved from grass to system.
+	m_settings->registerSetting("UiPalette", QString("system"));
 	// The QML interface's font (Settings > Appearance).
 	m_settings->registerSetting("UiFontFamily", QString("Inter"));
 	m_settings->registerSetting("UiSidebarCollapsed", false);

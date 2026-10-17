@@ -20,56 +20,66 @@
 #include "qml/Theme/ThemeService.h"
 
 #include <QDebug>
+#include <QEvent>
 #include <QGuiApplication>
 #include <QPalette>
 
+#include "qml/Theme/KirigamiColors.h"
+
 namespace
 {
-	/* QStyleHints::colorScheme() would answer this directly, but it is Qt
-	 * 6.5+ and the floor here is 6.4. lightnessF() < 0.5 on the window colour
-	 * is the same heuristic ui/themes/ThemeManager.cpp already uses
-	 * (resolveIconTheme()) to tell a dark system palette from a light one. */
-	bool systemPrefersDark()
-	{
-		return qGuiApp->palette().color(QPalette::Window).lightnessF() < 0.5;
-	}
+	const QString kSystemScheme = QStringLiteral("system");
 } // namespace
 
 ThemeService::ThemeService(QObject* parent)
-	: QObject(parent)
+	: QObject(parent), m_kirigami(KirigamiColors::forDesktop())
 {
-	/* QGuiApplication::paletteChanged() has been deprecated in favour of
-	 * QEvent::ApplicationPaletteChange since Qt 6.0, but it is still emitted
-	 * on the 6.4 floor and needs no application-wide event filter just for
-	 * this one listener. */
-	QT_WARNING_PUSH
-	QT_WARNING_DISABLE_DEPRECATED
-	connect(qGuiApp, &QGuiApplication::paletteChanged, this,
-			&ThemeService::applySystemPalette);
-	QT_WARNING_POP
+	if (m_kirigami)
+		connect(m_kirigami.get(), &KirigamiColors::changed, this,
+				&ThemeService::readSystemColors);
+	/* On the application rather than one window, so it is there before any
+	 * window is and does not depend on which one the event reaches first.
+	 * eventFilter() looks at the event type before anything else. */
+	qGuiApp->installEventFilter(this);
+
+	readSystemColors();
+	resolve(false);
 }
 
-ThemePalette ThemeService::palette() const
+ThemeService::~ThemeService() = default;
+
+QString ThemeService::scheme() const
 {
-	return ThemePalette::forScheme(m_scheme, m_dark);
+	return m_followSystem ? kSystemScheme : ThemePalette::schemeName(m_scheme);
 }
 
 void ThemeService::setScheme(const QString& scheme)
 {
+	if (scheme == kSystemScheme) {
+		if (m_followSystem)
+			return;
+		m_followSystem = true;
+		resolve(true);
+		return;
+	}
+
 	const ThemePalette::Scheme parsed = ThemePalette::schemeFromName(scheme);
 	if (ThemePalette::schemeName(parsed) != scheme) {
 		qWarning() << "ThemeService: ignoring unknown colour scheme" << scheme;
 		return;
 	}
-	if (parsed == m_scheme)
+	if (!m_followSystem && parsed == m_scheme)
 		return;
+	m_followSystem = false;
 	m_scheme = parsed;
-	emit changed();
+	resolve(true);
 }
 
 ThemePalette ThemeService::previewPalette(const QString& scheme) const
 {
-	return ThemePalette::forScheme(ThemePalette::schemeFromName(scheme), m_dark);
+	if (scheme == kSystemScheme)
+		return m_systemPalette;
+	return ThemePalette::forScheme(ThemePalette::schemeFromName(scheme), modeIsDark());
 }
 
 void ThemeService::setMode(const QString& mode)
@@ -83,28 +93,52 @@ void ThemeService::setMode(const QString& mode)
 		return;
 
 	m_mode = mode;
-	if (m_mode == QStringLiteral("dark"))
-		m_dark = true;
-	else if (m_mode == QStringLiteral("light"))
-		m_dark = false;
-	else
-		m_dark = systemPrefersDark();
-
 	// The mode itself changed either way, so the whole theme is announced as
 	// one unit even on the rare switch that leaves `dark` unchanged (e.g.
 	// "system" -> "light" while the system is already light).
-	emit changed();
+	resolve(true);
 }
 
-void ThemeService::applySystemPalette()
+bool ThemeService::eventFilter(QObject* watched, QEvent* event)
 {
-	if (m_mode != QStringLiteral("system"))
+	/* Qt passes the event on to every window after the application, so only
+	 * the application's own copy is acted on. */
+	if (event->type() == QEvent::ApplicationPaletteChange && watched == qGuiApp)
+		readSystemColors();
+	return QObject::eventFilter(watched, event);
+}
+
+void ThemeService::readSystemColors()
+{
+	const SystemColors colors =
+		m_kirigami ? m_kirigami->colors() : SystemColors::fromPalette(qGuiApp->palette());
+	const ThemePalette palette = ThemePalette::fromSystem(colors);
+	const bool dark = colors.isDark();
+	if (palette == m_systemPalette && dark == m_systemDark)
 		return;
 
-	const bool dark = systemPrefersDark();
-	if (dark == m_dark)
+	m_systemPalette = palette;
+	m_systemDark = dark;
+	emit systemPaletteChanged();
+	resolve(false);
+}
+
+bool ThemeService::modeIsDark() const
+{
+	if (m_mode == QStringLiteral("system"))
+		return m_systemDark;
+	return m_mode == QStringLiteral("dark");
+}
+
+void ThemeService::resolve(bool announce)
+{
+	const bool dark = m_followSystem ? m_systemDark : modeIsDark();
+	const ThemePalette palette =
+		m_followSystem ? m_systemPalette : ThemePalette::forScheme(m_scheme, dark);
+	if (!announce && dark == m_dark && palette == m_palette)
 		return;
 
 	m_dark = dark;
+	m_palette = palette;
 	emit changed();
 }

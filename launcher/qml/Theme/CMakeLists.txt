@@ -29,6 +29,8 @@ qt_add_qml_module(MeshMC_qml_theme
     SOURCES
         ThemeService.h
         ThemeService.cpp
+        KirigamiColors.h
+        KirigamiColors.cpp
     # Inter 4.1 static TTFs (+ their OFL.txt), bundled here rather than as a
     # loose file on disk: Theme.qml's own FontLoader instances load them by
     # qrc path so Theme.font.family is real on every machine, not only one
@@ -45,11 +47,13 @@ qt_add_qml_module(MeshMC_qml_theme
 
 # ThemeService only reads ThemePalette (theme/ThemePalette.h, part of the
 # core); it must not see QtWidgets or launcher/ui/, so this links MeshMC_core
-# alone, never MeshMC_logic.
+# alone, never MeshMC_logic. KirigamiPlatform is Kirigami's C++ half: on a
+# Plasma session KirigamiColors reads the desktop's colour sets through it.
 target_link_libraries(MeshMC_qml_theme PUBLIC
     MeshMC_core
     Qt${QT_VERSION_MAJOR}::Quick
     Qt${QT_VERSION_MAJOR}::Gui
+    KF${QT_VERSION_MAJOR}::KirigamiPlatform
 )
 
 ######## Unit test ########

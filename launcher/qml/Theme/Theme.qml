@@ -4,6 +4,7 @@
 
 pragma Singleton
 import QtQuick
+import org.kde.kirigami as Kirigami
 
 /*
  * The single source of design tokens for the QML user interface: every size,
@@ -26,10 +27,15 @@ QtObject {
     readonly property bool dark: ThemeService.dark
     property string mode: ThemeService.mode
     onModeChanged: ThemeService.mode = mode
-    // "amethyst", "ember", "diamond" or "grass".
+    // "system" (the desktop's own colours), "amethyst", "ember", "diamond"
+    // or "grass". "system" is light or dark by itself; `mode` only applies
+    // to the other four.
     property string scheme: ThemeService.scheme
     onSchemeChanged: ThemeService.scheme = scheme
     function previewPalette(name) { return ThemeService.previewPalette(name) }
+    // The "system" scheme's palette as the desktop has it right now, even
+    // while another scheme is active.
+    readonly property var systemPalette: ThemeService.systemPalette
 
     readonly property QtObject space: QtObject {
         readonly property int xxs: 2
@@ -123,11 +129,19 @@ QtObject {
      * Every instance of a class uses its class's grammar; a control never
      * falls back to a bare colour-only "selected" look. See design-plan.md
      * §2.6.
+     *
+     * The durations are Kirigami.Units', so they follow KDE's animation
+     * speed setting -- slower, faster, or instant for someone who wants no
+     * motion -- the way every KDE app's do. Each is the unit nearest the
+     * value it replaced, at Kirigami's default speed: fast was 120 ms
+     * (shortDuration, 100), normal 180 (longDuration, 200) and slow 260,
+     * which shares normal's unit since veryLongDuration (400) is twice as
+     * far from it.
      */
     readonly property QtObject motion: QtObject {
-        readonly property int fast: 120
-        readonly property int normal: 180
-        readonly property int slow: 260
+        readonly property int fast: Kirigami.Units.shortDuration
+        readonly property int normal: Kirigami.Units.longDuration
+        readonly property int slow: Kirigami.Units.longDuration
         readonly property int easing: Easing.OutCubic
     }
 

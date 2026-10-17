@@ -23,7 +23,12 @@
 #include <QString>
 #include <qqmlintegration.h>
 
+#include <memory>
+
+#include "theme/SystemPalette.h"
 #include "theme/ThemePalette.h"
+
+class KirigamiColors;
 
 /*
  * The C++ half of MeshMC.Theme: owns which palette is active and follows the
@@ -38,6 +43,12 @@
  * One `changed()` signal covers palette, dark and mode's effect together, so
  * a binding can never observe, say, the new `dark` with the previous
  * `palette` still attached mid-switch.
+ *
+ * The "system" scheme is the desktop's own colours (ThemePalette::
+ * fromSystem()), read from Kirigami's platform theme on a Plasma session
+ * (KirigamiColors) and from QPalette everywhere else, and re-read live when
+ * either reports a change. It decides light or dark by itself, so `mode`
+ * only applies to the four named schemes.
  */
 class ThemeService : public QObject
 {
@@ -48,13 +59,18 @@ class ThemeService : public QObject
 	Q_PROPERTY(ThemePalette palette READ palette NOTIFY changed)
 	Q_PROPERTY(bool dark READ dark NOTIFY changed)
 	Q_PROPERTY(QString mode READ mode WRITE setMode NOTIFY changed)
-	/* "amethyst", "ember", "diamond" or "grass" -- see ThemePalette::Scheme. */
+	/* "system", "amethyst", "ember", "diamond" or "grass" -- see
+	 * ThemePalette::Scheme and ThemePalette::fromSystem(). */
 	Q_PROPERTY(QString scheme READ scheme WRITE setScheme NOTIFY changed)
+	/* The "system" scheme's palette as it stands, whichever scheme is
+	 * active: the picker shows it live on its System card. */
+	Q_PROPERTY(ThemePalette systemPalette READ systemPalette NOTIFY systemPaletteChanged)
 
   public:
 	explicit ThemeService(QObject* parent = nullptr);
+	~ThemeService() override;
 
-	ThemePalette palette() const;
+	ThemePalette palette() const { return m_palette; }
 	bool dark() const { return m_dark; }
 	QString mode() const { return m_mode; }
 
@@ -62,30 +78,55 @@ class ThemeService : public QObject
 	 * warning and leaves the current mode untouched. */
 	void setMode(const QString& mode);
 
-	QString scheme() const { return ThemePalette::schemeName(m_scheme); }
+	QString scheme() const;
 	/* Unknown names are rejected with a warning, like setMode(). */
 	void setScheme(const QString& scheme);
 
-	/* @p scheme's palette in the current mode, for a picker that shows
-	 * every scheme side by side without switching to it. */
+	ThemePalette systemPalette() const { return m_systemPalette; }
+
+	/* @p scheme's palette in the mode it would show in, for a picker that
+	 * shows every scheme side by side without switching to it. */
 	Q_INVOKABLE ThemePalette previewPalette(const QString& scheme) const;
 
   signals:
 	void changed();
+	void systemPaletteChanged();
+
+  protected:
+	/* QEvent::ApplicationPaletteChange: the OS switched light/dark or its
+	 * accent colour. Installed on the application, so it sees that event
+	 * the moment Qt has the new palette. */
+	bool eventFilter(QObject* watched, QEvent* event) override;
 
   private:
-	/* Re-reads the OS palette while in "system" mode; connected to
-	 * QGuiApplication so a live OS theme switch is picked up without a
-	 * restart. No-op outside "system" mode, and outside a real value change. */
-	void applySystemPalette();
+	/* Re-reads the desktop's colours; announces systemPaletteChanged, and
+	 * the active theme's change where it follows the system, only when
+	 * something actually moved. */
+	void readSystemColors();
+	/* Light or dark for the named schemes, by `mode`. */
+	bool modeIsDark() const;
+	/* Works out palette and dark from the scheme, mode and system colours,
+	 * and announces them -- always when @p announce, since a new mode or
+	 * scheme is news even when it happens to look the same; otherwise only
+	 * on a real change. */
+	void resolve(bool announce);
 
-	/* Dark by default: the launcher is designed dark-first. "system" follows
-	 * the OS instead, and is one setting away. */
+	/* Dark by default: the named schemes are designed dark-first. "system"
+	 * follows the OS instead, and is one setting away. */
 	QString m_mode = QStringLiteral("dark");
-	bool m_dark = true;
-	// Grass is the app's default scheme (see ThemePalette.h); this fallback
-	// only matters before Main.qml's own Component.onCompleted applies the
-	// persisted "UiPalette" setting (or for a consumer that never does, e.g.
-	// a unit test constructing ThemeService directly).
+	/* The "system" scheme is the app's default (Application.cpp registers
+	 * the "UiPalette" setting as "system"); this only matters before
+	 * Main.qml's own Component.onCompleted applies the persisted setting,
+	 * or for a consumer that never does, e.g. a unit test constructing
+	 * ThemeService directly. */
+	bool m_followSystem = true;
+	// The named scheme shown whenever m_followSystem is off.
 	ThemePalette::Scheme m_scheme = ThemePalette::Scheme::Grass;
+
+	std::unique_ptr<KirigamiColors> m_kirigami;
+	bool m_systemDark = false;
+	ThemePalette m_systemPalette;
+
+	bool m_dark = true;
+	ThemePalette m_palette;
 };

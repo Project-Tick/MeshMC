@@ -24,6 +24,8 @@
 #include <QObject>
 #include <QString>
 
+struct SystemColors;
+
 /*
  * The semantic colour tokens for the token-based QML theme -- "modern
  * launcher": dark-first, soft, with a strong accent.
@@ -175,9 +177,11 @@ class ThemePalette
 
 	/* The launcher's colour schemes. Each is one accent over its own set
 	 * of neutrals, in a dark and a light variant; the user picks the
-	 * scheme and the mode independently. Grass is the default (Amethyst
-	 * was, until the purple read as the app's whole identity rather than
-	 * one choice among several -- see ThemeService's own default). */
+	 * scheme and the mode independently. Grass is the first of them
+	 * (Amethyst was, until the purple read as the app's whole identity
+	 * rather than one choice among several); the app itself now starts on
+	 * the desktop's own colours instead -- see fromSystem() and
+	 * ThemeService's own default. */
 	enum class Scheme
 	{
 		Amethyst, // hue-less graphite, electric violet
@@ -187,6 +191,11 @@ class ThemePalette
 	};
 
 	static ThemePalette forScheme(Scheme scheme, bool dark);
+	/* The "system" scheme, which is not one of the Scheme values above
+	 * because it has no colours of its own: @p system's, fitted to these
+	 * roles and held to the same contrast. Light or dark is whatever
+	 * @p system is. SystemPalette.cpp defines it and documents the mapping. */
+	static ThemePalette fromSystem(const SystemColors& system);
 	/* "amethyst", "ember", "diamond" or "grass" -- the stored setting
 	 * value. An unknown name falls back to Amethyst. */
 	static Scheme schemeFromName(const QString& name);

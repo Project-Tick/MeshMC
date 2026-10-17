@@ -9,21 +9,25 @@ import MeshMC.Theme
 /*
  * The colour schemes side by side, each drawn as a miniature launcher in its
  * own colours (sidebar, three cards, a Play button) for the current light or
- * dark mode, so the choice is made by looking rather than by name.
+ * dark mode, so the choice is made by looking rather than by name. System
+ * comes first and is drawn in the desktop's colours as they are right now,
+ * so a change of accent or of light/dark on the desktop shows on it live.
  *
- * A Grid of equal tiles, never a wrapping Flow: four in one row while they
- * fit at a readable size, otherwise two rows of two -- never three and a
- * lone fourth. The tiles share the width the host gives this item
- * (SettingRow's `wide` mode gives it the panel's full width).
+ * A Grid of equal tiles, never a wrapping Flow: all in one row while they
+ * fit at a readable size, otherwise two rows as even as the count allows --
+ * never a lone tile on a row of its own. The tiles share the width the host
+ * gives this item (SettingRow's `wide` mode gives it the panel's full width).
  */
 Grid {
     id: root
 
-    // The scheme shown as chosen; "amethyst", "ember", "diamond" or "grass".
+    // The scheme shown as chosen; "system", "amethyst", "ember", "diamond"
+    // or "grass".
     property string current: Theme.scheme
     signal picked(string scheme)
 
     readonly property var schemes: [
+        { id: "system", label: i18n("System"), note: i18n("Your desktop's colours") },
         { id: "grass", label: i18n("Grass"), note: i18n("Graphite and grass green") },
         { id: "amethyst", label: i18n("Obsidian"), note: i18n("Graphite and amethyst") },
         { id: "ember", label: i18n("Ember"), note: i18n("Charcoal and lava") },
@@ -42,7 +46,7 @@ Grid {
     readonly property real tileWidth: (width - spacing * (columns - 1)) / columns
 
     width: parent ? parent.width : implicitWidth
-    columns: root.fitsInOneRow ? root.schemes.length : 2
+    columns: root.fitsInOneRow ? root.schemes.length : Math.ceil(root.schemes.length / 2)
     spacing: Theme.space.md
 
     Repeater {
@@ -51,8 +55,11 @@ Grid {
         delegate: AbstractButton {
             id: card
             required property var modelData
-            // Re-read whenever the mode flips, so the previews follow it.
-            readonly property var colors: Theme.dark, Theme.previewPalette(modelData.id)
+            // System's is the live palette itself; the others are re-read
+            // whenever the mode they would show in may have moved.
+            readonly property var colors: modelData.id === "system"
+                                          ? Theme.systemPalette
+                                          : (Theme.mode, Theme.dark, Theme.previewPalette(modelData.id))
             readonly property bool chosen: root.current === modelData.id
 
             width: root.tileWidth

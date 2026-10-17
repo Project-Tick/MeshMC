@@ -18,6 +18,7 @@
  */
 
 #include "theme/ThemePalette.h"
+#include "theme/ThemePaletteBuild.h"
 
 bool ThemePalette::operator==(const ThemePalette& other) const
 {
@@ -60,90 +61,86 @@ bool ThemePalette::operator!=(const ThemePalette& other) const
 	return !(*this == other);
 }
 
+QColor ThemePaletteBuild::withAlpha(QColor color, int alpha)
+{
+	color.setAlpha(alpha);
+	return color;
+}
+
+int ThemePaletteBuild::subtleAlpha(bool dark)
+{
+	return dark ? 41 : 31; // ~16% / ~12%
+}
+
+ThemePalette ThemePaletteBuild::build(const SchemeColors& c, bool dark)
+{
+	ThemePalette p;
+
+	p.canvas = c.canvas;
+	p.surface = c.surface;
+	p.surfaceRaised = c.surfaceRaised;
+	p.surfaceOverlay = c.surfaceOverlay;
+	p.surfaceSunken = c.surfaceSunken;
+
+	p.textPrimary = c.textPrimary;
+	p.textSecondary = c.textSecondary;
+	p.textTertiary = c.textTertiary;
+	p.textDisabled = c.textDisabled;
+	p.textOnAccent = c.textOnAccent;
+
+	p.accent = c.accent;
+	p.accentHover = c.accentHover;
+	p.accentPressed = c.accentPressed;
+	p.accentSubtle = withAlpha(c.accent, subtleAlpha(dark));
+	p.accentText = c.accentText;
+
+	// Hairlines are translucent so they read the same over every
+	// surface; see the header comment for why they sit under 3:1.
+	// Alpha widened from 20 (~8%, measured ~1.19-1.24:1 composited over a
+	// panel -- barely there) to a step that composites to a visibly
+	// distinct edge (~1.3-1.6:1) without approaching borderStrong's own
+	// 3:1 floor; see ThemePalette_test.cpp's "border visible over
+	// surface" check.
+	p.border = dark ? QColor(0xFF, 0xFF, 0xFF, 38) : QColor(0x00, 0x00, 0x00, 32);
+	p.borderStrong = c.borderStrong;
+	p.divider = p.border;
+	// A light theme's bright accent (Ember's orange) can sit under the
+	// 3:1 a focus indicator needs; its darker text shade never does.
+	p.focusRing = dark ? c.accent : c.accentText;
+
+	if (dark) {
+		p.success = QColor(0x4A, 0xDE, 0x80);
+		p.warning = QColor(0xFB, 0xBF, 0x24);
+		p.danger = QColor(0xFB, 0x71, 0x85);
+		p.info = QColor(0x60, 0xA5, 0xFA);
+	} else {
+		p.success = QColor(0x15, 0x6B, 0x35);
+		p.warning = QColor(0x8A, 0x4B, 0x06);
+		p.danger = QColor(0xB0, 0x10, 0x3A);
+		p.info = QColor(0x1D, 0x4E, 0xD8);
+	}
+	const int subtle = subtleAlpha(dark);
+	p.successSubtle = withAlpha(p.success, subtle);
+	p.warningSubtle = withAlpha(p.warning, subtle);
+	p.dangerSubtle = withAlpha(p.danger, subtle);
+	p.infoSubtle = withAlpha(p.info, subtle);
+
+	p.hoverOverlay = dark ? QColor(0xFF, 0xFF, 0xFF, 15) : QColor(0x00, 0x00, 0x00, 13);
+	p.pressedOverlay = dark ? QColor(0xFF, 0xFF, 0xFF, 31) : QColor(0x00, 0x00, 0x00, 26);
+	p.selection = c.selection;
+	p.selectionText = c.selectionText;
+
+	p.scrim = QColor(0x00, 0x00, 0x00, dark ? 140 : 115);
+	p.shadow = QColor(0x00, 0x00, 0x00, dark ? 102 : 51);
+	p.tooltipBackground = c.tooltipBackground;
+	p.tooltipText = dark ? c.textPrimary : QColor(0xF6, 0xF6, 0xF9);
+
+	return p;
+}
+
 namespace
 {
-	/* What differs between schemes. Everything else -- status colours,
-	 * overlays, scrims -- is shared per mode, so switching scheme never
-	 * changes what "danger" or "success" looks like. */
-	struct SchemeColors
-	{
-		QColor canvas, surface, surfaceRaised, surfaceOverlay, surfaceSunken;
-		QColor textPrimary, textSecondary, textTertiary, textDisabled;
-		QColor accent, accentHover, accentPressed, accentText, textOnAccent;
-		QColor borderStrong, selection, selectionText, tooltipBackground;
-	};
-
-	QColor withAlpha(QColor color, int alpha)
-	{
-		color.setAlpha(alpha);
-		return color;
-	}
-
-	ThemePalette build(const SchemeColors& c, bool dark)
-	{
-		ThemePalette p;
-
-		p.canvas = c.canvas;
-		p.surface = c.surface;
-		p.surfaceRaised = c.surfaceRaised;
-		p.surfaceOverlay = c.surfaceOverlay;
-		p.surfaceSunken = c.surfaceSunken;
-
-		p.textPrimary = c.textPrimary;
-		p.textSecondary = c.textSecondary;
-		p.textTertiary = c.textTertiary;
-		p.textDisabled = c.textDisabled;
-		p.textOnAccent = c.textOnAccent;
-
-		p.accent = c.accent;
-		p.accentHover = c.accentHover;
-		p.accentPressed = c.accentPressed;
-		p.accentSubtle = withAlpha(c.accent, dark ? 41 : 31); // ~16% / ~12%
-		p.accentText = c.accentText;
-
-		// Hairlines are translucent so they read the same over every
-		// surface; see the header comment for why they sit under 3:1.
-		// Alpha widened from 20 (~8%, measured ~1.19-1.24:1 composited over a
-		// panel -- barely there) to a step that composites to a visibly
-		// distinct edge (~1.3-1.6:1) without approaching borderStrong's own
-		// 3:1 floor; see ThemePalette_test.cpp's "border visible over
-		// surface" check.
-		p.border = dark ? QColor(0xFF, 0xFF, 0xFF, 38) : QColor(0x00, 0x00, 0x00, 32);
-		p.borderStrong = c.borderStrong;
-		p.divider = p.border;
-		// A light theme's bright accent (Ember's orange) can sit under the
-		// 3:1 a focus indicator needs; its darker text shade never does.
-		p.focusRing = dark ? c.accent : c.accentText;
-
-		if (dark) {
-			p.success = QColor(0x4A, 0xDE, 0x80);
-			p.warning = QColor(0xFB, 0xBF, 0x24);
-			p.danger = QColor(0xFB, 0x71, 0x85);
-			p.info = QColor(0x60, 0xA5, 0xFA);
-		} else {
-			p.success = QColor(0x15, 0x6B, 0x35);
-			p.warning = QColor(0x8A, 0x4B, 0x06);
-			p.danger = QColor(0xB0, 0x10, 0x3A);
-			p.info = QColor(0x1D, 0x4E, 0xD8);
-		}
-		const int subtle = dark ? 41 : 31;
-		p.successSubtle = withAlpha(p.success, subtle);
-		p.warningSubtle = withAlpha(p.warning, subtle);
-		p.dangerSubtle = withAlpha(p.danger, subtle);
-		p.infoSubtle = withAlpha(p.info, subtle);
-
-		p.hoverOverlay = dark ? QColor(0xFF, 0xFF, 0xFF, 15) : QColor(0x00, 0x00, 0x00, 13);
-		p.pressedOverlay = dark ? QColor(0xFF, 0xFF, 0xFF, 31) : QColor(0x00, 0x00, 0x00, 26);
-		p.selection = c.selection;
-		p.selectionText = c.selectionText;
-
-		p.scrim = QColor(0x00, 0x00, 0x00, dark ? 140 : 115);
-		p.shadow = QColor(0x00, 0x00, 0x00, dark ? 102 : 51);
-		p.tooltipBackground = c.tooltipBackground;
-		p.tooltipText = dark ? c.textPrimary : QColor(0xF6, 0xF6, 0xF9);
-
-		return p;
-	}
+	using ThemePaletteBuild::SchemeColors;
 
 	/* Neutrals carry no hue at all, so nothing but the accent is coloured
 	 * -- the fix for the earlier teal-grey that read as washed out. The
@@ -278,15 +275,15 @@ ThemePalette ThemePalette::forScheme(Scheme scheme, bool dark)
 {
 	switch (scheme) {
 		case Scheme::Ember:
-			return build(ember(dark), dark);
+			return ThemePaletteBuild::build(ember(dark), dark);
 		case Scheme::Diamond:
-			return build(diamond(dark), dark);
+			return ThemePaletteBuild::build(diamond(dark), dark);
 		case Scheme::Grass:
-			return build(grass(dark), dark);
+			return ThemePaletteBuild::build(grass(dark), dark);
 		case Scheme::Amethyst:
 			break;
 	}
-	return build(amethyst(dark), dark);
+	return ThemePaletteBuild::build(amethyst(dark), dark);
 }
 
 ThemePalette::Scheme ThemePalette::schemeFromName(const QString& name)

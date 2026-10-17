@@ -5,10 +5,18 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 import MeshMC.Theme
 import MeshMC.Components
 
-ApplicationWindow {
+/*
+ * A Kirigami window, for KDE: AbstractApplicationWindow rather than
+ * Kirigami's ApplicationWindow, whose page stack and drawers would stand in
+ * for the sidebar, pages and play bar this window lays out itself. It is
+ * still a Qt Quick Controls ApplicationWindow underneath -- menuBar,
+ * Overlay.overlay for the dialogs and MeshMC.Style all work as before.
+ */
+Kirigami.AbstractApplicationWindow {
     id: root
 
     required property var instanceModel
@@ -25,6 +33,9 @@ ApplicationWindow {
     minimumHeight: 540
     title: "MeshMC"
     color: Theme.palette.canvas
+    // A Kirigami window shows itself as soon as it exists; QmlShell::show()
+    // decides when instead, and whether minimised.
+    visible: false
 
     // Whether launcher/qml/Cat was built at all (MESHMC_HAS_CAT): the QML
     // shell has no other way to tell a Quick3D-less build apart from one
@@ -84,7 +95,7 @@ ApplicationWindow {
             if (mode === "dark" || mode === "light" || mode === "system")
                 Theme.mode = mode
             var scheme = SettingsStore.string("UiPalette")
-            if (scheme === "amethyst" || scheme === "ember" || scheme === "diamond" || scheme === "grass")
+            if (scheme === "system" || scheme === "amethyst" || scheme === "ember" || scheme === "diamond" || scheme === "grass")
                 Theme.scheme = scheme
         }
         onboarding.start()
@@ -593,7 +604,7 @@ ApplicationWindow {
                 readonly property var pageOrder: ["home", "library", "settings", "discover", "instance", "accounts"]
                 // Whether the play bar shows for the page currently on
                 // screen -- updated at the same invisible midpoint as
-                // pageStack's own currentIndex (see pageTransition below),
+                // pageLayout's own currentIndex (see pageTransition below),
                 // never straight from root.page, so the bar never appears or
                 // disappears while the old page is still visibly fading.
                 property bool dockVisible: root.dockVisibleFor(root.page)
@@ -604,7 +615,7 @@ ApplicationWindow {
                     id: pageTransition
                     property int nextIndex: 0
                     NumberAnimation { target: pageHost; property: "opacity"; to: 0; duration: Theme.motion.fast; easing.type: Theme.motion.easing }
-                    PropertyAction { target: pageStack; property: "currentIndex"; value: pageTransition.nextIndex }
+                    PropertyAction { target: pageLayout; property: "currentIndex"; value: pageTransition.nextIndex }
                     PropertyAction { target: pageHost; property: "dockVisible"; value: root.dockVisibleFor(pageHost.pageOrder[pageTransition.nextIndex]) }
                     ParallelAnimation {
                         NumberAnimation { target: pageHost; property: "opacity"; to: 1; duration: Theme.motion.normal; easing.type: Theme.motion.easing }
@@ -620,8 +631,10 @@ ApplicationWindow {
                     }
                 }
 
+                // Not "pageStack": that is the Kirigami window's own
+                // property, which this layout has no use for.
                 StackLayout {
-                    id: pageStack
+                    id: pageLayout
                     anchors.fill: parent
                     Component.onCompleted: currentIndex = pageHost.pageOrder.indexOf(root.page)
 

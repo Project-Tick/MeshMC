@@ -27,6 +27,9 @@ set(CORE_SOURCES
     theme/Contrast.cpp
     theme/ThemePalette.h
     theme/ThemePalette.cpp
+    theme/ThemePaletteBuild.h
+    theme/SystemPalette.h
+    theme/SystemPalette.cpp
 
     # What the QML instance grid needs in place of the widget proxy and
     # QItemSelectionModel. Core, like the blocks above: no QtWidgets, no ui/.

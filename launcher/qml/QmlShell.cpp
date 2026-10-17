@@ -81,6 +81,7 @@
 #include "qml/ModIconProvider.h"
 #include "qml/QmlUiHost.h"
 #include "qml/ScreenshotThumbnailProvider.h"
+#include "qml/Theme/KirigamiColors.h"
 #include "core/LauncherContext.h"
 #include "minecraft/auth/AccountList.h"
 #include "minecraft/mod/ModIconCache.h"
@@ -1166,6 +1167,14 @@ bool QmlShell::load()
 
 	m_engine = std::make_unique<QQmlApplicationEngine>();
 	m_engine->addImportPath(QStringLiteral("qrc:/qt/qml"));
+	/* Kirigami takes its platform integration -- Kirigami.Theme's colours,
+	 * Kirigami.Units' animation speed -- from the plugin named by the style
+	 * above, and MeshMC.Style names none. On a Plasma session, name the
+	 * desktop's own (see KirigamiColors::desktopPlugin()) through the engine
+	 * property Kirigami reads for exactly this, so both follow the user's
+	 * Plasma settings; anywhere else Kirigami keeps its built-in fallback. */
+	if (const QString plugin = KirigamiColors::desktopPlugin(); !plugin.isEmpty())
+		m_engine->setProperty("_kirigamiTheme", plugin);
 	/* i18n(), i18nc(), i18np() and i18ncp() for every .qml file, translated
 	 * in the same "meshmc" domain as the C++ side (see main.cpp). */
 	KLocalization::setupLocalizedContext(m_engine.get());
