@@ -61,6 +61,25 @@ class ColorSchemes : public QObject
 	 * widget style that goes with the scheme (see its constructor). */
 	static bool isPlasmaSession();
 
+	/* "org.kde.desktop" on a Plasma session that has it installed (it comes
+	 * with Plasma, as part of qqc2-desktop-style), otherwise empty: the
+	 * Kirigami platform plugin QmlShell names to its engine, so Kirigami
+	 * follows the user's Plasma settings even under a controls style forced
+	 * through QT_QUICK_CONTROLS_STYLE. Found by asking Kirigami for it, the
+	 * same lookup Kirigami itself makes. */
+	static QString desktopPlugin();
+
+	/* On the offscreen platform only (review snapshots, tests): its theme
+	 * names placeholder fonts -- "Sans Serif" 9pt, which no Mac has -- and
+	 * leaves every other font to the font database, so Kirigami.Theme's
+	 * smallFont (the smallest readable font) came out larger than its
+	 * defaultFont (the application's). This makes the application's font
+	 * the font database's too, so small text is no larger than body text.
+	 * Must run before the engine's first Kirigami.Theme exists: the platform
+	 * plugin reads both fonts when each theme is made. Real platforms already
+	 * give the system's fonts, and are left alone. */
+	static void applyOffscreenFont();
+
 	/* Needs the QGuiApplication: KColorSchemeManager::instance() is made
 	 * on first use, and applies the scheme to the application at once. */
 	explicit ColorSchemes(QObject* parent = nullptr);

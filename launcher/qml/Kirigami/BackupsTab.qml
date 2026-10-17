@@ -157,7 +157,7 @@ Item {
                             }
                             selected: row.highlighted
                             font: row.font
-                            icon.name: "package-x-generic"
+                            icon.name: "package-symbolic"
                             icon.width: Kirigami.Units.iconSizes.medium
                             icon.height: Kirigami.Units.iconSizes.medium
                         }

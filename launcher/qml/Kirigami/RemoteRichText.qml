@@ -13,8 +13,7 @@ import org.kde.kirigami as Kirigami
  * author put them, and Text (Qt 6.11) crashes the launcher when one of them
  * fails (a 404, a refused connection, a YouTube page in an <img>) while
  * another is still loading. TextEdit loads them its own way and survives
- * that. The custom interface's RemoteRichText found this; this is the same
- * component in the KDE colours.
+ * that.
  *
  * Set `source`, not `text`: TextEdit's `text` reads back as the document
  * re-serialised (never empty for HTML), so test `source` for emptiness too.

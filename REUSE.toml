@@ -80,9 +80,7 @@ SPDX-License-Identifier = "Apache-2.0"
 # Project originals: icons, app icon, background art, generated pixel art.
 [[annotations]]
 path = [
-    "launcher/qml/Components/art/**",
-    "launcher/qml/Cat/textures/heart.png",
-    "launcher/qml/Cat/textures/sleep_z.png",
+    "launcher/qml/Kirigami/art/**",
     "launcher/resources/meshmc/org.projecttick.MeshMC*.svg",
     "launcher/resources/meshmc/*/noaccount.png",
     "launcher/resources/meshmc/*/star.png",
@@ -131,43 +129,6 @@ path = [
 ]
 SPDX-FileCopyrightText = "2014 Uri Herrera <uri_herrera@nitrux.in> and others"
 SPDX-License-Identifier = "LGPL-3.0-or-later"
-
-# Lucide interface icons (launcher/qml/Components/icons).
-[[annotations]]
-path = [
-    "launcher/qml/Components/icons/*.svg",
-    "launcher/qml/Components/icons/LICENSE.Lucide.txt",
-]
-SPDX-FileCopyrightText = [
-    "Cole Bemis 2013-2022 (Feather)",
-    "Lucide Contributors 2022",
-]
-SPDX-License-Identifier = "ISC"
-
-# Inter typeface (launcher/qml/Theme/fonts/inter).
-[[annotations]]
-path = "launcher/qml/Theme/fonts/inter/*"
-SPDX-FileCopyrightText = "2016 The Inter Project Authors (https://github.com/rsms/inter)"
-SPDX-License-Identifier = "OFL-1.1"
-
-# "Minecraft Cat" by JanesBT, regrouped and recoloured by MeshMC
-# (launcher/qml/Cat/assets/CREDITS.md).
-[[annotations]]
-path = [
-    "launcher/qml/Cat/assets/cat.glb",
-    "launcher/qml/Cat/model/meshes/*.mesh",
-    "launcher/qml/Cat/textures/cat_*.png",
-]
-SPDX-FileCopyrightText = [
-    "JanesBT (https://sketchfab.com/JanesBt)",
-    "2026 Project Tick",
-]
-SPDX-License-Identifier = "CC-BY-4.0"
-
-[[annotations]]
-path = "launcher/qml/Cat/assets/CREDITS.md"
-SPDX-FileCopyrightText = "2026 Project Tick"
-SPDX-License-Identifier = "Apache-2.0"
 
 # Vendored libraries: build glue the project wrote around them keeps the
 # project licence (first entry above); these keep their own.

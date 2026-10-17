@@ -156,7 +156,7 @@ QtObject {
         Kirigami.Action {
             id: profilerAction
             text: i18nc("@action:inmenu", "Profiler")
-            icon.name: "utilities-system-monitor"
+            icon.name: "speedometer-symbolic"
             displayHint: Kirigami.DisplayHint.AlwaysHide
             visible: !actions.running && actions.profilers.length > 0
         },
@@ -191,13 +191,13 @@ QtObject {
         },
         Kirigami.Action {
             text: i18nc("@action:inmenu", "Change Icon…")
-            icon.name: "preferences-desktop-icons"
+            icon.name: "edit-image-symbolic"
             displayHint: Kirigami.DisplayHint.AlwaysHide
             onTriggered: actions.app.dialogs.askIcon(actions.instanceId, actions.iconKey)
         },
         Kirigami.Action {
             text: i18nc("@action:inmenu", "Change Group…")
-            icon.name: "tag"
+            icon.name: "tag-symbolic"
             displayHint: Kirigami.DisplayHint.AlwaysHide
             onTriggered: actions.app.dialogs.askGroup(actions.instanceId, actions.group)
         },

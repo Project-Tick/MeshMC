@@ -1,0 +1,128 @@
+name: Setup KDE Craft
+description: >-
+  Install Qt 6, KDE Frameworks 6 and MeshMC's other libraries from KDE Craft's
+  binary cache, the way KDE's own CI does (sysadmin/craft-ci), and point the
+  rest of the job at them.
+
+inputs:
+  target:
+    description: >-
+      CraftMaster target, a section of craft-ci's qt6/CraftConfig.ini:
+      macos-arm-clang, macos-64-clang, windows-msvc2026_64-cl, ...
+      KDE publishes no cache for Windows arm64 or Linux arm64.
+    required: true
+  packages:
+    description: Craft packages to install, separated by spaces
+    required: true
+  root:
+    description: Directory for Craft; keep it short on Windows (path length)
+    required: true
+
+outputs:
+  craft-root:
+    description: The Craft prefix, also exported as CMAKE_PREFIX_PATH
+    value: ${{ steps.use-craft.outputs.craft-root }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Setup Python for Craft
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.13"
+
+    - name: Week of the Craft cache
+      id: week
+      shell: bash
+      run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+    # Only the downloaded archives: unpacking them is quick, fetching them is
+    # what takes the time. Renewed weekly, as the Craft cache moves on.
+    - name: Restore Craft downloads
+      uses: actions/cache@v6.1.0
+      with:
+        path: ${{ inputs.root }}/downloads
+        key: craft-${{ inputs.target }}-${{ steps.week.outputs.week }}
+        restore-keys: |
+          craft-${{ inputs.target }}-
+
+    - name: Get CraftMaster and KDE's Craft configuration
+      shell: bash
+      env:
+        CRAFT_DIR: ${{ inputs.root }}
+      run: |
+        mkdir -p "$CRAFT_DIR"
+        git clone --depth=1 https://invent.kde.org/packaging/craftmaster.git "$CRAFT_DIR/craftmaster"
+        git clone --depth=1 https://invent.kde.org/sysadmin/craft-ci.git "$CRAFT_DIR/craft-ci"
+
+    # KDE's configuration signs with KDE's certificates and downloads into
+    # KDE's machines' directories; this turns both off for us.
+    - name: Configure Craft
+      shell: bash
+      env:
+        CRAFT_DIR: ${{ inputs.root }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        {
+          echo "[Variables]"
+          echo "Msys = C:/msys64"
+          echo
+          echo "[GeneralSettings]"
+          echo "Packager/UseCache = True"
+          echo "Packager/CreateCache = False"
+          echo "CodeSigning/Enabled = False"
+          echo "CodeSigning/SignCache = False"
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            echo "Paths/Python = $(cygpath -m "$pythonLocation")/"
+          fi
+          echo
+          echo "[$TARGET]"
+          echo 'Paths/DownloadDir = ${Variables:Root}/downloads'
+          echo "CodeSigning/Enabled = False"
+        } > "$CRAFT_DIR/meshmc-craft.ini"
+        cat "$CRAFT_DIR/meshmc-craft.ini"
+
+    - name: Install from KDE Craft's cache
+      shell: bash
+      env:
+        CRAFT_DIR: ${{ inputs.root }}
+        TARGET: ${{ inputs.target }}
+        PACKAGES: ${{ inputs.packages }}
+        PYTHONUTF8: "1"
+      run: |
+        craftmaster() {
+          python "$CRAFT_DIR/craftmaster/CraftMaster.py" \
+            --config "$CRAFT_DIR/craft-ci/qt6/CraftConfig.ini" \
+            --config-override "$CRAFT_DIR/meshmc-craft.ini" \
+            --target "$TARGET" "$@"
+        }
+        craftmaster --setup
+        craftmaster -c -i --options virtual.ignored=True --update craft
+        # shellcheck disable=SC2086 # one word per package
+        craftmaster -c $PACKAGES
+
+    # What craftenv.sh / craftenv.ps1 would set, for the build, the tests and
+    # the package steps after this.
+    - name: Use Craft for the build
+      id: use-craft
+      shell: bash
+      env:
+        CRAFT_DIR: ${{ inputs.root }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        root="$CRAFT_DIR/$TARGET"
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+          root="$(cygpath -m "$root")"
+        fi
+        echo "craft-root=$root" >> "$GITHUB_OUTPUT"
+        {
+          echo "CRAFT_ROOT=$root"
+          echo "CMAKE_PREFIX_PATH=$root"
+          echo "QT_PLUGIN_PATH=$root/plugins"
+          echo "QML_IMPORT_PATH=$root/qml"
+          echo "QML2_IMPORT_PATH=$root/qml"
+          # Craft's Qt reads this on macOS for GenericDataLocation.
+          echo "QT_DATA_DIRS=$root/share"
+        } >> "$GITHUB_ENV"
+        echo "$root/bin" >> "$GITHUB_PATH"

@@ -45,7 +45,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Linux builds in Fedora: Qt 6 and KDE Frameworks 6 from its
+          # packages (see .github/actions/setup-dependencies/linux).
           - os: ubuntu-24.04
+            container: fedora:44
             artifact-name: Linux
             cmake-preset: linux
             qt-version: 6.10.2
@@ -53,6 +56,7 @@ jobs:
             build-name: Linux x86_64 Qt6
 
           - os: ubuntu-24.04-arm
+            container: fedora:44
             artifact-name: Linux-aarch64
             cmake-preset: linux
             qt-version: 6.10.2
@@ -76,23 +80,31 @@ jobs:
             qt-major: 6
             build-name: Windows MSVC x86_64 Qt6
 
+          # MinGW rather than MSVC on arm64: KDE Craft has no Windows arm64
+          # cache and vcpkg is gone, while MSYS2's CLANGARM64 carries Qt, KDE
+          # Frameworks 6 and every other library this build needs.
           - os: windows-11-vs2026-arm
-            artifact-name: Windows-MSVC-arm64
-            cmake-preset: windows_msvc
+            artifact-name: Windows-MinGW-arm64
+            cmake-preset: windows_mingw
+            msystem: CLANGARM64
             vcvars-arch: arm64
-            qt-version: 6.10.2
             qt-major: 6
-            build-name: Windows MSVC aarch64 Qt6
+            build-name: Windows MinGW aarch64 Qt6
 
+          # Apple Silicon only: KDE Craft's cache, where Qt and KDE
+          # Frameworks 6 come from on macOS, is built per architecture
+          # (macos-arm-clang, macos-64-clang), so no universal binary; 13.3 is
+          # the deployment target that cache is built for.
           - os: macos-26
             artifact-name: macOS
-            cmake-preset: macos_universal
-            macosx-deployment-target: 12.0
-            qt-version: 6.9.3
+            cmake-preset: macos
+            macosx-deployment-target: 13.3
             qt-major: 6
-            build-name: macOS Universal Qt6
+            build-name: macOS arm64 Qt6
 
     runs-on: ${{ matrix.os }}
+    # Empty for everything but Linux, which then runs on the runner itself.
+    container: ${{ matrix.container }}
 
     defaults:
       run:
@@ -112,6 +124,11 @@ jobs:
       ##
       # SETUP
       ##
+
+      # actions/checkout needs git for the submodules; Fedora's image has none.
+      - name: Install git (Linux container)
+        if: ${{ matrix.container != '' }}
+        run: dnf -y install git-core
 
       - name: Checkout
         uses: actions/checkout@v7

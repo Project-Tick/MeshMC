@@ -1,6 +1,14 @@
 name: Setup Linux dependencies
 description: Install and setup dependencies for building MeshMC
 
+# Runs in a Fedora container (see the Linux entries of build.yml's matrix):
+# Fedora carries everything the build needs, KDE Frameworks 6 included, on
+# both x86_64 and aarch64, with a Qt as new as the one the KDE interface is
+# developed against. Ubuntu 24.04 has no KDE Frameworks 6, and KDE's Craft
+# cache has no Linux aarch64 build. The AppImage and the portable tarball do
+# not inherit Fedora's glibc requirement: sharun ships the dynamic loader and
+# every library, glibc included.
+
 runs:
   using: composite
 
@@ -8,14 +16,35 @@ runs:
     - name: Install host dependencies
       shell: bash
       run: |
-        sudo apt-get -y update
-        sudo apt-get -y install \
-          dpkg-dev \
-          ninja-build pkg-config scdoc gamemode-dev \
-          libxcb-cursor-dev libtomlplusplus-dev libvulkan-dev \
-          libgpg-error-dev libassuan-dev libksba-dev \
-          libnpth0-dev libbotan-2-dev autoconf automake libtool gettext \
-          autoconf-archive
+        dnf -y install --setopt=install_weak_deps=False \
+          gcc-c++ cmake ninja-build pkgconf-pkg-config git-core \
+          scdoc gamemode-devel tomlplusplus-devel vulkan-headers qrencode-devel \
+          cmark-devel libarchive-devel zlib-ng-compat-devel gpgmepp-devel \
+          extra-cmake-modules \
+          qt6-qtbase-devel qt6-qtbase-private-devel qt6-qtdeclarative-devel \
+          qt6-qtsvg-devel qt6-qtnetworkauth-devel qt6-qtquick3d-devel \
+          qt6-qtshadertools-devel qt6-qtimageformats qt6-qttools-devel \
+          kf6-ki18n-devel kf6-kcoreaddons-devel kf6-kguiaddons-devel \
+          kf6-kirigami-devel kf6-kiconthemes-devel kf6-breeze-icons-devel \
+          kf6-kcolorscheme-devel kf6-qqc2-desktop-style kf6-kirigami-addons-devel \
+          plasma-breeze-qt6 plasma-breeze-common \
+          gh gnupg2 file findutils xz
+
+    # Fedora 44 ships JDK 25 only, which can no longer compile the Java
+    # helpers' -source/-target 7.
+    - name: Setup Java
+      uses: actions/setup-java@v6
+      with:
+        distribution: temurin
+        java-version: 17
+
+    # What install-qt-action used to export; the package step reads it.
+    - name: Locate Qt
+      shell: bash
+      run: |
+        echo "QT_PLUGIN_PATH=$(qtpaths6 --query QT_INSTALL_PLUGINS)" >> "$GITHUB_ENV"
+        # AppImage tools are AppImages themselves, and a container has no FUSE.
+        echo "APPIMAGE_EXTRACT_AND_RUN=1" >> "$GITHUB_ENV"
 
     - name: Setup AppImage tooling
       shell: bash
@@ -23,20 +52,16 @@ runs:
         GH_TOKEN: ${{ github.token }}
       run: |
         # Determinate AppImage architecture to use
-        dpkg_arch="$(dpkg-architecture -q DEB_HOST_ARCH_CPU)"
-        case "$dpkg_arch" in
-          "amd64")
-            APPIMAGE_ARCH="x86_64"
-            ;;
-          "arm64")
-            APPIMAGE_ARCH="aarch64"
-            ;;
+        APPIMAGE_ARCH="$(uname -m)"
+        case "$APPIMAGE_ARCH" in
+          x86_64|aarch64) ;;
           *)
-            echo "# 🚨 The Debian architecture \"$deb_arch\" is not recognized!" >> "$GITHUB_STEP_SUMMARY"
+            echo "# 🚨 The architecture \"$APPIMAGE_ARCH\" is not recognized!" >> "$GITHUB_STEP_SUMMARY"
             exit 1
             ;;
         esac
 
+        mkdir -p ~/bin
         gh release download \
           --repo VHSgunzo/sharun \
           --pattern "sharun-$APPIMAGE_ARCH-aio" \

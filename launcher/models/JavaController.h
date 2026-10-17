@@ -43,7 +43,7 @@ class JavaInstallList;
  *    under JavaUtils::managedJavaRoot() as <vendor>/<name-version>/.
  *
  * Downloading a runtime is JavaDownloadController's job. What a view writes
- * (JavaPath, JvmArgs, the vendor) goes through SettingsStore like any other
+ * (JavaPath, JvmArgs, the vendor) goes through SettingsAdapter like any other
  * setting; nothing here touches settings.
  *
  * Several views (global Settings, one per instance) can share one

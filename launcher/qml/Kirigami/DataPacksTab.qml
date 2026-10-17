@@ -123,7 +123,7 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width - Kirigami.Units.gridUnit * 4
                     visible: list.count === 0
-                    icon.name: "package-x-generic"
+                    icon.name: "package-symbolic"
                     text: i18n("No data packs")
                     explanation: i18n("Data packs change this world's recipes, loot and more. Add a .zip to get started.")
                     helpfulAction: Kirigami.Action {
@@ -141,7 +141,7 @@ Item {
         anchors.centerIn: parent
         width: parent.width - Kirigami.Units.gridUnit * 4
         visible: picker.count === 0
-        icon.name: "package-x-generic"
+        icon.name: "package-symbolic"
         text: i18n("No worlds yet")
         explanation: i18n("Data packs live inside a world's own folder, so create a world first.")
     }

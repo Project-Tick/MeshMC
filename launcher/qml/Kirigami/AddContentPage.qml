@@ -282,7 +282,7 @@ Kirigami.ScrollablePage {
             anchors.centerIn: parent
             width: parent.width - Kirigami.Units.gridUnit * 4
             visible: !page.searching && page.count === 0 && (page.searched || page.keyMissing || !page.browser)
-            icon.name: !page.browser ? "package-x-generic"
+            icon.name: !page.browser ? "package-symbolic"
                      : page.keyMissing || page.error.length > 0 ? "network-disconnect" : "edit-find"
             text: !page.browser ? i18n("Nothing to add here")
                 : page.keyMissing ? i18n("CurseForge isn't available")

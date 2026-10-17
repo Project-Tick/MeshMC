@@ -28,9 +28,10 @@ Kirigami.ApplicationWindow {
 
     readonly property string moduleName: "MeshMC.Kirigami"
 
-    // Handed over by QmlShell::rootProperties(); the KDE interface has no
-    // cat, so it is only accepted.
-    property bool catAvailable: false
+    // Whether the build has the 3D skin preview (launcher/qml/Preview3D,
+    // MESHMC_HAS_SKIN_PREVIEW_3D): handed over by QmlShell::rootProperties()
+    // for the skin page's PlayerPreview.
+    property bool preview3DAvailable: false
 
     title: i18nc("@title:window", "MeshMC")
     width: Kirigami.Units.gridUnit * 66

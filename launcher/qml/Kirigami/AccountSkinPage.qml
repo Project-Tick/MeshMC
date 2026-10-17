@@ -119,7 +119,7 @@ FormCard.FormCardPage {
             contentItem: PlayerPreview {
                 id: preview
                 implicitHeight: Kirigami.Units.gridUnit * 16
-                catAvailable: page.app.catAvailable
+                preview3DAvailable: page.app.preview3DAvailable
                 skinTexture: page.picked ? page.picked.textureUrl || ""
                              : page.editor.info.hasSkin && page.accountId.length > 0
                                ? "image://accountface/skin/" + page.accountId + "?rev=" + page.revision : ""

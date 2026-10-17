@@ -186,7 +186,7 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width - Kirigami.Units.gridUnit * 4
                     visible: list.count === 0
-                    icon.name: tab.totalCount > 0 ? "edit-find" : "package-x-generic"
+                    icon.name: tab.totalCount > 0 ? "edit-find" : "package-symbolic"
                     text: tab.totalCount > 0 ? i18n("Nothing matches your search") : tab.current.empty
                     explanation: tab.totalCount > 0 ? ""
                                : i18n("Find some on Modrinth and CurseForge, or add files you already have.")

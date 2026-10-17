@@ -71,7 +71,7 @@ FormCard.FormCard {
                             Layout.alignment: Qt.AlignHCenter
                             brand: button.modelData.brand
                             size: Kirigami.Units.iconSizes.medium
-                            fallback: "applications-games"
+                            fallback: "applications-games-symbolic"
                         }
                         QQC2.Label {
                             Layout.fillWidth: true

@@ -19,11 +19,13 @@
 
 #include "qml/ColorSchemes.h"
 
+#include <QFontDatabase>
 #include <QGuiApplication>
 #include <QStringList>
 #include <QStyleHints>
 
 #include <KColorSchemeManager>
+#include <Kirigami/Platform/PlatformPluginFactory>
 
 bool ColorSchemes::isPlasmaSession()
 {
@@ -31,6 +33,28 @@ bool ColorSchemes::isPlasmaSession()
 									 .split(QLatin1Char(':'), Qt::SkipEmptyParts);
 	return desktops.contains(QLatin1String("KDE"), Qt::CaseInsensitive) ||
 		   qEnvironmentVariable("KDE_FULL_SESSION") == QLatin1String("true");
+}
+
+QString ColorSchemes::desktopPlugin()
+{
+	const QString plugin = QStringLiteral("org.kde.desktop");
+	if (!isPlasmaSession()) {
+		return QString();
+	}
+	// Cached by Kirigami per name, found or not, so asking twice is free.
+	return Kirigami::Platform::PlatformPluginFactory::findPlugin(plugin) ? plugin
+																		 : QString();
+}
+
+void ColorSchemes::applyOffscreenFont()
+{
+	if (QGuiApplication::platformName() != QLatin1String("offscreen")) {
+		return;
+	}
+	// The offscreen theme has no smallest readable font of its own, so this
+	// is the font database's default: the system's general font.
+	QGuiApplication::setFont(
+		QFontDatabase::systemFont(QFontDatabase::SmallestReadableFont));
 }
 
 ColorSchemes::ColorSchemes(QObject* parent) : QObject(parent)

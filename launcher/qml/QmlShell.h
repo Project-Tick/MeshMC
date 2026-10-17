@@ -461,7 +461,7 @@ class QmlShell : public QObject
 	Q_INVOKABLE bool isInstanceRunning(const QString& id) const;
 	/* Preview/dev-only: sets the same runtime flag LaunchTask sets around a
 	 * real game process's exit (BaseInstance::setCrashed()), so a
-	 * MESHMC_QML_ROUTE devRoute step (Main.qml's applyDevRoute(), "crashed=
+	 * MESHMC_QML_ROUTE devRoute step (DevRoute.qml, "crashed=
 	 * <id>") can exercise the Home page's "Crashed last time" chip. Unlike
 	 * every other instance property, hasCrashed is never written to
 	 * instance.cfg, so gen_preview.py's static preview data cannot fake it
@@ -470,7 +470,7 @@ class QmlShell : public QObject
 	 * unknown id. */
 	Q_INVOKABLE void debugMarkInstanceCrashed(const QString& id);
 	/* Preview/dev-only: a real mouse click at window point "x,y" for
-	 * review snapshots (Main.qml's applyDevRoute(), "click=x,y[,right
+	 * review snapshots (DevRoute.qml, "click=x,y[,right
 	 * [,delayMs]]"): the pointer moves there first, so hover-only controls
 	 * show up, then presses and releases through the window's normal
 	 * event delivery -- what a snapshot of "click the card's ⋯" needs to
@@ -479,7 +479,7 @@ class QmlShell : public QObject
 	 * (dx, dy) before letting go instead. */
 	Q_INVOKABLE void debugClick(const QString& spec);
 	/* Preview/dev-only, for review snapshots of questions only a real
-	 * launch would otherwise ask (Main.qml's applyDevRoute(), "ask=<kind>"):
+	 * launch would otherwise ask (DevRoute.qml, "ask=<kind>"):
 	 * "pickAccount" asks the launch account picker over the real account
 	 * list; "busySkip" shows the account-refresh wait with its "Play
 	 * offline" button, which ends it; "modal" shows a sample plugin prompt

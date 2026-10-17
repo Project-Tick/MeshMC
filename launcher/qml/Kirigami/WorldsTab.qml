@@ -11,6 +11,7 @@ import org.kde.kirigami as Kirigami
 import org.kde.kirigami.delegates as KD
 import org.kde.kirigamiaddons.components as Components
 import org.kde.kirigamiaddons.delegates as Delegates
+import "artwork.js" as Artwork
 
 /*
  * The instance's single-player worlds: each with its own icon, name, game
@@ -182,36 +183,35 @@ Item {
 
                     // The folder's own name, the title of a world without a
                     // level name. `folder` is the full path.
-                    readonly property string displayName: row.name.length > 0 ? row.name : String(row.folder).split(/[\\/]/).pop()
+                    readonly property string folderName: String(row.folder).split(/[\\/]/).pop()
+                    readonly property string displayName: row.name.length > 0 ? row.name : row.folderName
                     readonly property string mode: String(row.gameMode || "")
 
                     width: ListView.view.width
                     text: row.displayName
+                    onIconFileChanged: worldIcon.iconFailed = false
                     contentItem: RowLayout {
                         spacing: Kirigami.Units.largeSpacing
 
                         // The world's own icon.png, kept crisp like the
-                        // pixel picture it is. Without one, a neutral globe:
-                        // a landscape would pass for a real view of the
-                        // world, and two worlds would share one.
-                        Item {
+                        // pixel picture it is. Without one -- or when it
+                        // cannot be read -- a biome picture picked from the
+                        // folder name (artwork.js), the same one the Home
+                        // page's card for this world shows.
+                        Image {
+                            id: worldIcon
+                            // Set once the world's own icon fails to load.
+                            property bool iconFailed: false
+                            readonly property bool ownIcon: String(row.iconFile || "").length > 0 && !worldIcon.iconFailed
                             Layout.preferredWidth: Kirigami.Units.iconSizes.huge
                             Layout.preferredHeight: Kirigami.Units.iconSizes.huge
-                            Image {
-                                id: worldIcon
-                                anchors.fill: parent
-                                source: tab.fileUrl(row.iconFile)
-                                sourceSize: Qt.size(width * 2, height * 2)
-                                fillMode: Image.PreserveAspectCrop
-                                smooth: false
-                                asynchronous: true
-                            }
-                            Kirigami.Icon {
-                                anchors.fill: parent
-                                anchors.margins: Kirigami.Units.smallSpacing
-                                visible: worldIcon.status !== Image.Ready
-                                source: "map-globe"
-                            }
+                            source: worldIcon.ownIcon ? tab.fileUrl(row.iconFile) : Artwork.worldUrl(row.folderName)
+                            onStatusChanged: if (status === Image.Error && worldIcon.ownIcon) worldIcon.iconFailed = true
+                            sourceSize: Qt.size(width * 2, height * 2)
+                            fillMode: Image.PreserveAspectCrop
+                            smooth: !worldIcon.ownIcon
+                            mipmap: !worldIcon.ownIcon
+                            asynchronous: true
                         }
                         KD.TitleSubtitle {
                             Layout.fillWidth: true
@@ -255,7 +255,7 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width - Kirigami.Units.gridUnit * 4
                     visible: list.count === 0
-                    icon.name: "map-globe"
+                    icon.name: "map-globe-symbolic"
                     text: i18n("No worlds yet")
                     explanation: i18n("Worlds you create in single player show up here. You can also add one from a .zip.")
                     helpfulAction: Kirigami.Action {
@@ -339,7 +339,7 @@ Item {
 
             Kirigami.Action {
                 text: i18nc("@action:inmenu", "Data Packs")
-                icon.name: "package-x-generic"
+                icon.name: "package-symbolic"
                 // An old-format instance has no Data Packs tab.
                 visible: !!tab.details && tab.details.isMinecraft
                 onTriggered: tab.dataPacksRequested(menu.world.index)

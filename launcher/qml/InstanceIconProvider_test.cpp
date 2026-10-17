@@ -165,7 +165,7 @@ class InstanceIconProviderTest : public QObject
 
 int main(int argc, char* argv[])
 {
-	/* Same reasoning as QmlModule_test.cpp: a Pixmap-type QQuickImageProvider
+	/* Same reasoning as KirigamiShell_test.cpp: a Pixmap-type QQuickImageProvider
 	 * needs a QGuiApplication, and forcing offscreen keeps this runnable on a
 	 * headless runner without depending on the harness to set
 	 * QT_QPA_PLATFORM for us. */

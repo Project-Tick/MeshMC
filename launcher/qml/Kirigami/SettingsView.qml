@@ -75,7 +75,7 @@ KirigamiSettings.ConfigurationView {
         Module {
             moduleId: "general"
             text: i18nc("@action:button settings page", "General")
-            icon.name: "configure"
+            icon.name: "configure-symbolic"
             component: Component { SettingsGeneralPage { app: view.app; readonly property string moduleId: "general" } }
         },
         Module {
@@ -87,38 +87,38 @@ KirigamiSettings.ConfigurationView {
         Module {
             moduleId: "minecraft"
             text: i18nc("@action:button settings page", "Minecraft")
-            icon.name: "applications-games"
+            icon.name: "applications-games-symbolic"
             component: Component { SettingsMinecraftPage { app: view.app; readonly property string moduleId: "minecraft" } }
         },
         Module {
             moduleId: "console"
             text: i18nc("@action:button settings page", "Console")
-            icon.name: "utilities-terminal"
+            icon.name: "utilities-terminal-symbolic"
             component: Component { SettingsConsolePage { app: view.app; readonly property string moduleId: "console" } }
         },
         Module {
             moduleId: "appearance"
             text: i18nc("@action:button settings page", "Appearance")
-            icon.name: "preferences-desktop-theme-global"
+            icon.name: "preferences-desktop-theme-global-symbolic"
             component: Component { SettingsAppearancePage { app: view.app; readonly property string moduleId: "appearance" } }
         },
         Module {
             moduleId: "commands"
             text: i18nc("@action:button settings page", "Custom Commands")
-            icon.name: "system-run"
+            icon.name: "system-run-symbolic"
             component: Component { SettingsCommandsPage { app: view.app; readonly property string moduleId: "commands" } }
         },
         Module {
             moduleId: "plugins"
             text: i18nc("@action:button settings page", "Installed Plugins")
-            icon.name: "plugins"
+            icon.name: "plugins-symbolic"
             visible: !!view.shell && typeof view.shell.pluginList === "function" && !!view.shell.pluginList()
             component: Component { SettingsPluginsPage { app: view.app; readonly property string moduleId: "plugins" } }
         },
         Module {
             moduleId: "pluginsettings"
             text: i18nc("@action:button settings page", "Plugin Settings")
-            icon.name: "preferences-plugin"
+            icon.name: "preferences-plugin-symbolic"
             visible: view.surfaceCounter.count > 0
             component: Component {
                 FormCard.FormCardPage {
@@ -132,46 +132,46 @@ KirigamiSettings.ConfigurationView {
         Module {
             moduleId: "proxy"
             text: i18nc("@action:button settings page", "Proxy")
-            icon.name: "preferences-system-network-proxy"
+            icon.name: "preferences-system-network-symbolic"
             component: Component { SettingsProxyPage { app: view.app; readonly property string moduleId: "proxy" } }
         },
         Module {
             moduleId: "tools"
             text: i18nc("@action:button settings page", "External Tools")
-            icon.name: "tools"
+            icon.name: "tools-symbolic"
             component: Component { SettingsToolsPage { app: view.app; readonly property string moduleId: "tools" } }
         },
         Module {
             moduleId: "logupload"
             text: i18nc("@action:button settings page", "Log Upload")
-            icon.name: "cloud-upload"
+            icon.name: "cloud-upload-symbolic"
             component: Component { SettingsLogUploadPage { app: view.app; readonly property string moduleId: "logupload" } }
         },
         Module {
             moduleId: "logs"
             text: i18nc("@action:button settings page", "Launcher Logs")
-            icon.name: "text-x-log"
+            icon.name: "view-list-text-symbolic"
             visible: !!view.shell && !!view.shell.launcherLogs
             component: Component { SettingsLauncherLogsPage { app: view.app; readonly property string moduleId: "logs" } }
         },
         Module {
             moduleId: "updates"
             text: i18nc("@action:button settings page", "Updates")
-            icon.name: "update-none"
+            icon.name: "update-none-symbolic"
             visible: !!view.shell && !!view.shell.updateSettings && view.shell.updateSettings.available
             component: Component { SettingsUpdatesPage { app: view.app; readonly property string moduleId: "updates" } }
         },
         Module {
             moduleId: "about"
             text: i18nc("@action:button settings page", "About MeshMC")
-            icon.name: "help-about"
+            icon.name: "help-about-symbolic"
             category: i18nc("@title:group", "About")
             component: Component { AboutMeshMCPage { app: view.app; readonly property string moduleId: "about" } }
         },
         Module {
             moduleId: "aboutkde"
             text: i18nc("@action:button settings page", "About KDE")
-            icon.name: "kde"
+            icon.name: "kde-symbolic"
             category: i18nc("@title:group", "About")
             component: Component { FormCard.AboutKDEPage { readonly property string moduleId: "aboutkde" } }
         }

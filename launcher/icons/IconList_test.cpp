@@ -27,7 +27,7 @@
 /*
  * Covers IconList::roleNames() -- the QML-facing addition an icon picker
  * grid binds `key`/`name`/`isBuiltin` against (see
- * qml/Components/IconPickerDialog.qml) -- without needing the compiled
+ * qml/Kirigami/IconPickerDialog.qml) -- without needing the compiled
  * "meshmc" icon theme resource InstanceIconProvider_test.cpp needs for real
  * pixmaps: addThemeIcon()/addIcon() only touch the model's bookkeeping, never
  * render anything.

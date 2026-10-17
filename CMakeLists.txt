@@ -215,8 +215,8 @@ find_package(KF${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
     I18n
     GuiAddons
     # The QML shell's window, icons and motion (org.kde.kirigami), and
-    # KirigamiPlatform's C++ side, which the "system" colour scheme reads
-    # Plasma's colours through (launcher/qml/Theme/KirigamiColors.cpp).
+    # KirigamiPlatform's C++ side, through which QmlShell::load() finds
+    # Plasma's platform plugin on a Plasma session.
     Kirigami
     # The KDE interface (launcher/qml/Kirigami): the application's KAboutData,
     # which its About page reads, and Breeze icons by name on every platform
@@ -248,20 +248,20 @@ set_package_properties(Breeze PROPERTIES
     TYPE RUNTIME
     PURPOSE "The Breeze widget style and colour schemes of the KDE interface off Plasma")
 
-# Qt Quick 3D, for the optional roaming cat companion (launcher/qml/Cat/) --
+# Qt Quick 3D, for the optional 3D skin preview (launcher/qml/Preview3D/) --
 # never added to the required components above: unlike everything there, the
 # 6.4 floor must keep building without it, so it is looked for but not
-# required. MeshMC_ENABLE_CAT defaults to whatever was found, and is the one
-# switch that decides whether launcher/qml/CMakeLists.txt descends into
-# Cat/ at all; turning it OFF by hand skips the cat even when Quick3D is
-# present, but it can never turn ON what was not found.
+# required. MeshMC_ENABLE_SKIN_PREVIEW_3D defaults to whatever was found, and
+# is the one switch that decides whether launcher/qml/CMakeLists.txt descends
+# into Preview3D/ at all; turning it OFF by hand leaves the flat skin preview
+# even when Quick3D is present, but it can never turn ON what was not found.
 find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS Quick3D)
-option(MeshMC_ENABLE_CAT "Build the roaming 3D cat companion (needs Qt Quick 3D)" ${Qt${QT_VERSION_MAJOR}Quick3D_FOUND})
-if(MeshMC_ENABLE_CAT AND NOT Qt${QT_VERSION_MAJOR}Quick3D_FOUND)
-    message(WARNING "MeshMC_ENABLE_CAT is ON but Qt Quick3D was not found; building without the cat.")
-    set(MeshMC_ENABLE_CAT OFF)
+option(MeshMC_ENABLE_SKIN_PREVIEW_3D "Build the 3D skin preview (needs Qt Quick 3D)" ${Qt${QT_VERSION_MAJOR}Quick3D_FOUND})
+if(MeshMC_ENABLE_SKIN_PREVIEW_3D AND NOT Qt${QT_VERSION_MAJOR}Quick3D_FOUND)
+    message(WARNING "MeshMC_ENABLE_SKIN_PREVIEW_3D is ON but Qt Quick3D was not found; building the flat skin preview only.")
+    set(MeshMC_ENABLE_SKIN_PREVIEW_3D OFF)
 endif()
-message(STATUS "Cat companion (Qt Quick3D): ${MeshMC_ENABLE_CAT}")
+message(STATUS "3D skin preview (Qt Quick3D): ${MeshMC_ENABLE_SKIN_PREVIEW_3D}")
 
 if(UNIX)
     find_package(PkgConfig)
@@ -717,6 +717,16 @@ endif()
 
 if(APPLE AND QT_VERSION_MAJOR EQUAL 5)
     include("${CMAKE_SOURCE_DIR}/cmake/FixQt5MacBundle.cmake")
+endif()
+
+# The macOS bundle's last install step, once everything above (plugins
+# included) has put its files in: no library loaded from outside the bundle,
+# and everything signed. See cmake/MacBundleFinalize.cmake.
+if(APPLE)
+    install(CODE "
+        set(MESHMC_BUNDLE \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/MeshMC.app\")
+        include(\"${CMAKE_SOURCE_DIR}/cmake/MacBundleFinalize.cmake\")
+    ")
 endif()
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

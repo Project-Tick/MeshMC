@@ -33,6 +33,8 @@
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
 
+#include "qml/ColorSchemes.h"
+
 #include <functional>
 #include <memory>
 
@@ -43,11 +45,10 @@
  * built and at its resource path, its root window loads under the controls
  * style QmlShell gives it, and the window's navigation -- the one place every
  * page, the drawer and the C++ side go through -- opens what it is asked
- * for. Same shape as QmlModule_test, which keeps covering the custom design
- * until that is deleted.
+ * for, and the pages behind it.
  *
  * The URL is spelled out rather than using QQmlComponent::loadFromModule(),
- * which is Qt 6.5+; see QmlModule_test.cpp.
+ * which is Qt 6.5+ (the floor is 6.4; see launcher/qml/CMakeLists.txt).
  */
 
 /* A SettingsAdapter (the launcher's or one instance's), in memory: what
@@ -642,6 +643,43 @@ class KirigamiShellTest : public QObject
 	void initTestCase()
 	{
 		QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
+		// The font QmlShell::load() sets on this platform; see the test below.
+		ColorSchemes::applyOffscreenFont();
+	}
+
+	/* Kirigami.Theme's fonts as the pages get them on the offscreen
+	 * platform, where these tests and the review snapshots run: small text
+	 * came out larger than body text (13pt against a 9pt placeholder) until
+	 * ColorSchemes::applyOffscreenFont() -- see there. Real platforms give
+	 * the system's fonts by themselves (on macOS, 9pt against 13pt). */
+	void smallTextIsNoLargerThanBodyText()
+	{
+		QQuickWindow window; // never shown
+		QQmlEngine engine;
+		QQmlComponent component(&engine);
+		component.setData("import QtQuick\n"
+						  "import org.kde.kirigami as Kirigami\n"
+						  "Item {\n"
+						  "    property font body: Kirigami.Theme.defaultFont\n"
+						  "    property font small: Kirigami.Theme.smallFont\n"
+						  "}\n",
+						  QUrl(QStringLiteral("qrc:/test/Fonts.qml")));
+		std::unique_ptr<QObject> object(component.create());
+		QVERIFY2(object, qPrintable(component.errorString()));
+		// The platform plugin gives an item its fonts once it is in a window.
+		qobject_cast<QQuickItem*>(object.get())->setParentItem(window.contentItem());
+		QCoreApplication::processEvents();
+
+		const QFont body = object->property("body").value<QFont>();
+		const QFont small = object->property("small").value<QFont>();
+		QVERIFY(body.pointSizeF() > 0);
+		QVERIFY2(small.pointSizeF() <= body.pointSizeF(),
+				 qPrintable(QStringLiteral("small %1pt, body %2pt")
+								.arg(small.pointSizeF())
+								.arg(body.pointSizeF())));
+		// Body text is the application's font.
+		QCOMPARE(body.family(), QGuiApplication::font().family());
+		QCOMPARE(body.pointSizeF(), QGuiApplication::font().pointSizeF());
 	}
 
 	void rootWindowLoadsOnHome()
@@ -1330,7 +1368,7 @@ class KirigamiShellTest : public QObject
 
 int main(int argc, char* argv[])
 {
-	// Headless, as QmlModule_test is: a CI runner has no display.
+	// Headless: a CI runner has no display.
 	qputenv("QT_QPA_PLATFORM", "offscreen");
 
 	// The launcher's own domain and icon theme setup, as main() makes them.

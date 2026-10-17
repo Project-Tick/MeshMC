@@ -116,19 +116,32 @@ runs:
         esac
 
         echo "VCPKG_TRIPLET=$vcpkg_arch-$vcpkg_platform" >> "$GITHUB_ENV"
-    - name: Install Qt 6
-      if: ${{ inputs.msystem == '' && inputs.qt-major == '6' }}
-      uses: jurplel/install-qt-action@v4
+    # Qt, KDE Frameworks 6 and the rest of what the top-level CMakeLists.txt
+    # finds, on the platforms that have no package manager carrying KDE
+    # Frameworks: KDE Craft's binary cache, as KDE's own CI uses it. Linux
+    # gets them from Fedora and MinGW from MSYS2 (see their actions).
+    #
+    # The Qt modules: qtquick3d is the optional 3D skin preview's only extra
+    # Qt dependency; qtshadertools is listed alongside it because Quick3D
+    # bakes its shader variants through it at runtime. The KDE ones:
+    # find_package(KF6 ... COMPONENTS ...) plus what the KDE interface only
+    # loads at run time (qqc2-desktop-style, kirigami-addons, Plasma's
+    # breeze for its widget style and colour schemes). gpgmepp is
+    # MeshMC_PLUGIN_SIGNATURES, on by default everywhere but MSVC.
+    - name: Setup KDE Craft (macOS, Windows MSVC)
+      if: ${{ runner.os == 'macOS' || (runner.os == 'Windows' && inputs.msystem == '') }}
+      uses: ./.github/actions/setup-craft
       with:
-        aqtversion: "==3.1.*"
-        version: ${{ inputs.qt-version }}
-        # qtquick3d is the optional 3D cat companion's only extra Qt
-        # dependency (see launcher/qml/Cat/CMakeLists.txt); qtshadertools is
-        # listed alongside it because Quick3D bakes its shader variants
-        # through it at runtime, not only at build time, so it has to be
-        # present even though nothing here compiles a shader directly.
-        modules: qtimageformats qtnetworkauth qtquick3d qtshadertools
-        cache: ${{ inputs.build-type == 'Debug' }}
+        target: ${{ runner.os == 'Windows' && 'windows-msvc2026_64-cl' || (runner.arch == 'ARM64' && 'macos-arm-clang' || 'macos-64-clang') }}
+        root: ${{ runner.os == 'Windows' && 'C:/craft' || format('{0}/craft', runner.temp) }}
+        packages: >-
+          libs/qt6/qtbase libs/qt6/qtdeclarative libs/qt6/qtsvg libs/qt6/qttools
+          libs/qt6/qtimageformats libs/qt6/qtnetworkauth
+          libs/qt6/qtquick3d libs/qt6/qtshadertools
+          extra-cmake-modules ki18n kcoreaddons kguiaddons kirigami kiconthemes
+          breeze-icons kcolorscheme qqc2-desktop-style kirigami-addons breeze
+          cmark libarchive zlib
+          ${{ runner.os == 'macOS' && 'libs/gpgme/gpgmepp' || '' }}
 
     - name: Setup bundled OpenSSL
       uses: ./.github/actions/setup-openssl

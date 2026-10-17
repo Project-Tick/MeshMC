@@ -16,12 +16,19 @@ permissions: {}
 jobs:
   CodeQL:
     runs-on: ubuntu-latest
+    # Same Fedora as the Linux builds: it has KDE Frameworks 6 packaged
+    # (see .github/actions/setup-dependencies/linux).
+    container: fedora:44
 
     permissions:
       contents: read
       security-events: write
 
     steps:
+      # actions/checkout needs git for the submodules; Fedora's image has none.
+      - name: Install git
+        run: dnf -y install git-core
+
       - name: Checkout repository
         uses: actions/checkout@v7
         with:

@@ -64,6 +64,20 @@ runs:
           qt${{ inputs.qt-major }}-networkauth:p
           qt${{ inputs.qt-major }}-tools:p
           gpgme:p
+          cmark:p
+          libarchive:p
+          zlib:p
+          extra-cmake-modules:p
+          ki18n:p
+          kcoreaddons:p
+          kguiaddons:p
+          kirigami:p
+          kiconthemes:p
+          breeze-icons:p
+          kcolorscheme:p
+          qqc2-desktop-style:p
+          kirigami-addons:p
+          breeze:p
 
     - name: List pacman packages (MinGW)
       if: ${{ inputs.msystem != '' }}

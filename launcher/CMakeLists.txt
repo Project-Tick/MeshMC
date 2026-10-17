@@ -21,16 +21,6 @@ set(CORE_SOURCES
     core/InstancePathProblems.h
     core/InstancePathProblems.cpp
 
-    # WCAG 2.1 contrast math for the token-based theme. Confined to QtGui,
-    # same as the block above -- no QtWidgets, no ui/.
-    theme/Contrast.h
-    theme/Contrast.cpp
-    theme/ThemePalette.h
-    theme/ThemePalette.cpp
-    theme/ThemePaletteBuild.h
-    theme/SystemPalette.h
-    theme/SystemPalette.cpp
-
     # What the QML instance grid needs in place of the widget proxy and
     # QItemSelectionModel. Core, like the blocks above: no QtWidgets, no ui/.
     models/InstanceFilterModel.h
@@ -1384,17 +1374,6 @@ add_unit_test(PluginListModel
     LIBS MeshMC_logic
     )
 
-add_unit_test(Contrast
-    SOURCES theme/Contrast_test.cpp
-    LIBS MeshMC_logic
-    )
-
-# Links the core alone, not MeshMC_logic: the palette is core and this proves it.
-add_unit_test(ThemePalette
-    SOURCES theme/ThemePalette_test.cpp
-    LIBS MeshMC_core
-    )
-
 add_unit_test(InstanceFilterModel
     SOURCES models/InstanceFilterModel_test.cpp
     LIBS MeshMC_core
@@ -1865,45 +1844,26 @@ add_test(NAME CoreLinksWithoutQtWidgets COMMAND MeshMC_core_link_check)
 
 # Defined in its own directory so the module's resource aliases stay clean; see
 # launcher/qml/CMakeLists.txt for why. Kept as a separate target rather than
-# being attached to the application so that QmlModule_test can link the same
-# module and instantiate it headlessly -- attaching it to the executable would
-# bury the compiled .qml inside the app binary, out of reach of any test.
+# being attached to the application so that KirigamiShell_test can link the
+# same modules and instantiate them headlessly -- attaching them to the
+# executable would bury the compiled .qml inside the app binary, out of reach
+# of any test.
 add_subdirectory(qml)
 
-# Proves the QML toolchain end to end: module built, resources at the expected
-# prefix, engine can instantiate the root component. All three fail silently
-# otherwise -- a green build and an application that renders nothing.
-# MeshMC_qml is linked explicitly: it carries the compiled .qml resources and
-# puts the module plugins in the link closure, which is where
-# qt_import_qml_plugins looks for them. Relying on qmlimportscanner to find
-# them from the test's sources alone worked on macOS but left Main.qml out of
-# the resources on Linux.
-#
-# MeshMC_qmlplugin -- the root module's own plugin -- is linked by name too.
-# MeshMC_qml carries every submodule's plugin, but cannot carry its own (the
-# plugin links MeshMC_qml), so only qt_import_qml_plugins below would bring it
-# in -- and that quietly does nothing where qmlimportscanner is not a target or
-# libraries are built shared (a distribution's own Qt on Linux), leaving
-# 'plugin "MeshMC_qmlplugin" not found' at runtime.
-add_unit_test(QmlModule
-    SOURCES qml/QmlModule_test.cpp
-    LIBS MeshMC_qml MeshMC_qmlplugin Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Gui
-    )
-
-# qt_add_qml_module builds the module as a static library plus a separate QML
-# plugin, and the engine refuses the module without it. qt_add_executable would
-# emit the import automatically during finalization, but add_unit_test uses a
-# plain add_executable, so it has to be asked for by hand -- otherwise the test
-# links and then fails at runtime with 'plugin "MeshMC_qmlplugin" not found'.
-qt_import_qml_plugins(QmlModule_test)
-
-# The same proof for the KDE interface (MeshMC.Kirigami), which QmlShell
-# loads, plus its window's navigation. Linked the same way, for the same
-# reasons, as QmlModule above.
+# Proves the QML toolchain end to end for the KDE interface (MeshMC.Kirigami),
+# which QmlShell loads: module built, resources at the expected prefix, engine
+# can instantiate the root window -- all three fail silently otherwise, a green
+# build and an application that renders nothing -- plus its window's
+# navigation and pages. MeshMC_qml is linked explicitly: it carries the
+# compiled .qml resources and every module's plugin, by name (see
+# launcher/qml/CMakeLists.txt), so the engine finds them on every platform.
 add_unit_test(KirigamiShell
     SOURCES qml/KirigamiShell_test.cpp
-    LIBS MeshMC_qml MeshMC_qmlplugin KF${QT_VERSION_MAJOR}::IconThemes Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Gui
+    LIBS MeshMC_qml KF${QT_VERSION_MAJOR}::IconThemes Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Gui
     )
+# add_unit_test uses a plain add_executable, which -- unlike qt_add_executable
+# -- never imports static QML plugins on its own; this imports whatever the
+# link closure has, including a static Qt's own.
 qt_import_qml_plugins(KirigamiShell_test)
 
 # MeshMC_logic rather than the core: the built-in icons are compiled from
@@ -1959,15 +1919,11 @@ add_executable(MeshMC MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
 target_link_libraries(MeshMC PRIVATE MeshMC_logic)
 # main() sets up KIconThemes for the QML shell before the QApplication exists.
 target_link_libraries(MeshMC PRIVATE KF${QT_VERSION_MAJOR}::IconThemes)
-# The root QML module's own plugin, by name, for the same reason as in
-# QmlModule_test above: qt_import_qml_plugins below may do nothing on a
-# distribution's Qt, and the shell would then fall back to the widgets.
-target_link_libraries(MeshMC PRIVATE MeshMC_qmlplugin)
 
-# Same reason as QmlModule_test: MeshMC_qml is a static QML module with a
-# separate plugin, and a plain add_executable does not import it. Without this
-# the launcher links and then fails at runtime with 'plugin "MeshMC_qmlplugin"
-# not found' the moment the QML shell loads.
+# Same reason as KirigamiShell_test: a plain add_executable does not import
+# static QML plugins by itself. Our own modules' plugins already come through
+# MeshMC_qml by name (see launcher/qml/CMakeLists.txt); this covers whatever
+# else the link closure has.
 qt_import_qml_plugins(MeshMC)
 
 # Export all symbols so dlopen()'ed .mmco plugins can resolve launcher symbols at runtime
@@ -2166,6 +2122,83 @@ endif()
 # Bundle utilities are used to complete the portable packages - they add all the libraries that would otherwise be missing on the target system.
 # NOTE: it seems that this absolutely has to be here, and nowhere else.
 if(WIN32 OR (UNIX AND APPLE))
+    # Qt plugins the KDE interface loads by name at run time. Nothing links
+    # them, and neither deploy tool finds them: both copy only the plugin
+    # types they know, and macdeployqt only .dylib files, where KDE builds .so
+    # modules.
+    #   styles/breeze6             Breeze, the QStyle org.kde.desktop draws through
+    #   kf6/kirigami/platform      Kirigami's desktop integration (org.kde.desktop)
+    #   kiconthemes6/iconengines   KIconThemes' icon engine
+    #   kf6/ktranscript            KI18n's scripted translations
+    #   kf6/sonnet                 the system spell checker, for org.kde.desktop's text fields
+    #   platforms/libqoffscreen    (macOS) headless runs of the package, e.g. smoke tests
+    # They go where the deploy tool puts Qt's own plugins, on the same
+    # relative path -- macOS: Contents/PlugIns, which Qt always searches in a
+    # bundle; Windows: PLUGIN_DEST_DIR, qt.conf's Plugins. What they link is
+    # resolved further down, per platform.
+    if(APPLE)
+        set(_kde_plugin_suffix ".so")
+        set(MESHMC_KDE_PLUGINS_DEST "MeshMC.app/Contents/PlugIns")
+    else()
+        set(_kde_plugin_suffix ".dll")
+        set(MESHMC_KDE_PLUGINS_DEST "${PLUGIN_DEST_DIR}")
+    endif()
+    set(_kde_plugin_patterns
+        "styles/breeze6${_kde_plugin_suffix}"
+        "kf6/kirigami/platform/org.kde.desktop${_kde_plugin_suffix}"
+        "kiconthemes6/iconengines/KIconEnginePlugin${_kde_plugin_suffix}"
+        "kf6/ktranscript${_kde_plugin_suffix}"
+        "kf6/sonnet/sonnet_*spellchecker${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    )
+    if(APPLE)
+        list(APPEND _kde_plugin_patterns "platforms/libqoffscreen.dylib")
+    endif()
+    set(MESHMC_KDE_PLUGIN_FILES "")
+    foreach(_kde_plugin_pattern IN LISTS _kde_plugin_patterns)
+        file(GLOB _kde_plugins LIST_DIRECTORIES false RELATIVE "${QT_PLUGINS_DIR}"
+            "${QT_PLUGINS_DIR}/${_kde_plugin_pattern}")
+        if(NOT _kde_plugins)
+            message(WARNING
+                "${_kde_plugin_pattern} is not in ${QT_PLUGINS_DIR}; "
+                "the package ships without it.")
+        endif()
+        foreach(_kde_plugin IN LISTS _kde_plugins)
+            get_filename_component(_kde_plugin_dir "${_kde_plugin}" DIRECTORY)
+            get_filename_component(_kde_plugin_name "${_kde_plugin}" NAME)
+            file(REAL_PATH "${QT_PLUGINS_DIR}/${_kde_plugin}" _kde_plugin_file)
+            install(FILES "${_kde_plugin_file}"
+                DESTINATION "${MESHMC_KDE_PLUGINS_DEST}/${_kde_plugin_dir}"
+                RENAME "${_kde_plugin_name}")
+            list(APPEND MESHMC_KDE_PLUGIN_FILES "${_kde_plugin}")
+        endforeach()
+    endforeach()
+
+    # The colour schemes the KDE interface offers off Plasma
+    # (qml/ColorSchemes.cpp), where Qt looks for GenericDataLocation in a
+    # package: macOS Contents/Resources (KDE Craft's Qt), Windows data/ next
+    # to the executable -- KDE's own layout there, share/ being bin/data/.
+    # KColorScheme carries Breeze Light and Dark compiled in, so those two
+    # survive without them.
+    set(_color_scheme_hints "")
+    foreach(_prefix IN LISTS CMAKE_PREFIX_PATH ITEMS "${QT_QML_DIR}/.." "${QT_QML_DIR}/../../..")
+        list(APPEND _color_scheme_hints
+            "${_prefix}/share/color-schemes" "${_prefix}/bin/data/color-schemes")
+    endforeach()
+    find_path(MeshMC_COLOR_SCHEMES_DIR BreezeLight.colors HINTS ${_color_scheme_hints})
+    file(GLOB _color_schemes "${MeshMC_COLOR_SCHEMES_DIR}/*.colors")
+    if(APPLE)
+        set(_color_schemes_dest "${RESOURCES_DEST_DIR}/color-schemes")
+    else()
+        set(_color_schemes_dest "${BINARY_DEST_DIR}/data/color-schemes")
+    endif()
+    if(_color_schemes)
+        install(FILES ${_color_schemes} DESTINATION "${_color_schemes_dest}")
+    else()
+        message(WARNING
+            "No KDE colour schemes (color-schemes/*.colors, from Breeze) found; "
+            "the package only offers Breeze Light and Dark.")
+    endif()
+
     if(WIN32)
         # Find windeployqt directly — Qt's qt_generate_deploy_script tries to find
         # windeployqt.debug.bat for Debug builds, which may not be available.
@@ -2245,8 +2278,8 @@ if(WIN32 OR (UNIX AND APPLE))
         # --release even when the app itself is built in Debug mode.
         #
         # --qmldir points windeployqt at our QML sources so qmlimportscanner
-        # can see what our own qt_add_qml_module() modules import (MeshMC,
-        # MeshMC.Theme, MeshMC.Style and MeshMC.Components are compiled into
+        # can see what our own qt_add_qml_module() modules import
+        # (MeshMC.Kirigami and MeshMC.Preview3D are compiled into
         # meshmc.exe as static QML modules, but the Qt-provided modules they
         # import -- QtQuick, QtQuick.Controls, QtQml, ... -- are not, and
         # still have to be deployed as plugins). --no-quick-import used to be
@@ -2260,6 +2293,15 @@ if(WIN32 OR (UNIX AND APPLE))
             --no-translations
             --no-compiler-runtime
         )
+        # The KDE interface's controls style, which nothing imports: it is
+        # asked for by name (see the qmlimportscanner call for macOS below).
+        if(EXISTS "${QT_QML_DIR}/org/kde/desktop/qmldir")
+            list(APPEND WINDEPLOYQT_OPTIONS --qmldir "${QT_QML_DIR}/org/kde/desktop")
+        else()
+            message(WARNING
+                "org.kde.desktop (qqc2-desktop-style) is not in ${QT_QML_DIR}: "
+                "the package will draw the KDE interface with Qt's Basic style.")
+        endif()
         if(_windeployqt_help MATCHES "no-system-dxc-compiler")
             list(APPEND WINDEPLOYQT_OPTIONS --no-system-dxc-compiler)
         else()
@@ -2304,9 +2346,9 @@ if(WIN32 OR (UNIX AND APPLE))
         # qt_deploy_runtime_dependencies() below only follows *linked*
         # libraries and Qt's regular (dlopen()'d-by-plugin-type) plugins; it
         # does not know about QML modules, which are dlopen()'d by URI at
-        # run time. Our own modules (MeshMC, MeshMC.Theme, MeshMC.Style,
-        # MeshMC.Components) are compiled into meshmc itself via
-        # qt_import_qml_plugins() and need nothing here. The modules those
+        # run time. Our own modules (MeshMC.Kirigami, MeshMC.Preview3D) are
+        # compiled into meshmc itself, linked through MeshMC_qml, and need
+        # nothing here. The modules those
         # import from Qt -- QtQuick, QtQuick.Controls, QtQml, ... -- are not
         # compiled in and are otherwise entirely missing from the bundle.
         #
@@ -2337,9 +2379,24 @@ if(WIN32 OR (UNIX AND APPLE))
                 "modules to bundle into MeshMC.app.")
         endif()
 
+        # The Qt Quick Controls style the KDE interface asks for by name
+        # (QQuickStyle::setStyle("org.kde.desktop") in QmlShell::load())
+        # is never imported, so the scanner only finds it -- and what it
+        # imports, org.kde.desktop.private, org.kde.sonnet, ... -- when it
+        # is scanned as a root of its own. KDE Frameworks install their QML
+        # modules next to Qt's on macOS (KDE Craft), hence QT_QML_DIR.
+        set(_qml_scan_roots -rootPath "${CMAKE_CURRENT_SOURCE_DIR}/qml")
+        if(EXISTS "${QT_QML_DIR}/org/kde/desktop/qmldir")
+            list(APPEND _qml_scan_roots -rootPath "${QT_QML_DIR}/org/kde/desktop")
+        else()
+            message(WARNING
+                "org.kde.desktop (qqc2-desktop-style) is not in ${QT_QML_DIR}: "
+                "MeshMC.app will draw the KDE interface with Qt's Basic style.")
+        endif()
+
         execute_process(
             COMMAND "${QMLIMPORTSCANNER_EXECUTABLE}"
-                -rootPath "${CMAKE_CURRENT_SOURCE_DIR}/qml"
+                ${_qml_scan_roots}
                 -importPath "${QT_QML_DIR}"
             OUTPUT_VARIABLE _qml_scan_json
             RESULT_VARIABLE _qml_scan_result
@@ -2394,6 +2451,16 @@ if(WIN32 OR (UNIX AND APPLE))
             endforeach()
         endforeach()
 
+        # The KDE plugins installed above, and the crash reporter -- linked
+        # like meshmc itself (KI18n), but outside macdeployqt's view.
+        foreach(_kde_plugin IN LISTS MESHMC_KDE_PLUGIN_FILES)
+            list(APPEND MESHMC_QT_QML_PLUGIN_FILES "${MESHMC_KDE_PLUGINS_DEST}/${_kde_plugin}")
+        endforeach()
+        if(TARGET meshmc-crashreporter)
+            list(APPEND MESHMC_QT_QML_PLUGIN_FILES
+                "${BINARY_DEST_DIR}/$<TARGET_FILE_NAME:meshmc-crashreporter>")
+        endif()
+
         # Pre-render as one quoted argument per line, same reason as
         # WINDEPLOYQT_OPTIONS_CODE above: splicing the list directly into the
         # CONTENT string would paste it in semicolon-separated.
@@ -2423,6 +2490,11 @@ if(WIN32 OR (UNIX AND APPLE))
             # time it inspects ${MESHMC_QT_QML_PLUGIN_FILES}, those files
             # already exist at their *installed* location -- install rules
             # run in registration order within a directory.
+            #
+            # A subdirectory that is *not* a module (no qmldir) belongs to
+            # this one, though, and is copied whole: Kirigami's controls load
+            # their QML from disk and `import "private"` from beside it.
+            # designer/ is Qt Design Studio's, never loaded at run time.
             install(CODE "
                 file(GLOB _qml_module_files LIST_DIRECTORIES false
                     \"${QT_QML_DIR}/${_qml_module}/*\")
@@ -2432,6 +2504,16 @@ if(WIN32 OR (UNIX AND APPLE))
                         FOLLOW_SYMLINK_CHAIN
                     )
                 endif()
+                file(GLOB _qml_module_entries LIST_DIRECTORIES true
+                    \"${QT_QML_DIR}/${_qml_module}/*\")
+                foreach(_qml_module_dir IN LISTS _qml_module_entries)
+                    if(IS_DIRECTORY \"\${_qml_module_dir}\"
+                       AND NOT EXISTS \"\${_qml_module_dir}/qmldir\"
+                       AND NOT _qml_module_dir MATCHES \"/designer$\")
+                        file(INSTALL \"\${_qml_module_dir}\"
+                            DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${QML_DEST_DIR}/${_qml_module}\")
+                    endif()
+                endforeach()
             ")
         endforeach()
 
@@ -2443,9 +2525,9 @@ if(WIN32 OR (UNIX AND APPLE))
         # follows *linked* libraries and Qt's regular
         # (dlopen()'d-by-plugin-type) plugins; it does not know about QML
         # modules, which are dlopen()'d by URI at run time. Our own modules
-        # (MeshMC, MeshMC.Theme, MeshMC.Style, MeshMC.Components) are
-        # compiled into meshmc itself via qt_import_qml_plugins() and need
-        # nothing here. The Qt QML plugins copied in just above are not
+        # (MeshMC.Kirigami, MeshMC.Preview3D) are compiled into meshmc
+        # itself, linked through MeshMC_qml, and need nothing here. The Qt
+        # (and KDE) QML plugins copied in just above are not
         # compiled in, though, and have dependencies of their own (e.g.
         # libqtquickcontrols2plugin.dylib needs QtQuickControls2Impl.framework)
         # that nothing linked into meshmc itself pulls in -- ADDITIONAL_LIBRARIES
@@ -2522,6 +2604,13 @@ if(WIN32 OR (UNIX AND APPLE))
         endforeach()
     endif()
     list(REMOVE_DUPLICATES _prefix_path_bins)
+    # Not on macOS: macdeployqt above already copied every non-system library
+    # meshmc links, with install names rewritten to point into the bundle.
+    # This ran after it and copied the same files again, unrewritten, over
+    # those -- harmless with a Qt whose libraries all say @rpath, but with
+    # KDE Craft's (absolute install names) it left the bundle loading Qt and
+    # KDE Frameworks from the build machine's Craft prefix.
+    if(NOT APPLE)
     install(
         RUNTIME_DEPENDENCY_SET LAUNCHER_DEPENDENCY_SET
         DIRECTORIES
@@ -2539,6 +2628,7 @@ if(WIN32 OR (UNIX AND APPLE))
         RUNTIME DESTINATION ${BINARY_DEST_DIR}
         FRAMEWORK DESTINATION ${FRAMEWORK_DEST_DIR}
     )
+    endif()
 
     if(WIN32)
         # Deploy Qt plugins and DLLs using windeployqt. WINDEPLOYQT_OPTIONS is
@@ -2555,6 +2645,26 @@ if(WIN32 OR (UNIX AND APPLE))
             if(NOT _deploy_result EQUAL 0)
                 message(FATAL_ERROR \"windeployqt failed with exit code: \${_deploy_result}\")
             endif()
+        ")
+
+        # What the QML modules windeployqt just deployed and the KDE plugins
+        # installed above link besides Qt: see cmake/WinDeployRuntime.cmake.
+        set(_kde_scan "${QML_DEST_DIR}")
+        foreach(_kde_plugin IN LISTS MESHMC_KDE_PLUGIN_FILES)
+            list(APPEND _kde_scan "${MESHMC_KDE_PLUGINS_DEST}/${_kde_plugin}")
+        endforeach()
+        if(MSVC)
+            set(_kde_scan_tool dumpbin)
+        else()
+            set(_kde_scan_tool objdump)
+        endif()
+        install(CODE "
+            set(MESHMC_DEPLOY_PREFIX \"\${CMAKE_INSTALL_PREFIX}\")
+            set(MESHMC_DEPLOY_BIN \"${BINARY_DEST_DIR}\")
+            set(MESHMC_DEPLOY_SCAN \"${_kde_scan}\")
+            set(MESHMC_DEPLOY_SEARCH \"${_qt_bin_dir};${_qt_install_bins};${_prefix_path_bins}\")
+            set(MESHMC_DEPLOY_TOOL \"${_kde_scan_tool}\")
+            include(\"${CMAKE_SOURCE_DIR}/cmake/WinDeployRuntime.cmake\")
         ")
 
         #################### OpenSSL runtime (Windows) ####################
@@ -2638,9 +2748,10 @@ if(WIN32 OR (UNIX AND APPLE))
     install(
         CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}/qt.conf\" \"[Paths]\nPlugins = ${QT_CONF_PLUGINS_DEST}\nQmlImports = ${QT_CONF_QML_DEST}\n\")"
     )
-    # Add qtlogging.ini as a config file
+    # Add qtlogging.ini as a config file. Relative, so `cmake --install
+    # --prefix` honours it (CMAKE_INSTALL_PREFIX here is the configure-time one).
     install(
         FILES "qtlogging.ini"
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/${RESOURCES_DEST_DIR}
+        DESTINATION ${RESOURCES_DEST_DIR}
     )
 endif()

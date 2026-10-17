@@ -7,13 +7,13 @@ import org.kde.kirigami as Kirigami
 
 /*
  * A skin on a player, as large as the box it is given: in 3D, turned by
- * dragging, where the build has Qt Quick3D (`catAvailable`, MESHMC_HAS_CAT)
- * and the window draws through a 3D graphics API -- the model is
- * Cat/SkinPreview3D.qml, loaded by url so this module needs no Quick3D of
- * its own -- and otherwise the flat front view (`flatSource`,
- * image://accountface/body/<id> and friends). Qt Quick3D draws nothing
- * through the software renderer, which the offscreen review snapshots use,
- * so they show the flat view.
+ * dragging, where the build has Qt Quick3D (`preview3DAvailable`,
+ * MESHMC_HAS_SKIN_PREVIEW_3D) and the window draws through a 3D graphics
+ * API -- the model is MeshMC.Preview3D's SkinPreview3D.qml, loaded by url so
+ * this module needs no Quick3D of its own -- and otherwise the flat front
+ * view (`flatSource`, image://accountface/body/<id> and friends). Qt
+ * Quick3D draws nothing through the software renderer, which the offscreen
+ * review snapshots use, so they show the flat view.
  *
  * On the View colours, as a document area, so a dark skin still stands
  * off its background.
@@ -27,10 +27,10 @@ Rectangle {
     property bool slim: false
     property url capeTexture
     property bool elytra: false
-    property bool catAvailable: false
+    property bool preview3DAvailable: false
 
     readonly property bool hasSkin: preview.skinTexture.toString().length > 0
-    readonly property bool threeD: preview.catAvailable && preview.hasSkin
+    readonly property bool threeD: preview.preview3DAvailable && preview.hasSkin
                                    && GraphicsInfo.api !== GraphicsInfo.Software
                                    && GraphicsInfo.api !== GraphicsInfo.Unknown
                                    && model.status !== Loader.Error
@@ -53,9 +53,9 @@ Rectangle {
         id: model
         anchors.fill: parent
         anchors.margins: Kirigami.Units.largeSpacing
-        active: preview.catAvailable && preview.hasSkin
+        active: preview.preview3DAvailable && preview.hasSkin
                 && GraphicsInfo.api !== GraphicsInfo.Software && GraphicsInfo.api !== GraphicsInfo.Unknown
-        source: active ? "qrc:/qt/qml/MeshMC/Cat/SkinPreview3D.qml" : ""
+        source: active ? "qrc:/qt/qml/MeshMC/Preview3D/SkinPreview3D.qml" : ""
         onLoaded: {
             item.skinTexture = Qt.binding(() => preview.skinTexture)
             item.slim = Qt.binding(() => preview.slim)

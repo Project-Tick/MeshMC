@@ -54,7 +54,7 @@ Delegates.RoundedItemDelegate {
             opacity: row.enabledComponent ? 1 : 0.6
             icon.name: row.problem === "error" ? "dialog-error"
                      : row.problem === "warning" ? "dialog-warning"
-                     : row.model.uid === "net.minecraft" ? "applications-games" : "package-x-generic"
+                     : row.model.uid === "net.minecraft" ? "applications-games-symbolic" : "package-symbolic"
             icon.width: Kirigami.Units.iconSizes.medium
             icon.height: Kirigami.Units.iconSizes.medium
         }

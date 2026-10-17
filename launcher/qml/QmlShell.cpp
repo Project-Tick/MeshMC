@@ -87,7 +87,6 @@
 #include "qml/ModIconProvider.h"
 #include "qml/QmlUiHost.h"
 #include "qml/ScreenshotThumbnailProvider.h"
-#include "qml/Theme/KirigamiColors.h"
 #include "core/LauncherContext.h"
 #include "minecraft/auth/AccountList.h"
 #include "minecraft/mod/ModIconCache.h"
@@ -102,8 +101,7 @@ namespace
 {
 	/* Spelled out rather than loadFromModule(), which is Qt 6.5+; the floor is
 	 * 6.4. The module sets RESOURCE_PREFIX "/qt/qml" so this path is stable.
-	 * The KDE interface (launcher/qml/Kirigami); the custom design's
-	 * MeshMC/Main.qml is still built, but no longer loaded. */
+	 * The KDE interface (launcher/qml/Kirigami). */
 	const QUrl kRootUrl(QStringLiteral("qrc:/qt/qml/MeshMC/Kirigami/Main.qml"));
 
 	/* The application as KDE frameworks describe it: FormCard's AboutPage
@@ -1141,21 +1139,21 @@ QVariantMap QmlShell::rootProperties()
 				 QVariant::fromValue(expose(m_selection.get())));
 	props.insert(QStringLiteral("shell"), QVariant::fromValue(expose(this)));
 	/* MESHMC_QML_ROUTE opens a given screen at startup -- see
-	 * Main.qml's applyDevRoute(). With MESHMC_QML_SNAPSHOT it lets a
+	 * Kirigami/DevRoute.qml. With MESHMC_QML_SNAPSHOT it lets a
 	 * review script picture any page without editing the QML. */
 	props.insert(QStringLiteral("devRoute"),
 				 qEnvironmentVariable("MESHMC_QML_ROUTE"));
-	/* Whether launcher/qml/Cat (the roaming cat companion) was built at
+	/* Whether launcher/qml/Preview3D (the 3D skin preview) was built at
 	 * all -- a compile-time fact, not a setting, so it is a plain bool
-	 * handed over once here rather than a Q_PROPERTY. Main.qml's catLoader
-	 * and SettingsPage's Cat group both gate on this: MESHMC_HAS_CAT is
-	 * only ever defined when launcher/qml/CMakeLists.txt actually linked
-	 * MeshMC_qml_cat in (see its MeshMC_ENABLE_CAT guard), which itself
-	 * only happens when Qt Quick3D was found. */
-#ifdef MESHMC_HAS_CAT
-	props.insert(QStringLiteral("catAvailable"), true);
+	 * handed over once here rather than a Q_PROPERTY. The skin page's
+	 * PlayerPreview gates on it: MESHMC_HAS_SKIN_PREVIEW_3D is only ever
+	 * defined when launcher/qml/CMakeLists.txt actually linked
+	 * MeshMC_qml_preview3d in (see its MeshMC_ENABLE_SKIN_PREVIEW_3D
+	 * guard), which itself only happens when Qt Quick3D was found. */
+#ifdef MESHMC_HAS_SKIN_PREVIEW_3D
+	props.insert(QStringLiteral("preview3DAvailable"), true);
 #else
-	props.insert(QStringLiteral("catAvailable"), false);
+	props.insert(QStringLiteral("preview3DAvailable"), false);
 #endif
 	return props;
 }
@@ -1265,8 +1263,10 @@ bool QmlShell::load()
 
 	/* The colour scheme off Plasma, before the first frame is drawn: the one
 	 * UiColorScheme names, or the system's light or dark appearance while
-	 * it names none. A choice made later is kept in the same setting. */
+	 * it names none. A choice made later is kept in the same setting. On
+	 * the offscreen platform the font too (see applyOffscreenFont()). */
 	m_colorSchemes = std::make_unique<ColorSchemes>();
+	ColorSchemes::applyOffscreenFont();
 	m_colorSchemes->choose(LAUNCHER->settings()->get("UiColorScheme").toString());
 	connect(m_colorSchemes.get(), &ColorSchemes::chosenChanged, this, [this]() {
 		LAUNCHER->settings()->set("UiColorScheme", m_colorSchemes->chosen());
@@ -1284,10 +1284,10 @@ bool QmlShell::load()
 	 * Kirigami.Units' animation speed -- from the plugin named by the style
 	 * above: org.kde.desktop names its own. A style forced through
 	 * QT_QUICK_CONTROLS_STYLE may name none; on a Plasma session, name the
-	 * desktop's (see KirigamiColors::desktopPlugin()) through the engine
+	 * desktop's (see ColorSchemes::desktopPlugin()) through the engine
 	 * property Kirigami reads for exactly this, so both still follow the
 	 * user's Plasma settings. */
-	if (const QString plugin = KirigamiColors::desktopPlugin(); !plugin.isEmpty())
+	if (const QString plugin = ColorSchemes::desktopPlugin(); !plugin.isEmpty())
 		m_engine->setProperty("_kirigamiTheme", plugin);
 	/* i18n(), i18nc(), i18np() and i18ncp() for every .qml file, translated
 	 * in the same "meshmc" domain as the C++ side (see main.cpp). */

@@ -88,7 +88,7 @@ QQC2.Popup {
             anchors.centerIn: parent
             width: parent.width - Kirigami.Units.gridUnit * 8
             visible: picture.status === Image.Error
-            icon.name: "image-missing"
+            icon.name: "image-missing-symbolic"
             text: i18n("This picture could not be loaded")
         }
 

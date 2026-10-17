@@ -21,6 +21,35 @@ Contributions are welcome from all. This repository is managed in [GitHub](https
 
 If you want to build the launcher yourself, check [this wiki page](https://projecttick.org/wiki/development/build-instructions) for build instructions.
 
+#### Fedora
+
+Fedora (44 or newer) packages everything the build needs, KDE Frameworks 6 included, except Java 17:
+Fedora's own JDK is too new for the Java helpers, so it comes from Adoptium's repository.
+
+```sh
+sudo dnf install gcc-c++ cmake ninja-build git extra-cmake-modules \
+  qt6-qtbase-devel qt6-qtbase-private-devel qt6-qtdeclarative-devel qt6-qtsvg-devel \
+  qt6-qtnetworkauth-devel qt6-qtquick3d-devel qt6-qtshadertools-devel \
+  qt6-qtimageformats qt6-qttools-devel \
+  kf6-ki18n-devel kf6-kcoreaddons-devel kf6-kguiaddons-devel kf6-kirigami-devel \
+  kf6-kiconthemes-devel kf6-breeze-icons-devel kf6-kcolorscheme-devel \
+  kf6-qqc2-desktop-style kf6-kirigami-addons-devel plasma-breeze-qt6 \
+  cmark-devel libarchive-devel zlib-ng-compat-devel gpgmepp-devel \
+  scdoc gamemode-devel tomlplusplus-devel qrencode-devel
+sudo dnf install adoptium-temurin-java-repository
+sudo dnf config-manager setopt adoptium-temurin-java-repository.enabled=1
+sudo dnf install temurin-17-jdk
+
+export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk
+cmake --preset linux
+cmake --build --preset linux --config Release
+MESHMC_QML_UI=1 ./build/Release/meshmc   # the KDE interface
+```
+
+The build does not fail without `kf6-qqc2-desktop-style`, `kf6-kirigami-addons-devel` and `plasma-breeze-qt6`,
+but the KDE interface needs them at run time (its controls style, its context menus and About page, and Breeze
+off Plasma); a Plasma desktop already has them.
+
 ### Code formatting
 Just follow the existing formatting.
 

@@ -951,26 +951,10 @@ void Application::initSettings()
 	// Theming
 	m_settings->registerSetting("IconTheme", QString("breeze_dark"));
 	m_settings->registerSetting("ApplicationTheme", QString("system"));
-	// The QML interface's own light/dark choice; the widget theme above
-	// keeps its separate list of themes. "system" by default, like the
-	// palette: someone who picks Grass on a light desktop gets light Grass.
-	m_settings->registerSetting("UiThemeMode", QString("system"));
-	// Colour scheme of the QML interface: system (the desktop's own colours,
-	// the default), grass, amethyst, ember or diamond. A scheme someone picked
-	// is written to the config, so it stays theirs; only the unpicked default
-	// moved from grass to system.
-	m_settings->registerSetting("UiPalette", QString("system"));
 	// The KDE interface's colour scheme off Plasma, by id ("BreezeDark"...);
 	// empty follows the system's light or dark appearance. See ColorSchemes.
 	m_settings->registerSetting("UiColorScheme", QString());
-	// The QML interface's font (Settings > Appearance).
-	m_settings->registerSetting("UiFontFamily", QString("Inter"));
 	m_settings->registerSetting("UiSidebarCollapsed", false);
-	// Stops decorative loops (Play sheen, the cat's idle moves) for people
-	// who find motion distracting.
-	m_settings->registerSetting("UiReduceMotion", false);
-	m_settings->registerSetting("CatEnabled", true);
-	m_settings->registerSetting("CatVariant", QString("calico"));
 
 	/* Screen-top menu bar. Only macOS has one; elsewhere the setting is
 	 * carried but never acted on. The second key is what this shipped as

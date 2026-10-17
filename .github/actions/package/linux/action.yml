@@ -46,24 +46,59 @@ runs:
     - name: Setup build variables
       shell: bash
       run: |
-        # Fixup architecture naming for AppImages
-        dpkg_arch="$(dpkg-architecture -q DEB_HOST_ARCH_CPU)"
-        case "$dpkg_arch" in
-          "amd64")
-            APPIMAGE_ARCH="x86_64"
-            ;;
-          "arm64")
-            APPIMAGE_ARCH="aarch64"
-            ;;
+        # AppImage architecture naming (the build runs in a Fedora container,
+        # so no dpkg-architecture)
+        APPIMAGE_ARCH="$(uname -m)"
+        case "$APPIMAGE_ARCH" in
+          x86_64|aarch64) ;;
           *)
-            echo "# 🚨 The Debian architecture \"$deb_arch\" is not recognized!" >> "$GITHUB_STEP_SUMMARY"
+            echo "# 🚨 The architecture \"$APPIMAGE_ARCH\" is not recognized!" >> "$GITHUB_STEP_SUMMARY"
             exit 1
             ;;
         esac
         echo "APPIMAGE_ARCH=$APPIMAGE_ARCH" >> "$GITHUB_ENV"
 
-        # Used for the file paths of libraries
-        echo "DEB_HOST_MULTIARCH=$(dpkg-architecture -q DEB_HOST_MULTIARCH)" >> "$GITHUB_ENV"
+    # Qt's own QML modules (QtQuick, QtQuick.Controls, ...) and KDE's
+    # (org.kde.kirigami, ...) live in $QT_INSTALL_QML, a directory *sibling
+    # to* $QT_PLUGIN_PATH -- the "$QT_PLUGIN_PATH"/*/*.so glob of the package
+    # steps never reaches them. This finds the modules launcher/qml/ imports
+    # (qmlimportscanner), plus the org.kde.desktop controls style, which the
+    # KDE interface asks for by name and nothing imports, and the plugins and
+    # data the KDE interface loads at run time:
+    #   styles/breeze6, kf6/ktranscript  already in the */*.so glob
+    #   kf6/kirigami/platform            Kirigami's desktop integration
+    #   kiconthemes6/iconengines         KIconThemes' icon engine
+    #   kf6/sonnet                       spell checking in text fields
+    #   share/color-schemes              Breeze's colour schemes; sharun puts
+    #                                    the AppDir's share/ on XDG_DATA_DIRS
+    # Both package steps below copy what it lists.
+    - name: Find the QML modules and KDE runtime pieces
+      shell: bash
+      run: |
+        qt_root="$(dirname "${QT_PLUGIN_PATH%/}")"
+        QT_QML_PATH="$qt_root/qml"
+        qmlimportscanner_bin="$(find "$qt_root" -name qmlimportscanner -type f | head -1)"
+        if [[ -z "$qmlimportscanner_bin" ]]; then
+          echo "::error::qmlimportscanner not found under $qt_root; cannot determine which Qt QML modules to bundle."
+          exit 1
+        fi
+        scan_roots=(-rootPath launcher/qml)
+        if [[ -f "$QT_QML_PATH/org/kde/desktop/qmldir" ]]; then
+          scan_roots+=(-rootPath "$QT_QML_PATH/org/kde/desktop")
+        else
+          echo "::warning::org.kde.desktop is not in $QT_QML_PATH; the KDE interface falls back to Qt's Basic style."
+        fi
+        "$qmlimportscanner_bin" "${scan_roots[@]}" -importPath "$QT_QML_PATH" \
+          | grep -o '"relativePath": *"[^"]*"' | sed -E 's/.*"([^"]*)"$/\1/' | sort -u \
+          > "$RUNNER_TEMP/meshmc-qml-modules.txt"
+        if [[ ! -s "$RUNNER_TEMP/meshmc-qml-modules.txt" ]]; then
+          echo "::error::qmlimportscanner reported no Qt QML modules for launcher/qml"
+          exit 1
+        fi
+        find "$QT_PLUGIN_PATH"/kf6/kirigami/platform "$QT_PLUGIN_PATH"/kiconthemes6/iconengines \
+          "$QT_PLUGIN_PATH"/kf6/sonnet -name '*.so' > "$RUNNER_TEMP/meshmc-kde-plugins.txt" || true
+        echo "QT_QML_PATH=$QT_QML_PATH" >> "$GITHUB_ENV"
+        echo "MESHMC_COLOR_SCHEMES=$(dirname "$(dirname "$qt_root")")/share/color-schemes" >> "$GITHUB_ENV"
 
     - name: Package AppImage
       shell: bash
@@ -96,39 +131,26 @@ runs:
           )
         fi
 
-        # Qt's own QML modules (QtQuick, QtQuick.Controls, ...) live in
-        # $QT_INSTALL_QML, a directory *sibling to* $QT_PLUGIN_PATH -- the
-        # "$QT_PLUGIN_PATH"/*/*.so glob below never reaches them, so the QML
-        # shell has nothing to import QtQuick from. Deploy only the modules
-        # launcher/qml/ actually imports (found with qmlimportscanner)
-        # rather than the whole Qt QML tree (Quick3D, WebEngine, etc.).
-        qt_root="$(dirname "${QT_PLUGIN_PATH%/}")"
-        QT_QML_PATH="$qt_root/qml"
-        qmlimportscanner_bin="$(find "$qt_root" -name qmlimportscanner -type f | head -1)"
-        if [[ -z "$qmlimportscanner_bin" ]]; then
-          echo "::error::qmlimportscanner not found under $qt_root; cannot determine which Qt QML modules to bundle."
-          exit 1
-        fi
-        mapfile -t qml_modules < <(
-          "$qmlimportscanner_bin" -rootPath launcher/qml -importPath "$QT_QML_PATH" \
-            | grep -o '"relativePath": *"[^"]*"' | sed -E 's/.*"([^"]*)"$/\1/' | sort -u
-        )
-        if [[ ${#qml_modules[@]} -eq 0 ]]; then
-          echo "::error::qmlimportscanner reported no Qt QML modules for launcher/qml"
-          exit 1
-        fi
+        # The QML modules, KDE plugins and colour schemes found by "Find the
+        # QML modules and KDE runtime pieces" above.
+        mapfile -t qml_modules < "$RUNNER_TEMP/meshmc-qml-modules.txt"
+        mapfile -t kde_plugins < "$RUNNER_TEMP/meshmc-kde-plugins.txt"
         qml_plugin_libs=()
         for m in "${qml_modules[@]}"; do
           mkdir -p "$INSTALL_APPIMAGE_DIR/qml/$(dirname "$m")"
           cp -a "$QT_QML_PATH/$m" "$INSTALL_APPIMAGE_DIR/qml/$m"
           while IFS= read -r -d '' so; do qml_plugin_libs+=("$so"); done < <(find "$QT_QML_PATH/$m" -maxdepth 1 -name '*.so' -print0)
         done
+        if [[ -d "$MESHMC_COLOR_SCHEMES" ]]; then
+          mkdir -p "$INSTALL_APPIMAGE_DIR/share/color-schemes"
+          cp "$MESHMC_COLOR_SCHEMES"/*.colors "$INSTALL_APPIMAGE_DIR/share/color-schemes/"
+        fi
 
         sharun lib4bin \
           --hard-links \
           --with-hooks \
           --dst-dir "$INSTALL_APPIMAGE_DIR" \
-          "$INSTALL_APPIMAGE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so "${qml_plugin_libs[@]}" "${openssl_libs[@]}"
+          "$INSTALL_APPIMAGE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so "${kde_plugins[@]}" "${qml_plugin_libs[@]}" "${openssl_libs[@]}"
 
         cp ~/bin/AppImageUpdate.AppImage "$INSTALL_APPIMAGE_DIR"/bin/
         # FIXME(@YongDo-Hyun): gamemode doesn't seem to be very portable with DBus. Find a way to make it work!
@@ -179,37 +201,28 @@ runs:
           )
         fi
 
-        # See the QML deployment comment in the AppImage step above: Qt's own
-        # QML modules live beside $QT_PLUGIN_PATH, not under it, and the
-        # portable tarball needs them too (launcher/MeshMC.in points Qt at
-        # the copy made here via QML2_IMPORT_PATH/QML_IMPORT_PATH).
-        qt_root="$(dirname "${QT_PLUGIN_PATH%/}")"
-        QT_QML_PATH="$qt_root/qml"
-        qmlimportscanner_bin="$(find "$qt_root" -name qmlimportscanner -type f | head -1)"
-        if [[ -z "$qmlimportscanner_bin" ]]; then
-          echo "::error::qmlimportscanner not found under $qt_root; cannot determine which Qt QML modules to bundle."
-          exit 1
-        fi
-        mapfile -t qml_modules < <(
-          "$qmlimportscanner_bin" -rootPath launcher/qml -importPath "$QT_QML_PATH" \
-            | grep -o '"relativePath": *"[^"]*"' | sed -E 's/.*"([^"]*)"$/\1/' | sort -u
-        )
-        if [[ ${#qml_modules[@]} -eq 0 ]]; then
-          echo "::error::qmlimportscanner reported no Qt QML modules for launcher/qml"
-          exit 1
-        fi
+        # The same QML modules, KDE plugins and colour schemes as the AppImage
+        # (launcher/MeshMC.in points Qt at the qml/ copy made here via
+        # QML2_IMPORT_PATH/QML_IMPORT_PATH; sharun puts share/ on
+        # XDG_DATA_DIRS).
+        mapfile -t qml_modules < "$RUNNER_TEMP/meshmc-qml-modules.txt"
+        mapfile -t kde_plugins < "$RUNNER_TEMP/meshmc-kde-plugins.txt"
         qml_plugin_libs=()
         for m in "${qml_modules[@]}"; do
           mkdir -p "$INSTALL_PORTABLE_DIR/qml/$(dirname "$m")"
           cp -a "$QT_QML_PATH/$m" "$INSTALL_PORTABLE_DIR/qml/$m"
           while IFS= read -r -d '' so; do qml_plugin_libs+=("$so"); done < <(find "$QT_QML_PATH/$m" -maxdepth 1 -name '*.so' -print0)
         done
+        if [[ -d "$MESHMC_COLOR_SCHEMES" ]]; then
+          mkdir -p "$INSTALL_PORTABLE_DIR/share/color-schemes"
+          cp "$MESHMC_COLOR_SCHEMES"/*.colors "$INSTALL_PORTABLE_DIR/share/color-schemes/"
+        fi
 
         sharun lib4bin \
           --with-hooks \
           --hard-links \
           --dst-dir "$INSTALL_PORTABLE_DIR" \
-          "$INSTALL_PORTABLE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so "${qml_plugin_libs[@]}" "${openssl_libs[@]}"
+          "$INSTALL_PORTABLE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so "${kde_plugins[@]}" "${qml_plugin_libs[@]}" "${openssl_libs[@]}"
 
         # FIXME(@YongDo-Hyun): gamemode doesn't seem to be very portable with DBus. Find a way to make it work!
         find "$INSTALL_PORTABLE_DIR" -name '*gamemode*' -exec rm {} +

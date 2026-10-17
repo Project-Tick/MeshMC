@@ -17,7 +17,9 @@ runs:
       shell: bash
       run: |
         brew update
-        brew install ninja extra-cmake-modules temurin@17 autoconf pkg-config \
+        # Qt, KDE Frameworks (extra-cmake-modules included) and the libraries
+        # come from KDE Craft (setup-dependencies/action.yml), not Homebrew.
+        brew install ninja temurin@17 autoconf pkg-config \
         autoconf-archive automake libtool
 
     - name: Install Qt5

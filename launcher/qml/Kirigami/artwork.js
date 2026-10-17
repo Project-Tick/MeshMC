@@ -11,12 +11,10 @@
  * else one of the launcher's own rendered scenes, picked from the id so an
  * instance keeps its scene.
  *
- * The scenes are the custom interface's (MeshMC.Components' art/, rendered
- * by art/scenes/build.py) and are read from its resources by address; when
- * that module goes, art/ moves here with it.
+ * The pictures are this module's own resources (art/, see CMakeLists.txt).
  */
 
-var artRoot = "qrc:/qt/qml/MeshMC/Components/art/"
+var artRoot = "qrc:/qt/qml/MeshMC/Kirigami/art/"
 var sceneCount = 32
 var worldBiomes = ["plains", "desert", "snow", "jungle", "ocean", "cave", "nether", "end"]
 
@@ -32,7 +30,7 @@ function hash(text) {
 // One of the 16:9 scenes, for @p seed (an instance id).
 function sceneUrl(seed) {
     var index = hash(seed) % sceneCount
-    return artRoot + "scenes/card/" + (index < 10 ? "0" : "") + index + ".jpg"
+    return artRoot + "scenes/" + (index < 10 ? "0" : "") + index + ".jpg"
 }
 
 // A square biome picture for a world with no icon.png, from @p seed (its

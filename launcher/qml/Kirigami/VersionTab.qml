@@ -239,7 +239,7 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width - Kirigami.Units.gridUnit * 4
                     visible: list.count === 0
-                    icon.name: "package-x-generic"
+                    icon.name: "package-symbolic"
                     text: i18n("No components")
                     explanation: i18n("This instance has nothing installed yet.")
                 }
@@ -300,7 +300,7 @@ Item {
             }
             Kirigami.Action {
                 text: i18nc("@action:inmenu", "Edit JSON")
-                icon.name: "text-x-script"
+                icon.name: "format-text-code-symbolic"
                 visible: menu.entry.hasFile
                 onTriggered: tab.tools.editComponentJson(menu.entry.index)
             }

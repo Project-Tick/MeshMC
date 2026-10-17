@@ -100,7 +100,7 @@ ListArea {
             anchors.centerIn: parent
             width: parent.width - Kirigami.Units.gridUnit * 4
             visible: view.emptyText.length > 0
-            icon.name: "utilities-log-viewer"
+            icon.name: "view-list-text-symbolic"
             text: view.emptyText
             explanation: view.emptyExplanation
         }

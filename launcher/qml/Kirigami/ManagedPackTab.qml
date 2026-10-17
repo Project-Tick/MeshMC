@@ -269,7 +269,7 @@ Item {
         anchors.centerIn: parent
         width: parent.width - Kirigami.Units.gridUnit * 4
         visible: !tab.controller
-        icon.name: "package-x-generic"
+        icon.name: "package-symbolic"
         text: i18n("Not a managed pack")
         explanation: i18n("This instance was not installed from a catalogue MeshMC recognises.")
     }

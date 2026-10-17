@@ -22,6 +22,11 @@ RowLayout {
     // The shell's BrandLogos (see BrandIcon).
     property var logos: null
 
+    // As wide as it needs and no wider: a layout fills by default, and the
+    // page header then splits its width between this and the actions, which
+    // pushed Play into the overflow menu at body-text sizes (13pt on macOS).
+    // Short of room it still shrinks, eliding the name.
+    Layout.fillWidth: false
     spacing: Kirigami.Units.largeSpacing
 
     Kirigami.Icon {
