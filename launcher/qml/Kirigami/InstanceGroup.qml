@@ -10,7 +10,7 @@ import org.kde.kirigamiaddons.components as Components
 
 /*
  * One group of the library: a section header that folds it, and its
- * instances as a grid of cards or a list of rows. A named group's header
+ * instances as a grid of artwork cards or a list of rows. A named group's header
  * also has a menu to rename or delete the group.
  */
 // Not "section": inside the ListView below that name is ListView.section.
@@ -30,13 +30,6 @@ ColumnLayout {
     property bool manageable: false
 
     signal toggleRequested()
-
-    // Cards grow to fill the row, adding a column once there is room for
-    // one more at this width.
-    readonly property int minimumCardWidth: Kirigami.Units.gridUnit * 18
-    readonly property int columns: Math.max(1, Math.floor(groupSection.width / groupSection.minimumCardWidth))
-    readonly property int cellWidth: Math.floor(groupSection.width / groupSection.columns)
-    readonly property int cellHeight: Kirigami.Units.gridUnit * 4 + Kirigami.Units.largeSpacing
 
     spacing: Kirigami.Units.smallSpacing
 
@@ -85,24 +78,25 @@ ColumnLayout {
         sourceComponent: groupSection.view === "list" ? listComponent : gridComponent
     }
 
+    // Artwork cards, as many to a row as fit between the narrowest and the
+    // widest card, filling the row.
     Component {
         id: gridComponent
-        GridView {
-            interactive: false
-            implicitHeight: contentHeight
-            model: groupSection.model
-            cellWidth: groupSection.cellWidth
-            cellHeight: groupSection.cellHeight
-            delegate: Item {
-                id: cell
-                required property var model
-                width: groupSection.cellWidth
-                height: groupSection.cellHeight
-                InstanceCard {
-                    anchors.fill: parent
-                    anchors.margins: Kirigami.Units.smallSpacing
-                    app: groupSection.app
-                    model: cell.model
+        ColumnLayout {
+            spacing: 0
+            Kirigami.CardsLayout {
+                // Every column as wide as the others, a short last row included.
+                uniformCellWidths: true
+                Layout.fillWidth: true
+                maximumColumns: 0
+                minimumColumnWidth: Kirigami.Units.gridUnit * 13
+                maximumColumnWidth: Kirigami.Units.gridUnit * 19
+                Repeater {
+                    model: groupSection.model
+                    delegate: InstanceCard {
+                        Layout.fillWidth: true
+                        app: groupSection.app
+                    }
                 }
             }
         }

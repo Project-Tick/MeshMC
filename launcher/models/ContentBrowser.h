@@ -253,6 +253,13 @@ class ContentBrowser : public QObject
 	/// Fetches (or re-shows, if already loaded) the compatible versions of
 	/// results() row `row`, filling `versions`.
 	Q_INVOKABLE void loadVersions(int row);
+	/// The long description of results() row `row`, as HTML: fetched with
+	/// its versions by loadVersions(), and empty until then (bodyLoaded()
+	/// says when it is there) or when the project has none.
+	Q_INVOKABLE QString projectBody(int row) const;
+	/// The project's own page on its site, or empty when the provider does
+	/// not give one.
+	Q_INVOKABLE QString projectWebsite(int row) const;
 	/// Installing version `versionId` of results() row `row`: a
 	/// ContentInstallReview (parented to this browser, already started)
 	/// that resolves the dependencies first and lists them, so some can be
@@ -378,6 +385,8 @@ class ContentBrowser : public QObject
 	void errorChanged();
 	void resultsChanged();
 	void versionsChanged();
+	/// Row `row`'s description has loaded (see projectBody()).
+	void bodyLoaded(int row);
 	void versionsLoadingChanged();
 	void categoriesChanged();
 	void filtersChanged();

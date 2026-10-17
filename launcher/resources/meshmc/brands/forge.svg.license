@@ -1,0 +1,9 @@
+SPDX-FileCopyrightText: Forge Development LLC and the Minecraft Forge contributors
+SPDX-License-Identifier: LGPL-2.1-only
+
+The Forge anvil, used here only to identify the Forge mod loader; Forge and
+its logo are trademarks of Forge Development LLC. Derived from
+https://github.com/MinecraftForge/MinecraftForge/blob/26.3/docs/assets/Forge_logo.svg
+(LGPL 2.1, per that repository's LICENSE.txt): the anvil path alone, unchanged,
+in a square viewBox, filled with the tan #DFA86A that the same file uses for
+its wordmark instead of its navy #1E2D41, so it reads on dark backgrounds too.

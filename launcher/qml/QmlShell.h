@@ -86,6 +86,13 @@ QString sanitizedInstanceName(const QString& name);
  * (QHostInfo) nor filesystem access to test. */
 bool javaSetupStepNeeded(bool hostnameChanged, bool javaPathResolves);
 
+/* The window a review snapshot (MESHMC_QML_SNAPSHOT) pictures: @p main, or
+ * the window it names in its `snapshotWindow` property -- the settings
+ * window, while that is open (Main.qml) -- when that is a visible Qt Quick
+ * window. Free-standing so KirigamiShell_test can check it against the real
+ * Main.qml without a LauncherContext. */
+QQuickWindow* snapshotWindow(QQuickWindow* main);
+
 /*
  * The QML user interface: owns the engine, hands the core's models to it and
  * loads the root window.
@@ -132,6 +139,9 @@ class QmlShell : public QObject
 	/// The Home page's "Recent worlds" row -- most recently played worlds
 	/// across every instance (see RecentWorldsModel's class comment).
 	Q_PROPERTY(QObject* recentWorlds READ recentWorlds CONSTANT)
+	/// The logos of the modpack sites MeshMC may not ship, fetched once
+	/// into the cache (BrandLogos): url(id) and `revision`.
+	Q_PROPERTY(QObject* brandLogos READ brandLogos CONSTANT)
 	/// Accounts page: the AccountList model plus add/remove/default/login.
 	Q_PROPERTY(QObject* accountsController READ accountsController CONSTANT)
 	/// The QML "New instance" flow: picks a Minecraft version and loader.
@@ -312,6 +322,7 @@ class QmlShell : public QObject
 	QObject* heroModel() const;
 	QObject* instancePageModel() const;
 	QObject* recentWorlds() const;
+	QObject* brandLogos() const;
 	/* The instances of one group (empty = ungrouped) that pass the search,
 	 * for one section of the library. Created on first use and kept, so
 	 * QML asking again from a rebuilt delegate gets the same model back. */
@@ -473,8 +484,9 @@ class QmlShell : public QObject
 	 * list; "busySkip" shows the account-refresh wait with its "Play
 	 * offline" button, which ends it; "modal" shows a sample plugin prompt
 	 * (UiHost::runPluginModal()); "optionalMods" a sample ATLauncher
-	 * optional-mods question (UiHost::chooseOptionalMods()). Through the same QmlUiHost calls the
-	 * real code makes. No-op for any other kind. */
+	 * optional-mods question (UiHost::chooseOptionalMods()); "choose" the
+	 * "modpack already installed" choice (UiHost::choose()). Through the
+	 * same QmlUiHost calls the real code makes. No-op for any other kind. */
 	Q_INVOKABLE void debugShowRequest(const QString& kind);
 	/* Preview/dev-only, for review snapshots in either colour scheme
 	 * (DevRoute.qml's "theme=light|dark", "system" to follow the desktop

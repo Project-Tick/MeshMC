@@ -23,7 +23,9 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQmlExpression>
+#include <QQuickItem>
 #include <QQuickStyle>
+#include <QQuickWindow>
 #include <QStandardItemModel>
 #include <QUrl>
 
@@ -31,7 +33,10 @@
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
 
+#include <functional>
 #include <memory>
+
+#include "qml/QmlShell.h"
 
 /*
  * The KDE interface (MeshMC.Kirigami) end to end, headlessly: the module is
@@ -45,6 +50,64 @@
  * which is Qt 6.5+; see QmlModule_test.cpp.
  */
 
+/* A SettingsAdapter (the launcher's or one instance's), in memory: what
+ * the setting delegates call, and a record of what was reset. */
+class FakeSettings : public QObject
+{
+	Q_OBJECT
+
+  public:
+	Q_INVOKABLE QVariant value(const QString& id) const
+	{
+		return m_values.value(id, m_defaults.value(id));
+	}
+	Q_INVOKABLE QVariant defaultValue(const QString& id) const
+	{
+		return m_defaults.value(id);
+	}
+	Q_INVOKABLE void setValue(const QString& id, const QVariant& value)
+	{
+		m_values.insert(id, value);
+		emit valueChanged(id, value);
+	}
+	Q_INVOKABLE void reset(const QString& id)
+	{
+		m_values.remove(id);
+		resets.append(id);
+		emit valueChanged(id, value(id));
+	}
+
+	QVariantMap m_values;
+	QVariantMap m_defaults;
+	QStringList resets;
+
+  signals:
+	void valueChanged(const QString& id, const QVariant& value);
+};
+
+/* The instance's servers.dat (ServersListModel), with one server. */
+class FakeServers : public QStandardItemModel
+{
+	Q_OBJECT
+	Q_PROPERTY(bool locked MEMBER m_locked CONSTANT)
+
+  public:
+	FakeServers()
+	{
+		setItemRoleNames({{Qt::UserRole + 1, "name"},
+						  {Qt::UserRole + 2, "address"},
+						  {Qt::UserRole + 3, "acceptTextures"},
+						  {Qt::UserRole + 4, "iconUrl"}});
+		auto* item = new QStandardItem;
+		item->setData(QStringLiteral("Hypixel"), Qt::UserRole + 1);
+		item->setData(QStringLiteral("mc.hypixel.net"), Qt::UserRole + 2);
+		item->setData(0, Qt::UserRole + 3);
+		item->setData(QString(), Qt::UserRole + 4);
+		appendRow(item);
+	}
+	bool m_locked = false;
+};
+
 /* The instance page's InstanceDetails, as far as these tests read it. */
 class FakeDetails : public QObject
 {
@@ -52,8 +115,28 @@ class FakeDetails : public QObject
 	Q_PROPERTY(QString instanceId READ instanceId CONSTANT)
 	Q_PROPERTY(QString name READ name CONSTANT)
 	Q_PROPERTY(bool isLegacy READ isLegacy CONSTANT)
+	Q_PROPERTY(bool isMinecraft READ isMinecraft CONSTANT)
+	Q_PROPERTY(QObject* settings READ settings CONSTANT)
+	Q_PROPERTY(QObject* servers READ servers CONSTANT)
+	Q_PROPERTY(QString notes MEMBER m_notes NOTIFY notesChanged)
 
   public:
+	bool isMinecraft() const
+	{
+		return true;
+	}
+	QObject* servers()
+	{
+		return &m_servers;
+	}
+	FakeServers m_servers;
+	QString m_notes;
+	QObject* settings()
+	{
+		return &m_settings;
+	}
+	FakeSettings m_settings;
+
 	QString instanceId() const
 	{
 		return QStringLiteral("fabric");
@@ -66,6 +149,9 @@ class FakeDetails : public QObject
 	{
 		return false;
 	}
+
+  signals:
+	void notesChanged();
 };
 
 /* A modpack's lazily loaded detail (ModrinthModpackDetail), empty. */
@@ -157,6 +243,78 @@ class FakeModpackModel : public QStandardItemModel
 	void changed();
 };
 
+/* A plugin's surfaces (PluginSurfaceModel) with one surface -- a section
+ * holding a toggle and a button -- and a record of the events sent back. */
+class FakePluginSurfaces : public QStandardItemModel
+{
+	Q_OBJECT
+
+  public:
+	FakePluginSurfaces()
+	{
+		setItemRoleNames({{Qt::UserRole + 1, "surfaceId"},
+						  {Qt::UserRole + 2, "title"},
+						  {Qt::UserRole + 3, "document"},
+						  {Qt::UserRole + 4, "revision"}});
+		const auto node = [](const char* type, const char* id, const QVariantMap& props,
+							 const QVariantList& children = {}) {
+			return QVariantMap{{QStringLiteral("type"), QLatin1String(type)},
+							   {QStringLiteral("id"), QLatin1String(id)},
+							   {QStringLiteral("props"), props},
+							   {QStringLiteral("children"), children}};
+		};
+		const QVariantMap section = node(
+			"section", "sec", {{QStringLiteral("title"), QStringLiteral("Tweaks")}},
+			{node("toggle", "fast", {{QStringLiteral("label"), QStringLiteral("Go fast")},
+									 {QStringLiteral("value"), false}}),
+			 node("button", "go", {{QStringLiteral("label"), QStringLiteral("Run it")}})});
+		auto* item = new QStandardItem;
+		item->setData(QStringLiteral("p.surface"), Qt::UserRole + 1);
+		item->setData(QStringLiteral("My plugin"), Qt::UserRole + 2);
+		item->setData(section, Qt::UserRole + 3);
+		item->setData(0, Qt::UserRole + 4);
+		appendRow(item);
+
+		/* A surface that is not a section: put in a card of its own. */
+		const QVariantMap loose = node(
+			"column", "col", {},
+			{node("text", "note", {{QStringLiteral("text"), QStringLiteral("Everything is fine.")}}),
+			 node("text_field", "args", {{QStringLiteral("label"), QStringLiteral("Extra arguments")},
+										 {QStringLiteral("value"), QStringLiteral("-Xmx4G")}}),
+			 node("number_field", "threads", {{QStringLiteral("label"), QStringLiteral("Threads")},
+											  {QStringLiteral("value"), 4}}),
+			 node("choice", "profile",
+				  {{QStringLiteral("label"), QStringLiteral("Profile")},
+				   {QStringLiteral("value"), QStringLiteral("b")},
+				   {QStringLiteral("options"),
+					QVariantList{QVariantMap{{QStringLiteral("id"), QStringLiteral("a")},
+											 {QStringLiteral("label"), QStringLiteral("Low")}},
+								 QVariantMap{{QStringLiteral("id"), QStringLiteral("b")},
+											 {QStringLiteral("label"), QStringLiteral("Balanced")}}}}}),
+			 node("progress", "load", {{QStringLiteral("value"), 40}}),
+			 node("list", "mods",
+				  {{QStringLiteral("columns"), QStringList{QStringLiteral("Name"), QStringLiteral("State")}},
+				   {QStringLiteral("rows"),
+					QVariantList{QVariantMap{{QStringLiteral("id"), QStringLiteral("1")},
+											 {QStringLiteral("cells"), QStringList{QStringLiteral("Sodium"), QStringLiteral("ok")}}}}}}),
+			 node("link", "docs", {{QStringLiteral("text"), QStringLiteral("Open the docs")},
+								   {QStringLiteral("href"), QStringLiteral("https://example.org")}})});
+		auto* second = new QStandardItem;
+		second->setData(QStringLiteral("p.loose"), Qt::UserRole + 1);
+		second->setData(QStringLiteral("Loose surface"), Qt::UserRole + 2);
+		second->setData(loose, Qt::UserRole + 3);
+		second->setData(0, Qt::UserRole + 4);
+		appendRow(second);
+	}
+	/// "surface/node/event", the last one sent.
+	Q_INVOKABLE void sendEvent(const QString& surface, const QString& node,
+							   const QString& event, const QVariant&)
+	{
+		lastEvent = surface + QLatin1Char('/') + node + QLatin1Char('/') + event;
+	}
+	QString lastEvent;
+};
+
 /* Stands in for QmlShell: the members Main.qml calls here, and nothing
  * else -- Main.qml checks for each shell member before using it. */
 class FakeShell : public QObject
@@ -164,8 +322,29 @@ class FakeShell : public QObject
 	Q_OBJECT
 	Q_PROPERTY(int accountCount READ accountCount CONSTANT)
 	Q_PROPERTY(QObject* modpackModel READ modpackModel CONSTANT)
+	Q_PROPERTY(QObject* settings READ settings CONSTANT)
+	Q_PROPERTY(QObject* accountsController MEMBER m_accountsController CONSTANT)
+	Q_PROPERTY(QObject* newInstance MEMBER m_newInstance CONSTANT)
+	Q_PROPERTY(QStringList setupSteps MEMBER m_setupSteps CONSTANT)
 
   public:
+	QObject* settings()
+	{
+		return &m_settings;
+	}
+	FakeSettings m_settings;
+	/// Set by a test before the window loads; see accountsStub().
+	QObject* m_accountsController = nullptr;
+	/// Likewise; see newInstanceStub().
+	QObject* m_newInstance = nullptr;
+	/// QmlShell::setupSteps(): what first run still has to set up.
+	QStringList m_setupSteps;
+	/// The instance "fabric"'s own settings.
+	FakeSettings& instanceSettings()
+	{
+		return m_details.m_settings;
+	}
+
 	int accountCount() const
 	{
 		return m_accountCount;
@@ -173,6 +352,10 @@ class FakeShell : public QObject
 	QObject* modpackModel()
 	{
 		return &m_modpacks;
+	}
+	FakeDetails& details()
+	{
+		return m_details;
 	}
 	/// One instance exists: "fabric".
 	Q_INVOKABLE QObject* instanceDetails(const QString& id)
@@ -185,13 +368,42 @@ class FakeShell : public QObject
 		lastLaunch = id + QLatin1Char(':') + mode;
 	}
 
+	/// What the Play options offer: two accounts, one profiler.
+	Q_INVOKABLE QVariantMap launchOptions(const QString&) const
+	{
+		const auto account = [](const char* id, const char* name, bool isDefault) {
+			return QVariantMap{{QStringLiteral("id"), QLatin1String(id)},
+							   {QStringLiteral("name"), QLatin1String(name)},
+							   {QStringLiteral("isDefault"), isDefault}};
+		};
+		return {{QStringLiteral("supportsDemo"), true},
+				{QStringLiteral("profiler"), m_profiler},
+				{QStringLiteral("profilers"),
+				 QVariantList{QVariantMap{{QStringLiteral("key"), QStringLiteral("jprofiler")},
+										  {QStringLiteral("name"), QStringLiteral("JProfiler")},
+										  {QStringLiteral("ready"), true}}}},
+				{QStringLiteral("accounts"),
+				 QVariantList{account("a1", "Steve", true), account("a2", "Alex", false)}}};
+	}
+	/// "id:as:account", for Play As.
+	Q_INVOKABLE void launchInstanceAs(const QString& id, const QString& accountId)
+	{
+		lastLaunch = id + QStringLiteral(":as:") + accountId;
+	}
+	Q_INVOKABLE void setInstanceProfiler(const QString&, const QString& key)
+	{
+		m_profiler = key;
+	}
+
 	int m_accountCount = 1;
 	QString lastLaunch;
+	QString m_profiler;
 	FakeModpackModel m_modpacks;
 
   signals:
 	void navigateRequested(const QString& target);
 	void openInstanceLog(const QString& id);
+	void importRequested(const QString& source);
 
   private:
 	FakeDetails m_details;
@@ -266,6 +478,160 @@ class KirigamiShellTest : public QObject
 		QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 	}
 
+	/* The settings window while it is open, else null. */
+	static QQuickWindow* settingsWindow(QObject* root)
+	{
+		return qobject_cast<QQuickWindow*>(
+			evaluate(root, QStringLiteral("root.settingsView.settingsWindow"))
+				.value<QObject*>());
+	}
+
+	static QString settingsPage(QObject* root)
+	{
+		return evaluate(root, QStringLiteral("root.settingsView.currentModule()"))
+			.toString();
+	}
+
+	/* The first item under @p window's content for which @p match holds. */
+	static QQuickItem* findItem(QQuickWindow* window,
+								const std::function<bool(QQuickItem*)>& match)
+	{
+		std::function<QQuickItem*(QQuickItem*)> search =
+			[&](QQuickItem* item) -> QQuickItem* {
+			if (match(item)) {
+				return item;
+			}
+			for (QQuickItem* child : item->childItems()) {
+				if (QQuickItem* found = search(child)) {
+					return found;
+				}
+			}
+			return nullptr;
+		};
+		return window ? search(window->contentItem()) : nullptr;
+	}
+
+	/* A setting delegate (SettingSwitch.qml and friends) by its key. */
+	static QQuickItem* settingItem(QQuickWindow* window, const QString& key)
+	{
+		return findItem(window, [&](QQuickItem* item) {
+			return item->property("key").toString() == key &&
+				   item->property("checked").isValid();
+		});
+	}
+
+	static QQuickItem* buttonWithText(QQuickWindow* window, const QString& text)
+	{
+		return findItem(window, [&](QQuickItem* item) {
+			return item->inherits("QQuickAbstractButton") &&
+				   item->property("text").toString() == text;
+		});
+	}
+
+	static bool click(QQuickItem* item)
+	{
+		return item && QMetaObject::invokeMethod(item, "click");
+	}
+
+	/* AccountsController, as far as the Accounts and skin pages call it:
+	 * no accounts model until a test sets `accounts`, and one skin library
+	 * whose arm width changes only once `accept` is set. */
+	static std::unique_ptr<QObject> accountsStub(QQmlEngine& engine)
+	{
+		QQmlComponent component(&engine);
+		component.setData(
+			"import QtQuick\n"
+			"QtObject {\n"
+			"  id: stub\n"
+			"  signal defaultSkinsRevisionChanged()\n"
+			"  property var accounts: null\n"
+			"  property string defaultAccountId: ''\n"
+			"  property bool skinDemoRequested: false\n"
+			"  property string skinDemoPose: ''\n"
+			"  property QtObject library: QtObject {\n"
+			"    id: lib\n"
+			"    property bool accept: false\n"
+			"    property int asked: 0\n"
+			"    property var skins: [{ name: 'Hero', path: '/hero.png', textureUrl: '',\n"
+			"      thumbnailUrl: '', bodyUrl: '', slim: false, worn: true }]\n"
+			"    property var defaultSkins: [{ name: 'Alex', slim: true, variants: [\n"
+			"      { name: 'Alex', path: '/alex-classic.png', slim: false, ready: true, worn: false },\n"
+			"      { name: 'Alex', path: '/alex-slim.png', slim: true, ready: true, worn: false } ] }]\n"
+			"    property bool defaultSkinsLoading: false\n"
+			"    function setSlim(name, slim) {\n"
+			"      lib.asked++\n"
+			"      if (lib.accept) lib.skins = [Object.assign({}, lib.skins[0], { slim: slim })]\n"
+			"    }\n"
+			"    function markWorn(name) {}\n"
+			"  }\n"
+			"  function accountSkinInfo(row) { return { valid: true, slim: false,\n"
+			"    hasSkin: false, currentCapeId: '', currentCapeUrl: '', capes: [] } }\n"
+			"  function skins(row) { return stub.library }\n"
+			"}\n",
+			QUrl(QStringLiteral("qrc:/test/AccountsStub.qml")));
+		std::unique_ptr<QObject> stub(component.create());
+		if (!stub) {
+			qWarning() << component.errorString();
+		}
+		return stub;
+	}
+
+	/* NewInstanceController, as far as New Instance and Import call it:
+	 * two Minecraft versions, the newest first, and one watcher that every
+	 * create() and importFrom() hands back, still running until a test
+	 * finishes it. What they were asked is kept in `created` and
+	 * `imported`. */
+	static std::unique_ptr<QObject> newInstanceStub(QQmlEngine& engine)
+	{
+		QQmlComponent component(&engine);
+		component.setData(
+			"import QtQuick\n"
+			"QtObject {\n"
+			"  id: stub\n"
+			"  property string loader: ''\n"
+			"  property string selectedMinecraftVersion: ''\n"
+			"  property string selectedLoaderVersion: ''\n"
+			"  property bool loaderLoading: false\n"
+			"  property var created: []\n"
+			"  property var imported: []\n"
+			"  property ListModel minecraftVersions: ListModel {\n"
+			"    property bool showSnapshots: false\n"
+			"    property bool showOldVersions: false\n"
+			"    property bool loading: false\n"
+			"    property string error: ''\n"
+			"    property string firstVersionId: '1.21.4'\n"
+			"    ListElement { version: '1.21.4'; versionId: '1.21.4'; type: 'release'; recommended: true; time: 0 }\n"
+			"    ListElement { version: '1.21.3'; versionId: '1.21.3'; type: 'release'; recommended: false; time: 0 }\n"
+			"  }\n"
+			"  property ListModel loaderVersions: ListModel {}\n"
+			"  property QtObject watcher: QtObject {\n"
+			"    property bool running: true\n"
+			"    property bool succeeded: false\n"
+			"    property bool failed: false\n"
+			"    property string status: ''\n"
+			"    property string error: ''\n"
+			"    property string title: ''\n"
+			"    property real progress: -1\n"
+			"    property string instanceId: 'fabric'\n"
+			"    signal finished(bool ok)\n"
+			"  }\n"
+			"  function selectMinecraftVersion(v) { stub.selectedMinecraftVersion = v }\n"
+			"  function selectLoaderVersion(v) { stub.selectedLoaderVersion = v }\n"
+			"  function suggestedName() {\n"
+			"    return stub.selectedMinecraftVersion + (stub.loader.length > 0 ? ' Fabric' : '') }\n"
+			"  function create(name, group, icon) { stub.created = [name, group, icon]; return stub.watcher }\n"
+			"  function suggestedNameForImportSource(s) { return s.length > 0 ? s.replace(/^.*\\//, '').replace(/\\..*$/, '') : '' }\n"
+			"  function isImportSourceValid(s) { return /\\.(zip|mrpack)$/.test(s) }\n"
+			"  function importFrom(s, name, group, icon) { stub.imported = [s, name, group, icon]; return stub.watcher }\n"
+			"}\n",
+			QUrl(QStringLiteral("qrc:/test/NewInstanceStub.qml")));
+		std::unique_ptr<QObject> stub(component.create());
+		if (!stub) {
+			qWarning() << component.errorString();
+		}
+		return stub;
+	}
+
 	QStandardItemModel m_instances;
 	QObject m_selection;
 
@@ -278,7 +644,7 @@ class KirigamiShellTest : public QObject
 		QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
 	}
 
-	void rootWindowLoadsOnTheLibrary()
+	void rootWindowLoadsOnHome()
 	{
 		QQmlEngine engine;
 		QObject shell;
@@ -289,8 +655,15 @@ class KirigamiShellTest : public QObject
 		 * constructed: the property only exists on this module's root. */
 		QCOMPARE(root->property("moduleName").toString(),
 				 QStringLiteral("MeshMC.Kirigami"));
-		QCOMPARE(root->property("section").toString(), QStringLiteral("library"));
+		QCOMPARE(root->property("section").toString(), QStringLiteral("home"));
 		QCOMPARE(depth(root.get()), 1);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Home"));
+
+		/* The library is one step away. */
+		QVERIFY(navigate(root.get(), QStringLiteral("library")));
+		QCOMPARE(root->property("section").toString(), QStringLiteral("library"));
+		QVERIFY(navigate(root.get(), QStringLiteral("home")));
+		QCOMPARE(root->property("section").toString(), QStringLiteral("home"));
 	}
 
 	/* Every section opens on its own, whole paths and the split form alike,
@@ -302,8 +675,9 @@ class KirigamiShellTest : public QObject
 		auto root = createRoot(engine, &shell);
 		QVERIFY(root);
 
-		QVERIFY(navigate(root.get(), QStringLiteral("settings/java")));
-		QCOMPARE(root->property("section").toString(), QStringLiteral("settings"));
+		QVERIFY(navigate(root.get(), QStringLiteral("accounts")));
+		QCOMPARE(root->property("section").toString(), QStringLiteral("accounts"));
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Accounts"));
 		QVERIFY(navigate(root.get(), QStringLiteral("about")));
 		QCOMPARE(root->property("section").toString(), QStringLiteral("about"));
 		QVERIFY(navigate(root.get(), QStringLiteral("discover"), QString()));
@@ -438,6 +812,494 @@ class KirigamiShellTest : public QObject
 		back(root.get());
 		QCOMPARE(depth(root.get()), 2);
 		QCOMPARE(root->property("openedInstanceId").toString(), QStringLiteral("fabric"));
+	}
+
+	/* A plugin's document is drawn with FormCard delegates, and a click on
+	 * one goes back to the plugin as (surface, node, event). */
+	void pluginSurfacesDrawADocumentAndSendEvents()
+	{
+		QQmlEngine engine;
+		KLocalization::setupLocalizedContext(&engine);
+		engine.addImportPath(QStringLiteral("qrc:/qt/qml"));
+		FakePluginSurfaces surfaces;
+		QQmlComponent component(&engine);
+		component.setData(
+			"import QtQuick\n"
+			"import MeshMC.Kirigami\n"
+			"PluginSurfaces { width: 400 }\n",
+			QUrl(QStringLiteral("qrc:/qt/qml/MeshMC/Kirigami/Test.qml")));
+		std::unique_ptr<QObject> object(component.createWithInitialProperties(
+			{{QStringLiteral("model"), QVariant::fromValue<QObject*>(&surfaces)}}));
+		QVERIFY2(object, qPrintable(component.errorString()));
+		auto* root = qobject_cast<QQuickItem*>(object.get());
+		QVERIFY(root);
+		QCOMPARE(root->property("count").toInt(), 2);
+
+		const auto find = [&](const char* text) {
+			std::function<QQuickItem*(QQuickItem*)> search = [&](QQuickItem* item) -> QQuickItem* {
+				if (item->inherits("QQuickAbstractButton") &&
+					item->property("text").toString() == QLatin1String(text)) {
+					return item;
+				}
+				for (QQuickItem* child : item->childItems()) {
+					if (QQuickItem* found = search(child)) {
+						return found;
+					}
+				}
+				return nullptr;
+			};
+			return search(root);
+		};
+		QQuickItem* toggle = nullptr;
+		QTRY_VERIFY((toggle = find("Go fast")));
+		QQuickItem* button = find("Run it");
+		QVERIFY(button);
+
+		QVERIFY(QMetaObject::invokeMethod(button, "click"));
+		QCOMPARE(surfaces.lastEvent, QStringLiteral("p.surface/go/click"));
+		/* The switch inside the delegate is what a user clicks. */
+		QQuickItem* sw = toggle->findChild<QQuickItem*>(QStringLiteral("checkControl"));
+		QVERIFY(sw);
+		QVERIFY(QMetaObject::invokeMethod(sw, "click"));
+		QCOMPARE(surfaces.lastEvent, QStringLiteral("p.surface/fast/change"));
+
+		/* A picture for review, when asked for. */
+		const QString shotDir = qEnvironmentVariable("MESHMC_TEST_SHOT_DIR");
+		if (!shotDir.isEmpty()) {
+			QQuickWindow window;
+			window.resize(640, 820);
+			root->setParentItem(window.contentItem());
+			root->setWidth(640);
+			window.show();
+			QTest::qWait(500);
+			window.grabWindow().save(shotDir + QStringLiteral("/plugin-surfaces.png"));
+			root->setParentItem(nullptr);
+		}
+	}
+
+	/* The tabs beyond the everyday five sit under "More": the bar shows
+	 * the one that is open, the menu the rest. */
+	void moreTabsSitUnderMore()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/worlds")));
+		const QString ids = QStringLiteral("root.instancePage.%1.map(t => t.id).join(',')");
+		QCOMPARE(evaluate(root.get(), ids.arg(QStringLiteral("barTabs"))).toString(),
+				 QStringLiteral("content,worlds,screenshots,log,settings"));
+		QCOMPARE(evaluate(root.get(), ids.arg(QStringLiteral("moreTabs"))).toString(),
+				 QStringLiteral("version,datapacks,servers,backups,gameoptions,notes"));
+
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/servers")));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.instancePage.shownTab")).toString(),
+				 QStringLiteral("servers"));
+		QCOMPARE(evaluate(root.get(), ids.arg(QStringLiteral("barTabs"))).toString(),
+				 QStringLiteral("content,worlds,screenshots,log,settings,servers"));
+		QCOMPARE(evaluate(root.get(), ids.arg(QStringLiteral("moreTabs"))).toString(),
+				 QStringLiteral("version,datapacks,backups,gameoptions,notes"));
+
+		/* A tab this instance does not have shows the first one. */
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/managedpack")));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.instancePage.shownTab")).toString(),
+				 QStringLiteral("content"));
+	}
+
+	/* The Servers tab lists servers.dat's servers; Add Server opens its
+	 * dialog (the dev route's review=add). */
+	void serversTabListsTheServers()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+		auto* main = qobject_cast<QQuickWindow*>(root.get());
+
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/servers")));
+		QQuickItem* list = nullptr;
+		QTRY_VERIFY((list = findItem(main, [](QQuickItem* item) {
+			return item->objectName() == QLatin1String("serversList");
+		})));
+		QCOMPARE(list->property("count").toInt(), 1);
+
+		QTRY_VERIFY(evaluate(root.get(), QStringLiteral("root.instancePage.review('add')")).toBool());
+		QVERIFY(!evaluate(root.get(), QStringLiteral("root.instancePage.review('nonsense')")).toBool());
+	}
+
+	/* Notes typed in the Notes tab reach the instance a moment later. */
+	void notesAreSavedIntoTheInstance()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+		auto* main = qobject_cast<QQuickWindow*>(root.get());
+
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/notes")));
+		QQuickItem* area = nullptr;
+		QTRY_VERIFY((area = findItem(main, [](QQuickItem* item) {
+			return item->objectName() == QLatin1String("notesArea");
+		})));
+		area->setProperty("text", QStringLiteral("seed: 1234"));
+		QTRY_COMPARE_WITH_TIMEOUT(shell.details().m_notes, QStringLiteral("seed: 1234"), 5000);
+	}
+
+	/* The instance page's Play menu: Play Offline and Demo, Play As with
+	 * an entry per account, and the Profiler. Both choices go to the shell. */
+	void playOptionsOfferAccountsAndProfilers()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/content")));
+		const QString find = QStringLiteral(
+			"root.instancePage.actions.filter(a => a.text === '%1')[0]");
+		QCOMPARE(evaluate(root.get(), find.arg(QStringLiteral("Play Offline")) + QStringLiteral(".visible")).toBool(), true);
+		QCOMPARE(evaluate(root.get(), find.arg(QStringLiteral("Play As")) + QStringLiteral(".children.length")).toInt(), 2);
+		QCOMPARE(evaluate(root.get(), find.arg(QStringLiteral("Play As")) + QStringLiteral(".children[1].text")).toString(),
+				 QStringLiteral("Alex"));
+		QCOMPARE(evaluate(root.get(), find.arg(QStringLiteral("Profiler")) + QStringLiteral(".children.length")).toInt(), 2);
+
+		QVERIFY(evaluate(root.get(), find.arg(QStringLiteral("Play As")) + QStringLiteral(".children[1].trigger(), true")).toBool());
+		QCOMPARE(shell.lastLaunch, QStringLiteral("fabric:as:a2"));
+
+		QVERIFY(evaluate(root.get(), find.arg(QStringLiteral("Profiler")) + QStringLiteral(".children[1].trigger(), true")).toBool());
+		QCOMPARE(shell.m_profiler, QStringLiteral("jprofiler"));
+	}
+
+	/* Settings open in a window of their own, on the page asked for, over
+	 * whatever the main window shows -- which the review snapshots then
+	 * picture instead -- and move to another page when asked again. */
+	void settingsOpenInAWindowOfTheirOwn()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+		auto* main = qobject_cast<QQuickWindow*>(root.get());
+		QVERIFY(main);
+		/* Offscreen. A window opened over another one only shows once
+		 * that one does. */
+		main->show();
+		QCOMPARE(snapshotWindow(main), main);
+
+		QVERIFY(navigate(root.get(), QStringLiteral("library")));
+		QVERIFY(navigate(root.get(), QStringLiteral("settings/java")));
+		QCOMPARE(root->property("section").toString(), QStringLiteral("library"));
+		QCOMPARE(depth(root.get()), 1);
+		QQuickWindow* settings = settingsWindow(root.get());
+		QVERIFY(settings);
+		QVERIFY(settings != main);
+		QTRY_COMPARE(settingsPage(root.get()), QStringLiteral("java"));
+		QTRY_VERIFY(settings->isVisible());
+		QCOMPARE(snapshotWindow(main), settings);
+
+		QVERIFY(navigate(root.get(), QStringLiteral("settings"), QStringLiteral("proxy")));
+		QTRY_COMPARE(settingsPage(root.get()), QStringLiteral("proxy"));
+
+		/* Asked for as a section, they open the same way, and change no
+		 * section either. */
+		QVERIFY(evaluate(root.get(), QStringLiteral("root.showSection('settings')")).toBool());
+		QCOMPARE(root->property("section").toString(), QStringLiteral("library"));
+
+		settingsWindow(root.get())->close();
+		QTRY_VERIFY(!settingsWindow(root.get()));
+		QCOMPARE(snapshotWindow(main), main);
+	}
+
+	/* A setting is saved the moment it is flipped, and a change made
+	 * anywhere else shows on its row -- here the game window's
+	 * "Start maximized", which also locks the size rows. */
+	void aSettingIsSavedAndFollowed()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		shell.m_settings.m_defaults.insert(QStringLiteral("LaunchMaximized"), false);
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+		qobject_cast<QQuickWindow*>(root.get())->show();
+
+		QVERIFY(navigate(root.get(), QStringLiteral("settings/minecraft")));
+		QTRY_COMPARE(settingsPage(root.get()), QStringLiteral("minecraft"));
+		QQuickItem* maximized = nullptr;
+		QTRY_VERIFY((maximized = settingItem(settingsWindow(root.get()), QStringLiteral("LaunchMaximized"))));
+		QQuickItem* width = settingItem(settingsWindow(root.get()), QStringLiteral("MinecraftWinWidth"));
+		QVERIFY(width);
+		QVERIFY(!maximized->property("checked").toBool());
+		// A page takes input once the settings window has laid it out.
+		QTRY_VERIFY(width->isEnabled());
+
+		QVERIFY(click(maximized));
+		QCOMPARE(shell.m_settings.value(QStringLiteral("LaunchMaximized")).toBool(), true);
+		QVERIFY(maximized->property("checked").toBool());
+		QVERIFY(!width->isEnabled());
+
+		shell.m_settings.setValue(QStringLiteral("LaunchMaximized"), false);
+		QVERIFY(!maximized->property("checked").toBool());
+		QVERIFY(width->isEnabled());
+	}
+
+	/* An instance's Settings tab follows the launcher until a group is
+	 * switched to its own settings; switching back drops them. */
+	void instanceSettingsOverrideTheLauncher()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		FakeSettings& own = shell.instanceSettings();
+		own.m_defaults.insert(QStringLiteral("OverrideWindow"), false);
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+		auto* main = qobject_cast<QQuickWindow*>(root.get());
+		main->show();
+
+		QVERIFY(navigate(root.get(), QStringLiteral("instance/fabric/settings")));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.instancePage.shownTab")).toString(),
+				 QStringLiteral("settings"));
+		QQuickItem* gate = nullptr;
+		QTRY_VERIFY((gate = settingItem(main, QStringLiteral("OverrideWindow"))));
+		QQuickItem* maximized = settingItem(main, QStringLiteral("LaunchMaximized"));
+		QVERIFY(maximized);
+		QVERIFY(!gate->property("checked").toBool());
+		// The tab takes input once the window has laid out the page.
+		QTRY_VERIFY(gate->isEnabled());
+		QVERIFY(!maximized->isEnabled());
+
+		QVERIFY(click(gate));
+		QCOMPARE(own.value(QStringLiteral("OverrideWindow")).toBool(), true);
+		QVERIFY(maximized->isEnabled());
+		QVERIFY(click(maximized));
+		QCOMPARE(own.value(QStringLiteral("LaunchMaximized")).toBool(), true);
+		QVERIFY(shell.m_settings.m_values.isEmpty());
+
+		QVERIFY(click(gate));
+		QCOMPARE(own.value(QStringLiteral("OverrideWindow")).toBool(), false);
+		QVERIFY(!maximized->isEnabled());
+		QCOMPARE(own.resets, QStringList({QStringLiteral("LaunchMaximized"),
+										  QStringLiteral("MinecraftWinWidth"),
+										  QStringLiteral("MinecraftWinHeight")}));
+	}
+
+	/* Accounts lists every account, says which is the default, and opens
+	 * a Microsoft account's skin and cape over itself. */
+	void accountsListThePlayers()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto stub = accountsStub(engine);
+		QVERIFY(stub);
+		shell.m_accountsController = stub.get();
+		QStandardItemModel accounts;
+		const QStringList roles = {QStringLiteral("name"), QStringLiteral("profileName"),
+								   QStringLiteral("isMSA"), QStringLiteral("stateKey"),
+								   QStringLiteral("status"), QStringLiteral("accountId")};
+		QHash<int, QByteArray> roleNames;
+		for (int i = 0; i < roles.size(); ++i) {
+			roleNames.insert(Qt::UserRole + 1 + i, roles.at(i).toUtf8());
+		}
+		accounts.setItemRoleNames(roleNames);
+		auto addAccount = [&](const QString& name, bool msa, const QString& id) {
+			auto* item = new QStandardItem;
+			const QVariantList values = {name, name, msa, QStringLiteral("online"),
+										 QString(), id};
+			for (int i = 0; i < values.size(); ++i) {
+				item->setData(values.at(i), Qt::UserRole + 1 + i);
+			}
+			accounts.appendRow(item);
+		};
+		addAccount(QStringLiteral("Steve"), true, QStringLiteral("steve-id"));
+		addAccount(QStringLiteral("Alex"), false, QStringLiteral("alex-id"));
+		stub->setProperty("accounts", QVariant::fromValue<QObject*>(&accounts));
+		stub->setProperty("defaultAccountId", QStringLiteral("alex-id"));
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+		auto* main = qobject_cast<QQuickWindow*>(root.get());
+		main->show();
+
+		QVERIFY(navigate(root.get(), QStringLiteral("accounts")));
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Accounts"));
+		auto row = [&](const QString& id) {
+			return findItem(main, [&](QQuickItem* item) {
+				return item->property("accountId").toString() == id &&
+					   item->property("isDefault").isValid();
+			});
+		};
+		QTRY_VERIFY(row(QStringLiteral("steve-id")) && row(QStringLiteral("alex-id")));
+		QVERIFY(!row(QStringLiteral("steve-id"))->property("isDefault").toBool());
+		QVERIFY(row(QStringLiteral("alex-id"))->property("isDefault").toBool());
+
+		QTRY_VERIFY(row(QStringLiteral("steve-id"))->isEnabled());
+		QVERIFY(click(row(QStringLiteral("steve-id"))));
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Skin and Cape for Steve"));
+		back(root.get());
+		QCOMPARE(depth(root.get()), 1);
+		/* An offline account has no skin page to open. */
+		QTRY_VERIFY(row(QStringLiteral("alex-id"))->isEnabled());
+		QVERIFY(click(row(QStringLiteral("alex-id"))));
+		QCOMPARE(depth(root.get()), 1);
+	}
+
+	/* The skin page's arm width radios show what the skin says, also after
+	 * a click: a click only asks the library for the change (refused
+	 * first, then taken), and on a default skin it picks that skin's other
+	 * texture instead of asking the library at all. Kept from the custom
+	 * design's skin editor, where choosing Slim snapped back to Classic. */
+	void skinArmsFollowTheSkin()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto stub = accountsStub(engine);
+		QVERIFY(stub);
+		shell.m_accountsController = stub.get();
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+		auto* main = qobject_cast<QQuickWindow*>(root.get());
+		main->show();
+		QObject* library = stub->property("library").value<QObject*>();
+		QVERIFY(library);
+
+		QVERIFY(evaluate(root.get(), QStringLiteral("root.openAccountSkin(-1, '', 'Demo') !== null")).toBool());
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Skin and Cape for Demo"));
+		// The review row (-1) opens on its first skin.
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.editor.selectedName")).toString(),
+				 QStringLiteral("Hero"));
+
+		QQuickItem* classic = buttonWithText(main, QStringLiteral("Classic arms"));
+		QQuickItem* slim = buttonWithText(main, QStringLiteral("Slim arms"));
+		QVERIFY(classic && slim);
+		auto shows = [&](bool wantSlim) {
+			return classic->property("checked").toBool() == !wantSlim &&
+				   slim->property("checked").toBool() == wantSlim;
+		};
+		QVERIFY(shows(false));
+		QTRY_VERIFY(slim->isEnabled());
+
+		// Refused: the radios stay on what the skin says.
+		QVERIFY(click(slim));
+		QCOMPARE(library->property("asked").toInt(), 1);
+		QVERIFY(shows(false));
+
+		// Taken: they follow the skin there, and back.
+		library->setProperty("accept", true);
+		QVERIFY(click(slim));
+		QVERIFY(shows(true));
+		QVERIFY(click(classic));
+		QVERIFY(shows(false));
+		QCOMPARE(library->property("asked").toInt(), 3);
+
+		// A default skin: shown with its own width (Alex is slim), and the
+		// radios swap its texture, the library left alone.
+		evaluate(root.get(), QStringLiteral(
+			"root.pageStack.currentItem.editor.selectDefault(root.pageStack.currentItem.editor.defaultList[0])"));
+		auto selectedPath = [&] {
+			return evaluate(root.get(), QStringLiteral(
+				"root.pageStack.currentItem.editor.selected ? root.pageStack.currentItem.editor.selected.path : ''"))
+				.toString();
+		};
+		QCOMPARE(selectedPath(), QStringLiteral("/alex-slim.png"));
+		QVERIFY(shows(true));
+		QVERIFY(click(classic));
+		QCOMPARE(selectedPath(), QStringLiteral("/alex-classic.png"));
+		QVERIFY(shows(false));
+		QCOMPARE(library->property("asked").toInt(), 3);
+	}
+
+	/* New Instance goes over the library on the newest version, named
+	 * after it until a name is typed; a second ask finds the same page.
+	 * Create hands the controller what the page shows, and once the
+	 * instance is in, its page opens. */
+	void newInstanceCreatesThenOpensTheInstance()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto stub = newInstanceStub(engine);
+		QVERIFY(stub);
+		shell.m_newInstance = stub.get();
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+
+		evaluate(root.get(), QStringLiteral("root.openNewInstance()"));
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("New Instance"));
+		QCOMPARE(root->property("section").toString(), QStringLiteral("library"));
+		QCOMPARE(stub->property("selectedMinecraftVersion").toString(), QStringLiteral("1.21.4"));
+		evaluate(root.get(), QStringLiteral("root.openNewInstance()"));
+		QCOMPARE(depth(root.get()), 2);
+
+		/* A loader renames it; a vanilla one carries the game's name. */
+		QVERIFY(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.pickLoader('fabric')")).toBool());
+		QCOMPARE(stub->property("loader").toString(), QStringLiteral("fabric"));
+		QVERIFY(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.canCreate")).toBool());
+		evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.create()"));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.shell.newInstance.created.join('|')")).toString(),
+				 QStringLiteral("1.21.4 Fabric||default"));
+		QVERIFY(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.creating")).toBool());
+
+		evaluate(root.get(), QStringLiteral(
+			"root.shell.newInstance.watcher.running = false, root.shell.newInstance.watcher.finished(true)"));
+		QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+		QCOMPARE(root->property("openedInstanceId").toString(), QStringLiteral("fabric"));
+		QCOMPARE(depth(root.get()), 2);
+	}
+
+	/* Import opens on the file it was handed, named after it. Another
+	 * file from outside the window (a drop, `meshmc --import`) goes into
+	 * the same page, unless it is still importing the last one. */
+	void importTakesFilesFromOutside()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		auto stub = newInstanceStub(engine);
+		QVERIFY(stub);
+		shell.m_newInstance = stub.get();
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+
+		evaluate(root.get(), QStringLiteral("root.openImport('file:///packs/Better%20MC.mrpack')"));
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(topTitle(root.get()), QStringLiteral("Import Instance"));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.source")).toString(),
+				 QStringLiteral("file:///packs/Better%20MC.mrpack"));
+
+		emit shell.importRequested(QStringLiteral("/packs/Skyblock.zip"));
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.source")).toString(),
+				 QStringLiteral("/packs/Skyblock.zip"));
+
+		/* Not a pack: Import stays off. */
+		evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.setSource('/packs/readme.txt')"));
+		QVERIFY(!evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.canImport")).toBool());
+		evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.setSource('/packs/Skyblock.zip')"));
+		evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.startImport()"));
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.shell.newInstance.imported.join('|')")).toString(),
+				 QStringLiteral("/packs/Skyblock.zip|Skyblock||default"));
+
+		emit shell.importRequested(QStringLiteral("/packs/Other.zip"));
+		QCOMPARE(depth(root.get()), 2);
+		QCOMPARE(evaluate(root.get(), QStringLiteral("root.pageStack.currentItem.source")).toString(),
+				 QStringLiteral("/packs/Skyblock.zip"));
+	}
+
+	/* First run opens only while a setup step is still needed, with the
+	 * account step only while there is no account. */
+	void onboardingOnlyWhenSomethingIsNeeded()
+	{
+		QQmlEngine engine;
+		FakeShell shell;
+		shell.m_accountCount = 0;
+		auto root = createRoot(engine, &shell);
+		QVERIFY(root);
+		QVERIFY(!evaluate(root.get(), QStringLiteral("root.openOnboarding(false)")).toBool());
+
+		shell.m_setupSteps = {QStringLiteral("java")};
+		QVERIFY(evaluate(root.get(), QStringLiteral("root.openOnboarding(false)")).toBool());
+		QCOMPARE(evaluate(root.get(), QStringLiteral("onboarding.steps.join('|')")).toString(),
+				 QStringLiteral("welcome|account|java|done"));
 	}
 
 	/* With no account at all, "Play Offline" goes to the Accounts page

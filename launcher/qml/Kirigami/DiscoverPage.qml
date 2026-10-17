@@ -7,6 +7,8 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
+import "brands.js" as Brands
+
 /*
  * Modpacks to install as new instances, from Modrinth, CurseForge, FTB,
  * ATLauncher or Technic: the provider in the tab bar under the title, the
@@ -165,8 +167,8 @@ Kirigami.ScrollablePage {
         onSearchRequested: (text) => page.setSearch(text)
     }
 
-    // The providers as tabs, once there is more than one. A Loader, since
-    // the desktop style's TabBar cannot be empty.
+    // The providers as tabs, each with its own logo, once there is more
+    // than one. A Loader, since the desktop style's TabBar cannot be empty.
     header: Loader {
         active: page.providers.length > 1
         sourceComponent: QQC2.TabBar {
@@ -176,8 +178,12 @@ Kirigami.ScrollablePage {
                 model: page.providers
                 QQC2.TabButton {
                     required property var modelData
+                    readonly property string logo: Brands.source(modelData.id, page.shell ? page.shell.brandLogos : null)
                     text: modelData.name
                     width: implicitWidth
+                    // A logo still to be fetched: a plain globe meanwhile.
+                    icon.source: logo
+                    icon.name: logo.length > 0 ? "" : "globe-symbolic"
                     onClicked: page.setProvider(modelData.id)
                 }
             }

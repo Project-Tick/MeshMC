@@ -1,0 +1,8 @@
+Minecraft artwork owned by Mojang AB / Microsoft
+
+This is NOT a free software licence. The files marked with this identifier
+show Minecraft characters, blocks, items or logos, which are the property of
+Mojang AB / Microsoft. They are included in MeshMC because it is a Minecraft
+launcher, with no licence granted by the rights holder; see the "Mojang
+assets" section of COPYING.md. They are not covered by the licence of the
+rest of the project, and should be replaced by original artwork.

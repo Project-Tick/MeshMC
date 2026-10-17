@@ -1,13 +1,17 @@
+# SPDX-FileCopyrightText: 2026 Project Tick
+# SPDX-License-Identifier: Apache-2.0
+
 [Desktop Entry]
-Version=1.0
-Name=MeshMC
-Comment=Discover, manage, and play Minecraft instances
+Version=1.5
 Type=Application
-Terminal=false
+Name=MeshMC
+GenericName=Minecraft Launcher
+Comment=Discover, manage, and play Minecraft instances
 Exec=meshmc %U
-StartupNotify=true
 Icon=org.projecttick.MeshMC
-Categories=Game;ActionGame;AdventureGame;Simulation;PackageManager;
-Keywords=game;minecraft;mc;
+Terminal=false
+StartupNotify=true
 StartupWMClass=MeshMC
-MimeType=application/zip;application/x-modrinth-modpack+zip;x-scheme-handler/curseforge;x-scheme-handler/meshmc;x-scheme-handler/meshmc;
+Categories=Game;
+Keywords=game;minecraft;mc;launcher;modpack;mod;
+MimeType=application/zip;application/x-modrinth-modpack+zip;x-scheme-handler/curseforge;x-scheme-handler/meshmc;

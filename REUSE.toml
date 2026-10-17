@@ -1,0 +1,317 @@
+# SPDX-FileCopyrightText: 2026 Project Tick
+# SPDX-License-Identifier: CC0-1.0
+
+# REUSE 3.x annotations for files that cannot carry a comment header (images,
+# translations, JSON, binary test data, fonts, 3D models, ...) and for files
+# that have not been given one yet. A header inside a file always wins over
+# an entry here (precedence = "closest"), so adding a header later is enough.
+#
+# Entries are grouped by origin and go from general to specific; where two
+# entries match the same file the LAST one applies. Every group marked TODO
+# needs a decision or a provenance check by a human before KDE Review. The
+# full list is in the KDE Review notes handed over with this file.
+
+version = 1
+SPDX-PackageName = "MeshMC"
+SPDX-PackageSupplier = "Project Tick"
+SPDX-PackageDownloadLocation = "https://github.com/Project-Tick/MeshMC"
+
+############################ Project files (Apache-2.0) ############################
+
+# Build glue, CI, packaging, docs and other text files without a header yet.
+# TODO: replace by real headers in the files once nobody is editing them.
+[[annotations]]
+path = [
+    ".gitattributes",
+    ".gitignore",
+    ".flatpak-manifest.json",
+    "**/.gitignore",
+    ".github/**",
+    "CHANGELOG.md",
+    "CMakePresets.json",
+    "crowdin.yml",
+    "buildconfig/CMakeLists.txt",
+    "cmake/**",
+    "launcher/CMakeLists.txt",
+    "launcher/Messages.sh",
+    "launcher/scripts/**",
+    "launcher/packaging/**",
+    "launcher/plugin/plugins/**/CMakeLists.txt",
+    "launcher/plugin/plugins/staging/ErrorOracle/rules/*.json",
+    "launcher/plugin/sdk/**",
+    "launcher/resources/*/*.qrc",
+    "launcher/resources/*/index.theme",
+    "launcher/resources/documents/credits.html",
+    "launcher/resources/shaders/vshader_skin_background.glsl",
+    "launcher/ui/**",
+    "libraries/README.md",
+    "libraries/*/README.md",
+    "libraries/*/CMakeLists.txt",
+    "libraries/*/.gitignore",
+    "libraries/javacheck/JavaCheck.java",
+    "libraries/katabasis/acknowledgements.md",
+    "launcher/updater/meshupdater/*.ui",
+    "launcher/updater/meshupdater/updater.exe.manifest",
+    "README.md",
+]
+SPDX-FileCopyrightText = [
+    "2012-2021 MultiMC Contributors",
+    "2026 Project Tick",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+# Test data (JSON, jars, shortcut fixtures): trivial, no creative content.
+[[annotations]]
+path = [
+    "launcher/minecraft/testdata/**",
+    "launcher/mojang/testdata/**",
+    "launcher/testdata/**",
+]
+SPDX-FileCopyrightText = "2026 Project Tick"
+SPDX-License-Identifier = "CC0-1.0"
+
+# Translations come from Crowdin (https://crowdin.com/project/projtlauncher)
+# and are licensed like the source they translate.
+[[annotations]]
+path = "launcher/locale/*.po*"
+SPDX-FileCopyrightText = "MeshMC translators"
+SPDX-License-Identifier = "Apache-2.0"
+
+# Project originals: icons, app icon, background art, generated pixel art.
+[[annotations]]
+path = [
+    "launcher/qml/Components/art/**",
+    "launcher/qml/Cat/textures/heart.png",
+    "launcher/qml/Cat/textures/sleep_z.png",
+    "launcher/resources/meshmc/org.projecttick.MeshMC*.svg",
+    "launcher/resources/meshmc/*/noaccount.png",
+    "launcher/resources/meshmc/*/star.png",
+    "launcher/resources/meshmc/scalable/instances/meshmc.svg",
+    "launcher/resources/meshmc/scalable/*.svg",
+    "launcher/resources/meshmc/*/instances/flame*.png",
+    "launcher/resources/meshmc/*/instances/gear.png",
+    "launcher/resources/meshmc/*/instances/magitech.png",
+    "launcher/resources/meshmc/*/instances/meat.png",
+    "launcher/resources/meshmc/scalable/instances/flame.svg",
+    "launcher/resources/meshmc/scalable/instances/gear.svg",
+    "launcher/resources/meshmc/scalable/instances/magitech.svg",
+    "launcher/resources/meshmc/scalable/instances/meat.svg",
+    "launcher/resources/sources/burfcat_hat.png",
+    "launcher/resources/sources/cattiversary.xcf",
+    "launcher/resources/sources/clucker.svg",
+    "launcher/resources/sources/flame.svg",
+    "launcher/resources/sources/gear.svg",
+    "launcher/resources/sources/magitech.svg",
+    "launcher/resources/sources/meat.svg",
+    "launcher/resources/meshmc/scalable/instances/projecttick.svg",
+    "launcher/resources/meshmc/scalable/instances/projtlauncher.svg",
+    "launcher/resources/meshmc/index.theme",
+    "launcher/resources/assets/*",
+    "launcher/resources/backgrounds/*.png",
+    "launcher/packaging/linux/org.projecttick.MeshMC_256.png",
+    "launcher/packaging/macos/MeshMC.icon/**",
+    "launcher/packaging/macos/org.projecttick.MeshMC.icns",
+    "launcher/packaging/windows/org.projecttick.MeshMC.ico",
+]
+SPDX-FileCopyrightText = [
+    "2012-2021 MultiMC Contributors",
+    "2026 Project Tick",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+############################ Third-party material ############################
+
+# Breeze icon theme (launcher/resources/breeze_light, breeze_dark), see
+# COPYING.md. KDE's policy wants "LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL"
+# for Breeze icons; COPYING.md says "version 3 or later".
+[[annotations]]
+path = [
+    "launcher/resources/breeze_light/scalable/**",
+    "launcher/resources/breeze_dark/scalable/**",
+]
+SPDX-FileCopyrightText = "2014 Uri Herrera <uri_herrera@nitrux.in> and others"
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
+# Lucide interface icons (launcher/qml/Components/icons).
+[[annotations]]
+path = [
+    "launcher/qml/Components/icons/*.svg",
+    "launcher/qml/Components/icons/LICENSE.Lucide.txt",
+]
+SPDX-FileCopyrightText = [
+    "Cole Bemis 2013-2022 (Feather)",
+    "Lucide Contributors 2022",
+]
+SPDX-License-Identifier = "ISC"
+
+# Inter typeface (launcher/qml/Theme/fonts/inter).
+[[annotations]]
+path = "launcher/qml/Theme/fonts/inter/*"
+SPDX-FileCopyrightText = "2016 The Inter Project Authors (https://github.com/rsms/inter)"
+SPDX-License-Identifier = "OFL-1.1"
+
+# "Minecraft Cat" by JanesBT, regrouped and recoloured by MeshMC
+# (launcher/qml/Cat/assets/CREDITS.md).
+[[annotations]]
+path = [
+    "launcher/qml/Cat/assets/cat.glb",
+    "launcher/qml/Cat/model/meshes/*.mesh",
+    "launcher/qml/Cat/textures/cat_*.png",
+]
+SPDX-FileCopyrightText = [
+    "JanesBT (https://sketchfab.com/JanesBt)",
+    "2026 Project Tick",
+]
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "launcher/qml/Cat/assets/CREDITS.md"
+SPDX-FileCopyrightText = "2026 Project Tick"
+SPDX-License-Identifier = "Apache-2.0"
+
+# Vendored libraries: build glue the project wrote around them keeps the
+# project licence (first entry above); these keep their own.
+[[annotations]]
+path = "libraries/libnbtplusplus/CMakeLists.txt"
+SPDX-FileCopyrightText = "2013, 2015 ljfa-ag"
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
+[[annotations]]
+path = "launcher/plugin/plugins/DiscordRPC/vendor/discord_ipc/README.md"
+SPDX-FileCopyrightText = [
+    "2017 Discord, Inc.",
+    "2026 Project Tick",
+]
+SPDX-License-Identifier = "MIT"
+
+########### TODO: licences KDE does not accept / provenance unverified ###########
+
+# Icon set by Adam Whitcroft ("Batch"), listed in COPYING.md: free to use but
+# "do not sell, host or rent the icon set". That is not a free licence in
+# KDE's sense. The files below are the Adobe Illustrator exports in the
+# icon theme; which of them really are Batch icons is NOT verified.
+# TODO(licence): replace with icons KDE can accept (Breeze) or get permission.
+[[annotations]]
+path = [
+    "launcher/resources/meshmc/scalable/accounts.svg",
+    "launcher/resources/meshmc/scalable/about.svg",
+    "launcher/resources/meshmc/scalable/checkupdate.svg",
+    "launcher/resources/meshmc/scalable/copy.svg",
+    "launcher/resources/meshmc/scalable/externaltools.svg",
+    "launcher/resources/meshmc/scalable/bug.svg",
+    "launcher/resources/meshmc/scalable/instance-settings.svg",
+    "launcher/resources/meshmc/scalable/centralmods.svg",
+    "launcher/resources/meshmc/scalable/coremods.svg",
+    "launcher/resources/meshmc/scalable/log.svg",
+    "launcher/resources/meshmc/scalable/news.svg",
+    "launcher/resources/meshmc/scalable/new.svg",
+    "launcher/resources/meshmc/scalable/jarmods.svg",
+    "launcher/resources/meshmc/scalable/launcher.svg",
+    "launcher/resources/meshmc/scalable/refresh.svg",
+    "launcher/resources/meshmc/scalable/loadermods.svg",
+    "launcher/resources/meshmc/scalable/notes.svg",
+    "launcher/resources/meshmc/scalable/proxy.svg",
+    "launcher/resources/meshmc/scalable/screenshots.svg",
+    "launcher/resources/meshmc/scalable/shortcut.svg",
+    "launcher/resources/meshmc/scalable/viewfolder.svg",
+    "launcher/resources/meshmc/scalable/resourcepacks.svg",
+    "launcher/resources/meshmc/scalable/status-yellow.svg",
+    "launcher/resources/meshmc/scalable/status-bad.svg",
+    "launcher/resources/meshmc/scalable/settings.svg",
+    "launcher/resources/meshmc/scalable/status-good.svg",
+]
+SPDX-FileCopyrightText = "Adam Whitcroft (Batch icon set)"
+SPDX-License-Identifier = "LicenseRef-Batch-Icons"
+
+# Logos of other projects and companies, used only to identify them. They are
+# trademarks and their artwork is not under the project licence.
+# TODO(licence): check each one; replace with Breeze brand icons where possible.
+[[annotations]]
+path = [
+    "launcher/resources/meshmc/scalable/adoptium.svg",
+    "launcher/resources/meshmc/scalable/atlauncher.svg",
+    "launcher/resources/meshmc/scalable/atlauncher-placeholder.png",
+    "launcher/resources/meshmc/scalable/azul.svg",
+    "launcher/resources/meshmc/scalable/discord.svg",
+    "launcher/resources/meshmc/scalable/git-scm.svg",
+    "launcher/resources/meshmc/scalable/matrix.svg",
+    "launcher/resources/meshmc/scalable/technic.svg",
+    "launcher/resources/meshmc/scalable/patreon.svg",
+    "launcher/resources/meshmc/scalable/reddit-alien.svg",
+    "launcher/resources/meshmc/scalable/java.svg",
+    "launcher/resources/meshmc/scalable/instances/modrinth.svg",
+    "launcher/resources/meshmc/scalable/instances/quiltmc.svg",
+    "launcher/resources/meshmc/scalable/instances/ftb_logo.svg",
+    "launcher/resources/meshmc/scalable/instances/forge_mark.svg",
+    "launcher/resources/meshmc/scalable/instances/fabricmc.svg",
+    "launcher/resources/meshmc/scalable/instances/neoforged.svg",
+    "launcher/resources/meshmc/scalable/instances/quilt_mark.svg",
+    "launcher/resources/meshmc/*/instances/forge.png",
+    "launcher/resources/meshmc/*/instances/liteloader.png",
+    "launcher/resources/meshmc/*/instances/ftb_*.png",
+    "launcher/resources/sources/ftb-*.svg",
+]
+SPDX-FileCopyrightText = "The respective trademark owners"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Logo"
+
+# Artwork of Minecraft's characters and blocks, and the Mojang logo. Property
+# of Mojang AB / Microsoft; COPYING.md ("Mojang assets") says they are included
+# "until someone from Mojang objects". KDE cannot accept this.
+# TODO(licence): replace with original art before KDE Review.
+[[annotations]]
+path = [
+    "launcher/resources/meshmc/scalable/mojang.svg",
+    "launcher/resources/meshmc/scalable/minecraft.svg",
+    "launcher/resources/meshmc/scalable/instances/bee*.svg",
+    "launcher/resources/meshmc/scalable/instances/brick.svg",
+    "launcher/resources/meshmc/scalable/instances/chicken.svg",
+    "launcher/resources/meshmc/scalable/instances/creeper.svg",
+    "launcher/resources/meshmc/scalable/instances/diamond.svg",
+    "launcher/resources/meshmc/scalable/instances/dirt.svg",
+    "launcher/resources/meshmc/scalable/instances/enderman.svg",
+    "launcher/resources/meshmc/scalable/instances/enderpearl.svg",
+    "launcher/resources/meshmc/scalable/instances/fox*.svg",
+    "launcher/resources/meshmc/scalable/instances/gold.svg",
+    "launcher/resources/meshmc/scalable/instances/grass.svg",
+    "launcher/resources/meshmc/scalable/instances/herobrine.svg",
+    "launcher/resources/meshmc/scalable/instances/iron.svg",
+    "launcher/resources/meshmc/scalable/instances/netherstar.svg",
+    "launcher/resources/meshmc/scalable/instances/planks.svg",
+    "launcher/resources/meshmc/scalable/instances/skeleton.svg",
+    "launcher/resources/meshmc/scalable/instances/squarecreeper.svg",
+    "launcher/resources/meshmc/scalable/instances/steve.svg",
+    "launcher/resources/meshmc/scalable/instances/stone.svg",
+    "launcher/resources/meshmc/scalable/instances/tnt.svg",
+    "launcher/resources/meshmc/*/instances/*_legacy.png",
+    "launcher/resources/sources/creeper.svg",
+    "launcher/resources/sources/enderpearl.svg",
+    "launcher/resources/sources/herobrine.svg",
+    "launcher/resources/sources/netherstar.svg",
+    "launcher/resources/sources/pskeleton.svg",
+    "launcher/resources/sources/skeleton.svg",
+    "launcher/resources/sources/squarecreeper.svg",
+    "launcher/resources/sources/steve.svg",
+    "launcher/resources/meshmc/*/unknown_server.png",
+    "launcher/resources/meshmc/*/instances/bee.png",
+    "launcher/resources/meshmc/*/instances/brick.png",
+    "launcher/resources/meshmc/*/instances/chicken.png",
+    "launcher/resources/meshmc/*/instances/creeper.png",
+    "launcher/resources/meshmc/*/instances/diamond.png",
+    "launcher/resources/meshmc/*/instances/dirt.png",
+    "launcher/resources/meshmc/*/instances/enderman.png",
+    "launcher/resources/meshmc/*/instances/enderpearl.png",
+    "launcher/resources/meshmc/*/instances/fox.png",
+    "launcher/resources/meshmc/*/instances/gold.png",
+    "launcher/resources/meshmc/*/instances/grass.png",
+    "launcher/resources/meshmc/*/instances/herobrine.png",
+    "launcher/resources/meshmc/*/instances/iron.png",
+    "launcher/resources/meshmc/*/instances/netherstar.png",
+    "launcher/resources/meshmc/*/instances/planks.png",
+    "launcher/resources/meshmc/*/instances/skeleton.png",
+    "launcher/resources/meshmc/*/instances/squarecreeper.png",
+    "launcher/resources/meshmc/*/instances/steve.png",
+    "launcher/resources/meshmc/*/instances/stone.png",
+    "launcher/resources/meshmc/*/instances/tnt.png",
+]
+SPDX-FileCopyrightText = "Mojang AB / Microsoft"
+SPDX-License-Identifier = "LicenseRef-Mojang-Assets"

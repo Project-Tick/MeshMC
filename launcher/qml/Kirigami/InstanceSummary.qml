@@ -6,12 +6,11 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import org.kde.kirigami.delegates as KD
 
 /*
- * What the library shows of one instance, in a grid card and a list row
- * alike: its icon, name and version, the launch's progress while it starts,
- * and buttons to play or stop it and to open its menu.
+ * One instance as a row of the library's list: its icon, its name, its
+ * loader's logo and version, the launch's progress while it starts, and
+ * buttons to play or stop it and to open its menu.
  *
  * `entry` is the delegate's model object, with InstanceList's roles
  * (instanceId, name, iconKey, group, isRunning, canLaunch, gameVersion,
@@ -57,14 +56,23 @@ RowLayout {
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Kirigami.Units.smallSpacing
+        spacing: 0
 
-        KD.TitleSubtitle {
+        QQC2.Label {
             Layout.fillWidth: true
-            title: summary.entry.name
-            subtitle: summary.launching ? summary.entry.launchStatus
-                    : summary.running ? i18nc("@info:status, %1 is the loader and version", "Running · %1", summary.versionLine)
-                    : summary.versionLine
+            text: summary.entry.name
+            elide: Text.ElideRight
+        }
+        // The loader's logo before its name and version.
+        LoaderLine {
+            id: loaderLine
+            Layout.fillWidth: true
+            loader: summary.entry.loader || ""
+            gameVersion: summary.entry.gameVersion || ""
+            logos: summary.app.shell ? summary.app.shell.brandLogos : null
+            text: summary.launching ? summary.entry.launchStatus
+                : summary.running ? i18nc("@info:status, %1 is the loader and version", "Running · %1", loaderLine.versionText)
+                : loaderLine.versionText
         }
         LaunchProgressBar {
             Layout.fillWidth: true

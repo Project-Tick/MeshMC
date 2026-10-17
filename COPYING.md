@@ -335,3 +335,17 @@
     https://github.com/FabricMC/community) and the Quilt mark (quilt_mark.svg,
     from https://github.com/QuiltMC/art) are dedicated to the public domain
     under CC0 1.0; credited here as a courtesy.
+
+# Mod loader and modpack site logos
+
+    The logos in launcher/resources/meshmc/brands/ identify the mod loaders
+    and modpack sites in the KDE interface. The .license file beside each
+    names its source, owner and licence: Fabric and Quilt (CC0 1.0),
+    NeoForge (CC BY 4.0, the NeoForged team), Forge (LGPL 2.1, from the
+    Minecraft Forge repository) and FTB (LGPL 2.1, from the FTB App
+    repository), Technic (MIT, from Technic Solder). Each is a trademark of
+    its owner, used only to identify that loader or site.
+
+    The Modrinth, CurseForge and ATLauncher logos are not distributed with
+    MeshMC: the launcher downloads them from those sites on first use and
+    keeps them in its data folder's cache (launcher/modplatform/BrandLogos.cpp).

@@ -1,71 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (C) 2026 Project Tick -->
-<component type="desktop">
+<!--
+    SPDX-FileCopyrightText: 2026 Project Tick
+    SPDX-License-Identifier: CC0-1.0
+-->
+<component type="desktop-application">
   <id>org.projecttick.MeshMC</id>
-  <name>MeshMC</name>
-  <summary>Custom Minecraft Launcher to easily manage multiple Minecraft installations at once</summary>
-  <developer id="org.projecttick">
-    <name>Project Tick</name>
-  </developer>
   <metadata_license>CC0-1.0</metadata_license>
+  <!-- TODO(KDE Review): the KDE Licensing Policy does not accept Apache-2.0 for
+       application code. Update this once the licence question is settled. -->
   <project_license>Apache-2.0</project_license>
+  <developer id="org.projecttick">
+    <name translate="no">Project Tick</name>
+  </developer>
+  <name>MeshMC</name>
+  <summary>Manage and play Minecraft instances with different versions, mods and modpacks</summary>
   <description>
-    <p>MeshMC is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity. With MMCO Plugin system.</p>
+    <p>MeshMC is a launcher for Minecraft that keeps every game setup in its own instance, so mods, worlds, settings and Java versions never mix.</p>
     <p>Features:</p>
     <ul>
-      <li>Easily install game modifications, such as Fabric, Forge, NeoForge and Quilt</li>
-      <li>Easily install and update modpacks from the MeshMC</li>
-      <li>Control your Java settings</li>
-      <li>Ability to install MMCO plugin from outside</li>
-      <li>Ability to use proprietary plugins signed with MMCS.</li>
-      <li>Manage worlds and resource packs from the launcher</li>
-      <li>See logs and other details easily through a dashboard</li>
-      <li>Kill Minecraft in case of a crash/freeze</li>
-      <li>Ability to disable MMCO plugins you don't want.</li>
-      <li>Isolate Minecraft instances to keep everything clean</li>
-      <li>Install and update mods directly from the launcher</li>
-      <li>Customize the launcher with themes, and more</li>
-      <li>And cats :3</li>
-      <li>With more themes, UwU</li>
+      <li>Create instances for any Minecraft version, and install Fabric, Forge, NeoForge or Quilt on them</li>
+      <li>Find, install and update mods, resource packs, shader packs and data packs from inside the launcher</li>
+      <li>Install and update modpacks from Modrinth, CurseForge, FTB, Technic and ATLauncher</li>
+      <li>Manage worlds, screenshots, servers and notes for each instance</li>
+      <li>Choose the Java version and memory settings for every instance</li>
+      <li>Sign in with several Microsoft accounts and manage skins</li>
+      <li>Back up instances, and read the game's logs while it runs</li>
+      <li>Extend the launcher with optional plugins</li>
     </ul>
   </description>
+  <launchable type="desktop-id">org.projecttick.MeshMC.desktop</launchable>
+  <provides>
+    <binary>meshmc</binary>
+  </provides>
+  <categories>
+    <category>Game</category>
+  </categories>
+  <keywords>
+    <keyword>Minecraft</keyword>
+    <keyword>launcher</keyword>
+    <keyword>mods</keyword>
+    <keyword>modpacks</keyword>
+  </keywords>
+  <url type="homepage">https://projecttick.org</url>
+  <url type="faq">https://projecttick.org/wiki/overview/faq/</url>
+  <url type="help">https://projecttick.org/wiki</url>
+  <!-- TODO(KDE Review): move to https://bugs.kde.org/enter_bug.cgi?format=guided&amp;product=meshmc
+       once the bugs.kde.org product exists. -->
+  <url type="bugtracker">https://github.com/Project-Tick/MeshMC/issues</url>
+  <url type="contact">https://github.com/Project-Tick/MeshMC/issues</url>
+  <url type="vcs-browser">https://github.com/Project-Tick/MeshMC</url>
+  <url type="translate">https://crowdin.com/project/projtlauncher</url>
+  <url type="contribute">https://github.com/Project-Tick/MeshMC/blob/develop/.github/CONTRIBUTING.md</url>
+  <!-- TODO(screenshots): placeholder. Take real screenshots of the KDE interface,
+       upload them to https://invent.kde.org/websites/product-screenshots and use the
+       https://cdn.kde.org/screenshots/meshmc/... URLs here. The previous
+       projecttick.org screenshots showed the old QtWidgets interface. -->
   <screenshots>
     <screenshot type="default">
-      <caption>The main MeshMC window</caption>
-      <image type="source" width="1030" height="764">https://projecttick.org/img/screenshots/LauncherDark.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>Modpack installation</caption>
-      <image type="source" width="1126" height="850">https://projecttick.org/img/screenshots/ModpackInstallDark.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>Modpack updating</caption>
-      <image type="source" width="930" height="677">https://projecttick.org/img/screenshots/ModpackUpdateDark.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>Mod installation</caption>
-      <image type="source" width="848" height="558">https://projecttick.org/img/screenshots/ModInstallDark.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>Mod updating</caption>
-      <image type="source" width="860" height="748">https://projecttick.org/img/screenshots/ModUpdateDark.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>Instance management</caption>
-      <image type="source" width="960" height="659">https://projecttick.org/img/screenshots/PropertiesDark.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>Cat :3</caption>
-      <image type="source" width="1042" height="754">https://projecttick.org/img/screenshots/LauncherCatDark.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>Customization</caption>
-      <image type="source" width="1040" height="752">https://projecttick.org/img/screenshots/CustomizeDark.png</image>
+      <caption>The instance library</caption>
+      <image type="source">https://cdn.kde.org/screenshots/meshmc/library.png</image>
     </screenshot>
   </screenshots>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
   <recommends>
     <memory>2048</memory>
   </recommends>
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-fantasy">moderate</content_attribute>
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
+  <branding>
+    <color type="primary" scheme_preference="light">#3584e4</color>
+    <color type="primary" scheme_preference="dark">#0a2d6f</color>
+  </branding>
   <releases>
     <release version="10.0.0" date="2026-09-03">
       <description>
@@ -767,25 +777,4 @@
       </description>
     </release>
   </releases>
-  <categories>
-    <category>Game</category>
-  </categories>
-  <url type="homepage">https://projecttick.org</url>
-  <url type="faq">https://projecttick.org/wiki/overview/faq/</url>
-  <url type="help">https://projecttick.org/wiki</url>
-  <url type="bugtracker">https://github.com/Project-Tick/MeshMC/issues</url>
-  <url type="translate">https://crowdin.com/project/projtlauncher</url>
-  <url type="contact">https://github.com/Project-Tick/MeshMC/issues</url>
-  <url type="vcs-browser">https://github.com/Project-Tick/MeshMC/</url>
-  <url type="contribute">https://github.com/Project-Tick/MeshMC/blob/develop/.github/CONTRIBUTING.md</url>
-  <url type="donation">https://www.patreon.com/meshmc</url>
-  <content_rating type="oars-1.1">
-    <content_attribute id="violence-fantasy">moderate</content_attribute>
-    <content_attribute id="social-chat">intense</content_attribute>
-  </content_rating>
-  <branding>
-    <color type="primary" scheme_preference="light">#3584e4</color>
-    <color type="primary" scheme_preference="dark">#0a2d6f</color>
-  </branding>
-  <launchable type="desktop-id">org.projecttick.MeshMC.desktop</launchable>
 </component>

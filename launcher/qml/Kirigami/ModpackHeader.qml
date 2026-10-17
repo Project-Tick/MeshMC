@@ -3,118 +3,74 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import QtQuick
-import QtQuick.Controls as QQC2
-import QtQuick.Layouts
 import org.kde.coreaddons as KCoreAddons
 import org.kde.kirigami as Kirigami
 
+import "brands.js" as Brands
 import "format.js" as Format
 
 /*
- * The top of a modpack's page: its logo, name and author, how many have
- * downloaded and follow it and when it was last updated, what it is in a
- * line, and its categories. `pack` is the Discover result row.
+ * The top of a modpack's page (ProjectHeader): its logo, name and author,
+ * how many have downloaded and follow it; beside them where it is from,
+ * what the picked version runs on, when it was last updated and its
+ * categories. `controls` -- Install and its choices -- go under the name.
+ *
+ * `pack` is the Discover result row; `version` the picked entry of the
+ * pack's versions ({gameVersions, loaders, ...}), or null.
  */
-ColumnLayout {
+ProjectHeader {
     id: header
 
     property var pack: ({})
+    property string providerId
+    property string providerName
+    property var version: null
+    // Loader ids as the projects spell their own names.
+    property var loaderNames: ({})
+
     readonly property var updatedDate: Format.parseDate(header.pack.updated)
+    readonly property string loader: header.version && (header.version.loaders || []).length > 0
+                                     ? header.version.loaders[0] : ""
+    readonly property string gameVersion: header.version && (header.version.gameVersions || []).length > 0
+                                          ? header.version.gameVersions[0] : ""
 
-    spacing: Kirigami.Units.largeSpacing * 2
+    iconSource: header.pack.logoUrl || ""
+    fallbackSource: "image://instanceicon/planks"
+    title: header.pack.title || ""
+    author: header.pack.author || ""
 
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Kirigami.Units.largeSpacing * 2
-
-        Kirigami.Icon {
-            Layout.alignment: Qt.AlignTop
-            Layout.preferredWidth: Kirigami.Units.iconSizes.enormous
-            Layout.preferredHeight: Kirigami.Units.iconSizes.enormous
-            source: header.pack.logoUrl || ""
-            fallback: "package-x-generic"
-            placeholder: "package-x-generic"
-        }
-        ColumnLayout {
-            Layout.fillWidth: true
-            Layout.minimumWidth: 0
-            spacing: Kirigami.Units.smallSpacing
-
-            Kirigami.Heading {
-                Layout.fillWidth: true
-                level: 1
-                text: header.pack.title || ""
-                wrapMode: Text.Wrap
-            }
-            QQC2.Label {
-                Layout.fillWidth: true
-                visible: (header.pack.author || "").length > 0
-                text: i18nc("@info %1 is a modpack's author", "by %1", header.pack.author || "")
-                elide: Text.ElideRight
-                opacity: 0.7
-            }
-            Flow {
-                Layout.fillWidth: true
-                Layout.topMargin: Kirigami.Units.smallSpacing
-                spacing: Kirigami.Units.largeSpacing * 2
-
-                StatLabel {
-                    visible: (header.pack.downloads || 0) > 0
-                    iconName: "download"
-                    text: i18ncp("@info %2 is a short number such as 12.3K", "%2 download", "%2 downloads",
-                                 header.pack.downloads || 0, Format.compactNumber(header.pack.downloads))
-                }
-                StatLabel {
-                    visible: (header.pack.follows || 0) > 0
-                    iconName: "emblem-favorite"
-                    text: i18ncp("@info %2 is a short number such as 12.3K", "%2 follower", "%2 followers",
-                                 header.pack.follows || 0, Format.compactNumber(header.pack.follows))
-                }
-                StatLabel {
-                    visible: !!header.updatedDate
-                    iconName: "view-calendar"
-                    text: header.updatedDate
-                          ? i18nc("@info %1 is a date", "Updated %1",
-                                  KCoreAddons.Format.formatRelativeDate(header.updatedDate, Locale.ShortFormat))
-                          : ""
-                }
-            }
-        }
+    stats: {
+        var list = []
+        if ((header.pack.downloads || 0) > 0)
+            list.push({ iconName: "download-symbolic",
+                        text: i18ncp("@info %2 is a short number such as 12.3K", "%2 download", "%2 downloads",
+                                     header.pack.downloads, Format.compactNumber(header.pack.downloads)) })
+        if ((header.pack.follows || 0) > 0)
+            list.push({ iconName: "starred-symbolic",
+                        text: i18ncp("@info %2 is a short number such as 12.3K", "%2 follower", "%2 followers",
+                                     header.pack.follows, Format.compactNumber(header.pack.follows)) })
+        return list
     }
 
-    QQC2.Label {
-        Layout.fillWidth: true
-        visible: text.length > 0
-        text: header.pack.description || ""
-        wrapMode: Text.Wrap
-    }
-
-    Flow {
-        Layout.fillWidth: true
-        spacing: Kirigami.Units.smallSpacing
-        visible: (header.pack.categories || []).length > 0
-        Repeater {
-            model: header.pack.categories || []
-            Kirigami.Chip {
-                required property string modelData
-                text: modelData.length > 0 ? modelData.charAt(0).toUpperCase() + modelData.slice(1) : modelData
-                closable: false
-                interactive: false
-            }
+    details: {
+        var list = []
+        if (header.providerName.length > 0)
+            list.push({ label: i18nc("@label where a modpack is from", "Source:"),
+                        text: header.providerName, brand: header.providerId })
+        if (header.loader.length > 0 || header.gameVersion.length > 0) {
+            var loaderName = header.loaderNames[header.loader]
+                             || (header.loader.length > 0 ? header.loader.charAt(0).toUpperCase() + header.loader.slice(1) : "")
+            list.push({ label: i18nc("@label what a modpack version runs on", "Runs on:"),
+                        text: [loaderName, header.gameVersion].filter(s => s.length > 0).join(" "),
+                        brand: Brands.loaderId(header.loader) })
         }
-    }
-
-    component StatLabel: RowLayout {
-        property string iconName
-        property alias text: label.text
-        spacing: Kirigami.Units.smallSpacing
-        Kirigami.Icon {
-            implicitWidth: Kirigami.Units.iconSizes.small
-            implicitHeight: Kirigami.Units.iconSizes.small
-            source: parent.iconName
-        }
-        QQC2.Label {
-            id: label
-        }
+        if (header.updatedDate)
+            list.push({ label: i18nc("@label", "Updated:"),
+                        text: KCoreAddons.Format.formatRelativeDate(header.updatedDate, Locale.ShortFormat) })
+        var categories = (header.pack.categories || []).map(c => c.length > 0 ? c.charAt(0).toUpperCase() + c.slice(1) : c)
+        if (categories.length > 0)
+            list.push({ label: i18nc("@label", "Categories:"),
+                        text: categories.join(i18nc("@info separator between categories", ", ")) })
+        return list
     }
 }

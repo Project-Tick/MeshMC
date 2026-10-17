@@ -15,14 +15,19 @@ ListView {
     id: strip
 
     property var images: []
+    // Space before the first picture and after the last, for a strip laid
+    // edge to edge across a page: the page's own padding.
+    property real edgeMargin: 0
     signal opened(int index)
 
-    readonly property int thumbHeight: Kirigami.Units.gridUnit * 7
+    readonly property int thumbHeight: Kirigami.Units.gridUnit * 9
     // Screenshots are 16:9 more often than not; anything else is cropped.
     readonly property int thumbWidth: Math.round(strip.thumbHeight * 16 / 9)
 
     implicitHeight: strip.thumbHeight + (scrollBar.visible ? scrollBar.height + Kirigami.Units.smallSpacing : 0)
     orientation: ListView.Horizontal
+    leftMargin: strip.edgeMargin
+    rightMargin: strip.edgeMargin
     spacing: Kirigami.Units.largeSpacing
     clip: true
     boundsBehavior: Flickable.StopAtBounds

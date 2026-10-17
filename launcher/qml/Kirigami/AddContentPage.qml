@@ -7,6 +7,8 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
+import "brands.js" as Brands
+
 /*
  * Mods, resource packs, shaders and data packs for one instance, from
  * Modrinth or CurseForge, pushed over the instance's page by its Content
@@ -162,9 +164,17 @@ Kirigami.ScrollablePage {
         }
     }
 
-    // Where to look: Modrinth or CurseForge.
+    readonly property var logos: page.app.shell ? page.app.shell.brandLogos : null
+    function siteLogo(site) {
+        return Brands.source(site, page.logos)
+    }
+
+    // Where to look: Modrinth or CurseForge, each by its logo (a plain
+    // globe while one is still to be fetched).
     component SiteAction: Kirigami.Action {
         required property string site
+        icon.source: page.siteLogo(site)
+        icon.name: page.siteLogo(site).length > 0 ? "" : "globe-symbolic"
         checkable: true
         checked: page.site === site
         onTriggered: {
@@ -185,7 +195,8 @@ Kirigami.ScrollablePage {
     Kirigami.Action {
         id: siteAction
         text: page.siteName
-        icon.name: "globe"
+        icon.source: page.siteLogo(page.site)
+        icon.name: page.siteLogo(page.site).length > 0 ? "" : "globe-symbolic"
         tooltip: i18nc("@info:tooltip", "Where to search")
         SiteAction {
             site: "modrinth"

@@ -83,36 +83,50 @@ Kirigami.GlobalDrawer {
         onObjectRemoved: recentAction.refresh()
     }
 
+    // Breeze's monochrome -symbolic icons, as stock KDE applications use in
+    // their sidebars: several of the plain names have a colour version at
+    // 32px and up (applications-games, help-about), which a HiDPI sidebar
+    // would get.
     actions: [
+        SectionAction {
+            section: "home"
+            text: i18nc("@action:inmenu", "Home")
+            icon.name: "go-home-symbolic"
+        },
         SectionAction {
             section: "library"
             text: i18nc("@action:inmenu", "Library")
-            icon.name: "applications-games"
+            icon.name: "applications-games-symbolic"
         },
         SectionAction {
             section: "discover"
             text: i18nc("@action:inmenu", "Discover")
-            icon.name: "system-search"
+            icon.name: "compass-symbolic"
         },
         SectionAction {
             section: "accounts"
             text: i18nc("@action:inmenu", "Accounts")
-            icon.name: "user-identity"
+            icon.name: "user-identity-symbolic"
         },
-        SectionAction {
-            section: "settings"
+        // A window of its own (SettingsView.qml), not a section.
+        Kirigami.Action {
             text: i18nc("@action:inmenu", "Settings")
-            icon.name: "configure"
+            icon.name: "configure-symbolic"
+            onTriggered: {
+                drawer.app.openSettings("")
+                if (drawer.modal)
+                    drawer.close()
+            }
         },
         SectionAction {
             section: "about"
             text: i18nc("@action:inmenu", "About MeshMC")
-            icon.name: "help-about"
+            icon.name: "help-about-symbolic"
         },
         Kirigami.Action {
             id: recentAction
             text: i18nc("@title:group", "Recently Played")
-            icon.name: "document-open-recent"
+            icon.name: "document-open-recent-symbolic"
             expandible: true
             visible: children.length > 0
             function refresh() {

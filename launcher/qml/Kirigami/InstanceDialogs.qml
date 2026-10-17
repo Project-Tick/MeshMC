@@ -4,7 +4,6 @@
 
 import QtQuick
 import QtQuick.Controls as QQC2
-import QtQuick.Dialogs as Dialogs
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.components as Components
@@ -14,10 +13,6 @@ import org.kde.kirigamiaddons.components as Components
  * duplicate, export, create shortcut and delete -- the instance context
  * menu, and renaming or deleting a group, in one place so the library and
  * the instance page open the same ones. Main.qml has one, as `app.dialogs`.
- *
- * Export writes a plain .zip of the instance for now; the pack formats
- * (Modrinth, CurseForge) and the choice of files come with the full export
- * dialog in a later phase.
  */
 Item {
     id: dialogs
@@ -56,11 +51,6 @@ Item {
         }
     }
 
-    // "New Instance" and "Import": the dialog moves over in a later phase.
-    function newInstance(importing, source) {
-        newInstanceStub.importing = importing
-        newInstanceStub.open()
-    }
     function askRename(id, name) {
         renameDialog.targetId = id
         renameField.text = name
@@ -106,23 +96,13 @@ Item {
         if (controller)
             shortcutDialog.start(controller)
     }
-    function exportInstance(id) {
+    // @p format ("zip", "modrinth", "curseforge") is optional: the dialog
+    // opens on the instance's last one otherwise (a zip at first).
+    function exportInstance(id, format) {
         var controller = dialogs.shell && typeof dialogs.shell.exportController === "function"
                 ? dialogs.shell.exportController(id) : null
-        if (!controller)
-            return
-        controller.format = "zip"
-        exportFileDialog.controller = controller
-        exportFileDialog.selectedFile = controller.suggestedFileUrl()
-        exportFileDialog.open()
-    }
-
-    Kirigami.PromptDialog {
-        id: newInstanceStub
-        property bool importing: false
-        title: importing ? i18nc("@title:dialog", "Import Instance") : i18nc("@title:dialog", "New Instance")
-        subtitle: i18n("Creating and importing instances moves to this window in a coming update. Until then, the classic window can do it.")
-        standardButtons: Kirigami.Dialog.Ok
+        if (controller)
+            exportDialog.start(controller, format || "")
     }
 
     Kirigami.PromptDialog {
@@ -263,29 +243,8 @@ Item {
         app: dialogs.app
     }
 
-    Dialogs.FileDialog {
-        id: exportFileDialog
-        property var controller: null
-        property var watcher: null
-        title: i18nc("@title:dialog", "Export Instance")
-        fileMode: Dialogs.FileDialog.SaveFile
-        nameFilters: [i18n("Zip archives (*.zip)")]
-        onAccepted: {
-            watcher = controller.exportTo(selectedFile.toString())
-            if (!watcher)
-                dialogs.app.notify(controller.error)
-        }
-    }
-    Connections {
-        target: exportFileDialog.watcher
-        function onFinished(ok) {
-            var controller = exportFileDialog.controller
-            if (ok)
-                dialogs.app.notify(i18n("Instance exported."), i18nc("@action:button", "Show in Folder"),
-                                   () => controller.showInFolder())
-            else if (controller && controller.error.length > 0)
-                dialogs.app.notify(controller.error)
-            exportFileDialog.watcher = null
-        }
+    ExportInstanceDialog {
+        id: exportDialog
+        app: dialogs.app
     }
 }

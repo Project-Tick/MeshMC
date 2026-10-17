@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 Project Tick
+# SPDX-License-Identifier: CC0-1.0
+
+# Dependencies for KDE's Gitlab CI (https://invent.kde.org/sysadmin/ci-utilities).
+# They mirror the find_package() calls of the top-level CMakeLists.txt.
+#
+# Not listed because they are not KDE projects, and so come from the CI image
+# (Linux, FreeBSD) or the Craft blueprints (Windows, macOS) instead:
+#   Qt 6 (Core Widgets Concurrent Network NetworkAuth Xml OpenGL OpenGLWidgets
+#         Qml Quick QuickControls2 Test; Quick3D optional), zlib,
+#   libarchive.
+# TODO(CI, unverified): check with sysadmin that the CI images have
+#   libarchive-devel; ask for it if not.
+
+Dependencies:
+- 'on': ['Linux', 'FreeBSD', 'Windows', 'macOS']
+  'require':
+    'frameworks/extra-cmake-modules': '@latest-kf6'
+    'frameworks/ki18n': '@latest-kf6'
+    'frameworks/kguiaddons': '@latest-kf6'
+    'frameworks/kcoreaddons': '@latest-kf6'
+    'frameworks/kiconthemes': '@latest-kf6'
+    'frameworks/breeze-icons': '@latest-kf6'
+    'frameworks/kcolorscheme': '@latest-kf6'
+    'frameworks/kirigami': '@latest-kf6'
+    'frameworks/qqc2-desktop-style': '@latest-kf6'
+    'libraries/kirigami-addons': '@latest-kf6'
+    'third-party/cmark': '@latest'
+
+# Plasma's Breeze (widget style and colour schemes); only looked for, and only
+# used at run time (find_package(Breeze) is not REQUIRED).
+- 'on': ['Linux', 'FreeBSD']
+  'require':
+    'plasma/breeze': '@latest-kf6'
+
+Options:
+  # GPG plugin signatures need Gpgmepp, which the CI does not have; the plugins
+  # themselves are off by default. Switch this off again when it is available.
+  cmake-options: '-DMeshMC_PLUGIN_SIGNATURES=OFF'
+  # TODO: turn this on (require-passing-tests-on: ['Linux', 'FreeBSD']) once the
+  # unit tests are known to pass headless on the CI image.
+  # JSON/XML/YAML validation jobs: the Minecraft test data and the Crowdin
+  # configuration are not meant to follow KDE's schemas.
+  json-validate-ignore:
+    - launcher/minecraft/testdata/
+    - launcher/mojang/testdata/
+    - launcher/testdata/
+    - launcher/packaging/macos/MeshMC.icon/icon.json
+    - launcher/plugin/plugins/staging/ErrorOracle/rules/
+    - CMakePresets.json
+  xml-validate-ignore:
+    - launcher/ui/

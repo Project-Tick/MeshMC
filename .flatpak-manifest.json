@@ -1,0 +1,84 @@
+{
+    "id": "org.projecttick.MeshMC",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "6.11",
+    "sdk": "org.kde.Sdk",
+    "sdk-extensions": [
+        "org.freedesktop.Sdk.Extension.openjdk17"
+    ],
+    "command": "meshmc",
+    "rename-icon": "org.projecttick.MeshMC",
+    "build-options": {
+        "append-path": "/usr/lib/sdk/openjdk17/bin",
+        "env": {
+            "JAVA_HOME": "/usr/lib/sdk/openjdk17"
+        }
+    },
+    "finish-args": [
+        "--share=ipc",
+        "--share=network",
+        "--socket=wayland",
+        "--socket=fallback-x11",
+        "--socket=pulseaudio",
+        "--device=dri",
+        "--talk-name=org.freedesktop.Notifications"
+    ],
+    "cleanup": [
+        "/include",
+        "/lib/cmake",
+        "/lib/pkgconfig",
+        "/share/man"
+    ],
+    "modules": [
+        {
+            "name": "cmark",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMARK_TESTS=OFF",
+                "-DCMARK_STATIC=OFF"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/commonmark/cmark/archive/refs/tags/0.31.2.tar.gz",
+                    "sha256": "f9bc5ca38bcb0b727f0056100fac4d743e768872e3bacec7746de28f5700d697"
+                }
+            ]
+        },
+        {
+            "name": "kirigami-addons",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DBUILD_TESTING=OFF"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.kde.org/stable/kirigami-addons/kirigami-addons-1.15.0.tar.xz",
+                    "sha256": "82436c7589cdab2e2ee6b2e7d5ab3bedfa049fa7ded5498c01a90a04b9cdbbb3"
+                }
+            ]
+        },
+        {
+            "name": "meshmc",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DBUILD_TESTING=OFF",
+                "-DMeshMC_QML_UI=ON",
+                "-DMeshMC_PLUGIN_SIGNATURES=OFF"
+            ],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": ".",
+                    "skip": [
+                        ".git",
+                        "build",
+                        "install"
+                    ]
+                }
+            ]
+        }
+    ]
+}

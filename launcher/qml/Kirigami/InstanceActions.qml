@@ -30,8 +30,19 @@ QtObject {
     readonly property var folders: actions.app.shell && actions.app.shell.library && actions.instanceId.length > 0
                                    ? actions.app.shell.library.folders(actions.instanceId) : ({})
     readonly property bool hasGameFolder: !!actions.folders.game && actions.folders.game !== actions.folders.instance
-    // supportsDemo, accounts, ... (QmlShell::launchOptions()).
-    readonly property var options: actions.instanceId.length > 0 ? actions.app.launchOptions(actions.instanceId) : ({})
+    // Bumped after a choice that changes what the options say (the
+    // profiler), so they are asked again.
+    property int optionsRevision: 0
+    // supportsDemo, accounts, profiler, profilers ... (QmlShell::launchOptions()).
+    readonly property var options: {
+        actions.optionsRevision
+        return actions.instanceId.length > 0 ? actions.app.launchOptions(actions.instanceId) : ({})
+    }
+    // [{id, name, isDefault}]: Play As is only a choice with two or more.
+    readonly property var accounts: actions.options.accounts || []
+    // [{key, name, ready}], and the key in use ("" for none).
+    readonly property var profilers: actions.options.profilers || []
+    readonly property string profiler: actions.options.profiler || ""
 
     function openPath(path) {
         if (actions.app.shell && actions.app.shell.library)
@@ -55,6 +66,62 @@ QtObject {
         onTriggered: actions.app.call("openInstanceFolder", actions.instanceId)
     }
 
+    // The entries of Play As, one per account.
+    readonly property Instantiator accountEntries: Instantiator {
+        model: actions.accounts
+        delegate: Kirigami.Action {
+            required property var modelData
+            text: modelData.isDefault ? i18nc("@action:inmenu %1 is an account name", "%1 (default)", modelData.name)
+                                      : modelData.name
+            // The account's own head, in its own colours.
+            icon.source: "image://accountface/" + modelData.id
+            icon.color: "transparent"
+            onTriggered: actions.playAsAccount(modelData.id)
+        }
+        onObjectAdded: actions.syncChildren(playAsAction, actions.accountEntries)
+        onObjectRemoved: actions.syncChildren(playAsAction, actions.accountEntries)
+    }
+    function playAsAccount(accountId) {
+        if (actions.app.sendToAccountsIfNone())
+            return
+        if (actions.app.shell && typeof actions.app.shell.launchInstanceAs === "function")
+            actions.app.shell.launchInstanceAs(actions.instanceId, accountId)
+    }
+
+    // The entries of Profiler: None, then each one the launcher knows.
+    readonly property Instantiator profilerEntries: Instantiator {
+        model: [{ key: "", name: i18nc("@item:inmenu no profiler", "None"), ready: true }].concat(actions.profilers)
+        delegate: Kirigami.Action {
+            required property var modelData
+            // One that is not set up yet leads to where it is set up
+            // instead of being a dead, greyed-out entry.
+            text: modelData.ready ? modelData.name : i18nc("@action:inmenu %1 is a profiler", "Set Up %1…", modelData.name)
+            checkable: true
+            checked: modelData.ready && actions.profiler === modelData.key
+            onTriggered: {
+                if (modelData.ready)
+                    actions.chooseProfiler(modelData.key)
+                else
+                    actions.app.navigate("settings/tools")
+                checked = Qt.binding(() => modelData.ready && actions.profiler === modelData.key)
+            }
+        }
+        onObjectAdded: actions.syncChildren(profilerAction, actions.profilerEntries)
+        onObjectRemoved: actions.syncChildren(profilerAction, actions.profilerEntries)
+    }
+    function chooseProfiler(key) {
+        if (actions.app.shell && typeof actions.app.shell.setInstanceProfiler === "function")
+            actions.app.shell.setInstanceProfiler(actions.instanceId, key)
+        actions.optionsRevision++
+    }
+    // Makes the actions an Instantiator built the sub-actions of @p owner.
+    function syncChildren(owner, maker) {
+        var list = []
+        for (var i = 0; i < maker.count; ++i)
+            list.push(maker.objectAt(i))
+        owner.children = list
+    }
+
     // The rest, in the order a menu lists them. AlwaysHide keeps them in the
     // instance page's overflow menu.
     readonly property list<QtObject> more: [
@@ -73,6 +140,25 @@ QtObject {
             visible: !actions.running && actions.options.supportsDemo === true
             enabled: actions.canLaunch
             onTriggered: actions.app.launchMode(actions.instanceId, "demo")
+        },
+        // Play with another account than the default, without making it the
+        // default: one entry per account, with its face.
+        Kirigami.Action {
+            id: playAsAction
+            text: i18nc("@action:inmenu", "Play As")
+            icon.name: "user-identity"
+            displayHint: Kirigami.DisplayHint.AlwaysHide
+            visible: !actions.running && actions.accounts.length > 1
+            enabled: actions.canLaunch
+        },
+        // Which profiler watches the game. It is a setting of the instance,
+        // not of one launch: every later Play uses it, until "None" is picked.
+        Kirigami.Action {
+            id: profilerAction
+            text: i18nc("@action:inmenu", "Profiler")
+            icon.name: "utilities-system-monitor"
+            displayHint: Kirigami.DisplayHint.AlwaysHide
+            visible: !actions.running && actions.profilers.length > 0
         },
         Kirigami.Action {
             separator: true
@@ -148,7 +234,7 @@ QtObject {
     ]
 
     // How many of `more` are ways to play, with the separator after them.
-    readonly property int playEntries: 3
+    readonly property int playEntries: 5
 
     // For the library's context menu: the ways to play, then Open and the
     // folders, then the rest.

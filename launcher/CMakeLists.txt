@@ -842,11 +842,18 @@ set(CONTENT_DOWNLOAD_SOURCES
     modplatform/ModInstallConflictAnalyzer.cpp
     modplatform/ModUpdateCheckTask.h
     modplatform/ModUpdateCheckTask.cpp
+    modplatform/BrandLogos.h
+    modplatform/BrandLogos.cpp
 )
 
 add_unit_test(PackContents
     SOURCES modplatform/PackContents_test.cpp
     LIBS MeshMC_logic
+    )
+
+add_unit_test(BrandLogos
+    SOURCES modplatform/BrandLogos_test.cpp
+    LIBS MeshMC_core
     )
 
 set(PLUGIN_SOURCES

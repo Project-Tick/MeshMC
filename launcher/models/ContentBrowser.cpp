@@ -468,6 +468,12 @@ void ContentBrowser::applyVersionsFromProject(
 void ContentBrowser::onEntryUpdated(int row)
 {
 	auto* model = qobject_cast<ContentProviderModel*>(sender());
+	if (model && model == currentModel()) {
+		const auto* project = model->projectAt(row);
+		if (project && project->bodyLoaded) {
+			emit bodyLoaded(row);
+		}
+	}
 	if (!model || model != m_versionsModel || row != m_versionsRow) {
 		/* An answer for a row (or a model) the caller has since moved on
 		 * from - see ContentProviderModel::applyVersions() for the same
@@ -479,6 +485,20 @@ void ContentBrowser::onEntryUpdated(int row)
 		return;
 	}
 	applyVersionsFromProject(project);
+}
+
+QString ContentBrowser::projectBody(int row) const
+{
+	auto* model = currentModel();
+	const auto* project = model ? model->projectAt(row) : nullptr;
+	return project ? project->bodyHtml : QString();
+}
+
+QString ContentBrowser::projectWebsite(int row) const
+{
+	auto* model = currentModel();
+	const auto* project = model ? model->projectAt(row) : nullptr;
+	return project ? project->websiteUrl : QString();
 }
 
 bool ContentBrowser::versionsSettled(const ModPlatform::IndexedProject* project)

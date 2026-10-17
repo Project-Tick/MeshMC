@@ -186,7 +186,7 @@ Kirigami.ScrollablePage {
             anchors.centerIn: parent
             width: parent.width - Kirigami.Units.gridUnit * 4
             visible: page.instanceCount === 0
-            icon.name: page.searching ? "edit-find" : "applications-games"
+            icon.name: page.searching ? "edit-find" : "applications-games-symbolic"
             text: page.searching ? i18n("No instances match “%1”", page.searchText) : i18n("No instances yet")
             explanation: page.searching
                          ? i18n("Check the spelling, or search for part of the name.")

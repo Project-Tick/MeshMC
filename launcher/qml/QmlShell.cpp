@@ -65,6 +65,7 @@
 #include "models/InstanceFilterModel.h"
 #include "models/NewInstanceController.h"
 #include "models/RecentWorldsModel.h"
+#include "modplatform/BrandLogos.h"
 #include "models/SettingsAdapter.h"
 #include "modplatform/modrinth/ModrinthModpackModel.h"
 #include "modplatform/flame/FlameModpackModel.h"
@@ -152,6 +153,16 @@ QString sanitizedInstanceName(const QString& name)
 bool javaSetupStepNeeded(bool hostnameChanged, bool javaPathResolves)
 {
 	return hostnameChanged || !javaPathResolves;
+}
+
+QQuickWindow* snapshotWindow(QQuickWindow* main)
+{
+	if (!main) {
+		return nullptr;
+	}
+	auto* named = qobject_cast<QQuickWindow*>(
+		main->property("snapshotWindow").value<QObject*>());
+	return named && named->isVisible() ? named : main;
 }
 
 QmlShell::QmlShell(QObject* parent) : QObject(parent)
@@ -565,6 +576,25 @@ void QmlShell::debugShowRequest(const QString& kind)
 				  mod(QStringLiteral("Inventory Tweaks"), QStringLiteral("Sorts your inventory with one click."), false) });
 			m_uiHost->chooseOptionalMods(QStringLiteral("Sky Factory"), mods);
 		});
+	} else if (kind == QLatin1String("choose")) {
+		// Queued like pickAccount: choose() blocks until answered. The
+		// question InstanceImportTask asks of a pack installed already.
+		QTimer::singleShot(0, this, [this]() {
+			if (!m_uiHost) {
+				return;
+			}
+			m_uiHost->choose(
+				i18n("This modpack is already installed"),
+				i18n("The instance \"%1\" was installed from this modpack, at "
+					 "version %2.\n\nUpdating it replaces the pack's own files "
+					 "and keeps everything that is yours: worlds, screenshots, "
+					 "play time and the instance's settings. Creating a "
+					 "separate instance leaves it untouched.",
+					 QStringLiteral("Vault Hunters"), QStringLiteral("3.14")),
+				UiHost::Severity::Question,
+				{ i18n("Update existing instance"),
+				  i18n("Create separate instance") });
+		});
 	} else if (kind == QLatin1String("busySkip")) {
 		/* Kept alive by its own skip callback, which ends it; QmlUiHost
 		 * drops the callback (and so the indicator) at the latest when it
@@ -914,6 +944,11 @@ QObject* QmlShell::instancePageModel() const
 QObject* QmlShell::recentWorlds() const
 {
 	return expose(m_recentWorlds.get());
+}
+
+QObject* QmlShell::brandLogos() const
+{
+	return expose(BrandLogos::instance());
 }
 
 QObject* QmlShell::accountsController() const
@@ -1316,7 +1351,7 @@ void QmlShell::scheduleSnapshotIfRequested()
 	const int delay =
 		qEnvironmentVariableIntValue("MESHMC_QML_SNAPSHOT_DELAY", &delayOk);
 	QTimer::singleShot(delayOk ? delay : 750, this, [this, path]() {
-		const QImage image = m_window->grabWindow();
+		const QImage image = snapshotWindow(m_window)->grabWindow();
 		const bool saved = !image.isNull() && image.save(path);
 		if (saved)
 			qInfo() << "QML shell: snapshot written to" << path << image.size();

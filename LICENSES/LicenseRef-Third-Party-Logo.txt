@@ -1,0 +1,9 @@
+Logos of other projects and companies
+
+This is NOT a licence grant. The files marked with this identifier are logos
+and trademarks of other projects and companies (mod loaders, modpack sites,
+Java vendors, chat services...). MeshMC uses them only to identify the
+project or service they stand for. They are not covered by the licence of the
+rest of the project; the rights stay with their owners. Where the owner
+publishes the artwork under a free licence, the file carries its own
+SPDX header or .license file instead of this identifier.

@@ -518,6 +518,9 @@ QObject* NewInstanceController::create(const QString& name,
 	Task* wrapped = LAUNCHER->instances()->wrapInstanceTask(creationTask);
 	auto* watcher = new TaskWatcher(Task::Ptr(wrapped), this);
 	watcher->setTitle(name);
+	/* Names the new instance on the watcher once it is committed, as the
+	 * modpack installs do, so the page can open it. */
+	LAUNCHER->instances()->reportCommittedInstance(watcher);
 	wrapped->start();
 	return watcher;
 }
@@ -560,6 +563,8 @@ QObject* NewInstanceController::importFrom(const QString& source,
 	Task* wrapped = LAUNCHER->instances()->wrapInstanceTask(importTask);
 	auto* watcher = new TaskWatcher(Task::Ptr(wrapped), this);
 	watcher->setTitle(name.isEmpty() ? trimmed : name);
+	/* As in create(). */
+	LAUNCHER->instances()->reportCommittedInstance(watcher);
 	wrapped->start();
 	return watcher;
 }

@@ -9,13 +9,17 @@ import org.kde.coreaddons as KCoreAddons
 import org.kde.kirigami as Kirigami
 import org.kde.kirigami.delegates as KD
 
+import "brands.js" as Brands
 import "format.js" as Format
 
 /*
- * One project from Add Content, pushed over it: what it is, then every
- * version, newest first, the newest that runs on this instance picked --
- * versions for another Minecraft version or loader are greyed and say so.
- * Install, in the toolbar, installs the picked one: what it needs is worked
+ * One project from Add Content, pushed over it, laid out like a modpack's
+ * page (ProjectHeader): its logo, name and author with Install under them
+ * and, beside them, where it is from and what the picked version runs on;
+ * what it is in a line and its own description, folded to a few lines;
+ * then every version, newest first, the newest that runs on this instance
+ * picked -- versions for another Minecraft version or loader are greyed and
+ * say so. Install installs the picked one: what it needs is worked
  * out first and listed to untick (InstallReviewDialog), and the download
  * shows in the footer. A version of something already installed replaces
  * it.
@@ -51,8 +55,38 @@ Kirigami.ScrollablePage {
     readonly property bool downloading: !!page.download && page.download.running
     readonly property bool busy: page.checking || page.downloading
     readonly property string blockedReason: page.installer ? page.installer.blockedReason : ""
-    readonly property string projectUrl: page.browser && page.browser.provider === "modrinth" && (page.project.projectId || "").length > 0
-                                         ? "https://modrinth.com/project/" + page.project.projectId : ""
+    readonly property string site: page.browser ? page.browser.provider : ""
+    readonly property string siteName: page.owner && page.owner.siteName ? page.owner.siteName : ""
+    readonly property var pickedVersion: page.picked >= 0 && page.picked < page.versions.length ? page.versions[page.picked] : null
+    // The project's own page: what the provider gives, else Modrinth's
+    // address for its id.
+    readonly property string projectUrl: {
+        var website = page.browser && page.row >= 0 && typeof page.browser.projectWebsite === "function"
+                      ? page.browser.projectWebsite(page.row) : ""
+        if (website.length > 0)
+            return website
+        return page.site === "modrinth" && (page.project.projectId || "").length > 0
+               ? "https://modrinth.com/project/" + page.project.projectId : ""
+    }
+    // Its long description, as HTML, once loaded with its versions; the
+    // browser keeps it per row, this page its own copy.
+    property string body: ""
+    property bool bodyUnfolded: false
+    function readBody() {
+        if (!page.browser || page.versionsLost || page.row < 0 || typeof page.browser.projectBody !== "function")
+            return
+        var html = page.browser.projectBody(page.row)
+        if (html.length > 0)
+            page.body = html
+    }
+    Connections {
+        target: page.browser
+        ignoreUnknownSignals: true
+        function onBodyLoaded(row) {
+            if (row === page.row)
+                page.readBody()
+        }
+    }
 
     function install() {
         if (!page.installer || page.picked < 0 || page.busy)
@@ -92,25 +126,17 @@ Kirigami.ScrollablePage {
             page.versionsLoading = false
             var best = page.installer.bestVersion(page.versions)
             page.picked = best ? page.versions.indexOf(best) : -1
+            page.readBody()
         })
     }
     Component.onDestruction: page.token.alive = false
 
+    // Install is in the header, as on a modpack's page.
     actions: [
-        Kirigami.Action {
-            text: page.checking ? i18nc("@action:button", "Checking…")
-                : page.downloading ? i18nc("@action:button", "Installing…")
-                : page.project.installed ? i18nc("@action:button", "Install This Version")
-                : i18nc("@action:button", "Install")
-            icon.name: "download"
-            enabled: page.picked >= 0 && !page.busy && page.blockedReason.length === 0 && !page.versionsLost
-            onTriggered: page.install()
-        },
         Kirigami.Action {
             text: i18nc("@action:button", "Open in Browser")
             icon.name: "internet-services"
             visible: page.projectUrl.length > 0
-            displayHint: Kirigami.DisplayHint.AlwaysHide
             onTriggered: Qt.openUrlExternally(page.projectUrl)
         }
     ]
@@ -127,47 +153,59 @@ Kirigami.ScrollablePage {
         id: versionList
         model: page.versions
         currentIndex: page.picked
+        // Picking a version must not scroll the header off the page.
+        highlightFollowsCurrentItem: false
+        // The header grows as the description and versions come in, and a
+        // ListView keeps its rows where they were then, which pushes the
+        // top of the header out of view: until the user scrolls, stay at
+        // the top.
+        property bool userScrolled: false
+        onMovementStarted: versionList.userScrolled = true
 
         header: ColumnLayout {
             width: versionList.width
+            onHeightChanged: {
+                if (!versionList.userScrolled)
+                    Qt.callLater(versionList.positionViewAtBeginning)
+            }
             spacing: Kirigami.Units.largeSpacing
 
-            RowLayout {
+            // Who made it and where it is from, Install under the name,
+            // and beside it what the picked version is and runs on.
+            ProjectHeader {
                 Layout.fillWidth: true
-                Layout.margins: Kirigami.Units.largeSpacing
-                spacing: Kirigami.Units.largeSpacing * 2
-                Kirigami.Icon {
-                    Layout.alignment: Qt.AlignTop
-                    Layout.preferredWidth: Kirigami.Units.iconSizes.huge
-                    Layout.preferredHeight: Kirigami.Units.iconSizes.huge
-                    source: page.project.logoUrl || ""
-                    fallback: "package-x-generic"
-                    placeholder: "package-x-generic"
+                iconSource: page.project.logoUrl || ""
+                fallbackSource: "image://instanceicon/gear"
+                title: page.project.title || ""
+                author: page.project.author || ""
+                logos: page.app.shell ? page.app.shell.brandLogos : null
+                details: {
+                    var list = [{ label: i18nc("@label where a project is from", "Source:"),
+                                  text: page.siteName, brand: page.site }]
+                    if (page.pickedVersion) {
+                        list.push({ label: i18nc("@label:listbox", "Version:"),
+                                    text: page.pickedVersion.versionNumber || page.pickedVersion.name || "" })
+                        var loaders = page.pickedVersion.loaders || []
+                        var games = (page.pickedVersion.gameVersions || []).slice(0, 3).join(", ")
+                        list.push({ label: i18nc("@label what a version runs on", "Runs on:"),
+                                    text: [loaders.map(l => l.charAt(0).toUpperCase() + l.slice(1)).join(", "), games]
+                                          .filter(t => t.length > 0).join(" "),
+                                    brand: loaders.length > 0 ? Brands.loaderId(loaders[0]) : "" })
+                    }
+                    if (page.project.installed)
+                        list.push({ label: i18nc("@label", "Installed:"),
+                                    text: i18nc("@info a project is installed on the instance", "On this instance") })
+                    return list
                 }
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.minimumWidth: 0
-                    spacing: Kirigami.Units.smallSpacing
-                    Kirigami.Heading {
-                        Layout.fillWidth: true
-                        level: 1
-                        text: page.project.title || ""
-                        wrapMode: Text.Wrap
-                    }
-                    QQC2.Label {
-                        Layout.fillWidth: true
-                        visible: (page.project.author || "").length > 0
-                        text: i18nc("@info %1 is a project's author", "by %1", page.project.author || "")
-                        elide: Text.ElideRight
-                        opacity: 0.7
-                    }
-                    QQC2.Label {
-                        Layout.fillWidth: true
-                        Layout.topMargin: Kirigami.Units.smallSpacing
-                        visible: text.length > 0
-                        text: page.project.description || ""
-                        wrapMode: Text.Wrap
-                    }
+
+                controls: QQC2.Button {
+                    text: page.checking ? i18nc("@action:button", "Checking…")
+                        : page.downloading ? i18nc("@action:button", "Installing…")
+                        : page.project.installed ? i18nc("@action:button", "Install This Version")
+                        : i18nc("@action:button", "Install")
+                    icon.name: "download-symbolic"
+                    enabled: page.picked >= 0 && !page.busy && page.blockedReason.length === 0 && !page.versionsLost
+                    onClicked: page.install()
                 }
             }
 
@@ -197,6 +235,48 @@ Kirigami.ScrollablePage {
                 visible: page.versionsLost
                 type: Kirigami.MessageType.Warning
                 text: i18n("The search changed before this project's versions arrived. Go back and open it again.")
+            }
+
+            // What it is in a line, then its own description, folded to a
+            // few lines until asked for.
+            Kirigami.SelectableLabel {
+                Layout.fillWidth: true
+                Layout.leftMargin: Kirigami.Units.gridUnit
+                Layout.rightMargin: Kirigami.Units.gridUnit
+                visible: (page.project.description || "").length > 0
+                text: page.project.description || ""
+                wrapMode: Text.Wrap
+                font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.35
+                font.weight: Font.DemiBold
+                Accessible.role: Accessible.Heading
+            }
+            Item {
+                id: bodyFrame
+                readonly property real foldedHeight: Kirigami.Units.gridUnit * 10
+                readonly property bool foldable: description.implicitHeight > bodyFrame.foldedHeight + Kirigami.Units.gridUnit * 2
+                Layout.fillWidth: true
+                Layout.leftMargin: Kirigami.Units.gridUnit
+                Layout.rightMargin: Kirigami.Units.gridUnit
+                Layout.maximumWidth: Kirigami.Units.gridUnit * 40
+                implicitHeight: bodyFrame.foldable && !page.bodyUnfolded ? bodyFrame.foldedHeight : description.implicitHeight
+                visible: page.body.length > 0
+                clip: true
+                // Not a Label: see RemoteRichText.
+                RemoteRichText {
+                    id: description
+                    width: parent.width
+                    source: page.body
+                    format: "html"
+                    article: true
+                }
+            }
+            QQC2.Button {
+                Layout.leftMargin: Kirigami.Units.gridUnit
+                visible: page.body.length > 0 && bodyFrame.foldable
+                flat: true
+                text: page.bodyUnfolded ? i18nc("@action:button", "Show Less") : i18nc("@action:button", "Show More")
+                icon.name: page.bodyUnfolded ? "go-up-symbolic" : "go-down-symbolic"
+                onClicked: page.bodyUnfolded = !page.bodyUnfolded
             }
 
             Kirigami.ListSectionHeader {

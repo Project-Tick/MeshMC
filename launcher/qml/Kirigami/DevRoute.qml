@@ -10,10 +10,15 @@ import org.kde.kirigami as Kirigami
  * steps such as "size=800x700;page=library;view=list" or
  * "instance=fabric;tab=log", run in order once the window exists.
  *
- *   size=WxH             the window's size
+ *   size=WxH             the window's size -- the settings window's while
+ *                        it is open
  *   page=<path>, nav=<path>
- *                        Main.qml's navigate() ("discover", "instance/fabric/log")
- *   instance=<id>        that instance's page; tab=<id> then picks its tab,
+ *                        Main.qml's navigate() ("discover", "instance/fabric/log",
+ *                        "settings/java" opens the settings window)
+ *   instance=<id>        that instance's page; tab=<id> then picks its tab
+ *                        (content, worlds, screenshots, log, settings, and
+ *                        under More: managedpack, version, datapacks,
+ *                        servers, backups, gameoptions, notes, plugins),
  *                        logfile=<name> shows one of its log files,
  *                        launching[=<status>:<0..1>] its footer mid-launch
  *   view=grid|list       the library's view
@@ -23,8 +28,18 @@ import org.kde.kirigami as Kirigami
  *   menu=<id>            the library's context menu for that instance
  *   theme=light|dark     the system appearance the colour scheme follows
  *                        (QmlShell::debugColorScheme(), ColorSchemes)
- *   newinstance          the New Instance dialog
- *   ask=pickAccount|busySkip
+ *   newinstance[=import] the New Instance page (or Import); version=<n>
+ *                        then picks version n, loader=<id> a mod loader
+ *                        ("" vanilla, fabric, quilt, forge, neoforge) and
+ *                        install presses Create (a real install)
+ *   import=<path|url>    the Import page with that file or link, as a drop
+ *                        on the window or `meshmc --import` opens it
+ *   export=<id>[:<format>]
+ *                        the Export dialog of that instance, on "zip",
+ *                        "modrinth" or "curseforge"
+ *   onboarding[=<step>]  the first-run flow, with every step, on "welcome",
+ *                        "account", "java" or "done"
+ *   ask=pickAccount|busySkip|choose
  *                        a question only a real launch asks
  *                        (QmlShell::debugShowRequest())
  *   crashed=<id>         marks the instance as crashed last time
@@ -46,6 +61,11 @@ import org.kde.kirigami as Kirigami
  *                        pixel offset, once that part has loaded
  *   updates, export      the Content tab's Check for Updates and Export
  *                        List dialogs (after instance=<id>)
+ *   review=<name>        the open instance tab's own state, once built:
+ *                        version: minecraftversion, loader, newcomponent;
+ *                        worlds: rename, delete, running; datapacks: add;
+ *                        servers: add, edit; backups: create;
+ *                        screenshots: select, rename, delete
  *   wait=<ms>            pauses the steps after it
  *
  * The steps from detail= on wait for the network: each runs once the page
@@ -104,9 +124,15 @@ QtObject {
         route.waitedMs = 0
         route.poll.restart()
     }
-    // The page on top of the stack, if it has @p method.
+    // The settings window while it is open, else the main one: what size=
+    // and the page steps act on.
+    function front() {
+        var settings = route.app.settingsView ? route.app.settingsView.settingsWindow : null
+        return settings && settings.pageStack ? settings : route.app
+    }
+    // The page on top of the front window's stack, if it has @p method.
     function top(method) {
-        var page = route.app.pageStack.currentItem
+        var page = route.front().pageStack.currentItem
         return page && typeof page[method] === "function" ? page : null
     }
 
@@ -129,8 +155,8 @@ QtObject {
             var value = eq < 0 ? "" : step.slice(eq + 1).trim()
             if (key === "size") {
                 var wh = value.split("x")
-                app.width = parseInt(wh[0])
-                app.height = parseInt(wh[1])
+                route.front().width = parseInt(wh[0])
+                route.front().height = parseInt(wh[1])
             } else if (key === "page" || key === "nav")
                 app.navigate(value)
             else if (key === "instance")
@@ -159,6 +185,18 @@ QtObject {
                 app.call("debugColorScheme", value)
             else if (key === "newinstance")
                 app.openNewInstance(value)
+            else if (key === "import")
+                app.openImport(value)
+            else if (key === "onboarding")
+                app.openOnboarding(true, value)
+            else if (key === "loader")
+                route.waitFor(() => !!route.top("pickLoader") && route.top("pickLoader").pickLoader(value))
+            // With an instance it is the Export dialog; bare, the Content
+            // tab's Export List (below).
+            else if (key === "export" && value.length > 0) {
+                var exportArgs = value.split(":")
+                app.dialogs.exportInstance(exportArgs[0], exportArgs[1] || "")
+            }
             else if (key === "ask")
                 app.call("debugShowRequest", value)
             else if (key === "crashed")
@@ -188,6 +226,8 @@ QtObject {
                 route.waitFor(() => !!route.top("scrollTo") && route.top("scrollTo").scrollTo(value))
             else if (key === "updates" || key === "export")
                 route.waitFor(() => !!app.instancePage && app.instancePage.openContentDialog(key))
+            else if (key === "review")
+                route.waitFor(() => !!app.instancePage && app.instancePage.review(value))
             else if (key === "wait") {
                 var until = Date.now() + parseInt(value)
                 route.waitFor(() => Date.now() >= until)

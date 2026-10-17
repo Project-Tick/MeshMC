@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import QtQuick
-import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
@@ -11,7 +10,8 @@ import org.kde.kirigami as Kirigami
  * Where a modpack lives besides here: the links its provider gives
  * (Modrinth: its page, source, issues, wiki, Discord and donations, see
  * ModrinthModpackDetail.links), else its page on the provider, from its
- * slug. Each opens in the browser.
+ * slug. Each is a link with its icon, one to a line, as KDE's software
+ * centre lists an application's; the page's own link has the site's logo.
  */
 ColumnLayout {
     id: section
@@ -21,6 +21,8 @@ ColumnLayout {
     property string provider
     property string providerName
     property string slug
+    // The shell's BrandLogos, for the site's logo.
+    property var logos: null
 
     readonly property var links: {
         var list = section.detailLinks ? section.detailLinks.slice() : []
@@ -66,31 +68,45 @@ ColumnLayout {
         return link.url
     }
     function linkIcon(kind) {
-        return ({ page: "globe", source: "code-context", issues: "tools-report-bug", wiki: "help-contents",
-                  discord: "dialog-messages", donation: "donate" })[kind] || "link"
+        return ({ page: "globe-symbolic", source: "code-context-symbolic", issues: "tools-report-bug-symbolic",
+                  wiki: "documentation-symbolic", discord: "dialog-messages-symbolic",
+                  donation: "help-donate-symbolic" })[kind] || "link-symbolic"
     }
 
     visible: section.links.length > 0
-    spacing: Kirigami.Units.largeSpacing
+    spacing: Kirigami.Units.smallSpacing
 
     Kirigami.Heading {
         level: 2
+        type: Kirigami.Heading.Type.Primary
         text: i18nc("@title", "Links")
     }
-    Flow {
-        Layout.fillWidth: true
-        spacing: Kirigami.Units.smallSpacing
-        Repeater {
-            model: section.links
-            QQC2.Button {
-                required property var modelData
-                text: section.linkText(modelData)
-                icon.name: section.linkIcon(modelData.kind)
-                flat: true
-                onClicked: Qt.openUrlExternally(modelData.url)
-                QQC2.ToolTip.text: modelData.url
-                QQC2.ToolTip.visible: hovered
-                QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+    Repeater {
+        model: section.links
+        RowLayout {
+            id: link
+            required property var modelData
+            Layout.fillWidth: true
+            spacing: Kirigami.Units.smallSpacing
+
+            BrandIcon {
+                visible: link.modelData.kind === "page"
+                brand: section.provider
+                logos: section.logos
+                fallback: section.linkIcon("page")
+            }
+            Kirigami.Icon {
+                visible: link.modelData.kind !== "page"
+                implicitWidth: Kirigami.Units.iconSizes.small
+                implicitHeight: Kirigami.Units.iconSizes.small
+                source: section.linkIcon(link.modelData.kind)
+            }
+            Kirigami.UrlButton {
+                Layout.fillWidth: true
+                text: section.linkText(link.modelData)
+                url: link.modelData.url
+                horizontalAlignment: Text.AlignLeft
+                elide: Text.ElideRight
             }
         }
     }

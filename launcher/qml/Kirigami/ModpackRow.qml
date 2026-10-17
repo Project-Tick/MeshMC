@@ -34,13 +34,11 @@ QQC2.ItemDelegate {
     contentItem: RowLayout {
         spacing: Kirigami.Units.largeSpacing
 
-        Kirigami.Icon {
+        ProjectLogo {
             Layout.alignment: Qt.AlignTop
             Layout.preferredWidth: Kirigami.Units.iconSizes.huge
             Layout.preferredHeight: Kirigami.Units.iconSizes.huge
-            source: row.model.logoUrl || ""
-            fallback: "package-x-generic"
-            placeholder: "package-x-generic"
+            logoUrl: row.model.logoUrl || ""
         }
 
         ColumnLayout {
@@ -84,7 +82,7 @@ QQC2.ItemDelegate {
                     visible: row.downloads > 0
                     implicitWidth: Kirigami.Units.iconSizes.small
                     implicitHeight: Kirigami.Units.iconSizes.small
-                    source: "download"
+                    source: "download-symbolic"
                 }
                 QQC2.Label {
                     visible: row.downloads > 0
@@ -99,7 +97,7 @@ QQC2.ItemDelegate {
                     visible: !!row.updatedDate
                     implicitWidth: Kirigami.Units.iconSizes.small
                     implicitHeight: Kirigami.Units.iconSizes.small
-                    source: "view-calendar"
+                    source: "view-calendar-symbolic"
                 }
                 QQC2.Label {
                     visible: !!row.updatedDate

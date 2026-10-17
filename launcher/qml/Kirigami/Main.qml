@@ -7,7 +7,7 @@ import org.kde.kirigami as Kirigami
 
 /*
  * The launcher as a stock KDE application: a Kirigami window whose global
- * drawer is the sidebar (Library, Discover, Accounts, Settings, About and
+ * drawer is the sidebar (Home, Library, Discover, Accounts, Settings, About and
  * the recently played instances) and whose page stack holds one section's
  * page, with an instance's page pushed on top of the library.
  *
@@ -45,8 +45,9 @@ Kirigami.ApplicationWindow {
     // menu button, as on a phone; above it, it stays beside the pages.
     readonly property bool wideLayout: width >= Kirigami.Units.gridUnit * 50
 
-    // "library", "discover", "accounts", "settings" or "about".
-    property string section: "library"
+    // "home", "library", "discover", "accounts" or "about"; Settings are a window
+    // of their own (settingsView).
+    property string section: "home"
     // The instance whose page is open over the library, or "".
     property string openedInstanceId: ""
     // That page, while it is on the stack.
@@ -89,6 +90,25 @@ Kirigami.ApplicationWindow {
     Navigator {
         id: navigator
         app: root
+    }
+
+    // The settings window: see SettingsView.qml.
+    readonly property alias settingsView: settingsView
+    SettingsView {
+        id: settingsView
+        app: root
+    }
+    // The settings on page @p moduleId ("java", ...; "" for the first).
+    function openSettings(moduleId) {
+        return settingsView.show(moduleId || "")
+    }
+    // What a review snapshot (MESHMC_QML_SNAPSHOT) pictures instead of this
+    // window while it is open: the settings window (see QmlShell's
+    // snapshotWindow()).
+    readonly property var snapshotWindow: settingsView.settingsWindow
+    // Account @p row's skin and cape, over the Accounts page.
+    function openAccountSkin(row, accountId, name) {
+        return navigator.openAccountSkin(row, accountId, name)
     }
     function showSection(id) {
         return navigator.showSection(id)
@@ -158,12 +178,28 @@ Kirigami.ApplicationWindow {
         return [""].concat(groups.filter(g => g.length > 0))
     }
 
-    // "New instance" and "Import": the dialog moves over in a later phase.
+    // New Instance, or with @p mode "import" Import, over the library;
+    // @p source fills in Import's file or link. See Navigator.qml.
     function openNewInstance(mode, source) {
-        root.dialogs.newInstance(mode === "import", source || "")
+        return mode === "import" ? navigator.openImport(source || "") : navigator.openNewInstance()
     }
+    // An import asked for from outside the pages too: a drop on the window
+    // (ImportDropArea), `meshmc --import` or a second launcher passing a
+    // file on (QmlShell::requestImport()).
     function openImport(source) {
-        root.openNewInstance("import", source)
+        return navigator.openImport(source || "")
+    }
+    // First run (OnboardingView.qml): only when a setup step is still
+    // needed, or with every step (on @p step) for review snapshots.
+    function openOnboarding(everyStep, step) {
+        return onboarding.start(!!everyStep, step || "")
+    }
+    ImportDropArea {
+        app: root
+    }
+    OnboardingView {
+        id: onboarding
+        app: root
     }
 
     // Discover's modpack page; Add Content for an instance, and a project
@@ -257,10 +293,12 @@ Kirigami.ApplicationWindow {
     }
 
     Component.onCompleted: {
-        root.showSection("library")
+        root.showSection("home")
         drawer.restoreState()
         if (root.devRoute.length > 0)
             Qt.callLater(routeSteps.apply, root.devRoute)
+        else
+            Qt.callLater(root.openOnboarding, false)
     }
 
     // Startup route for review snapshots (MESHMC_QML_ROUTE): see DevRoute.qml.

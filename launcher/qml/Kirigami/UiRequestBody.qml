@@ -64,6 +64,11 @@ ColumnLayout {
 
     QQC2.Label {
         Layout.fillWidth: true
+        // Wrapped text still reports its whole unwrapped line as its
+        // implicit width, which the dialog then grew to fit -- up to the
+        // window's width for a long question. A preferred width of its own
+        // leaves the dialog at the width it asks for (UiRequests.qml).
+        Layout.preferredWidth: Kirigami.Units.gridUnit * 20
         // A plugin's modal brings its own text in its document.
         visible: text.length > 0
         text: body.request ? body.request.text : ""

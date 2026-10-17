@@ -234,4 +234,17 @@
         <file>scalable/openj9_hex_custom.svg</file>  <!-- Adapted from the `OpenJ9-hex.svg` file by Ludgie. Source: https://github.com/eclipse-openj9/openj9/blob/master/artwork/OpenJ9-hex.svg -->
 
     </qresource>
+    <!-- The mod loaders and modpack sites whose owners license their logo
+         openly, to identify them in the KDE interface (MeshMC.Kirigami,
+         brands.js); source, owner and licence of each in the .license file
+         beside it. The others are fetched from their owners' sites on first
+         use instead (BrandLogos). -->
+    <qresource prefix="/icons/meshmc">
+        <file>brands/fabric.svg</file>
+        <file>brands/quilt.svg</file>
+        <file>brands/forge.svg</file>
+        <file>brands/neoforge.svg</file>
+        <file>brands/ftb.svg</file>
+        <file>brands/technic.svg</file>
+    </qresource>
 </RCC>

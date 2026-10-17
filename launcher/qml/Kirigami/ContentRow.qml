@@ -37,9 +37,9 @@ KD.SwitchSubtitleDelegate {
         return parts.join(" · ")
     }
     readonly property string iconUrl: row.model.iconUrl || ""
-    // The file's own icon when it declares one; a name wins over a source.
-    icon.source: row.iconUrl
-    icon.name: row.iconUrl.length > 0 ? "" : "package-x-generic"
+    // The file's own icon when it declares one, else one of the launcher's
+    // own block pictures, as for a mod's page without a logo.
+    icon.source: row.iconUrl.length > 0 ? row.iconUrl : "image://instanceicon/gear"
     icon.width: Kirigami.Units.iconSizes.medium
     icon.height: Kirigami.Units.iconSizes.medium
     checked: row.model.enabled === true

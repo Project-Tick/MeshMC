@@ -48,12 +48,11 @@ QQC2.ItemDelegate {
     contentItem: RowLayout {
         spacing: Kirigami.Units.largeSpacing
 
-        Kirigami.Icon {
+        ProjectLogo {
             Layout.preferredWidth: Kirigami.Units.iconSizes.large
             Layout.preferredHeight: Kirigami.Units.iconSizes.large
-            source: row.model.logoUrl || ""
-            fallback: "package-x-generic"
-            placeholder: "package-x-generic"
+            logoUrl: row.model.logoUrl || ""
+            fallbackSource: "image://instanceicon/gear"
         }
 
         ColumnLayout {

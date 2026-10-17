@@ -8,11 +8,14 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
 /*
- * One modpack, pushed over Discover: who made it and how popular it is,
- * which version to install and as what, its pictures, its own description
- * and where else it lives. Install, in the toolbar, makes a new instance
- * from it; the footer shows how that is going, and once it is done the page
- * offers the new instance.
+ * One modpack, pushed over Discover, laid out as KDE's software centre lays
+ * out an application: a header band with its logo, name, author and
+ * figures, Install with the version to install and the instance name under
+ * them, and where it is from and what it runs on beside them; then its
+ * pictures across the page, what it is in a line, its own description and
+ * where else it lives. Install makes a new instance from it; the footer
+ * shows how that is going, and once it is done the page offers the new
+ * instance.
  *
  * `pack` is the result row that was opened; the provider's model loads the
  * rest -- versions, gallery, body, links -- into its one `detail` (a
@@ -115,7 +118,7 @@ Kirigami.ScrollablePage {
         if (where === "description") {
             if (page.bodyHtml.length === 0 || description.height <= 0)
                 return false
-            y = aboutHeading.mapToItem(flick.contentItem, 0, 0).y - Kirigami.Units.largeSpacing
+            y = description.mapToItem(flick.contentItem, 0, 0).y - Kirigami.Units.largeSpacing
         } else if (where === "bottom") {
             if (page.loading)
                 return false
@@ -135,26 +138,14 @@ Kirigami.ScrollablePage {
             page.model.loadDetail(page.pack.projectId)
     }
 
+    // Install is in the header, beside its choices, as in KDE's software
+    // centre; the toolbar keeps what is about the page itself.
     actions: [
-        Kirigami.Action {
-            text: page.installing ? i18nc("@action:button", "Installing…") : i18nc("@action:button", "Install")
-            icon.name: "download"
-            visible: !page.installed
-            enabled: !page.installing && page.versions.length > 0 && versionBox.currentIndex >= 0
-            onTriggered: page.install()
-        },
-        Kirigami.Action {
-            text: i18nc("@action:button", "Open Instance")
-            icon.name: "go-next"
-            visible: page.installed && (page.watcher.instanceId || "").length > 0
-            onTriggered: page.app.openInstance(page.watcher.instanceId)
-        },
         Kirigami.Action {
             readonly property var link: linksSection.pageLink
             text: i18nc("@action:button", "Open in Browser")
             icon.name: "internet-services"
             visible: !!link
-            displayHint: Kirigami.DisplayHint.AlwaysHide
             onTriggered: Qt.openUrlExternally(link.url)
         }
     ]
@@ -170,6 +161,72 @@ Kirigami.ScrollablePage {
 
     ColumnLayout {
         spacing: Kirigami.Units.largeSpacing * 2
+
+        // Who made it, how popular it is, where it is from and what it runs
+        // on, with Install and its choices under the name.
+        ModpackHeader {
+            Layout.fillWidth: true
+            Layout.topMargin: -page.topPadding
+            Layout.leftMargin: -page.leftPadding
+            Layout.rightMargin: -page.rightPadding
+            horizontalPadding: page.leftPadding
+            pack: page.pack
+            providerId: page.source.provider || ""
+            providerName: page.source.providerName || ""
+            version: versionBox.currentIndex >= 0 && versionBox.currentIndex < page.versions.length
+                     ? page.versions[versionBox.currentIndex] : null
+            loaderNames: page.loaderNames
+            logos: page.app.shell ? page.app.shell.brandLogos : null
+
+            controls: [
+                RowLayout {
+                    spacing: Kirigami.Units.smallSpacing
+                    QQC2.Button {
+                        visible: !page.installed
+                        text: page.installing ? i18nc("@action:button", "Installing…") : i18nc("@action:button", "Install")
+                        icon.name: "download-symbolic"
+                        enabled: !page.installing && page.versions.length > 0 && versionBox.currentIndex >= 0
+                        onClicked: page.install()
+                    }
+                    QQC2.Button {
+                        visible: page.installed && (page.watcher.instanceId || "").length > 0
+                        text: i18nc("@action:button", "Open Instance")
+                        icon.name: "go-next"
+                        onClicked: page.app.openInstance(page.watcher.instanceId)
+                    }
+                },
+                // What Install installs: the featured version (or the newest)
+                // and the pack's own name, until changed.
+                Kirigami.FormLayout {
+                    Layout.fillWidth: true
+                    wideMode: true
+
+                    QQC2.ComboBox {
+                        id: versionBox
+                        Kirigami.FormData.label: i18nc("@label:listbox", "Version:")
+                        Layout.preferredWidth: Kirigami.Units.gridUnit * 18
+                        enabled: page.versions.length > 0 && !page.installing
+                        model: page.versions.map(v => page.versionLabel(v))
+                        displayText: page.loading && page.versions.length === 0 ? i18nc("@item:inlistbox", "Loading…")
+                                   : page.versions.length === 0 ? i18nc("@item:inlistbox", "No versions")
+                                   : currentText
+                        // Newest first from every provider, alphas included:
+                        // start on the version the author features, if any.
+                        onModelChanged: {
+                            var featured = page.versions.findIndex(v => v.featured)
+                            currentIndex = featured >= 0 ? featured : (page.versions.length > 0 ? 0 : -1)
+                        }
+                    }
+                    QQC2.TextField {
+                        id: nameField
+                        Kirigami.FormData.label: i18nc("@label:textbox", "Instance name:")
+                        Layout.preferredWidth: Kirigami.Units.gridUnit * 18
+                        enabled: !page.installing
+                        onAccepted: page.install()
+                    }
+                }
+            ]
+        }
 
         Kirigami.InlineMessage {
             Layout.fillWidth: true
@@ -196,43 +253,6 @@ Kirigami.ScrollablePage {
                 onTriggered: page.install()
             }
         }
-
-        // Who made it, how many play it, and what it is.
-        ModpackHeader {
-            Layout.fillWidth: true
-            pack: page.pack
-        }
-
-        // What Install installs: the featured version (or the newest) and
-        // the pack's own name, until changed.
-        Kirigami.FormLayout {
-            Layout.fillWidth: true
-
-            QQC2.ComboBox {
-                id: versionBox
-                Kirigami.FormData.label: i18nc("@label:listbox", "Version:")
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 18
-                enabled: page.versions.length > 0 && !page.installing
-                model: page.versions.map(v => page.versionLabel(v))
-                displayText: page.loading && page.versions.length === 0 ? i18nc("@item:inlistbox", "Loading…")
-                           : page.versions.length === 0 ? i18nc("@item:inlistbox", "No versions")
-                           : currentText
-                // Newest first from every provider, alphas included: start
-                // on the version the author features, if there is one.
-                onModelChanged: {
-                    var featured = page.versions.findIndex(v => v.featured)
-                    currentIndex = featured >= 0 ? featured : (page.versions.length > 0 ? 0 : -1)
-                }
-            }
-            QQC2.TextField {
-                id: nameField
-                Kirigami.FormData.label: i18nc("@label:textbox", "Instance name:")
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 18
-                enabled: !page.installing
-                onAccepted: page.install()
-            }
-        }
-
         Kirigami.InlineMessage {
             Layout.fillWidth: true
             visible: page.detailError.length > 0
@@ -245,24 +265,26 @@ Kirigami.ScrollablePage {
             }
         }
 
-        // Its pictures, in a row; one opens full size.
-        Kirigami.Heading {
-            level: 2
-            visible: page.gallery.length > 0
-            text: i18nc("@title", "Gallery")
-        }
+        // Its pictures, a row across the page; one opens full size.
         GalleryStrip {
             Layout.fillWidth: true
+            Layout.leftMargin: -page.leftPadding
+            Layout.rightMargin: -page.rightPadding
             visible: page.gallery.length > 0
+            edgeMargin: page.leftPadding
             images: page.gallery
             onOpened: (index) => galleryViewer.show(index)
         }
 
-        Kirigami.Heading {
-            id: aboutHeading
-            level: 2
-            visible: page.bodyHtml.length > 0 || page.loading
-            text: i18nc("@title", "Description")
+        // What it is in a line, then its own description.
+        Kirigami.SelectableLabel {
+            Layout.fillWidth: true
+            visible: (page.pack.description || "").length > 0
+            text: page.pack.description || ""
+            wrapMode: Text.Wrap
+            font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.35
+            font.weight: Font.DemiBold
+            Accessible.role: Accessible.Heading
         }
         Kirigami.LoadingPlaceholder {
             Layout.alignment: Qt.AlignHCenter
@@ -288,6 +310,7 @@ Kirigami.ScrollablePage {
             provider: page.source.provider || ""
             providerName: page.source.providerName || ""
             slug: page.pack.slug || ""
+            logos: page.app.shell ? page.app.shell.brandLogos : null
         }
     }
 
