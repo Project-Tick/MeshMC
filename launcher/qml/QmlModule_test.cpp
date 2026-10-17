@@ -34,6 +34,7 @@
 #include <QUrl>
 
 #include <KLocalizedQmlContext>
+#include <KLocalizedString>
 
 #include <functional>
 #include <memory>
@@ -608,6 +609,9 @@ int main(int argc, char* argv[])
 	 * need a QGuiApplication, so QTEST_GUILESS_MAIN (QCoreApplication) -- what
 	 * the other tests in this tree use -- is not an option here. */
 	qputenv("QT_QPA_PLATFORM", "offscreen");
+	// The launcher's own translation domain, as main() sets it; without one
+	// every i18n() call in the QML logs a warning.
+	KLocalizedString::setApplicationDomain("meshmc");
 
 	QGuiApplication app(argc, argv);
 	QmlModuleTest test;

@@ -1871,9 +1871,16 @@ add_subdirectory(qml)
 # qt_import_qml_plugins looks for them. Relying on qmlimportscanner to find
 # them from the test's sources alone worked on macOS but left Main.qml out of
 # the resources on Linux.
+#
+# MeshMC_qmlplugin -- the root module's own plugin -- is linked by name too.
+# MeshMC_qml carries every submodule's plugin, but cannot carry its own (the
+# plugin links MeshMC_qml), so only qt_import_qml_plugins below would bring it
+# in -- and that quietly does nothing where qmlimportscanner is not a target or
+# libraries are built shared (a distribution's own Qt on Linux), leaving
+# 'plugin "MeshMC_qmlplugin" not found' at runtime.
 add_unit_test(QmlModule
     SOURCES qml/QmlModule_test.cpp
-    LIBS MeshMC_qml Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Gui
+    LIBS MeshMC_qml MeshMC_qmlplugin Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Gui
     )
 
 # qt_add_qml_module builds the module as a static library plus a separate QML
@@ -1934,6 +1941,10 @@ add_executable(MeshMC MACOSX_BUNDLE WIN32 main.cpp ${MESHMC_RCS})
 # Keyword signature: qt_import_qml_plugins below links with PRIVATE, and CMake
 # refuses to mix the two forms on one target.
 target_link_libraries(MeshMC PRIVATE MeshMC_logic)
+# The root QML module's own plugin, by name, for the same reason as in
+# QmlModule_test above: qt_import_qml_plugins below may do nothing on a
+# distribution's Qt, and the shell would then fall back to the widgets.
+target_link_libraries(MeshMC PRIVATE MeshMC_qmlplugin)
 
 # Same reason as QmlModule_test: MeshMC_qml is a static QML module with a
 # separate plugin, and a plain add_executable does not import it. Without this

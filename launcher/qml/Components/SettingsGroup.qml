@@ -67,6 +67,9 @@ Column {
     property var _watchedRows: []
 
     function markRows() {
+        // A row's visibleChanged can still arrive while the group is torn down.
+        if (!rowsColumn)
+            return
         var first = true
         for (var i = 0; i < rowsColumn.children.length; ++i) {
             var row = rowsColumn.children[i]
