@@ -8,11 +8,18 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
 /*
- * One instance, pushed over the library: its name as the page title, Play
- * (or Stop) and Open Folder in the toolbar with everything else in its
- * overflow menu, and tabs for what is inside it -- Content, Worlds,
- * Screenshots, Log and Settings. While the game starts, the footer shows the
- * launch's progress and Cancel.
+ * One instance, pushed over the library: Play (or Stop) and Open Folder in
+ * the toolbar with everything else in its overflow menu, a banner with the
+ * instance's picture, name and facts (InstanceBanner), and tabs for what is
+ * inside it -- Content, Worlds, Screenshots, Log and Settings. While the
+ * game starts, the footer shows the launch's progress and Cancel.
+ *
+ * The banner heads the tabs to look through -- Content, Worlds,
+ * Screenshots -- while the window is tall enough. The Log and the tabs of
+ * settings need that height for what they show, so there it folds away and
+ * the name moves into the toolbar (InstanceTitle): it is in one place or
+ * the other, never both. Play stays in the toolbar throughout, in the same
+ * place whichever tab is open, rather than in a banner that comes and goes.
  *
  * The page reads its instance from two places: `details` (InstanceDetails,
  * QmlShell.instanceDetails()) for the tabs, and the shell's single-row
@@ -96,12 +103,17 @@ Kirigami.Page {
     }
 
     title: page.row ? page.row.name : (page.details ? page.details.name : "")
-    // The instance's icon and its loader's logo beside the name.
+    // The instance's icon and its loader's logo beside the name, while the
+    // banner is not there to show them.
     titleDelegate: InstanceTitle {
         entry: page.row
         title: page.title
         logos: page.app.shell ? page.app.shell.brandLogos : null
+        shown: !page.bannerShown
     }
+    // See the top: the browsing tabs, on a window with room for it.
+    readonly property bool bannerShown: ["content", "worlds", "screenshots"].indexOf(page.shownTab) >= 0
+                                        && page.height >= Kirigami.Units.gridUnit * 32
     padding: 0
     // The Log tab on one of the instance's log files (DevRoute.qml's
     // "logfile=<name>").
@@ -186,53 +198,81 @@ Kirigami.Page {
         return list
     }
 
-    // The everyday tabs, the open one if it is among the rest, and "More"
-    // with the others.
-    header: RowLayout {
+    // The banner, then the everyday tabs, the open one if it is among the
+    // rest, and "More" with the others, on a toolbar strip as wide as the
+    // page.
+    header: ColumnLayout {
         spacing: 0
 
-        QQC2.TabBar {
-            id: tabBar
+        // Folds away and back rather than jumping, so the tabs visibly move
+        // with it.
+        InstanceBanner {
+            id: banner
             Layout.fillWidth: true
-            currentIndex: page.barIndex
-            Repeater {
-                id: barButtons
-                model: page.barTabs
-                // The bar ignores a currentIndex past its last button, and
-                // an index it already holds. An open tab from under More joins
-                // the buttons after the index moved: set it again once the
-                // last one is there.
-                onItemAdded: (index, item) => {
-                    if (index === barButtons.count - 1) {
-                        tabBar.currentIndex = -1
-                        tabBar.currentIndex = page.barIndex
-                    }
-                }
-                QQC2.TabButton {
-                    required property var modelData
-                    text: modelData.text
-                    width: implicitWidth
-                    onClicked: page.tab = modelData.id
-                }
-            }
-            // A click moves currentIndex itself; a tab picked any other way
-            // (navigate(), the dev route) moves it here.
-            Connections {
-                target: page
-                function onBarIndexChanged() {
-                    tabBar.currentIndex = page.barIndex
+            Layout.preferredHeight: page.bannerShown ? banner.implicitHeight : 0
+            visible: Layout.preferredHeight > 0
+            entry: page.row
+            title: page.title
+            content: page.details ? page.details.content : null
+            logos: page.app.shell ? page.app.shell.brandLogos : null
+            Behavior on Layout.preferredHeight {
+                NumberAnimation {
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InOutQuad
                 }
             }
         }
-        QQC2.ToolButton {
-            id: moreTabsButton
-            Layout.fillHeight: true
-            visible: page.moreTabs.length > 0
-            text: i18nc("@action:button more tabs of an instance", "More")
-            icon.name: "arrow-down"
-            LayoutMirroring.enabled: true
-            LayoutMirroring.childrenInherit: true
-            onClicked: moreTabsMenu.popup(moreTabsButton, 0, moreTabsButton.height)
+
+        TabStrip {
+            Layout.fillWidth: true
+            contentItem: RowLayout {
+                spacing: 0
+
+                QQC2.TabBar {
+                    id: tabBar
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignBottom
+                    currentIndex: page.barIndex
+                    Repeater {
+                        id: barButtons
+                        model: page.barTabs
+                        // The bar ignores a currentIndex past its last button,
+                        // and an index it already holds. An open tab from
+                        // under More joins the buttons after the index moved:
+                        // set it again once the last one is there.
+                        onItemAdded: (index, item) => {
+                            if (index === barButtons.count - 1) {
+                                tabBar.currentIndex = -1
+                                tabBar.currentIndex = page.barIndex
+                            }
+                        }
+                        QQC2.TabButton {
+                            required property var modelData
+                            text: modelData.text
+                            width: implicitWidth
+                            onClicked: page.tab = modelData.id
+                        }
+                    }
+                    // A click moves currentIndex itself; a tab picked any
+                    // other way (navigate(), the dev route) moves it here.
+                    Connections {
+                        target: page
+                        function onBarIndexChanged() {
+                            tabBar.currentIndex = page.barIndex
+                        }
+                    }
+                }
+                QQC2.ToolButton {
+                    id: moreTabsButton
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: page.moreTabs.length > 0
+                    text: i18nc("@action:button more tabs of an instance", "More")
+                    icon.name: "arrow-down"
+                    LayoutMirroring.enabled: true
+                    LayoutMirroring.childrenInherit: true
+                    onClicked: moreTabsMenu.popup(moreTabsButton, 0, moreTabsButton.height)
+                }
+            }
         }
     }
 

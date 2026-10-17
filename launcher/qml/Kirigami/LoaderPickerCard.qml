@@ -7,6 +7,7 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.formcard as FormCard
+import "combos.js" as Combos
 
 /*
  * New Instance's mod loader: the unmodified game or one of the four
@@ -90,6 +91,8 @@ FormCard.FormCard {
     }
     FormCard.FormComboBoxDelegate {
         id: versionBox
+        // A long list scrolls under the box (combos.js).
+        Component.onCompleted: Combos.capPopup(versionBox, Kirigami.Units.gridUnit)
         visible: card.loader.length > 0
         text: i18nc("@label:listbox", "Loader version")
         enabled: !!card.loaderVersions && count > 0

@@ -168,29 +168,38 @@ Kirigami.ScrollablePage {
     }
 
     // The providers as tabs, each with its own logo, once there is more
-    // than one. A Loader, since the desktop style's TabBar cannot be empty.
+    // than one, in a strip the page's whole width (TabStrip). A Loader,
+    // since the desktop style's TabBar cannot be empty; it does not size
+    // its item, so the strip is given the Loader's width.
     header: Loader {
+        id: providerHeader
         active: page.providers.length > 1
-        sourceComponent: QQC2.TabBar {
-            id: providerBar
-            currentIndex: Math.max(0, page.providers.indexOf(page.current))
-            Repeater {
-                model: page.providers
-                QQC2.TabButton {
-                    required property var modelData
-                    readonly property string logo: Brands.source(modelData.id, page.shell ? page.shell.brandLogos : null)
-                    text: modelData.name
-                    width: implicitWidth
-                    // A logo still to be fetched: a plain globe meanwhile.
-                    icon.source: logo
-                    icon.name: logo.length > 0 ? "" : "globe-symbolic"
-                    onClicked: page.setProvider(modelData.id)
+        sourceComponent: TabStrip {
+            width: providerHeader.width
+            contentItem: QQC2.TabBar {
+                id: providerBar
+                currentIndex: Math.max(0, page.providers.indexOf(page.current))
+                Repeater {
+                    model: page.providers
+                    QQC2.TabButton {
+                        required property var modelData
+                        readonly property string logo: Brands.source(modelData.id, page.shell ? page.shell.brandLogos : null)
+                        text: modelData.name
+                        width: implicitWidth
+                        // Only the keyboard focuses a tab: one clicked earlier would
+                        // keep its focus tint beside the tab that is now current.
+                        focusPolicy: Qt.TabFocus
+                        // A logo still to be fetched: a plain globe meanwhile.
+                        icon.source: logo
+                        icon.name: logo.length > 0 ? "" : "globe-symbolic"
+                        onClicked: page.setProvider(modelData.id)
+                    }
                 }
-            }
-            Connections {
-                target: page
-                function onCurrentChanged() {
-                    providerBar.currentIndex = Math.max(0, page.providers.indexOf(page.current))
+                Connections {
+                    target: page
+                    function onCurrentChanged() {
+                        providerBar.currentIndex = Math.max(0, page.providers.indexOf(page.current))
+                    }
                 }
             }
         }
@@ -228,10 +237,29 @@ Kirigami.ScrollablePage {
         id: results
         // Rows are opened by a click; none is picked to begin with.
         currentIndex: -1
+        // The featured row above the first result grows in after the first
+        // layout, and the list scrolls up to it; what is above the view must
+        // not paint over the title bar while it does.
+        clip: true
         model: page.keyMissing ? null : page.model
         delegate: ModpackRow {
             width: ListView.view.width
             onClicked: page.open(model)
+        }
+        // Highlights of an empty search; any words typed make it a list of
+        // answers, which a row of pictures above would only push down.
+        header: DiscoverFeatured {
+            width: results.width
+            height: shown ? implicitHeight : 0
+            source: page.searchText.length === 0 && !page.searching ? page.model : null
+            onOpened: (row) => page.open(row)
+            // A list does not scroll to a header that grows after it was laid
+            // out, which leaves it above the view: look at the top, within
+            // the same frame, so nothing is drawn out of place.
+            onHeightChanged: if (height > 0) {
+                results.forceLayout()
+                results.positionViewAtBeginning()
+            }
         }
 
         // QML views never ask for more on their own: ask as the end comes

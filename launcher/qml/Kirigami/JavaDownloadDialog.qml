@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import "combos.js" as Combos
 
 /*
  * Download a Java runtime: a vendor, a Java version and a build for this
@@ -72,7 +73,11 @@ Kirigami.Dialog {
         function sync() { currentIndex = count > 0 ? (box.byIndex ? box.chosen : indexOfValue(box.chosen)) : -1 }
         onChosenChanged: sync()
         onCountChanged: sync()
-        Component.onCompleted: sync()
+        Component.onCompleted: {
+            sync()
+            // A long list scrolls under the box (combos.js).
+            Combos.capPopup(box, Kirigami.Units.gridUnit)
+        }
         onActivated: (index) => {
             box.picked(box.byIndex ? index : currentValue)
             sync()

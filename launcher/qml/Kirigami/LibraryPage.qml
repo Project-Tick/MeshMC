@@ -163,10 +163,19 @@ Kirigami.ScrollablePage {
         // A section's grid is all its delegates at once; rebuilding one
         // for another group would buy nothing.
         reuseItems: false
+        // A scrollable page drops its padding around a list, which suits
+        // rows running edge to edge but left the cards pressed against
+        // the sidebar, the toolbar and the scroll bar: the grid keeps the
+        // margin other pages (Home) have around their cards.
+        readonly property int edge: page.app.libraryView === "grid" ? Kirigami.Units.gridUnit : 0
+        leftMargin: edge
+        rightMargin: edge
+        topMargin: edge
+        bottomMargin: edge
 
         delegate: InstanceGroup {
             required property string modelData
-            width: ListView.view.width
+            width: ListView.view.width - ListView.view.leftMargin - ListView.view.rightMargin
             app: page.app
             group: modelData
             model: page.shell ? page.shell.sectionModel(modelData) : null
@@ -186,11 +195,14 @@ Kirigami.ScrollablePage {
             anchors.centerIn: parent
             width: parent.width - Kirigami.Units.gridUnit * 4
             visible: page.instanceCount === 0
-            icon.name: page.searching ? "edit-find" : "applications-games-symbolic"
+            // The app's logo for an empty library; a search that found nothing
+            // keeps the magnifier, since the library is not what is empty.
+            icon.name: page.searching ? "edit-find" : ""
+            icon.source: page.searching ? "" : "qrc:/org.projecttick.MeshMC.svg"
             text: page.searching ? i18n("No instances match “%1”", page.searchText) : i18n("No instances yet")
             explanation: page.searching
                          ? i18n("Check the spelling, or search for part of the name.")
-                         : i18n("An instance is one Minecraft setup: a version, a mod loader and its mods.")
+                         : i18n("Create your first instance to start playing: one Minecraft setup, with its version, mod loader and mods.")
             helpfulAction: page.searching ? clearSearchAction : newInstanceAction
         }
     }

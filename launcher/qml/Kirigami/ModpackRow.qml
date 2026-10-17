@@ -44,6 +44,11 @@ QQC2.ItemDelegate {
         ColumnLayout {
             Layout.fillWidth: true
             Layout.minimumWidth: 0
+            // A layout's maximum width is its children's: with only a name in
+            // it (Technic's search hits carry no description, author or
+            // date) the column would stop at the name's width and be centred
+            // in the row. It takes the whole row.
+            Layout.maximumWidth: Number.POSITIVE_INFINITY
             spacing: Kirigami.Units.smallSpacing
 
             RowLayout {

@@ -121,7 +121,13 @@ namespace
 		about.setDesktopFileName(QStringLiteral("org.projecttick.MeshMC"));
 		// The launcher's logo (resources/meshmc/meshmc.qrc), for the About
 		// page's header.
-		about.setProgramLogo(QIcon(QStringLiteral(":/org.projecttick.MeshMC.svg")));
+		const QIcon logo(QStringLiteral(":/org.projecttick.MeshMC.svg"));
+		about.setProgramLogo(logo);
+		// And the icon of every window the shell opens, the settings window
+		// included: nothing else gives them one, and only the desktop file
+		// (which Linux reads for the task switcher) is not there when the
+		// build runs from its folder, nor on macOS or Windows at all.
+		QGuiApplication::setWindowIcon(logo);
 		about.addAuthor(i18n("MeshMC Developers"), QString(), QString(),
 						info.sourceUrl());
 		about.addCredit(i18n("MultiMC Developers"));

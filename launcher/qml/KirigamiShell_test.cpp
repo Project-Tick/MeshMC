@@ -1159,10 +1159,13 @@ class KirigamiShellTest : public QObject
 
 		QVERIFY(navigate(root.get(), QStringLiteral("accounts")));
 		QCOMPARE(topTitle(root.get()), QStringLiteral("Accounts"));
+		/* The account's row in the list, a button: the card above the list
+		 * (AccountHeaderCard) carries the same account id. */
 		auto row = [&](const QString& id) {
 			return findItem(main, [&](QQuickItem* item) {
 				return item->property("accountId").toString() == id &&
-					   item->property("isDefault").isValid();
+					   item->property("isDefault").isValid() &&
+					   item->metaObject()->indexOfMethod("click()") >= 0;
 			});
 		};
 		QTRY_VERIFY(row(QStringLiteral("steve-id")) && row(QStringLiteral("alex-id")));

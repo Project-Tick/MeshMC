@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import "combos.js" as Combos
 
 /*
  * One modpack, pushed over Discover, laid out as KDE's software centre lays
@@ -203,6 +204,8 @@ Kirigami.ScrollablePage {
 
                     QQC2.ComboBox {
                         id: versionBox
+                        // A long list scrolls under the box (combos.js).
+                        Component.onCompleted: Combos.capPopup(versionBox, Kirigami.Units.gridUnit)
                         Kirigami.FormData.label: i18nc("@label:listbox", "Version:")
                         Layout.preferredWidth: Kirigami.Units.gridUnit * 18
                         enabled: page.versions.length > 0 && !page.installing

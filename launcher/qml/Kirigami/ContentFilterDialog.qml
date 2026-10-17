@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import "combos.js" as Combos
 
 /*
  * Add Content's filters: Minecraft version, mod loader, where it runs,
@@ -56,6 +57,8 @@ Kirigami.Dialog {
     Kirigami.FormLayout {
         QQC2.ComboBox {
             id: versionBox
+            // A long list scrolls under the box (combos.js).
+            Component.onCompleted: Combos.capPopup(versionBox, Kirigami.Units.gridUnit)
             Kirigami.FormData.label: i18nc("@label:listbox", "Minecraft version:")
             Layout.preferredWidth: Kirigami.Units.gridUnit * 12
             readonly property var options: [{ value: "", text: i18nc("@item:inlistbox", "Any version") }]

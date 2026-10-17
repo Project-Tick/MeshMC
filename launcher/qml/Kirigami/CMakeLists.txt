@@ -53,8 +53,10 @@ qt_add_qml_module(MeshMC_qml_kirigami
         Clipboard.qml
         ListArea.qml
         format.js
+        combos.js
         RemoteRichText.qml
         DiscoverPage.qml
+        DiscoverFeatured.qml
         ModpackRow.qml
         ModpackFilterDialog.qml
         ModpackPage.qml
@@ -86,6 +88,7 @@ qt_add_qml_module(MeshMC_qml_kirigami
         ProjectHeader.qml
         ProjectLogo.qml
         InstanceTitle.qml
+        InstanceBanner.qml
         # K3: Settings (a ConfigurationView window), Accounts, skins and an
         # instance's own settings.
         SettingsView.qml
@@ -130,6 +133,8 @@ qt_add_qml_module(MeshMC_qml_kirigami
         AboutMeshMCPage.qml
         AccountsPage.qml
         AccountDelegate.qml
+        AccountHeaderCard.qml
+        AccountMenu.qml
         MicrosoftLoginDialog.qml
         OfflineAccountDialog.qml
         TextPromptDialog.qml
@@ -142,6 +147,7 @@ qt_add_qml_module(MeshMC_qml_kirigami
         PlayerPreview.qml
         InstanceSettingsTab.qml
         InstanceJavaCards.qml
+        TabStrip.qml
         TabToolBar.qml
         WatcherMessage.qml
         ConfirmActionDialog.qml

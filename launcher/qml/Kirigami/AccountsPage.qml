@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls as QQC2
+import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.formcard as FormCard
 
@@ -47,6 +48,12 @@ FormCard.FormCardPage {
             page.app.notify(i18n("Skins and capes belong to a Microsoft account. Sign in with the one that owns Minecraft to change how you look."))
     }
 
+    function askRemove(row, accountName) {
+        removeDialog.row = row
+        removeDialog.accountName = accountName
+        removeDialog.open()
+    }
+
     title: i18nc("@title", "Accounts")
 
     // The review snapshots' data has only offline accounts: a route with
@@ -72,8 +79,32 @@ FormCard.FormCardPage {
         }
     ]
 
+    // The default account's card; the row's own data is its delegate's, so
+    // this makes one per account and only the default one shows.
+    Repeater {
+        model: page.accounts
+        delegate: AccountHeaderCard {
+            Layout.topMargin: Kirigami.Units.largeSpacing
+            isDefault: page.defaultAccountId.length > 0 && accountId === page.defaultAccountId
+            revision: page.revision
+            onSkinRequested: page.openSkin(index, accountId, shownName, isMSA)
+            onRefreshRequested: page.controller.refresh(index)
+            onRemoveRequested: page.askRemove(index, shownName)
+        }
+    }
+    // Accounts, but none to launch with: say what to do, gently.
+    FormCard.FormCard {
+        Layout.topMargin: Kirigami.Units.largeSpacing
+        visible: accountList.count > 0 && page.defaultAccountId.length === 0
+        FormCard.FormPlaceholderMessageDelegate {
+            icon.name: "user-identity"
+            text: i18n("No default account")
+            explanation: i18n("Pick the account games should launch with. “Use as Default” is on its row below.")
+        }
+    }
+
     FormCard.FormHeader {
-        title: i18nc("@title:group", "Accounts")
+        title: i18nc("@title:group", "All Accounts")
     }
     FormCard.FormCard {
         autoSeparators: true
@@ -99,11 +130,7 @@ FormCard.FormCardPage {
                 onMakeDefaultRequested: page.controller.setDefault(index)
                 onSkinRequested: page.openSkin(index, accountId, shownName, isMSA)
                 onRefreshRequested: page.controller.refresh(index)
-                onRemoveRequested: {
-                    removeDialog.row = index
-                    removeDialog.accountName = shownName
-                    removeDialog.open()
-                }
+                onRemoveRequested: page.askRemove(index, shownName)
             }
         }
     }

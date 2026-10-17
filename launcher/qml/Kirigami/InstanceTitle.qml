@@ -12,13 +12,16 @@ import org.kde.kirigami as Kirigami
  * the library's card says of it, so the page reads as that instance.
  *
  * `entry` is the instance's row of the shell's instancePageModel
- * (InstanceList's roles), or null while there is none.
+ * (InstanceList's roles), or null while there is none. While the page's
+ * banner (InstanceBanner) says all this, `shown` is false and the title
+ * takes no room, so the name is never there twice.
  */
 RowLayout {
     id: titleRow
 
     property var entry: null
     property string title
+    property bool shown: true
     // The shell's BrandLogos (see BrandIcon).
     property var logos: null
 
@@ -31,7 +34,7 @@ RowLayout {
 
     Kirigami.Icon {
         Layout.alignment: Qt.AlignVCenter
-        visible: !!titleRow.entry
+        visible: titleRow.shown && !!titleRow.entry
         implicitWidth: Kirigami.Units.iconSizes.smallMedium
         implicitHeight: Kirigami.Units.iconSizes.smallMedium
         source: titleRow.entry ? "image://instanceicon/" + (titleRow.entry.iconKey && titleRow.entry.iconKey.length > 0
@@ -44,6 +47,7 @@ RowLayout {
         Layout.minimumWidth: 0
         Layout.maximumWidth: Math.ceil(implicitWidth)
         Layout.fillWidth: true
+        visible: titleRow.shown
         level: 1
         text: titleRow.title
         elide: Text.ElideRight
@@ -52,7 +56,7 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         Layout.fillWidth: true
         Layout.minimumWidth: 0
-        visible: !!titleRow.entry
+        visible: titleRow.shown && !!titleRow.entry
         loader: titleRow.entry ? titleRow.entry.loader || "" : ""
         gameVersion: titleRow.entry ? titleRow.entry.gameVersion || "" : ""
         logos: titleRow.logos

@@ -8,6 +8,7 @@ import QtQuick.Dialogs as Dialogs
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.formcard as FormCard
+import "combos.js" as Combos
 
 /*
  * Where this instance's modpack came from, and what other versions of it
@@ -222,6 +223,8 @@ Item {
                 visible: tab.hasVersions
                 FormCard.FormComboBoxDelegate {
                     id: versionBox
+                    // A long list scrolls under the box (combos.js).
+                    Component.onCompleted: Combos.capPopup(versionBox, Kirigami.Units.gridUnit)
                     text: i18nc("@label:listbox", "Update to")
                     model: tab.versionLabels
                 }

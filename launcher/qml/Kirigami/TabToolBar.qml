@@ -18,6 +18,10 @@ QQC2.ToolBar {
     property alias actions: tools.actions
     default property alias leading: leadingRow.data
 
+    // In the window's colours, as the open tab above it is: the tab and
+    // its tools read as one piece, as on a tabbed panel.
+    Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
     contentItem: RowLayout {
         spacing: Kirigami.Units.smallSpacing
 

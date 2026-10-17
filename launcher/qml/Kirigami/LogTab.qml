@@ -135,6 +135,8 @@ Item {
 
         QQC2.ToolBar {
             Layout.fillWidth: true
+            // As TabToolBar: one piece with the open tab above it.
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
             contentItem: RowLayout {
                 spacing: Kirigami.Units.smallSpacing
 

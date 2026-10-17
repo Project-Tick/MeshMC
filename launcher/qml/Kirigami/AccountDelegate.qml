@@ -110,26 +110,11 @@ FormCard.AbstractFormDelegate {
         }
     }
 
-    QQC2.Menu {
+    AccountMenu {
         id: menu
-        QQC2.MenuItem {
-            text: i18nc("@action:inmenu", "Skin and Cape…")
-            icon.name: "im-user"
-            enabled: delegate.isMSA
-            onTriggered: delegate.skinRequested()
-        }
-        QQC2.MenuItem {
-            visible: delegate.isMSA
-            height: visible ? implicitHeight : 0
-            text: i18nc("@action:inmenu", "Sign In Again")
-            icon.name: "view-refresh"
-            onTriggered: delegate.refreshRequested()
-        }
-        QQC2.MenuSeparator {}
-        QQC2.MenuItem {
-            text: i18nc("@action:inmenu", "Remove…")
-            icon.name: "list-remove-user"
-            onTriggered: delegate.removeRequested()
-        }
+        isMSA: delegate.isMSA
+        onSkinRequested: delegate.skinRequested()
+        onRefreshRequested: delegate.refreshRequested()
+        onRemoveRequested: delegate.removeRequested()
     }
 }

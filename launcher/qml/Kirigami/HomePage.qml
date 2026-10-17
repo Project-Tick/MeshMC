@@ -166,10 +166,11 @@ Kirigami.ScrollablePage {
             Layout.fillWidth: true
             Layout.topMargin: Kirigami.Units.gridUnit * 4
             visible: page.recentCount === 0
-            icon.name: "applications-games-symbolic"
-            text: page.instanceCount === 0 ? i18n("No instances yet") : i18n("Nothing played yet")
+            // The app's own logo: this is the first thing a new user sees.
+            icon.source: "qrc:/org.projecttick.MeshMC.svg"
+            text: page.instanceCount === 0 ? i18n("Welcome to MeshMC") : i18n("Nothing played yet")
             explanation: page.instanceCount === 0
-                         ? i18n("An instance is one Minecraft setup: a version, a mod loader and its mods.")
+                         ? i18n("Create your first instance to start playing: one Minecraft setup, with its version, mod loader and mods.")
                          : i18n("What you play shows up here, ready to pick up again.")
             helpfulAction: page.instanceCount === 0 ? newInstanceAction : libraryAction
         }

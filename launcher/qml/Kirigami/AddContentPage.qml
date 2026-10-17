@@ -144,22 +144,25 @@ Kirigami.ScrollablePage {
         onSearchRequested: (text) => page.setSearch(text)
     }
 
-    header: QQC2.TabBar {
-        id: kindBar
-        currentIndex: Math.max(0, page.kinds.findIndex(k => k.id === page.kind))
-        Repeater {
-            model: page.kinds
-            QQC2.TabButton {
-                required property var modelData
-                text: modelData.text
-                width: implicitWidth
-                onClicked: page.showKind(modelData.id)
+    // The kinds as tabs, in a strip the page's whole width (TabStrip).
+    header: TabStrip {
+        contentItem: QQC2.TabBar {
+            id: kindBar
+            currentIndex: Math.max(0, page.kinds.findIndex(k => k.id === page.kind))
+            Repeater {
+                model: page.kinds
+                QQC2.TabButton {
+                    required property var modelData
+                    text: modelData.text
+                    width: implicitWidth
+                    onClicked: page.showKind(modelData.id)
+                }
             }
-        }
-        Connections {
-            target: page
-            function onKindChanged() {
-                kindBar.currentIndex = Math.max(0, page.kinds.findIndex(k => k.id === page.kind))
+            Connections {
+                target: page
+                function onKindChanged() {
+                    kindBar.currentIndex = Math.max(0, page.kinds.findIndex(k => k.id === page.kind))
+                }
             }
         }
     }

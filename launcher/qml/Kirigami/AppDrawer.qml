@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import QtQuick
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
 /*
@@ -56,6 +58,52 @@ Kirigami.GlobalDrawer {
             // A checkable action unchecks itself on a second click.
             checked = Qt.binding(() => drawer.app.section === section)
             drawer.go(section)
+        }
+    }
+
+    // The app's identity above the sections, as in a stock KDE application:
+    // its logo and name, with the version dimmed under it. Kirigami hides the
+    // header of a folded drawer unless told otherwise, and then drops the
+    // name, which leaves the logo alone. It is centred on the same axis as
+    // the sections' icons below, expanded or folded, so the margin is what
+    // a folded drawer leaves around a logo-sized icon.
+    showHeaderWhenCollapsed: true
+    readonly property int logoSize: Kirigami.Units.iconSizes.medium
+    header: RowLayout {
+        spacing: Kirigami.Units.largeSpacing
+
+        Image {
+            Layout.leftMargin: Math.max(0, (drawer.collapsedSize - drawer.logoSize) / 2)
+            Layout.topMargin: Kirigami.Units.largeSpacing
+            Layout.bottomMargin: Kirigami.Units.largeSpacing
+            Layout.preferredWidth: drawer.logoSize
+            Layout.preferredHeight: drawer.logoSize
+            source: "qrc:/org.projecttick.MeshMC.svg"
+            sourceSize: Qt.size(drawer.logoSize * 2, drawer.logoSize * 2)
+            fillMode: Image.PreserveAspectFit
+            smooth: true
+            Accessible.ignored: true
+        }
+        ColumnLayout {
+            visible: !drawer.collapsed
+            spacing: 0
+            Layout.fillWidth: true
+            Layout.minimumWidth: 0
+
+            Kirigami.Heading {
+                Layout.fillWidth: true
+                level: 3
+                text: i18nc("@title", "MeshMC")
+                elide: Text.ElideRight
+            }
+            QQC2.Label {
+                Layout.fillWidth: true
+                visible: text.length > 0
+                text: Qt.application.version
+                elide: Text.ElideRight
+                font: Kirigami.Theme.smallFont
+                opacity: 0.7
+            }
         }
     }
 
