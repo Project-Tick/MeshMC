@@ -39,7 +39,37 @@ KirigamiSettings.ConfigurationView {
         // window on it.
         if (view.configViewItem && id.length > 0 && view.currentModule() !== id)
             view.configViewItem.close()
+        if (!view.configViewItem && view.opensAsSheet && view.openAsWindow(id))
+            return true
         view.open(id)
+        return true
+    }
+
+    // ConfigurationView makes its desktop window window-modal over the main
+    // one, and macOS presents a window-modal child as a sheet: no title
+    // bar, so no close button (only Escape closed it). There it is built
+    // the same way but application-modal, a window of its own.
+    readonly property bool opensAsSheet: Qt.platform.os === "osx" && !Kirigami.Settings.isMobile
+    function openAsWindow(moduleId) {
+        const component = Qt.createComponent("org.kde.kirigamiaddons.settings.private", "ConfigWindow")
+        if (component.status !== Component.Ready)
+            return false
+        view.configViewItem = component.createObject(view.app, {
+            defaultModule: moduleId,
+            modules: view.modules,
+            width: Kirigami.Units.gridUnit * 50,
+            height: Kirigami.Units.gridUnit * 30,
+            minimumWidth: Kirigami.Units.gridUnit * 50,
+            minimumHeight: Kirigami.Units.gridUnit * 30,
+            title: view.title,
+            modality: Qt.ApplicationModal,
+        })
+        view.configViewItem.closing.connect(event => {
+            if (event.accepted) {
+                view.configViewItem.destroy()
+                view.configViewItem = null
+            }
+        })
         return true
     }
     function moduleIds() {
