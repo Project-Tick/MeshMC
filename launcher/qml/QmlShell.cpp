@@ -19,6 +19,7 @@
 
 #include "qml/QmlShell.h"
 
+#include <QAbstractItemModel>
 #include <QCoreApplication>
 #include <QCursor>
 #include <QGuiApplication>
@@ -80,6 +81,7 @@
 #include "settings/SettingsObject.h"
 #include <QDir>
 #include "qml/AccountFaceProvider.h"
+#include "qml/ColorSchemes.h"
 #include "qml/InstanceIconProvider.h"
 #include "qml/ModIconProvider.h"
 #include "qml/QmlUiHost.h"
@@ -789,6 +791,11 @@ QObject* QmlShell::about() const
 	return expose(m_about.get());
 }
 
+QObject* QmlShell::colorSchemes() const
+{
+	return expose(m_colorSchemes.get());
+}
+
 bool QmlShell::updaterAvailable() const
 {
 	return m_updaterAvailable;
@@ -1220,6 +1227,21 @@ bool QmlShell::load()
 	 * when it was built with them; this covers a build without. */
 	BreezeIcons::initIcons();
 	setUpAboutData(*m_about);
+
+	/* The colour scheme off Plasma, before the first frame is drawn: the one
+	 * UiColorScheme names, or the system's light or dark appearance while
+	 * it names none. A choice made later is kept in the same setting. */
+	m_colorSchemes = std::make_unique<ColorSchemes>();
+	m_colorSchemes->choose(LAUNCHER->settings()->get("UiColorScheme").toString());
+	connect(m_colorSchemes.get(), &ColorSchemes::chosenChanged, this, [this]() {
+		LAUNCHER->settings()->set("UiColorScheme", m_colorSchemes->chosen());
+	});
+	// A bundle that forgot the .colors files shows up here as one scheme:
+	// the system's, which then falls back to the platform palette.
+	if (QAbstractItemModel* schemes = m_colorSchemes->model()) {
+		qDebug() << "<> Colour schemes found:" << schemes->rowCount() - 1
+				 << "chosen:" << m_colorSchemes->chosen();
+	}
 
 	m_engine = std::make_unique<QQmlApplicationEngine>();
 	m_engine->addImportPath(QStringLiteral("qrc:/qt/qml"));

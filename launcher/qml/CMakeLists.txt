@@ -58,6 +58,8 @@ target_sources(MeshMC_qml PRIVATE
     AccountFaceProvider.cpp
     ScreenshotThumbnailProvider.h
     ScreenshotThumbnailProvider.cpp
+    ColorSchemes.h
+    ColorSchemes.cpp
     ModIconProvider.h
     ModIconProvider.cpp
 )
@@ -72,11 +74,13 @@ target_link_libraries(MeshMC_qml PUBLIC
     MeshMC_core
 )
 
-# QmlShell's KDE application setup: the KAboutData the About page reads, and
-# the Breeze icons it asks for by name (BreezeIcons::initIcons()).
+# QmlShell's KDE application setup: the KAboutData the About page reads, the
+# Breeze icons it asks for by name (BreezeIcons::initIcons()) and the colour
+# scheme off Plasma (ColorSchemes).
 target_link_libraries(MeshMC_qml PRIVATE
     KF${QT_VERSION_MAJOR}::CoreAddons
     KF${QT_VERSION_MAJOR}::BreezeIcons
+    KF${QT_VERSION_MAJOR}::ColorScheme
 )
 
 # The plugin targets, and not just the modules' backing libraries, have to reach

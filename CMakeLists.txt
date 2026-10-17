@@ -225,6 +225,8 @@ find_package(KF${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
     CoreAddons
     IconThemes
     BreezeIcons
+    # Its colour scheme away from Plasma (launcher/qml/ColorSchemes.cpp).
+    ColorScheme
 )
 
 # Only loaded at runtime, by name: the Qt Quick Controls style the KDE
@@ -238,6 +240,13 @@ find_package(KF${QT_VERSION_MAJOR}KirigamiAddons)
 set_package_properties(KF${QT_VERSION_MAJOR}KirigamiAddons PROPERTIES
     TYPE RUNTIME
     PURPOSE "Context menus and the About page of the KDE interface")
+# Plasma's Breeze, for the widget style and colour schemes the KDE interface
+# uses away from Plasma (Application's constructor, ColorSchemes); Plasma
+# itself brings both.
+find_package(Breeze)
+set_package_properties(Breeze PROPERTIES
+    TYPE RUNTIME
+    PURPOSE "The Breeze widget style and colour schemes of the KDE interface off Plasma")
 
 # Qt Quick 3D, for the optional roaming cat companion (launcher/qml/Cat/) --
 # never added to the required components above: unlike everything there, the

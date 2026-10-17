@@ -52,6 +52,7 @@ class RecentWorldsModel;
 class JavaInstallList;
 class TranslationsModel;
 class AboutInfo;
+class ColorSchemes;
 class QmlUiHost;
 class UiHost;
 class QQmlApplicationEngine;
@@ -182,6 +183,10 @@ class QmlShell : public QObject
 	/// Settings' About section: version, build, credits, licences, help
 	/// links (see AboutInfo). Created in load().
 	Q_PROPERTY(QObject* about READ about CONSTANT)
+	/// The KDE interface's colour scheme off Plasma, for a Settings picker
+	/// (see ColorSchemes); the UiColorScheme setting follows its choice.
+	/// Created in load().
+	Q_PROPERTY(QObject* colorSchemes READ colorSchemes CONSTANT)
 	/* Whether this build can update itself, so "Check for updates" has
 	 * something to do -- set by Application, which owns the updater. */
 	Q_PROPERTY(bool updaterAvailable READ updaterAvailable NOTIFY
@@ -514,6 +519,7 @@ class QmlShell : public QObject
 	Q_INVOKABLE void useJava(const QString& path);
 
 	QObject* about() const;
+	QObject* colorSchemes() const;
 	bool updaterAvailable() const;
 	/// Called by Application, which knows whether the updater exists.
 	void setUpdaterAvailable(bool available);
@@ -635,6 +641,7 @@ class QmlShell : public QObject
 	PluginListFactory m_pluginListFactory;
 	std::unique_ptr<QObject> m_pluginList;
 	std::unique_ptr<AboutInfo> m_about;
+	std::unique_ptr<ColorSchemes> m_colorSchemes;
 	bool m_updaterAvailable = false;
 	/* Whether show() has shown m_window yet: the first call shows it,
 	 * later ones only raise it. */

@@ -21,7 +21,8 @@ import org.kde.kirigami as Kirigami
  *                        folds the wide window's sidebar
  *   drawer=open          opens the narrow window's modal drawer
  *   menu=<id>            the library's context menu for that instance
- *   theme=light|dark     a colour scheme (QmlShell::debugColorScheme())
+ *   theme=light|dark     the system appearance the colour scheme follows
+ *                        (QmlShell::debugColorScheme(), ColorSchemes)
  *   newinstance          the New Instance dialog
  *   ask=pickAccount|busySkip
  *                        a question only a real launch asks

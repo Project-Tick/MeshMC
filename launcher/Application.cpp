@@ -21,6 +21,7 @@
 #include "BuildConfig.h"
 #include "plugin/PluginAuthRequestDecorator.h"
 #include "ui/WidgetUiHost.h"
+#include "qml/ColorSchemes.h"
 #include "qml/QmlShell.h"
 #include "qml/QmlUiHost.h"
 #include "models/UpdateSettingsController.h"
@@ -959,6 +960,9 @@ void Application::initSettings()
 	// is written to the config, so it stays theirs; only the unpicked default
 	// moved from grass to system.
 	m_settings->registerSetting("UiPalette", QString("system"));
+	// The KDE interface's colour scheme off Plasma, by id ("BreezeDark"...);
+	// empty follows the system's light or dark appearance. See ColorSchemes.
+	m_settings->registerSetting("UiColorScheme", QString());
 	// The QML interface's font (Settings > Appearance).
 	m_settings->registerSetting("UiFontFamily", QString("Inter"));
 	m_settings->registerSetting("UiSidebarCollapsed", false);
@@ -1464,6 +1468,17 @@ void Application::initSubsystems()
 	if (!qmlShellRequested()) {
 		m_themeManager->applyCurrentlySelectedTheme(true);
 		qDebug() << "<> Theme applied.";
+	} else if (!ColorSchemes::isPlasmaSession() &&
+			   qEnvironmentVariableIsEmpty("QT_STYLE_OVERRIDE")) {
+		/* Away from Plasma, KDE's widget style comes along, as it does with
+		 * KDE applications on macOS and Windows: the org.kde.desktop
+		 * controls draw through the application's QStyle, and with the
+		 * platform's own they get its bevels instead of Breeze. Its colours
+		 * are the KColorScheme ColorSchemes applies. On Plasma the platform
+		 * theme already brings the user's style. */
+		if (QStyle* breeze = QStyleFactory::create(QStringLiteral("Breeze"))) {
+			QApplication::setStyle(breeze);
+		}
 	}
 }
 

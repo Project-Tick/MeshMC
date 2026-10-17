@@ -52,11 +52,25 @@ namespace
 const QString kRenderedBuiltinDir =
 	QStringLiteral(":/icons/meshmc/256x256/instances/");
 
-void setBuiltinImage(MMCIcon& entry, const QString& key)
+/* A key without rendered artwork (fabricmc, forge, quiltmc, the *_legacy
+ * set...) is built from its own files in the builtin folders, the way the
+ * rendered ones are, rather than looked up by name in whatever icon theme is
+ * current: that lookup only found them while QIcon's theme was one of the
+ * launcher's own, which inherit the builtin set. The QML shell runs on the
+ * desktop's icon theme (KIconThemes), where those names do not exist. Only a
+ * key with no file at all still goes by name. */
+void setBuiltinImage(MMCIcon& entry, const QString& key,
+					 const QStringList& files)
 {
 	const QString rendered = kRenderedBuiltinDir + key + QStringLiteral(".png");
 	if (QFile::exists(rendered)) {
 		entry.replace(Builtin, QIcon(rendered));
+	} else if (!files.isEmpty()) {
+		QIcon icon;
+		for (const QString& file : files) {
+			icon.addFile(file);
+		}
+		entry.replace(Builtin, icon);
 	} else {
 		entry.replace(Builtin, key);
 	}
@@ -72,19 +86,24 @@ IconList::IconList(const QStringList& builtinPaths, QString path,
 	connect(this, &IconList::iconUpdated, this,
 			[this](const QString& key) { m_tintCache.remove(key); });
 
-	QSet<QString> builtinNames;
-
 	// add builtin icons
 	for (auto& builtinPath : builtinPaths) {
 		QDir instance_icons(builtinPath);
 		auto file_info_list =
 			instance_icons.entryInfoList(QDir::Files, QDir::Name);
 		for (auto file_info : file_info_list) {
-			builtinNames.insert(file_info.baseName());
+			// The SVG first: the first file decides which icon engine
+			// renders the icon, and only the SVG one scales cleanly.
+			QStringList& files = m_builtinFiles[file_info.baseName()];
+			if (file_info.suffix() == QLatin1String("svg")) {
+				files.prepend(file_info.filePath());
+			} else {
+				files.append(file_info.filePath());
+			}
 		}
 	}
-	for (auto& builtinName : builtinNames) {
-		addThemeIcon(builtinName);
+	for (auto it = m_builtinFiles.cbegin(); it != m_builtinFiles.cend(); ++it) {
+		addThemeIcon(it.key());
 	}
 
 	m_watcher.reset(new QFileSystemWatcher());
@@ -358,7 +377,7 @@ bool IconList::addThemeIcon(const QString& key)
 	auto iter = name_index.find(key);
 	if (iter != name_index.end()) {
 		auto& oldOne = icons[*iter];
-		setBuiltinImage(oldOne, key);
+		setBuiltinImage(oldOne, key, m_builtinFiles.value(key));
 		dataChanged(index(*iter), index(*iter));
 		return true;
 	} else {
@@ -368,7 +387,7 @@ bool IconList::addThemeIcon(const QString& key)
 			MMCIcon mmc_icon;
 			mmc_icon.m_name = key;
 			mmc_icon.m_key = key;
-			setBuiltinImage(mmc_icon, key);
+			setBuiltinImage(mmc_icon, key, m_builtinFiles.value(key));
 			icons.push_back(mmc_icon);
 			name_index[key] = icons.size() - 1;
 		}
