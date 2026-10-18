@@ -22,6 +22,7 @@
 #include <QDebug>
 
 #include "PackLayout.h"
+#include <KLocalizedString>
 
 ShaderPackFolderModel::ShaderPackFolderModel(const QString& dir)
 	: ModFolderModel(dir)
@@ -35,13 +36,13 @@ QVariant ShaderPackFolderModel::headerData(int section,
 	if (role == Qt::ToolTipRole) {
 		switch (section) {
 			case ActiveColumn:
-				return tr("Is the shader pack enabled?");
+				return i18n("Is the shader pack enabled?");
 			case NameColumn:
-				return tr("The name of the shader pack.");
+				return i18n("The name of the shader pack.");
 			case VersionColumn:
-				return tr("The version of the shader pack.");
+				return i18n("The version of the shader pack.");
 			case DateColumn:
-				return tr("The date and time this shader pack was last "
+				return i18n("The date and time this shader pack was last "
 						  "changed (or added).");
 			default:
 				return QVariant();

@@ -163,9 +163,6 @@ enum MMCOHookId {
 	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_LOADED = 0x0606,
 	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING = 0x0607,
 
-	/* News */
-	MMCO_HOOK_NEWS_UPDATED = 0x0700, /* payload: nullptr */
-
 	/* Plugin-driven authentication providers (ABI 2+ additive) */
 	MMCO_HOOK_AUTH_REQUEST = 0x0800, /* payload: MMCOAuthRequestEvent* */
 	MMCO_HOOK_SESSION_FILL = 0x0801, /* payload: MMCOSessionFillEvent* */
@@ -238,18 +235,12 @@ typedef void (*MMCOInstanceRunningCallback)(void* user_data,
  * plugins can wire callbacks without scanning qApp->allWidgets().
  *
  *   main_window       — QMainWindow*  (MainWindow*)
- *   news_toolbar      — QToolBar*
- *   more_news_action  — QAction*       (the "More News..." action)
- *   news_label_button — QToolButton*   (the clickable news headline)
  *
  * All handles are owned by MeshMC and stay valid for the lifetime of the
  * main window. Plugins must NOT delete or take ownership of them.
  */
 typedef struct MMCOUiMainReadyPayload {
 	void* main_window;
-	void* news_toolbar;
-	void* more_news_action;
-	void* news_label_button;
 } MMCOUiMainReadyPayload;
 
 typedef struct MMCOGlobalSettingsPagesEvent {
@@ -582,19 +573,6 @@ typedef struct MMCOContext {
 
 	/* S16 — Application Settings (read-only global settings) */
 	const char* (*app_setting_get)(void* mh, const char* key);
-
-	/* S17 — News API */
-	int (*news_get_entry_count)(void* mh);
-	const char* (*news_get_entry_title)(void* mh, int index);
-	const char* (*news_get_entry_link)(void* mh, int index);
-	const char* (*news_get_entry_content)(void* mh, int index);
-	const char* (*news_get_entry_author)(void* mh, int index);
-	const char* (*news_get_entry_date)(void* mh, int index);
-	int (*news_get_entry_feed_index)(void* mh, int index);
-	int (*news_add_feed_url)(void* mh, const char* url);
-	int (*news_get_feed_count)(void* mh);
-	const char* (*news_get_feed_url)(void* mh, int index);
-	int (*news_reload)(void* mh);
 
 	/* S18 — Plugin icon set */
 

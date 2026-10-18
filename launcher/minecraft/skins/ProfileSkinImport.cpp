@@ -30,6 +30,7 @@
 #include "minecraft/auth/Parsers.h"
 #include "net/Download.h"
 #include "net/NetJob.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -62,10 +63,10 @@ void ProfileSkinImport::executeTask()
 
 void ProfileSkinImport::lookUpUuid()
 {
-	setStatus(tr("Looking up %1").arg(m_username));
+	setStatus(i18n("Looking up %1", m_username));
 
 	m_response.clear();
-	m_job = new NetJob(tr("Look up user"), APPLICATION->network());
+	m_job = new NetJob(i18n("Look up user"), APPLICATION->network());
 	/* Percent-encoded: Mojang names are restricted to word characters today,
 	 * but this string comes straight out of a text field. */
 	const QString endpoint =
@@ -77,7 +78,7 @@ void ProfileSkinImport::lookUpUuid()
 	connect(m_job.get(), &NetJob::failed, this, [this](QString reason) {
 		qCritical() << "Could not look up the UUID for" << m_username << ":"
 					<< reason;
-		emitFailed(tr("failed to get user UUID"));
+		emitFailed(i18n("failed to get user UUID"));
 	});
 	connect(m_job.get(), &NetJob::succeeded, this, [this] {
 		QJsonParseError parseError{};
@@ -87,7 +88,7 @@ void ProfileSkinImport::lookUpUuid()
 			qWarning() << "The name lookup response is not valid JSON at"
 					   << parseError.offset << ":"
 					   << parseError.errorString();
-			emitFailed(tr("failed to parse get user UUID response"));
+			emitFailed(i18n("failed to parse get user UUID response"));
 			return;
 		}
 
@@ -96,7 +97,7 @@ void ProfileSkinImport::lookUpUuid()
 			/* A name that nobody owns answers with a body that has no id
 			 * rather than with an HTTP error, so this is the branch an
 			 * ordinary typo lands in. */
-			emitFailed(tr("user id is empty"));
+			emitFailed(i18n("user id is empty"));
 			return;
 		}
 		fetchProfile();
@@ -107,10 +108,10 @@ void ProfileSkinImport::lookUpUuid()
 
 void ProfileSkinImport::fetchProfile()
 {
-	setStatus(tr("Fetching the profile of %1").arg(m_username));
+	setStatus(i18n("Fetching the profile of %1", m_username));
 
 	m_response.clear();
-	m_job = new NetJob(tr("Download user profile"), APPLICATION->network());
+	m_job = new NetJob(i18n("Download user profile"), APPLICATION->network());
 	const QString endpoint =
 		QString::fromLatin1(kSessionProfileEndpoint) + m_uuid;
 	m_job->addNetAction(
@@ -119,12 +120,12 @@ void ProfileSkinImport::fetchProfile()
 	connect(m_job.get(), &NetJob::failed, this, [this](QString reason) {
 		qCritical() << "Could not fetch the profile of" << m_username << ":"
 					<< reason;
-		emitFailed(tr("failed to get user profile"));
+		emitFailed(i18n("failed to get user profile"));
 	});
 	connect(m_job.get(), &NetJob::succeeded, this, [this] {
 		MinecraftProfile profile;
 		if (!Parsers::parseMojangSessionProfile(m_response, profile)) {
-			emitFailed(tr("failed to parse get user profile response"));
+			emitFailed(i18n("failed to parse get user profile response"));
 			return;
 		}
 
@@ -138,7 +139,7 @@ void ProfileSkinImport::fetchProfile()
 			/* The parser substitutes a default skin URL when the player has
 			 * none, so an empty one here means the payload was malformed in
 			 * a way the parser accepted. */
-			emitFailed(tr("failed to parse get user profile response"));
+			emitFailed(i18n("failed to parse get user profile response"));
 			return;
 		}
 		downloadTexture();
@@ -149,16 +150,16 @@ void ProfileSkinImport::fetchProfile()
 
 void ProfileSkinImport::downloadTexture()
 {
-	setStatus(tr("Downloading the skin of %1").arg(m_username));
+	setStatus(i18n("Downloading the skin of %1", m_username));
 
-	m_job = new NetJob(tr("Download user skin"), APPLICATION->network());
+	m_job = new NetJob(i18n("Download user skin"), APPLICATION->network());
 	m_job->addNetAction(
 		Net::Download::makeFile(QUrl(m_textureUrl), m_targetPath));
 
 	connect(m_job.get(), &NetJob::failed, this, [this](QString reason) {
 		qCritical() << "Could not download the skin of" << m_username << ":"
 					<< reason;
-		emitFailed(tr("failed to download skin"));
+		emitFailed(i18n("failed to download skin"));
 	});
 	connect(m_job.get(), &NetJob::succeeded, this,
 			[this] { emitSucceeded(); });

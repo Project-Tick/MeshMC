@@ -57,6 +57,9 @@
 #include <QtWidgets/QProgressDialog>
 #include <QShortcut>
 
+#include <KAboutApplicationDialog>
+#include <KAboutData>
+
 #include <BaseInstance.h>
 #include <InstanceList.h>
 #include <MMCZip.h>
@@ -72,7 +75,6 @@
 #include <BuildConfig.h>
 #include <net/NetJob.h>
 #include <net/Download.h>
-#include <news/NewsChecker.h>
 #include <notifications/NotificationChecker.h>
 #include <tools/BaseProfiler.h>
 
@@ -90,8 +92,6 @@
 #include "ui/widgets/LabeledToolButton.h"
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "ui/dialogs/ProgressDialog.h"
-#include "ui/dialogs/AboutDialog.h"
-#include "ui/dialogs/NewsViewerDialog.h"
 #include "ui/dialogs/MeshMCLogsDialog.h"
 #include "ui/dialogs/PluginsDialog.h"
 #include "ui/dialogs/VersionSelectDialog.h"
@@ -111,13 +111,14 @@
 #include "InstanceCopyTask.h"
 
 #include "MMCTime.h"
+#include <KLocalizedString>
 
 namespace
 {
 	QString profileInUseFilter(const QString& profile, bool used)
 	{
 		if (used) {
-			return QObject::tr("%1 (in use)").arg(profile);
+			return i18n("%1 (in use)", profile);
 		} else {
 			return profile;
 		}
@@ -210,10 +211,6 @@ void MainWindow::refreshThemedIcons()
 {
 	applyThemedIcons();
 
-	if (newsLabel) {
-		newsLabel->setIcon(APPLICATION->getThemedIcon("news"));
-	}
-
 	if (changeIconButton) {
 		if (m_currentInstIcon.isEmpty()) {
 			// Nothing selected: createInstanceToolbar()'s placeholder.
@@ -242,10 +239,6 @@ void MainWindow::createMainToolbar()
 
 	ui->actionReportBug->setVisible(!BuildConfig.BUG_TRACKER_URL.isEmpty());
 
-	ui->actionDISCORD->setVisible(!BuildConfig.DISCORD_URL.isEmpty());
-
-	ui->actionREDDIT->setVisible(!BuildConfig.SUBREDDIT_URL.isEmpty());
-
 	ui->actionPlugins->setVisible(
 		APPLICATION->pluginManager()->moduleCount() >= 1);
 
@@ -257,8 +250,6 @@ void MainWindow::createMainToolbar()
 	}
 
 	ui->actionCheckUpdate->setVisible(APPLICATION->updaterEnabled());
-
-	ui->actionPatreon->setVisible(!BuildConfig.PATREON_URL.isEmpty());
 }
 
 void MainWindow::createInstanceToolbar()
@@ -415,43 +406,6 @@ MainWindow::MainWindow(QWidget* parent)
 				&MainWindow::konamiTriggered);
 	}
 
-	// Add the news label to the news toolbar.
-	{
-		// Feed 0 is ours; anything after it comes from
-		// -DMeshMC_NEWS_EXTRA_FEEDS at build time. The news bar only
-		// ever shows the newest headline across the lot; the rest is
-		// for the news dialog.
-		QStringList feeds{BuildConfig.NEWS_RSS_URL};
-		feeds.append(BuildConfig.NEWS_EXTRA_FEEDS.split(QLatin1Char(';'),
-														Qt::SkipEmptyParts));
-		m_newsChecker.reset(new NewsChecker(APPLICATION->network(), feeds));
-		newsLabel = new QToolButton();
-		newsLabel->setIcon(APPLICATION->getThemedIcon("news"));
-		newsLabel->setSizePolicy(QSizePolicy::Expanding,
-								 QSizePolicy::Preferred);
-		newsLabel->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-		newsLabel->setFocusPolicy(Qt::NoFocus);
-		ui->newsToolBar->insertWidget(ui->actionMoreNews, newsLabel);
-		QObject::connect(newsLabel, &QAbstractButton::clicked, this,
-						 &MainWindow::newsButtonClicked);
-		QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this,
-						 &MainWindow::updateNewsLabel);
-
-		/* Re-publish a finished load as MMCO_HOOK_NEWS_UPDATED. The
-		 * checker is ours, so this is the only place that knows when
-		 * every feed has landed — and by now they all have, which is
-		 * what the hook promises its listeners. */
-		QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this,
-						 []() {
-							 if (APPLICATION->pluginManager()) {
-								 APPLICATION->pluginManager()->dispatchHook(
-									 MMCO_HOOK_NEWS_UPDATED);
-							 }
-						 });
-
-		updateNewsLabel();
-	}
-
 	// Create the instance list widget
 	{
 		view = new InstanceView(ui->centralWidget);
@@ -486,16 +440,6 @@ MainWindow::MainWindow(QWidget* parent)
 				&InstanceList::on_GroupStateChanged);
 		ui->horizontalLayout->addWidget(view);
 	}
-	// The cat background
-	{
-		bool cat_enable = APPLICATION->settings()->get("TheCat").toBool();
-		ui->actionCAT->setChecked(cat_enable);
-		// NOTE: calling the operator like that is an ugly hack to appease
-		// ancient gcc...
-		connect(ui->actionCAT, &QAction::toggled, this,
-				&MainWindow::onCatToggled);
-		setCatBackground(cat_enable);
-	}
 	// start instance when double-clicked
 	connect(view, &InstanceView::activated, this,
 			&MainWindow::instanceActivated);
@@ -528,8 +472,8 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(APPLICATION->themeManager(), &ThemeManager::iconThemeChanged,
 			this, &MainWindow::refreshThemedIcons);
 
-	m_statusLeft = new QLabel(tr("No instance selected"), this);
-	m_statusCenter = new QLabel(tr("Total playtime: 0s"), this);
+	m_statusLeft = new QLabel(i18n("No instance selected"), this);
+	m_statusCenter = new QLabel(i18n("Total playtime: 0s"), this);
 	statusBar()->addPermanentWidget(m_statusLeft, 1);
 	statusBar()->addPermanentWidget(m_statusCenter, 0);
 
@@ -586,12 +530,6 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// TODO: refresh accounts here?
 	// auto accounts = APPLICATION->accounts();
-
-	// load the news
-	{
-		m_newsChecker->reloadNews();
-		updateNewsLabel();
-	}
 
 	if (APPLICATION->updaterEnabled()) {
 		updatesAllowedChanged(APPLICATION->updatesAreAllowed());
@@ -655,10 +593,6 @@ MainWindow::MainWindow(QWidget* parent)
 		// qApp->allWidgets() on every load).
 		MMCOUiMainReadyPayload mainReady{};
 		mainReady.main_window = static_cast<void*>(this);
-		mainReady.news_toolbar = static_cast<void*>(ui->newsToolBar);
-		mainReady.more_news_action =
-			static_cast<void*>(ui->actionMoreNews);
-		mainReady.news_label_button = static_cast<void*>(newsLabel);
 		APPLICATION->pluginManager()->dispatchHook(MMCO_HOOK_UI_MAIN_READY,
 												   &mainReady);
 	}
@@ -676,11 +610,9 @@ void MainWindow::retranslateUi()
 			action->setToolTip(action->toolTip().arg(appName));
 	}
 
-	QString winTitle = tr("MeshMC - Version %1", "MeshMC - Version X")
-						   .arg(BuildConfig.printableVersionString());
+	QString winTitle = i18nc("MeshMC - Version X", "MeshMC - Version %1", BuildConfig.printableVersionString());
 	if (!BuildConfig.BUILD_PLATFORM.isEmpty()) {
-		winTitle += tr(" on %1", "on platform, as in operating system")
-						.arg(BuildConfig.BUILD_PLATFORM);
+		winTitle += i18nc("on platform, as in operating system", " on %1", BuildConfig.BUILD_PLATFORM);
 	}
 	setWindowTitle(APPLICATION->applicationDisplayName());
 
@@ -694,13 +626,13 @@ void MainWindow::retranslateUi()
 											   defaultAccount->isInUse());
 		ui->actionAccountsButton->setText(profileLabel);
 	} else {
-		ui->actionAccountsButton->setText(tr("Profiles"));
+		ui->actionAccountsButton->setText(i18n("Profiles"));
 	}
 
 	if (m_selectedInstance) {
 		m_statusLeft->setText(m_selectedInstance->getStatusbarDescription());
 	} else {
-		m_statusLeft->setText(tr("No instance selected"));
+		m_statusLeft->setText(i18n("No instance selected"));
 	}
 }
 
@@ -718,7 +650,6 @@ void MainWindow::lockToolbars(bool state)
 {
 	ui->mainToolBar->setMovable(!state);
 	ui->instanceToolBar->setMovable(!state);
-	ui->newsToolBar->setMovable(!state);
 	APPLICATION->settings()->set("ToolbarsLocked", state);
 }
 
@@ -811,7 +742,7 @@ void MainWindow::showInstanceContextMenu(const QPoint& pos)
 		actionVoid->setEnabled(false);
 
 		QAction* actionCreateInstance =
-			new QAction(tr("Create instance"), this);
+			new QAction(i18n("Create instance"), this);
 		actionCreateInstance->setToolTip(ui->actionAddInstance->toolTip());
 		if (!group.isNull()) {
 			QVariantMap data;
@@ -827,7 +758,7 @@ void MainWindow::showInstanceContextMenu(const QPoint& pos)
 		actions.append(actionCreateInstance);
 		if (!group.isNull()) {
 			QAction* actionDeleteGroup =
-				new QAction(tr("Delete group '%1'").arg(group), this);
+				new QAction(i18n("Delete group '%1'", group), this);
 			QVariantMap data;
 			data["group"] = group;
 			actionDeleteGroup->setData(data);
@@ -860,10 +791,10 @@ void MainWindow::showInstanceContextMenu(const QPoint& pos)
 		 * two different features; the name is here because a context menu
 		 * can afford it and "which one?" is the first question otherwise. */
 		QAction* actionRestore = new QAction(
-			tr("Undo Deletion of \"%1\"").arg(instances->lastTrashedName()),
+			i18n("Undo Deletion of \"%1\"", instances->lastTrashedName()),
 			&myMenu);
 		actionRestore->setToolTip(
-			tr("Bring the instance you last sent to the trash back, along "
+			i18n("Bring the instance you last sent to the trash back, along "
 			   "with its shortcuts."));
 		connect(actionRestore, &QAction::triggered, this,
 				&MainWindow::restoreTrashedInstance);
@@ -936,12 +867,12 @@ void MainWindow::updateToolsMenu()
 		launchButton->setPopupMode(QToolButton::MenuButtonPopup);
 	}
 
-	QAction* normalLaunch = launchMenu->addAction(tr("Launch"));
+	QAction* normalLaunch = launchMenu->addAction(i18n("Launch"));
 	connect(normalLaunch, &QAction::triggered, this, [this]() {
 		APPLICATION->launch(m_selectedInstance, LaunchMode::Normal);
 	});
 
-	QAction* offlineLaunch = launchMenu->addAction(tr("Launch Offline"));
+	QAction* offlineLaunch = launchMenu->addAction(i18n("Launch Offline"));
 	connect(offlineLaunch, &QAction::triggered, this, [this]() {
 		APPLICATION->launch(m_selectedInstance, LaunchMode::Offline);
 	});
@@ -949,7 +880,7 @@ void MainWindow::updateToolsMenu()
 	auto mcInstance =
 		std::dynamic_pointer_cast<MinecraftInstance>(m_selectedInstance);
 	if (mcInstance) {
-		QAction* demoLaunch = launchMenu->addAction(tr("Launch &Demo"));
+		QAction* demoLaunch = launchMenu->addAction(i18n("Launch &Demo"));
 		if (mcInstance->supportsDemo()) {
 			connect(demoLaunch, &QAction::triggered, this, [this]() {
 				APPLICATION->launch(m_selectedInstance, LaunchMode::Demo);
@@ -957,21 +888,21 @@ void MainWindow::updateToolsMenu()
 		} else {
 			demoLaunch->setDisabled(true);
 			demoLaunch->setToolTip(
-				tr("This Minecraft version has no demo mode. It was added "
+				i18n("This Minecraft version has no demo mode. It was added "
 				   "in 1.3.1."));
 		}
 	}
 
 	/* The profiler is a property of the instance, so these are a radio
 	 * group reflecting a setting, not four different ways to launch. */
-	launchMenu->addSeparator()->setText(tr("Profilers"));
+	launchMenu->addSeparator()->setText(i18n("Profilers"));
 
 	m_profilerActions = new QActionGroup(launchMenu);
 	m_profilerActions->setExclusive(true);
 
 	const QString currentProfiler = m_selectedInstance->profilerKey();
 
-	QAction* noProfiler = launchMenu->addAction(tr("No Profiler"));
+	QAction* noProfiler = launchMenu->addAction(i18n("No Profiler"));
 	noProfiler->setCheckable(true);
 	noProfiler->setData(QString());
 	noProfiler->setChecked(currentProfiler.isEmpty());
@@ -990,7 +921,7 @@ void MainWindow::updateToolsMenu()
 		if (!profiler->check(&error)) {
 			profilerAction->setDisabled(true);
 			profilerAction->setToolTip(
-				tr("Profiler not setup correctly. Go into settings, "
+				i18n("Profiler not setup correctly. Go into settings, "
 				   "\"External Tools\"."));
 		}
 	}
@@ -1008,7 +939,7 @@ void MainWindow::updateToolsMenu()
 			});
 	
 	if (APPLICATION->accounts()->count() > 1) {
-		QMenu* launchAsMenu = launchMenu->addMenu(tr("Launch &As"));
+		QMenu* launchAsMenu = launchMenu->addMenu(i18n("Launch &As"));
 		for (int i = 0; i < APPLICATION->accounts()->count(); i++) {
 			MinecraftAccountPtr account = APPLICATION->accounts()->at(i);
 			QAction* action = launchAsMenu->addAction(account->profileName());
@@ -1045,7 +976,7 @@ void MainWindow::repopulateAccountsMenu()
 	}
 
 	if (accounts->count() <= 0) {
-		QAction* action = new QAction(tr("No accounts added!"), this);
+		QAction* action = new QAction(i18n("No accounts added!"), this);
 		action->setEnabled(false);
 		ui->accountMenu->addAction(action);
 	} else {
@@ -1075,7 +1006,7 @@ void MainWindow::repopulateAccountsMenu()
 
 	ui->accountMenu->addSeparator();
 
-	QAction* action = new QAction(tr("No Default Account"), this);
+	QAction* action = new QAction(i18n("No Default Account"), this);
 	action->setCheckable(true);
 	action->setIcon(APPLICATION->getThemedIcon("noaccount"));
 	action->setData(-1);
@@ -1147,7 +1078,7 @@ void MainWindow::defaultAccountChanged()
 
 	// Set the icon to the "no account" icon.
 	ui->actionAccountsButton->setIcon(APPLICATION->getThemedIcon("noaccount"));
-	ui->actionAccountsButton->setText(tr("Profiles"));
+	ui->actionAccountsButton->setText(i18n("Profiles"));
 }
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* ev)
@@ -1183,23 +1114,6 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* ev)
 		}
 	}
 	return QMainWindow::eventFilter(obj, ev);
-}
-
-void MainWindow::updateNewsLabel()
-{
-	if (m_newsChecker->isLoadingNews()) {
-		newsLabel->setText(tr("Loading news..."));
-		newsLabel->setEnabled(false);
-	} else {
-		QList<NewsEntryPtr> entries = m_newsChecker->getNewsEntries();
-		if (entries.length() > 0) {
-			newsLabel->setText(entries[0]->title);
-			newsLabel->setEnabled(true);
-		} else {
-			newsLabel->setText(tr("No news available."));
-			newsLabel->setEnabled(false);
-		}
-	}
 }
 
 QList<int> stringToIntList(const QString& string)
@@ -1238,36 +1152,10 @@ void MainWindow::notificationsChanged()
 								 intListToString(shownNotifications));
 }
 
-void MainWindow::onCatToggled(bool state)
-{
-	setCatBackground(state);
-	APPLICATION->settings()->set("TheCat", state);
-}
-
-void MainWindow::setCatBackground(bool enabled)
-{
-	if (enabled) {
-		QString catPath = APPLICATION->themeManager()->getCatPack();
-		view->setStyleSheet(QString(R"(
-InstanceView
-{
-    background-image: url(%1);
-    background-attachment: fixed;
-    background-clip: padding;
-    background-position: top right;
-    background-repeat: none;
-    background-color:palette(base);
-})")
-								.arg(catPath));
-	} else {
-		view->setStyleSheet(QString());
-	}
-}
-
 void MainWindow::runModalTask(Task* task)
 {
 	connect(task, &Task::failed, [this](QString reason) {
-		CustomMessageBox::selectable(this, tr("Error"), reason,
+		CustomMessageBox::selectable(this, i18n("Error"), reason,
 									 QMessageBox::Critical)
 			->show();
 	});
@@ -1275,12 +1163,12 @@ void MainWindow::runModalTask(Task* task)
 		QStringList warnings = task->warnings();
 		if (warnings.count()) {
 			CustomMessageBox::selectable(
-				this, tr("Warnings"), warnings.join('\n'), QMessageBox::Warning)
+				this, i18n("Warnings"), warnings.join('\n'), QMessageBox::Warning)
 				->show();
 		}
 	});
 	ProgressDialog loadDialog(this);
-	loadDialog.setSkipButton(true, tr("Abort"));
+	loadDialog.setSkipButton(true, i18n("Abort"));
 	loadDialog.execWithTask(task);
 }
 
@@ -1320,18 +1208,18 @@ void MainWindow::finalizeInstance(InstancePtr inst)
 		auto update = inst->createUpdateTask(Net::Mode::Online);
 		connect(update.get(), &Task::failed, [this](QString reason) {
 			QString error = QString("Instance load failed: %1").arg(reason);
-			CustomMessageBox::selectable(this, tr("Error"), error,
+			CustomMessageBox::selectable(this, i18n("Error"), error,
 										 QMessageBox::Warning)
 				->show();
 		});
 		if (update) {
-			loadDialog.setSkipButton(true, tr("Abort"));
+			loadDialog.setSkipButton(true, i18n("Abort"));
 			loadDialog.execWithTask(update.get());
 		}
 	} else {
 		CustomMessageBox::selectable(
-			this, tr("Error"),
-			tr("MeshMC cannot download Minecraft or update instances unless "
+			this, i18n("Error"),
+			i18n("MeshMC cannot download Minecraft or update instances unless "
 			   "you have at least "
 			   "one account added.\nPlease add your Mojang or Minecraft "
 			   "account."),
@@ -1399,16 +1287,6 @@ void MainWindow::droppedURLs(QList<QUrl> urls)
 	}
 }
 
-void MainWindow::on_actionREDDIT_triggered()
-{
-	DesktopServices::openUrl(QUrl(BuildConfig.SUBREDDIT_URL));
-}
-
-void MainWindow::on_actionDISCORD_triggered()
-{
-	DesktopServices::openUrl(QUrl(BuildConfig.DISCORD_URL));
-}
-
 void MainWindow::on_actionChangeInstIcon_triggered()
 {
 	if (!m_selectedInstance)
@@ -1468,8 +1346,8 @@ void MainWindow::on_actionChangeInstGroup_triggered()
 	groups.sort(Qt::CaseInsensitive);
 	int foo = groups.indexOf(name);
 
-	name = QInputDialog::getItem(this, tr("Group name"),
-								 tr("Enter a new group name."), groups, foo,
+	name = QInputDialog::getItem(this, i18n("Group name"),
+								 i18n("Enter a new group name."), groups, foo,
 								 true, &ok);
 	name = name.simplified();
 	if (ok) {
@@ -1491,8 +1369,8 @@ void MainWindow::deleteGroup()
 	QString groupName = map["group"].toString();
 	if (!groupName.isEmpty()) {
 		auto reply = QMessageBox::question(
-			this, tr("Delete group"),
-			tr("Are you sure you want to delete the group %1").arg(groupName),
+			this, i18n("Delete group"),
+			i18n("Are you sure you want to delete the group %1", groupName),
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
 			APPLICATION->instances()->deleteGroup(groupName);
@@ -1539,11 +1417,6 @@ void MainWindow::on_actionViewIconThemeFolder_triggered()
 void MainWindow::on_actionViewWidgetThemeFolder_triggered()
 {
 	DesktopServices::openDirectory(APPLICATION->themeManager()->getApplicationThemesFolder().path(), true);
-}
-
-void MainWindow::on_actionViewCatPackFolder_triggered()
-{
-	DesktopServices::openDirectory(APPLICATION->themeManager()->getCatPacksFolder().path(), true);
 }
 
 void MainWindow::on_actionViewIconsFolder_triggered()
@@ -1644,41 +1517,12 @@ void MainWindow::on_actionReportBug_triggered()
 	DesktopServices::openUrl(QUrl(BuildConfig.BUG_TRACKER_URL));
 }
 
-void MainWindow::on_actionPatreon_triggered()
-{
-    DesktopServices::openUrl(QUrl(BuildConfig.PATREON_URL));
-}
-
-/*
- * The two ways into the news dialog. They differ only in whether the
- * list of every entry is open: "More news" wants to browse, the
- * headline in the news bar wants that one post.
- */
-void MainWindow::showNews(bool withSidebar)
-{
-	if (!m_newsDialog) {
-		m_newsDialog = new NewsViewerDialog(m_newsChecker.get(), this);
-		m_newsDialog->setAttribute(Qt::WA_DeleteOnClose);
-	}
-	m_newsDialog->loadEntries(withSidebar);
-	m_newsDialog->show();
-	m_newsDialog->raise();
-	m_newsDialog->activateWindow();
-}
-
-void MainWindow::on_actionMoreNews_triggered()
-{
-	showNews(true);
-}
-
-void MainWindow::newsButtonClicked()
-{
-	showNews(false);
-}
-
 void MainWindow::on_actionAbout_triggered()
 {
-	AboutDialog dialog(this);
+	KAboutApplicationDialog dialog(
+		KAboutData::applicationData(),
+		this
+	);
 	dialog.exec();
 }
 
@@ -1707,11 +1551,10 @@ void MainWindow::on_actionDeleteInstance_triggered()
 	 * one by one. */
 	if (m_selectedInstance->isRunning()) {
 		CustomMessageBox::selectable(
-			this, tr("Instance is running"),
-			tr("\"%1\" is running. Stop it first -- deleting an instance "
+			this, i18n("Instance is running"),
+			i18n("\"%1\" is running. Stop it first -- deleting an instance "
 			   "while the game has its files open would leave both in a "
-			   "mess.")
-				.arg(m_selectedInstance->name()),
+			   "mess.", m_selectedInstance->name()),
 			QMessageBox::Warning, QMessageBox::Ok)
 			->exec();
 		return;
@@ -1724,8 +1567,9 @@ void MainWindow::on_actionDeleteInstance_triggered()
 	const int shortcutCount = m_selectedInstance->shortcuts().size();
 	QString shortcutNote;
 	if (shortcutCount > 0) {
-		shortcutNote = tr("\n\n%n shortcut(s) to it will go the same way.", "",
-						  shortcutCount);
+		shortcutNote = i18np("\n\nOne shortcut to it will go the same way.",
+							 "\n\n%1 shortcuts to it will go the same way.",
+						  	 shortcutCount);
 	}
 
 	/* Say which of the two this is going to be instead of hedging: with a
@@ -1734,9 +1578,9 @@ void MainWindow::on_actionDeleteInstance_triggered()
 	const bool recoverable = FS::canTrash();
 	const QString fate =
 		recoverable
-			? tr("It will be moved to the trash. To bring it back, "
+			? i18n("It will be moved to the trash. To bring it back, "
 				 "right-click the instance list and pick Restore.")
-			: tr("There is no usable trash on this system, so this is "
+			: i18n("There is no usable trash on this system, so this is "
 				 "permanent.");
 
 	/* One title for both cases: the difference between recoverable and
@@ -1744,9 +1588,8 @@ void MainWindow::on_actionDeleteInstance_triggered()
 	 * one of them only makes the other look safe to click through. */
 	auto response =
 		CustomMessageBox::selectable(
-			this, tr("Delete instance?"),
-			tr("About to delete: %1\n%2%3\n\nAre you sure?")
-				.arg(m_selectedInstance->name(), fate, shortcutNote),
+			this, i18n("Delete instance?"),
+			i18n("About to delete: %1\n%2%3\n\nAre you sure?", m_selectedInstance->name(), fate, shortcutNote),
 			QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No,
 			QMessageBox::No)
 			->exec();
@@ -1782,8 +1625,8 @@ void MainWindow::restoreTrashedInstance()
 
 	if (!complete) {
 		CustomMessageBox::selectable(
-			this, tr("Restore Instance"),
-			tr("Not everything could be put back. Check your trash to "
+			this, i18n("Restore Instance"),
+			i18n("Not everything could be put back. Check your trash to "
 			   "recover the rest by hand."),
 			QMessageBox::Warning, QMessageBox::Ok)
 			->exec();
@@ -1841,8 +1684,8 @@ void MainWindow::on_actionExportInstanceFlamePack_triggered()
 	if (component && component->getVersionFile() &&
 		component->getVersionFile()->type == QStringLiteral("snapshot")) {
 		CustomMessageBox::selectable(
-			this, tr("Cannot export"),
-			tr("CurseForge modpacks cannot be made from a snapshot version "
+			this, i18n("Cannot export"),
+			i18n("CurseForge modpacks cannot be made from a snapshot version "
 			   "of Minecraft."),
 			QMessageBox::Warning)
 			->exec();
@@ -2094,7 +1937,7 @@ void MainWindow::selectionBad()
 	for (QToolButton* button : instance_buttons) {
 		button->setEnabled(false);
 	}
-	renameButton->setText(tr("Rename Instance"));
+	renameButton->setText(i18n("Rename Instance"));
 	syncSidebarWidths();
 	updateInstanceToolIcon("grass");
 
@@ -2116,7 +1959,7 @@ void MainWindow::checkInstancePathForProblems()
 	 * Each message names the folder it is about, because with more than
 	 * one configured "your instance folder" is no longer an answer.
 	 */
-	auto tempFolderText = tr("This is a problem: <br/>"
+	auto tempFolderText = i18n("This is a problem: <br/>"
 							 " - MeshMC will likely be deleted without warning "
 							 "by the operating system <br/>"
 							 " - close MeshMC now and extract it to a real "
@@ -2128,11 +1971,10 @@ void MainWindow::checkInstancePathForProblems()
 		if (FS::checkProblemticPathJava(QDir(instanceFolder))) {
 			QMessageBox warning(this);
 			warning.setText(
-				tr("Your instance folder \'%1\' contains \'!\' and this is "
-				   "known to cause Java problems!")
-					.arg(instanceFolder));
+				i18n("Your instance folder \'%1\' contains \'!\' and this is "
+				   "known to cause Java problems!", instanceFolder));
 			warning.setInformativeText(
-				tr("You have now two options: <br/>"
+				i18n("You have now two options: <br/>"
 				   " - change the instance folder in the settings <br/>"
 				   " - move this installation of MeshMC to a different folder"));
 			warning.setDefaultButton(QMessageBox::Ok);
@@ -2143,9 +1985,8 @@ void MainWindow::checkInstancePathForProblems()
 		if (pathfoldername.contains("Rar$", Qt::CaseInsensitive)) {
 			QMessageBox warning(this);
 			warning.setText(
-				tr("Your instance folder \'%1\' contains \'Rar$\' - that "
-				   "means you haven't extracted MeshMC archive!")
-					.arg(instanceFolder));
+				i18n("Your instance folder \'%1\' contains \'Rar$\' - that "
+				   "means you haven't extracted MeshMC archive!", instanceFolder));
 			warning.setInformativeText(tempFolderText);
 			warning.setDefaultButton(QMessageBox::Ok);
 			warning.exec();
@@ -2153,9 +1994,8 @@ void MainWindow::checkInstancePathForProblems()
 				   pathfoldername.contains("/TempState/")) {
 			QMessageBox warning(this);
 			warning.setText(
-				tr("Your instance folder \'%1\' is in a temporary folder: "
-				   "\'%2\'!")
-					.arg(instanceFolder, QDir::tempPath()));
+				i18n("Your instance folder \'%1\' is in a temporary folder: "
+				   "\'%2\'!", instanceFolder, QDir::tempPath()));
 			warning.setInformativeText(tempFolderText);
 			warning.setDefaultButton(QMessageBox::Ok);
 			warning.exec();
@@ -2171,6 +2011,6 @@ void MainWindow::updateStatusCenter()
 	int timePlayed = APPLICATION->instances()->getTotalPlayTime();
 	if (timePlayed > 0) {
 		m_statusCenter->setText(
-			tr("Total playtime: %1").arg(Time::prettifyDuration(timePlayed)));
+			i18n("Total playtime: %1", Time::prettifyDuration(timePlayed)));
 	}
 }

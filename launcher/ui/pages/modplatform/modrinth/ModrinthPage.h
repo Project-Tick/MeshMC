@@ -25,6 +25,7 @@
 #include <Application.h>
 #include "tasks/Task.h"
 #include <modplatform/modrinth/ModrinthPackIndex.h>
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -47,7 +48,7 @@ class ModrinthPage : public QWidget, public BasePage
 	virtual ~ModrinthPage() override;
 	virtual QString displayName() const override
 	{
-		return tr("Modrinth");
+		return i18n("Modrinth");
 	}
 	virtual QIcon icon() const override
 	{

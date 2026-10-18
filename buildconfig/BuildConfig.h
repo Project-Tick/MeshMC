@@ -152,9 +152,6 @@ class Config
 	QString CURSEFORGE_API_KEY;
 
 	QString BUG_TRACKER_URL;
-	QString DISCORD_URL;
-	QString SUBREDDIT_URL;
-	QString PATREON_URL;
 
 	QString RESOURCE_BASE = "https://resources.download.minecraft.net/";
 	QString LIBRARY_BASE = "https://libraries.minecraft.net/";

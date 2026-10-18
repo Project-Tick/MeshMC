@@ -248,15 +248,6 @@ set(NOTIFICATIONS_SOURCES
     notifications/NotificationChecker.cpp
 )
 
-# Backend for the news bar... there's usually no news.
-set(NEWS_SOURCES
-    # News System
-    news/NewsChecker.h
-    news/NewsChecker.cpp
-    news/NewsEntry.h
-    news/NewsEntry.cpp
-)
-
 # Instance backup snapshots (was the BackupSystem .mmco plugin)
 set(BACKUP_SOURCES
     backup/BackupManager.h
@@ -731,7 +722,6 @@ set(LOGIC_SOURCES
     ${LAUNCH_SOURCES}
     ${UPDATE_SOURCES}
     ${NOTIFICATIONS_SOURCES}
-    ${NEWS_SOURCES}
     ${BACKUP_SOURCES}
     ${MINECRAFT_SOURCES}
     ${SCREENSHOTS_SOURCES}
@@ -772,15 +762,6 @@ SET(MESHMC_SOURCES
 
     # Bundled resources
     resources/backgrounds/backgrounds.qrc
-    resources/multimc/multimc.qrc
-    resources/pe_dark/pe_dark.qrc
-    resources/pe_light/pe_light.qrc
-    resources/pe_colored/pe_colored.qrc
-    resources/pe_blue/pe_blue.qrc
-    resources/OSX/OSX.qrc
-    resources/iOS/iOS.qrc
-    resources/flat/flat.qrc
-    resources/flat_white/flat_white.qrc
     resources/documents/documents.qrc
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
@@ -815,18 +796,12 @@ SET(MESHMC_SOURCES
     ui/setupwizard/BaseWizardPage.h
     ui/setupwizard/JavaWizardPage.cpp
     ui/setupwizard/JavaWizardPage.h
-    ui/setupwizard/LanguageWizardPage.cpp
-    ui/setupwizard/LanguageWizardPage.h
 
     # GUI - themes
     ui/themes/FusionTheme.cpp
     ui/themes/FusionTheme.h
     ui/themes/BrightTheme.cpp
     ui/themes/BrightTheme.h
-    ui/themes/GreenDarkTheme.cpp
-    ui/themes/GreenDarkTheme.h
-    ui/themes/GreenLightTheme.cpp
-    ui/themes/GreenLightTheme.h
     ui/themes/CustomTheme.cpp
     ui/themes/CustomTheme.h
     ui/themes/DarkTheme.cpp
@@ -837,8 +812,6 @@ SET(MESHMC_SOURCES
     ui/themes/SystemTheme.h
     ui/themes/ThemeManager.cpp
     ui/themes/ThemeManager.h
-    ui/themes/CatPack.cpp
-    ui/themes/CatPack.h
 
     # Processes
     LaunchController.h
@@ -958,8 +931,6 @@ SET(MESHMC_SOURCES
     ui/pages/modplatform/ImportPage.h
 
     # GUI - dialogs
-    ui/dialogs/AboutDialog.cpp
-    ui/dialogs/AboutDialog.h
     ui/dialogs/BlockedModsDialog.cpp
     ui/dialogs/BlockedModsDialog.h
     ui/dialogs/ProfileSelectDialog.cpp
@@ -988,8 +959,6 @@ SET(MESHMC_SOURCES
     ui/dialogs/NewComponentDialog.h
     ui/dialogs/NewInstanceDialog.cpp
     ui/dialogs/NewInstanceDialog.h
-    ui/dialogs/NewsViewerDialog.cpp
-    ui/dialogs/NewsViewerDialog.h
     ui/dialogs/NotificationDialog.cpp
     ui/dialogs/NotificationDialog.h
     ui/pagedialog/PageDialog.cpp
@@ -1135,7 +1104,6 @@ set(MESHMC_UI_FILES
     ui/dialogs/ExportPackDialog.ui
     ui/dialogs/IconPickerDialog.ui
     ui/dialogs/MSALoginDialog.ui
-    ui/dialogs/AboutDialog.ui
     ui/dialogs/EditAccountDialog.ui
     ui/dialogs/UntrustedModsDialog.ui
     ui/MainWindow.ui
@@ -1179,15 +1147,6 @@ endif()
 
 set(MESHMC_QRC_FILES
     resources/backgrounds/backgrounds.qrc
-    resources/multimc/multimc.qrc
-    resources/pe_dark/pe_dark.qrc
-    resources/pe_light/pe_light.qrc
-    resources/pe_colored/pe_colored.qrc
-    resources/pe_blue/pe_blue.qrc
-    resources/OSX/OSX.qrc
-    resources/iOS/iOS.qrc
-    resources/flat/flat.qrc
-    resources/flat_white/flat_white.qrc
     resources/documents/documents.qrc
     resources/breeze_dark/breeze_dark.qrc
     resources/breeze_light/breeze_light.qrc
@@ -1228,15 +1187,6 @@ set_tests_properties(IconTheme PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QPA_PLATFORMTHEME="
     )
 
-target_link_libraries(MeshMC_logic
-    classparser
-    nbt++
-    ZLIB::ZLIB
-    tomlplusplus::tomlplusplus
-    BuildConfig
-    Katabasis
-)
-
 if(MeshMC_DISABLE_JAVA_DOWNLOADER)
     target_compile_definitions(MeshMC_logic PUBLIC MeshMC_DISABLE_JAVA_DOWNLOADER)
 endif()
@@ -1258,10 +1208,19 @@ target_link_libraries(MeshMC_logic
     Qt${QT_VERSION_MAJOR}::Concurrent
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
+    KF${QT_VERSION_MAJOR}::I18n
+    KF${QT_VERSION_MAJOR}::GuiAddons
+    KF${QT_VERSION_MAJOR}::CoreAddons
+    KF${QT_VERSION_MAJOR}::XmlGui
     LibArchive::LibArchive
     cmark::cmark
-    rainbow
     LocalPeer::LocalPeer
+    classparser
+    nbt++
+    ZLIB::ZLIB
+    tomlplusplus
+    BuildConfig
+    Katabasis
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
@@ -1463,6 +1422,7 @@ if(NOT APPLE)
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Network
+        KF${QT_VERSION_MAJOR}::I18n
         LibArchive::LibArchive
         cmark::cmark
         BuildConfig
@@ -1730,7 +1690,7 @@ if(WIN32 OR (UNIX AND APPLE))
     # environment variable) so RUNTIME_DEPENDENCY_SET can locate third-party
     # DLLs that live in a dependency prefix.
     #
-    # nbt++/rainbow are NOT handled here: they are our own targets in
+    # nbt++ are NOT handled here: they are our own targets in
     # this build tree, and the top-level CMakeLists.txt installs them directly
     # to the right place. Everything else under libraries/ links statically.
     set(_prefix_path_bins "")

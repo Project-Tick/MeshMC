@@ -25,6 +25,7 @@
 
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
+#include <KLocalizedString>
 
 MinecraftProfileStep::MinecraftProfileStep(AccountData* data) : AuthStep(data)
 {
@@ -34,7 +35,7 @@ MinecraftProfileStep::~MinecraftProfileStep() noexcept = default;
 
 QString MinecraftProfileStep::describe()
 {
-	return tr("Fetching the Minecraft profile.");
+	return i18n("Fetching the Minecraft profile.");
 }
 
 void MinecraftProfileStep::perform()
@@ -72,7 +73,7 @@ void MinecraftProfileStep::onRequestDone(QNetworkReply::NetworkError error,
 		// account state.
 		m_data->minecraftProfile = MinecraftProfile();
 		emit finished(AccountTaskState::STATE_SUCCEEDED,
-					  tr("Account has no Minecraft profile."));
+					  i18n("Account has no Minecraft profile."));
 		return;
 	}
 	if (error != QNetworkReply::NoError) {
@@ -85,17 +86,17 @@ void MinecraftProfileStep::onRequestDone(QNetworkReply::NetworkError error,
 		qWarning() << QString::fromUtf8(data);
 
 		emit finished(AccountTaskState::STATE_FAILED_SOFT,
-					  tr("Minecraft Java profile acquisition failed."));
+					  i18n("Minecraft Java profile acquisition failed."));
 		return;
 	}
 	if (!Parsers::parseMinecraftProfile(data, m_data->minecraftProfile)) {
 		m_data->minecraftProfile = MinecraftProfile();
 		emit finished(
 			AccountTaskState::STATE_FAILED_SOFT,
-			tr("Minecraft Java profile response could not be parsed"));
+			i18n("Minecraft Java profile response could not be parsed"));
 		return;
 	}
 
 	emit finished(AccountTaskState::STATE_WORKING,
-				  tr("Minecraft Java profile acquisition succeeded."));
+				  i18n("Minecraft Java profile acquisition succeeded."));
 }

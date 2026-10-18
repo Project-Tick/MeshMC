@@ -22,6 +22,7 @@
 
 #include <QTimerEvent>
 #include <QStyle>
+#include <KLocalizedString>
 
 NotificationDialog::NotificationDialog(
 	const NotificationChecker::NotificationEntry& entry, QWidget* parent)
@@ -47,8 +48,8 @@ NotificationDialog::NotificationDialog(
 	ui->iconLabel->setPixmap(style()->standardPixmap(icon, 0, this));
 	ui->messageLabel->setText(entry.message);
 
-	m_dontShowAgainText = tr("Don't show again");
-	m_closeText = tr("Close");
+	m_dontShowAgainText = i18n("Don't show again");
+	m_closeText = i18n("Close");
 
 	ui->dontShowAgainBtn->setText(m_dontShowAgainText +
 								  QString(" (%1)").arg(m_dontShowAgainTime));

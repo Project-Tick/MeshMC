@@ -24,8 +24,6 @@
 #include "plugin/PluginHooks.h"
 #include "plugin/PluginAPI.h"
 
-#include "news/NewsEntry.h"
-
 #include <QObject>
 #include <QMutex>
 #include <QPointer>
@@ -41,7 +39,6 @@
 #include <vector>
 #include <functional>
 
-class NewsChecker;
 class QAction;
 class QEvent;
 class QMenu;
@@ -560,25 +557,6 @@ class PluginManager : public QObject
 	static int api_main_window_hide(void* mh);
 	static int api_main_window_is_visible(void* mh);
 
-	/* S17 — News API.
-	 *
-	 * Read-only projection of MainWindow's NewsChecker, which owns and
-	 * parses every feed. Both helpers cope with there being no main
-	 * window yet (startup) or any more (shutdown). */
-	NewsChecker* newsChecker() const;
-	QList<NewsEntryPtr> newsEntries() const;
-	static int api_news_get_entry_count(void* mh);
-	static const char* api_news_get_entry_title(void* mh, int index);
-	static const char* api_news_get_entry_link(void* mh, int index);
-	static const char* api_news_get_entry_content(void* mh, int index);
-	static const char* api_news_get_entry_author(void* mh, int index);
-	static const char* api_news_get_entry_date(void* mh, int index);
-	static int api_news_get_entry_feed_index(void* mh, int index);
-	static int api_news_add_feed_url(void* mh, const char* url);
-	static int api_news_get_feed_count(void* mh);
-	static const char* api_news_get_feed_url(void* mh, int index);
-	static int api_news_reload(void* mh);
-
 	/* Helpers */
 	static ModuleRuntime* rt(void* mh);
 
@@ -604,9 +582,6 @@ class PluginManager : public QObject
 	mutable QMutex m_launchModMutex;
 	QMap<QString, QString> m_pendingLaunchEnv;
 	QString m_pendingLaunchWrapper;
-
-	/* S17 — News: no state. NewsChecker holds the feeds and the
-	 * entries; see newsChecker() above. */
 
 	/* S19 / S20 — system-tray and main-window helpers state.
 	 * All tray icons, menus, actions and close filters are tracked per

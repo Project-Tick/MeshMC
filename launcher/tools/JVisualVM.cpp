@@ -25,6 +25,7 @@
 #include "settings/SettingsObject.h"
 #include "launch/LaunchTask.h"
 #include "BaseInstance.h"
+#include <KLocalizedString>
 
 class JVisualVM : public BaseProfiler
 {
@@ -49,13 +50,13 @@ JVisualVM::JVisualVM(SettingsObjectPtr settings, InstancePtr instance,
 
 void JVisualVM::profilerStarted()
 {
-	emit readyToLaunch(tr("JVisualVM started"));
+	emit readyToLaunch(i18n("JVisualVM started"));
 }
 
 void JVisualVM::profilerFinished(int exit, QProcess::ExitStatus status)
 {
 	if (status == QProcess::CrashExit) {
-		emit abortLaunch(tr("Profiler aborted"));
+		emit abortLaunch(i18n("Profiler aborted"));
 	}
 	if (m_profilerProcess) {
 		m_profilerProcess->deleteLater();
@@ -103,12 +104,12 @@ bool JVisualVMFactory::check(QString* error)
 bool JVisualVMFactory::check(const QString& path, QString* error)
 {
 	if (path.isEmpty()) {
-		*error = QObject::tr("Empty path");
+		*error = i18n("Empty path");
 		return false;
 	}
 	QFileInfo finfo(path);
 	if (!finfo.isExecutable() || !finfo.fileName().contains("visualvm")) {
-		*error = QObject::tr("Invalid path to JVisualVM");
+		*error = i18n("Invalid path to JVisualVM");
 		return false;
 	}
 	return true;

@@ -39,6 +39,7 @@
 #include "modplatform/flame/FlameApi.h"
 #include "modplatform/flame/FlameFingerprint.h"
 #include "net/JsonPost.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -137,7 +138,7 @@ FlamePackExportTask::FlamePackExportTask(FlamePackExportOptions options,
 
 void FlamePackExportTask::executeTask()
 {
-	setStatus(tr("Searching for files..."));
+	setStatus(i18n("Searching for files..."));
 	setProgress(0, 0);
 
 	connect(&m_scanWatcher, &QFutureWatcher<ScanResult>::finished, this,
@@ -267,7 +268,7 @@ void FlamePackExportTask::onScanFinished()
 
 	const ScanResult result = m_scanFuture.result();
 	if (!result.ok) {
-		emitFailed(tr("Could not read the instance's files."));
+		emitFailed(i18n("Could not read the instance's files."));
 		return;
 	}
 
@@ -285,7 +286,7 @@ void FlamePackExportTask::onScanFinished()
 
 void FlamePackExportTask::matchFingerprints()
 {
-	setStatus(tr("Identifying files on CurseForge..."));
+	setStatus(i18n("Identifying files on CurseForge..."));
 	setProgress(1, 4);
 
 	QJsonArray fingerprints;
@@ -305,7 +306,7 @@ void FlamePackExportTask::matchFingerprints()
 	body["fingerprints"] = fingerprints;
 
 	m_request.reset(new Net::JsonPost(
-		tr("Identifying files on CurseForge..."),
+		i18n("Identifying files on CurseForge..."),
 		FlameApi::matchFingerprintsUrl(),
 		QJsonDocument(body).toJson(QJsonDocument::Compact)));
 
@@ -422,14 +423,14 @@ void FlamePackExportTask::lookUpProjects()
 		return;
 	}
 
-	setStatus(tr("Fetching project details from CurseForge..."));
+	setStatus(i18n("Fetching project details from CurseForge..."));
 	setProgress(2, 4);
 
 	QJsonObject body;
 	body["modIds"] = addonIds;
 
 	m_request.reset(new Net::JsonPost(
-		tr("Fetching project details from CurseForge..."),
+		i18n("Fetching project details from CurseForge..."),
 		FlameApi::projectsUrl(),
 		QJsonDocument(body).toJson(QJsonDocument::Compact)));
 
@@ -512,7 +513,7 @@ void FlamePackExportTask::onProjectLookupFailed(const QString& reason)
 
 void FlamePackExportTask::buildZip()
 {
-	setStatus(tr("Adding files..."));
+	setStatus(i18n("Adding files..."));
 	setProgress(3, 4);
 
 	auto* zip =

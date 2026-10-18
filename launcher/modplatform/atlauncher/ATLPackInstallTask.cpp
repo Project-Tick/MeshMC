@@ -40,6 +40,7 @@
 
 #include "BuildConfig.h"
 #include "Application.h"
+#include <KLocalizedString>
 
 namespace ATLauncher
 {
@@ -109,23 +110,20 @@ namespace ATLauncher
 		try {
 			ATLauncher::loadVersion(version, obj);
 		} catch (const JSONValidationError& e) {
-			emitFailed(tr("Could not understand pack manifest:\n") + e.cause());
+			emitFailed(i18n("Could not understand pack manifest:\n") + e.cause());
 			return;
 		}
 		m_version = version;
 
 		auto vlist = APPLICATION->metadataIndex()->get("net.minecraft");
 		if (!vlist) {
-			emitFailed(tr("Failed to get local metadata index for %1")
-						   .arg("net.minecraft"));
+			emitFailed(i18n("Failed to get local metadata index for %1", QStringLiteral("net.minecraft")));
 			return;
 		}
 
 		auto ver = vlist->getVersion(m_version.minecraft);
 		if (!ver) {
-			emitFailed(tr("Failed to get local metadata index for '%1' v%2")
-						   .arg("net.minecraft")
-						   .arg(m_version.minecraft));
+			emitFailed(i18n("Failed to get local metadata index for '%1' v%2", QStringLiteral("net.minecraft"), m_version.minecraft));
 			return;
 		}
 		ver->load(Net::Mode::Online);
@@ -187,7 +185,7 @@ namespace ATLauncher
 				qWarning() << "Unsupported mod type: " + raw;
 				return Q_NULLPTR;
 			case ModType::Unknown:
-				emitFailed(tr("Unknown mod type: %1").arg(raw));
+				emitFailed(i18n("Unknown mod type: %1", raw));
 				return Q_NULLPTR;
 		}
 
@@ -201,7 +199,7 @@ namespace ATLauncher
 			auto vlist = APPLICATION->metadataIndex()->get(uid);
 			if (!vlist) {
 				emitFailed(
-					tr("Failed to get local metadata index for %1").arg(uid));
+					i18n("Failed to get local metadata index for %1", uid));
 				return Q_NULLPTR;
 			}
 
@@ -239,8 +237,7 @@ namespace ATLauncher
 					return version->descriptor();
 				}
 
-				emitFailed(tr("Failed to find version for %1 loader")
-							   .arg(m_version.loader.type));
+				emitFailed(i18n("Failed to find version for %1 loader", m_version.loader.type));
 				return Q_NULLPTR;
 			} else if (m_version.loader.choose) {
 				// Fabric Loader doesn't depend on a given Minecraft version.
@@ -254,7 +251,7 @@ namespace ATLauncher
 
 		if (m_version.loader.version == Q_NULLPTR ||
 			m_version.loader.version.isEmpty()) {
-			emitFailed(tr("No loader version set for modpack!"));
+			emitFailed(i18n("No loader version set for modpack!"));
 			return Q_NULLPTR;
 		}
 
@@ -362,8 +359,7 @@ namespace ATLauncher
 					break;
 				case DownloadType::Browser:
 				case DownloadType::Unknown:
-					emitFailed(tr("Unknown or unsupported download type: %1")
-								   .arg(lib.download_raw));
+					emitFailed(i18n("Unknown or unsupported download type: %1", lib.download_raw));
 					return false;
 			}
 
@@ -459,8 +455,8 @@ namespace ATLauncher
 	{
 		qDebug() << "PackInstallTask::installConfigs: "
 				 << QThread::currentThreadId();
-		setStatus(tr("Downloading configs..."));
-		jobPtr = new NetJob(tr("Config download"), APPLICATION->network());
+		setStatus(i18n("Downloading configs..."));
+		jobPtr = new NetJob(i18n("Config download"), APPLICATION->network());
 
 		auto path =
 			QString("Configs/%1/%2.zip").arg(m_pack).arg(m_version_name);
@@ -507,7 +503,7 @@ namespace ATLauncher
 	{
 		qDebug() << "PackInstallTask::extractConfigs: "
 				 << QThread::currentThreadId();
-		setStatus(tr("Extracting configs..."));
+		setStatus(i18n("Extracting configs..."));
 
 		QDir extractDir(m_stagingPath);
 
@@ -539,14 +535,14 @@ namespace ATLauncher
 		// Select optional mods, if pack contains any
 		QVector<QString> selectedMods;
 		if (!optionalMods.isEmpty()) {
-			setStatus(tr("Selecting optional mods..."));
+			setStatus(i18n("Selecting optional mods..."));
 			selectedMods = m_support->chooseOptionalMods(optionalMods);
 		}
 
-		setStatus(tr("Downloading mods..."));
+		setStatus(i18n("Downloading mods..."));
 
 		jarmods.clear();
-		jobPtr = new NetJob(tr("Mod download"), APPLICATION->network());
+		jobPtr = new NetJob(i18n("Mod download"), APPLICATION->network());
 		for (const auto& mod : m_version.mods) {
 			// skip non-client mods
 			if (!mod.client)
@@ -562,15 +558,14 @@ namespace ATLauncher
 					url = BuildConfig.ATL_DOWNLOAD_SERVER_URL + mod.url;
 					break;
 				case DownloadType::Browser:
-					emitFailed(tr("Unsupported download type: %1")
-								   .arg(mod.download_raw));
+					emitFailed(i18n("Unsupported download type: %1", mod.download_raw));
 					return;
 				case DownloadType::Direct:
 					url = mod.url;
 					break;
 				case DownloadType::Unknown:
 					emitFailed(
-						tr("Unknown download type: %1").arg(mod.download_raw));
+						i18n("Unknown download type: %1", mod.download_raw));
 					return;
 			}
 
@@ -707,7 +702,7 @@ namespace ATLauncher
 		if (m_modExtractFuture.result()) {
 			install();
 		} else {
-			emitFailed(tr("Failed to extract mods..."));
+			emitFailed(i18n("Failed to extract mods..."));
 		}
 	}
 
@@ -719,7 +714,7 @@ namespace ATLauncher
 		qDebug() << "PackInstallTask::extractMods: "
 				 << QThread::currentThreadId();
 
-		setStatus(tr("Extracting mods..."));
+		setStatus(i18n("Extracting mods..."));
 		for (auto iter = toExtract.begin(); iter != toExtract.end(); iter++) {
 			auto& modPath = iter.key();
 			auto& mod = iter.value();
@@ -784,7 +779,7 @@ namespace ATLauncher
 	void PackInstallTask::install()
 	{
 		qDebug() << "PackInstallTask::install: " << QThread::currentThreadId();
-		setStatus(tr("Installing modpack"));
+		setStatus(i18n("Installing modpack"));
 
 		auto instanceConfigPath =
 			FS::PathCombine(m_stagingPath, "instance.cfg");
@@ -807,7 +802,7 @@ namespace ATLauncher
 
 		// Use a component to add libraries BEFORE Minecraft
 		if (!createLibrariesComponent(instance.instanceRoot(), components)) {
-			emitFailed(tr("Failed to create libraries component"));
+			emitFailed(i18n("Failed to create libraries component"));
 			return;
 		}
 
@@ -844,7 +839,7 @@ namespace ATLauncher
 			components->setComponentVersion("org.quiltmc.quilt-loader", version,
 											true);
 		} else if (m_version.loader.type != QString()) {
-			emitFailed(tr("Unknown loader type: ") + m_version.loader.type);
+			emitFailed(i18n("Unknown loader type: ") + m_version.loader.type);
 			return;
 		}
 
@@ -858,7 +853,7 @@ namespace ATLauncher
 		// Use a component to fill in the rest of the data
 		// todo: use more detection
 		if (!createPackComponent(instance.instanceRoot(), components)) {
-			emitFailed(tr("Failed to create pack component"));
+			emitFailed(i18n("Failed to create pack component"));
 			return;
 		}
 

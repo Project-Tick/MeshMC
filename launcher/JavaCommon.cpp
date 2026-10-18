@@ -21,6 +21,7 @@
 #include "ui/dialogs/CustomMessageBox.h"
 #include <MMCStrings.h>
 #include <QRegularExpression>
+#include <KLocalizedString>
 
 bool JavaCommon::checkJVMArgs(QString jvmargs, QWidget* parent)
 {
@@ -29,7 +30,7 @@ bool JavaCommon::checkJVMArgs(QString jvmargs, QWidget* parent)
 		jvmargs.contains("-XX-MaxHeapSize") ||
 		jvmargs.contains("-XX:InitialHeapSize")) {
 		auto warnStr =
-			QObject::tr("You tried to manually set a JVM memory option (using "
+			i18n("You tried to manually set a JVM memory option (using "
 						"\"-XX:PermSize\", \"-XX-MaxHeapSize\", "
 						"\"-XX:InitialHeapSize\",  \"-Xmx\" or \"-Xms\").\n"
 						"There are dedicated boxes for these in the settings "
@@ -37,7 +38,7 @@ bool JavaCommon::checkJVMArgs(QString jvmargs, QWidget* parent)
 						"This message will be displayed until you remove them "
 						"from the JVM arguments.");
 		CustomMessageBox::selectable(parent,
-									 QObject::tr("JVM arguments warning"),
+									 i18n("JVM arguments warning"),
 									 warnStr, QMessageBox::Warning)
 			->exec();
 		return false;
@@ -49,20 +50,16 @@ void JavaCommon::javaWasOk(QWidget* parent, JavaCheckResult result)
 {
 	QString text;
 	text +=
-		QObject::tr(
-			"Java test succeeded!<br />Platform reported: %1<br />Java version "
+		i18n("Java test succeeded!<br />Platform reported: %1<br />Java version "
 			"reported: %2<br />Java vendor "
-			"reported: %3<br />")
-			.arg(result.realPlatform, result.javaVersion.toString(),
-				 result.javaVendor);
+			"reported: %3<br />", result.realPlatform, result.javaVersion.toString(), result.javaVendor);
 	if (result.errorLog.size()) {
 		auto htmlError = result.errorLog;
 		htmlError.replace('\n', "<br />");
 		text +=
-			QObject::tr("<br />Warnings:<br /><font color=\"orange\">%1</font>")
-				.arg(htmlError);
+			i18n("<br />Warnings:<br /><font color=\"orange\">%1</font>", htmlError);
 	}
-	CustomMessageBox::selectable(parent, QObject::tr("Java test success"), text,
+	CustomMessageBox::selectable(parent, i18n("Java test success"), text,
 								 QMessageBox::Information)
 		->show();
 }
@@ -72,10 +69,10 @@ void JavaCommon::javaArgsWereBad(QWidget* parent, JavaCheckResult result)
 	auto htmlError = result.errorLog;
 	QString text;
 	htmlError.replace('\n', "<br />");
-	text += QObject::tr("The specified java binary didn't work with the "
+	text += i18n("The specified java binary didn't work with the "
 						"arguments you provided:<br />");
 	text += QString("<font color=\"red\">%1</font>").arg(htmlError);
-	CustomMessageBox::selectable(parent, QObject::tr("Java test failure"), text,
+	CustomMessageBox::selectable(parent, i18n("Java test failure"), text,
 								 QMessageBox::Warning)
 		->show();
 }
@@ -83,10 +80,10 @@ void JavaCommon::javaArgsWereBad(QWidget* parent, JavaCheckResult result)
 void JavaCommon::javaBinaryWasBad(QWidget* parent, JavaCheckResult result)
 {
 	QString text;
-	text += QObject::tr("The specified java binary didn't work.<br />You "
+	text += i18n("The specified java binary didn't work.<br />You "
 						"should use the auto-detect feature, "
 						"or set the path to the java executable.<br />");
-	CustomMessageBox::selectable(parent, QObject::tr("Java test failure"), text,
+	CustomMessageBox::selectable(parent, i18n("Java test failure"), text,
 								 QMessageBox::Warning)
 		->show();
 }

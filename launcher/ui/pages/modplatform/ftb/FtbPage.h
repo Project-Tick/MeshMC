@@ -28,6 +28,7 @@
 #include "Application.h"
 #include "ui/pages/BasePage.h"
 #include "tasks/Task.h"
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -45,7 +46,7 @@ class FtbPage : public QWidget, public BasePage
 	virtual ~FtbPage();
 	virtual QString displayName() const override
 	{
-		return tr("FTB");
+		return i18n("FTB");
 	}
 	virtual QIcon icon() const override
 	{

@@ -26,6 +26,7 @@
 #include "java/JavaChecker.h"
 #include "ui/pages/BasePage.h"
 #include <Application.h>
+#include <KLocalizedString>
 
 class SettingsObject;
 
@@ -44,7 +45,7 @@ class MinecraftPage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return tr("Minecraft");
+		return i18n("Minecraft");
 	}
 	QIcon icon() const override
 	{

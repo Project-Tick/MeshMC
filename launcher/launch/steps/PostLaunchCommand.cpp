@@ -20,6 +20,7 @@
 
 #include "PostLaunchCommand.h"
 #include <launch/LaunchTask.h>
+#include <KLocalizedString>
 
 PostLaunchCommand::PostLaunchCommand(LaunchTask* parent) : LaunchStep(parent)
 {
@@ -35,7 +36,7 @@ PostLaunchCommand::PostLaunchCommand(LaunchTask* parent) : LaunchStep(parent)
 void PostLaunchCommand::executeTask()
 {
 	QString postlaunch_cmd = m_parent->substituteVariables(m_command);
-	emit logLine(tr("Running Post-Launch command: %1").arg(postlaunch_cmd),
+	emit logLine(i18n("Running Post-Launch command: %1", postlaunch_cmd),
 				 MessageLevel::MeshMC);
 	m_process.start(postlaunch_cmd);
 }
@@ -43,8 +44,7 @@ void PostLaunchCommand::executeTask()
 void PostLaunchCommand::on_state(LoggedProcess::State state)
 {
 	auto getError = [&]() {
-		return tr("Post-Launch command failed with code %1.\n\n")
-			.arg(m_process.exitCode());
+		return i18n("Post-Launch command failed with code %1.\n\n", m_process.exitCode());
 	};
 	switch (state) {
 		case LoggedProcess::Aborted:
@@ -61,7 +61,7 @@ void PostLaunchCommand::on_state(LoggedProcess::State state)
 				emit logLine(error, MessageLevel::Fatal);
 				emitFailed(error);
 			} else {
-				emit logLine(tr("Post-Launch command ran successfully.\n\n"),
+				emit logLine(i18n("Post-Launch command ran successfully.\n\n"),
 							 MessageLevel::MeshMC);
 				emitSucceeded();
 			}

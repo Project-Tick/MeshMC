@@ -28,6 +28,7 @@
 #include "Application.h"
 
 #include "ui/dialogs/ProgressDialog.h"
+#include <KLocalizedString>
 
 ProfileSelectDialog::ProfileSelectDialog(const QString& message, int flags,
 										 QWidget* parent)
@@ -43,16 +44,16 @@ ProfileSelectDialog::ProfileSelectDialog(const QString& message, int flags,
 	view->setRootIsDecorated(false);
 	// FIXME: use a real model, not this
 	if (QTreeWidgetItem* header = view->headerItem()) {
-		header->setText(0, tr("Name"));
+		header->setText(0, i18n("Name"));
 	} else {
-		view->setHeaderLabel(tr("Name"));
+		view->setHeaderLabel(i18n("Name"));
 	}
 	QList<QTreeWidgetItem*> items;
 	for (int i = 0; i < m_accounts->count(); i++) {
 		MinecraftAccountPtr account = m_accounts->at(i);
 		QString profileLabel;
 		if (account->isInUse()) {
-			profileLabel = tr("%1 (in use)").arg(account->profileName());
+			profileLabel = i18n("%1 (in use)", account->profileName());
 		} else {
 			profileLabel = account->profileName();
 		}

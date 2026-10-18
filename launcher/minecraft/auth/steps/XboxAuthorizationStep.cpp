@@ -27,6 +27,7 @@
 
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
+#include <KLocalizedString>
 
 XboxAuthorizationStep::XboxAuthorizationStep(AccountData* data,
 											 Katabasis::Token* token,
@@ -41,8 +42,7 @@ XboxAuthorizationStep::~XboxAuthorizationStep() noexcept = default;
 
 QString XboxAuthorizationStep::describe()
 {
-	return tr("Getting authorization to access %1 services.")
-		.arg(m_authorizationKind);
+	return i18n("Getting authorization to access %1 services.", m_authorizationKind);
 }
 
 void XboxAuthorizationStep::rehydrate()
@@ -93,8 +93,7 @@ void XboxAuthorizationStep::onRequestDone(
 		if (!processSTSError(error, data, headers)) {
 			emit finished(
 				AccountTaskState::STATE_FAILED_SOFT,
-				tr("Failed to get authorization for %1 services. Error %1.")
-					.arg(m_authorizationKind, error));
+				i18n("Failed to get authorization for %1 services. Error %2.", m_authorizationKind, error));
 		}
 		return;
 	}
@@ -102,24 +101,22 @@ void XboxAuthorizationStep::onRequestDone(
 	Katabasis::Token temp;
 	if (!Parsers::parseXTokenResponse(data, temp, m_authorizationKind)) {
 		emit finished(AccountTaskState::STATE_FAILED_SOFT,
-					  tr("Could not parse authorization response for access to "
-						 "%1 services.")
-						  .arg(m_authorizationKind));
+					  i18n("Could not parse authorization response for access to "
+						 "%1 services.", m_authorizationKind));
 		return;
 	}
 
 	if (temp.extra["uhs"] != m_data->userToken.extra["uhs"]) {
 		emit finished(AccountTaskState::STATE_FAILED_SOFT,
-					  tr("Server has changed %1 authorization user hash in the "
-						 "reply. Something is wrong.")
-						  .arg(m_authorizationKind));
+					  i18n("Server has changed %1 authorization user hash in the "
+						 "reply. Something is wrong.", m_authorizationKind));
 		return;
 	}
 	auto& token = *m_token;
 	token = temp;
 
 	emit finished(AccountTaskState::STATE_WORKING,
-				  tr("Got authorization to access %1").arg(m_relyingParty));
+				  i18n("Got authorization to access %1", m_relyingParty));
 }
 
 bool XboxAuthorizationStep::processSTSError(QNetworkReply::NetworkError error,
@@ -134,8 +131,7 @@ bool XboxAuthorizationStep::processSTSError(QNetworkReply::NetworkError error,
 					   << jsonError.errorString();
 			emit finished(
 				AccountTaskState::STATE_FAILED_SOFT,
-				tr("Cannot parse %1 authorization error response as JSON: %2")
-					.arg(m_authorizationKind, jsonError.errorString()));
+				i18n("Cannot parse %1 authorization error response as JSON: %2", m_authorizationKind, jsonError.errorString()));
 			return true;
 		}
 
@@ -143,46 +139,37 @@ bool XboxAuthorizationStep::processSTSError(QNetworkReply::NetworkError error,
 		auto obj = doc.object();
 		if (!Parsers::getNumber(obj.value("XErr"), errorCode)) {
 			emit finished(AccountTaskState::STATE_FAILED_SOFT,
-						  tr("XErr element is missing from %1 authorization "
-							 "error response.")
-							  .arg(m_authorizationKind));
+						  i18n("XErr element is missing from %1 authorization "
+							 "error response.", m_authorizationKind));
 			return true;
 		}
 		switch (errorCode) {
 			case 2148916233: {
 				emit finished(
 					AccountTaskState::STATE_FAILED_SOFT,
-					tr("This Microsoft account does not have an XBox Live "
-					   "profile. Buy the game on %1 first.")
-						.arg("<a "
-							 "href=\"https://www.minecraft.net/en-us/store/"
-							 "minecraft-java-edition\">minecraft.net</a>"));
+					i18n("This Microsoft account does not have an XBox Live "
+					   "profile. Buy the game on %1 first.", QStringLiteral("<a " "href=\"https://www.minecraft.net/en-us/store/" "minecraft-java-edition\">minecraft.net</a>")));
 				return true;
 			}
 			case 2148916235: {
 				// NOTE: this is the Grulovia error
 				emit finished(AccountTaskState::STATE_FAILED_SOFT,
-							  tr("XBox Live is not available in your country. "
+							  i18n("XBox Live is not available in your country. "
 								 "You've been blocked."));
 				return true;
 			}
 			case 2148916238: {
 				emit finished(
 					AccountTaskState::STATE_FAILED_SOFT,
-					tr("This Microsoft account is underaged and is not linked "
+					i18n("This Microsoft account is underaged and is not linked "
 					   "to a family.\n\nPlease set up your account according "
-					   "to %1.")
-						.arg(
-							"<a "
-							"href=\"https://help.minecraft.net/hc/en-us/"
-							"articles/4403181904525\">help.minecraft.net</a>"));
+					   "to %1.", QStringLiteral("<a " "href=\"https://help.minecraft.net/hc/en-us/" "articles/4403181904525\">help.minecraft.net</a>")));
 				return true;
 			}
 			default: {
 				emit finished(AccountTaskState::STATE_FAILED_SOFT,
-							  tr("XSTS authentication ended with unrecognized "
-								 "error(s):\n\n%1")
-								  .arg(errorCode));
+							  i18n("XSTS authentication ended with unrecognized "
+								 "error(s):\n\n%1", errorCode));
 				return true;
 			}
 		}

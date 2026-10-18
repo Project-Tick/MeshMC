@@ -26,6 +26,7 @@
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 #include <LoggedProcess.h>
+#include <KLocalizedString>
 
 class WorldList;
 class ModFolderModel;
@@ -46,7 +47,7 @@ class WorldListPage : public QMainWindow, public BasePage
 
 	virtual QString displayName() const override
 	{
-		return tr("Worlds");
+		return i18n("Worlds");
 	}
 	virtual QIcon icon() const override
 	{
