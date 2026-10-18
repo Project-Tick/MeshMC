@@ -43,7 +43,7 @@ sudo dnf install temurin-17-jdk
 export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk
 cmake --preset linux
 cmake --build --preset linux --config Release
-MESHMC_QML_UI=1 ./build/Release/meshmc   # the KDE interface
+./build/Release/meshmc                   # the KDE interface; MESHMC_QML_UI=0 for the old QtWidgets one
 ```
 
 The build does not fail without `kf6-qqc2-desktop-style`, `kf6-kirigami-addons-devel` and `plasma-breeze-qt6`,

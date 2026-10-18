@@ -2341,11 +2341,10 @@ void Application::registerGlobalSettingsPage(std::function<BasePage*()> creator)
 
 namespace
 {
-	/* The QML user interface is a preview. It is always compiled -- so it
-	 * cannot rot unnoticed -- but only shown when asked for. The build option
-	 * MeshMC_QML_UI picks the default; MESHMC_QML_UI in the environment
-	 * overrides it either way, so both interfaces can be compared from the
-	 * same binary. */
+	/* The KDE (QML) user interface is the one shown; the QtWidgets window
+	 * stays for when it cannot load. The build option MeshMC_QML_UI picks
+	 * the default (on); MESHMC_QML_UI in the environment overrides it either
+	 * way, so both interfaces can be compared from the same binary. */
 	bool useQmlShell()
 	{
 #ifdef MESHMC_QML_UI_DEFAULT
