@@ -70,8 +70,7 @@ SettingsPage {
     FormCard.FormHeader {
         title: i18nc("@title:group", "Folders")
     }
-    FormCard.FormCard {
-        autoSeparators: true
+    SeparatedCard {
         Repeater {
             model: [
                 { key: "InstanceDir", label: i18nc("@label folder", "Instances") },
@@ -105,9 +104,8 @@ SettingsPage {
             }
         ]
     }
-    FormCard.FormCard {
+    SeparatedCard {
         visible: !!page.folders
-        autoSeparators: true
         FormCard.FormTextDelegate {
             visible: page.extraDirs.length === 0
             text: i18n("No other folders")

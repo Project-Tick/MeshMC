@@ -20,8 +20,7 @@ SettingsPage {
     readonly property var plugins: page.shell && typeof page.shell.pluginList === "function"
                                    ? page.shell.pluginList() : null
 
-    FormCard.FormCard {
-        autoSeparators: true
+    SeparatedCard {
         Layout.topMargin: Kirigami.Units.largeSpacing
         FormCard.FormPlaceholderMessageDelegate {
             visible: !page.plugins || page.plugins.count === 0

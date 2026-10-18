@@ -97,6 +97,9 @@ qt_add_qml_module(MeshMC_qml_kirigami
         MemoryText.qml
         MaxMemoryDelegate.qml
         SliderDelegate.qml
+        SpinBoxDelegate.qml
+        SeparatedCard.qml
+        Badge.qml
         StartMemoryDelegate.qml
         JavaPathDelegate.qml
         JavaPickerDialog.qml

@@ -70,17 +70,17 @@ QQC2.ScrollView {
                 // snapshot or an old beta or alpha does.
                 // A badge's own size is the theme's small font, which off
                 // Plasma comes out larger than the text beside it.
-                Kirigami.Badge {
+                Badge {
                     visible: row.type !== "release"
                     font.pointSize: Kirigami.Theme.defaultFont.pointSize
                     text: view.typeLabel(row.type)
-                    type: row.type === "snapshot" ? Kirigami.Badge.Type.Warning : Kirigami.Badge.Type.Information
+                    type: row.type === "snapshot" ? Kirigami.MessageType.Warning : Kirigami.MessageType.Information
                 }
-                Kirigami.Badge {
+                Badge {
                     visible: row.recommended
                     font.pointSize: Kirigami.Theme.defaultFont.pointSize
                     text: i18nc("@info Minecraft version", "Recommended")
-                    type: Kirigami.Badge.Type.Positive
+                    type: Kirigami.MessageType.Positive
                 }
                 Item {
                     Layout.fillWidth: true

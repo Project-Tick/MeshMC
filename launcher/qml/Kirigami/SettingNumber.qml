@@ -3,13 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import QtQuick
-import org.kde.kirigamiaddons.formcard as FormCard
 
 /*
  * A whole-number setting within bounds, with an optional unit after the
  * number ("px", "MiB"), saved whenever the value is changed.
  */
-FormCard.FormSpinBoxDelegate {
+SpinBoxDelegate {
     id: delegate
 
     required property var source

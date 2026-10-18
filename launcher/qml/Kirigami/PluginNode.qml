@@ -297,7 +297,7 @@ Item {
 
     Component {
         id: numberFieldNode
-        FormCard.FormSpinBoxDelegate {
+        SpinBoxDelegate {
             label: root.props.label || ""
             enabled: root.props.enabled !== false
             from: root.props.min !== undefined ? root.props.min : 0

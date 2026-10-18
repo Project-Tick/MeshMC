@@ -106,8 +106,7 @@ FormCard.FormCardPage {
     FormCard.FormHeader {
         title: i18nc("@title:group", "All Accounts")
     }
-    FormCard.FormCard {
-        autoSeparators: true
+    SeparatedCard {
         FormCard.FormPlaceholderMessageDelegate {
             visible: accountList.count === 0
             icon.name: "user-identity"

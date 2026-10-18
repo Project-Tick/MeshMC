@@ -58,8 +58,7 @@ ColumnLayout {
         ]
     }
 
-    FormCard.FormCard {
-        autoSeparators: true
+    SeparatedCard {
         FormCard.FormTextDelegate {
             visible: card.runtimes.length === 0
             text: i18n("Nothing downloaded yet.")

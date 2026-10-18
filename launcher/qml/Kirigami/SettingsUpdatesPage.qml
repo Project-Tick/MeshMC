@@ -30,7 +30,7 @@ SettingsPage {
             }
         }
         FormCard.FormDelegateSeparator {}
-        FormCard.FormSpinBoxDelegate {
+        SpinBoxDelegate {
             label: i18nc("@label:spinbox", "How often")
             description: i18n("0 checks only when MeshMC starts.")
             enabled: autoCheck.checked

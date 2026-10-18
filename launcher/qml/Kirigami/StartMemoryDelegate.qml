@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import QtQuick
-import org.kde.kirigamiaddons.formcard as FormCard
 
 import "memory.js" as Memory
 
@@ -12,7 +11,7 @@ import "memory.js" as Memory
  * steps as the maximum and never above it. Typed ("2 GB", "2048") or
  * stepped.
  */
-FormCard.FormSpinBoxDelegate {
+SpinBoxDelegate {
     id: delegate
 
     required property var source
