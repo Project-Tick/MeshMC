@@ -4,7 +4,6 @@
 
 import QtQuick
 import org.kde.kirigami as Kirigami
-import org.kde.kirigamiaddons.formcard as FormCard
 
 import "memory.js" as Memory
 
@@ -15,7 +14,7 @@ import "memory.js" as Memory
  * needs itself. The starting memory never ends up above it: lowering the
  * maximum below it pulls the starting amount down too.
  */
-FormCard.FormSliderDelegate {
+SliderDelegate {
     id: delegate
 
     required property var source

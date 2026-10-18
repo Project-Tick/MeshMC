@@ -103,6 +103,7 @@ qt_add_qml_module(MeshMC_qml_kirigami
         memory.js
         MemoryText.qml
         MaxMemoryDelegate.qml
+        SliderDelegate.qml
         StartMemoryDelegate.qml
         JavaPathDelegate.qml
         JavaPickerDialog.qml

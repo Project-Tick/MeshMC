@@ -53,7 +53,7 @@ Loader {
 
     Component {
         id: sliderControl
-        FormCard.FormSliderDelegate {
+        SliderDelegate {
             id: slider
             label: delegate.spec.label
             from: delegate.spec.from
