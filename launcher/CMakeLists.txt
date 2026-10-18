@@ -931,8 +931,6 @@ SET(MESHMC_SOURCES
     ui/pages/modplatform/ImportPage.h
 
     # GUI - dialogs
-    ui/dialogs/AboutDialog.cpp
-    ui/dialogs/AboutDialog.h
     ui/dialogs/BlockedModsDialog.cpp
     ui/dialogs/BlockedModsDialog.h
     ui/dialogs/ProfileSelectDialog.cpp
@@ -1106,7 +1104,6 @@ set(MESHMC_UI_FILES
     ui/dialogs/ExportPackDialog.ui
     ui/dialogs/IconPickerDialog.ui
     ui/dialogs/MSALoginDialog.ui
-    ui/dialogs/AboutDialog.ui
     ui/dialogs/EditAccountDialog.ui
     ui/dialogs/UntrustedModsDialog.ui
     ui/MainWindow.ui
@@ -1213,6 +1210,8 @@ target_link_libraries(MeshMC_logic
     Qt${QT_VERSION_MAJOR}::Widgets
     KF${QT_VERSION_MAJOR}::I18n
     KF${QT_VERSION_MAJOR}::GuiAddons
+    KF${QT_VERSION_MAJOR}::CoreAddons
+    KF${QT_VERSION_MAJOR}::XmlGui
     LibArchive::LibArchive
     cmark::cmark
     LocalPeer::LocalPeer

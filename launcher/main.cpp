@@ -25,6 +25,7 @@
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <KLocalizedString>
+#include <KAboutData>
 
 #include <csignal>
 #include <cstdlib>
@@ -91,7 +92,6 @@ static void crashSignalHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-	KLocalizedString::setApplicationDomain("meshmc");
 #ifdef BREAK_INFINITE_LOOP
 	while (true) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -137,6 +137,45 @@ int main(int argc, char* argv[])
 #endif
 
 	Application app(argc, argv);
+
+	KLocalizedString::setApplicationDomain("meshmc");
+
+	KAboutData aboutData(
+		QStringLiteral("MeshMC"),
+		i18nc("@title", "MeshMC"),
+		BuildConfig.printableVersionString(),
+		i18nc("@info", "A custom launcher that makes managing Minecraft easier by allowing you to have multiple instances of Minecraft at once."),
+		KAboutLicense::Apache_V2,
+		i18nc("@info:credit", "Copyright 2013–2021 MultiMC Contributors\n"
+			  "Copyright © 2025-%1 Project Tick", QStringLiteral("2026")));
+
+	aboutData.setHomepage(QStringLiteral("https://projecttick.org"));
+	aboutData.addAuthor(i18nc("@info:credit", "Mehmet Samet Duman"),
+						i18nc("@info:credit", "Maintainer (since 2025) and developer"),
+						QStringLiteral("yongdohyun@projecttick.org"));
+	aboutData.addAuthor(i18nc("@info:credit", "Abdullah Hüseyin Efe"),
+						i18nc("@info:credit", "Developer and Co-Maintainer (since 2026)"),
+						QStringLiteral("abdullah.huseyin.efe@outlook.com"));
+	aboutData.addAuthor(i18nc("@info:credit", "Andrew Okin"),
+						i18nc("@info:credit", "The creator of MultiMC"),
+						QStringLiteral("forkk@forkk.net"));
+	aboutData.addAuthor(i18nc("@info:credit", "Petr Mrázek"),
+						i18nc("@info:credit", "MultiMC maintainer"),
+						QStringLiteral("peterix@gmail.com"));
+	aboutData.addAuthor(i18nc("@info:credit", "Sky Welch"),
+						i18nc("@info:credit", "MultiMC maintainer"),
+						QStringLiteral("multimc@bunnies.io"));
+	aboutData.addAuthor(i18nc("@info:credit", "Jan (02JanDal)"),
+						i18nc("@info:credit", "MultiMC maintainer"),
+						QStringLiteral("02jandal@gmail.com"));
+	aboutData.addAuthor(i18nc("@info:credit", "RoboSky"),
+						i18nc("@info:credit", "MultiMC maintainer"));
+	aboutData.setOrganizationDomain("projecttick.org");
+	aboutData.setDesktopFileName("org.projecttick.MeshMC");
+
+	aboutData.setProgramLogo(APPLICATION->getThemedIcon("logo"));
+
+	KAboutData::setApplicationData(aboutData);
 
 	// Install crash signal handlers to launch meshmc-crashreporter
 	signal(SIGSEGV, crashSignalHandler);

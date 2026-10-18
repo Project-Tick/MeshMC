@@ -10,6 +10,8 @@
 
 * KDE Frameworks 5/6 I18n
 * KDE Frameworks 5/6 GuiAddons
+* KDE Frameworks 5/6 CoreAddons
+* KDE Frameworks 5/6 XmlGui
 
 ## Added
 
@@ -43,6 +45,7 @@
 * Patreon information has been removed.
 * Discord and Subreddit information features have been removed.
 * vcpkg support has been removed.
+* Removed custom about page and switched to KAboutData
 
 ## Deprecated
 

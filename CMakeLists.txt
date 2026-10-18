@@ -196,6 +196,8 @@ find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
 find_package(KF${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS 
     I18n
     GuiAddons
+    CoreAddons
+    XmlGui
 )
 
 if(UNIX)
@@ -629,3 +631,5 @@ if(APPLE AND QT_VERSION_MAJOR EQUAL 5)
 endif()
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+ki18n_install(po)
