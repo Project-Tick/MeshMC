@@ -11,8 +11,8 @@ import "artwork.js" as Artwork
 
 /*
  * One instance in the library's grid: a card with the instance's cover on
- * top (artwork.js: its pack's art, else its newest screenshot, else one of
- * the launcher's scenes), then its name, its loader's logo and version and
+ * top (artwork.js: its pack's art, else its newest screenshot, else its own
+ * icon), then its name, its loader's logo and version and
  * when it was last played, and Play with the instance's menu at the foot.
  * A click opens the instance's page; a right-click, its menu.
  *
@@ -51,8 +51,8 @@ Kirigami.Card {
     onClicked: card.app.openInstance(card.model.instanceId)
 
     // Every cover is decoded at one 16:9 size, so every banner has the
-    // same shape: a picture is cropped to it, a pack's square logo sits
-    // whole in the middle of it.
+    // same shape: a picture is cropped to it, a pack's square logo or the
+    // instance's icon sits whole in the middle of it.
     banner.source: card.art.source
     banner.sourceSize: Qt.size(Kirigami.Units.gridUnit * 32, Kirigami.Units.gridUnit * 18)
     banner.fillMode: card.art.logo ? Image.PreserveAspectFit : Image.PreserveAspectCrop

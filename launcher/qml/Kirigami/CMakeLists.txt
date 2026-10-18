@@ -13,13 +13,6 @@
 # lists, so the root window sits at qrc:/qt/qml/MeshMC/Kirigami/Main.qml.
 qt_add_library(MeshMC_qml_kirigami STATIC)
 
-# The pictures artwork.js hands out: 32 rendered scenes (16:9) for an
-# instance's card when it has no pack art or screenshot of its own, and a
-# picture per biome for a world without an icon.png. Globbed rather than
-# listed line by line, with CONFIGURE_DEPENDS so a changed set is picked up.
-file(GLOB MESHMC_KIRIGAMI_ART RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS
-    art/scenes/*.jpg art/worlds/*.jpg)
-
 qt_add_qml_module(MeshMC_qml_kirigami
     URI MeshMC.Kirigami
     VERSION 1.0
@@ -182,8 +175,6 @@ qt_add_qml_module(MeshMC_qml_kirigami
         OnboardingView.qml
         OnboardingStep.qml
         OnboardingJavaStep.qml
-    RESOURCES
-        ${MESHMC_KIRIGAMI_ART}
 )
 
 target_link_libraries(MeshMC_qml_kirigami PUBLIC

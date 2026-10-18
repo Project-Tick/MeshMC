@@ -11,7 +11,6 @@ import org.kde.kirigami as Kirigami
 import org.kde.kirigami.delegates as KD
 import org.kde.kirigamiaddons.components as Components
 import org.kde.kirigamiaddons.delegates as Delegates
-import "artwork.js" as Artwork
 
 /*
  * The instance's single-player worlds: each with its own icon, name, game
@@ -195,23 +194,28 @@ Item {
 
                         // The world's own icon.png, kept crisp like the
                         // pixel picture it is. Without one -- or when it
-                        // cannot be read -- a biome picture picked from the
-                        // folder name (artwork.js), the same one the Home
-                        // page's card for this world shows.
+                        // cannot be read -- a globe, as the Home page's
+                        // card for this world shows.
                         Image {
                             id: worldIcon
                             // Set once the world's own icon fails to load.
                             property bool iconFailed: false
                             readonly property bool ownIcon: String(row.iconFile || "").length > 0 && !worldIcon.iconFailed
+                            visible: worldIcon.ownIcon
                             Layout.preferredWidth: Kirigami.Units.iconSizes.huge
                             Layout.preferredHeight: Kirigami.Units.iconSizes.huge
-                            source: worldIcon.ownIcon ? tab.fileUrl(row.iconFile) : Artwork.worldUrl(row.folderName)
+                            source: worldIcon.ownIcon ? tab.fileUrl(row.iconFile) : ""
                             onStatusChanged: if (status === Image.Error && worldIcon.ownIcon) worldIcon.iconFailed = true
                             sourceSize: Qt.size(width * 2, height * 2)
                             fillMode: Image.PreserveAspectCrop
-                            smooth: !worldIcon.ownIcon
-                            mipmap: !worldIcon.ownIcon
+                            smooth: false
                             asynchronous: true
+                        }
+                        Kirigami.Icon {
+                            visible: !worldIcon.ownIcon
+                            Layout.preferredWidth: Kirigami.Units.iconSizes.huge
+                            Layout.preferredHeight: Kirigami.Units.iconSizes.huge
+                            source: "map-globe"
                         }
                         KD.TitleSubtitle {
                             Layout.fillWidth: true

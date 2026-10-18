@@ -8,11 +8,9 @@ import QtQuick.Layouts
 import org.kde.coreaddons as KCoreAddons
 import org.kde.kirigami as Kirigami
 
-import "artwork.js" as Artwork
-
 /*
  * One of Home's recent worlds: the save's own icon (its icon.png, as the
- * game's world list shows it; a biome picture for a world that has none),
+ * game's world list shows it; a globe for a world that has none),
  * its name, the instance it is in and when it was last played. A click
  * opens that instance on its Worlds tab.
  *
@@ -41,19 +39,23 @@ Kirigami.AbstractCard {
 
         // Square, as the game's own world list shows it.
         Image {
+            visible: world.ownIcon
             Layout.preferredWidth: Kirigami.Units.iconSizes.huge
             Layout.preferredHeight: Kirigami.Units.iconSizes.huge
-            source: world.ownIcon ? world.iconUrl : Artwork.worldUrl(world.folderName)
+            source: world.iconUrl
             // A save's icon is a small screenshot, kept at its own size and
-            // scaled up unsmoothed, which keeps it sharp; the biome pictures
-            // are larger and decoded at twice the size shown.
-            sourceSize: world.ownIcon ? Qt.size(Kirigami.Units.iconSizes.huge, Kirigami.Units.iconSizes.huge)
-                                      : Qt.size(Kirigami.Units.iconSizes.huge * 2, Kirigami.Units.iconSizes.huge * 2)
+            // scaled up unsmoothed, which keeps it sharp.
+            sourceSize: Qt.size(Kirigami.Units.iconSizes.huge, Kirigami.Units.iconSizes.huge)
             fillMode: Image.PreserveAspectCrop
             asynchronous: true
-            smooth: !world.ownIcon
-            mipmap: !world.ownIcon
+            smooth: false
             clip: true
+        }
+        Kirigami.Icon {
+            visible: !world.ownIcon
+            Layout.preferredWidth: Kirigami.Units.iconSizes.huge
+            Layout.preferredHeight: Kirigami.Units.iconSizes.huge
+            source: "map-globe"
         }
         ColumnLayout {
             Layout.fillWidth: true

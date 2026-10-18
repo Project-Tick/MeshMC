@@ -13,10 +13,11 @@ import "artwork.js" as Artwork
 /*
  * The head of an instance's page, as Discover heads an application's: the
  * picture its library card shows (artwork.js: its pack's art, else its
- * newest screenshot, else one of the launcher's scenes) as a wide, short
- * banner, darkened towards its foot, and over it the instance's icon, its
- * name, its loader and version, and what there is to know at a glance --
- * when it was last played, for how long in all, how many mods it has.
+ * newest screenshot) as a wide, short banner, darkened towards its foot
+ * (the plain background when it has neither), and over it the instance's
+ * icon, its name, its loader and version, and what there is to know at a
+ * glance -- when it was last played, for how long in all, how many mods it
+ * has.
  *
  * The text is in the Complementary colours, light on dark, as KDE puts
  * text over pictures: it reads the same on any picture and in any scheme.
@@ -38,7 +39,12 @@ Item {
     // The shell's BrandLogos (see BrandIcon).
     property var logos: null
 
-    readonly property var art: banner.entry ? Artwork.cover(banner.entry) : null
+    // The card's fallback, the instance's icon, is already at the banner's
+    // foot; it is not shown twice.
+    readonly property var art: {
+        var cover = banner.entry ? Artwork.cover(banner.entry) : null
+        return cover && !cover.icon ? cover : null
+    }
     readonly property real playedSeconds: banner.entry ? Number(banner.entry.totalTimePlayed) || 0 : 0
     // The mods folder's list -- the very one the Content tab shows, so
     // asking for it here costs nothing the page would not spend anyway.

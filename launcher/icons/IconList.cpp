@@ -35,37 +35,19 @@
 
 namespace
 {
-/* Rendered artwork for builtin keys: one 256 px PNG per key, same names as
- * the old pixel-art set (grass, tnt, creeper...), so every instance that
- * stores one of those keys picks the new look up with no migration.
- *
- * The folder is listed in meshmc.qrc but deliberately NOT in index.theme.
- * Inside an icon theme Qt mixes the PNG and SVG entries of a name and picks
- * one per requested size and device pixel ratio; at some sizes the old
- * scalable/instances SVG (or flame's 32/128 px PNGs) would still win. A
- * builtin key with a file here therefore holds QIcon(file) directly --
- * QIcon smooth-downscales its single 256 px image to whatever size is asked
- * for -- and only keys without one keep going through QIcon::fromTheme().
- * The path is not stored as the icon's filename, so getFilePath() of a
- * builtin stays empty exactly as before (export, plugins). A user icon of
- * the same key (IconType::FileBased) still outranks either. */
-const QString kRenderedBuiltinDir =
-	QStringLiteral(":/icons/meshmc/256x256/instances/");
-
-/* A key without rendered artwork (fabricmc, forge, quiltmc, the *_legacy
- * set...) is built from its own files in the builtin folders, the way the
- * rendered ones are, rather than looked up by name in whatever icon theme is
- * current: that lookup only found them while QIcon's theme was one of the
- * launcher's own, which inherit the builtin set. The QML shell runs on the
- * desktop's icon theme (KIconThemes), where those names do not exist. Only a
- * key with no file at all still goes by name. */
+/* A builtin key (grass, fabricmc, the *_legacy set...) is built from its own
+ * files in the builtin folders rather than looked up by name in whatever
+ * icon theme is current: that lookup only found them while QIcon's theme
+ * was one of the launcher's own, which inherit the builtin set. The QML
+ * shell runs on the desktop's icon theme (KIconThemes), where those names do
+ * not exist. Only a key with no file at all still goes by name. The path is
+ * not stored as the icon's filename, so getFilePath() of a builtin stays
+ * empty (export, plugins). A user icon of the same key (IconType::FileBased)
+ * still outranks it. */
 void setBuiltinImage(MMCIcon& entry, const QString& key,
 					 const QStringList& files)
 {
-	const QString rendered = kRenderedBuiltinDir + key + QStringLiteral(".png");
-	if (QFile::exists(rendered)) {
-		entry.replace(Builtin, QIcon(rendered));
-	} else if (!files.isEmpty()) {
+	if (!files.isEmpty()) {
 		QIcon icon;
 		for (const QString& file : files) {
 			icon.addFile(file);

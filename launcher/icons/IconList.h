@@ -117,7 +117,7 @@ class IconList : public QAbstractListModel
 	QVector<MMCIcon> icons;
 	QDir m_dir;
 	mutable QHash<QString, QColor> m_tintCache;
-	/* Each builtin key's own files in the builtin folders (SVG first), for
-	 * keys without rendered artwork -- see setBuiltinImage() in the .cpp. */
+	/* Each builtin key's own files in the builtin folders (SVG first) -- see
+	 * setBuiltinImage() in the .cpp. */
 	QHash<QString, QStringList> m_builtinFiles;
 };

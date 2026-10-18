@@ -94,15 +94,31 @@ class QmlArtworkTest : public QObject
 				 QStringLiteral("image://instanceicon/curseforge_925200|logo"));
 	}
 
-	// Nothing of its own: one of the scenes, the same one every time.
-	void sceneLast()
+	// No picture of its own: the instance's icon, shown whole like a logo.
+	void iconLast()
 	{
-		const QString first = coverOf({{"instanceId", "vanilla"}});
-		QVERIFY2(first.startsWith(
-					 QLatin1String("qrc:/qt/qml/MeshMC/Kirigami/art/scenes/")),
-				 qPrintable(first));
-		QVERIFY(first.endsWith(QLatin1String(".jpg|picture")));
-		QCOMPARE(coverOf({{"instanceId", "vanilla"}}), first);
+		QCOMPARE(coverOf({{"instanceId", "vanilla"}, {"iconKey", "creeper"}}),
+				 QStringLiteral("image://instanceicon/creeper|logo"));
+		QCOMPARE(coverOf({{"instanceId", "vanilla"}, {"iconKey", ""}}),
+				 QStringLiteral("image://instanceicon/default|logo"));
+	}
+
+	// Only the icon fallback says so: the instance page's banner, which
+	// already shows the icon, leaves it out.
+	void onlyTheIconIsMarked()
+	{
+		const auto isIcon = [this](const QVariantMap& entry) {
+			return m_engine.globalObject()
+				.property(QStringLiteral("cover"))
+				.call({m_engine.toScriptValue(entry)})
+				.property(QStringLiteral("icon"))
+				.toBool();
+		};
+		QVERIFY(isIcon({{"instanceId", "vanilla"}}));
+		QVERIFY(!isIcon({{"instanceId", "atm"},
+						 {"packArt", "image://instanceicon/curseforge_925200"}}));
+		QVERIFY(!isIcon({{"instanceId", "atm"},
+						 {"coverImage", "file:///shots/newest.png"}}));
 	}
 };
 

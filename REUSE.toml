@@ -77,10 +77,9 @@ path = "launcher/locale/*.po*"
 SPDX-FileCopyrightText = "MeshMC translators"
 SPDX-License-Identifier = "Apache-2.0"
 
-# Project originals: icons, app icon, background art, generated pixel art.
+# Project originals: icons, app icon, background art.
 [[annotations]]
 path = [
-    "launcher/qml/Kirigami/art/**",
     "launcher/resources/meshmc/org.projecttick.MeshMC*.svg",
     "launcher/resources/meshmc/*/noaccount.png",
     "launcher/resources/meshmc/*/star.png",

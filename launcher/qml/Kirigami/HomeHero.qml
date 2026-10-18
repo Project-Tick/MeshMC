@@ -42,7 +42,7 @@ Kirigami.AbstractCard {
         rowSpacing: Kirigami.Units.largeSpacing
 
         // The cover, on a plate in the view's alternate colour for a pack
-        // logo shown whole.
+        // logo or the instance's icon shown whole.
         Rectangle {
             readonly property real coverWidth: hero.wide ? Math.min(Kirigami.Units.gridUnit * 22, parent.width * 0.45)
                                                          : parent.width
