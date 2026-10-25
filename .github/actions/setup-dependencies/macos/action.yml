@@ -17,8 +17,10 @@ runs:
       shell: bash
       run: |
         brew update
-        brew install ninja extra-cmake-modules temurin@17 autoconf pkg-config \
-        autoconf-archive automake libtool
+        brew install cmake ninja temurin@17 autoconf pkg-config \
+        autoconf-archive automake libtool gettext libxml2 zlib \
+        bzip2 xz gperf cmark docbook docbook-xsl cpanminus
+        cpanm URI
 
     - name: Install Qt5
       if: ${{ inputs.qt-major == '5' }}

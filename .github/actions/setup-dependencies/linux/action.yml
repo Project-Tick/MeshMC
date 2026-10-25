@@ -10,12 +10,20 @@ runs:
       run: |
         sudo apt-get -y update
         sudo apt-get -y install \
-          dpkg-dev \
+          dpkg-dev build-essential \
           ninja-build pkg-config scdoc gamemode-dev \
-          libxcb-cursor-dev libtomlplusplus-dev libvulkan-dev \
+          libxcb-cursor-dev libxcb-randr0-dev libxcb-shape0-dev \
+          libxcb-xfixes0-dev libxcb-xkb-dev libxcb-icccm4-dev \
+          libxcb-keysyms1-dev libxcb-image0-dev libxcb-render-util0-dev \
+          libxcb-xinerama0-dev  libxcb-sync-dev libtomlplusplus-dev libvulkan-dev \
           libgpg-error-dev libassuan-dev libksba-dev \
-          libnpth0-dev libbotan-2-dev autoconf automake libtool gettext \
-          autoconf-archive
+          libnpth0-dev libbotan-3-dev autoconf automake libtool gettext \
+          autoconf-archive cmake gperf zlib1g-dev libbz2-dev liblzma-dev \
+          libxml2-dev libx11-dev libxcb1-dev libxkbcommon-dev \
+          libxkbcommon-x11-dev plasma-wayland-protocols libxcb-res0-dev \
+          libwayland-dev wayland-protocols libwayland-egl1 libx11-dev \
+          libxfixes-dev docbook docbook-xml docbook-xsl docbook-utils \
+          xsltproc libxml2-utils libaspell-dev libxslt1-dev
 
     - name: Setup AppImage tooling
       shell: bash

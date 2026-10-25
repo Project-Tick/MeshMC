@@ -76,47 +76,6 @@ runs:
         echo "CMAKE_C_COMPILER_LAUNCHER=$CCACHE_VARIANT" >> "$GITHUB_ENV"
         echo "CMAKE_CXX_COMPILER_LAUNCHER=$CCACHE_VARIANT" >> "$GITHUB_ENV"
 
-    - name: Determine vcpkg triplet
-      shell: bash
-      run: |
-        declare vcpkg_arch vcpkg_platform
-
-        case "$RUNNER_ARCH" in
-        "X64")
-        	vcpkg_arch=x64
-        	;;
-        "ARM64")
-          vcpkg_arch=arm64
-          ;;
-        *)
-        	echo "# 🚨 The architecture \"$RUNNER_ARCH\" is not supported by vcpkg in CI!" >>"$GITHUB_STEP_SUMMARY"
-        	exit 1
-        	;;
-        esac
-
-        case "$RUNNER_OS" in
-        "Linux")
-        	vcpkg_platform=linux
-        	;;
-        "macOS")
-        	vcpkg_arch=universal
-        	vcpkg_platform=osx
-        	;;
-        "Windows")
-        	if [[ "${{ inputs.msystem }}" != "" ]]; then
-        		vcpkg_platform=mingw-static-release
-        	else
-        		vcpkg_platform=windows
-        	fi
-        	;;
-        *)
-        	echo "# 🚨 The platform \"$platform\" is not supported by vcpkg in CI!" >>"$GITHUB_STEP_SUMMARY"
-        	exit 1
-        	;;
-        esac
-
-        echo "VCPKG_TRIPLET=$vcpkg_arch-$vcpkg_platform" >> "$GITHUB_ENV"
-
     - name: Install Qt 5
       if: ${{ inputs.msystem == '' && inputs.qt-major == '5' && runner.os != 'macOS' }}
       uses: jurplel/install-qt-action@v4
@@ -134,6 +93,26 @@ runs:
         version: ${{ inputs.qt-version }}
         modules: qtimageformats qtnetworkauth
         cache: ${{ inputs.build-type == 'Debug' }}
+
+    - name: Restore KDE Frameworks cache
+      id: kf-cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}/meshmc-kf-prefix
+        key: >-
+          meshmc-kf-${{ runner.os }}-${{ runner.arch }}-${{ inputs.msystem || 'native' }}-${{ inputs.qt-major }}-${{ inputs.qt-version }}-${{ inputs.qt-architecture || 'default' }}-${{ inputs.build-type }}-${{ inputs.qt-major == '5' && 'kf5.116.0' || 'kf6.4.0' }}-v1
+
+    - name: Build KDE Frameworks
+      shell: ${{ runner.os == 'Windows' && inputs.msystem != '' && 'msys2 {0}' || runner.os == 'Windows' && 'pwsh' || 'bash' }}
+      env:
+        QT_MAJOR: ${{ inputs.qt-major }}
+        QT_VERSION: ${{ inputs.qt-version }}
+        QT_ARCHITECTURE: ${{ inputs.qt-architecture }}
+        BUILD_TYPE: ${{ inputs.build-type }}
+        MSYSTEM_INPUT: ${{ inputs.msystem }}
+        KDE_PREFIX: ${{ runner.temp }}/meshmc-kf-prefix
+        KF_CACHE_HIT: ${{ steps.kf-cache.outputs.cache-hit }}
+      run: python launcher/scripts/ci/build-kde-frameworks.py
 
     - name: Setup bundled OpenSSL
       uses: ./.github/actions/setup-openssl

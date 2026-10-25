@@ -40,7 +40,102 @@ runs:
       if: ${{ inputs.msystem == '' }}
       shell: pwsh
       run: |
+        $ErrorActionPreference = "Stop"
+
         choco install pkgconfiglite -y --allow-empty-checksums
+
+        Invoke-WebRequest -Uri "https://www.oasis-open.org/docbook/xml/4.5/docbook-xml-4.5.zip" -OutFile "docbook-xml-4.5.zip"
+        Expand-Archive -Path "docbook-xml-4.5.zip" -DestinationPath "C:\dbk45"
+        echo "XML_CATALOG_FILES=C:\dbk45\catalog.xml" >> $env:GITHUB_ENV
+        echo "DocBookXML4_ROOT=C:\dbk45" >> $env:GITHUB_ENV
+
+        $vcpkgRoot = $env:VCPKG_INSTALLATION_ROOT
+        if (-not $vcpkgRoot) {
+          $vcpkgRoot = $env:VCPKG_ROOT
+        }
+        if (-not $vcpkgRoot) {
+          throw "VCPKG_INSTALLATION_ROOT/VCPKG_ROOT is not set on this runner."
+        }
+
+        $triplet = if ($env:RUNNER_ARCH -eq "ARM64") {
+          "arm64-windows"
+        } else {
+          "x64-windows"
+        }
+
+        & "$vcpkgRoot\vcpkg.exe" install `
+          gettext-libintl gperf zlib bzip2 liblzma libxml2 iso-codes cmark libarchive libqrencode libxslt `
+          "--triplet=$triplet"
+
+        if ($LASTEXITCODE -ne 0) {
+          throw "vcpkg dependency installation failed."
+        }
+
+        $tripletRoot = Join-Path $vcpkgRoot "installed\$triplet"
+        $toolsRoot = Join-Path $tripletRoot "tools"
+
+        $pathEntries = [System.Collections.Generic.HashSet[string]]::new(
+          [System.StringComparer]::OrdinalIgnoreCase
+        )
+
+        # Executables installed directly in the triplet's bin directory.
+        $binPath = Join-Path $tripletRoot "bin"
+        if (Test-Path $binPath) {
+          [void]$pathEntries.Add($binPath)
+        }
+
+        # vcpkg commonly installs build tools in tools\<port>\.
+        if (Test-Path $toolsRoot) {
+          Get-ChildItem -Path $toolsRoot -Directory -Recurse |
+            ForEach-Object {
+              $directory = $_.FullName
+
+              if (
+                Get-ChildItem -LiteralPath $directory -File `
+                  -ErrorAction SilentlyContinue |
+                  Where-Object {
+                    $_.Extension -in @(".exe", ".cmd", ".bat", ".com")
+                  } |
+                  Select-Object -First 1
+              ) {
+                [void]$pathEntries.Add($directory)
+              }
+            }
+
+          # Also include the tools root itself.
+          [void]$pathEntries.Add($toolsRoot)
+        }
+
+        foreach ($entry in $pathEntries) {
+          Add-Content -Path $env:GITHUB_PATH -Value $entry
+          Write-Host "Added to PATH: $entry"
+        }
+
+        # Verify that the next GitHub Actions step can find gperf.
+        $gperfCandidates = @(
+          (Join-Path $toolsRoot "gperf\gperf.exe"),
+          (Join-Path $binPath "gperf.exe")
+        )
+
+        $gperf = Get-Command gperf -ErrorAction SilentlyContinue
+        if (-not $gperf) {
+          foreach ($candidate in $gperfCandidates) {
+            if (Test-Path $candidate) {
+              $gperf = Get-Item $candidate
+              break
+            }
+          }
+        }
+
+        if ($gperf) {
+          Write-Host "Found gperf: $($gperf.Source)"
+        } else {
+          Write-Warning "gperf.exe was not found in the expected vcpkg locations."
+          Get-ChildItem -Path $toolsRoot -Filter "gperf.exe" `
+            -File -Recurse -ErrorAction SilentlyContinue |
+            ForEach-Object { Write-Host "Found candidate: $($_.FullName)" }
+        }
+
 
     - name: Setup MSYS2 (MinGW)
       if: ${{ inputs.msystem != '' }}
@@ -50,6 +145,7 @@ runs:
         update: true
         install: >-
           git
+          gperf
         pacboy: >-
           toolchain:p
           ccache:p
@@ -60,7 +156,27 @@ runs:
           qt${{ inputs.qt-major }}-imageformats:p
           qt${{ inputs.qt-major }}-networkauth:p
           qt${{ inputs.qt-major }}-tools:p
+          qt${{ inputs.qt-major }}-declarative:p
           gpgme:p
+          gettext:p
+          zlib:p
+          bzip2:p
+          xz:p
+          libxml2:p
+          cmark:p
+          gpgme:p
+          qrencode:p
+          libarchive:p
+          libxslt:p
+          docbook-xml:p
+          docbook5-xml:p
+          docbook-xsl:p
+
+    - name: Install Qt5 WinExtras (MinGW)
+      if: ${{ inputs.msystem != '' && inputs.qt-major == '5'}}
+      shell: msys2 {0}
+      run: |
+        pacman -S mingw-w64-clang-x86_64-qt5-winextras --noconfirm
 
     - name: List pacman packages (MinGW)
       if: ${{ inputs.msystem != '' }}

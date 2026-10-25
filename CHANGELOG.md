@@ -51,6 +51,10 @@
 
 
 
+## Support
+
+* Support for macOS 12 has been removed, and the minimum version has been updated to 13.3.
+
 ## CI/CD Updates
 
 * Linux CI images have been updated to 26.04.
