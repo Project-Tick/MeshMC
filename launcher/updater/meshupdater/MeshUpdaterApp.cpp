@@ -43,8 +43,6 @@
 #include <QThread>
 #include <QTimer>
 
-#include <KLocalizedString>
-
 #include <mutex>
 
 #include "AssetMatcher.h"
@@ -420,40 +418,40 @@ MeshUpdaterApp::MeshUpdaterApp(int& argc, char** argv) : QApplication(argc, argv
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription(
-		i18n("Installs MeshMC updates."));
+		tr("Installs MeshMC updates."));
 	parser.addOptions({
 		{{QStringLiteral("d"), QStringLiteral("dir")},
-		 i18n("Use a custom path as application root (use '.' for current "
+		 tr("Use a custom path as application root (use '.' for current "
 			"directory)."),
-		 i18n("directory")},
+		 tr("directory")},
 		{{QStringLiteral("V"), QStringLiteral("installed-version")},
-		 i18n("Treat this as the installed launcher version instead of asking "
+		 tr("Treat this as the installed launcher version instead of asking "
 			"the launcher."),
-		 i18n("installed version")},
+		 tr("installed version")},
 		{{QStringLiteral("I"), QStringLiteral("install-version")},
-		 i18n("Install a specific version."), i18n("version name")},
+		 tr("Install a specific version."), tr("version name")},
 		{{QStringLiteral("U"), QStringLiteral("update-url")},
-		 i18n("Update from the specified repository."), i18n("github repo url")},
+		 tr("Update from the specified repository."), tr("github repo url")},
 		{QStringLiteral("finish-update"),
-		 i18n("Install the release already unpacked in this directory. Used by "
+		 tr("Install the release already unpacked in this directory. Used by "
 			"the updater itself for the second pass of an install."),
-		 i18n("unpacked release directory")},
+		 tr("unpacked release directory")},
 		{QStringLiteral("self-test"),
-		 i18n("Print a token and exit, to prove this binary can run.")},
+		 tr("Print a token and exit, to prove this binary can run.")},
 		{{QStringLiteral("c"), QStringLiteral("check-only")},
-		 i18n("Only check whether an update is needed. Exit status 100 if it "
+		 tr("Only check whether an update is needed. Exit status 100 if it "
 			"is, 0 if it is not, non-zero on error.")},
 		{{QStringLiteral("p"), QStringLiteral("pre-release")},
-		 i18n("Allow updating to pre-releases.")},
+		 tr("Allow updating to pre-releases.")},
 		{{QStringLiteral("F"), QStringLiteral("force")},
-		 i18n("Update even when one is not needed.")},
+		 tr("Update even when one is not needed.")},
 		{{QStringLiteral("l"), QStringLiteral("list")},
-		 i18n("List the available releases.")},
-		{QStringLiteral("debug"), i18n("Log debug output to the console.")},
+		 tr("List the available releases.")},
+		{QStringLiteral("debug"), tr("Log debug output to the console.")},
 		{{QStringLiteral("S"), QStringLiteral("select-ui")},
-		 i18n("Select the version to install with a GUI.")},
+		 tr("Select the version to install with a GUI.")},
 		{{QStringLiteral("D"), QStringLiteral("allow-downgrade")},
-		 i18n("Allow downgrading to an earlier version.")},
+		 tr("Allow downgrading to an earlier version.")},
 	});
 	parser.addHelpOption();
 	parser.addVersionOption();
@@ -481,7 +479,7 @@ MeshUpdaterApp::MeshUpdaterApp(int& argc, char** argv) : QApplication(argc, argv
 	if (!startLogging())
 		return;
 
-	logStartupInfo(dirOption.isEmpty() ? i18n("default") : i18n("command line"),
+	logStartupInfo(dirOption.isEmpty() ? tr("default") : tr("command line"),
 				   binPath);
 
 	// Second pass?
@@ -516,9 +514,10 @@ MeshUpdaterApp::MeshUpdaterApp(int& argc, char** argv) : QApplication(argc, argv
 		if (target.isEmpty()) {
 			// Without a target there is nowhere to install; refusing beats
 			// guessing and overwriting the wrong directory.
-			showFatalError(i18n("Update Failed"),
-						   i18n("The update marker at %1 does not say where to "
-							  "install to.", QDir::toNativeSeparators(marker)));
+			showFatalError(tr("Update Failed"),
+						   tr("The update marker at %1 does not say where to "
+							  "install to.")
+							   .arg(QDir::toNativeSeparators(marker)));
 			return;
 		}
 
@@ -539,8 +538,8 @@ MeshUpdaterApp::MeshUpdaterApp(int& argc, char** argv) : QApplication(argc, argv
 	// macOS bundles are updated by Sparkle, from inside the launcher. This
 	// binary should not even be installed there; if it somehow runs, it must
 	// not start replacing files in a signed bundle.
-	showFatalError(i18n("macOS Is Not Supported"),
-				   i18n("The updater does not support installations on macOS. "
+	showFatalError(tr("macOS Is Not Supported"),
+				   tr("The updater does not support installations on macOS. "
 					  "Updates are handled by the launcher itself."));
 	return;
 #endif
@@ -555,8 +554,8 @@ MeshUpdaterApp::MeshUpdaterApp(int& argc, char** argv) : QApplication(argc, argv
 				QStringLiteral("APPIMAGE"));
 		if (m_appImagePath.isEmpty()) {
 			showFatalError(
-				i18n("Unsupported Installation"),
-				i18n("This looks like an AppImage, but the APPIMAGE environment "
+				tr("Unsupported Installation"),
+				tr("This looks like an AppImage, but the APPIMAGE environment "
 				   "variable is missing, so there is no file to update."));
 			return;
 		}
@@ -566,9 +565,10 @@ MeshUpdaterApp::MeshUpdaterApp(int& argc, char** argv) : QApplication(argc, argv
 
 	m_launcherExecutable = QDir(binPath).absoluteFilePath(launcherBinaryName());
 	if (!QFileInfo(m_launcherExecutable).isFile()) {
-		showFatalError(i18n("Unsupported Installation"),
-					   i18n("The updater cannot find the main executable at:\n"
-						  "%1", QDir::toNativeSeparators(m_launcherExecutable)));
+		showFatalError(tr("Unsupported Installation"),
+					   tr("The updater cannot find the main executable at:\n"
+						  "%1")
+						   .arg(QDir::toNativeSeparators(m_launcherExecutable)));
 		return;
 	}
 
@@ -672,13 +672,14 @@ bool MeshUpdaterApp::startLogging()
 	const QString logDir = QDir(m_dataPath).absoluteFilePath("logs");
 	if (!QDir().mkpath(logDir)) {
 		showFatalError(
-			i18n("The launcher data folder is not writable!"),
-			i18n("The updater could not create its log directory at:\n"
+			tr("The launcher data folder is not writable!"),
+			tr("The updater could not create its log directory at:\n"
 			   "%1\n"
 			   "\n"
 			   "Make sure you have write permissions to the data folder.\n"
 			   "\n"
-			   "The updater cannot continue until this is fixed.", QDir::toNativeSeparators(logDir)));
+			   "The updater cannot continue until this is fixed.")
+				.arg(QDir::toNativeSeparators(logDir)));
 		return false;
 	}
 
@@ -703,13 +704,14 @@ bool MeshUpdaterApp::startLogging()
 		const QString reason = logFile->errorString();
 		logFile.reset();
 		showFatalError(
-			i18n("The launcher data folder is not writable!"),
-			i18n("The updater could not create a log file - %1.\n"
+			tr("The launcher data folder is not writable!"),
+			tr("The updater could not create a log file - %1.\n"
 			   "\n"
 			   "Make sure you have write permissions to the data folder.\n"
 			   "(%2)\n"
 			   "\n"
-			   "The updater cannot continue until this is fixed.", reason, QDir::toNativeSeparators(m_dataPath)));
+			   "The updater cannot continue until this is fixed.")
+				.arg(reason, QDir::toNativeSeparators(m_dataPath)));
 		return false;
 	}
 
@@ -772,7 +774,7 @@ void MeshUpdaterApp::loadReleaseList()
 	QString error;
 	const QString apiUrl = GitHub::releasesApiUrl(m_repositoryUrl, &error);
 	if (apiUrl.isEmpty()) {
-		fail(i18n("Cannot list releases: %1", error));
+		fail(tr("Cannot list releases: %1").arg(error));
 		return;
 	}
 
@@ -805,7 +807,8 @@ void MeshUpdaterApp::requestReleasePage(const QString& apiUrl, int page)
 				reply->deleteLater();
 
 				if (reply->error() != QNetworkReply::NoError) {
-					fail(i18n("Could not fetch %1: %2", m_currentUrl, reply->errorString()));
+					fail(tr("Could not fetch %1: %2")
+							 .arg(m_currentUrl, reply->errorString()));
 					return;
 				}
 
@@ -813,7 +816,8 @@ void MeshUpdaterApp::requestReleasePage(const QString& apiUrl, int page)
 				const int found = GitHub::parseReleasePage(reply->readAll(),
 														   &m_releases, &error);
 				if (found < 0) {
-					fail(i18n("Could not read the release list from %1: %2", m_currentUrl, error));
+					fail(tr("Could not read the release list from %1: %2")
+							 .arg(m_currentUrl, error));
 					return;
 				}
 
@@ -993,7 +997,9 @@ void MeshUpdaterApp::run()
 
 	const GitHubRelease latest = latestRelease();
 	if (!latest.isValid()) {
-		fail(i18n("The repository has no published releases%1.", m_allowPreRelease ? QString() : i18n(" (pre-releases excluded)")));
+		fail(tr("The repository has no published releases%1.")
+				 .arg(m_allowPreRelease ? QString()
+										: tr(" (pre-releases excluded)")));
 		return;
 	}
 
@@ -1032,8 +1038,8 @@ void MeshUpdaterApp::run()
 		// deployment and replacing them from outside would either fail or
 		// break the install's integrity.
 		showFatalError(
-			i18n("Updating Flatpak Is Not Supported"),
-			i18n("This is the Flatpak build of MeshMC, which is updated through "
+			tr("Updating Flatpak Is Not Supported"),
+			tr("This is the Flatpak build of MeshMC, which is updated through "
 			   "Flatpak itself.\n"
 			   "\n"
 			   "Run this to update:\n"
@@ -1072,15 +1078,16 @@ void MeshUpdaterApp::run()
 	if (!m_userSelectedVersionRaw.isEmpty()) {
 		target = releaseForVersion(m_userSelectedVersionRaw);
 		if (!target.isValid()) {
-			showFatalError(i18n("No Release for That Version"),
-						   i18n("There is no GitHub release for version %1.", m_userSelectedVersionRaw));
+			showFatalError(tr("No Release for That Version"),
+						   tr("There is no GitHub release for version %1.")
+							   .arg(m_userSelectedVersionRaw));
 			return;
 		}
 	} else if (m_selectUI) {
 		target = askWhichRelease();
 		if (!target.isValid()) {
 			// Cancelling the picker is a decision, not a failure.
-			abortWith(i18n("No version was selected."));
+			abortWith(tr("No version was selected."));
 			return;
 		}
 	}
@@ -1149,9 +1156,14 @@ void MeshUpdaterApp::performUpdate(const GitHubRelease& release)
 
 	if (candidates.isEmpty()) {
 		showFatalError(
-			i18n("No Valid Release Assets"),
-			i18n("Release %1 has no files for this installation: %2, portable: "
-			   "%3.", release.tagName, BuildConfig.BUILD_ARTIFACT.isEmpty() ? i18n("unknown build") : BuildConfig.BUILD_ARTIFACT, m_isPortable ? i18n("yes") : i18n("no")));
+			tr("No Valid Release Assets"),
+			tr("Release %1 has no files for this installation: %2, portable: "
+			   "%3.")
+				.arg(release.tagName,
+					 BuildConfig.BUILD_ARTIFACT.isEmpty()
+						 ? tr("unknown build")
+						 : BuildConfig.BUILD_ARTIFACT,
+					 m_isPortable ? tr("yes") : tr("no")));
 		return;
 	}
 
@@ -1166,7 +1178,7 @@ void MeshUpdaterApp::performUpdate(const GitHubRelease& release)
 	}
 
 	if (!chosen.isValid()) {
-		abortWith(i18n("No file was selected."));
+		abortWith(tr("No file was selected."));
 		return;
 	}
 
@@ -1174,8 +1186,8 @@ void MeshUpdaterApp::performUpdate(const GitHubRelease& release)
 
 	const QString downloaded = downloadAsset(chosen);
 	if (downloaded.isEmpty()) {
-		showFatalError(i18n("Failed to Download"),
-					   i18n("The update file could not be downloaded."));
+		showFatalError(tr("Failed to Download"),
+					   tr("The update file could not be downloaded."));
 		return;
 	}
 
@@ -1237,9 +1249,9 @@ void MeshUpdaterApp::installFrom(const QString& archivePath)
 
 		QMessageBox box;
 		box.setIcon(QMessageBox::Warning);
-		box.setText(i18n("An update is already in progress."));
+		box.setText(tr("An update is already in progress."));
 		box.setInformativeText(
-			i18n("This installation has an update lock file at: %1\n"
+			tr("This installation has an update lock file at: %1\n"
 			   "\n"
 			   "Timestamp: %2\n"
 			   "Updating from version %3 to %4\n"
@@ -1252,7 +1264,11 @@ void MeshUpdaterApp::installFrom(const QString& archivePath)
 			   "%7\n"
 			   "has the details of the last attempt.\n"
 			   "\n"
-			   "To ignore this lock and update anyway, choose \"Ignore\".", QDir::toNativeSeparators(lockPath), previous.timestamp.toString(Qt::ISODate), previous.from, previous.to, previous.target, previous.dataPath, QDir::toNativeSeparators(m_updateLogPath)));
+			   "To ignore this lock and update anyway, choose \"Ignore\".")
+				.arg(QDir::toNativeSeparators(lockPath),
+					 previous.timestamp.toString(Qt::ISODate), previous.from,
+					 previous.to, previous.target, previous.dataPath,
+					 QDir::toNativeSeparators(m_updateLogPath)));
 		box.setStandardButtons(QMessageBox::Ignore | QMessageBox::Cancel);
 		box.setDefaultButton(QMessageBox::Cancel);
 		box.setMinimumWidth(460);
@@ -1263,8 +1279,9 @@ void MeshUpdaterApp::installFrom(const QString& archivePath)
 			// the user just answered. The lock stays: it is not ours, it
 			// describes an earlier attempt, and the launcher reports it at
 			// startup where there is room to explain it properly.
-			abortWith(i18n("The update was aborted: an update lock from an "
-						 "earlier attempt is present at %1.", lockPath));
+			abortWith(tr("The update was aborted: an update lock from an "
+						 "earlier attempt is present at %1.")
+						  .arg(lockPath));
 			return;
 		}
 	}
@@ -1277,7 +1294,8 @@ void MeshUpdaterApp::installFrom(const QString& archivePath)
 					  m_dataPath, QLatin1String(UpdateLockFile::kChangelogName)),
 				  m_installRelease.body);
 
-	logUpdate(i18n("Updating from %1 to %2", m_installedVersion, m_installRelease.tagName));
+	logUpdate(tr("Updating from %1 to %2")
+				  .arg(m_installedVersion, m_installRelease.tagName));
 
 	const QString lowerName = QFileInfo(archivePath).fileName().toLower();
 	if (isArchiveName(lowerName)) {
@@ -1291,7 +1309,7 @@ void MeshUpdaterApp::installFrom(const QString& archivePath)
 		lock.pid = QCoreApplication::applicationPid();
 		UpdateLockFile::write(lockPath, lock);
 
-		logUpdate(i18n("Updating the installation at %1", m_rootPath));
+		logUpdate(tr("Updating the installation at %1").arg(m_rootPath));
 		unpackAndHandOff(archivePath);
 
 		// The one place the lock is let go of.
@@ -1316,7 +1334,7 @@ void MeshUpdaterApp::installFrom(const QString& archivePath)
 		return;
 	}
 
-	logUpdate(i18n("Running the installer at %1", archivePath));
+	logUpdate(tr("Running the installer at %1").arg(archivePath));
 	runInstaller(archivePath);
 }
 
@@ -1327,8 +1345,9 @@ void MeshUpdaterApp::runInstaller(const QString& installerPath)
 	proc.setProgram(installerPath);
 
 	const bool started = proc.startDetached();
-	logUpdate(started ? i18n("The installer was started.")
-					  : i18n("The installer could not be started: %1", proc.errorString()));
+	logUpdate(started ? tr("The installer was started.")
+					  : tr("The installer could not be started: %1")
+							.arg(proc.errorString()));
 
 	// From here the installer owns the installation, including restarting the
 	// launcher, so there is nothing left for this process to supervise.
@@ -1355,13 +1374,20 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 	const ReleaseArchive::Result unpacked =
 		ReleaseArchive::extract(archivePath, stagingDir);
 	if (!unpacked.ok) {
-		logUpdate(i18n("Failed to unpack %1: %2", archivePath, unpacked.error));
-		deferFailure(i18n("Failed to Extract Archive"),
-					   i18n("Could not unpack %1 into %2:\n%3", QDir::toNativeSeparators(archivePath), QDir::toNativeSeparators(stagingDir), unpacked.error));
+		logUpdate(tr("Failed to unpack %1: %2")
+					  .arg(archivePath, unpacked.error));
+		deferFailure(tr("Failed to Extract Archive"),
+					   tr("Could not unpack %1 into %2:\n%3")
+						   .arg(QDir::toNativeSeparators(archivePath),
+								QDir::toNativeSeparators(stagingDir),
+								unpacked.error));
 		return;
 	}
 
-	logUpdate(i18n("Unpacked %1 files and %2 links (%3) into %4", QString::number(unpacked.fileCount), QString::number(unpacked.linkCount), formatBytes(unpacked.byteCount), stagingDir));
+	logUpdate(tr("Unpacked %1 files and %2 links (%3) into %4")
+				  .arg(QString::number(unpacked.fileCount),
+					   QString::number(unpacked.linkCount),
+					   formatBytes(unpacked.byteCount), stagingDir));
 
 	// Release archives come both ways: contents at the top level, or wrapped
 	// in one versioned directory.
@@ -1381,15 +1407,18 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 #endif
 	);
 	if (!QFileInfo(stagedLauncher).isFile()) {
-		logUpdate(i18n("The unpacked release has no launcher at %1", stagedLauncher));
+		logUpdate(tr("The unpacked release has no launcher at %1")
+					  .arg(stagedLauncher));
 		deferFailure(
-			i18n("Update Failed"),
-			i18n("The downloaded release does not contain MeshMC at:\n"
+			tr("Update Failed"),
+			tr("The downloaded release does not contain MeshMC at:\n"
 			   "%1\n"
 			   "\n"
 			   "Your installation has not been changed.\n"
 			   "The updater log has the details:\n"
-			   "%2", QDir::toNativeSeparators(stagedLauncher), QDir::toNativeSeparators(m_updateLogPath)));
+			   "%2")
+				.arg(QDir::toNativeSeparators(stagedLauncher),
+					 QDir::toNativeSeparators(m_updateLogPath)));
 		return;
 	}
 
@@ -1398,10 +1427,10 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 	// files it would overwrite include the libraries it is running from.
 	const QString stageProgram = prepareInstallStageProgram(releaseRoot);
 	if (stageProgram.isEmpty()) {
-		logUpdate(i18n("No usable second pass was found for this release."));
+		logUpdate(tr("No usable second pass was found for this release."));
 		deferFailure(
-			i18n("Update Failed"),
-			i18n("The update cannot be installed, because no program that is "
+			tr("Update Failed"),
+			tr("The update cannot be installed, because no program that is "
 			   "able to install it could be started.\n"
 			   "\n"
 			   "Your installation has not been changed. You can install this "
@@ -1409,13 +1438,14 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 			   "\n"
 			   "The updater log has what was tried and why each attempt "
 			   "failed:\n"
-			   "%1", QDir::toNativeSeparators(m_updateLogPath)));
+			   "%1")
+				.arg(QDir::toNativeSeparators(m_updateLogPath)));
 		return;
 	}
 
 	// Only now is the release known to be installable, so this is where the
 	// installation starts being touched.
-	logUpdate(i18n("Backing up the current installation"));
+	logUpdate(tr("Backing up the current installation"));
 	backupInstallation();
 
 	// The marker is how the second pass knows it is a second pass, and where
@@ -1423,9 +1453,10 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 	const QString marker = QDir(releaseRoot).absoluteFilePath(
 		QLatin1String(UpdateLockFile::kUnpackMarkerName));
 	if (!writeTextFile(marker, m_rootPath)) {
-		logUpdate(i18n("Could not write the update marker at %1", marker));
-		deferFailure(i18n("Update Failed"),
-					   i18n("Could not write the update marker at:\n%1", QDir::toNativeSeparators(marker)));
+		logUpdate(tr("Could not write the update marker at %1").arg(marker));
+		deferFailure(tr("Update Failed"),
+					   tr("Could not write the update marker at:\n%1")
+						   .arg(QDir::toNativeSeparators(marker)));
 		return;
 	}
 
@@ -1443,18 +1474,22 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 	next.setArguments(arguments);
 	next.setWorkingDirectory(releaseRoot);
 
-	logUpdate(i18n("Starting the second pass: %1 %2", stageProgram, arguments.join(QLatin1Char(' '))));
+	logUpdate(tr("Starting the second pass: %1 %2")
+				  .arg(stageProgram, arguments.join(QLatin1Char(' '))));
 
 	qint64 stagePid = 0;
 	if (!next.startDetached(&stagePid)) {
-		logUpdate(i18n("Could not start %1: %2", stageProgram, next.errorString()));
-		deferFailure(i18n("Update Failed"),
-					   i18n("Could not start the second pass of the update:\n"
+		logUpdate(tr("Could not start %1: %2")
+					  .arg(stageProgram, next.errorString()));
+		deferFailure(tr("Update Failed"),
+					   tr("Could not start the second pass of the update:\n"
 						  "%1\n"
 						  "\n"
 						  "%2\n"
 						  "\n"
-						  "Your installation has not been changed.", QDir::toNativeSeparators(stageProgram), next.errorString()));
+						  "Your installation has not been changed.")
+						   .arg(QDir::toNativeSeparators(stageProgram),
+								next.errorString()));
 		return;
 	}
 
@@ -1469,33 +1504,40 @@ void MeshUpdaterApp::unpackAndHandOff(const QString& archivePath)
 		const bool stillRunning = processAlive(stagePid);
 		m_installStateUnknown = stillRunning;
 
-		logUpdate(i18n("The second pass (pid %1) did not take the update over "
-					 "within %2 seconds and is %3.", QString::number(stagePid), QString::number(kTakeoverTimeoutMs / 1000), stillRunning ? i18n("still running") : i18n("no longer running")));
+		logUpdate(tr("The second pass (pid %1) did not take the update over "
+					 "within %2 seconds and is %3.")
+					  .arg(QString::number(stagePid),
+						   QString::number(kTakeoverTimeoutMs / 1000),
+						   stillRunning ? tr("still running")
+										: tr("no longer running")));
 
 		deferFailure(
-			i18n("Update Failed"),
+			tr("Update Failed"),
 			stillRunning
-				? i18n("The second pass of the update was started but never "
+				? tr("The second pass of the update was started but never "
 					 "reported that it had taken over, and it is still "
 					 "running.\n"
 					 "\n"
 					 "Check that MeshMC still starts before using it. The "
 					 "previous installation was backed up, and the updater "
 					 "log has the details:\n"
-					 "%1", QDir::toNativeSeparators(m_updateLogPath))
-				: i18n("The second pass of the update stopped before it began "
+					 "%1")
+					  .arg(QDir::toNativeSeparators(m_updateLogPath))
+				: tr("The second pass of the update stopped before it began "
 					 "installing.\n"
 					 "\n"
 					 "Your installation has not been changed. The updater log "
 					 "has the details:\n"
-					 "%1", QDir::toNativeSeparators(m_updateLogPath)));
+					 "%1")
+					  .arg(QDir::toNativeSeparators(m_updateLogPath)));
 		return;
 	}
 
 	// Exiting is the point: it releases every file this process had open in
 	// the installation the second pass is about to overwrite.
 	m_handedOver = true;
-	logUpdate(i18n("Handed the update over to the second pass (pid %1).", stagePid));
+	logUpdate(tr("Handed the update over to the second pass (pid %1).")
+				  .arg(stagePid));
 	m_status = Succeeded;
 	QCoreApplication::exit(ExitSuccess);
 }
@@ -1531,7 +1573,7 @@ bool MeshUpdaterApp::copyExecutable(const QString& from, const QString& to)
 {
 	QString error;
 	if (!copyOverFile(from, to, &error)) {
-		logUpdate(i18n("Could not copy %1 to %2: %3", from, to, error));
+		logUpdate(tr("Could not copy %1 to %2: %3").arg(from, to, error));
 		return false;
 	}
 
@@ -1541,7 +1583,7 @@ bool MeshUpdaterApp::copyExecutable(const QString& from, const QString& to)
 										QFileDevice::ExeUser |
 										QFileDevice::ExeGroup |
 										QFileDevice::ExeOther)) {
-		logUpdate(i18n("Could not make %1 executable.", to));
+		logUpdate(tr("Could not make %1 executable.").arg(to));
 		return false;
 	}
 
@@ -1551,7 +1593,7 @@ bool MeshUpdaterApp::copyExecutable(const QString& from, const QString& to)
 bool MeshUpdaterApp::probeUpdaterBinary(const QString& program)
 {
 	if (!QFileInfo(program).isFile()) {
-		logUpdate(i18n("There is no file at %1.", program));
+		logUpdate(tr("There is no file at %1.").arg(program));
 		return false;
 	}
 
@@ -1562,7 +1604,8 @@ bool MeshUpdaterApp::probeUpdaterBinary(const QString& program)
 
 	probe.start();
 	if (!probe.waitForStarted(kSelfTestTimeoutMs)) {
-		logUpdate(i18n("%1 could not be started: %2", program, probe.errorString()));
+		logUpdate(tr("%1 could not be started: %2")
+					  .arg(program, probe.errorString()));
 		return false;
 	}
 	if (!probe.waitForFinished(kSelfTestTimeoutMs)) {
@@ -1570,7 +1613,8 @@ bool MeshUpdaterApp::probeUpdaterBinary(const QString& program)
 		// up and wait for someone to dismiss it, which nobody is going to.
 		probe.kill();
 		probe.waitForFinished(1000);
-		logUpdate(i18n("%1 did not answer the self test within %2 seconds.", program, QString::number(kSelfTestTimeoutMs / 1000)));
+		logUpdate(tr("%1 did not answer the self test within %2 seconds.")
+					  .arg(program, QString::number(kSelfTestTimeoutMs / 1000)));
 		return false;
 	}
 
@@ -1581,11 +1625,13 @@ bool MeshUpdaterApp::probeUpdaterBinary(const QString& program)
 
 	if (probe.exitStatus() != QProcess::NormalExit || probe.exitCode() != 0 ||
 		!answer.contains(QLatin1String(kSelfTestToken))) {
-		logUpdate(i18n("%1 failed the self test (exit code %2): %3", program, QString::number(probe.exitCode()), complaint.isEmpty() ? answer : complaint));
+		logUpdate(tr("%1 failed the self test (exit code %2): %3")
+					  .arg(program, QString::number(probe.exitCode()),
+						   complaint.isEmpty() ? answer : complaint));
 		return false;
 	}
 
-	logUpdate(i18n("%1 passed the self test: %2", program, answer));
+	logUpdate(tr("%1 passed the self test: %2").arg(program, answer));
 	return true;
 }
 
@@ -1594,7 +1640,7 @@ QString MeshUpdaterApp::prepareInstallStageProgram(const QString& releaseRoot)
 	const QString agentName = installStageAgentName();
 	const QString ownBinary = ownUpdaterBinaryPath();
 
-	logUpdate(i18n("Looking for a program to install the update with."));
+	logUpdate(tr("Looking for a program to install the update with."));
 
 	// 1. The updater that came with the release.
 	//
@@ -1605,7 +1651,7 @@ QString MeshUpdaterApp::prepareInstallStageProgram(const QString& releaseRoot)
 	// which is what the self test is here to catch.
 	const QString releaseUpdater =
 		QDir(releaseRoot).absoluteFilePath(updaterBinaryName());
-	logUpdate(i18n("Trying the release's own updater at %1", releaseUpdater));
+	logUpdate(tr("Trying the release's own updater at %1").arg(releaseUpdater));
 
 	// The code is looked at before it is run. In a bundle the file above is a
 	// hard link to the loader, which contains none of the updater's own
@@ -1613,8 +1659,9 @@ QString MeshUpdaterApp::prepareInstallStageProgram(const QString& releaseRoot)
 	const QString releaseUpdaterCode = realUpdaterBinaryIn(releaseRoot);
 	if (!fileContainsBytes(releaseUpdaterCode,
 						   QByteArrayLiteral("finish-update"))) {
-		logUpdate(i18n("%1 does not know --finish-update, so it is from before "
-					 "the current updater; not running it.", releaseUpdaterCode));
+		logUpdate(tr("%1 does not know --finish-update, so it is from before "
+					 "the current updater; not running it.")
+					  .arg(releaseUpdaterCode));
 	} else if (probeUpdaterBinary(releaseUpdater)) {
 		return releaseUpdater;
 	}
@@ -1641,7 +1688,8 @@ QString MeshUpdaterApp::prepareInstallStageProgram(const QString& releaseRoot)
 		const QString agentBinary =
 			QDir(sharedBin).absoluteFilePath(agentName);
 
-		logUpdate(i18n("Trying this updater inside the release, as %1", agentLoader));
+		logUpdate(tr("Trying this updater inside the release, as %1")
+					  .arg(agentLoader));
 		if (copyExecutable(ownBinary, agentBinary) &&
 			copyExecutable(loader, agentLoader) &&
 			probeUpdaterBinary(agentLoader)) {
@@ -1651,7 +1699,8 @@ QString MeshUpdaterApp::prepareInstallStageProgram(const QString& releaseRoot)
 		const QString agent =
 			QDir(QFileInfo(releaseUpdater).absolutePath())
 				.absoluteFilePath(agentName);
-		logUpdate(i18n("Trying this updater inside the release, as %1", agent));
+		logUpdate(tr("Trying this updater inside the release, as %1")
+					  .arg(agent));
 		if (copyExecutable(ownBinary, agent) && probeUpdaterBinary(agent))
 			return agent;
 	}
@@ -1667,7 +1716,7 @@ QString MeshUpdaterApp::prepareInstallStageProgram(const QString& releaseRoot)
 
 	const QString standalone =
 		QDir(standaloneDir).absoluteFilePath(agentName);
-	logUpdate(i18n("Trying this updater on its own, as %1", standalone));
+	logUpdate(tr("Trying this updater on its own, as %1").arg(standalone));
 	if (copyExecutable(ownBinary, standalone) &&
 		probeUpdaterBinary(standalone)) {
 		return standalone;
@@ -1681,8 +1730,9 @@ bool MeshUpdaterApp::waitForInstallStageTakeover(qint64 stagePid)
 	const QString lockPath = UpdateLockFile::lockPath(m_dataPath);
 	const qint64 ownPid = QCoreApplication::applicationPid();
 
-	logUpdate(i18n("Waiting for the second pass (pid %1) to take the update "
-				 "over.", stagePid));
+	logUpdate(tr("Waiting for the second pass (pid %1) to take the update "
+				 "over.")
+				  .arg(stagePid));
 
 	QElapsedTimer timer;
 	timer.start();
@@ -1733,7 +1783,8 @@ void MeshUpdaterApp::backupInstallation()
 		root.absoluteFilePath(QStringLiteral("backup_%1").arg(stamp));
 
 	if (!QDir().mkpath(backupDir)) {
-		logUpdate(i18n("Could not create the backup directory %1", backupDir));
+		logUpdate(tr("Could not create the backup directory %1")
+					  .arg(backupDir));
 		return;
 	}
 
@@ -1745,7 +1796,7 @@ void MeshUpdaterApp::backupInstallation()
 		backupDir);
 
 	QProgressDialog progress(
-		i18n("Backing up the installation at %1", m_rootPath), QString(), 0,
+		tr("Backing up the installation at %1").arg(m_rootPath), QString(), 0,
 		fileList.length());
 	progress.setCancelButton(nullptr);
 	progress.setMinimumWidth(400);
@@ -1753,7 +1804,7 @@ void MeshUpdaterApp::backupInstallation()
 	progress.show();
 	QCoreApplication::processEvents();
 
-	logUpdate(i18n("Backing up:\n  %1", fileList.join(QLatin1String(",\n "))));
+	logUpdate(tr("Backing up:\n  %1").arg(fileList.join(QLatin1String(",\n  "))));
 
 	const auto backUp = [&](const QString& path) {
 		const QString relative = root.relativeFilePath(path);
@@ -1774,7 +1825,7 @@ void MeshUpdaterApp::backupInstallation()
 						QDir(backupDir)
 							.absoluteFilePath(root.relativeFilePath(file)),
 						&error)) {
-					logUpdate(i18n("Could not back up %1: %2", file, error));
+					logUpdate(tr("Could not back up %1: %2").arg(file, error));
 				}
 			}
 			return;
@@ -1782,7 +1833,7 @@ void MeshUpdaterApp::backupInstallation()
 
 		QString error;
 		if (!copyOverFile(path, destination, &error))
-			logUpdate(i18n("Could not back up %1: %2", path, error));
+			logUpdate(tr("Could not back up %1: %2").arg(path, error));
 	};
 
 	int done = 0;
@@ -1801,7 +1852,7 @@ void MeshUpdaterApp::backupInstallation()
 			if (direct.exists())
 				backUp(direct.absoluteFilePath());
 			else
-				logUpdate(i18n("Not present, ignoring: %1", glob));
+				logUpdate(tr("Not present, ignoring: %1").arg(glob));
 			continue;
 		}
 		while (iterator.hasNext())
@@ -1811,7 +1862,7 @@ void MeshUpdaterApp::backupInstallation()
 	progress.setValue(done);
 	QCoreApplication::processEvents();
 
-	logUpdate(i18n("Backed the installation up to %1", backupDir));
+	logUpdate(tr("Backed the installation up to %1").arg(backupDir));
 
 	// Here rather than after the install: this is the last moment at which
 	// m_rootPath is the installation. The second pass runs from the staging
@@ -1838,12 +1889,13 @@ qint64 MeshUpdaterApp::claimLockForInstallStage(const QString& targetDir)
 		lock.dataPath = m_dataPath;
 
 	if (UpdateLockFile::write(lockPath, lock)) {
-		logUpdate(i18n("Took the update lock over (pid %1).", lock.pid));
+		logUpdate(tr("Took the update lock over (pid %1).").arg(lock.pid));
 	} else {
 		// Worth continuing: the install itself does not depend on the lock.
 		// The first pass will report that the hand-off went unconfirmed,
 		// which is the honest outcome when this cannot be written.
-		logUpdate(i18n("Could not take the update lock at %1 over.", lockPath));
+		logUpdate(tr("Could not take the update lock at %1 over.")
+					  .arg(lockPath));
 	}
 
 	return firstPass;
@@ -1866,16 +1918,20 @@ void MeshUpdaterApp::removeInstallStageAgents(const QString& root)
 		// platforms where a first pass has to resort to this, and the copy
 		// is already mapped by then.
 		if (QFile::remove(path))
-			logUpdate(i18n("Removed the second pass's copy at %1", path));
+			logUpdate(tr("Removed the second pass's copy at %1").arg(path));
 		else
-			logUpdate(i18n("Could not remove %1; it may end up installed.", path));
+			logUpdate(tr("Could not remove %1; it may end up installed.")
+						  .arg(path));
 	}
 }
 
 void MeshUpdaterApp::finishUpdate(const QString& sourceDir,
 								  const QString& targetDir)
 {
-	logUpdate(i18n("Completing the update: installing %1 into %2, from %3", QDir::toNativeSeparators(sourceDir), QDir::toNativeSeparators(targetDir), QDir::toNativeSeparators(applicationFilePath())));
+	logUpdate(tr("Completing the update: installing %1 into %2, from %3")
+				  .arg(QDir::toNativeSeparators(sourceDir),
+					   QDir::toNativeSeparators(targetDir),
+					   QDir::toNativeSeparators(applicationFilePath())));
 
 	// Before anything is copied, and before waiting for anything: this is
 	// the first pass's only proof that its hand-off worked.
@@ -1894,10 +1950,14 @@ void MeshUpdaterApp::finishUpdate(const QString& sourceDir,
 		}
 
 		if (processAlive(firstPass)) {
-			logUpdate(i18n("The first pass (pid %1) is still running after %2 "
-						 "seconds; installing anyway.", QString::number(firstPass), QString::number(kFirstPassExitTimeoutMs / 1000)));
+			logUpdate(tr("The first pass (pid %1) is still running after %2 "
+						 "seconds; installing anyway.")
+						  .arg(QString::number(firstPass),
+							   QString::number(kFirstPassExitTimeoutMs /
+											   1000)));
 		} else {
-			logUpdate(i18n("The first pass (pid %1) has exited.", firstPass));
+			logUpdate(tr("The first pass (pid %1) has exited.")
+						  .arg(firstPass));
 		}
 	}
 
@@ -1916,10 +1976,12 @@ void MeshUpdaterApp::finishUpdate(const QString& sourceDir,
 	const QDir target(targetDir);
 	const QStringList fileList = installedFileList(source);
 
-	logUpdate(i18n("Installing the following into %1:\n  %2", target.absolutePath(), fileList.join(QLatin1String(",\n "))));
+	logUpdate(tr("Installing the following into %1:\n  %2")
+				  .arg(target.absolutePath(),
+					   fileList.join(QLatin1String(",\n  "))));
 
 	QProgressDialog progress(
-		i18n("Installing from %1", source.absolutePath()), QString(), 0,
+		tr("Installing from %1").arg(source.absolutePath()), QString(), 0,
 		fileList.length());
 	progress.setCancelButton(nullptr);
 	progress.setMinimumWidth(400);
@@ -1942,7 +2004,7 @@ void MeshUpdaterApp::finishUpdate(const QString& sourceDir,
 					source.relativeFilePath(file));
 				QString error;
 				if (!copyOverFile(file, destination, &error)) {
-					logUpdate(i18n("Failed to install %1: %2", file, error));
+					logUpdate(tr("Failed to install %1: %2").arg(file, error));
 					failed = true;
 				}
 			}
@@ -1952,7 +2014,7 @@ void MeshUpdaterApp::finishUpdate(const QString& sourceDir,
 		const QString destination = target.absoluteFilePath(relative);
 		QString error;
 		if (!copyOverFile(path, destination, &error)) {
-			logUpdate(i18n("Failed to install %1: %2", path, error));
+			logUpdate(tr("Failed to install %1: %2").arg(path, error));
 			failed = true;
 		}
 	};
@@ -1972,7 +2034,7 @@ void MeshUpdaterApp::finishUpdate(const QString& sourceDir,
 			if (direct.exists())
 				install(direct.absoluteFilePath());
 			else
-				logUpdate(i18n("Not present, ignoring: %1", glob));
+				logUpdate(tr("Not present, ignoring: %1").arg(glob));
 			continue;
 		}
 		while (iterator.hasNext())
@@ -1988,8 +2050,8 @@ void MeshUpdaterApp::finishUpdate(const QString& sourceDir,
 		m_dataPath,
 		QLatin1String(failed ? UpdateLockFile::kFailMarkerName
 							 : UpdateLockFile::kSuccessMarkerName));
-	logUpdate(failed ? i18n("There were errors installing the update.")
-					 : i18n("The update succeeded."));
+	logUpdate(failed ? tr("There were errors installing the update.")
+					 : tr("The update succeeded."));
 	QString copyError;
 	copyOverFile(m_updateLogPath, marker, &copyError);
 
@@ -2006,7 +2068,8 @@ void MeshUpdaterApp::finishUpdate(const QString& sourceDir,
 			));
 
 	if (!launcher.startDetached()) {
-		logUpdate(i18n("Could not restart the launcher: %1", launcher.errorString()));
+		logUpdate(tr("Could not restart the launcher: %1")
+					  .arg(launcher.errorString()));
 		failed = true;
 	}
 
@@ -2040,8 +2103,8 @@ bool MeshUpdaterApp::updateAppImage()
 
 	if (program.isEmpty()) {
 		showFatalError(
-			i18n("AppImageUpdate Not Found"),
-			i18n("This AppImage is updated with AppImageUpdate, which could not "
+			tr("AppImageUpdate Not Found"),
+			tr("This AppImage is updated with AppImageUpdate, which could not "
 			   "be found.\n"
 			   "\n"
 			   "Install AppImageUpdate, or download the new version "
@@ -2057,8 +2120,9 @@ bool MeshUpdaterApp::updateAppImage()
 
 	if (!proc.startDetached()) {
 		qCritical() << "Could not start AppImageUpdate:" << proc.errorString();
-		showFatalError(i18n("Update Failed"),
-					   i18n("Could not start AppImageUpdate:\n%1", proc.errorString()));
+		showFatalError(tr("Update Failed"),
+					   tr("Could not start AppImageUpdate:\n%1")
+						   .arg(proc.errorString()));
 		return false;
 	}
 
@@ -2139,7 +2203,7 @@ void MeshUpdaterApp::releaseLockNothingChanged()
 {
 	const QString lockPath = UpdateLockFile::lockPath(m_dataPath);
 	if (QFile::remove(lockPath)) {
-		logUpdate(i18n("The installation was not modified; dropped the update "
+		logUpdate(tr("The installation was not modified; dropped the update "
 					 "lock."));
 	}
 }
@@ -2158,9 +2222,9 @@ void MeshUpdaterApp::pruneBackups()
 	// QDir::Time sorts newest first, so everything past the first few goes.
 	for (int i = kBackupsToKeep; i < backups.size(); ++i) {
 		const QString path = backups.at(i).absoluteFilePath();
-		logUpdate(i18n("Removing the old backup at %1", path));
+		logUpdate(tr("Removing the old backup at %1").arg(path));
 		if (!QDir(path).removeRecursively())
-			logUpdate(i18n("Could not fully remove %1", path));
+			logUpdate(tr("Could not fully remove %1").arg(path));
 	}
 }
 
@@ -2186,7 +2250,7 @@ void MeshUpdaterApp::fail(const QString& reason)
 		return;
 	}
 
-	showFatalError(i18n("Update Failed"), reason);
+	showFatalError(tr("Update Failed"), reason);
 }
 
 void MeshUpdaterApp::abortWith(const QString& reason)

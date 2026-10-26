@@ -125,7 +125,11 @@ namespace
 /// MESHMC_QRC_FILES in launcher/CMakeLists.txt (minus the ones that are not
 /// icon themes: backgrounds, documents, shaders).
 const QStringList kBundledThemes = {
-	QStringLiteral("meshmc"),   QStringLiteral("breeze_dark"),
+	QStringLiteral("multimc"),      QStringLiteral("pe_dark"),
+	QStringLiteral("pe_light"),     QStringLiteral("pe_colored"),
+	QStringLiteral("pe_blue"),      QStringLiteral("OSX"),
+	QStringLiteral("iOS"),          QStringLiteral("flat"),
+	QStringLiteral("flat_white"),   QStringLiteral("breeze_dark"),
 	QStringLiteral("breeze_light"),
 };
 
@@ -222,10 +226,10 @@ const QStringList kOptionalUiIconNames = {
  * Kept identical to the list it passes to IconList, because the names found
  * here are exactly the names that end up going through the theme lookup. */
 const QStringList kInstanceIconDirs = {
-	QStringLiteral(":/icons/meshmc/32x32/instances/"),
-	QStringLiteral(":/icons/meshmc/50x50/instances/"),
-	QStringLiteral(":/icons/meshmc/128x128/instances/"),
-	QStringLiteral(":/icons/meshmc/scalable/instances/"),
+	QStringLiteral(":/icons/multimc/32x32/instances/"),
+	QStringLiteral(":/icons/multimc/50x50/instances/"),
+	QStringLiteral(":/icons/multimc/128x128/instances/"),
+	QStringLiteral(":/icons/multimc/scalable/instances/"),
 };
 
 /// Resolves like the launcher does, and reports what was actually obtained.
@@ -478,7 +482,7 @@ class IconThemeTest : public QObject
 	void instanceIconsWereDiscovered()
 	{
 		QVERIFY2(!m_instanceIconNames.isEmpty(),
-				 "no built-in instance icons found under :/icons/meshmc");
+				 "no built-in instance icons found under :/icons/multimc");
 		QVERIFY2(m_instanceIconNames.contains(QStringLiteral("grass")),
 				 "the default instance icon 'grass' was not among them");
 	}
@@ -530,7 +534,7 @@ class IconThemeTest : public QObject
 		/* Asked for through a theme that really is missing two of the
 		 * optional names, so this exercises a genuine miss rather than a
 		 * synthetic one. */
-		QIcon::setThemeName(QStringLiteral("meshmc"));
+		QIcon::setThemeName(QStringLiteral("multimc"));
 
 		for (const QString& name : {QStringLiteral("externaltools"),
 									QStringLiteral("notes"),
@@ -550,7 +554,7 @@ class IconThemeTest : public QObject
 									QStringLiteral("noaccount")}) {
 			QVERIFY2(resolve(name).drawable,
 					 qPrintable(name + ": the icon a fallback lands on is "
-									   "missing from the meshmc theme"));
+									   "missing from the multimc theme"));
 		}
 	}
 
@@ -621,7 +625,7 @@ class IconThemeTest : public QObject
 	/// icon names never take that path.
 	void dashedNamesFallBackToTheirPrefix()
 	{
-		QIcon::setThemeName(QStringLiteral("meshmc"));
+		QIcon::setThemeName(QStringLiteral("multimc"));
 
 		const Resolution got = resolve(QStringLiteral("launch-no-such-variant"));
 		QVERIFY2(got.drawable,
@@ -896,7 +900,7 @@ class IconThemeTest : public QObject
 		QString borrowedName;
 
 		for (const QString& theme : kBundledThemes) {
-			if (theme == QStringLiteral("meshmc")) {
+			if (theme == QStringLiteral("multimc")) {
 				continue;
 			}
 			for (const QString& name : kUiIconNames) {
@@ -1010,9 +1014,17 @@ int main(int argc, char* argv[])
 	 * for the same reason; every icon theme listed there is repeated here,
 	 * because leaving one out would show up as that theme having no icons at
 	 * all rather than as a link error. */
-	Q_INIT_RESOURCE(meshmc);
+	Q_INIT_RESOURCE(multimc);
+	Q_INIT_RESOURCE(pe_dark);
+	Q_INIT_RESOURCE(pe_light);
+	Q_INIT_RESOURCE(pe_blue);
+	Q_INIT_RESOURCE(pe_colored);
 	Q_INIT_RESOURCE(breeze_dark);
 	Q_INIT_RESOURCE(breeze_light);
+	Q_INIT_RESOURCE(OSX);
+	Q_INIT_RESOURCE(iOS);
+	Q_INIT_RESOURCE(flat);
+	Q_INIT_RESOURCE(flat_white);
 
 	IconThemeTest testCase;
 	return QTest::qExec(&testCase, argc, argv);

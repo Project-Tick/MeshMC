@@ -26,7 +26,6 @@
 #include <Application.h>
 #include "tasks/Task.h"
 #include <modplatform/flame/FlamePackIndex.h>
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -49,7 +48,7 @@ class FlamePage : public QWidget, public BasePage
 	virtual ~FlamePage();
 	virtual QString displayName() const override
 	{
-		return i18n("CurseForge");
+		return tr("CurseForge");
 	}
 	virtual QIcon icon() const override
 	{

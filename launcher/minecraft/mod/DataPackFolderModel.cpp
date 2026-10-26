@@ -22,7 +22,6 @@
 #include <QDebug>
 
 #include "PackLayout.h"
-#include <KLocalizedString>
 
 DataPackFolderModel::DataPackFolderModel(const QString& dir)
 	: ModFolderModel(dir)
@@ -36,13 +35,13 @@ QVariant DataPackFolderModel::headerData(int section,
 	if (role == Qt::ToolTipRole) {
 		switch (section) {
 			case ActiveColumn:
-				return i18n("Is the data pack enabled?");
+				return tr("Is the data pack enabled?");
 			case NameColumn:
-				return i18n("The name of the data pack.");
+				return tr("The name of the data pack.");
 			case VersionColumn:
-				return i18n("The version of the data pack.");
+				return tr("The version of the data pack.");
 			case DateColumn:
-				return i18n("The date and time this data pack was last "
+				return tr("The date and time this data pack was last "
 						  "changed (or added).");
 			default:
 				return QVariant();

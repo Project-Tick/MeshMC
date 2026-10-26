@@ -29,7 +29,6 @@
 #include <QFileInfo>
 #include <QCryptographicHash>
 #include <QSet>
-#include <KLocalizedString>
 
 ContentDownloadTask::ContentDownloadTask(
 	const QList<ModPlatform::DownloadItem>& items, const QString& targetDir,
@@ -76,7 +75,7 @@ void ContentDownloadTask::executeTask()
 		dir.mkpath(".");
 	}
 
-	setStatus(i18n("Downloading %1 file(s)...", m_items.size()));
+	setStatus(tr("Downloading %1 file(s)...").arg(m_items.size()));
 
 	m_netJob = new NetJob("ContentDownload", APPLICATION->network());
 

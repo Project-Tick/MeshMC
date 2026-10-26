@@ -96,7 +96,6 @@ else()
 endif()
 
 include(ECMQtDeclareLoggingCategory)
-include(FeatureSummary)
 
 option(ENABLE_LTO "Enable Link Time Optimization" off)
 option(MeshMC_DISABLE_JAVA_DOWNLOADER "Disable the built-in Java downloader feature" OFF)
@@ -168,21 +167,7 @@ set(QT_VERSION_MAJOR "${MeshMC_QT_VERSION_MAJOR}")
 set(MeshMC_BUNDLE_OPENSSL_LIBS "" CACHE STRING
     "Semicolon-separated list of OpenSSL runtime libraries to ship inside the package")
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    set(QT_MIN_VERSION "6.4.0")
-    set(KF_MIN_VERSION "6.23.0")
-    find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS OpenGLWidgets)
-elseif(QT_VERSION_MAJOR EQUAL 5)
-    # 5.15 is the final Qt 5 LTS and the oldest release we support: it provides
-    # QtNetworkAuth, versionless CMake commands and the string/container APIs
-    # the codebase already relies on.
-    set(QT_MIN_VERSION "5.15.0")
-    set(KF_MIN_VERSION "5.116.0")
-else()
-    message(FATAL_ERROR "This version is not supported!")
-endif()
-
-find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS 
+set(MeshMC_QT_COMPONENTS
     Core
     Widgets
     Concurrent
@@ -193,12 +178,29 @@ find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
     OpenGL
 )
 
-find_package(KF${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS 
-    I18n
-    GuiAddons
-    CoreAddons
-    XmlGui
-)
+if(QT_VERSION_MAJOR EQUAL 6)
+    # Qt 6 split QOpenGLWidget out of QtWidgets into its own module.
+    list(APPEND MeshMC_QT_COMPONENTS OpenGLWidgets)
+    set(MeshMC_QT_MINIMUM_VERSION "6.4.0")
+else()
+    # 5.15 is the final Qt 5 LTS and the oldest release we support: it provides
+    # QtNetworkAuth, versionless CMake commands and the string/container APIs
+    # the codebase already relies on.
+    set(MeshMC_QT_MINIMUM_VERSION "5.15.0")
+endif()
+
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${MeshMC_QT_COMPONENTS})
+
+if(DEFINED Qt${QT_VERSION_MAJOR}Core_VERSION)
+    set(_projt_qt_version "${Qt${QT_VERSION_MAJOR}Core_VERSION}")
+elseif(DEFINED Qt${QT_VERSION_MAJOR}_VERSION)
+    set(_projt_qt_version "${Qt${QT_VERSION_MAJOR}_VERSION}")
+endif()
+if(DEFINED _projt_qt_version AND _projt_qt_version VERSION_LESS "${MeshMC_QT_MINIMUM_VERSION}")
+    message(FATAL_ERROR "Qt ${MeshMC_QT_MINIMUM_VERSION} or newer is required. Detected: ${_projt_qt_version}")
+endif()
+message(STATUS "Building against Qt ${_projt_qt_version} (major version ${QT_VERSION_MAJOR})")
+unset(_projt_qt_version)
 
 if(UNIX)
     find_package(PkgConfig)
@@ -224,6 +226,14 @@ set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RelWithDebInfo Release Debug "")
 set(CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL MinSizeRel Release Debug "")
 
 find_package(cmark REQUIRED)
+
+find_package(tomlplusplus 3.2.0)
+if(NOT tomlplusplus_FOUND)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET GLOBAL
+                      tomlplusplus>=3.2.0)
+    add_library(tomlplusplus::tomlplusplus ALIAS PkgConfig::tomlplusplus)
+endif()
 
 find_package(ZLIB REQUIRED)
 find_package(LibArchive)
@@ -574,6 +584,16 @@ endif()
 include(ExternalProject)
 set_directory_properties(PROPERTIES EP_BASE External)
 
+# Everything under libraries/ is built as part of this build tree, statically,
+# unless the library hardcodes SHARED (rainbow) or opts out itself
+# (nbt++, via NBT_BUILD_SHARED). This matches what the old pre-built
+# dependency prefix shipped, so linkage does not change — only where the
+# objects come from.
+#
+# Cache entry rather than a plain variable: subprojects under libraries/ read
+# this through option(), and a cache entry is the one form that wins there
+# whichever CMP0077 mode their cmake_minimum_required happens to select.
+
 ############################### internal libraries ############################
 option(NBT_BUILD_SHARED "Build NBT shared library" ON)
 option(NBT_USE_ZLIB "Build NBT library with zlib support" OFF)
@@ -584,12 +604,24 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/libnbtplusplus libnbtplusplus)
 add_subdirectory(libraries/launcher) # java based launcher part for Minecraft
 add_subdirectory(libraries/javacheck) # java compatibility checker
 add_subdirectory(libraries/xz-embedded) # xz compression
+add_subdirectory(libraries/rainbow) # Qt extension for colors
 add_subdirectory(libraries/localpeer) # fork of a library from Qt solutions
 add_subdirectory(libraries/classparser) # Java class file parser
 add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too much
-add_subdirectory(libraries/tomlplusplus) # A Toml parser library
 
-set_target_properties(nbt++ PROPERTIES
+# Two libraries under libraries/ build as shared objects (rainbow hardcodes
+# SHARED, nbt++ opts in via NBT_BUILD_SHARED), so they have to be deployed
+# where the launcher can load them: alongside the binary on Windows,
+# LIBRARY_DEST_DIR elsewhere (covered by the RPATH, $ORIGIN/../lib).
+#
+# Installed explicitly rather than left to install(RUNTIME_DEPENDENCY_SET),
+# which scans the built binary and searches a directory list — it did not pick
+# these up. Their own subprojects do install them, but to
+# ${CMAKE_INSTALL_BINDIR} (install/bin/) while meshmc.exe sits at the install
+# root, so the launcher died on startup with "nbt++.dll not found". These are
+# our own targets and we know exactly where they belong; no point rediscovering
+# it by scanning a binary.
+set_target_properties(nbt++ rainbow PROPERTIES
     VERSION   "${MeshMC_RELEASE_VERSION_NAME}"
     SOVERSION "${MeshMC_VERSION_MAJOR}")
 
@@ -597,7 +629,7 @@ if(NOT DEFINED PRIVATE_LIBRARY_DEST_DIR)
     set(PRIVATE_LIBRARY_DEST_DIR "${LIBRARY_DEST_DIR}")
 endif()
 
-install(TARGETS nbt++
+install(TARGETS nbt++ rainbow
     RUNTIME DESTINATION "${BINARY_DEST_DIR}"
     LIBRARY DESTINATION "${PRIVATE_LIBRARY_DEST_DIR}")
 
@@ -629,7 +661,3 @@ endif()
 if(APPLE AND QT_VERSION_MAJOR EQUAL 5)
     include("${CMAKE_SOURCE_DIR}/cmake/FixQt5MacBundle.cmake")
 endif()
-
-feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
-
-ki18n_install(po)

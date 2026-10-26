@@ -24,7 +24,6 @@
 // FIXME: remove this
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
-#include <KLocalizedString>
 
 InstanceCreationTask::InstanceCreationTask(BaseVersionPtr version)
 {
@@ -33,7 +32,7 @@ InstanceCreationTask::InstanceCreationTask(BaseVersionPtr version)
 
 void InstanceCreationTask::executeTask()
 {
-	setStatus(i18n("Creating instance from version %1", m_version->name()));
+	setStatus(tr("Creating instance from version %1").arg(m_version->name()));
 
 	/* Outlives the scope below on purpose: this function ends by handing
 	 * the instance to downloadFiles(), which runs asynchronously against

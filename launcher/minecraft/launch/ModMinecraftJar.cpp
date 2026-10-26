@@ -25,7 +25,6 @@
 #include "FileSystem.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
-#include <KLocalizedString>
 
 void ModMinecraftJar::executeTask()
 {
@@ -38,14 +37,14 @@ void ModMinecraftJar::executeTask()
 	}
 	// nuke obsolete stripped jar(s) if needed
 	if (!FS::ensureFolderPathExists(m_inst->binRoot())) {
-		emitFailed(i18n("Couldn't create the bin folder for Minecraft.jar"));
+		emitFailed(tr("Couldn't create the bin folder for Minecraft.jar"));
 		return;
 	}
 
 	auto finalJarPath =
 		QDir(m_inst->binRoot()).absoluteFilePath("minecraft.jar");
 	if (!removeJar()) {
-		emitFailed(i18n("Couldn't remove stale jar file: %1", finalJarPath));
+		emitFailed(tr("Couldn't remove stale jar file: %1").arg(finalJarPath));
 		return;
 	}
 
@@ -61,13 +60,13 @@ void ModMinecraftJar::executeTask()
 										temp3, m_inst->getLocalLibraryPath());
 		}
 		if (jars.isEmpty()) {
-			emitFailed(i18n("Couldn't determine the Minecraft jar to add the jar "
+			emitFailed(tr("Couldn't determine the Minecraft jar to add the jar "
 						  "mods to."));
 			return;
 		}
 		auto sourceJarPath = jars[0];
 		if (!MMCZip::createModdedJar(sourceJarPath, finalJarPath, jarMods)) {
-			emitFailed(i18n("Failed to create the custom Minecraft jar file."));
+			emitFailed(tr("Failed to create the custom Minecraft jar file."));
 			return;
 		}
 	}

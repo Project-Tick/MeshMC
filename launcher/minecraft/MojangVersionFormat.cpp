@@ -25,7 +25,6 @@
 using namespace Json;
 #include "ParseUtils.h"
 #include <BuildConfig.h>
-#include <KLocalizedString>
 
 static const int CURRENT_MINIMUM_MESHMC_VERSION = 18;
 
@@ -168,7 +167,8 @@ void MojangVersionFormat::readVersionProperties(const QJsonObject& in,
 		} else if (!toCompare.isEmpty()) {
 			out->addProblem(
 				ProblemSeverity::Error,
-				i18n("processArguments is set to unknown value '%1'", processArguments));
+				QObject::tr("processArguments is set to unknown value '%1'")
+					.arg(processArguments));
 		}
 	}
 	Bits::readString(in, "type", out->type);
@@ -191,9 +191,11 @@ void MojangVersionFormat::readVersionProperties(const QJsonObject& in,
 		if (out->minimumMeshMCVersion > CURRENT_MINIMUM_MESHMC_VERSION) {
 			out->addProblem(
 				ProblemSeverity::Warning,
-				i18n("The 'minimumMeshMCVersion' value of this version "
+				QObject::tr("The 'minimumMeshMCVersion' value of this version "
 							"(%1) is higher than supported by MeshMC (%2). It "
-							"might not work properly!", out->minimumMeshMCVersion, CURRENT_MINIMUM_MESHMC_VERSION));
+							"might not work properly!")
+					.arg(out->minimumMeshMCVersion)
+					.arg(CURRENT_MINIMUM_MESHMC_VERSION));
 		}
 	}
 	if (in.contains("downloads")) {
@@ -306,7 +308,8 @@ LibraryPtr MojangVersionFormat::libraryFromJson(ProblemContainer& problems,
 	if (!out->m_name.valid()) {
 		problems.addProblem(
 			ProblemSeverity::Error,
-			i18n("Library %1 name is broken and cannot be processed.", rawName));
+			QObject::tr("Library %1 name is broken and cannot be processed.")
+				.arg(rawName));
 	}
 
 	Bits::readString(libObj, "url", out->m_repositoryURL);

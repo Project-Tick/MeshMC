@@ -33,7 +33,6 @@
 #include "ModFolderLoadTask.h"
 #include <algorithm>
 #include "LocalModParseTask.h"
-#include <KLocalizedString>
 
 namespace
 {
@@ -442,9 +441,9 @@ QVariant ModFolderModel::data(const QModelIndex& index, int role) const
 				case VersionColumn: {
 					switch (mods[row].type()) {
 						case Mod::MOD_FOLDER:
-							return i18n("Folder");
+							return tr("Folder");
 						case Mod::MOD_SINGLEFILE:
-							return i18n("File");
+							return tr("File");
 						default:
 							break;
 					}
@@ -543,11 +542,11 @@ QVariant ModFolderModel::headerData(int section, Qt::Orientation orientation,
 				case ActiveColumn:
 					return QString();
 				case NameColumn:
-					return i18n("Name");
+					return tr("Name");
 				case VersionColumn:
-					return i18n("Version");
+					return tr("Version");
 				case DateColumn:
-					return i18n("Last changed");
+					return tr("Last changed");
 				default:
 					return QVariant();
 			}
@@ -555,13 +554,13 @@ QVariant ModFolderModel::headerData(int section, Qt::Orientation orientation,
 		case Qt::ToolTipRole:
 			switch (section) {
 				case ActiveColumn:
-					return i18n("Is the mod enabled?");
+					return tr("Is the mod enabled?");
 				case NameColumn:
-					return i18n("The name of the mod.");
+					return tr("The name of the mod.");
 				case VersionColumn:
-					return i18n("The version of the mod.");
+					return tr("The version of the mod.");
 				case DateColumn:
-					return i18n("The date and time this mod was last changed (or "
+					return tr("The date and time this mod was last changed (or "
 							  "added).");
 				default:
 					return QVariant();

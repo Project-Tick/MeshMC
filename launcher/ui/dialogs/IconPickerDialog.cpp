@@ -32,7 +32,6 @@
 #include "icons/IconList.h"
 #include "icons/IconUtils.h"
 #include <DesktopServices.h>
-#include <KLocalizedString>
 
 IconPickerDialog::IconPickerDialog(QWidget* parent)
 	: QDialog(parent), ui(new Ui::IconPickerDialog)
@@ -70,8 +69,8 @@ IconPickerDialog::IconPickerDialog(QWidget* parent)
 	// NOTE: ResetRole forces the button to be on the left, while the OK/Cancel
 	// ones are on the right. We win.
 	auto buttonAdd =
-		ui->buttonBox->addButton(i18n("Add Icon"), QDialogButtonBox::ResetRole);
-	auto buttonRemove = ui->buttonBox->addButton(i18n("Remove Icon"),
+		ui->buttonBox->addButton(tr("Add Icon"), QDialogButtonBox::ResetRole);
+	auto buttonRemove = ui->buttonBox->addButton(tr("Remove Icon"),
 												 QDialogButtonBox::ResetRole);
 
 	connect(buttonAdd, &QPushButton::clicked, this,
@@ -86,7 +85,7 @@ IconPickerDialog::IconPickerDialog(QWidget* parent)
 			&QItemSelectionModel::selectionChanged, this,
 			&IconPickerDialog::selectionChanged);
 
-	auto buttonFolder = ui->buttonBox->addButton(i18n("Open Folder"),
+	auto buttonFolder = ui->buttonBox->addButton(tr("Open Folder"),
 												 QDialogButtonBox::ResetRole);
 	connect(buttonFolder, &QPushButton::clicked, this,
 			&IconPickerDialog::openFolder);
@@ -116,11 +115,11 @@ bool IconPickerDialog::eventFilter(QObject* obj, QEvent* evt)
 void IconPickerDialog::addNewIcon()
 {
 	//: The title of the select icons open file dialog
-	QString selectIcons = i18n("Select Icons");
+	QString selectIcons = tr("Select Icons");
 	//: The type of icon files
 	auto filter = IconUtils::getIconFilter();
 	QStringList fileNames = QFileDialog::getOpenFileNames(
-		this, selectIcons, QString(), i18n("Icons %1", filter));
+		this, selectIcons, QString(), tr("Icons %1").arg(filter));
 	APPLICATION->icons()->installIcons(fileNames);
 }
 

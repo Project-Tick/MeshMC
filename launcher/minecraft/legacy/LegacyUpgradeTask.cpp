@@ -28,7 +28,6 @@
 #include "minecraft/PackProfile.h"
 #include "LegacyModList.h"
 #include "classparser.h"
-#include <KLocalizedString>
 
 LegacyUpgradeTask::LegacyUpgradeTask(InstancePtr origInstance)
 {
@@ -37,7 +36,7 @@ LegacyUpgradeTask::LegacyUpgradeTask(InstancePtr origInstance)
 
 void LegacyUpgradeTask::executeTask()
 {
-	setStatus(i18n("Copying instance %1", m_origInstance->name()));
+	setStatus(tr("Copying instance %1").arg(m_origInstance->name()));
 
 	FS::copy folderCopy(m_origInstance->instanceRoot(), m_stagingPath);
 	folderCopy.followSymlinks(true);
@@ -71,7 +70,7 @@ void LegacyUpgradeTask::copyFinished()
 {
 	auto successful = m_copyFuture.result();
 	if (!successful) {
-		emitFailed(i18n("Instance folder copy failed."));
+		emitFailed(tr("Instance folder copy failed."));
 		return;
 	}
 	auto legacyInst = std::dynamic_pointer_cast<LegacyInstance>(m_origInstance);
@@ -97,7 +96,7 @@ void LegacyUpgradeTask::copyFinished()
 				preferredVersionNumber = classparser::GetMinecraftJarVersion(
 					legacyInst->runnableJar());
 				if (preferredVersionNumber.isNull()) {
-					emitFailed(i18n("Could not decide Minecraft version."));
+					emitFailed(tr("Could not decide Minecraft version."));
 					return;
 				}
 			}
@@ -145,6 +144,6 @@ void LegacyUpgradeTask::copyFinished()
 
 void LegacyUpgradeTask::copyAborted()
 {
-	emitFailed(i18n("Instance folder copy has been aborted."));
+	emitFailed(tr("Instance folder copy has been aborted."));
 	return;
 }

@@ -23,7 +23,6 @@
 #include <QDomDocument>
 #include "BuildConfig.h"
 #include "Application.h"
-#include <KLocalizedString>
 
 namespace LegacyFTB
 {
@@ -105,16 +104,17 @@ namespace LegacyFTB
 
 		if (!parseAndAddPacks(publicModpacksXmlFileData, PackType::Public,
 							  publicPacks)) {
-			failedLists.append(i18n("Public Packs"));
+			failedLists.append(tr("Public Packs"));
 		}
 
 		if (!parseAndAddPacks(thirdPartyModpacksXmlFileData,
 							  PackType::ThirdParty, thirdPartyPacks)) {
-			failedLists.append(i18n("Third Party Packs"));
+			failedLists.append(tr("Third Party Packs"));
 		}
 
 		if (failedLists.size() > 0) {
-			emit failed(i18n("Failed to download some pack lists: %1", failedLists.join("\n- ")));
+			emit failed(tr("Failed to download some pack lists: %1")
+							.arg(failedLists.join("\n- ")));
 		} else {
 			emit finished(publicPacks, thirdPartyPacks);
 		}

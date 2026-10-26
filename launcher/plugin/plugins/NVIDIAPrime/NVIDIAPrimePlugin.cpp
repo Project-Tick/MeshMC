@@ -17,7 +17,6 @@
  */
 
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
-#include <KLocalizedString>
 
 MMCO_DEFINE_MODULE("NVIDIA Prime Module", "1.0.0", "Project Tick",
 				   "Discrete GPU offload via NVIDIA Prime Render Offload",
@@ -76,16 +75,16 @@ static void injectCheckboxIntoMinecraftPage()
 		return;
 
 	/* Build the Performance group box */
-	auto* groupBox = new QGroupBox(i18n("Performance"));
+	auto* groupBox = new QGroupBox(QObject::tr("Performance"));
 	groupBox->setObjectName(QStringLiteral("nvidiaPrimeGroupBox"));
 	auto* groupLayout = new QVBoxLayout(groupBox);
 
 	g_primeCheckbox = new QCheckBox(
-		i18n("Use discrete GPU (NVIDIA Prime Render Offload)"),
+		QObject::tr("Use discrete GPU (NVIDIA Prime Render Offload)"),
 		groupBox);
 	g_primeCheckbox->setObjectName(QStringLiteral("useNVIDIAPrimeCheck"));
 	g_primeCheckbox->setToolTip(
-		i18n("Forces Minecraft to use the NVIDIA discrete GPU on "
+		QObject::tr("Forces Minecraft to use the NVIDIA discrete GPU on "
 					"Optimus laptops.\nUses prime-run on Flatpak, or sets "
 					"environment variables directly otherwise."));
 	groupLayout->addWidget(g_primeCheckbox);

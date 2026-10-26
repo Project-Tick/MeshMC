@@ -32,7 +32,6 @@
 #include <RWStorage.h>
 
 #include <BuildConfig.h>
-#include <KLocalizedString>
 
 namespace LegacyFTB
 {
@@ -40,8 +39,8 @@ namespace LegacyFTB
 	FilterModel::FilterModel(QObject* parent) : QSortFilterProxyModel(parent)
 	{
 		currentSorting = Sorting::ByGameVersion;
-		sortings.insert(i18n("Sort by name"), Sorting::ByName);
-		sortings.insert(i18n("Sort by game version"), Sorting::ByGameVersion);
+		sortings.insert(tr("Sort by name"), Sorting::ByName);
+		sortings.insert(tr("Sort by game version"), Sorting::ByGameVersion);
 	}
 
 	bool FilterModel::lessThan(const QModelIndex& left,
@@ -103,11 +102,11 @@ namespace LegacyFTB
 	{
 		switch (type) {
 			case PackType::Public:
-				return i18n("Public Modpack");
+				return tr("Public Modpack");
 			case PackType::ThirdParty:
-				return i18n("Third Party Modpack");
+				return tr("Third Party Modpack");
 			case PackType::Private:
-				return i18n("Private Modpack");
+				return tr("Private Modpack");
 		}
 		qWarning() << "Unknown FTB modpack type:" << int(type);
 		return QString();

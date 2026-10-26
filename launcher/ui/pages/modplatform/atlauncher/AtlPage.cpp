@@ -29,7 +29,6 @@
 #include "ui/dialogs/VersionSelectDialog.h"
 
 #include <BuildConfig.h>
-#include <KLocalizedString>
 
 AtlPage::AtlPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::AtlPage), dialog(dialog)
@@ -172,12 +171,13 @@ QString AtlPage::chooseVersion(Meta::VersionListPtr vlist,
 		vselect.setExactFilter(BaseVersionList::ParentVersionRole,
 							   minecraftVersion);
 		vselect.setEmptyString(
-			i18n("No versions are currently available for Minecraft %1", minecraftVersion));
+			tr("No versions are currently available for Minecraft %1")
+				.arg(minecraftVersion));
 	} else {
-		vselect.setEmptyString(i18n("No versions are currently available"));
+		vselect.setEmptyString(tr("No versions are currently available"));
 	}
 	vselect.setEmptyErrorString(
-		i18n("Couldn't load or download the version lists!"));
+		tr("Couldn't load or download the version lists!"));
 
 	// select recommended build
 	for (int i = 0; i < vlist->versions().size(); i++) {

@@ -20,7 +20,6 @@
 #include "BrightTheme.h"
 
 #include <QObject>
-#include <KLocalizedString>
 
 QString BrightTheme::id()
 {
@@ -29,12 +28,12 @@ QString BrightTheme::id()
 
 QString BrightTheme::name()
 {
-	return i18n("Bright");
+	return QObject::tr("Bright");
 }
 
 QString BrightTheme::tooltip()
 {
-	return i18n("A bright Fusion-based theme with blue accents");
+	return QObject::tr("A bright Fusion-based theme with blue accents");
 }
 
 bool BrightTheme::hasColorScheme()

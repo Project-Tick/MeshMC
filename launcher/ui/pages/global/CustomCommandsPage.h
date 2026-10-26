@@ -26,7 +26,6 @@
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 #include "ui/widgets/CustomCommands.h"
-#include <KLocalizedString>
 
 class CustomCommandsPage : public QWidget, public BasePage
 {
@@ -38,7 +37,7 @@ class CustomCommandsPage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return i18n("Custom Commands");
+		return tr("Custom Commands");
 	}
 	QIcon icon() const override
 	{

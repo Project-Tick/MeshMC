@@ -21,7 +21,6 @@
 
 #include "BaseInstance.h"
 #include "launch/LaunchTask.h"
-#include <KLocalizedString>
 
 class NullInstance : public BaseInstance
 {
@@ -37,7 +36,7 @@ class NullInstance : public BaseInstance
 	void saveNow() override {}
 	QString getStatusbarDescription() override
 	{
-		return i18n("Unknown instance type");
+		return tr("Unknown instance type");
 	};
 	QSet<QString> traits() const override
 	{

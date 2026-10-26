@@ -32,7 +32,6 @@
 
 #include "BuildConfig.h"
 #include "ui/dialogs/UpdateAvailableDialog.h"
-#include <KLocalizedString>
 
 namespace
 {
@@ -221,9 +220,9 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 	// The check blocks, so the progress dialog exists to prove the launcher
 	// has not simply frozen. An automatic check gets none: nobody asked, and
 	// a window stealing focus during startup is worse than no feedback.
-	QProgressDialog progress(i18n("Checking for updates..."), QString(), 0, 0,
+	QProgressDialog progress(tr("Checking for updates..."), QString(), 0, 0,
 							 m_parent);
-	progress.setWindowTitle(i18n("Checking for updates..."));
+	progress.setWindowTitle(tr("Checking for updates..."));
 	progress.setMinimumDuration(0);
 	progress.setCancelButton(nullptr);
 	progress.adjustSize();
@@ -255,8 +254,9 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 				   << proc.errorString();
 		progress.cancel();
 		showMessage(m_parent, QMessageBox::Information,
-					i18n("Update Check Failed"),
-					i18n("Failed to start after 5 seconds\nReason: %1.", proc.errorString()));
+					tr("Update Check Failed"),
+					tr("Failed to start after 5 seconds\nReason: %1.")
+						.arg(proc.errorString()));
 		noteCheckCompleted();
 		return;
 	}
@@ -271,8 +271,9 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 				   << proc.errorString();
 		progress.cancel();
 		showMessage(m_parent, QMessageBox::Information,
-					i18n("Update Check Failed"),
-					i18n("Updater failed to close 60 seconds\nReason: %1.", proc.errorString()),
+					tr("Update Check Failed"),
+					tr("Updater failed to close 60 seconds\nReason: %1.")
+						.arg(proc.errorString()),
 					QString::fromUtf8(output));
 		noteCheckCompleted();
 		return;
@@ -290,8 +291,8 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 			qDebug() << "Updater: no update available.";
 			if (triggeredByUser) {
 				showMessage(m_parent, QMessageBox::Information,
-							i18n("No Update Available"),
-							i18n("You are running the latest version."));
+							tr("No Update Available"),
+							tr("You are running the latest version."));
 			}
 			break;
 
@@ -299,8 +300,8 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 			qWarning() << "Updater: the check reported an error:"
 					   << qPrintable(QString::fromUtf8(stdError));
 			showMessage(m_parent, QMessageBox::Warning,
-						i18n("Update Check Error"),
-						i18n("There was an error running the update check."),
+						tr("Update Check Error"),
+						tr("There was an error running the update check."),
 						QString::fromUtf8(stdError));
 			break;
 
@@ -326,9 +327,11 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 				qWarning() << "Updater: the check reported an update but no "
 							  "version tag.";
 				showMessage(m_parent, QMessageBox::Warning,
-							i18n("Update Check Error"),
-							i18n("There was an error running the update check."),
-							i18n("StdOut: %1\nStdErr: %2", QString::fromUtf8(stdOutput), QString::fromUtf8(stdError)));
+							tr("Update Check Error"),
+							tr("There was an error running the update check."),
+							tr("StdOut: %1\nStdErr: %2")
+								.arg(QString::fromUtf8(stdOutput),
+									 QString::fromUtf8(stdError)));
 				break;
 			}
 
@@ -341,10 +344,13 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 			qWarning() << "Updater: the check exited with an unknown code"
 					   << exitCode;
 			showMessage(
-				m_parent, QMessageBox::Information, i18n("Unknown Update Error"),
-				i18n("The updater exited with an unknown condition.\nExit Code: "
-				   "%1", QString::number(exitCode)),
-				i18n("StdOut: %1\nStdErr: %2", QString::fromUtf8(stdOutput), QString::fromUtf8(stdError)));
+				m_parent, QMessageBox::Information, tr("Unknown Update Error"),
+				tr("The updater exited with an unknown condition.\nExit Code: "
+				   "%1")
+					.arg(QString::number(exitCode)),
+				tr("StdOut: %1\nStdErr: %2")
+					.arg(QString::fromUtf8(stdOutput),
+						 QString::fromUtf8(stdError)));
 	}
 
 	noteCheckCompleted();
@@ -431,8 +437,9 @@ void MeshMCExternalUpdater::performUpdate(const QString& versionTag)
 	if (!proc.startDetached()) {
 		qCritical() << "Updater: failed to start the updater:" << proc.error()
 					<< proc.errorString();
-		showMessage(m_parent, QMessageBox::Warning, i18n("Update Failed"),
-					i18n("Could not start the updater.\nReason: %1.", proc.errorString()));
+		showMessage(m_parent, QMessageBox::Warning, tr("Update Failed"),
+					tr("Could not start the updater.\nReason: %1.")
+						.arg(proc.errorString()));
 		return;
 	}
 

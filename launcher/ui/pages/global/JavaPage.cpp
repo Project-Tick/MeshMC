@@ -42,7 +42,6 @@
 #include <FileSystem.h>
 #include "Application.h"
 #include "Sys.h"
-#include <KLocalizedString>
 
 JavaPage::JavaPage(QWidget* parent) : QWidget(parent), ui(new Ui::JavaPage)
 {
@@ -143,7 +142,7 @@ void JavaPage::on_javaDetectBtn_clicked()
 	JavaInstallPtr java;
 
 	VersionSelectDialog vselect(APPLICATION->javalist().get(),
-								i18n("Select a Java version"), this, true);
+								tr("Select a Java version"), this, true);
 	vselect.setResizeOn(2);
 	vselect.exec();
 
@@ -157,7 +156,7 @@ void JavaPage::on_javaDetectBtn_clicked()
 void JavaPage::on_javaBrowseBtn_clicked()
 {
 	QString raw_path =
-		QFileDialog::getOpenFileName(this, i18n("Find Java executable"));
+		QFileDialog::getOpenFileName(this, tr("Find Java executable"));
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (raw_path.isEmpty()) {
@@ -223,8 +222,9 @@ void JavaPage::on_javaRemoveBtn_clicked()
 	javaDir.cdUp();			 // java root
 
 	auto result = QMessageBox::question(
-		this, i18n("Remove Java Installation"),
-		i18n("Are you sure you want to remove this Java installation?\n\n%1", javaDir.absolutePath()),
+		this, tr("Remove Java Installation"),
+		tr("Are you sure you want to remove this Java installation?\n\n%1")
+			.arg(javaDir.absolutePath()),
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (result != QMessageBox::Yes)

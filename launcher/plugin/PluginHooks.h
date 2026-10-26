@@ -95,6 +95,10 @@ enum MMCOHookId : uint32_t {
 	 * Payload: MMCOInstanceSettingsPageEvent*. */
 	MMCO_HOOK_INSTANCE_SETTINGS_PAGE_APPLYING = 0x0607,
 
+	/* News */
+	MMCO_HOOK_NEWS_UPDATED =
+		0x0700, /* payload: nullptr — fires after feeds reload */
+
 	/* Authentication — plugin-driven auth-provider extension points.
 	 *
 	 * These two hooks are the foundation of third-party authentication
@@ -300,6 +304,9 @@ struct MMCOGlobalSettingsPagesEvent {
  */
 struct MMCOUiMainReadyPayload {
 	void* main_window;		 /* Opaque: QMainWindow* (MainWindow*)  */
+	void* news_toolbar;		 /* Opaque: QToolBar*                    */
+	void* more_news_action;	 /* Opaque: QAction*                     */
+	void* news_label_button; /* Opaque: QToolButton*                 */
 };
 
 /*

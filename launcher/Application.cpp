@@ -45,6 +45,7 @@
 #include "ui/themes/ThemeManager.h"
 
 #include "ui/setupwizard/SetupWizard.h"
+#include "ui/setupwizard/LanguageWizardPage.h"
 #include "ui/setupwizard/JavaWizardPage.h"
 
 #include "ui/dialogs/CustomMessageBox.h"
@@ -114,8 +115,6 @@
 #include "Sys.h"
 #include "Logging.h"
 #include "MMCStrings.h"
-
-#include <KLocalizedString>
 
 #if defined Q_OS_WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -510,7 +509,7 @@ void Application::initPlatform()
 	setOrganizationName("MeshMC");
 	setOrganizationDomain("projecttick.org");
 	setApplicationName("MeshMC");
-	setApplicationDisplayName(QString("MeshMC"));
+	setApplicationDisplayName(QString("MeshMC %2").arg(BuildConfig.printableVersionString()));
 	setApplicationVersion(BuildConfig.printableVersionString());
 
 	startTime = QDateTime::currentDateTime();
@@ -931,7 +930,7 @@ void Application::initSettings()
 	m_settings->registerSetting("AutoUpdate", true);
 
 	// Theming
-	m_settings->registerSetting("IconTheme", QString("breeze_dark"));
+	m_settings->registerSetting("IconTheme", QString("pe_colored"));
 	m_settings->registerSetting("ApplicationTheme", QString("system"));
 
 	/* Screen-top menu bar. Only macOS has one; elsewhere the setting is
@@ -1170,7 +1169,7 @@ void Application::initSettings()
 	// Init page provider
 	{
 		m_globalSettingsProvider =
-			std::make_shared<GenericPageProvider>(i18n("Settings"));
+			std::make_shared<GenericPageProvider>(tr("Settings"));
 		m_globalSettingsProvider->addPage<MeshMCPage>();
 		m_globalSettingsProvider->addPage<AppearancePage>();
 		m_globalSettingsProvider->addPage<MinecraftPage>();
@@ -1240,10 +1239,10 @@ void Application::initSubsystems()
 	// Instance icons
 	{
 		auto setting = APPLICATION->settings()->getSetting("IconsDir");
-		QStringList instFolders = {":/icons/meshmc/32x32/instances/",
-								   ":/icons/meshmc/50x50/instances/",
-								   ":/icons/meshmc/128x128/instances/",
-								   ":/icons/meshmc/scalable/instances/"};
+		QStringList instFolders = {":/icons/multimc/32x32/instances/",
+								   ":/icons/multimc/50x50/instances/",
+								   ":/icons/multimc/128x128/instances/",
+								   ":/icons/multimc/scalable/instances/"};
 		m_icons.reset(new IconList(instFolders, setting->get().toString()));
 		connect(setting.get(), &Setting::SettingChanged,
 				[&](const Setting&, QVariant value) {
@@ -1411,10 +1410,18 @@ bool Application::createSetupWizard()
 		}
 		return false;
 	}();
-	bool wizardRequired = javaRequired;
+	bool languageRequired = [&]() {
+		if (settings()->get("Language").toString().isEmpty())
+			return true;
+		return false;
+	}();
+	bool wizardRequired = javaRequired || languageRequired;
 
 	if (wizardRequired) {
 		m_setupWizard = new SetupWizard(nullptr);
+		if (languageRequired) {
+			m_setupWizard->addPage(new LanguageWizardPage(m_setupWizard));
+		}
 		if (javaRequired) {
 			m_setupWizard->addPage(new JavaWizardPage(m_setupWizard));
 		}
@@ -1922,8 +1929,8 @@ bool Application::reportUpdateMarkers()
 		UpdateLockFile::Contents lock;
 		UpdateLockFile::read(lockPath, &lock);
 
-		QMessageBox box(QMessageBox::Warning, i18n("Update In Progress"),
-						i18n("This installation has an update lock file at: %1\n"
+		QMessageBox box(QMessageBox::Warning, tr("Update In Progress"),
+						tr("This installation has an update lock file at: %1\n"
 						   "\n"
 						   "Timestamp: %2\n"
 						   "Updating from version %3 to %4\n"
@@ -1938,7 +1945,12 @@ bool Application::reportUpdateMarkers()
 						   "has the details of the last attempt.\n"
 						   "\n"
 						   "To delete this lock and continue, choose "
-						   "\"Ignore\".", QDir::toNativeSeparators(lockPath), lock.timestamp.toString(Qt::ISODate), lock.from, lock.to, lock.target, lock.dataPath, QDir::toNativeSeparators(updateLog)),
+						   "\"Ignore\".")
+							.arg(QDir::toNativeSeparators(lockPath),
+								 lock.timestamp.toString(Qt::ISODate),
+								 lock.from, lock.to, lock.target,
+								 lock.dataPath,
+								 QDir::toNativeSeparators(updateLog)),
 						QMessageBox::Ignore | QMessageBox::Abort);
 		box.setDefaultButton(QMessageBox::Abort);
 		box.setModal(true);
@@ -1956,14 +1968,15 @@ bool Application::reportUpdateMarkers()
 	const QString failMarker = UpdateLockFile::markerPath(
 		m_dataPath, QLatin1String(UpdateLockFile::kFailMarkerName));
 	if (QFileInfo::exists(failMarker)) {
-		QMessageBox box(QMessageBox::Warning, i18n("Update Failed"),
-						i18n("An update attempt failed.\n"
+		QMessageBox box(QMessageBox::Warning, tr("Update Failed"),
+						tr("An update attempt failed.\n"
 						   "\n"
 						   "Please make sure your installation still works "
 						   "before continuing.\n"
 						   "The updater log at:\n"
 						   "%1\n"
-						   "has the details of the last attempt.", QDir::toNativeSeparators(updateLog)),
+						   "has the details of the last attempt.")
+							.arg(QDir::toNativeSeparators(updateLog)),
 						QMessageBox::Ignore | QMessageBox::Abort);
 		box.setDefaultButton(QMessageBox::Abort);
 		box.setModal(true);
@@ -1984,13 +1997,15 @@ bool Application::reportUpdateMarkers()
 		// Shown without blocking startup: the news is good, and the details
 		// are there for anyone who wants them.
 		auto* box = new QMessageBox(
-			QMessageBox::Information, i18n("Update Succeeded"),
-			i18n("The update succeeded.\n"
+			QMessageBox::Information, tr("Update Succeeded"),
+			tr("The update succeeded.\n"
 			   "\n"
 			   "You are now running %1.\n"
 			   "The updater log at:\n"
 			   "%2\n"
-			   "has the details.", BuildConfig.printableVersionString(), QDir::toNativeSeparators(updateLog)),
+			   "has the details.")
+				.arg(BuildConfig.printableVersionString(),
+					 QDir::toNativeSeparators(updateLog)),
 			QMessageBox::Ok);
 		box->setDefaultButton(QMessageBox::Ok);
 		box->setDetailedText(logContents());

@@ -18,7 +18,6 @@
  */
 
 #include "ResourcePackFolderModel.h"
-#include <KLocalizedString>
 
 ResourcePackFolderModel::ResourcePackFolderModel(const QString& dir)
 	: ModFolderModel(dir)
@@ -32,13 +31,13 @@ QVariant ResourcePackFolderModel::headerData(int section,
 	if (role == Qt::ToolTipRole) {
 		switch (section) {
 			case ActiveColumn:
-				return i18n("Is the resource pack enabled?");
+				return tr("Is the resource pack enabled?");
 			case NameColumn:
-				return i18n("The name of the resource pack.");
+				return tr("The name of the resource pack.");
 			case VersionColumn:
-				return i18n("The version of the resource pack.");
+				return tr("The version of the resource pack.");
 			case DateColumn:
-				return i18n("The date and time this resource pack was last "
+				return tr("The date and time this resource pack was last "
 						  "changed (or added).");
 			default:
 				return QVariant();

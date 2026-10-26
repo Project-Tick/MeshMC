@@ -30,14 +30,13 @@
 #include "Application.h"
 #include "BuildConfig.h"
 #include "ui/GuiUtil.h"
-#include <KLocalizedString>
 
 MeshMCLogsDialog::MeshMCLogsDialog(QWidget* parent)
 	: QDialog(parent), ui(new Ui::MeshMCLogsDialog),
 	  m_liveWatcher(new QFileSystemWatcher(this))
 {
 	ui->setupUi(this);
-	setWindowTitle(i18n("MeshMC Logs"));
+	setWindowTitle(tr("MeshMC Logs"));
 	resize(750, 550);
 
 	connect(m_liveWatcher, &QFileSystemWatcher::fileChanged, this,
@@ -148,16 +147,18 @@ void MeshMCLogsDialog::loadSelectedLog()
 	QString fullPath = logFilePath(m_currentFile);
 	QFile file(fullPath);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
-		QMessageBox::critical(this, i18n("Error"),
-							  i18n("Unable to open %1 for reading: %2", m_currentFile, file.errorString()));
+		QMessageBox::critical(this, tr("Error"),
+							  tr("Unable to open %1 for reading: %2")
+								  .arg(m_currentFile, file.errorString()));
 		setControlsEnabled(false);
 		return;
 	}
 
 	if (file.size() > (1024ll * 1024ll * 12ll)) {
 		ui->textBrowser->setPlainText(
-			i18n("The file (%1) is too big. You may want to open it in a viewer "
-			   "optimized for large files.", m_currentFile));
+			tr("The file (%1) is too big. You may want to open it in a viewer "
+			   "optimized for large files.")
+				.arg(m_currentFile));
 		return;
 	}
 
@@ -203,15 +204,16 @@ void MeshMCLogsDialog::on_btnDelete_clicked()
 		return;
 	}
 	if (QMessageBox::question(
-			this, i18n("Delete"),
-			i18n("Do you really want to delete %1?", m_currentFile),
+			this, tr("Delete"),
+			tr("Do you really want to delete %1?").arg(m_currentFile),
 			QMessageBox::Yes, QMessageBox::No) == QMessageBox::No) {
 		return;
 	}
 	QFile file(logFilePath(m_currentFile));
 	if (!file.remove()) {
-		QMessageBox::critical(this, i18n("Error"),
-							  i18n("Unable to delete %1: %2", m_currentFile, file.errorString()));
+		QMessageBox::critical(this, tr("Error"),
+							  tr("Unable to delete %1: %2")
+								  .arg(m_currentFile, file.errorString()));
 	}
 	m_currentFile.clear();
 	populateLogList();
@@ -233,8 +235,9 @@ void MeshMCLogsDialog::on_btnClean_clicked()
 		return;
 
 	QMessageBox* messageBox = new QMessageBox(this);
-	messageBox->setWindowTitle(i18n("Clean up"));
-	messageBox->setText(i18n("Do you really want to delete all log files?\n%1", toDelete.join('\n')));
+	messageBox->setWindowTitle(tr("Clean up"));
+	messageBox->setText(tr("Do you really want to delete all log files?\n%1")
+							.arg(toDelete.join('\n')));
 	messageBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	messageBox->setDefaultButton(QMessageBox::Ok);
 	messageBox->setIcon(QMessageBox::Question);
@@ -253,8 +256,8 @@ void MeshMCLogsDialog::on_btnClean_clicked()
 
 	if (!failed.empty()) {
 		QMessageBox::critical(
-			this, i18n("Error"),
-			i18n("Couldn't delete some files:\n%1", failed.join('\n')));
+			this, tr("Error"),
+			tr("Couldn't delete some files:\n%1").arg(failed.join('\n')));
 	}
 
 	m_currentFile.clear();

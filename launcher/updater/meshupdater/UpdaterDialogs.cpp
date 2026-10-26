@@ -27,7 +27,6 @@
 
 #include "HoeDown.h"
 #include "MMCStrings.h"
-#include <KLocalizedString>
 
 namespace
 {
@@ -65,11 +64,12 @@ SelectReleaseDialog::SelectReleaseDialog(const Version& currentVersion,
 	ui->changelogTextBrowser->setVerticalScrollBarPolicy(
 		Qt::ScrollBarAsNeeded);
 
-	setUpTree(ui->versionsTree, i18n("Version"), i18n("Published Date"));
+	setUpTree(ui->versionsTree, tr("Version"), tr("Published Date"));
 
-	ui->explainLabel->setText(i18n("Select a version to install.\n"
+	ui->explainLabel->setText(tr("Select a version to install.\n"
 								 "\n"
-								 "Currently installed version: %1", m_currentVersion.toString()));
+								 "Currently installed version: %1")
+								  .arg(m_currentVersion.toString()));
 
 	loadReleases();
 
@@ -78,8 +78,8 @@ SelectReleaseDialog::SelectReleaseDialog(const Version& currentVersion,
 
 	// The button box is wired to accept/reject in the .ui file; the labels are
 	// set here so they go through our translations rather than Qt's.
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(i18n("OK"));
-	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(i18n("Cancel"));
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
+	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
 SelectReleaseDialog::~SelectReleaseDialog()
@@ -140,9 +140,9 @@ SelectReleaseAssetDialog::SelectReleaseAssetDialog(
 {
 	ui->setupUi(this);
 
-	setUpTree(ui->versionsTree, i18n("Version"), i18n("Published Date"));
+	setUpTree(ui->versionsTree, tr("Version"), tr("Published Date"));
 
-	ui->explainLabel->setText(i18n("Select a version to install."));
+	ui->explainLabel->setText(tr("Select a version to install."));
 
 	// An asset has no release notes; the pane would only ever be blank.
 	ui->changelogTextBrowser->setHidden(true);
@@ -152,8 +152,8 @@ SelectReleaseAssetDialog::SelectReleaseAssetDialog(
 	connect(ui->versionsTree, &QTreeWidget::currentItemChanged, this,
 			&SelectReleaseAssetDialog::selectionChanged);
 
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(i18n("OK"));
-	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(i18n("Cancel"));
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
+	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
 SelectReleaseAssetDialog::~SelectReleaseAssetDialog()

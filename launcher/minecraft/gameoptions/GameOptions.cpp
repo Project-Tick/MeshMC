@@ -22,7 +22,6 @@
 #include "Logging.h"
 #include <QDebug>
 #include <QSaveFile>
-#include <KLocalizedString>
 
 namespace
 {
@@ -94,9 +93,9 @@ QVariant GameOptions::headerData(int section, Qt::Orientation orientation,
 	}
 	switch (section) {
 		case 0:
-			return i18n("Key");
+			return tr("Key");
 		case 1:
-			return i18n("Value");
+			return tr("Value");
 		default:
 			return QVariant();
 	}

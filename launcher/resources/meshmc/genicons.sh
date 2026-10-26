@@ -71,5 +71,5 @@ else
 fi
 
 # replace icon in themes
-cp -v org.projecttick.MeshMC.svg "../meshmc/scalable/instances/meshmc.svg"
-cp -v org.projecttick.MeshMC.svg "../meshmc/scalable/launcher.svg"
+cp -v org.projecttick.MeshMC.svg "../multimc/scalable/instances/meshmc.svg"
+cp -v org.projecttick.MeshMC.svg "../multimc/scalable/launcher.svg"

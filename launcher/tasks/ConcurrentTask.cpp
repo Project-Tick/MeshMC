@@ -20,7 +20,6 @@
 #include "ConcurrentTask.h"
 
 #include <QDebug>
-#include <KLocalizedString>
 
 ConcurrentTask::ConcurrentTask(QObject* parent, QString task_name,
 							   int max_concurrent)
@@ -182,20 +181,23 @@ void ConcurrentTask::updateState()
 {
 	if (totalSize() > 1) {
 		setProgress(finishedSize(), totalSize());
-		setStatus(i18n("Executing %1 task(s) (%2 out of %3 are done)", QString::number(m_doing.size()), QString::number(finishedSize()), QString::number(totalSize())));
+		setStatus(tr("Executing %1 task(s) (%2 out of %3 are done)")
+					  .arg(QString::number(m_doing.size()),
+						   QString::number(finishedSize()),
+						   QString::number(totalSize())));
 		return;
 	}
 
 	// A lone task gets no list of its own to be seen in, so we step aside and
 	// let it speak through us instead. See subTaskStatus and friends.
 	if (!m_queue.isEmpty()) {
-		setStatus(i18n("Waiting for a task to start..."));
+		setStatus(tr("Waiting for a task to start..."));
 	} else if (!m_doing.isEmpty()) {
-		setStatus(i18n("Executing 1 task:"));
+		setStatus(tr("Executing 1 task:"));
 	} else if (finishedSize() > 0) {
-		setStatus(i18n("Task finished."));
+		setStatus(tr("Task finished."));
 	} else {
-		setStatus(i18n("Please wait..."));
+		setStatus(tr("Please wait..."));
 	}
 }
 

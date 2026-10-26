@@ -45,14 +45,13 @@
 #include "minecraft/auth/AccountTask.h"
 #include "launch/steps/CreateBackup.h"
 #include "launch/steps/TextPrint.h"
-#include <KLocalizedString>
 
 LaunchController::LaunchController(QObject* parent) : Task(parent) {}
 
 void LaunchController::executeTask()
 {
 	if (!m_instance) {
-		emitFailed(i18n("No instance specified!"));
+		emitFailed(tr("No instance specified!"));
 		return;
 	}
 
@@ -75,7 +74,7 @@ void LaunchController::decideAccount()
 		if (m_demoUsername.isEmpty()) {
 			auto account = accounts->defaultAccount();
 			QString profileName = account ? account->profileName() : QString();
-			m_demoUsername = profileName.isEmpty() ? i18n("User") : profileName;
+			m_demoUsername = profileName.isEmpty() ? tr("User") : profileName;
 		}
 		return;
 	}
@@ -90,8 +89,8 @@ void LaunchController::decideAccount()
 		// play.
 		auto reply =
 			CustomMessageBox::selectable(
-				m_parentWidget, i18n("No Accounts"),
-				i18n("In order to play Minecraft, you must have at least one "
+				m_parentWidget, tr("No Accounts"),
+				tr("In order to play Minecraft, you must have at least one "
 				   "Microsoft "
 				   "account logged in."
 				   "Would you like to open the account manager to add an "
@@ -105,10 +104,10 @@ void LaunchController::decideAccount()
 		} else {
 			// Offer demo mode as an alternative
 			QMessageBox demoBox(m_parentWidget);
-			demoBox.setWindowTitle(i18n("No Account — Play Demo?"));
+			demoBox.setWindowTitle(tr("No Account — Play Demo?"));
 			demoBox.setIcon(QMessageBox::Question);
 			demoBox.setText(
-				i18n("<b>No Microsoft account is linked.</b><br><br>"
+				tr("<b>No Microsoft account is linked.</b><br><br>"
 				   "Without a Microsoft account you cannot play the full "
 				   "version of Minecraft.<br><br>"
 				   "<b>Demo Mode</b> lets you try Minecraft with the "
@@ -120,18 +119,18 @@ void LaunchController::decideAccount()
 				   "&nbsp;&bull;&nbsp;Multiplayer is not available<br><br>"
 				   "Would you like to launch Minecraft in Demo Mode?"));
 			auto yesButton =
-				demoBox.addButton(i18n("Play Demo"), QMessageBox::YesRole);
+				demoBox.addButton(tr("Play Demo"), QMessageBox::YesRole);
 			auto noButton =
-				demoBox.addButton(i18n("Cancel"), QMessageBox::NoRole);
+				demoBox.addButton(tr("Cancel"), QMessageBox::NoRole);
 			demoBox.setDefaultButton(noButton);
 			demoBox.exec();
 
 			if (demoBox.clickedButton() == yesButton) {
 				bool ok = false;
 				QString username = QInputDialog::getText(
-					m_parentWidget, i18n("Demo Mode — Choose Username"),
-					i18n("Enter a username to use in Demo Mode:"),
-					QLineEdit::Normal, i18n("User"), &ok);
+					m_parentWidget, tr("Demo Mode — Choose Username"),
+					tr("Enter a username to use in Demo Mode:"),
+					QLineEdit::Normal, tr("User"), &ok);
 				if (!ok) {
 					// User cancelled username dialog → abort (login() will
 					// handle the failure)
@@ -139,7 +138,7 @@ void LaunchController::decideAccount()
 				}
 				m_demoMode = true;
 				m_demoUsername = username.trimmed().isEmpty()
-									 ? i18n("User")
+									 ? tr("User")
 									 : username.trimmed();
 			} else {
 				// User declined demo mode → abort (login() will handle the
@@ -163,7 +162,7 @@ void LaunchController::decideAccount()
 	if (!m_accountToUse) {
 		// If no default account is set, ask the user which one to use.
 		ProfileSelectDialog selectDialog(
-			i18n("Which account would you like to use?"),
+			tr("Which account would you like to use?"),
 			ProfileSelectDialog::GlobalDefaultCheckbox, m_parentWidget);
 
 		selectDialog.exec();
@@ -196,7 +195,7 @@ void LaunchController::login()
 
 	// if no account is selected, we bail
 	if (!m_accountToUse) {
-		emitFailed(i18n("No account selected for launch."));
+		emitFailed(tr("No account selected for launch."));
 		return;
 	}
 
@@ -206,7 +205,7 @@ void LaunchController::login()
 	bool tryagain = true;
 	// the failure. the default failure.
 	const QString needLoginAgain =
-		i18n("Your account is currently not logged in. Please enter your "
+		tr("Your account is currently not logged in. Please enter your "
 		   "password to log in again. <br /> <br /> This could be caused by a "
 		   "password change.");
 	QString failReason = needLoginAgain;
@@ -273,8 +272,8 @@ void LaunchController::login()
 						bool ok = false;
 						QString usedname = m_session->player_name;
 						QString name = QInputDialog::getText(
-							m_parentWidget, i18n("Player name"),
-							i18n("Choose your offline mode player name."),
+							m_parentWidget, tr("Player name"),
+							tr("Choose your offline mode player name."),
 							QLineEdit::Normal, m_session->player_name, &ok);
 						if (!ok) {
 							tryagain = false;
@@ -300,7 +299,7 @@ void LaunchController::login()
 							tryagain = true;
 							continue;
 						} else {
-							emitFailed(i18n("Received undetermined session "
+							emitFailed(tr("Received undetermined session "
 										  "status during login."));
 							return;
 						}
@@ -312,15 +311,15 @@ void LaunchController::login()
 				} else {
 					// play demo ?
 					QMessageBox box(m_parentWidget);
-					box.setWindowTitle(i18n("Play demo?"));
-					box.setText(i18n("This account does not own Minecraft.\nYou "
+					box.setWindowTitle(tr("Play demo?"));
+					box.setText(tr("This account does not own Minecraft.\nYou "
 								   "need to purchase the game first to play "
 								   "it.\n\nDo you want to play the demo?"));
 					box.setIcon(QMessageBox::Warning);
 					auto demoButton = box.addButton(
-						i18n("Play Demo"), QMessageBox::ButtonRole::YesRole);
+						tr("Play Demo"), QMessageBox::ButtonRole::YesRole);
 					auto cancelButton = box.addButton(
-						i18n("Cancel"), QMessageBox::ButtonRole::NoRole);
+						tr("Cancel"), QMessageBox::ButtonRole::NoRole);
 					box.setDefaultButton(cancelButton);
 
 					box.exec();
@@ -329,7 +328,7 @@ void LaunchController::login()
 						m_session->MakeDemo();
 						launchInstance();
 					} else {
-						emitFailed(i18n("Launch cancelled - account does not own "
+						emitFailed(tr("Launch cancelled - account does not own "
 									  "Minecraft."));
 					}
 				}
@@ -347,7 +346,7 @@ void LaunchController::login()
 				// proceed.
 				ProgressDialog progDialog(m_parentWidget);
 				if (m_online) {
-					progDialog.setSkipButton(true, i18n("Play Offline"));
+					progDialog.setSkipButton(true, tr("Play Offline"));
 				}
 				auto task = m_accountToUse->currentTask();
 				progDialog.execWithTask(task.get());
@@ -361,10 +360,10 @@ void LaunchController::login()
 			}
 			*/
 			case AccountState::Expired: {
-				auto errorString = i18n("The account has expired and needs to be "
+				auto errorString = tr("The account has expired and needs to be "
 									  "logged into manually again.");
 				QMessageBox::warning(m_parentWidget,
-									 i18n("Account refresh failed"), errorString,
+									 tr("Account refresh failed"), errorString,
 									 QMessageBox::StandardButton::Ok,
 									 QMessageBox::StandardButton::Ok);
 				emitFailed(errorString);
@@ -372,10 +371,10 @@ void LaunchController::login()
 			}
 			case AccountState::Gone: {
 				auto errorString =
-					i18n("The account no longer exists on the servers. It may "
+					tr("The account no longer exists on the servers. It may "
 					   "have been migrated, in which case please add the new "
 					   "account you migrated this one to.");
-				QMessageBox::warning(m_parentWidget, i18n("Account gone"),
+				QMessageBox::warning(m_parentWidget, tr("Account gone"),
 									 errorString,
 									 QMessageBox::StandardButton::Ok,
 									 QMessageBox::StandardButton::Ok);
@@ -384,7 +383,7 @@ void LaunchController::login()
 			}
 		}
 	}
-	emitFailed(i18n("Failed to launch."));
+	emitFailed(tr("Failed to launch."));
 }
 
 void LaunchController::launchInstance()
@@ -393,15 +392,15 @@ void LaunchController::launchInstance()
 	Q_ASSERT_X(m_session.get() != nullptr, "launchInstance", "session is NULL");
 
 	if (!m_instance->reloadSettings()) {
-		QMessageBox::critical(m_parentWidget, i18n("Error!"),
-							  i18n("Couldn't load the instance profile."));
-		emitFailed(i18n("Couldn't load the instance profile."));
+		QMessageBox::critical(m_parentWidget, tr("Error!"),
+							  tr("Couldn't load the instance profile."));
+		emitFailed(tr("Couldn't load the instance profile."));
 		return;
 	}
 
 	m_launcher = m_instance->createLaunchTask(m_session, m_serverToJoin);
 	if (!m_launcher) {
-		emitFailed(i18n("Couldn't instantiate a launcher."));
+		emitFailed(tr("Couldn't instantiate a launcher."));
 		return;
 	}
 
@@ -538,8 +537,8 @@ void LaunchController::readyForLaunch()
 	QString error;
 	if (!m_profiler->check(&error)) {
 		m_launcher->abort();
-		QMessageBox::critical(m_parentWidget, i18n("Error!"),
-							  i18n("Couldn't start profiler: %1", error));
+		QMessageBox::critical(m_parentWidget, tr("Error!"),
+							  tr("Couldn't start profiler: %1").arg(error));
 		emitFailed("Profiler startup failed!");
 		return;
 	}
@@ -549,13 +548,14 @@ void LaunchController::readyForLaunch()
 	connect(profilerInstance, &BaseProfiler::readyToLaunch,
 			[this](const QString& message) {
 				QMessageBox msg;
-				msg.setText(i18n("The game launch is delayed until you press the "
+				msg.setText(tr("The game launch is delayed until you press the "
 							   "button. This is the right time to setup the "
 							   "profiler, as the "
-							   "profiler server is running now.\n\n%1", message));
-				msg.setWindowTitle(i18n("Waiting."));
+							   "profiler server is running now.\n\n%1")
+								.arg(message));
+				msg.setWindowTitle(tr("Waiting."));
 				msg.setIcon(QMessageBox::Information);
-				msg.addButton(i18n("Launch"), QMessageBox::AcceptRole);
+				msg.addButton(tr("Launch"), QMessageBox::AcceptRole);
 				msg.setModal(true);
 				msg.exec();
 				m_launcher->proceed();
@@ -563,8 +563,8 @@ void LaunchController::readyForLaunch()
 	connect(profilerInstance, &BaseProfiler::abortLaunch,
 			[this](const QString& message) {
 				QMessageBox msg;
-				msg.setText(i18n("Couldn't start the profiler: %1", message));
-				msg.setWindowTitle(i18n("Error"));
+				msg.setText(tr("Couldn't start the profiler: %1").arg(message));
+				msg.setWindowTitle(tr("Error"));
 				msg.setIcon(QMessageBox::Critical);
 				msg.addButton(QMessageBox::Ok);
 				msg.setModal(true);
@@ -605,7 +605,7 @@ void LaunchController::onFailed(QString reason)
 void LaunchController::onProgressRequested(Task* task)
 {
 	ProgressDialog progDialog(m_parentWidget);
-	progDialog.setSkipButton(true, i18n("Abort"));
+	progDialog.setSkipButton(true, tr("Abort"));
 	m_launcher->proceed();
 	progDialog.execWithTask(task);
 }
@@ -622,16 +622,16 @@ bool LaunchController::abort()
 		// instead of threading a result code through Application::kill().
 		if (m_launcher->isAborting()) {
 			CustomMessageBox::selectable(
-				m_parentWidget, i18n("Already stopping"),
-				i18n("MeshMC is already shutting this instance down. Give it a "
+				m_parentWidget, tr("Already stopping"),
+				tr("MeshMC is already shutting this instance down. Give it a "
 				   "few seconds - if the game does not react, it gets killed "
 				   "automatically."),
 				QMessageBox::Information)
 				->exec();
 		} else {
 			CustomMessageBox::selectable(
-				m_parentWidget, i18n("Can't kill Minecraft"),
-				i18n("This instance is at a point in the launch process that "
+				m_parentWidget, tr("Can't kill Minecraft"),
+				tr("This instance is at a point in the launch process that "
 				   "can't be interrupted. Please try again in a moment."),
 				QMessageBox::Warning)
 				->exec();
@@ -639,8 +639,8 @@ bool LaunchController::abort()
 		return false;
 	}
 	auto response = CustomMessageBox::selectable(
-						m_parentWidget, i18n("Kill Minecraft?"),
-						i18n("This can cause the instance to get corrupted and "
+						m_parentWidget, tr("Kill Minecraft?"),
+						tr("This can cause the instance to get corrupted and "
 						   "should only be used if Minecraft "
 						   "is frozen for some reason"),
 						QMessageBox::Question,

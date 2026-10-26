@@ -24,13 +24,20 @@
 #include "DesktopServices.h"
 #include "ui/themes/ITheme.h"
 #include "ui/themes/ThemeManager.h"
+#include "ui/themes/CatPack.h"
 
 #include <QGraphicsOpacityEffect>
+
+static const QStringList previewIconNames = {
+	"new",	"centralmods", "viewfolder", "launch",
+	"copy", "about",	   "settings",	 "accounts"};
 
 AppearancePage::AppearancePage(QWidget* parent)
 	: QWidget(parent), ui(new Ui::AppearancePage)
 {
 	ui->setupUi(this);
+
+	ui->catPreview->setGraphicsEffect(new QGraphicsOpacityEffect(this));
 
 	connect(ui->widgetStyleComboBox,
 			QOverload<int>::of(qOverload<int>(&QComboBox::currentIndexChanged)), this,
@@ -38,6 +45,9 @@ AppearancePage::AppearancePage(QWidget* parent)
 	connect(ui->iconsComboBox,
 			QOverload<int>::of(qOverload<int>(&QComboBox::currentIndexChanged)), this,
 			&AppearancePage::applyIconTheme);
+	connect(ui->catPackComboBox,
+			QOverload<int>::of(qOverload<int>(&QComboBox::currentIndexChanged)), this,
+			&AppearancePage::applyCatTheme);
 	connect(ui->themesFolderButton, &QPushButton::clicked, this,
 			&AppearancePage::openThemesFolder);
 	connect(ui->iconsFolderButton, &QPushButton::clicked, this,
@@ -111,6 +121,7 @@ void AppearancePage::applyWidgetTheme(int index)
 		}
 		ui->iconsComboBox->blockSignals(false);
 	}
+	updateIconPreview();
 }
 
 void AppearancePage::applyIconTheme(int index)
@@ -126,6 +137,7 @@ void AppearancePage::applyIconTheme(int index)
 		settings->set("IconTheme", resolved);
 		tm->applyCurrentlySelectedTheme();
 	}
+	updateIconPreview();
 }
 
 void AppearancePage::applySettings()
@@ -143,6 +155,7 @@ void AppearancePage::loadSettings()
 	// Block signals during population
 	ui->widgetStyleComboBox->blockSignals(true);
 	ui->iconsComboBox->blockSignals(true);
+	ui->catPackComboBox->blockSignals(true);
 
 	// --- Widget themes (flat list) ---
 	ui->widgetStyleComboBox->clear();
@@ -199,7 +212,64 @@ void AppearancePage::loadSettings()
 
 	ui->iconsComboBox->setCurrentIndex(iconIdx);
 
+	// --- Cat Packs ---
+	ui->catPackComboBox->clear();
+	auto currentCat = settings->get("BackgroundCat").toString();
+	auto cats = tm->getValidCatPacks();
+	int catIdx = 0;
+
+	for (int i = 0; i < cats.size(); i++) {
+		auto* cat = cats[i];
+		QIcon catIcon(cat->path());
+		ui->catPackComboBox->addItem(catIcon, cat->name(), cat->id());
+		if (cat->id() == currentCat) {
+			catIdx = i;
+		}
+	}
+
+	ui->catPackComboBox->setCurrentIndex(catIdx);
+
 	// Unblock signals
 	ui->widgetStyleComboBox->blockSignals(false);
 	ui->iconsComboBox->blockSignals(false);
+	ui->catPackComboBox->blockSignals(false);
+
+	// Initial previews
+	updateIconPreview();
+	updateCatPreview();
+}
+
+void AppearancePage::updateIconPreview()
+{
+	QList<QToolButton*> previewButtons = {ui->icon1, ui->icon2, ui->icon3,
+										  ui->icon4, ui->icon5, ui->icon6,
+										  ui->icon7, ui->icon8};
+
+	for (int i = 0; i < previewButtons.size() && i < previewIconNames.size();
+		 i++) {
+		previewButtons[i]->setIcon(
+			APPLICATION->getThemedIcon(previewIconNames[i]));
+	}
+}
+
+void AppearancePage::applyCatTheme(int index)
+{
+	auto settings = APPLICATION->settings();
+	auto originalCat = settings->get("BackgroundCat").toString();
+	auto newCat = ui->catPackComboBox->itemData(index).toString();
+	if (originalCat != newCat) {
+		settings->set("BackgroundCat", newCat);
+	}
+	updateCatPreview();
+}
+
+void AppearancePage::updateCatPreview()
+{
+	QIcon catPackIcon(APPLICATION->themeManager()->getCatPack());
+	ui->catPreview->setIcon(catPackIcon);
+
+	auto effect =
+		dynamic_cast<QGraphicsOpacityEffect*>(ui->catPreview->graphicsEffect());
+	if (effect)
+		effect->setOpacity(1.0);
 }

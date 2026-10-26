@@ -32,7 +32,6 @@
 #include "OneSixVersionFormat.h"
 
 #include "Application.h"
-#include <KLocalizedString>
 
 /*
  * This is responsible for loading the components of a component list AND
@@ -273,7 +272,7 @@ void ComponentUpdateTask::loadComponents()
 			break;
 		}
 		case LoadResult::Failed: {
-			emitFailed(i18n("Some component metadata load tasks failed."));
+			emitFailed(tr("Some component metadata load tasks failed."));
 			break;
 		}
 	}
@@ -509,7 +508,7 @@ void ComponentUpdateTask::resolveDependencies(bool checkOnly)
 		allRequires.clear();
 		toRemove.clear();
 		if (!gatherRequirementsFromComponents(components, allRequires)) {
-			emitFailed(i18n("Conflicting requirements detected during dependency "
+			emitFailed(tr("Conflicting requirements detected during dependency "
 						  "checking!"));
 			return;
 		}
@@ -527,12 +526,12 @@ void ComponentUpdateTask::resolveDependencies(bool checkOnly)
 	bool succeeded = getTrivialComponentChanges(componentIndex, allRequires,
 												toAdd, toChange);
 	if (!succeeded) {
-		emitFailed(i18n("Instance has conflicting dependencies."));
+		emitFailed(tr("Instance has conflicting dependencies."));
 		return;
 	}
 	if (checkOnly) {
 		if (toAdd.size() || toChange.size()) {
-			emitFailed(i18n("Instance has unresolved dependencies while "
+			emitFailed(tr("Instance has unresolved dependencies while "
 						  "loading/checking for launch."));
 		} else {
 			emitSucceeded();
@@ -662,8 +661,9 @@ void ComponentUpdateTask::checkIfAllFinished()
 			}
 		}
 		auto allErrors = allErrorsList.join("\n");
-		emitFailed(i18n("Component metadata update task failed while downloading "
-					  "from remote server:\n%1", allErrors));
+		emitFailed(tr("Component metadata update task failed while downloading "
+					  "from remote server:\n%1")
+					   .arg(allErrors));
 		d->remoteLoadStatusList.clear();
 	}
 }

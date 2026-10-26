@@ -22,7 +22,6 @@
 
 #include <QStandardPaths>
 #include <QTimer>
-#include <KLocalizedString>
 
 #include "launch/LaunchTask.h"
 #include "minecraft/MinecraftInstance.h"
@@ -156,7 +155,7 @@ void MeshMCPartLaunch::on_state(LoggedProcess::State state)
 		case LoggedProcess::Aborted:
 		case LoggedProcess::Crashed: {
 			m_parent->setPid(-1);
-			emitFailed(i18n("Game crashed."));
+			emitFailed(tr("Game crashed."));
 			return;
 		}
 		case LoggedProcess::Finished: {
@@ -164,7 +163,7 @@ void MeshMCPartLaunch::on_state(LoggedProcess::State state)
 			// if the exit code wasn't 0, report this as a crash
 			auto exitCode = m_process.exitCode();
 			if (exitCode != 0) {
-				emitFailed(i18n("Game crashed."));
+				emitFailed(tr("Game crashed."));
 				return;
 			}
 			// FIXME: make this work again
@@ -225,7 +224,7 @@ bool MeshMCPartLaunch::abort()
 				state != LoggedProcess::Starting) {
 				return;
 			}
-			emit logLine(i18n("The game did not react to the abort request. "
+			emit logLine(tr("The game did not react to the abort request. "
 							"Killing it."),
 						 MessageLevel::MeshMC);
 			m_process.kill();

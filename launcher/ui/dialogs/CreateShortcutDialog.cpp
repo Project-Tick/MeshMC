@@ -32,7 +32,6 @@
 #include "minecraft/WorldList.h"
 #include "minecraft/auth/AccountList.h"
 #include "ui/dialogs/IconPickerDialog.h"
-#include <KLocalizedString>
 
 namespace
 {
@@ -76,7 +75,9 @@ CreateShortcutDialog::CreateShortcutDialog(MinecraftInstance* instance,
 	} else {
 		for (const World& world : worlds->allWorlds()) {
 			ui->worldSelectionBox->addItem(
-				i18n("%1 [%2] - Last Played: %3", world.name(), world.gameType().toTranslatedString(), world.lastPlayed().toString(Qt::ISODate)),
+				tr("%1 [%2] - Last Played: %3")
+					.arg(world.name(), world.gameType().toTranslatedString(),
+						 world.lastPlayed().toString(Qt::ISODate)),
 				world.folderName());
 		}
 	}
@@ -87,14 +88,14 @@ CreateShortcutDialog::CreateShortcutDialog(MinecraftInstance* instance,
 	if (!DesktopServices::isFlatpak()) {
 		if (!FS::getDesktopDir().isEmpty()) {
 			ui->saveTargetSelectionBox->addItem(
-				i18n("Desktop"), asData(ShortcutTarget::Desktop));
+				tr("Desktop"), asData(ShortcutTarget::Desktop));
 		}
 		if (!FS::getApplicationsDir().isEmpty()) {
 			ui->saveTargetSelectionBox->addItem(
-				i18n("Applications"), asData(ShortcutTarget::Applications));
+				tr("Applications"), asData(ShortcutTarget::Applications));
 		}
 	}
-	ui->saveTargetSelectionBox->addItem(i18n("Other..."),
+	ui->saveTargetSelectionBox->addItem(tr("Other..."),
 										asData(ShortcutTarget::Other));
 
 	auto accounts = APPLICATION->accounts();
@@ -107,7 +108,7 @@ CreateShortcutDialog::CreateShortcutDialog(MinecraftInstance* instance,
 
 			QString label = account->profileName();
 			if (account->isInUse()) {
-				label = i18n("%1 (in use)", label);
+				label = tr("%1 (in use)").arg(label);
 			}
 
 			const QPixmap face = account->getFace();
@@ -184,10 +185,12 @@ void CreateShortcutDialog::refresh()
 
 	if (ui->targetCheckbox->isChecked()) {
 		if (ui->worldTarget->isChecked()) {
-			suggestion = i18n("%1 - %2", suggestion, ui->worldSelectionBox->currentData().toString());
+			suggestion = tr("%1 - %2").arg(
+				suggestion, ui->worldSelectionBox->currentData().toString());
 			complete = ui->worldSelectionBox->currentIndex() != -1;
 		} else if (ui->serverTarget->isChecked()) {
-			suggestion = i18n("%1 - Server %2", suggestion, ui->serverAddressBox->text());
+			suggestion = tr("%1 - Server %2")
+							 .arg(suggestion, ui->serverAddressBox->text());
 			complete = !ui->serverAddressBox->text().isEmpty();
 		} else {
 			complete = false;
@@ -204,18 +207,18 @@ void CreateShortcutDialog::createShortcut()
 	shortcut.instance = m_instance;
 	shortcut.parent = this;
 	shortcut.iconKey = m_iconKey;
-	shortcut.targetString = i18n("instance");
+	shortcut.targetString = tr("instance");
 	shortcut.target = static_cast<ShortcutTarget>(
 		ui->saveTargetSelectionBox->currentData().toInt());
 
 	if (ui->targetCheckbox->isChecked()) {
 		if (ui->worldTarget->isChecked()) {
-			shortcut.targetString = i18n("world");
+			shortcut.targetString = tr("world");
 			shortcut.extraArgs
 				<< QStringLiteral("--world")
 				<< ui->worldSelectionBox->currentData().toString();
 		} else if (ui->serverTarget->isChecked()) {
-			shortcut.targetString = i18n("server");
+			shortcut.targetString = tr("server");
 			shortcut.extraArgs << QStringLiteral("--server")
 							   << ui->serverAddressBox->text();
 		}

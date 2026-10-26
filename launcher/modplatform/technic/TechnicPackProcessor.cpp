@@ -28,7 +28,6 @@
 #include <settings/INISettingsObject.h>
 
 #include <memory>
-#include <KLocalizedString>
 
 void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 										const QString& instName,
@@ -65,7 +64,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 					modpackJar, "fmlversion.properties");
 				if (fmlVersionData.isEmpty()) {
 					emit failed(
-						i18n("Unable to open \"fmlversion.properties\"!"));
+						tr("Unable to open \"fmlversion.properties\"!"));
 					return;
 				}
 				INIFile iniFile;
@@ -75,12 +74,13 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 			}
 			data = MMCZip::readFileFromZip(modpackJar, "version.json");
 			if (data.isEmpty()) {
-				emit failed(i18n("Unable to open \"version.json\"!"));
+				emit failed(tr("Unable to open \"version.json\"!"));
 				return;
 			}
 		} else {
 			if (minecraftVersion.isEmpty())
-				emit failed(i18n("Could not find \"version.json\" inside "
+				emit failed(tr(
+					"Could not find \"version.json\" inside "
 					"\"bin/modpack.jar\", but minecraft version is unknown"));
 			components->setComponentVersion("net.minecraft", minecraftVersion,
 											true);
@@ -96,7 +96,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 					// Really shouldn't happen, but error handling shall not be
 					// forgotten
 					emit failed(
-						i18n("Unable to open \"forgeversion.properties\""));
+						tr("Unable to open \"forgeversion.properties\""));
 					return;
 				}
 				INIFile iniFile;
@@ -109,7 +109,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 
 				if (major.isEmpty() || minor.isEmpty() || revision.isEmpty() ||
 					build.isEmpty()) {
-					emit failed(i18n("Invalid \"forgeversion.properties\"!"));
+					emit failed(tr("Invalid \"forgeversion.properties\"!"));
 					return;
 				}
 
@@ -125,14 +125,14 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 	} else if (QFile::exists(versionJson)) {
 		QFile file(versionJson);
 		if (!file.open(QIODevice::ReadOnly)) {
-			emit failed(i18n("Unable to open \"version.json\"!"));
+			emit failed(tr("Unable to open \"version.json\"!"));
 			return;
 		}
 		data = file.readAll();
 		file.close();
 	} else {
 		// This is the "Vanilla" modpack, excluded by the search code
-		emit failed(i18n("Unable to find a \"version.json\"!"));
+		emit failed(tr("Unable to find a \"version.json\"!"));
 		return;
 	}
 
@@ -143,7 +143,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 			Json::ensureString(root, "inheritsFrom", QString(), "");
 		if (minecraftVersion.isEmpty()) {
 			if (fmlMinecraftVersion.isEmpty()) {
-				emit failed(i18n("Could not understand "
+				emit failed(tr("Could not understand "
 							   "\"version.json\":\ninheritsFrom is missing"));
 				return;
 			}
@@ -191,7 +191,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 			}
 		}
 	} catch (const JSONValidationError& e) {
-		emit failed(i18n("Could not understand \"version.json\":\n") + e.cause());
+		emit failed(tr("Could not understand \"version.json\":\n") + e.cause());
 		return;
 	}
 

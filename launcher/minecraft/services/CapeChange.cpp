@@ -23,7 +23,6 @@
 #include <QHttpMultiPart>
 
 #include "Application.h"
-#include <KLocalizedString>
 
 CapeChange::CapeChange(QObject* parent, QString token, QString cape)
 	: Task(parent), m_capeId(cape), m_token(token)
@@ -40,7 +39,7 @@ void CapeChange::setCape(QString& cape)
 	QNetworkReply* rep =
 		APPLICATION->network()->put(request, requestString.toUtf8());
 
-	setStatus(i18n("Equipping cape"));
+	setStatus(tr("Equipping cape"));
 
 	m_reply = shared_qobject_ptr<QNetworkReply>(rep);
 	connect(rep, &QNetworkReply::uploadProgress, this, &Task::setProgress);
@@ -58,7 +57,7 @@ void CapeChange::clearCape()
 						 QString("Bearer %1").arg(m_token).toLocal8Bit());
 	QNetworkReply* rep = APPLICATION->network()->deleteResource(request);
 
-	setStatus(i18n("Removing cape"));
+	setStatus(tr("Removing cape"));
 
 	m_reply = shared_qobject_ptr<QNetworkReply>(rep);
 	connect(rep, &QNetworkReply::uploadProgress, this, &Task::setProgress);

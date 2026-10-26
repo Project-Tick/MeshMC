@@ -41,7 +41,6 @@
 
 #include "FileSystem.h"
 #include "HoeDown.h"
-#include <KLocalizedString>
 
 namespace
 {
@@ -80,7 +79,7 @@ ExportListDialog::ExportListDialog(QString name,
 
 void ExportListDialog::buildUi()
 {
-	setWindowTitle(i18n("Export Pack to ModList"));
+	setWindowTitle(tr("Export Pack to ModList"));
 	setModal(true);
 	setSizeGripEnabled(true);
 	resize(650, 522);
@@ -92,22 +91,22 @@ void ExportListDialog::buildUi()
 	auto* panels = new QVBoxLayout();
 	root->addLayout(panels);
 
-	auto* settings = new QGroupBox(i18n("Settings"), this);
+	auto* settings = new QGroupBox(tr("Settings"), this);
 	auto* settingsLayout = new QGridLayout(settings);
 
-	settingsLayout->addWidget(new QLabel(i18n("Format"), settings), 0, 0);
+	settingsLayout->addWidget(new QLabel(tr("Format"), settings), 0, 0);
 	m_formatBox = new QComboBox(settings);
-	m_formatBox->addItem(i18n("HTML"));
-	m_formatBox->addItem(i18n("Markdown"));
-	m_formatBox->addItem(i18n("Plaintext"));
-	m_formatBox->addItem(i18n("JSON"));
-	m_formatBox->addItem(i18n("CSV"));
-	m_formatBox->addItem(i18n("Custom"));
+	m_formatBox->addItem(tr("HTML"));
+	m_formatBox->addItem(tr("Markdown"));
+	m_formatBox->addItem(tr("Plaintext"));
+	m_formatBox->addItem(tr("JSON"));
+	m_formatBox->addItem(tr("CSV"));
+	m_formatBox->addItem(tr("Custom"));
 	settingsLayout->addWidget(m_formatBox, 0, 1);
 
 	/* The template box on the left, the fields it can hold on the right,
 	 * sharing the row under the format picker. */
-	m_templateGroup = new QGroupBox(i18n("Template"), settings);
+	m_templateGroup = new QGroupBox(tr("Template"), settings);
 	m_templateGroup->setSizePolicy(QSizePolicy::Preferred,
 								   QSizePolicy::Maximum);
 	auto* templateLayout = new QVBoxLayout(m_templateGroup);
@@ -115,7 +114,7 @@ void ExportListDialog::buildUi()
 	m_templateText->setSizePolicy(QSizePolicy::Expanding,
 								  QSizePolicy::Maximum);
 	m_templateText->setToolTip(
-		i18n("This text supports the following placeholders:\n"
+		tr("This text supports the following placeholders:\n"
 		   "{name}     - Mod name\n"
 		   "{mod_id}   - Mod ID\n"
 		   "{url}      - Mod URL\n"
@@ -124,19 +123,19 @@ void ExportListDialog::buildUi()
 	templateLayout->addWidget(m_templateText);
 	settingsLayout->addWidget(m_templateGroup, 1, 0);
 
-	auto* options = new QGroupBox(i18n("Optional Info"), settings);
+	auto* options = new QGroupBox(tr("Optional Info"), settings);
 	options->setSizePolicy(QSizePolicy::Preferred,
 						   QSizePolicy::MinimumExpanding);
 	auto* optionsLayout = new QVBoxLayout(options);
 
-	m_versionCheck = new QCheckBox(i18n("Version"), options);
-	m_authorsCheck = new QCheckBox(i18n("Authors"), options);
-	m_urlCheck = new QCheckBox(i18n("URL"), options);
-	m_fileNameCheck = new QCheckBox(i18n("Filename"), options);
-	m_versionButton = new QPushButton(i18n("Version"), options);
-	m_authorsButton = new QPushButton(i18n("Authors"), options);
-	m_urlButton = new QPushButton(i18n("URL"), options);
-	m_fileNameButton = new QPushButton(i18n("Filename"), options);
+	m_versionCheck = new QCheckBox(tr("Version"), options);
+	m_authorsCheck = new QCheckBox(tr("Authors"), options);
+	m_urlCheck = new QCheckBox(tr("URL"), options);
+	m_fileNameCheck = new QCheckBox(tr("Filename"), options);
+	m_versionButton = new QPushButton(tr("Version"), options);
+	m_authorsButton = new QPushButton(tr("Authors"), options);
+	m_urlButton = new QPushButton(tr("URL"), options);
+	m_fileNameButton = new QPushButton(tr("Filename"), options);
 
 	/* Checkboxes first, then the buttons that replace them in custom
 	 * mode. Only one of the two sets is ever visible, so they stack in
@@ -156,7 +155,7 @@ void ExportListDialog::buildUi()
 
 	/* The text that will be written on the left, how it will look on the
 	 * right. */
-	auto* result = new QGroupBox(i18n("Result"), this);
+	auto* result = new QGroupBox(tr("Result"), this);
 	auto* resultLayout = new QHBoxLayout(result);
 	m_finalText = new QPlainTextEdit(result);
 	m_finalText->setReadOnly(true);
@@ -168,7 +167,7 @@ void ExportListDialog::buildUi()
 	panels->addWidget(result);
 
 	auto* warning = new QLabel(
-		i18n("This depends on the mods' metadata. To ensure it is available, "
+		tr("This depends on the mods' metadata. To ensure it is available, "
 		   "run an update on the instance. Installing the updates isn't "
 		   "necessary."),
 		this);
@@ -177,13 +176,13 @@ void ExportListDialog::buildUi()
 
 	/* Copy shares the bottom row with the dialog's own buttons. */
 	auto* buttonRow = new QHBoxLayout();
-	auto* copyButton = new QPushButton(i18n("Copy"), this);
+	auto* copyButton = new QPushButton(tr("Copy"), this);
 	buttonRow->addWidget(copyButton);
 
 	auto* buttons = new QDialogButtonBox(
 		QDialogButtonBox::Save | QDialogButtonBox::Cancel, this);
-	buttons->button(QDialogButtonBox::Save)->setText(i18n("Save"));
-	buttons->button(QDialogButtonBox::Cancel)->setText(i18n("Cancel"));
+	buttons->button(QDialogButtonBox::Save)->setText(tr("Save"));
+	buttons->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 	buttonRow->addWidget(buttons);
 	root->addLayout(buttonRow);
 
@@ -332,9 +331,9 @@ void ExportListDialog::done(int result)
 		const QString suggested = FS::RemoveInvalidFilenameChars(m_name)
 								  + ContentListExport::fileExtension(m_format);
 		const QString target = QFileDialog::getSaveFileName(
-			this, i18n("Export %1", m_name),
+			this, tr("Export %1").arg(m_name),
 			FS::PathCombine(QDir::homePath(), suggested),
-			i18n("File") + QStringLiteral(" (*.txt *.html *.md *.json *.csv)"));
+			tr("File") + QStringLiteral(" (*.txt *.html *.md *.json *.csv)"));
 
 		/* Backing out of the file dialog leaves this one open, so the
 		 * work that went into the template is not thrown away. */
