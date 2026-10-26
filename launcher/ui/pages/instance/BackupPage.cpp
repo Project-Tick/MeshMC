@@ -30,7 +30,6 @@
 
 #include "backup/BackupTask.h"
 #include "ui/dialogs/ProgressDialog.h"
-#include <KLocalizedString>
 
 BackupPage::BackupPage(BaseInstance* inst, QWidget* parent)
 	: QWidget(parent), ui(new Ui::BackupPage), m_inst(inst)
@@ -78,7 +77,7 @@ void BackupPage::refreshList()
 	}
 
 	const int count = m_entries.size();
-	ui->statusLabel->setText(tr("%1 backup", "%1 backups", count));
+	ui->statusLabel->setText(tr("%n backup(s)", "", count));
 	updateButtons();
 }
 
@@ -113,7 +112,7 @@ void BackupPage::on_btnCreate_clicked()
 {
 	bool ok = false;
 	const QString label = QInputDialog::getText(
-		this, i18n("Create Backup"), i18n("Backup label (optional):"),
+		this, tr("Create Backup"), tr("Backup label (optional):"),
 		QLineEdit::Normal, {}, &ok);
 
 	if (!ok)
@@ -128,11 +127,12 @@ void BackupPage::on_btnCreate_clicked()
 
 	if (task.wasSuccessful()) {
 		QMessageBox::information(
-			this, i18n("Backup Created"),
-			i18n("Backup created successfully:\n%1", task.result().fileName));
+			this, tr("Backup Created"),
+			tr("Backup created successfully:\n%1").arg(task.result().fileName));
 	} else {
-		QMessageBox::warning(this, i18n("Backup Failed"),
-							 i18n("Failed to create backup:\n%1", task.failReason()));
+		QMessageBox::warning(this, tr("Backup Failed"),
+							 tr("Failed to create backup:\n%1")
+								 .arg(task.failReason()));
 	}
 
 	refreshList();
@@ -148,33 +148,34 @@ void BackupPage::on_btnRestore_clicked()
 	// game means half-deleted worlds and mods the JVM still has open.
 	if (m_inst->isRunning()) {
 		QMessageBox::warning(
-			this, i18n("Instance Running"),
-			i18n("This instance is currently running. Close the game before "
+			this, tr("Instance Running"),
+			tr("This instance is currently running. Close the game before "
 			   "restoring a backup."));
 		return;
 	}
 
 	const auto ret = QMessageBox::warning(
-		this, i18n("Restore Backup"),
-		i18n("This will replace the current instance contents with the "
+		this, tr("Restore Backup"),
+		tr("This will replace the current instance contents with the "
 		   "backup:\n\n"
 		   "%1\n\n"
-		   "This action cannot be undone. Continue?", entry.fileName),
+		   "This action cannot be undone. Continue?")
+			.arg(entry.fileName),
 		QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
 	if (ret != QMessageBox::Yes)
 		return;
 
-	ui->statusLabel->setText(i18n("Restoring backup..."));
+	ui->statusLabel->setText(tr("Restoring backup..."));
 	QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
 	if (m_manager->restoreBackup(entry)) {
-		QMessageBox::information(this, i18n("Restore Complete"),
-								 i18n("Backup restored successfully."));
+		QMessageBox::information(this, tr("Restore Complete"),
+								 tr("Backup restored successfully."));
 	} else {
 		QMessageBox::warning(
-			this, i18n("Restore Failed"),
-			i18n("Failed to restore backup. Check the logs for details."));
+			this, tr("Restore Failed"),
+			tr("Failed to restore backup. Check the logs for details."));
 	}
 
 	refreshList();
@@ -187,31 +188,31 @@ void BackupPage::on_btnExport_clicked()
 		return;
 
 	const QString dest = QFileDialog::getSaveFileName(
-		this, i18n("Export Backup"), entry.fileName, i18n("Zip Files (*.zip)"));
+		this, tr("Export Backup"), entry.fileName, tr("Zip Files (*.zip)"));
 
 	if (dest.isEmpty())
 		return;
 
 	if (m_manager->exportBackup(entry, dest)) {
-		QMessageBox::information(this, i18n("Export Complete"),
-								 i18n("Backup exported to:\n%1", dest));
+		QMessageBox::information(this, tr("Export Complete"),
+								 tr("Backup exported to:\n%1").arg(dest));
 	} else {
-		QMessageBox::warning(this, i18n("Export Failed"),
-							 i18n("Failed to export backup."));
+		QMessageBox::warning(this, tr("Export Failed"),
+							 tr("Failed to export backup."));
 	}
 }
 
 void BackupPage::on_btnImport_clicked()
 {
 	const QString src = QFileDialog::getOpenFileName(
-		this, i18n("Import Backup"), {}, i18n("Zip Files (*.zip)"));
+		this, tr("Import Backup"), {}, tr("Zip Files (*.zip)"));
 
 	if (src.isEmpty())
 		return;
 
 	bool ok = false;
 	const QString label = QInputDialog::getText(
-		this, i18n("Import Backup"), i18n("Label for imported backup (optional):"),
+		this, tr("Import Backup"), tr("Label for imported backup (optional):"),
 		QLineEdit::Normal, {}, &ok);
 
 	if (!ok)
@@ -219,11 +220,11 @@ void BackupPage::on_btnImport_clicked()
 
 	const auto entry = m_manager->importBackup(src, label);
 	if (!entry.isValid()) {
-		QMessageBox::warning(this, i18n("Import Failed"),
-							 i18n("Failed to import backup."));
+		QMessageBox::warning(this, tr("Import Failed"),
+							 tr("Failed to import backup."));
 	} else {
-		QMessageBox::information(this, i18n("Import Complete"),
-								 i18n("Backup imported successfully."));
+		QMessageBox::information(this, tr("Import Complete"),
+								 tr("Backup imported successfully."));
 	}
 
 	refreshList();
@@ -236,8 +237,9 @@ void BackupPage::on_btnDelete_clicked()
 		return;
 
 	const auto ret = QMessageBox::question(
-		this, i18n("Delete Backup"),
-		i18n("Delete the selected backup?\n\n%1\n\nThis cannot be undone.", entry.fileName),
+		this, tr("Delete Backup"),
+		tr("Delete the selected backup?\n\n%1\n\nThis cannot be undone.")
+			.arg(entry.fileName),
 		QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
 	if (ret != QMessageBox::Yes)

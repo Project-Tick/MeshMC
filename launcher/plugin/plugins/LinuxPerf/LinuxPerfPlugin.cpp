@@ -6,7 +6,6 @@
 #include "vendor/gamemode_client.h"
 #include <QFileInfo>
 #include <QStandardPaths>
-#include <KLocalizedString>
 
 MMCO_DEFINE_MODULE("Linux Performance Tools", "1.2.0", "Project Tick",
 				   "MangoHud FPS overlay and GameMode performance integration "
@@ -77,26 +76,30 @@ static bool gamemoderun_available()
 static QString mangohud_missing_tooltip()
 {
 	if (is_flatpak()) {
-		return i18n("MangoHud is not mounted inside this Flatpak sandbox.\n"
+		return QObject::tr(
+			"MangoHud is not mounted inside this Flatpak sandbox.\n"
 			"Install the org.freedesktop.Platform.VulkanLayer.MangoHud branch\n"
 			"that matches the base runtime and restart MeshMC. A mismatched\n"
 			"branch will not appear under /usr/lib/extensions/vulkan.");
 	}
 
-	return i18n("MangoHud is not installed or not found on PATH.\n"
+	return QObject::tr(
+		"MangoHud is not installed or not found on PATH.\n"
 		"Install it (package: mangohud) and reopen this dialog.");
 }
 
 static QString gamemode_missing_tooltip()
 {
 	if (is_flatpak()) {
-		return i18n("GameMode is not available inside this Flatpak sandbox.\n"
+		return QObject::tr(
+			"GameMode is not available inside this Flatpak sandbox.\n"
 			"Bundle the GameMode client tools in the Flatpak and allow access "
 			"to\n"
 			"com.feralinteractive.GameMode on the session bus.");
 	}
 
-	return i18n("gamemoderun is not installed or not found on PATH.\n"
+	return QObject::tr(
+		"gamemoderun is not installed or not found on PATH.\n"
 		"Install GameMode and restart MeshMC to enable this option.");
 }
 
@@ -105,17 +108,20 @@ static QString gamemode_status_text()
 	int status = gamemode_query_status();
 	QString gmBin = gamemoderun_executable();
 	if (status >= 0) {
-		return i18n("GameMode daemon: running — will activate at game launch  (%1)", gmBin);
+		return QObject::
+			tr("GameMode daemon: running — will activate at game launch  (%1)")
+				.arg(gmBin);
 	}
 
 	if (is_flatpak()) {
-		return i18n("GameMode daemon: not reachable from sandbox — add "
+		return QObject::tr("GameMode daemon: not reachable from sandbox — add "
 						   "session bus access to\n"
 						   "com.feralinteractive.GameMode and ensure the host "
 						   "gamemoded service is running");
 	}
 
-	return i18n("GameMode daemon: not responding — run \"systemctl --user enable --now "
+	return QObject::tr(
+		"GameMode daemon: not responding — run \"systemctl --user enable --now "
 		"gamemoded\" or check gamemode install");
 }
 
@@ -230,23 +236,25 @@ static void injectCheckboxesIntoMinecraftPage()
 	if (mcPage->findChild<QGroupBox*>(QStringLiteral("linuxPerfGroupBox")))
 		return;
 
-	auto* groupBox = new QGroupBox(i18n("Linux Performance Tools"));
+	auto* groupBox = new QGroupBox(QObject::tr("Linux Performance Tools"));
 	groupBox->setObjectName(QStringLiteral("linuxPerfGroupBox"));
 	auto* groupLayout = new QVBoxLayout(groupBox);
 
 	g_mangoCheckbox = new QCheckBox(
-		i18n("Enable MangoHud overlay (FPS / GPU / CPU metrics)"),
+		QObject::tr("Enable MangoHud overlay (FPS / GPU / CPU metrics)"),
 		groupBox);
 	g_mangoCheckbox->setObjectName(QStringLiteral("linuxPerfMangoHudCheck"));
 	const bool mangoAvail = mangohud_available();
 	if (mangoAvail) {
 		QString mangoBin = mangohud_executable();
 		g_mangoCheckbox->setToolTip(
-			i18n("Injects the MangoHud overlay into Minecraft via the mangohud "
+			QObject::tr(
+				"Injects the MangoHud overlay into Minecraft via the mangohud "
 				"wrapper.\n"
 				"Displays real-time FPS, frame timing, GPU and CPU metrics.\n"
 				"Works with both OpenGL and Vulkan (LWJGL2 / LWJGL3).\n\n"
-				"Found: %1", mangoBin));
+				"Found: %1")
+				.arg(mangoBin));
 	} else {
 		g_mangoCheckbox->setToolTip(mangohud_missing_tooltip());
 	}
@@ -255,10 +263,12 @@ static void injectCheckboxesIntoMinecraftPage()
 	groupLayout->addWidget(g_mangoCheckbox);
 
 	g_gamemodeCheckbox = new QCheckBox(
-		i18n("Enable GameMode (CPU / scheduler performance optimisations)"),
+		QObject::tr(
+			"Enable GameMode (CPU / scheduler performance optimisations)"),
 		groupBox);
 	g_gamemodeCheckbox->setObjectName(QStringLiteral("linuxPerfGameModeCheck"));
-	g_gamemodeCheckbox->setToolTip(i18n("Launches Minecraft via gamemoderun so that Feral Interactive's\n"
+	g_gamemodeCheckbox->setToolTip(QObject::tr(
+		"Launches Minecraft via gamemoderun so that Feral Interactive's\n"
 		"GameMode daemon can apply CPU governor and scheduler optimisations\n"
 		"for the duration of the game session.\n"
 		"Requires GameMode to be installed (package: gamemode)."));
@@ -369,14 +379,14 @@ static void injectCheckboxesIntoInstanceSettingsPage(QWidget* page,
 		return;
 
 	auto* groupBox = new QGroupBox(
-		i18n("Override global Linux performance tools settings"), page);
+		QObject::tr("Override global Linux performance tools settings"), page);
 	groupBox->setObjectName(QStringLiteral("linuxPerfInstanceGroupBox"));
 	groupBox->setCheckable(true);
 
 	auto* groupLayout = new QVBoxLayout(groupBox);
 
 	auto* mangoCheckbox = new QCheckBox(
-		i18n("Enable MangoHud overlay (FPS / GPU / CPU metrics)"),
+		QObject::tr("Enable MangoHud overlay (FPS / GPU / CPU metrics)"),
 		groupBox);
 	mangoCheckbox->setObjectName(
 		QStringLiteral("linuxPerfInstanceMangoHudCheck"));
@@ -384,11 +394,13 @@ static void injectCheckboxesIntoInstanceSettingsPage(QWidget* page,
 	if (mangoAvail) {
 		QString mangoBin = mangohud_executable();
 		mangoCheckbox->setToolTip(
-			i18n("Injects the MangoHud overlay into Minecraft via the mangohud "
+			QObject::tr(
+				"Injects the MangoHud overlay into Minecraft via the mangohud "
 				"wrapper.\n"
 				"Displays real-time FPS, frame timing, GPU and CPU metrics.\n"
 				"Works with both OpenGL and Vulkan (LWJGL2 / LWJGL3).\n\n"
-				"Found: %1", mangoBin));
+				"Found: %1")
+				.arg(mangoBin));
 	} else {
 		mangoCheckbox->setToolTip(mangohud_missing_tooltip());
 	}
@@ -396,11 +408,13 @@ static void injectCheckboxesIntoInstanceSettingsPage(QWidget* page,
 	groupLayout->addWidget(mangoCheckbox);
 
 	auto* gamemodeCheckbox = new QCheckBox(
-		i18n("Enable GameMode (CPU / scheduler performance optimisations)"),
+		QObject::tr(
+			"Enable GameMode (CPU / scheduler performance optimisations)"),
 		groupBox);
 	gamemodeCheckbox->setObjectName(
 		QStringLiteral("linuxPerfInstanceGameModeCheck"));
-	gamemodeCheckbox->setToolTip(i18n("Launches Minecraft via gamemoderun so that Feral Interactive's\n"
+	gamemodeCheckbox->setToolTip(QObject::tr(
+		"Launches Minecraft via gamemoderun so that Feral Interactive's\n"
 		"GameMode daemon can apply CPU governor and scheduler optimisations\n"
 		"for the duration of the game session.\n"
 		"Requires GameMode to be installed (package: gamemode)."));

@@ -26,7 +26,6 @@
 
 #include "FileSystem.h"
 #include "MMCZip.h"
-#include <KLocalizedString>
 
 namespace MMCZip
 {
@@ -52,7 +51,7 @@ namespace MMCZip
 
 	void ExportToZipTask::executeTask()
 	{
-		setStatus(i18n("Adding files..."));
+		setStatus(tr("Adding files..."));
 		setProgress(0, m_files.length() + m_extraFiles.size());
 
 		m_future = QtConcurrent::run(QThreadPool::globalInstance(),
@@ -91,12 +90,13 @@ namespace MMCZip
 	auto ExportToZipTask::exportZip() -> ZipResult
 	{
 		if (!m_dir.exists()) {
-			return ZipResult(i18n("The folder to export does not exist."));
+			return ZipResult(tr("The folder to export does not exist."));
 		}
 
 		ZipWriter zip(m_outputPath);
 		if (!zip.open()) {
-			return ZipResult(i18n("Could not create '%1': %2", m_outputPath, zip.errorString()));
+			return ZipResult(tr("Could not create '%1': %2")
+								 .arg(m_outputPath, zip.errorString()));
 		}
 
 		qint64 done = 0;
@@ -110,7 +110,8 @@ namespace MMCZip
 			if (m_cancelled.load())
 				return ZipResult();
 			if (!zip.addFile(it.key(), it.value())) {
-				return ZipResult(i18n("Could not add %1: %2", it.key(), zip.errorString()));
+				return ZipResult(tr("Could not add %1: %2")
+									 .arg(it.key(), zip.errorString()));
 			}
 			reportProgress(++done, total);
 		}
@@ -127,7 +128,7 @@ namespace MMCZip
 				continue;
 			}
 
-			reportStatus(i18n("Compressing: %1", relative));
+			reportStatus(tr("Compressing: %1").arg(relative));
 
 			if (m_followSymlinks) {
 				/* An instance's mods folder is frequently a tree of
@@ -144,13 +145,15 @@ namespace MMCZip
 			}
 
 			if (!zip.addFile(absolute, m_destinationPrefix + relative)) {
-				return ZipResult(i18n("Could not read and compress %1: %2", relative, zip.errorString()));
+				return ZipResult(tr("Could not read and compress %1: %2")
+									 .arg(relative, zip.errorString()));
 			}
 			reportProgress(++done, total);
 		}
 
 		if (!zip.close()) {
-			return ZipResult(i18n("Could not finish '%1': %2", m_outputPath, zip.errorString()));
+			return ZipResult(tr("Could not finish '%1': %2")
+								 .arg(m_outputPath, zip.errorString()));
 		}
 		return ZipResult();
 	}

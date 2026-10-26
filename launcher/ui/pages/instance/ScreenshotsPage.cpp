@@ -48,7 +48,6 @@
 #include "RWStorage.h"
 #include <FileSystem.h>
 #include <DesktopServices.h>
-#include <KLocalizedString>
 
 typedef RWStorage<QString, QIcon> SharedIconCache;
 typedef std::shared_ptr<SharedIconCache> SharedIconCachePtr;
@@ -312,7 +311,7 @@ ScreenshotsPage::~ScreenshotsPage()
 
 void ScreenshotsPage::ShowContextMenu(const QPoint& pos)
 {
-	auto menu = ui->toolBar->createContextMenu(this, i18n("Context menu"));
+	auto menu = ui->toolBar->createContextMenu(this, tr("Context menu"));
 	menu->exec(ui->listView->mapToGlobal(pos));
 	delete menu;
 }
@@ -358,7 +357,7 @@ void ScreenshotsPage::on_actionUpload_triggered()
 
 		if (dialog.execWithTask(job.get()) != QDialog::Accepted) {
 			CustomMessageBox::selectable(
-				this, i18n("Failed to upload screenshots!"), i18n("Unknown error"),
+				this, tr("Failed to upload screenshots!"), tr("Unknown error"),
 				QMessageBox::Warning)
 				->exec();
 		} else {
@@ -366,9 +365,10 @@ void ScreenshotsPage::on_actionUpload_triggered()
 			QClipboard* clipboard = QApplication::clipboard();
 			clipboard->setText(link);
 			CustomMessageBox::selectable(
-				this, i18n("Upload finished"),
-				i18n("The <a href=\"%1\">link  to the uploaded screenshot</a> "
-				   "has been placed in your clipboard.", link),
+				this, tr("Upload finished"),
+				tr("The <a href=\"%1\">link  to the uploaded screenshot</a> "
+				   "has been placed in your clipboard.")
+					.arg(link),
 				QMessageBox::Information)
 				->exec();
 		}
@@ -393,17 +393,18 @@ void ScreenshotsPage::on_actionUpload_triggered()
 	m_uploadActive = true;
 	ProgressDialog prog(this);
 	if (prog.execWithTask(&task) != QDialog::Accepted) {
-		CustomMessageBox::selectable(this, i18n("Failed to upload screenshots!"),
-									 i18n("Unknown error"), QMessageBox::Warning)
+		CustomMessageBox::selectable(this, tr("Failed to upload screenshots!"),
+									 tr("Unknown error"), QMessageBox::Warning)
 			->exec();
 	} else {
 		auto link = QString("https://imgur.com/a/%1").arg(imgurAlbum->id());
 		QClipboard* clipboard = QApplication::clipboard();
 		clipboard->setText(link);
 		CustomMessageBox::selectable(
-			this, i18n("Upload finished"),
-			i18n("The <a href=\"%1\">link  to the uploaded album</a> has been "
-			   "placed in your clipboard.", link),
+			this, tr("Upload finished"),
+			tr("The <a href=\"%1\">link  to the uploaded album</a> has been "
+			   "placed in your clipboard.")
+				.arg(link),
 			QMessageBox::Information)
 			->exec();
 	}
@@ -413,8 +414,8 @@ void ScreenshotsPage::on_actionUpload_triggered()
 void ScreenshotsPage::on_actionDelete_triggered()
 {
 	auto mbox = CustomMessageBox::selectable(
-		this, i18n("Are you sure?"),
-		i18n("This will delete all selected screenshots."), QMessageBox::Warning,
+		this, tr("Are you sure?"),
+		tr("This will delete all selected screenshots."), QMessageBox::Warning,
 		QMessageBox::Yes | QMessageBox::No);
 	std::unique_ptr<QMessageBox> box(mbox);
 

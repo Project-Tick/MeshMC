@@ -31,7 +31,6 @@
 #include <FileSystem.h>
 #include "Application.h"
 #include <tools/MCEditTool.h>
-#include <KLocalizedString>
 
 ExternalToolsPage::ExternalToolsPage(QWidget* parent)
 	: QWidget(parent), ui(new Ui::ExternalToolsPage)
@@ -90,15 +89,15 @@ void ExternalToolsPage::on_jprofilerPathBtn_clicked()
 	QString error;
 	do {
 		raw_dir = QFileDialog::getExistingDirectory(
-			this, i18n("JProfiler Folder"), raw_dir);
+			this, tr("JProfiler Folder"), raw_dir);
 		if (raw_dir.isEmpty()) {
 			break;
 		}
 		QString cooked_dir = FS::NormalizePath(raw_dir);
 		if (!APPLICATION->profilers()["jprofiler"]->check(cooked_dir, &error)) {
 			QMessageBox::critical(
-				this, i18n("Error"),
-				i18n("Error while checking JProfiler install:\n%1", error));
+				this, tr("Error"),
+				tr("Error while checking JProfiler install:\n%1").arg(error));
 			continue;
 		} else {
 			ui->jprofilerPathEdit->setText(cooked_dir);
@@ -112,11 +111,11 @@ void ExternalToolsPage::on_jprofilerCheckBtn_clicked()
 	if (!APPLICATION->profilers()["jprofiler"]->check(
 			ui->jprofilerPathEdit->text(), &error)) {
 		QMessageBox::critical(
-			this, i18n("Error"),
-			i18n("Error while checking JProfiler install:\n%1", error));
+			this, tr("Error"),
+			tr("Error while checking JProfiler install:\n%1").arg(error));
 	} else {
-		QMessageBox::information(this, i18n("OK"),
-								 i18n("JProfiler setup seems to be OK"));
+		QMessageBox::information(this, tr("OK"),
+								 tr("JProfiler setup seems to be OK"));
 	}
 }
 
@@ -125,7 +124,7 @@ void ExternalToolsPage::on_jvisualvmPathBtn_clicked()
 	QString raw_dir = ui->jvisualvmPathEdit->text();
 	QString error;
 	do {
-		raw_dir = QFileDialog::getOpenFileName(this, i18n("JVisualVM Executable"),
+		raw_dir = QFileDialog::getOpenFileName(this, tr("JVisualVM Executable"),
 											   raw_dir);
 		if (raw_dir.isEmpty()) {
 			break;
@@ -133,8 +132,8 @@ void ExternalToolsPage::on_jvisualvmPathBtn_clicked()
 		QString cooked_dir = FS::NormalizePath(raw_dir);
 		if (!APPLICATION->profilers()["jvisualvm"]->check(cooked_dir, &error)) {
 			QMessageBox::critical(
-				this, i18n("Error"),
-				i18n("Error while checking JVisualVM install:\n%1", error));
+				this, tr("Error"),
+				tr("Error while checking JVisualVM install:\n%1").arg(error));
 			continue;
 		} else {
 			ui->jvisualvmPathEdit->setText(cooked_dir);
@@ -148,11 +147,11 @@ void ExternalToolsPage::on_jvisualvmCheckBtn_clicked()
 	if (!APPLICATION->profilers()["jvisualvm"]->check(
 			ui->jvisualvmPathEdit->text(), &error)) {
 		QMessageBox::critical(
-			this, i18n("Error"),
-			i18n("Error while checking JVisualVM install:\n%1", error));
+			this, tr("Error"),
+			tr("Error while checking JVisualVM install:\n%1").arg(error));
 	} else {
-		QMessageBox::information(this, i18n("OK"),
-								 i18n("JVisualVM setup seems to be OK"));
+		QMessageBox::information(this, tr("OK"),
+								 tr("JVisualVM setup seems to be OK"));
 	}
 }
 
@@ -162,10 +161,10 @@ void ExternalToolsPage::on_mceditPathBtn_clicked()
 	QString error;
 	do {
 #ifdef Q_OS_MACOS
-		raw_dir = QFileDialog::getOpenFileName(this, i18n("MCEdit Application"),
+		raw_dir = QFileDialog::getOpenFileName(this, tr("MCEdit Application"),
 											   raw_dir);
 #else
-		raw_dir = QFileDialog::getExistingDirectory(this, i18n("MCEdit Folder"),
+		raw_dir = QFileDialog::getExistingDirectory(this, tr("MCEdit Folder"),
 													raw_dir);
 #endif
 		if (raw_dir.isEmpty()) {
@@ -174,8 +173,8 @@ void ExternalToolsPage::on_mceditPathBtn_clicked()
 		QString cooked_dir = FS::NormalizePath(raw_dir);
 		if (!APPLICATION->mcedit()->check(cooked_dir, error)) {
 			QMessageBox::critical(
-				this, i18n("Error"),
-				i18n("Error while checking MCEdit install:\n%1", error));
+				this, tr("Error"),
+				tr("Error while checking MCEdit install:\n%1").arg(error));
 			continue;
 		} else {
 			ui->mceditPathEdit->setText(cooked_dir);
@@ -188,18 +187,18 @@ void ExternalToolsPage::on_mceditCheckBtn_clicked()
 	QString error;
 	if (!APPLICATION->mcedit()->check(ui->mceditPathEdit->text(), error)) {
 		QMessageBox::critical(
-			this, i18n("Error"),
-			i18n("Error while checking MCEdit install:\n%1", error));
+			this, tr("Error"),
+			tr("Error while checking MCEdit install:\n%1").arg(error));
 	} else {
-		QMessageBox::information(this, i18n("OK"),
-								 i18n("MCEdit setup seems to be OK"));
+		QMessageBox::information(this, tr("OK"),
+								 tr("MCEdit setup seems to be OK"));
 	}
 }
 
 void ExternalToolsPage::on_jsonEditorBrowseBtn_clicked()
 {
 	QString raw_file =
-		QFileDialog::getOpenFileName(this, i18n("JSON Editor"),
+		QFileDialog::getOpenFileName(this, tr("JSON Editor"),
 									 ui->jsonEditorTextBox->text().isEmpty()
 #if defined(Q_OS_LINUX)
 										 ? QString("/usr/bin")
@@ -222,8 +221,8 @@ void ExternalToolsPage::on_jsonEditorBrowseBtn_clicked()
 		ui->jsonEditorTextBox->setText(cooked_file);
 	} else {
 		QMessageBox::warning(
-			this, i18n("Invalid"),
-			i18n("The file chosen does not seem to be an executable"));
+			this, tr("Invalid"),
+			tr("The file chosen does not seem to be an executable"));
 	}
 }
 

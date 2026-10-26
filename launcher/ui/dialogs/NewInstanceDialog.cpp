@@ -46,7 +46,6 @@
 #include "ui/pages/modplatform/modrinth/ModrinthPage.h"
 #include "ui/pages/modplatform/ImportPage.h"
 #include "ui/pages/modplatform/technic/TechnicPage.h"
-#include <KLocalizedString>
 
 NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 									 const QString& url, QWidget* parent)
@@ -71,7 +70,7 @@ NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 		index = 0;
 	}
 	ui->groupBox->setCurrentIndex(index);
-	ui->groupBox->lineEdit()->setPlaceholderText(i18n("No group"));
+	ui->groupBox->lineEdit()->setPlaceholderText(tr("No group"));
 
 	refreshInstDirBox();
 	/* Reopen on the folder used last time.
@@ -161,7 +160,7 @@ QList<BasePage*> NewInstanceDialog::getPages()
 
 QString NewInstanceDialog::dialogTitle()
 {
-	return i18n("New Instance");
+	return tr("New Instance");
 }
 
 NewInstanceDialog::~NewInstanceDialog()
@@ -225,7 +224,7 @@ void NewInstanceDialog::refreshInstDirBox()
 	for (int i = 0; i < dirs.size(); i++) {
 		const QString& dir = dirs.at(i);
 		ui->instDirBox->addItem(
-			i == 0 ? i18n("Default (%1)", rawPrimary) : dir, dir);
+			i == 0 ? tr("Default (%1)").arg(rawPrimary) : dir, dir);
 	}
 
 	const int idx = ui->instDirBox->findData(previouslySelected);

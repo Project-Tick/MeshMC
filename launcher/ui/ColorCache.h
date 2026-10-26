@@ -19,7 +19,7 @@
 
 #pragma once
 #include <QtGui/QColor>
-#include <KColorUtils>
+#include <rainbow.h>
 #include <MessageLevel.h>
 #include <QMap>
 

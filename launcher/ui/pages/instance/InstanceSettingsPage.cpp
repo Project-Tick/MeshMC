@@ -35,7 +35,6 @@
 #include "java/JavaInstallList.h"
 #include "java/download/JavaRuntime.h"
 #include "FileSystem.h"
-#include <KLocalizedString>
 
 InstanceSettingsPage::InstanceSettingsPage(BaseInstance* inst, QWidget* parent)
 	: QWidget(parent), ui(new Ui::InstanceSettingsPage), m_instance(inst)
@@ -339,7 +338,7 @@ void InstanceSettingsPage::on_javaDetectBtn_clicked()
 	JavaInstallPtr java;
 
 	VersionSelectDialog vselect(APPLICATION->javalist().get(),
-								i18n("Select a Java version"), this, true);
+								tr("Select a Java version"), this, true);
 	vselect.setResizeOn(2);
 	vselect.exec();
 
@@ -359,7 +358,7 @@ void InstanceSettingsPage::on_javaDetectBtn_clicked()
 void InstanceSettingsPage::on_javaBrowseBtn_clicked()
 {
 	QString raw_path =
-		QFileDialog::getOpenFileName(this, i18n("Find Java executable"));
+		QFileDialog::getOpenFileName(this, tr("Find Java executable"));
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (raw_path.isEmpty()) {

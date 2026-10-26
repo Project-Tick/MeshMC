@@ -42,7 +42,6 @@
 #include "settings/SettingsObject.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/ProgressDialog.h"
-#include <KLocalizedString>
 
 namespace
 {
@@ -76,7 +75,7 @@ ExportPackDialog::ExportPackDialog(MinecraftInstance* instance,
 	 * disabled. A greyed-out box still asks a question, and neither
 	 * catalogue has anywhere to put the answer. */
 	if (m_format == Format::ModrinthPack) {
-		setWindowTitle(i18n("Export Modrinth Pack"));
+		setWindowTitle(tr("Export Modrinth Pack"));
 
 		ui->authorLabel->hide();
 		ui->author->hide();
@@ -84,7 +83,7 @@ ExportPackDialog::ExportPackDialog(MinecraftInstance* instance,
 
 		ui->summary->setPlainText(settings->get("ExportSummary").toString());
 	} else {
-		setWindowTitle(i18n("Export CurseForge Pack"));
+		setWindowTitle(tr("Export CurseForge Pack"));
 
 		ui->summaryLabel->hide();
 		ui->summary->hide();
@@ -175,8 +174,8 @@ ExportPackDialog::ExportPackDialog(MinecraftInstance* instance,
 	headerView->setSectionResizeMode(QHeaderView::ResizeToContents);
 	headerView->setSectionResizeMode(0, QHeaderView::Stretch);
 
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(i18n("OK"));
-	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(i18n("Cancel"));
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
+	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
 ExportPackDialog::~ExportPackDialog()
@@ -226,9 +225,9 @@ QString ExportPackDialog::askForOutputPath(const QString& packName)
 	 * prompt is the platform's, in the platform's words. */
 	if (m_format == Format::ModrinthPack) {
 		QString output = QFileDialog::getSaveFileName(
-			this, i18n("Export %1", packName),
+			this, tr("Export %1").arg(packName),
 			FS::PathCombine(QDir::homePath(), fileName + ".mrpack"),
-			i18n("Modrinth pack") + " (*.mrpack *.zip)", nullptr);
+			tr("Modrinth pack") + " (*.mrpack *.zip)", nullptr);
 		if (output.isEmpty()) {
 			return {};
 		}
@@ -242,9 +241,9 @@ QString ExportPackDialog::askForOutputPath(const QString& packName)
 	}
 
 	QString output = QFileDialog::getSaveFileName(
-		this, i18n("Export %1", packName),
+		this, tr("Export %1").arg(packName),
 		FS::PathCombine(QDir::homePath(), fileName + ".zip"),
-		i18n("CurseForge pack") + " (*.zip)", nullptr);
+		tr("CurseForge pack") + " (*.zip)", nullptr);
 	if (output.isEmpty()) {
 		return {};
 	}
@@ -322,13 +321,13 @@ void ExportPackDialog::done(int result)
 				if (exportTask->wasAborted()) {
 					return;
 				}
-				CustomMessageBox::selectable(this, i18n("Error"), reason,
+				CustomMessageBox::selectable(this, tr("Error"), reason,
 											 QMessageBox::Critical)
 					->exec();
 			});
 
 	ProgressDialog progress(this);
-	progress.setSkipButton(true, i18n("Abort"));
+	progress.setSkipButton(true, tr("Abort"));
 	if (progress.execWithTask(std::move(task)) != QDialog::Accepted) {
 		/* Failed or aborted. The window stays, so the user can adjust
 		 * what they chose and try again without retyping any of it. */

@@ -11,7 +11,6 @@
 
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "RuleEngine.h"
-#include <KLocalizedString>
 
 class QTextEdit;
 
@@ -29,7 +28,7 @@ class AnalysisPage : public QWidget, public BasePage
 	}
 	QString displayName() const override
 	{
-		return i18n("Error Analysis");
+		return QObject::tr("Error Analysis");
 	}
 	QIcon icon() const override
 	{

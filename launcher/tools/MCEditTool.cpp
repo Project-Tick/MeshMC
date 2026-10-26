@@ -26,7 +26,6 @@
 #include "settings/SettingsObject.h"
 #include "BaseInstance.h"
 #include "minecraft/MinecraftInstance.h"
-#include <KLocalizedString>
 
 MCEditTool::MCEditTool(SettingsObjectPtr settings)
 {
@@ -47,18 +46,18 @@ QString MCEditTool::path() const
 bool MCEditTool::check(const QString& toolPath, QString& error)
 {
 	if (toolPath.isEmpty()) {
-		error = i18n("Path is empty");
+		error = QObject::tr("Path is empty");
 		return false;
 	}
 	const QDir dir(toolPath);
 	if (!dir.exists()) {
-		error = i18n("Path does not exist");
+		error = QObject::tr("Path does not exist");
 		return false;
 	}
 	if (!dir.exists("mcedit.sh") && !dir.exists("mcedit.py") &&
 		!dir.exists("mcedit.exe") && !dir.exists("Contents") &&
 		!dir.exists("mcedit2.exe")) {
-		error = i18n("Path does not seem to be a MCEdit path");
+		error = QObject::tr("Path does not seem to be a MCEdit path");
 		return false;
 	}
 	return true;

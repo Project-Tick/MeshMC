@@ -27,7 +27,6 @@
 #include <QJsonArray>
 #include <QRegularExpression>
 #include <QSaveFile>
-#include <KLocalizedString>
 
 namespace ProfileUtils
 {
@@ -66,7 +65,8 @@ namespace ProfileUtils
 			auto version = Json::requireInteger(obj.value("version"));
 			if (version != currentOrderFileVersion) {
 				throw JSONValidationError(
-					i18n("Invalid order file version, expected %1", currentOrderFileVersion));
+					QObject::tr("Invalid order file version, expected %1")
+						.arg(currentOrderFileVersion));
 			}
 			auto orderArray = Json::requireArray(obj.value("order"));
 			for (auto item : orderArray) {
@@ -111,7 +111,8 @@ namespace ProfileUtils
 		QFile file(fileInfo.absoluteFilePath());
 		if (!file.open(QFile::ReadOnly)) {
 			auto errorStr =
-				i18n("Unable to open the version file %1: %2.", fileInfo.fileName(), file.errorString());
+				QObject::tr("Unable to open the version file %1: %2.")
+					.arg(fileInfo.fileName(), file.errorString());
 			return createErrorVersionFile(fileInfo.completeBaseName(),
 										  fileInfo.absoluteFilePath(),
 										  errorStr);
@@ -131,8 +132,11 @@ namespace ProfileUtils
 				}
 				column++;
 			}
-			auto errorStr = i18n("Unable to process the version file "
-										"%1: %2 at line %3 column %4.", fileInfo.fileName(), error.errorString(), line, column);
+			auto errorStr = QObject::tr("Unable to process the version file "
+										"%1: %2 at line %3 column %4.")
+								.arg(fileInfo.fileName(), error.errorString())
+								.arg(line)
+								.arg(column);
 			return createErrorVersionFile(fileInfo.completeBaseName(),
 										  fileInfo.absoluteFilePath(),
 										  errorStr);
@@ -163,7 +167,8 @@ namespace ProfileUtils
 		QFile file(fileInfo.absoluteFilePath());
 		if (!file.open(QFile::ReadOnly)) {
 			auto errorStr =
-				i18n("Unable to open the version file %1: %2.", fileInfo.fileName(), file.errorString());
+				QObject::tr("Unable to open the version file %1: %2.")
+					.arg(fileInfo.fileName(), file.errorString());
 			return createErrorVersionFile(fileInfo.completeBaseName(),
 										  fileInfo.absoluteFilePath(),
 										  errorStr);
@@ -173,7 +178,8 @@ namespace ProfileUtils
 		if (doc.isNull()) {
 			file.remove();
 			throw JSONValidationError(
-				i18n("Unable to process the version file %1.", fileInfo.fileName()));
+				QObject::tr("Unable to process the version file %1.")
+					.arg(fileInfo.fileName()));
 		}
 		return guardedParseJson(doc, fileInfo.completeBaseName(),
 								fileInfo.absoluteFilePath(), false);

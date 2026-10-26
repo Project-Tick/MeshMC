@@ -39,7 +39,6 @@
 
 #include "Application.h"
 #include "BuildConfig.h"
-#include <KLocalizedString>
 
 JavaSettingsWidget::JavaSettingsWidget(QWidget* parent) : QWidget(parent)
 {
@@ -173,8 +172,8 @@ JavaSettingsWidget::ValidationStatus JavaSettingsWidget::validate()
 		case JavaStatus::ReturnedInvalidData: {
 			int button =
 				CustomMessageBox::selectable(
-					this, i18n("No Java version selected"),
-					i18n("You didn't select a Java version or selected something "
+					this, tr("No Java version selected"),
+					tr("You didn't select a Java version or selected something "
 					   "that doesn't work.\n"
 					   "MeshMC will not be able to start Minecraft.\n"
 					   "Do you wish to proceed without any Java?"
@@ -275,7 +274,7 @@ void JavaSettingsWidget::on_javaBrowseBtn_clicked()
 	filter = "Java (java)";
 #endif
 	QString raw_path = QFileDialog::getOpenFileName(
-		this, i18n("Find Java executable"), QString(), filter);
+		this, tr("Find Java executable"), QString(), filter);
 	if (raw_path.isEmpty()) {
 		return;
 	}
@@ -293,12 +292,13 @@ void JavaSettingsWidget::on_javaStatusBtn_clicked()
 			checkJavaPath(m_javaPathTextBox->text());
 			return;
 		case JavaStatus::DoesNotExist:
-			text += i18n("The specified file either doesn't exist or is "
+			text += QObject::tr("The specified file either doesn't exist or is "
 								"not a proper executable.");
 			failed = true;
 			break;
 		case JavaStatus::DoesNotStart: {
-			text += i18n("The specified java binary didn't start properly.<br />");
+			text += QObject::tr(
+				"The specified java binary didn't start properly.<br />");
 			auto htmlError = m_result.errorLog;
 			if (!htmlError.isEmpty()) {
 				htmlError.replace('\n', "<br />");
@@ -308,7 +308,8 @@ void JavaSettingsWidget::on_javaStatusBtn_clicked()
 			break;
 		}
 		case JavaStatus::ReturnedInvalidData: {
-			text += i18n("The specified java binary returned unexpected results:<br />");
+			text += QObject::tr(
+				"The specified java binary returned unexpected results:<br />");
 			auto htmlOut = m_result.outLog;
 			if (!htmlOut.isEmpty()) {
 				htmlOut.replace('\n', "<br />");
@@ -318,9 +319,11 @@ void JavaSettingsWidget::on_javaStatusBtn_clicked()
 			break;
 		}
 		case JavaStatus::Good:
-			text += i18n("Java test succeeded!<br />Platform reported: "
+			text += QObject::tr("Java test succeeded!<br />Platform reported: "
 								"%1<br />Java version "
-								"reported: %2<br />", m_result.realPlatform, m_result.javaVersion.toString());
+								"reported: %2<br />")
+						.arg(m_result.realPlatform,
+							 m_result.javaVersion.toString());
 			break;
 		case JavaStatus::Pending:
 			// TODO: abort here?
@@ -328,8 +331,8 @@ void JavaSettingsWidget::on_javaStatusBtn_clicked()
 	}
 	CustomMessageBox::selectable(
 		this,
-		failed ? i18n("Java test failure")
-			   : i18n("Java test success"),
+		failed ? QObject::tr("Java test failure")
+			   : QObject::tr("Java test success"),
 		text, failed ? QMessageBox::Critical : QMessageBox::Information)
 		->show();
 }
@@ -419,14 +422,14 @@ void JavaSettingsWidget::checkFinished(JavaCheckResult result)
 
 void JavaSettingsWidget::retranslate()
 {
-	m_memoryGroupBox->setTitle(i18n("Memory"));
+	m_memoryGroupBox->setTitle(tr("Memory"));
 	m_maxMemSpinBox->setToolTip(
-		i18n("The maximum amount of memory Minecraft is allowed to use."));
-	m_labelMinMem->setText(i18n("Minimum memory allocation:"));
-	m_labelMaxMem->setText(i18n("Maximum memory allocation:"));
+		tr("The maximum amount of memory Minecraft is allowed to use."));
+	m_labelMinMem->setText(tr("Minimum memory allocation:"));
+	m_labelMaxMem->setText(tr("Maximum memory allocation:"));
 	m_minMemSpinBox->setToolTip(
-		i18n("The amount of memory Minecraft is started with."));
+		tr("The amount of memory Minecraft is started with."));
 	m_permGenSpinBox->setToolTip(
-		i18n("The amount of memory available to store loaded Java classes."));
-	m_javaBrowseBtn->setText(i18n("Browse"));
+		tr("The amount of memory available to store loaded Java classes."));
+	m_javaBrowseBtn->setText(tr("Browse"));
 }

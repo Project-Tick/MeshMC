@@ -39,13 +39,36 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>514</width>
-        <height>400</height>
+        <width>512</width>
+        <height>398</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="themeGridLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="widgetStyleLabel">
+           <property name="text">
+            <string>&amp;Theme:</string>
+           </property>
+           <property name="buddy">
+            <cstring>widgetStyleComboBox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="widgetStyleComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="2">
           <widget class="QPushButton" name="themesFolderButton">
            <property name="toolTip">
@@ -56,8 +79,18 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="widgetStyleComboBox">
+         <item row="1" column="0">
+          <widget class="QLabel" name="iconsLabel">
+           <property name="text">
+            <string>&amp;Icons:</string>
+           </property>
+           <property name="buddy">
+            <cstring>iconsComboBox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="iconsComboBox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -79,28 +112,18 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="iconsLabel">
+         <item row="2" column="0">
+          <widget class="QLabel" name="catPackLabel">
            <property name="text">
-            <string>&amp;Icons:</string>
+            <string>&amp;Cat:</string>
            </property>
            <property name="buddy">
-            <cstring>iconsComboBox</cstring>
+            <cstring>catPackComboBox</cstring>
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="widgetStyleLabel">
-           <property name="text">
-            <string>&amp;Theme:</string>
-           </property>
-           <property name="buddy">
-            <cstring>widgetStyleComboBox</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="iconsComboBox">
+         <item row="2" column="1">
+          <widget class="QComboBox" name="catPackComboBox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -125,6 +148,175 @@
         </layout>
        </item>
        <item>
+        <widget class="QGroupBox" name="previewBox">
+         <property name="title">
+          <string>Preview</string>
+         </property>
+         <layout class="QHBoxLayout" name="previewLayout">
+          <item>
+           <widget class="QToolButton" name="icon1">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="icon2">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="icon3">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="icon4">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="icon5">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="icon6">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="icon7">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="icon8">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="previewSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="catPreview">
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::NoFocus</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>64</width>
+              <height>128</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -146,6 +338,7 @@
  <tabstops>
   <tabstop>widgetStyleComboBox</tabstop>
   <tabstop>iconsComboBox</tabstop>
+  <tabstop>catPackComboBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

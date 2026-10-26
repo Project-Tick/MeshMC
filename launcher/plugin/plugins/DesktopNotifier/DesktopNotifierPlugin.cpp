@@ -20,6 +20,7 @@
  *    notify_exit         — instance stopped  (POST_LAUNCH)  (default 1)
  *    notify_created      — fire on INSTANCE_CREATED         (default 1)
  *    notify_removed      — fire on INSTANCE_REMOVED         (default 0)
+ *    notify_news         — fire on NEWS_UPDATED             (default 0)
  *    notify_startup      — say hello on APP_INITIALIZED     (default 0)
  *    timeout_ms          — notification timeout             (default 5000)
  */
@@ -172,6 +173,22 @@ static int on_instance_removed(void* /*mh*/, uint32_t /*hook_id*/,
 	return 0;
 }
 
+static int on_news_updated(void* /*mh*/, uint32_t /*hook_id*/,
+						   void* /*payload*/, void* /*ud*/)
+{
+	if (!settingBool("notify_news", false))
+		return 0;
+	int count = g_ctx->news_get_entry_count(g_ctx->module_handle);
+	if (count <= 0)
+		return 0;
+	const char* title = g_ctx->news_get_entry_title(g_ctx->module_handle, 0);
+	notify(QStringLiteral("News updated"),
+		   title ? QString::fromUtf8(title)
+				 : QStringLiteral("%1 new news entries.").arg(count),
+		   1);
+	return 0;
+}
+
 /* ── lifecycle ────────────────────────────────────────────────────── */
 
 extern "C" {
@@ -186,6 +203,7 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 	settingDefault("notify_exit", "1");	  /* POST_LAUNCH: game exited    */
 	settingDefault("notify_created", "1");
 	settingDefault("notify_removed", "0");
+	settingDefault("notify_news", "0");
 	settingDefault("notify_startup", "0");
 	settingDefault("timeout_ms", "5000");
 
@@ -211,6 +229,8 @@ MMCO_EXPORT int mmco_init(MMCOContext* ctx)
 					   on_instance_created, nullptr);
 	ctx->hook_register(ctx->module_handle, MMCO_HOOK_INSTANCE_REMOVED,
 					   on_instance_removed, nullptr);
+	ctx->hook_register(ctx->module_handle, MMCO_HOOK_NEWS_UPDATED,
+					   on_news_updated, nullptr);
 
 	MMCO_LOG(ctx, "DesktopNotifier initialized.");
 	return 0;

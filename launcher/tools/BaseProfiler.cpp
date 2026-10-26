@@ -21,7 +21,6 @@
 #include "QObjectPtr.h"
 
 #include <QProcess>
-#include <KLocalizedString>
 
 BaseProfiler::BaseProfiler(SettingsObjectPtr settings, InstancePtr instance,
 						   QObject* parent)
@@ -47,7 +46,7 @@ void BaseProfiler::abortProfilingImpl()
 	m_profilerProcess->terminate();
 	m_profilerProcess->deleteLater();
 	m_profilerProcess = 0;
-	emit abortLaunch(i18n("Profiler aborted"));
+	emit abortLaunch(tr("Profiler aborted"));
 }
 
 BaseProfiler* BaseProfilerFactory::createProfiler(InstancePtr instance,

@@ -46,7 +46,6 @@
 #include "ui/InstanceWindow.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/ProgressDialog.h"
-#include <KLocalizedString>
 
 /* Insert a line break between a list and a picture that immediately
  * follows it.
@@ -306,8 +305,10 @@ void ManagedPackPage::showPackInformation()
 	ui->packName->setText(m_instance->managedPackName());
 	ui->packVersion->setText(m_instance->managedPackVersionName());
 	ui->packOrigin->setText(
-		i18n("Website: <a href=%1>%2</a>    |    Pack ID: %3    |    Version "
-		   "ID: %4", packUrl(), displayName(), m_instance->managedPackId(), m_instance->managedPackVersionId()));
+		tr("Website: <a href=%1>%2</a>    |    Pack ID: %3    |    Version "
+		   "ID: %4")
+			.arg(packUrl(), displayName(), m_instance->managedPackId(),
+				 m_instance->managedPackVersionId()));
 }
 
 void ManagedPackPage::showLocalPackMode()
@@ -319,18 +320,19 @@ void ManagedPackPage::showLocalPackMode()
 	ui->packOriginLabel->hide();
 	ui->versionsComboBox->hide();
 
-	ui->updateToVersionLabel->setText(i18n("URL:"));
-	ui->updateButton->setText(i18n("Update Pack"));
+	ui->updateToVersionLabel->setText(tr("URL:"));
+	ui->updateButton->setText(tr("Update Pack"));
 	ui->updateButton->setDisabled(false);
 	ui->urlLine->setText(m_instance->managedPackUpdateUrl());
 
 	ui->packName->setText(m_instance->name());
 	ui->changelogTextBrowser->setText(
-		i18n("This is a local modpack.\n"
+		tr("This is a local modpack.\n"
 		   "This can be updated either using a file in %1 format or an URL.\n"
 		   "Do not use a different format than the one mentioned as it may "
 		   "break the instance.\n"
-		   "Make sure you also trust the URL.\n", displayName()));
+		   "Make sure you also trust the URL.\n")
+			.arg(displayName()));
 }
 
 void ManagedPackPage::reload()
@@ -342,7 +344,7 @@ void ManagedPackPage::reload()
 	m_loaded = false;
 	m_versions.clear();
 
-	ui->updateButton->setText(i18n("Fetching versions..."));
+	ui->updateButton->setText(tr("Fetching versions..."));
 	ui->updateButton->setDisabled(true);
 
 	openedImpl();
@@ -421,7 +423,7 @@ void ManagedPackPage::fetchVersions()
 				setFailState();
 			});
 
-	ui->changelogTextBrowser->setText(i18n("Fetching changelogs..."));
+	ui->changelogTextBrowser->setText(tr("Fetching changelogs..."));
 
 	m_versionsJob->start();
 }
@@ -499,7 +501,7 @@ void ManagedPackPage::applyVersions(quint64 generation,
 			  version.displayName == installedName));
 
 		if (isInstalled) {
-			label = i18n("%1 (Current)", label);
+			label = tr("%1 (Current)").arg(label);
 		}
 
 		ui->versionsComboBox->addItem(label, version.versionId);
@@ -537,18 +539,18 @@ void ManagedPackPage::suggestVersion()
 	} else {
 		/* CurseForge: one request per file, issued only for the version
 		 * the user is actually looking at. */
-		ui->changelogTextBrowser->setText(i18n("Fetching changelogs..."));
+		ui->changelogTextBrowser->setText(tr("Fetching changelogs..."));
 		fetchChangelogFor(index);
 	}
 
 	if (version->isInstallable()) {
-		ui->updateButton->setText(i18n("Update Pack"));
+		ui->updateButton->setText(tr("Update Pack"));
 		ui->updateButton->setDisabled(false);
 	} else {
 		/* CurseForge withholds download URLs for packs whose author
 		 * opted out of third-party distribution. The version is real
 		 * and worth listing, but we cannot fetch it. */
-		ui->updateButton->setText(i18n("Cannot update!"));
+		ui->updateButton->setText(tr("Cannot update!"));
 		ui->updateButton->setDisabled(true);
 	}
 }
@@ -615,7 +617,8 @@ void ManagedPackPage::fetchChangelogFor(int versionIndex)
 					return;
 				}
 				if (ui->versionsComboBox->currentIndex() == versionIndex) {
-					ui->changelogTextBrowser->setText(i18n("Failed to request changelog data for this modpack."));
+					ui->changelogTextBrowser->setText(tr(
+						"Failed to request changelog data for this modpack."));
 				}
 			});
 
@@ -657,13 +660,13 @@ void ManagedPackPage::setFailState()
 	ui->versionsComboBox->blockSignals(true);
 	ui->versionsComboBox->clear();
 	ui->versionsComboBox->addItem(
-		i18n("Failed to search for available versions."), QString());
+		tr("Failed to search for available versions."), QString());
 	ui->versionsComboBox->blockSignals(false);
 
 	ui->changelogTextBrowser->setText(
-		i18n("Failed to request changelog data for this modpack."));
+		tr("Failed to request changelog data for this modpack."));
 
-	ui->updateButton->setText(i18n("Cannot update!"));
+	ui->updateButton->setText(tr("Cannot update!"));
 	ui->updateButton->setDisabled(true);
 
 	ui->reloadButton->setVisible(true);
@@ -678,8 +681,8 @@ void ManagedPackPage::update()
 		const QString typed = m_instance->managedPackUpdateUrl();
 		if (typed.isEmpty()) {
 			CustomMessageBox::selectable(
-				this, i18n("No URL"),
-				i18n("Enter the URL of the modpack to update from, or use "
+				this, tr("No URL"),
+				tr("Enter the URL of the modpack to update from, or use "
 				   "\"Update From File\" instead."),
 				QMessageBox::Warning)
 				->show();
@@ -690,8 +693,8 @@ void ManagedPackPage::update()
 		if (!url.isValid() ||
 			(url.scheme() != "http" && url.scheme() != "https")) {
 			CustomMessageBox::selectable(
-				this, i18n("Invalid URL"),
-				i18n("\"%1\" is not a valid http or https URL.", typed),
+				this, tr("Invalid URL"),
+				tr("\"%1\" is not a valid http or https URL.").arg(typed),
 				QMessageBox::Warning)
 				->show();
 			return;
@@ -733,18 +736,18 @@ void ManagedPackPage::updateFromFile()
 	QString filter;
 	switch (m_provider) {
 		case Provider::Modrinth:
-			filter = i18n("Modrinth pack") + QStringLiteral(" (*.mrpack *.zip)");
+			filter = tr("Modrinth pack") + QStringLiteral(" (*.mrpack *.zip)");
 			break;
 		case Provider::CurseForge:
-			filter = i18n("CurseForge pack") + QStringLiteral(" (*.zip)");
+			filter = tr("CurseForge pack") + QStringLiteral(" (*.zip)");
 			break;
 		case Provider::Unknown:
-			filter = i18n("Modpack") + QStringLiteral(" (*.zip *.mrpack)");
+			filter = tr("Modpack") + QStringLiteral(" (*.zip *.mrpack)");
 			break;
 	}
 
 	const QUrl chosen = QFileDialog::getOpenFileUrl(
-		this, i18n("Choose update file"), QUrl::fromLocalFile(QDir::homePath()),
+		this, tr("Choose update file"), QUrl::fromLocalFile(QDir::homePath()),
 		filter);
 	if (chosen.isEmpty()) {
 		return;
@@ -772,8 +775,8 @@ void ManagedPackPage::updatePack(const QUrl& url, bool trusted,
 	 * update passes through. */
 	if (m_instance->isRunning()) {
 		CustomMessageBox::selectable(
-			this, i18n("Instance is running"),
-			i18n("This instance is currently running. Close the game before "
+			this, tr("Instance is running"),
+			tr("This instance is currently running. Close the game before "
 			   "updating the modpack - an update replaces the files the "
 			   "game has open."),
 			QMessageBox::Warning)
@@ -833,11 +836,12 @@ void ManagedPackPage::updatePack(const QUrl& url, bool trusted,
 			 * never a question about a name we were not going to touch
 			 * anyway. */
 			auto* box = CustomMessageBox::selectable(
-				this, i18n("Change instance name"),
-				i18n("The instance's name includes the version being "
+				this, tr("Change instance name"),
+				tr("The instance's name includes the version being "
 				   "replaced. Would you like to update it?\n\n"
 				   "Old name: %1\n"
-				   "New name: %2", m_instance->name(), newName),
+				   "New name: %2")
+					.arg(m_instance->name(), newName),
 				QMessageBox::Question, QMessageBox::Yes | QMessageBox::No,
 				QMessageBox::Yes);
 			if (box->exec() != QMessageBox::Yes) {
@@ -868,14 +872,14 @@ bool ManagedPackPage::runUpdateTask(InstanceTask* task)
 	Task* wrappedTask = wrapped.get();
 
 	connect(wrappedTask, &Task::failed, this, [this](const QString& reason) {
-		CustomMessageBox::selectable(this, i18n("Error"), reason,
+		CustomMessageBox::selectable(this, tr("Error"), reason,
 									 QMessageBox::Critical)
 			->show();
 	});
 	connect(wrappedTask, &Task::succeeded, this, [this, wrappedTask] {
 		const QStringList warnings = wrappedTask->warnings();
 		if (!warnings.isEmpty()) {
-			CustomMessageBox::selectable(this, i18n("Warnings"),
+			CustomMessageBox::selectable(this, tr("Warnings"),
 										 warnings.join(QLatin1Char('\n')),
 										 QMessageBox::Warning)
 				->show();
@@ -883,7 +887,7 @@ bool ManagedPackPage::runUpdateTask(InstanceTask* task)
 	});
 
 	ProgressDialog dialog(this);
-	dialog.setSkipButton(true, i18n("Abort"));
+	dialog.setSkipButton(true, tr("Abort"));
 	dialog.execWithTask(wrappedTask);
 
 	return wrappedTask->wasSuccessful();
@@ -898,9 +902,10 @@ void ManagedPackPage::onUpdateFinished(bool succeeded,
 	 */
 	if (!succeeded) {
 		CustomMessageBox::selectable(
-			nullptr, i18n("Update Failed"),
-			i18n("The instance failed to update to pack version %1. Please "
-			   "check launcher logs for more information.", versionName),
+			nullptr, tr("Update Failed"),
+			tr("The instance failed to update to pack version %1. Please "
+			   "check launcher logs for more information.")
+				.arg(versionName),
 			QMessageBox::Critical)
 			->show();
 		return;
@@ -923,14 +928,15 @@ void ManagedPackPage::onUpdateFinished(bool succeeded,
 		m_loaded = false;
 		m_versions.clear();
 		ui->reloadButton->setVisible(false);
-		ui->updateButton->setText(i18n("Fetching versions..."));
+		ui->updateButton->setText(tr("Fetching versions..."));
 		ui->updateButton->setDisabled(true);
 		openedImpl();
 	}
 
 	CustomMessageBox::selectable(
-		nullptr, i18n("Update Successful"),
-		i18n("The instance updated to pack version %1 successfully.", versionName),
+		nullptr, tr("Update Successful"),
+		tr("The instance updated to pack version %1 successfully.")
+			.arg(versionName),
 		QMessageBox::Information)
 		->show();
 }

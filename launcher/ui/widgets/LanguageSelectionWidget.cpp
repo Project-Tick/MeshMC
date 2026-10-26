@@ -25,7 +25,6 @@
 #include <QLabel>
 #include "Application.h"
 #include "translations/TranslationsModel.h"
-#include <KLocalizedString>
 
 LanguageSelectionWidget::LanguageSelectionWidget(QWidget* parent)
 	: QWidget(parent)
@@ -70,8 +69,10 @@ QString LanguageSelectionWidget::getSelectedLanguageKey() const
 
 void LanguageSelectionWidget::retranslate()
 {
-	QString text = i18n("Don't see your language or the quality is poor?<br/><a "
-					  "href=\"%1\">Help us with translations!</a>", QStringLiteral("https://github.com/Project-Tick/MeshMC/wiki/" "Translating-MeshMC"));
+	QString text = tr("Don't see your language or the quality is poor?<br/><a "
+					  "href=\"%1\">Help us with translations!</a>")
+					   .arg("https://github.com/Project-Tick/MeshMC/wiki/"
+							"Translating-MeshMC");
 	helpUsLabel->setText(text);
 }
 

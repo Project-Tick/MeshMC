@@ -28,7 +28,6 @@
 #include "InstanceImportTask.h"
 #include "FlameModel.h"
 #include "modplatform/flame/FlameApi.h"
-#include <KLocalizedString>
 
 FlamePage::FlamePage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::FlamePage), dialog(dialog)
@@ -126,7 +125,7 @@ void FlamePage::onSelectionChanged(QModelIndex first, QModelIndex second)
 		for (auto& author : current.authors) {
 			authorStrs.push_back(authorToStr(author));
 		}
-		text += "<br>" + i18n(" by ") + authorStrs.join(", ");
+		text += "<br>" + tr(" by ") + authorStrs.join(", ");
 	}
 	text += "<br><br>";
 

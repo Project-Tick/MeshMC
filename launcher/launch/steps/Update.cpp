@@ -20,12 +20,11 @@
 
 #include "Update.h"
 #include <launch/LaunchTask.h>
-#include <KLocalizedString>
 
 void Update::executeTask()
 {
 	if (m_aborted) {
-		emitFailed(i18n("Task aborted."));
+		emitFailed(tr("Task aborted."));
 		return;
 	}
 	m_updateTask.reset(m_parent->instance()->createUpdateTask(m_mode));
@@ -55,7 +54,8 @@ void Update::updateFinished()
 		emitSucceeded();
 		m_updateTask.reset();
 	} else {
-		QString reason = i18n("Instance update failed because: %1\n\n", m_updateTask->failReason());
+		QString reason = tr("Instance update failed because: %1\n\n")
+							 .arg(m_updateTask->failReason());
 		emit logLine(reason, MessageLevel::Fatal);
 		emitFailed(reason);
 		m_updateTask.reset();

@@ -32,7 +32,6 @@
 #include <settings/SettingsObject.h>
 #include <DesktopServices.h>
 #include <BuildConfig.h>
-#include <KLocalizedString>
 
 QString GuiUtil::uploadPaste(const QString& text, QWidget* parentWidget)
 {
@@ -47,8 +46,9 @@ QString GuiUtil::uploadPaste(const QString& text, QWidget* parentWidget)
 
 	if (!paste->validateText()) {
 		CustomMessageBox::selectable(
-			parentWidget, i18n("Upload failed"),
-			i18n("The log file is too big. You'll have to upload it manually."),
+			parentWidget, QObject::tr("Upload failed"),
+			QObject::tr(
+				"The log file is too big. You'll have to upload it manually."),
 			QMessageBox::Warning)
 			->exec();
 		return QString();
@@ -56,7 +56,7 @@ QString GuiUtil::uploadPaste(const QString& text, QWidget* parentWidget)
 
 	dialog.execWithTask(paste.get());
 	if (!paste->wasSuccessful()) {
-		CustomMessageBox::selectable(parentWidget, i18n("Upload failed"),
+		CustomMessageBox::selectable(parentWidget, QObject::tr("Upload failed"),
 									 paste->failReason(), QMessageBox::Critical)
 			->exec();
 		return QString();
@@ -64,9 +64,10 @@ QString GuiUtil::uploadPaste(const QString& text, QWidget* parentWidget)
 		const QString link = paste->pasteLink();
 		setClipboardText(link);
 		CustomMessageBox::selectable(
-			parentWidget, i18n("Upload finished"),
-			i18n("The <a href=\"%1\">link to the uploaded log</a> has "
-						"been placed in your clipboard.", link),
+			parentWidget, QObject::tr("Upload finished"),
+			QObject::tr("The <a href=\"%1\">link to the uploaded log</a> has "
+						"been placed in your clipboard.")
+				.arg(link),
 			QMessageBox::Information)
 			->exec();
 		return link;

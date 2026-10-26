@@ -46,7 +46,6 @@
 #include "FileSystem.h"
 #include "ExponentialSeries.h"
 #include "WatchLock.h"
-#include <KLocalizedString>
 
 const static int GROUP_FILE_FORMAT_VERSION = 1;
 
@@ -265,7 +264,7 @@ QVariant InstanceList::data(const QModelIndex& index, int role) const
 			return pdata->name();
 		}
 		case Qt::AccessibleTextRole: {
-			return i18n("%1 Instance", pdata->name());
+			return tr("%1 Instance").arg(pdata->name());
 		}
 		case Qt::ToolTipRole: {
 			return pdata->instanceRoot();
@@ -1255,7 +1254,7 @@ class InstanceStaging : public Task
 		}
 		// we actually failed, retry?
 		if (sleepTime == maxBackoff) {
-			emitFailed(i18n("Failed to commit instance, even after multiple "
+			emitFailed(tr("Failed to commit instance, even after multiple "
 						  "retries. It is being blocked by something."));
 			return;
 		}
@@ -1455,8 +1454,9 @@ bool InstanceList::commitStagedInstance(const QString& path,
 					qWarning() << "Could not remove obsolete file" << path;
 					if (removalWarnings) {
 						removalWarnings->append(
-							i18n("Could not remove a file the updated pack no "
-							   "longer includes: %1", QDir::toNativeSeparators(path)));
+							tr("Could not remove a file the updated pack no "
+							   "longer includes: %1")
+								.arg(QDir::toNativeSeparators(path)));
 					}
 				} else {
 					qDebug() << "Removed obsolete file" << path;

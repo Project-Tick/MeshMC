@@ -20,7 +20,6 @@
 #include "ModrinthApi.h"
 
 #include <QObject>
-#include <KLocalizedString>
 
 namespace
 {
@@ -191,11 +190,11 @@ QList<ModPlatform::SortingMethod> ModrinthApi::sortingMethods() const
 	 * different set from CurseForge - "relevance" and "follows" have no
 	 * counterpart there, "featured" and "category" none here. */
 	return {
-		{QStringLiteral("relevance"), i18n("Sort by Relevance")},
-		{QStringLiteral("downloads"), i18n("Sort by Downloads")},
-		{QStringLiteral("follows"), i18n("Sort by Follows")},
-		{QStringLiteral("newest"), i18n("Sort by Newest")},
-		{QStringLiteral("updated"), i18n("Sort by Last Updated")},
+		{QStringLiteral("relevance"), QObject::tr("Sort by Relevance")},
+		{QStringLiteral("downloads"), QObject::tr("Sort by Downloads")},
+		{QStringLiteral("follows"), QObject::tr("Sort by Follows")},
+		{QStringLiteral("newest"), QObject::tr("Sort by Newest")},
+		{QStringLiteral("updated"), QObject::tr("Sort by Last Updated")},
 	};
 }
 

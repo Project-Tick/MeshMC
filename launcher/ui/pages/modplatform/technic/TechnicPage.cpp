@@ -32,7 +32,6 @@
 
 #include "Application.h"
 #include "BuildConfig.h"
-#include <KLocalizedString>
 
 TechnicPage::TechnicPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::TechnicPage), dialog(dialog)
@@ -192,7 +191,7 @@ void TechnicPage::metadataLoaded()
 		text = "<a href=\"" + current.websiteUrl + "\">" + name + "</a>";
 	if (!current.author.isEmpty()) {
 		// This allows injecting HTML here
-		text += i18n(" by ") + current.author;
+		text += tr(" by ") + current.author;
 	}
 
 	ui->frame->setModText(text);

@@ -26,7 +26,6 @@
 #include "launch/LaunchTask.h"
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -44,7 +43,7 @@ class LogPage : public QWidget, public BasePage
 	virtual ~LogPage();
 	virtual QString displayName() const override
 	{
-		return i18n("Minecraft Log");
+		return tr("Minecraft Log");
 	}
 	virtual QIcon icon() const override
 	{

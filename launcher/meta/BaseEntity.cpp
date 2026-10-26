@@ -28,7 +28,6 @@
 
 #include "BuildConfig.h"
 #include "Application.h"
-#include <KLocalizedString>
 
 class ParsingValidator : public Net::Validator
 {
@@ -110,7 +109,7 @@ void Meta::BaseEntity::load(Net::Mode loadType)
 		return;
 	}
 	m_updateTask =
-		new NetJob(i18n("Download of meta file %1", localFilename()),
+		new NetJob(QObject::tr("Download of meta file %1").arg(localFilename()),
 				   APPLICATION->network());
 	auto url = this->url();
 	auto entry =

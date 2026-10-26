@@ -37,6 +37,8 @@ class MainWindow;
 }
 
 class LaunchController;
+class NewsChecker;
+class NewsViewerDialog;
 class NotificationChecker;
 class QToolButton;
 class QAction;
@@ -78,6 +80,10 @@ class MainWindow : public QMainWindow
 
 	void droppedURLs(QList<QUrl> urls);
 
+	NewsChecker* newsChecker() const
+	{
+		return m_newsChecker.get();
+	}
   signals:
 	void isClosing();
 
@@ -85,6 +91,7 @@ class MainWindow : public QMainWindow
 	QMenu* createPopupMenu() override;
 
   private slots:
+	void onCatToggled(bool);
 
 	void on_actionAbout_triggered();
 
@@ -93,6 +100,12 @@ class MainWindow : public QMainWindow
 	void on_actionMeshMCLogs_triggered();
 
 	void on_actionAddInstance_triggered();
+
+	void on_actionREDDIT_triggered();
+
+	void on_actionDISCORD_triggered();
+
+	void on_actionPatreon_triggered();
 
 	void on_actionCopyInstance_triggered();
 
@@ -124,6 +137,8 @@ class MainWindow : public QMainWindow
 
 	void on_actionViewWidgetThemeFolder_triggered();
 
+	void on_actionViewCatPackFolder_triggered();
+
 	void on_actionViewIconsFolder_triggered();
 	
 	void on_actionViewLogsFolder_triggered();
@@ -143,6 +158,10 @@ class MainWindow : public QMainWindow
 	void on_actionManageAccounts_triggered();
 
 	void on_actionReportBug_triggered();
+
+	void on_actionMoreNews_triggered();
+
+	void newsButtonClicked();
 
 	void on_actionLaunchInstance_triggered();
 
@@ -234,6 +253,8 @@ class MainWindow : public QMainWindow
 
 	void repopulateAccountsMenu();
 
+	void updateNewsLabel();
+
 	void konamiTriggered();
 
 	void globalSettingsClosed();
@@ -268,6 +289,7 @@ class MainWindow : public QMainWindow
 
 	void addInstance(QString url = QString());
 	void activateInstance(InstancePtr instance);
+	void setCatBackground(bool enabled);
 	void updateInstanceToolIcon(QString new_icon);
 	void setSelectedInstanceById(const QString& id);
 	void updateStatusCenter();
@@ -276,12 +298,17 @@ class MainWindow : public QMainWindow
 	void instanceFromInstanceTask(InstanceTask* task);
 	void finalizeInstance(InstancePtr inst);
 
+	/* Opens (or raises) the news dialog. withSidebar picks between
+	 * browsing every entry and going straight to the latest one. */
+	void showNews(bool withSidebar);
+
   private:
 	std::unique_ptr<Ui::MainWindow> ui;
 
 	// these are managed by Qt's memory management model!
 	InstanceView* view = nullptr;
 	InstanceProxyModel* proxymodel = nullptr;
+	QToolButton* newsLabel = nullptr;
 	LabeledToolButton* renameButton = nullptr;
 	LabeledToolButton* changeIconButton = nullptr;
 
@@ -298,7 +325,12 @@ class MainWindow : public QMainWindow
 	QActionGroup* m_profilerActions = nullptr;
 	KonamiCode* secretEventFilter = nullptr;
 
+	unique_qobject_ptr<NewsChecker> m_newsChecker;
 	unique_qobject_ptr<NotificationChecker> m_notificationChecker;
+
+	// Deletes itself on close (WA_DeleteOnClose), so this only ever
+	// holds a live dialog.
+	QPointer<NewsViewerDialog> m_newsDialog;
 
 	InstancePtr m_selectedInstance;
 	QString m_currentInstIcon;

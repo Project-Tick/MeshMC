@@ -28,7 +28,6 @@
 #include "ui/pages/BasePage.h"
 #include "JavaCommon.h"
 #include "Application.h"
-#include <KLocalizedString>
 
 class JavaChecker;
 namespace Ui
@@ -45,7 +44,7 @@ class InstanceSettingsPage : public QWidget, public BasePage
 	virtual ~InstanceSettingsPage();
 	virtual QString displayName() const override
 	{
-		return i18n("Settings");
+		return tr("Settings");
 	}
 	virtual QIcon icon() const override
 	{

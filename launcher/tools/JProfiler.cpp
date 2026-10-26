@@ -24,7 +24,6 @@
 #include "settings/SettingsObject.h"
 #include "launch/LaunchTask.h"
 #include "BaseInstance.h"
-#include <KLocalizedString>
 
 class JProfiler : public BaseProfiler
 {
@@ -52,13 +51,13 @@ JProfiler::JProfiler(SettingsObjectPtr settings, InstancePtr instance,
 
 void JProfiler::profilerStarted()
 {
-	emit readyToLaunch(i18n("Listening on port: %1", listeningPort));
+	emit readyToLaunch(tr("Listening on port: %1").arg(listeningPort));
 }
 
 void JProfiler::profilerFinished(int exit, QProcess::ExitStatus status)
 {
 	if (status == QProcess::CrashExit) {
-		emit abortLaunch(i18n("Profiler aborted"));
+		emit abortLaunch(tr("Profiler aborted"));
 	}
 	if (m_profilerProcess) {
 		m_profilerProcess->deleteLater();
@@ -112,18 +111,18 @@ bool JProfilerFactory::check(QString* error)
 bool JProfilerFactory::check(const QString& path, QString* error)
 {
 	if (path.isEmpty()) {
-		*error = i18n("Empty path");
+		*error = QObject::tr("Empty path");
 		return false;
 	}
 	QDir dir(path);
 	if (!dir.exists()) {
-		*error = i18n("Path does not exist");
+		*error = QObject::tr("Path does not exist");
 		return false;
 	}
 	if (!dir.exists("bin") ||
 		!(dir.exists("bin/jprofiler") || dir.exists("bin/jprofiler.exe")) ||
 		!dir.exists("bin/agent.jar")) {
-		*error = i18n("Invalid JProfiler install");
+		*error = QObject::tr("Invalid JProfiler install");
 		return false;
 	}
 	return true;

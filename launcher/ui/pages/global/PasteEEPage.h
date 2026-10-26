@@ -24,7 +24,6 @@
 
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -41,7 +40,7 @@ class PasteEEPage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return i18n("Log Upload");
+		return tr("Log Upload");
 	}
 	QIcon icon() const override
 	{

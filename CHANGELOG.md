@@ -2,16 +2,7 @@
 
 ## Highlights
 
-* I think the time has come to find out what the consequences were of the attempt to make MeshMC a KDE Project.
-* For this reason, I had to remove many features. It was painful, but worth the effort.
-* MeshMC is now moving toward becoming a "simpler" and highly stable launcher.
 
-## New Dependencies
-
-* KDE Frameworks 5/6 I18n
-* KDE Frameworks 5/6 GuiAddons
-* KDE Frameworks 5/6 CoreAddons
-* KDE Frameworks 5/6 XmlGui
 
 ## Added
 
@@ -24,7 +15,6 @@
 
 ## Changed
 
-* MeshMC version information is no longer displayed in the title.
 * The logging system has been updated. We now use categorical logging. You can disable unwanted categories using qtlogging.ini.
 * We have revised the update system. Updates are handled via Sparkle for macOS and ZSync for AppImage. A setup.exe installation package is used for Windows, while a two-stage update mechanism is employed for portable Windows and Linux versions.
 * The MainWindow used to have its UI drawn via .cpp code; now, Designer UI is used.
@@ -40,16 +30,8 @@
 ## Removed
 
 * The iconfix library has been removed because it is no longer in use.
-* The news system has been completely removed.
-* The CatPack system has been removed. `;(`
-* Patreon information has been removed.
-* Discord and Subreddit information features have been removed.
-* vcpkg support has been removed.
-* Removed custom about page and switched to KAboutData
 
 ## Deprecated
-
-
 
 ## CI/CD Updates
 

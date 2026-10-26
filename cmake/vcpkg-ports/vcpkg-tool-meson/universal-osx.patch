@@ -1,0 +1,30 @@
+diff --git a/mesonbuild/compilers/detect.py b/mesonbuild/compilers/detect.py
+index f57957f..41126a9 100644
+--- a/mesonbuild/compilers/detect.py
++++ b/mesonbuild/compilers/detect.py
+@@ -1472,6 +1472,25 @@ def _get_clang_compiler_defines(compiler: T.List[str], lang: str) -> T.Dict[str,
+     """
+     from .mixins.clang import clang_lang_map
+ 
++    # A universal build passes "-arch arm64 -arch x86_64", and clang refuses to
++    # run the preprocessor (-E -dM, below) for more than one architecture at a
++    # time -- the probe fails and compiler detection dies with it. The defines
++    # being collected here are used to identify the compiler, not to describe
++    # the target, so dropping the flags loses nothing that matters.
++    # https://github.com/mesonbuild/meson/issues/5290
++    # https://github.com/mesonbuild/meson/issues/8206
++    if '-arch' in compiler:
++        without_arch: T.List[str] = []
++        drop = False
++        for arg in compiler:
++            if drop:
++                drop = False
++            elif arg == '-arch':
++                drop = True
++            else:
++                without_arch.append(arg)
++        compiler = without_arch
++
+     def _try_obtain_compiler_defines(args: T.List[str]) -> str:
+         mlog.debug(f'Running command: {join_args(args)}')
+         p, output, error = Popen_safe(compiler + args, write='', stdin=subprocess.PIPE)

@@ -26,7 +26,6 @@
 #include "backup/BackupManager.h"
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -47,7 +46,7 @@ class BackupPage : public QWidget, public BasePage
 	}
 	QString displayName() const override
 	{
-		return i18n("Backups");
+		return tr("Backups");
 	}
 	QIcon icon() const override
 	{

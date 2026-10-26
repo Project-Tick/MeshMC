@@ -10,7 +10,6 @@
 #include <QSplitter>
 #include <QTextBrowser>
 #include <QUrl>
-#include <KLocalizedString>
 
 WikiPage::WikiPage(WikiRepoBundle** bundle, bool gitAvailable, QWidget* parent)
 	: QWidget(parent), m_bundle(bundle), m_gitAvailable(gitAvailable)
@@ -26,7 +25,7 @@ void WikiPage::buildUi()
 	auto* topRow = new QHBoxLayout();
 	topRow->addStretch();
 	m_searchEdit = new QLineEdit(this);
-	m_searchEdit->setPlaceholderText(i18n("Search…"));
+	m_searchEdit->setPlaceholderText(tr("Search…"));
 	topRow->addWidget(m_searchEdit, /*stretch=*/2);
 	connect(m_searchEdit, &QLineEdit::textChanged, this,
 			&WikiPage::onSearchTextChanged);
@@ -93,14 +92,14 @@ void WikiPage::rebuildNav()
 	// No wiki yet: explain why rather than leaving a blank viewer.
 	if (!m_gitAvailable) {
 		m_view->setHtml(
-			i18n("<h3>Wiki not available</h3>"
+			tr("<h3>Wiki not available</h3>"
 			   "<p>The MeshMC wiki is downloaded automatically using "
 			   "<b>git</b>, but no <code>git</code> program was found on your "
 			   "system, so the wiki cannot be fetched.</p>"
 			   "<p>Install Git and restart MeshMC to download the wiki.</p>"));
 	} else {
 		m_view->setHtml(
-			i18n("<h3>Downloading the MeshMC wiki…</h3>"
+			tr("<h3>Downloading the MeshMC wiki…</h3>"
 			   "<p>The wiki is fetched in the background the first time you "
 			   "are online and will appear here automatically once the "
 			   "download finishes. If you are offline, MeshMC retries on "
@@ -126,7 +125,8 @@ void WikiPage::showArticle(const QString& slug)
 		return;
 	const QString html = b->renderArticleHtml(slug);
 	if (html.isEmpty()) {
-		m_view->setHtml(i18n("<p><i>Article not found: %1</i></p>", slug.toHtmlEscaped()));
+		m_view->setHtml(tr("<p><i>Article not found: %1</i></p>")
+							.arg(slug.toHtmlEscaped()));
 		return;
 	}
 	m_view->setHtml(html);

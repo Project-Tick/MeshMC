@@ -26,7 +26,6 @@
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 #include "tasks/Task.h"
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -42,7 +41,7 @@ class LegacyUpgradePage : public QWidget, public BasePage
 	virtual ~LegacyUpgradePage();
 	virtual QString displayName() const override
 	{
-		return i18n("Upgrade");
+		return tr("Upgrade");
 	}
 	virtual QIcon icon() const override
 	{
