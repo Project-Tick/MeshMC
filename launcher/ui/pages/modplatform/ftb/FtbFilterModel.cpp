@@ -28,78 +28,69 @@
 namespace Ftb
 {
 
-	FilterModel::FilterModel(QObject* parent) : QSortFilterProxyModel(parent)
-	{
-		currentSorting = Sorting::ByPlays;
-		sortings.insert(tr("Sort by plays"), Sorting::ByPlays);
-		sortings.insert(tr("Sort by installs"), Sorting::ByInstalls);
-		sortings.insert(tr("Sort by name"), Sorting::ByName);
-	}
+FilterModel::FilterModel(QObject *parent)
+    : QSortFilterProxyModel(parent)
+{
+    currentSorting = Sorting::ByPlays;
+    sortings.insert(tr("Sort by plays"), Sorting::ByPlays);
+    sortings.insert(tr("Sort by installs"), Sorting::ByInstalls);
+    sortings.insert(tr("Sort by name"), Sorting::ByName);
+}
 
-	const QMap<QString, FilterModel::Sorting>
-	FilterModel::getAvailableSortings()
-	{
-		return sortings;
-	}
+const QMap<QString, FilterModel::Sorting> FilterModel::getAvailableSortings()
+{
+    return sortings;
+}
 
-	QString FilterModel::translateCurrentSorting()
-	{
-		return sortings.key(currentSorting);
-	}
+QString FilterModel::translateCurrentSorting()
+{
+    return sortings.key(currentSorting);
+}
 
-	void FilterModel::setSorting(Sorting sorting)
-	{
-		currentSorting = sorting;
-		invalidate();
-	}
+void FilterModel::setSorting(Sorting sorting)
+{
+    currentSorting = sorting;
+    invalidate();
+}
 
-	FilterModel::Sorting FilterModel::getCurrentSorting()
-	{
-		return currentSorting;
-	}
+FilterModel::Sorting FilterModel::getCurrentSorting()
+{
+    return currentSorting;
+}
 
-	void FilterModel::setSearchTerm(const QString& term)
-	{
-		searchTerm = term.trimmed();
-		invalidate();
-	}
+void FilterModel::setSearchTerm(const QString &term)
+{
+    searchTerm = term.trimmed();
+    invalidate();
+}
 
-	bool FilterModel::filterAcceptsRow(int sourceRow,
-									   const QModelIndex& sourceParent) const
-	{
-		if (searchTerm.isEmpty()) {
-			return true;
-		}
+bool FilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+    if (searchTerm.isEmpty()) {
+        return true;
+    }
 
-		auto index = sourceModel()->index(sourceRow, 0, sourceParent);
-		auto pack = sourceModel()
-						->data(index, Qt::UserRole)
-						.value<ModpacksCH::Modpack>();
-		return pack.name.contains(searchTerm, Qt::CaseInsensitive);
-	}
+    auto index = sourceModel()->index(sourceRow, 0, sourceParent);
+    auto pack = sourceModel()->data(index, Qt::UserRole).value<ModpacksCH::Modpack>();
+    return pack.name.contains(searchTerm, Qt::CaseInsensitive);
+}
 
-	bool FilterModel::lessThan(const QModelIndex& left,
-							   const QModelIndex& right) const
-	{
-		ModpacksCH::Modpack leftPack = sourceModel()
-										   ->data(left, Qt::UserRole)
-										   .value<ModpacksCH::Modpack>();
-		ModpacksCH::Modpack rightPack = sourceModel()
-											->data(right, Qt::UserRole)
-											.value<ModpacksCH::Modpack>();
+bool FilterModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+{
+    ModpacksCH::Modpack leftPack = sourceModel()->data(left, Qt::UserRole).value<ModpacksCH::Modpack>();
+    ModpacksCH::Modpack rightPack = sourceModel()->data(right, Qt::UserRole).value<ModpacksCH::Modpack>();
 
-		if (currentSorting == ByPlays) {
-			return leftPack.plays < rightPack.plays;
-		} else if (currentSorting == ByInstalls) {
-			return leftPack.installs < rightPack.installs;
-		} else if (currentSorting == ByName) {
-			return Strings::naturalCompare(leftPack.name, rightPack.name,
-										   Qt::CaseSensitive) >= 0;
-		}
+    if (currentSorting == ByPlays) {
+        return leftPack.plays < rightPack.plays;
+    } else if (currentSorting == ByInstalls) {
+        return leftPack.installs < rightPack.installs;
+    } else if (currentSorting == ByName) {
+        return Strings::naturalCompare(leftPack.name, rightPack.name, Qt::CaseSensitive) >= 0;
+    }
 
-		// Invalid sorting set, somehow...
-		qWarning() << "Invalid sorting set!";
-		return true;
-	}
+    // Invalid sorting set, somehow...
+    qWarning() << "Invalid sorting set!";
+    return true;
+}
 
 } // namespace Ftb

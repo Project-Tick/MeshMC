@@ -28,18 +28,18 @@
 namespace nbt
 {
 
-	void tag_string::read_payload(io::stream_reader& reader)
-	{
-		try {
-			value = reader.read_string();
-		} catch (io::input_error&) {
-			throw io::input_error("Error reading tag_string");
-		}
-	}
+void tag_string::read_payload(io::stream_reader &reader)
+{
+    try {
+        value = reader.read_string();
+    } catch (io::input_error &) {
+        throw io::input_error("Error reading tag_string");
+    }
+}
 
-	void tag_string::write_payload(io::stream_writer& writer) const
-	{
-		writer.write_string(value);
-	}
+void tag_string::write_payload(io::stream_writer &writer) const
+{
+    writer.write_string(value);
+}
 
 } // namespace nbt

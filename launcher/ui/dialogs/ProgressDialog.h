@@ -31,61 +31,61 @@ class TaskStepProgressBar;
 
 namespace Ui
 {
-	class ProgressDialog;
+class ProgressDialog;
 }
 
 class ProgressDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit ProgressDialog(QWidget* parent = 0);
-	~ProgressDialog();
+public:
+    explicit ProgressDialog(QWidget *parent = 0);
+    ~ProgressDialog();
 
-	/// Fits the dialog around whatever it is showing right now. Pass true to
-	/// centre it on its parent instead of around its own old position.
-	void updateSize(bool recenterParent = false);
+    /// Fits the dialog around whatever it is showing right now. Pass true to
+    /// centre it on its parent instead of around its own old position.
+    void updateSize(bool recenterParent = false);
 
-	int execWithTask(Task* task);
-	int execWithTask(std::unique_ptr<Task>&& task);
-	int execWithTask(std::unique_ptr<Task>& task);
+    int execWithTask(Task *task);
+    int execWithTask(std::unique_ptr<Task> &&task);
+    int execWithTask(std::unique_ptr<Task> &task);
 
-	void setSkipButton(bool present, QString label = QString());
+    void setSkipButton(bool present, QString label = QString());
 
-	Task* getTask();
+    Task *getTask();
 
-  public slots:
-	void onTaskStarted();
-	void onTaskFailed(QString failure);
-	void onTaskSucceeded();
+public slots:
+    void onTaskStarted();
+    void onTaskFailed(QString failure);
+    void onTaskSucceeded();
 
-	void changeStatus(const QString& status);
-	void changeDetails(const QString& details);
-	void changeProgress(qint64 current, qint64 total);
-	/// Adds, updates or retires the line belonging to one step of a multi
-	/// step task.
-	void changeStepProgress(const TaskStepProgress& step);
+    void changeStatus(const QString &status);
+    void changeDetails(const QString &details);
+    void changeProgress(qint64 current, qint64 total);
+    /// Adds, updates or retires the line belonging to one step of a multi
+    /// step task.
+    void changeStepProgress(const TaskStepProgress &step);
 
-  private slots:
-	void on_skipButton_clicked(bool checked);
+private slots:
+    void on_skipButton_clicked(bool checked);
 
-  protected:
-	virtual void keyPressEvent(QKeyEvent* e);
-	virtual void closeEvent(QCloseEvent* e);
+protected:
+    virtual void keyPressEvent(QKeyEvent *e);
+    virtual void closeEvent(QCloseEvent *e);
 
-  private:
-	bool handleImmediateResult(QDialog::DialogCode& result);
+private:
+    bool handleImmediateResult(QDialog::DialogCode &result);
 
-  private:
-	Ui::ProgressDialog* ui;
+private:
+    Ui::ProgressDialog *ui;
 
-	Task* task;
+    Task *task;
 
-	/// One line per step that is currently in flight, keyed by the step's uid.
-	/// Lines are dropped as their step reaches an end state.
-	QHash<QUuid, TaskStepProgressBar*> m_step_bars;
+    /// One line per step that is currently in flight, keyed by the step's uid.
+    /// Lines are dropped as their step reaches an end state.
+    QHash<QUuid, TaskStepProgressBar *> m_step_bars;
 
-	/// Everything we hooked up to the task, so it can be undone on the way
-	/// out even if the task lives on.
-	QList<QMetaObject::Connection> m_task_connections;
+    /// Everything we hooked up to the task, so it can be undone on the way
+    /// out even if the task lives on.
+    QList<QMetaObject::Connection> m_task_connections;
 };

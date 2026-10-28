@@ -42,25 +42,25 @@
  */
 class PluginDependencyResolver
 {
-  public:
-	struct Result {
-		/* Indices into the input vector, in load order. Disabled modules
-		 * are NOT included here. */
-		QVector<int> loadOrder;
-	};
+public:
+    struct Result {
+        /* Indices into the input vector, in load order. Disabled modules
+         * are NOT included here. */
+        QVector<int> loadOrder;
+    };
 
-	/*
-	 * Resolve dependencies for `modules` (mutated in place to set
-	 * disable reasons / details for modules that cannot load).
-	 *
-	 * The pre-existing `disabled` flag is respected — already-disabled
-	 * modules count as missing dependencies for anything that needs them.
-	 */
-	static Result resolve(QVector<PluginMetadata>& modules);
+    /*
+     * Resolve dependencies for `modules` (mutated in place to set
+     * disable reasons / details for modules that cannot load).
+     *
+     * The pre-existing `disabled` flag is respected — already-disabled
+     * modules count as missing dependencies for anything that needs them.
+     */
+    static Result resolve(QVector<PluginMetadata> &modules);
 
-  private:
-	/* Compare two version strings using a relaxed semver scheme. Returns
-	 * negative if a < b, 0 if equal, positive if a > b. Empty/missing
-	 * strings compare equal. */
-	static int compareVersions(const QString& a, const QString& b);
+private:
+    /* Compare two version strings using a relaxed semver scheme. Returns
+     * negative if a < b, 0 if equal, positive if a > b. Empty/missing
+     * strings compare equal. */
+    static int compareVersions(const QString &a, const QString &b);
 };

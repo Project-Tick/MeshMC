@@ -33,21 +33,17 @@ QProcessEnvironment CleanEnviroment();
 
 class JavaUtils : public QObject
 {
-	Q_OBJECT
-  public:
-	JavaUtils();
+    Q_OBJECT
+public:
+    JavaUtils();
 
-	static QString managedJavaRoot();
+    static QString managedJavaRoot();
 
-	JavaInstallPtr MakeJavaPtr(QString path, QString id = "unknown",
-							   QString arch = "unknown");
-	QList<QString> FindJavaPaths();
-	JavaInstallPtr GetDefaultJava();
+    JavaInstallPtr MakeJavaPtr(QString path, QString id = "unknown", QString arch = "unknown");
+    QList<QString> FindJavaPaths();
+    JavaInstallPtr GetDefaultJava();
 
 #ifdef Q_OS_WIN
-	QList<JavaInstallPtr> FindJavaFromRegistryKey(DWORD keyType,
-												  QString keyName,
-												  QString keyJavaDir,
-												  QString subkeySuffix = "");
+    QList<JavaInstallPtr> FindJavaFromRegistryKey(DWORD keyType, QString keyName, QString keyJavaDir, QString subkeySuffix = "");
 #endif
 };

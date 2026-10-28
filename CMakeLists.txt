@@ -35,6 +35,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(ECM NO_MODULE REQUIRED)
 set(CMAKE_MODULE_PATH "${ECM_MODULE_PATH};${CMAKE_MODULE_PATH}")
 
+include(KDEInstallDirs)
+include(KDECMakeSettings NO_POLICY_SCOPE)
+include(FeatureSummary)
+include(ECMSetupVersion)
+include(GenerateExportHeader)
+include(ECMQtDeclareLoggingCategory)
+include(ECMDeprecationSettings)
+
 include(CTest)
 include(ECMAddTests)
 if(BUILD_TESTING)
@@ -61,7 +69,6 @@ set(MeshMC_COMPILER_TARGET_SYSTEM_VERSION ${CMAKE_SYSTEM_VERSION})
 set(MeshMC_COMPILER_TARGET_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 
 ##################################### Set CMake options #####################################
-set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
@@ -79,20 +86,14 @@ set(CMAKE_C_STANDARD_REQUIRED true)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
+include(KDECompilerSettings NO_POLICY_SCOPE)
+
+kde_enable_exceptions()
+
 include(GenerateExportHeader)
 if(MSVC)
-    set(CMAKE_CXX_FLAGS " /W4 ${CMAKE_CXX_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DQT_NO_DEPRECATED_WARNINGS=Y")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
     set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG Release "")
-else()
-    # FIXME: readd -Werror flag
-    set(CMAKE_CXX_FLAGS " -Wall -pedantic -Wno-deprecated-declarations -fstack-protector-strong --param=ssp-buffer-size=4 -O3 -D_FORTIFY_SOURCE=2 ${CMAKE_CXX_FLAGS}")
-    if(UNIX AND APPLE)
-        set(CMAKE_CXX_FLAGS " -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
-    endif()
-    # FIXME: readd this: set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Werror=return-type")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_DEPRECATED_WARNINGS=Y")
 endif()
 
 include(ECMQtDeclareLoggingCategory)
@@ -350,15 +351,6 @@ set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platfo
 
 # Updater: the repository releases are read from.
 set(MeshMC_UPDATER_GITHUB_REPO "https://github.com/Project-Tick/MeshMC" CACHE STRING "GitHub repository the updater reads releases from.")
-
-# Updater: the release channel this build subscribes to.
-#
-# A "beta" build has pre-releases enabled by default, so a beta user is never
-# stranded on an older version than the stable line. Users can change this
-# afterwards; this only sets the default.
-#
-# This is deliberately NOT MeshMC_VERSION_CHANNEL / BuildConfig.VERSION_CHANNEL,
-# which is just the git branch name and purely informational.
 set(MeshMC_UPDATE_CHANNEL "stable" CACHE STRING "Release channel this build subscribes to: stable | beta.")
 set_property(CACHE MeshMC_UPDATE_CHANNEL PROPERTY STRINGS stable beta)
 
@@ -442,10 +434,22 @@ configure_file(launcher/packaging/windows/nsis/win_install.nsi.in win_install.ns
 ####################################### Install layout #######################################
 
 if(NOT (UNIX AND APPLE))
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${MeshMC_Portable_File}" DESTINATION "." COMPONENT portable EXCLUDE_FROM_ALL)
+    install(
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/${MeshMC_Portable_File}"
+        DESTINATION "."
+        COMPONENT portable
+        EXCLUDE_FROM_ALL
+    )
 endif()
 
 if(UNIX AND APPLE)
+
+    set(MeshMC_MACOS_BUNDLE_INSTALL_DIR
+        "${KDE_INSTALL_BUNDLEDIR}"
+        CACHE PATH
+        "Installation directory for MeshMC.app"
+    )
+
     set(BINARY_DEST_DIR "MeshMC.app/Contents/MacOS")
     set(FRAMEWORK_DEST_DIR "MeshMC.app/Contents/Frameworks")
     set(LIBRARY_DEST_DIR "${FRAMEWORK_DEST_DIR}")
@@ -524,20 +528,13 @@ if(UNIX AND APPLE)
 
 
 elseif(UNIX)
-    include(GNUInstallDirs)
-
-    set(BINARY_DEST_DIR "${CMAKE_INSTALL_BINDIR}")
-    set(LIBRARY_DEST_DIR "${CMAKE_INSTALL_LIBDIR}")
+    set(BINARY_DEST_DIR "${KDE_INSTALL_BINDIR}")
+    set(LIBRARY_DEST_DIR "${KDE_INSTALL_LIBDIR}")
     set(JARS_DEST_DIR "share/MeshMC")
     set(MMCO_MODULES_DEST_DIR "share/MeshMC/mmcmodules")
     set(MMCO_PLUGIN_DATA_DEST_DIR "${MMCO_MODULES_DEST_DIR}")
-    set(PRIVATE_LIBRARY_DEST_DIR "${CMAKE_INSTALL_LIBDIR}/meshmc")
+    set(PRIVATE_LIBRARY_DEST_DIR "${KDE_INSTALL_LIBDIR}/meshmc")
     SET(MeshMC_BINARY_RPATH "$ORIGIN/../${PRIVATE_LIBRARY_DEST_DIR}")
-    set(KDE_INSTALL_APPDIR      "${CMAKE_INSTALL_DATAROOTDIR}/applications")
-    set(KDE_INSTALL_METAINFODIR "${CMAKE_INSTALL_DATAROOTDIR}/metainfo")
-    set(KDE_INSTALL_ICONDIR     "${CMAKE_INSTALL_DATAROOTDIR}/icons")
-    set(KDE_INSTALL_MIMEDIR     "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages")
-    set(KDE_INSTALL_MANDIR      "${CMAKE_INSTALL_MANDIR}")
 
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/org.projecttick.MeshMC.desktop DESTINATION ${KDE_INSTALL_APPDIR})
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/org.projecttick.MeshMC.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
@@ -609,18 +606,6 @@ add_subdirectory(libraries/localpeer) # fork of a library from Qt solutions
 add_subdirectory(libraries/classparser) # Java class file parser
 add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too much
 
-# Two libraries under libraries/ build as shared objects (rainbow hardcodes
-# SHARED, nbt++ opts in via NBT_BUILD_SHARED), so they have to be deployed
-# where the launcher can load them: alongside the binary on Windows,
-# LIBRARY_DEST_DIR elsewhere (covered by the RPATH, $ORIGIN/../lib).
-#
-# Installed explicitly rather than left to install(RUNTIME_DEPENDENCY_SET),
-# which scans the built binary and searches a directory list — it did not pick
-# these up. Their own subprojects do install them, but to
-# ${CMAKE_INSTALL_BINDIR} (install/bin/) while meshmc.exe sits at the install
-# root, so the launcher died on startup with "nbt++.dll not found". These are
-# our own targets and we know exactly where they belong; no point rediscovering
-# it by scanning a binary.
 set_target_properties(nbt++ rainbow PROPERTIES
     VERSION   "${MeshMC_RELEASE_VERSION_NAME}"
     SOVERSION "${MeshMC_VERSION_MAJOR}")
@@ -643,8 +628,6 @@ install(FILES "${NEWLAUNCH_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "NewLaunc
 
 ############################### Built Artifacts ###############################
 
-add_subdirectory(buildconfig)
-
 add_subdirectory(launcher/crashreporter)
 
 # NOTE: this must always be last to appease the CMake deity of quirky install command evaluation order.
@@ -661,3 +644,32 @@ endif()
 if(APPLE AND QT_VERSION_MAJOR EQUAL 5)
     include("${CMAKE_SOURCE_DIR}/cmake/FixQt5MacBundle.cmake")
 endif()
+
+feature_summary(
+    WHAT ALL
+    INCLUDE_QUIET_PACKAGES
+    FATAL_ON_MISSING_REQUIRED_PACKAGES
+)
+
+include(KDEClangFormat)
+
+file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES
+    CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.c"
+)
+
+list(FILTER ALL_CLANG_FORMAT_SOURCE_FILES
+    EXCLUDE REGEX "^${CMAKE_CURRENT_BINARY_DIR}/"
+)
+
+list(FILTER ALL_CLANG_FORMAT_SOURCE_FILES
+    EXCLUDE REGEX "^${CMAKE_CURRENT_SOURCE_DIR}/cmake/vcpkg/"
+)
+
+kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
+
+include(KDEGitCommitHooks)
+kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)

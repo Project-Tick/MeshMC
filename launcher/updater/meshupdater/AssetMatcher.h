@@ -27,56 +27,53 @@
 
 namespace AssetMatcher
 {
-	struct Installation {
-		/*!
-		 * Name of the CI build, e.g. "Windows-MSVC-Qt6", "Linux-aarch64-Qt6".
-		 * BuildConfig.BUILD_ARTIFACT. Empty means a local build, which has no
-		 * published counterpart and therefore matches nothing.
-		 */
-		QString buildArtifact;
+struct Installation {
+    /*!
+     * Name of the CI build, e.g. "Windows-MSVC-Qt6", "Linux-aarch64-Qt6".
+     * BuildConfig.BUILD_ARTIFACT. Empty means a local build, which has no
+     * published counterpart and therefore matches nothing.
+     */
+    QString buildArtifact;
 
-		//! portable.txt sits in the installation root.
-		bool portable = false;
+    //! portable.txt sits in the installation root.
+    bool portable = false;
 
-		//! Running from a mounted AppImage.
-		bool appImage = false;
+    //! Running from a mounted AppImage.
+    bool appImage = false;
 
-		//! 64-bit ARM, however the platform spells it.
-		bool arm64 = false;
-	};
+    //! 64-bit ARM, however the platform spells it.
+    bool arm64 = false;
+};
 
-	/*! Outcome for one asset, with the reason spelled out for the log. */
-	struct Decision {
-		bool accepted = false;
-		QString reason;
-	};
+/*! Outcome for one asset, with the reason spelled out for the log. */
+struct Decision {
+    bool accepted = false;
+    QString reason;
+};
 
-	/*!
-	 * Judge a single asset.
-	 *
-	 * The reason is always filled in, accepted or not, because "why did it
-	 * pick that file" is the first question asked when an update goes wrong
-	 * and the log is all there is to go on.
-	 */
-	Decision consider(const GitHubReleaseAsset& asset,
-					  const Installation& installation);
+/*!
+ * Judge a single asset.
+ *
+ * The reason is always filled in, accepted or not, because "why did it
+ * pick that file" is the first question asked when an update goes wrong
+ * and the log is all there is to go on.
+ */
+Decision consider(const GitHubReleaseAsset &asset, const Installation &installation);
 
-	/*!
-	 * Every asset that belongs on \a installation.
-	 *
-	 * More than one result is possible and is not an error; the caller asks
-	 * the user. \a log, when given, receives one line per asset.
-	 */
-	QList<GitHubReleaseAsset> select(const QList<GitHubReleaseAsset>& assets,
-									 const Installation& installation,
-									 QStringList* log = nullptr);
+/*!
+ * Every asset that belongs on \a installation.
+ *
+ * More than one result is possible and is not an error; the caller asks
+ * the user. \a log, when given, receives one line per asset.
+ */
+QList<GitHubReleaseAsset> select(const QList<GitHubReleaseAsset> &assets, const Installation &installation, QStringList *log = nullptr);
 
-	/*!
-	 * The Qt major version a name declares through a "-qt<N>" token, or 0.
-	 *
-	 * Exposed for the test, and because the rule around it is the subtle one:
-	 * see the implementation.
-	 */
-	int qtMajorFromName(const QString& lowerName);
+/*!
+ * The Qt major version a name declares through a "-qt<N>" token, or 0.
+ *
+ * Exposed for the test, and because the rule around it is the subtle one:
+ * see the implementation.
+ */
+int qtMajorFromName(const QString &lowerName);
 
 } // namespace AssetMatcher

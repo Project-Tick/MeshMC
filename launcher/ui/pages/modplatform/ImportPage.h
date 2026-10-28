@@ -22,53 +22,53 @@
 
 #include <QWidget>
 
+#include "tasks/Task.h"
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include "tasks/Task.h"
 
 namespace Ui
 {
-	class ImportPage;
+class ImportPage;
 }
 
 class NewInstanceDialog;
 
 class ImportPage : public QWidget, public BasePage
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit ImportPage(NewInstanceDialog* dialog, QWidget* parent = 0);
-	virtual ~ImportPage();
-	virtual QString displayName() const override
-	{
-		return tr("Import from zip");
-	}
-	virtual QIcon icon() const override
-	{
-		return APPLICATION->getThemedIcon("viewfolder");
-	}
-	virtual QString id() const override
-	{
-		return "import";
-	}
-	virtual QString helpPage() const override
-	{
-		return "Zip-import";
-	}
-	virtual bool shouldDisplay() const override;
+public:
+    explicit ImportPage(NewInstanceDialog *dialog, QWidget *parent = 0);
+    virtual ~ImportPage();
+    virtual QString displayName() const override
+    {
+        return tr("Import from zip");
+    }
+    virtual QIcon icon() const override
+    {
+        return APPLICATION->getThemedIcon("viewfolder");
+    }
+    virtual QString id() const override
+    {
+        return "import";
+    }
+    virtual QString helpPage() const override
+    {
+        return "Zip-import";
+    }
+    virtual bool shouldDisplay() const override;
 
-	void setUrl(const QString& url);
-	void openedImpl() override;
+    void setUrl(const QString &url);
+    void openedImpl() override;
 
-  private slots:
-	void on_modpackBtn_clicked();
-	void updateState();
+private slots:
+    void on_modpackBtn_clicked();
+    void updateState();
 
-  private:
-	QUrl modpackUrl() const;
+private:
+    QUrl modpackUrl() const;
 
-  private:
-	Ui::ImportPage* ui = nullptr;
-	NewInstanceDialog* dialog = nullptr;
+private:
+    Ui::ImportPage *ui = nullptr;
+    NewInstanceDialog *dialog = nullptr;
 };

@@ -38,22 +38,22 @@ class MinecraftInstance;
 
 namespace Net
 {
-	class JsonPost;
+class JsonPost;
 }
 
 /* What the export dialog collected. Passed as one struct because these
  * are the dialog's fields, and a seven-argument constructor is a place
  * for two of them to be swapped without the compiler noticing. */
 struct FlamePackExportOptions {
-	QString name;
-	QString version;
-	QString author;
-	bool optionalFiles = true;
-	MinecraftInstance* instance = nullptr;
-	QString output;
-	MMCZip::FilterFileFunction filter;
-	/* MiB, or 0 for "do not state a requirement". */
-	int recommendedRAM = 0;
+    QString name;
+    QString version;
+    QString author;
+    bool optionalFiles = true;
+    MinecraftInstance *instance = nullptr;
+    QString output;
+    MMCZip::FilterFileFunction filter;
+    /* MiB, or 0 for "do not state a requirement". */
+    int recommendedRAM = 0;
 };
 
 /*
@@ -86,101 +86,100 @@ struct FlamePackExportOptions {
  */
 class FlamePackExportTask : public Task
 {
-	Q_OBJECT
-  public:
-	explicit FlamePackExportTask(FlamePackExportOptions options,
-								 QObject* parent = nullptr);
+    Q_OBJECT
+public:
+    explicit FlamePackExportTask(FlamePackExportOptions options, QObject *parent = nullptr);
 
-	bool canAbort() const override
-	{
-		return true;
-	}
+    bool canAbort() const override
+    {
+        return true;
+    }
 
-  public slots:
-	bool abort() override;
+public slots:
+    bool abort() override;
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-  private:
-	/* A file the manifest can name. `addonId` / `fileId` are what
-	 * CurseForge calls the project and the file; the rest is only for
-	 * the mod list. */
-	struct ResolvedFile {
-		int addonId = 0;
-		int fileId = 0;
-		/* Whether the file is switched on, which decides `required`. A
-		 * disabled mod in an optional-files export is offered rather
-		 * than imposed. */
-		bool enabled = true;
-		/* Resource packs are named in the manifest like everything else
-		 * but are left out of the mod list, which is a list of mods. */
-		bool isMod = true;
+private:
+    /* A file the manifest can name. `addonId` / `fileId` are what
+     * CurseForge calls the project and the file; the rest is only for
+     * the mod list. */
+    struct ResolvedFile {
+        int addonId = 0;
+        int fileId = 0;
+        /* Whether the file is switched on, which decides `required`. A
+         * disabled mod in an optional-files export is offered rather
+         * than imposed. */
+        bool enabled = true;
+        /* Resource packs are named in the manifest like everything else
+         * but are left out of the mod list, which is a list of mods. */
+        bool isMod = true;
 
-		QString name;
-		QString slug;
-		QString authors;
-	};
+        QString name;
+        QString slug;
+        QString authors;
+    };
 
-	/* A file we have fingerprinted but cannot name yet. */
-	struct PendingFile {
-		QString path; /* relative to the game directory */
-		quint32 fingerprint = 0;
-		bool enabled = true;
-		bool isMod = true;
-	};
+    /* A file we have fingerprinted but cannot name yet. */
+    struct PendingFile {
+        QString path; /* relative to the game directory */
+        quint32 fingerprint = 0;
+        bool enabled = true;
+        bool isMod = true;
+    };
 
-	struct ScanResult {
-		bool ok = false;
-		QFileInfoList files;
-		QMap<QString, ResolvedFile> resolved;
-		QList<PendingFile> pending;
-	};
+    struct ScanResult {
+        bool ok = false;
+        QFileInfoList files;
+        QMap<QString, ResolvedFile> resolved;
+        QList<PendingFile> pending;
+    };
 
-	/* Runs on a worker thread: walks the game directory, fingerprints
-	 * the candidates and reads their sidecars. */
-	ScanResult scanFiles() const;
-	void onScanFinished();
+    /* Runs on a worker thread: walks the game directory, fingerprints
+     * the candidates and reads their sidecars. */
+    ScanResult scanFiles() const;
+    void onScanFinished();
 
-	/* The bulk fingerprint question. Skipped when the sidecars already
-	 * accounted for everything. */
-	void matchFingerprints();
-	void onFingerprintsMatched();
+    /* The bulk fingerprint question. Skipped when the sidecars already
+     * accounted for everything. */
+    void matchFingerprints();
+    void onFingerprintsMatched();
 
-	/* Titles, slugs and authors for everything that ended up named. */
-	void lookUpProjects();
-	void onProjectsLookedUp();
+    /* Titles, slugs and authors for everything that ended up named. */
+    void lookUpProjects();
+    void onProjectsLookedUp();
 
-	void buildZip();
-	QByteArray generateManifest() const;
-	QByteArray generateModList() const;
+    void buildZip();
+    QByteArray generateManifest() const;
+    QByteArray generateModList() const;
 
-	/* Neither question is worth failing an export over, so a failure
-	 * carries on to the next step instead of stopping.
-	 *
-	 * A fingerprint service that is down means files ship inside the
-	 * pack rather than being referenced by it; a missing project title
-	 * means a mod list entry falls back to what the sidecar knew. Both
-	 * produce a worse pack, and both are better than no pack. Two
-	 * handlers because they resume in different places. */
-	void onFingerprintMatchFailed(const QString& reason);
-	void onProjectLookupFailed(const QString& reason);
+    /* Neither question is worth failing an export over, so a failure
+     * carries on to the next step instead of stopping.
+     *
+     * A fingerprint service that is down means files ship inside the
+     * pack rather than being referenced by it; a missing project title
+     * means a mod list entry falls back to what the sidecar knew. Both
+     * produce a worse pack, and both are better than no pack. Two
+     * handlers because they resume in different places. */
+    void onFingerprintMatchFailed(const QString &reason);
+    void onProjectLookupFailed(const QString &reason);
 
-	const FlamePackExportOptions m_options;
-	const QDir m_gameRoot;
+    const FlamePackExportOptions m_options;
+    const QDir m_gameRoot;
 
-	QFileInfoList m_files;
-	QMap<QString, ResolvedFile> m_resolved;
-	QList<PendingFile> m_pending;
+    QFileInfoList m_files;
+    QMap<QString, ResolvedFile> m_resolved;
+    QList<PendingFile> m_pending;
 
-	shared_qobject_ptr<Net::JsonPost> m_request;
-	Task::Ptr m_zipTask;
+    shared_qobject_ptr<Net::JsonPost> m_request;
+    Task::Ptr m_zipTask;
 
-	QFuture<ScanResult> m_scanFuture;
-	QFutureWatcher<ScanResult> m_scanWatcher;
+    QFuture<ScanResult> m_scanFuture;
+    QFutureWatcher<ScanResult> m_scanWatcher;
 
-	/* Latched by abort(). Read by the scan between files, and by every
-	 * handler that might otherwise report a second verdict after the
-	 * aborted one. */
-	std::atomic<bool> m_aborted{false};
+    /* Latched by abort(). Read by the scan between files, and by every
+     * handler that might otherwise report a second verdict after the
+     * aborted one. */
+    std::atomic<bool> m_aborted{false};
 };

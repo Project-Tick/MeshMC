@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include <QWidget>
-#include <QSortFilterProxyModel>
 #include "BaseVersionList.h"
+#include <QSortFilterProxyModel>
+#include <QWidget>
 
 class VersionProxyModel;
 class VersionListView;
@@ -32,66 +32,65 @@ class Filter;
 
 class VersionSelectWidget : public QWidget
 {
-	Q_OBJECT
-  public:
-	explicit VersionSelectWidget(QWidget* parent = 0);
-	~VersionSelectWidget();
+    Q_OBJECT
+public:
+    explicit VersionSelectWidget(QWidget *parent = 0);
+    ~VersionSelectWidget();
 
-	//! loads the list if needed.
-	void initialize(BaseVersionList* vlist);
+    //! loads the list if needed.
+    void initialize(BaseVersionList *vlist);
 
-	//! Starts a task that loads the list.
-	void loadList();
+    //! Starts a task that loads the list.
+    void loadList();
 
-	bool hasVersions() const;
-	BaseVersionPtr selectedVersion() const;
-	void selectRecommended();
-	void selectCurrent();
-	//! The list view itself, for callers that need to react to the view
-	//! rather than to the selection - a double click meaning "accept".
-	VersionListView* view();
+    bool hasVersions() const;
+    BaseVersionPtr selectedVersion() const;
+    void selectRecommended();
+    void selectCurrent();
+    //! The list view itself, for callers that need to react to the view
+    //! rather than to the selection - a double click meaning "accept".
+    VersionListView *view();
 
-	//! Draw the empty-list message over the (empty) list without loading
-	//! anything. For pickers that can tell in advance that there is
-	//! nothing to show, so they can say why instead of leaving a blank
-	//! panel and spending a download to reach the same conclusion.
-	void showEmptyMessage();
+    //! Draw the empty-list message over the (empty) list without loading
+    //! anything. For pickers that can tell in advance that there is
+    //! nothing to show, so they can say why instead of leaving a blank
+    //! panel and spending a download to reach the same conclusion.
+    void showEmptyMessage();
 
-	void setCurrentVersion(const QString& version);
-	void setFuzzyFilter(BaseVersionList::ModelRoles role, QString filter);
-	void setExactFilter(BaseVersionList::ModelRoles role, QString filter);
-	void setExactIfPresentFilter(BaseVersionList::ModelRoles role,
-								 QString filter);
-	void setFilter(BaseVersionList::ModelRoles role, Filter* filter);
-	void setEmptyString(QString emptyString);
-	void setEmptyErrorString(QString emptyErrorString);
-	void setResizeOn(int column);
+    void setCurrentVersion(const QString &version);
+    void setFuzzyFilter(BaseVersionList::ModelRoles role, QString filter);
+    void setExactFilter(BaseVersionList::ModelRoles role, QString filter);
+    void setExactIfPresentFilter(BaseVersionList::ModelRoles role, QString filter);
+    void setFilter(BaseVersionList::ModelRoles role, Filter *filter);
+    void setEmptyString(QString emptyString);
+    void setEmptyErrorString(QString emptyErrorString);
+    void setResizeOn(int column);
 
-  signals:
-	void selectedVersionChanged(BaseVersionPtr version);
+signals:
+    void selectedVersionChanged(BaseVersionPtr version);
 
-  protected:
-	virtual void closeEvent(QCloseEvent*);
+protected:
+    virtual void closeEvent(QCloseEvent *);
 
-  private slots:
-	void onTaskSucceeded();
-	void onTaskFailed(const QString& reason);
-	void changeProgress(qint64 current, qint64 total);
-	void currentRowChanged(const QModelIndex& current, const QModelIndex&);
+private slots:
+    void onTaskSucceeded();
+    void onTaskFailed(const QString &reason);
+    void changeProgress(qint64 current, qint64 total);
+    void currentRowChanged(const QModelIndex &current, const QModelIndex &);
 
-  private:
-	void preselect();
+private:
+    void preselect();
 
-  private:
-	QString m_currentVersion;
-	BaseVersionList* m_vlist = nullptr;
-	VersionProxyModel* m_proxyModel = nullptr;
-	int resizeOnColumn = 0;
-	Task* loadTask;
-	bool preselectedAlready = false;
+private:
+    QString m_currentVersion;
+    BaseVersionList *m_vlist = nullptr;
+    VersionProxyModel *m_proxyModel = nullptr;
+    int resizeOnColumn = 0;
+    Task *loadTask;
+    bool preselectedAlready = false;
 
-  private:
-	QVBoxLayout* verticalLayout = nullptr;
-	VersionListView* listView = nullptr;
-	QProgressBar* sneakyProgressBar = nullptr;
+private:
+    QVBoxLayout *verticalLayout = nullptr;
+    VersionListView *listView = nullptr;
+    QProgressBar *sneakyProgressBar = nullptr;
 };

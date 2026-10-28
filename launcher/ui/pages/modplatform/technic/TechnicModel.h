@@ -28,46 +28,49 @@
 namespace Technic
 {
 
-	typedef std::function<void(QString)> LogoCallback;
+typedef std::function<void(QString)> LogoCallback;
 
-	class ListModel : public QAbstractListModel
-	{
-		Q_OBJECT
+class ListModel : public QAbstractListModel
+{
+    Q_OBJECT
 
-	  public:
-		ListModel(QObject* parent);
-		virtual ~ListModel();
+public:
+    ListModel(QObject *parent);
+    virtual ~ListModel();
 
-		virtual QVariant data(const QModelIndex& index, int role) const;
-		virtual int columnCount(const QModelIndex& parent) const;
-		virtual int rowCount(const QModelIndex& parent) const;
+    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual int columnCount(const QModelIndex &parent) const;
+    virtual int rowCount(const QModelIndex &parent) const;
 
-		void getLogo(const QString& logo, const QString& logoUrl,
-					 LogoCallback callback);
-		void searchWithTerm(const QString& term);
+    void getLogo(const QString &logo, const QString &logoUrl, LogoCallback callback);
+    void searchWithTerm(const QString &term);
 
-	  private slots:
-		void searchRequestFinished();
-		void searchRequestFailed();
+private slots:
+    void searchRequestFinished();
+    void searchRequestFailed();
 
-		void logoFailed(QString logo);
-		void logoLoaded(QString logo, QString out);
+    void logoFailed(QString logo);
+    void logoLoaded(QString logo, QString out);
 
-	  private:
-		void performSearch();
-		void requestLogo(QString logo, QString url);
+private:
+    void performSearch();
+    void requestLogo(QString logo, QString url);
 
-	  private:
-		QList<Modpack> modpacks;
-		QStringList m_failedLogos;
-		QStringList m_loadingLogos;
-		QMap<QString, QIcon> m_logoMap;
-		QMap<QString, LogoCallback> waitingCallbacks;
+private:
+    QList<Modpack> modpacks;
+    QStringList m_failedLogos;
+    QStringList m_loadingLogos;
+    QMap<QString, QIcon> m_logoMap;
+    QMap<QString, LogoCallback> waitingCallbacks;
 
-		QString currentSearchTerm;
-		enum SearchState { None, ResetRequested, Finished } searchState = None;
-		NetJob::Ptr jobPtr;
-		QByteArray response;
-	};
+    QString currentSearchTerm;
+    enum SearchState {
+        None,
+        ResetRequested,
+        Finished
+    } searchState = None;
+    NetJob::Ptr jobPtr;
+    QByteArray response;
+};
 
 } // namespace Technic

@@ -23,48 +23,46 @@
 
 #include "PackLayout.h"
 
-ShaderPackFolderModel::ShaderPackFolderModel(const QString& dir)
-	: ModFolderModel(dir)
+ShaderPackFolderModel::ShaderPackFolderModel(const QString &dir)
+    : ModFolderModel(dir)
 {
 }
 
-QVariant ShaderPackFolderModel::headerData(int section,
-										   Qt::Orientation orientation,
-										   int role) const
+QVariant ShaderPackFolderModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (role == Qt::ToolTipRole) {
-		switch (section) {
-			case ActiveColumn:
-				return tr("Is the shader pack enabled?");
-			case NameColumn:
-				return tr("The name of the shader pack.");
-			case VersionColumn:
-				return tr("The version of the shader pack.");
-			case DateColumn:
-				return tr("The date and time this shader pack was last "
-						  "changed (or added).");
-			default:
-				return QVariant();
-		}
-	}
+    if (role == Qt::ToolTipRole) {
+        switch (section) {
+        case ActiveColumn:
+            return tr("Is the shader pack enabled?");
+        case NameColumn:
+            return tr("The name of the shader pack.");
+        case VersionColumn:
+            return tr("The version of the shader pack.");
+        case DateColumn:
+            return tr(
+                "The date and time this shader pack was last "
+                "changed (or added).");
+        default:
+            return QVariant();
+        }
+    }
 
-	return ModFolderModel::headerData(section, orientation, role);
+    return ModFolderModel::headerData(section, orientation, role);
 }
 
-bool ShaderPackFolderModel::acceptsFile(const QFileInfo& file,
-										Mod::ModType type) const
+bool ShaderPackFolderModel::acceptsFile(const QFileInfo &file, Mod::ModType type) const
 {
-	// A loose file can never be a shader pack: the format is always a
-	// directory tree, shipped either exploded or zipped.
-	if (type != Mod::MOD_ZIPFILE && type != Mod::MOD_FOLDER) {
-		return false;
-	}
+    // A loose file can never be a shader pack: the format is always a
+    // directory tree, shipped either exploded or zipped.
+    if (type != Mod::MOD_ZIPFILE && type != Mod::MOD_FOLDER) {
+        return false;
+    }
 
-	if (!PackLayout::isShaderPack(file)) {
-		qWarning() << file.filePath()
-				   << "has no shaders directory, refusing to install it as a "
-					  "shader pack";
-		return false;
-	}
-	return true;
+    if (!PackLayout::isShaderPack(file)) {
+        qWarning() << file.filePath()
+                   << "has no shaders directory, refusing to install it as a "
+                      "shader pack";
+        return false;
+    }
+    return true;
 }

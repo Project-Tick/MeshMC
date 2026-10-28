@@ -1,5 +1,7 @@
 project(application)
 
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/BuildConfig.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp")
+
 ################################ FILES ################################
 
 ######## Sources and headers ########
@@ -34,6 +36,10 @@ set(CORE_SOURCES
     MMCZip.cpp
     MMCStrings.h
     MMCStrings.cpp
+
+    ## BuildConfig
+    ${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp
+    BuildConfig.h
 
     # The long-running halves of MMCZip, as tasks: an archive big enough to
     # need a progress bar is an archive big enough to need a way out, and
@@ -1233,7 +1239,6 @@ target_link_libraries(MeshMC_logic
     nbt++
     ZLIB::ZLIB
     tomlplusplus::tomlplusplus
-    BuildConfig
     Katabasis
 )
 
@@ -1453,6 +1458,10 @@ if(NOT APPLE)
         ui/dialogs/ProgressDialog.cpp
         ui/widgets/TaskStepProgressBar.h
         ui/widgets/TaskStepProgressBar.cpp
+
+        ## BuildConfig
+        ${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp
+        BuildConfig.h
     )
 
     add_library(meshmc_updater_logic STATIC ${MESHUPDATER_SOURCES} ${MESHUPDATER_UI} ${MESHMC_SHARED_UI})
@@ -1465,7 +1474,6 @@ if(NOT APPLE)
         Qt${QT_VERSION_MAJOR}::Network
         LibArchive::LibArchive
         cmark::cmark
-        BuildConfig
     )
 
     # WIN32: no console window while updating. Diagnostics go to the log file,

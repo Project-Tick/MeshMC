@@ -20,62 +20,59 @@
 
 #pragma once
 
+#include <QDateTime>
+#include <QDomElement>
 #include <QObject>
 #include <QString>
-#include <QDomElement>
-#include <QDateTime>
 
 #include <memory>
 
 class NewsEntry : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	/*!
-	 * Constructs an empty news entry.
-	 */
-	explicit NewsEntry(QObject* parent = 0);
+public:
+    /*!
+     * Constructs an empty news entry.
+     */
+    explicit NewsEntry(QObject *parent = 0);
 
-	/*!
-	 * Constructs a new news entry.
-	 * Note that content may contain HTML.
-	 */
-	NewsEntry(const QString& title, const QString& content, const QString& link,
-			  const QString& author, const QDateTime& pubDate,
-			  QObject* parent = 0);
+    /*!
+     * Constructs a new news entry.
+     * Note that content may contain HTML.
+     */
+    NewsEntry(const QString &title, const QString &content, const QString &link, const QString &author, const QDateTime &pubDate, QObject *parent = 0);
 
-	/*!
-	 * Attempts to load information from the given XML element into the given
-	 * news entry pointer. If this fails, the function will return false and
-	 * store an error message in the errorMsg pointer.
-	 */
-	static bool fromXmlElement(const QDomElement& element, NewsEntry* entry,
-							   QString* errorMsg = 0);
+    /*!
+     * Attempts to load information from the given XML element into the given
+     * news entry pointer. If this fails, the function will return false and
+     * store an error message in the errorMsg pointer.
+     */
+    static bool fromXmlElement(const QDomElement &element, NewsEntry *entry, QString *errorMsg = 0);
 
-	//! The post title.
-	QString title;
+    //! The post title.
+    QString title;
 
-	//! The post's content. May contain HTML.
-	QString content;
+    //! The post's content. May contain HTML.
+    QString content;
 
-	//! URL to the post.
-	QString link;
+    //! URL to the post.
+    QString link;
 
-	//! The post's author.
-	QString author;
+    //! The post's author.
+    QString author;
 
-	//! The date and time that this post was published.
-	QDateTime pubDate;
+    //! The date and time that this post was published.
+    QDateTime pubDate;
 
-	/*!
-	 * Which of NewsChecker's feeds this entry came from. 0 is the
-	 * launcher's own feed; anything higher is an extra feed configured
-	 * at build time via MeshMC_NEWS_EXTRA_FEEDS. Set by NewsChecker
-	 * after parsing, not by fromXmlElement() — the XML says nothing
-	 * about where it was downloaded from.
-	 */
-	int feedIndex = 0;
+    /*!
+     * Which of NewsChecker's feeds this entry came from. 0 is the
+     * launcher's own feed; anything higher is an extra feed configured
+     * at build time via MeshMC_NEWS_EXTRA_FEEDS. Set by NewsChecker
+     * after parsing, not by fromXmlElement() — the XML says nothing
+     * about where it was downloaded from.
+     */
+    int feedIndex = 0;
 };
 
 typedef std::shared_ptr<NewsEntry> NewsEntryPtr;

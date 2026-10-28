@@ -33,6 +33,8 @@
 
 ## Deprecated
 
+
+
 ## CI/CD Updates
 
 * Linux CI images have been updated to 26.04.
@@ -43,11 +45,11 @@
 
 ## MeshMC 10.0.0
 
-## A Big Change
+### A Big Change
 
 * MeshMC is now offered under the Apache 2.0 license.
 
-## Highlights
+### Highlights
 
 * It was heartbreaking, I'm not lying.
 * Being alone is tough, but I like to persevere.
@@ -55,7 +57,7 @@
 * Joking aside, this is the first time I'm releasing such a massive release.
 * Everyone, calm down. Take a breath. Because if you try to hold it, you might choke, as I don't think you'll be able to read this release in one breath.
 
-## Added
+### Added
 
 * Shortcut system has been added.
 * A world selection feature has been added to the Shortcut system.
@@ -87,7 +89,7 @@
 * vcpkg build system has been added.
 * RPM Spec has been added.
 
-## Changed
+### Changed
 
 * GreenDark theme palette updated.
 * The macOS ToolBar code has been rewritten.
@@ -98,13 +100,13 @@
 * Path corrections have been added for UNIX installations (excluding macOS), especially for Linux; compatibility with Debian and RedHat policies has been ensured.
 * Crowdin translations have been updated.
 
-## Fixed
+### Fixed
 
 * The problem of Minecraft not closing when trying to kill an instance on Windows has been solved.
 * The error of not adding version entries in NSIS has been fixed.
 * An issue where an extra MeshMC folder appeared inside the MeshMC folder (located in the AppData or Application Support directory on Windows and macOS) has been fixed, and a small migrator has been added to prevent migration issues.
 
-## Removed
+### Removed
 
 * The ability to directly delete instances has been removed.
 * The Filelink plugin has been removed.
@@ -118,43 +120,43 @@
 * Optional Bare library has been removed.
 * Analysis collection has been removed.
 
-## Deprecated
+### Deprecated
 
 * MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.
 
 ## MeshMC 9.1.0
 
-## Highlights
+### Highlights
 
 * A classic backport release.
 * It won't affect you much, but it can be a boon for package managers who value stability.
 
-## Changed
+### Changed
 
 * Updater has been completely revamped. [BACKPORT FROM 10.0.0]
 
-## Fixed
+### Fixed
 
 * Manifest.txt generation has been fixed. [BACKPORT FROM 10.0.0]
 
 ## MeshMC 9.0.0
 
-## Highlights
+### Highlights
 
 * Wow! How many months has it been?
 * I was sent back to manually write the changelog.
 * I wonder what changes MeshMC made for this major!
 
-## Added
+### Added
 
 * SHA1-based mode verification has been added for Curseforge.
 
-## Changed
+### Changed
 
 * Translations are now located within the MeshMC main repository.
 * The update system has been completely overhauled. [MANUAL UPDATE REQUIRED*]
 
-## Fixed
+### Fixed
 
 * Errors specific to Windows in the Filelink plugin have been resolved.
 * The issue of missing bundle signings on macOS has been resolved.

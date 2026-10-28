@@ -23,60 +23,58 @@
 
 void Update::executeTask()
 {
-	if (m_aborted) {
-		emitFailed(tr("Task aborted."));
-		return;
-	}
-	m_updateTask.reset(m_parent->instance()->createUpdateTask(m_mode));
-	if (m_updateTask) {
-		connect(m_updateTask.get(), &Task::finished, this,
-				&Update::updateFinished);
-		connect(m_updateTask.get(), &Task::progress, this, &Task::setProgress);
-		connect(m_updateTask.get(), &Task::status, this, &Task::setStatus);
-		connect(m_updateTask.get(), &Task::details, this, &Task::setDetails);
-		// We are only a wrapper around the update itself, so its steps have
-		// to carry on through us.
-		propagateStepsFrom(m_updateTask.get());
-		emit progressReportingRequest();
-		return;
-	}
-	emitSucceeded();
+    if (m_aborted) {
+        emitFailed(tr("Task aborted."));
+        return;
+    }
+    m_updateTask.reset(m_parent->instance()->createUpdateTask(m_mode));
+    if (m_updateTask) {
+        connect(m_updateTask.get(), &Task::finished, this, &Update::updateFinished);
+        connect(m_updateTask.get(), &Task::progress, this, &Task::setProgress);
+        connect(m_updateTask.get(), &Task::status, this, &Task::setStatus);
+        connect(m_updateTask.get(), &Task::details, this, &Task::setDetails);
+        // We are only a wrapper around the update itself, so its steps have
+        // to carry on through us.
+        propagateStepsFrom(m_updateTask.get());
+        emit progressReportingRequest();
+        return;
+    }
+    emitSucceeded();
 }
 
 void Update::proceed()
 {
-	m_updateTask->start();
+    m_updateTask->start();
 }
 
 void Update::updateFinished()
 {
-	if (m_updateTask->wasSuccessful()) {
-		emitSucceeded();
-		m_updateTask.reset();
-	} else {
-		QString reason = tr("Instance update failed because: %1\n\n")
-							 .arg(m_updateTask->failReason());
-		emit logLine(reason, MessageLevel::Fatal);
-		emitFailed(reason);
-		m_updateTask.reset();
-	}
+    if (m_updateTask->wasSuccessful()) {
+        emitSucceeded();
+        m_updateTask.reset();
+    } else {
+        QString reason = tr("Instance update failed because: %1\n\n").arg(m_updateTask->failReason());
+        emit logLine(reason, MessageLevel::Fatal);
+        emitFailed(reason);
+        m_updateTask.reset();
+    }
 }
 
 bool Update::canAbort() const
 {
-	if (m_updateTask) {
-		return m_updateTask->canAbort();
-	}
-	return true;
+    if (m_updateTask) {
+        return m_updateTask->canAbort();
+    }
+    return true;
 }
 
 bool Update::abort()
 {
-	m_aborted = true;
-	if (m_updateTask) {
-		if (m_updateTask->canAbort()) {
-			return m_updateTask->abort();
-		}
-	}
-	return true;
+    m_aborted = true;
+    if (m_updateTask) {
+        if (m_updateTask->canAbort()) {
+            return m_updateTask->abort();
+        }
+    }
+    return true;
 }

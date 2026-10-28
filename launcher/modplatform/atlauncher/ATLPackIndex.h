@@ -22,31 +22,31 @@
 
 #include "ATLPackManifest.h"
 
+#include <QMetaType>
 #include <QString>
 #include <QVector>
-#include <QMetaType>
 
 namespace ATLauncher
 {
 
-	struct IndexedVersion {
-		QString version;
-		QString minecraft;
-	};
+struct IndexedVersion {
+    QString version;
+    QString minecraft;
+};
 
-	struct IndexedPack {
-		int id;
-		int position;
-		QString name;
-		PackType type;
-		QVector<IndexedVersion> versions;
-		bool system;
-		QString description;
+struct IndexedPack {
+    int id;
+    int position;
+    QString name;
+    PackType type;
+    QVector<IndexedVersion> versions;
+    bool system;
+    QString description;
 
-		QString safeName;
-	};
+    QString safeName;
+};
 
-	void loadIndexedPack(IndexedPack& m, QJsonObject& obj);
+void loadIndexedPack(IndexedPack &m, QJsonObject &obj);
 } // namespace ATLauncher
 
 Q_DECLARE_METATYPE(ATLauncher::IndexedPack)

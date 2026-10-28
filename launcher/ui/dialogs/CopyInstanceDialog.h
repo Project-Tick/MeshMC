@@ -20,43 +20,43 @@
 
 #pragma once
 
-#include <QDialog>
 #include "BaseVersion.h"
 #include <BaseInstance.h>
+#include <QDialog>
 
 class BaseInstance;
 
 namespace Ui
 {
-	class CopyInstanceDialog;
+class CopyInstanceDialog;
 }
 
 class CopyInstanceDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit CopyInstanceDialog(InstancePtr original, QWidget* parent = 0);
-	~CopyInstanceDialog();
+public:
+    explicit CopyInstanceDialog(InstancePtr original, QWidget *parent = 0);
+    ~CopyInstanceDialog();
 
-	void updateDialogState();
+    void updateDialogState();
 
-	QString instName() const;
-	QString instGroup() const;
-	QString iconKey() const;
-	bool shouldCopySaves() const;
-	bool shouldKeepPlaytime() const;
+    QString instName() const;
+    QString instGroup() const;
+    QString iconKey() const;
+    bool shouldCopySaves() const;
+    bool shouldKeepPlaytime() const;
 
-  private slots:
-	void on_iconButton_clicked();
-	void on_instNameTextBox_textChanged(const QString& arg1);
-	void on_copySavesCheckbox_stateChanged(int state);
-	void on_keepPlaytimeCheckbox_stateChanged(int state);
+private slots:
+    void on_iconButton_clicked();
+    void on_instNameTextBox_textChanged(const QString &arg1);
+    void on_copySavesCheckbox_stateChanged(int state);
+    void on_keepPlaytimeCheckbox_stateChanged(int state);
 
-  private:
-	Ui::CopyInstanceDialog* ui;
-	QString InstIconKey;
-	InstancePtr m_original;
-	bool m_copySaves = true;
-	bool m_keepPlaytime = true;
+private:
+    Ui::CopyInstanceDialog *ui;
+    QString InstIconKey;
+    InstancePtr m_original;
+    bool m_copySaves = true;
+    bool m_keepPlaytime = true;
 };

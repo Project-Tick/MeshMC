@@ -26,52 +26,52 @@
 namespace Modrinth
 {
 
-	struct File {
-		QString path;
-		QUrl downloadUrl;
-		QString sha1;
-		QString sha512;
-		int fileSize = 0;
+struct File {
+    QString path;
+    QUrl downloadUrl;
+    QString sha1;
+    QString sha512;
+    int fileSize = 0;
 
-		/*
-		 * What the manifest's `env` block says about this file, from the
-		 * point of view of the only thing this launcher installs: a
-		 * client.
-		 *
-		 * Both default to the permissive answer, because `env` is
-		 * optional in an mrpack and a pack that says nothing is a pack
-		 * whose files are all simply wanted.
-		 *
-		 * `required` false means the pack is offering the file rather
-		 * than insisting on it, and it is installed turned off.
-		 * `clientSupported` false means the pack says it has no business
-		 * on a client at all, and it is not installed.
-		 */
-		bool required = true;
-		bool clientSupported = true;
-	};
+    /*
+     * What the manifest's `env` block says about this file, from the
+     * point of view of the only thing this launcher installs: a
+     * client.
+     *
+     * Both default to the permissive answer, because `env` is
+     * optional in an mrpack and a pack that says nothing is a pack
+     * whose files are all simply wanted.
+     *
+     * `required` false means the pack is offering the file rather
+     * than insisting on it, and it is installed turned off.
+     * `clientSupported` false means the pack says it has no business
+     * on a client at all, and it is not installed.
+     */
+    bool required = true;
+    bool clientSupported = true;
+};
 
-	struct Dependency {
-		QString versionId;
-		QString projectId;
-		QString fileName;
-	};
+struct Dependency {
+    QString versionId;
+    QString projectId;
+    QString fileName;
+};
 
-	struct Manifest {
-		int formatVersion = 0;
-		QString game;
-		QString versionId;
-		QString name;
-		QString summary;
-		QVector<Modrinth::File> files;
+struct Manifest {
+    int formatVersion = 0;
+    QString game;
+    QString versionId;
+    QString name;
+    QString summary;
+    QVector<Modrinth::File> files;
 
-		QString minecraftVersion;
-		QString forgeVersion;
-		QString fabricVersion;
-		QString quiltVersion;
-		QString neoForgeVersion;
-	};
+    QString minecraftVersion;
+    QString forgeVersion;
+    QString fabricVersion;
+    QString quiltVersion;
+    QString neoForgeVersion;
+};
 
-	void loadManifest(Modrinth::Manifest& m, const QString& filepath);
+void loadManifest(Modrinth::Manifest &m, const QString &filepath);
 
 } // namespace Modrinth

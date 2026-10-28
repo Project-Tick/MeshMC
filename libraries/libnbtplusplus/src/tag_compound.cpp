@@ -30,80 +30,77 @@
 namespace nbt
 {
 
-	tag_compound::tag_compound(
-		std::initializer_list<std::pair<std::string, value_initializer>> init)
-	{
-		for (const auto& pair : init)
-			tags.emplace(std::move(pair.first), std::move(pair.second));
-	}
+tag_compound::tag_compound(std::initializer_list<std::pair<std::string, value_initializer>> init)
+{
+    for (const auto &pair : init)
+        tags.emplace(std::move(pair.first), std::move(pair.second));
+}
 
-	value& tag_compound::at(const std::string& key)
-	{
-		return tags.at(key);
-	}
+value &tag_compound::at(const std::string &key)
+{
+    return tags.at(key);
+}
 
-	const value& tag_compound::at(const std::string& key) const
-	{
-		return tags.at(key);
-	}
+const value &tag_compound::at(const std::string &key) const
+{
+    return tags.at(key);
+}
 
-	std::pair<tag_compound::iterator, bool>
-	tag_compound::put(const std::string& key, value_initializer&& val)
-	{
-		auto it = tags.find(key);
-		if (it != tags.end()) {
-			it->second = std::move(val);
-			return {it, false};
-		} else {
-			return tags.emplace(key, std::move(val));
-		}
-	}
+std::pair<tag_compound::iterator, bool> tag_compound::put(const std::string &key, value_initializer &&val)
+{
+    auto it = tags.find(key);
+    if (it != tags.end()) {
+        it->second = std::move(val);
+        return {it, false};
+    } else {
+        return tags.emplace(key, std::move(val));
+    }
+}
 
-	std::pair<tag_compound::iterator, bool>
-	tag_compound::insert(const std::string& key, value_initializer&& val)
-	{
-		return tags.emplace(key, std::move(val));
-	}
+std::pair<tag_compound::iterator, bool> tag_compound::insert(const std::string &key, value_initializer &&val)
+{
+    return tags.emplace(key, std::move(val));
+}
 
-	bool tag_compound::erase(const std::string& key)
-	{
-		return tags.erase(key) != 0;
-	}
+bool tag_compound::erase(const std::string &key)
+{
+    return tags.erase(key) != 0;
+}
 
-	bool tag_compound::has_key(const std::string& key) const
-	{
-		return tags.find(key) != tags.end();
-	}
+bool tag_compound::has_key(const std::string &key) const
+{
+    return tags.find(key) != tags.end();
+}
 
-	bool tag_compound::has_key(const std::string& key, tag_type tt) const
-	{
-		auto it = tags.find(key);
-		return it != tags.end() && it->second.get_type() == tt;
-	}
+bool tag_compound::has_key(const std::string &key, tag_type tt) const
+{
+    auto it = tags.find(key);
+    return it != tags.end() && it->second.get_type() == tt;
+}
 
-	void tag_compound::read_payload(io::stream_reader& reader)
-	{
-		clear();
-		tag_type tt;
-		while ((tt = reader.read_type(true)) != tag_type::End) {
-			std::string key;
-			try {
-				key = reader.read_string();
-			} catch (io::input_error&) {
-				std::ostringstream str;
-				str << "Error reading key of tag_" << tt;
-				throw io::input_error(str.str());
-			}
-			auto tptr = reader.read_payload(tt);
-			tags.emplace(std::move(key), value(std::move(tptr)));
-		}
-	}
+void tag_compound::read_payload(io::stream_reader &reader)
+{
+    clear();
+    tag_type tt;
+    while ((tt = reader.read_type(true)) != tag_type::End) {
+        std::string key;
+        try {
+            key = reader.read_string();
+        } catch (io::input_error &) {
+            std::ostringstream str;
+            str << "Error reading key of tag_" << tt;
+            throw io::input_error(str.str());
+        }
+        auto tptr = reader.read_payload(tt);
+        tags.emplace(std::move(key), value(std::move(tptr)));
+    }
+}
 
-	void tag_compound::write_payload(io::stream_writer& writer) const
-	{
-		for (const auto& pair : tags)
-			writer.write_tag(pair.first, pair.second);
-		writer.write_type(tag_type::End);
-	}
+void tag_compound::write_payload(io::stream_writer &writer) const
+{
+    for (const auto &pair : tags)
+        writer.write_tag(pair.first, pair.second);
+    writer.write_type(tag_type::End);
+}
 
 } // namespace nbt

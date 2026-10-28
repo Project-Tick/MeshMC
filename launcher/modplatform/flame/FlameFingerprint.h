@@ -47,21 +47,21 @@
  */
 namespace FlameFingerprint
 {
-	/* The fingerprint of `data`, which is filtered here rather than by
-	 * the caller. */
-	quint32 ofData(const QByteArray& data);
+/* The fingerprint of `data`, which is filtered here rather than by
+ * the caller. */
+quint32 ofData(const QByteArray &data);
 
-	/*
-	 * The fingerprint of the file at `path`, or nullopt when it could not
-	 * be read.
-	 *
-	 * Reads in blocks rather than whole: the files this is asked about
-	 * include resource packs that are hundreds of megabytes, and an
-	 * export hashes every one of them.
-	 *
-	 * An unreadable file is not an error worth failing an export over -
-	 * it simply cannot be named in the manifest and travels inside the
-	 * pack instead - so this reports absence rather than a reason.
-	 */
-	std::optional<quint32> ofFile(const QString& path);
+/*
+ * The fingerprint of the file at `path`, or nullopt when it could not
+ * be read.
+ *
+ * Reads in blocks rather than whole: the files this is asked about
+ * include resource packs that are hundreds of megabytes, and an
+ * export hashes every one of them.
+ *
+ * An unreadable file is not an error worth failing an export over -
+ * it simply cannot be named in the manifest and travels inside the
+ * pack instead - so this reports absence rather than a reason.
+ */
+std::optional<quint32> ofFile(const QString &path);
 } // namespace FlameFingerprint

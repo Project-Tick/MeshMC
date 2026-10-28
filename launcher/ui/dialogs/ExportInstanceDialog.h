@@ -32,7 +32,7 @@ typedef std::shared_ptr<BaseInstance> InstancePtr;
 
 namespace Ui
 {
-	class ExportInstanceDialog;
+class ExportInstanceDialog;
 }
 
 /*
@@ -51,27 +51,26 @@ namespace Ui
  */
 class ExportInstanceDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit ExportInstanceDialog(InstancePtr instance,
-								  QWidget* parent = nullptr);
-	~ExportInstanceDialog() override;
+public:
+    explicit ExportInstanceDialog(InstancePtr instance, QWidget *parent = nullptr);
+    ~ExportInstanceDialog() override;
 
-	void done(int result) override;
+    void done(int result) override;
 
-  private:
-	/* Runs the export and closes the dialog with the result. Never
-	 * leaves the dialog open on failure without saying why. */
-	void doExport();
-	QString ignoreFileName();
+private:
+    /* Runs the export and closes the dialog with the result. Never
+     * leaves the dialog open on failure without saying why. */
+    void doExport();
+    QString ignoreFileName();
 
-  private:
-	Ui::ExportInstanceDialog* ui;
-	InstancePtr m_instance;
-	FileIgnoreProxy* m_proxyModel;
-	FastFileIconProvider m_icons;
+private:
+    Ui::ExportInstanceDialog *ui;
+    InstancePtr m_instance;
+    FileIgnoreProxy *m_proxyModel;
+    FastFileIconProvider m_icons;
 
-  private slots:
-	void rowsInserted(QModelIndex parent, int top, int bottom);
+private slots:
+    void rowsInserted(QModelIndex parent, int top, int bottom);
 };

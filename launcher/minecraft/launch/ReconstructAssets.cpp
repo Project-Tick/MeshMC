@@ -19,25 +19,22 @@
  */
 
 #include "ReconstructAssets.h"
+#include "launch/LaunchTask.h"
+#include "minecraft/AssetsUtils.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
-#include "minecraft/AssetsUtils.h"
-#include "launch/LaunchTask.h"
 
 void ReconstructAssets::executeTask()
 {
-	auto instance = m_parent->instance();
-	std::shared_ptr<MinecraftInstance> minecraftInstance =
-		std::dynamic_pointer_cast<MinecraftInstance>(instance);
-	auto components = minecraftInstance->getPackProfile();
-	auto profile = components->getProfile();
-	auto assets = profile->getMinecraftAssets();
+    auto instance = m_parent->instance();
+    std::shared_ptr<MinecraftInstance> minecraftInstance = std::dynamic_pointer_cast<MinecraftInstance>(instance);
+    auto components = minecraftInstance->getPackProfile();
+    auto profile = components->getProfile();
+    auto assets = profile->getMinecraftAssets();
 
-	if (!AssetsUtils::reconstructAssets(assets->id,
-										minecraftInstance->resourcesDir())) {
-		emit logLine("Failed to reconstruct Minecraft assets.",
-					 MessageLevel::Error);
-	}
+    if (!AssetsUtils::reconstructAssets(assets->id, minecraftInstance->resourcesDir())) {
+        emit logLine("Failed to reconstruct Minecraft assets.", MessageLevel::Error);
+    }
 
-	emitSucceeded();
+    emitSucceeded();
 }

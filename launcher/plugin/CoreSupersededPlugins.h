@@ -47,40 +47,35 @@
  */
 
 struct CoreSupersededPlugin {
-	QLatin1String moduleName;
-	QLatin1String detail;
+    QLatin1String moduleName;
+    QLatin1String detail;
 };
 
 /*
  * Returns the matching entry, or nullptr when `name` is not a module
  * that core has taken over.
  */
-inline const CoreSupersededPlugin*
-findCoreSupersededPlugin(const QString& name)
+inline const CoreSupersededPlugin *findCoreSupersededPlugin(const QString &name)
 {
-	static const CoreSupersededPlugin entries[] = {
-		{QLatin1String("Filelink"),
-		 QLatin1String("The shortcut system is now part of MeshMC itself")},
-		{QLatin1String("BackupSystem"),
-		 QLatin1String("Instance backups are now part of MeshMC itself "
-					   "(instance settings -> Backups)")},
-		{QLatin1String("NewsViewer"),
-		 QLatin1String("The news viewer is now part of MeshMC itself "
-					   "(the news bar headline and \"More news\")")},
-		{QLatin1String("PackPortal"),
-		 QLatin1String("The pack portal is now part of MeshMC itself")},
-		{QLatin1String("PackUpdater"),
-		 QLatin1String("The pack updater is now part of MeshMC itself")},
-		{QLatin1String("SkinManager"),
-		 QLatin1String("The skin manager is now part of MeshMC itself")},
-	};
+    static const CoreSupersededPlugin entries[] = {
+        {QLatin1String("Filelink"), QLatin1String("The shortcut system is now part of MeshMC itself")},
+        {QLatin1String("BackupSystem"),
+         QLatin1String("Instance backups are now part of MeshMC itself "
+                       "(instance settings -> Backups)")},
+        {QLatin1String("NewsViewer"),
+         QLatin1String("The news viewer is now part of MeshMC itself "
+                       "(the news bar headline and \"More news\")")},
+        {QLatin1String("PackPortal"), QLatin1String("The pack portal is now part of MeshMC itself")},
+        {QLatin1String("PackUpdater"), QLatin1String("The pack updater is now part of MeshMC itself")},
+        {QLatin1String("SkinManager"), QLatin1String("The skin manager is now part of MeshMC itself")},
+    };
 
-	if (name.isEmpty())
-		return nullptr;
+    if (name.isEmpty())
+        return nullptr;
 
-	for (const auto& entry : entries) {
-		if (name.compare(entry.moduleName, Qt::CaseInsensitive) == 0)
-			return &entry;
-	}
-	return nullptr;
+    for (const auto &entry : entries) {
+        if (name.compare(entry.moduleName, Qt::CaseInsensitive) == 0)
+            return &entry;
+    }
+    return nullptr;
 }

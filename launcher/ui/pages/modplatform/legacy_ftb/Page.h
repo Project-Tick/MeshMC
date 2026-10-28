@@ -20,110 +20,106 @@
 
 #pragma once
 
-#include <QWidget>
-#include <QTreeView>
 #include <QTextBrowser>
+#include <QTreeView>
+#include <QWidget>
 
+#include "QObjectPtr.h"
+#include "modplatform/legacy_ftb/PackFetchTask.h"
+#include "modplatform/legacy_ftb/PackHelpers.h"
+#include "tasks/Task.h"
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include "tasks/Task.h"
-#include "modplatform/legacy_ftb/PackHelpers.h"
-#include "modplatform/legacy_ftb/PackFetchTask.h"
-#include "QObjectPtr.h"
 
 class NewInstanceDialog;
 
 namespace LegacyFTB
 {
 
-	namespace Ui
-	{
-		class Page;
-	}
+namespace Ui
+{
+class Page;
+}
 
-	class ListModel;
-	class FilterModel;
-	class PrivatePackListModel;
-	class PrivatePackFilterModel;
-	class PrivatePackManager;
+class ListModel;
+class FilterModel;
+class PrivatePackListModel;
+class PrivatePackFilterModel;
+class PrivatePackManager;
 
-	class Page : public QWidget, public BasePage
-	{
-		Q_OBJECT
+class Page : public QWidget, public BasePage
+{
+    Q_OBJECT
 
-	  public:
-		explicit Page(NewInstanceDialog* dialog, QWidget* parent = 0);
-		virtual ~Page();
-		QString displayName() const override
-		{
-			return tr("FTB Legacy");
-		}
-		QIcon icon() const override
-		{
-			return APPLICATION->getThemedIcon("ftb_logo");
-		}
-		QString id() const override
-		{
-			return "legacy_ftb";
-		}
-		QString helpPage() const override
-		{
-			return "FTB-platform";
-		}
-		bool shouldDisplay() const override;
-		void openedImpl() override;
+public:
+    explicit Page(NewInstanceDialog *dialog, QWidget *parent = 0);
+    virtual ~Page();
+    QString displayName() const override
+    {
+        return tr("FTB Legacy");
+    }
+    QIcon icon() const override
+    {
+        return APPLICATION->getThemedIcon("ftb_logo");
+    }
+    QString id() const override
+    {
+        return "legacy_ftb";
+    }
+    QString helpPage() const override
+    {
+        return "FTB-platform";
+    }
+    bool shouldDisplay() const override;
+    void openedImpl() override;
 
-	  private:
-		void suggestCurrent();
-		void onPackSelectionChanged(Modpack* pack = nullptr);
+private:
+    void suggestCurrent();
+    void onPackSelectionChanged(Modpack *pack = nullptr);
 
-	  private slots:
-		void ftbPackDataDownloadSuccessfully(ModpackList publicPacks,
-											 ModpackList thirdPartyPacks);
-		void ftbPackDataDownloadFailed(QString reason);
+private slots:
+    void ftbPackDataDownloadSuccessfully(ModpackList publicPacks, ModpackList thirdPartyPacks);
+    void ftbPackDataDownloadFailed(QString reason);
 
-		void ftbPrivatePackDataDownloadSuccessfully(Modpack pack);
-		void ftbPrivatePackDataDownloadFailed(QString reason, QString packCode);
+    void ftbPrivatePackDataDownloadSuccessfully(Modpack pack);
+    void ftbPrivatePackDataDownloadFailed(QString reason, QString packCode);
 
-		void onSortingSelectionChanged(QString data);
-		void onVersionSelectionItemChanged(QString data);
+    void onSortingSelectionChanged(QString data);
+    void onVersionSelectionItemChanged(QString data);
 
-		void onPublicPackSelectionChanged(QModelIndex first,
-										  QModelIndex second);
-		void onThirdPartyPackSelectionChanged(QModelIndex first,
-											  QModelIndex second);
-		void onPrivatePackSelectionChanged(QModelIndex first,
-										   QModelIndex second);
+    void onPublicPackSelectionChanged(QModelIndex first, QModelIndex second);
+    void onThirdPartyPackSelectionChanged(QModelIndex first, QModelIndex second);
+    void onPrivatePackSelectionChanged(QModelIndex first, QModelIndex second);
 
-		void onTabChanged(int tab);
+    void onTabChanged(int tab);
 
-		void onAddPackClicked();
-		void onRemovePackClicked();
+    void onAddPackClicked();
+    void onRemovePackClicked();
 
-	  private:
-		FilterModel* currentModel = nullptr;
-		QTreeView* currentList = nullptr;
-		QTextBrowser* currentModpackInfo = nullptr;
+private:
+    FilterModel *currentModel = nullptr;
+    QTreeView *currentList = nullptr;
+    QTextBrowser *currentModpackInfo = nullptr;
 
-		bool initialized = false;
-		Modpack selected;
-		QString selectedVersion;
+    bool initialized = false;
+    Modpack selected;
+    QString selectedVersion;
 
-		ListModel* publicListModel = nullptr;
-		FilterModel* publicFilterModel = nullptr;
+    ListModel *publicListModel = nullptr;
+    FilterModel *publicFilterModel = nullptr;
 
-		ListModel* thirdPartyModel = nullptr;
-		FilterModel* thirdPartyFilterModel = nullptr;
+    ListModel *thirdPartyModel = nullptr;
+    FilterModel *thirdPartyFilterModel = nullptr;
 
-		ListModel* privateListModel = nullptr;
-		FilterModel* privateFilterModel = nullptr;
+    ListModel *privateListModel = nullptr;
+    FilterModel *privateFilterModel = nullptr;
 
-		unique_qobject_ptr<PackFetchTask> ftbFetchTask;
-		std::unique_ptr<PrivatePackManager> ftbPrivatePacks;
+    unique_qobject_ptr<PackFetchTask> ftbFetchTask;
+    std::unique_ptr<PrivatePackManager> ftbPrivatePacks;
 
-		NewInstanceDialog* dialog = nullptr;
+    NewInstanceDialog *dialog = nullptr;
 
-		Ui::Page* ui = nullptr;
-	};
+    Ui::Page *ui = nullptr;
+};
 
 } // namespace LegacyFTB

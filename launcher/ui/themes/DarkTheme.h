@@ -23,16 +23,18 @@
 
 class DarkTheme : public FusionTheme
 {
-  public:
-	virtual ~DarkTheme() {}
+public:
+    virtual ~DarkTheme()
+    {
+    }
 
-	QString id() override;
-	QString name() override;
-	QString tooltip() override;
-	bool hasStyleSheet() override;
-	QString appStyleSheet() override;
-	bool hasColorScheme() override;
-	QPalette colorScheme() override;
-	double fadeAmount() override;
-	QColor fadeColor() override;
+    QString id() override;
+    QString name() override;
+    QString tooltip() override;
+    bool hasStyleSheet() override;
+    QString appStyleSheet() override;
+    bool hasColorScheme() override;
+    QPalette colorScheme() override;
+    double fadeAmount() override;
+    QColor fadeColor() override;
 };

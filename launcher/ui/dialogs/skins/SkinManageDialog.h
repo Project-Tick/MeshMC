@@ -36,7 +36,7 @@ class QLabel;
 
 namespace Ui
 {
-	class SkinManageDialog;
+class SkinManageDialog;
 }
 
 /* Pick, edit and upload a skin.
@@ -52,78 +52,77 @@ namespace Ui
  */
 class SkinManageDialog : public QDialog, public skinrender::SkinPreviewSource
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	SkinManageDialog(QWidget* parent, MinecraftAccountPtr account);
-	~SkinManageDialog() override;
+public:
+    SkinManageDialog(QWidget *parent, MinecraftAccountPtr account);
+    ~SkinManageDialog() override;
 
-	/* skinrender::SkinPreviewSource */
-	const SkinEntry* previewSkin() const override;
-	QImage previewCape(const QString& capeId) const override;
+    /* skinrender::SkinPreviewSource */
+    const SkinEntry *previewSkin() const override;
+    QImage previewCape(const QString &capeId) const override;
 
-  public slots:
-	/* Uploads the selected skin (and its cape, if it changed) before closing.
-	 * Rejects instead of closing when there is nothing to upload or the
-	 * upload failed. */
-	void accept() override;
+public slots:
+    /* Uploads the selected skin (and its cape, if it changed) before closing.
+     * Rejects instead of closing when there is nothing to upload or the
+     * upload failed. */
+    void accept() override;
 
-  protected:
-	bool eventFilter(QObject* watched, QEvent* event) override;
-	void resizeEvent(QResizeEvent* event) override;
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
-  private slots:
-	/* Connected by name from the .ui through connectSlotsByName(). */
-	void on_openFolderButton_clicked();
-	void on_resetSkinButton_clicked();
-	void on_importFileButton_clicked();
-	void on_importUrlButton_clicked();
-	void on_importUserButton_clicked();
-	void on_capeCombo_currentIndexChanged(int index);
-	void on_classicRadio_toggled(bool checked);
-	void on_actionRenameSkin_triggered();
-	void on_actionDeleteSkin_triggered();
+private slots:
+    /* Connected by name from the .ui through connectSlotsByName(). */
+    void on_openFolderButton_clicked();
+    void on_resetSkinButton_clicked();
+    void on_importFileButton_clicked();
+    void on_importUrlButton_clicked();
+    void on_importUserButton_clicked();
+    void on_capeCombo_currentIndexChanged(int index);
+    void on_classicRadio_toggled(bool checked);
+    void on_actionRenameSkin_triggered();
+    void on_actionDeleteSkin_triggered();
 
-	void onSkinActivated(const QModelIndex& index);
-	void onSelectionChanged(const QItemSelection& selected,
-							const QItemSelection& deselected);
-	void onElytraToggled(bool checked);
-	void showContextMenu(const QPoint& position);
+    void onSkinActivated(const QModelIndex &index);
+    void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void onElytraToggled(bool checked);
+    void showContextMenu(const QPoint &position);
 
-  private:
-	void setUpSkinList();
+private:
+    void setUpSkinList();
 
-	/* Fill the cape combo, downloading any cape textures that are not
-	 * cached yet. Blocking, with a progress dialog, because the combo cannot
-	 * be built without them. */
-	void loadCapes();
+    /* Fill the cape combo, downloading any cape textures that are not
+     * cached yet. Blocking, with a progress dialog, because the combo cannot
+     * be built without them. */
+    void loadCapes();
 
-	/* Push the selection into whichever preview is in use. */
-	void refreshPreview();
+    /* Push the selection into whichever preview is in use. */
+    void refreshPreview();
 
-	/* Redraw the cape thumbnail under the combo. */
-	void refreshCapePreview();
+    /* Redraw the cape thumbnail under the combo. */
+    void refreshCapePreview();
 
-	/* The selected entry, or nullptr when nothing usable is selected. */
-	SkinEntry* selectedSkin();
+    /* The selected entry, or nullptr when nothing usable is selected. */
+    SkinEntry *selectedSkin();
 
-	QString currentCapeId() const;
+    QString currentCapeId() const;
 
-	MinecraftAccountPtr m_account;
-	Ui::SkinManageDialog* m_ui;
-	SkinLibrary m_library;
+    MinecraftAccountPtr m_account;
+    Ui::SkinManageDialog *m_ui;
+    SkinLibrary m_library;
 
-	/* Exactly one of these two is used, decided once at construction by
-	 * whether a GL context can be had at all. */
-	skinrender::SkinPreviewSurface* m_preview = nullptr;
-	QPointer<QWidget> m_previewContainer;
-	QLabel* m_flatPreview = nullptr;
+    /* Exactly one of these two is used, decided once at construction by
+     * whether a GL context can be had at all. */
+    skinrender::SkinPreviewSurface *m_preview = nullptr;
+    QPointer<QWidget> m_previewContainer;
+    QLabel *m_flatPreview = nullptr;
 
-	/* Cape textures by cape id, and the combo row each id sits on. Row 0 is
-	 * always "No Cape", so value() returning 0 for an unknown id is exactly
-	 * the right fallback. */
-	QHash<QString, QImage> m_capes;
-	QHash<QString, int> m_capeRows;
+    /* Cape textures by cape id, and the combo row each id sits on. Row 0 is
+     * always "No Cape", so value() returning 0 for an unknown id is exactly
+     * the right fallback. */
+    QHash<QString, QImage> m_capes;
+    QHash<QString, int> m_capeRows;
 
-	QString m_selectedName;
+    QString m_selectedName;
 };

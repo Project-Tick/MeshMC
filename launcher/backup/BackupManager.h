@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include <QString>
-#include <QList>
 #include <QDateTime>
+#include <QList>
+#include <QString>
 #include <functional>
 
 /*
@@ -54,61 +54,57 @@
  */
 
 struct BackupEntry {
-	QString name;		  /* human-readable label, may be empty */
-	QString fileName;	  /* zip file name */
-	QString fullPath;	  /* absolute path to the backup zip */
-	QDateTime timestamp;  /* when the backup was created */
-	qint64 sizeBytes = 0; /* file size */
+    QString name; /* human-readable label, may be empty */
+    QString fileName; /* zip file name */
+    QString fullPath; /* absolute path to the backup zip */
+    QDateTime timestamp; /* when the backup was created */
+    qint64 sizeBytes = 0; /* file size */
 
-	bool isValid() const
-	{
-		return !fullPath.isEmpty();
-	}
+    bool isValid() const
+    {
+        return !fullPath.isEmpty();
+    }
 };
 
 class BackupManager
 {
-  public:
-	/* Reports how a long running backup is getting on:
-	 *   status  — line describing the phase, empty to leave it alone.
-	 *   details — second line, empty to leave it alone.
-	 *   current/total — file counts; total 0 means "no idea yet".
-	 * Called on whichever thread createBackup() runs on, so an
-	 * implementation that touches the UI has to marshal (BackupTask
-	 * does). Updates are already throttled to roughly one per percent —
-	 * a callback per file would be one queued call per file for no
-	 * visible gain. */
-	using ProgressFn =
-		std::function<void(const QString& status, const QString& details,
-						   qint64 current, qint64 total)>;
+public:
+    /* Reports how a long running backup is getting on:
+     *   status  — line describing the phase, empty to leave it alone.
+     *   details — second line, empty to leave it alone.
+     *   current/total — file counts; total 0 means "no idea yet".
+     * Called on whichever thread createBackup() runs on, so an
+     * implementation that touches the UI has to marshal (BackupTask
+     * does). Updates are already throttled to roughly one per percent —
+     * a callback per file would be one queued call per file for no
+     * visible gain. */
+    using ProgressFn = std::function<void(const QString &status, const QString &details, qint64 current, qint64 total)>;
 
-	BackupManager(const QString& instanceId, const QString& instanceRoot);
+    BackupManager(const QString &instanceId, const QString &instanceRoot);
 
-	/* Absolute path of the per-instance backup directory. */
-	QString backupDir() const;
+    /* Absolute path of the per-instance backup directory. */
+    QString backupDir() const;
 
-	/* Newest first. */
-	QList<BackupEntry> listBackups() const;
+    /* Newest first. */
+    QList<BackupEntry> listBackups() const;
 
-	/* Returns an invalid entry (empty fullPath) on failure. */
-	BackupEntry createBackup(const QString& label = {},
-							 const ProgressFn& progress = nullptr);
+    /* Returns an invalid entry (empty fullPath) on failure. */
+    BackupEntry createBackup(const QString &label = {}, const ProgressFn &progress = nullptr);
 
-	/* Wipes the instance root (except .backups/) and unpacks `entry`
-	 * over it. Destructive and not undoable — callers must confirm. */
-	bool restoreBackup(const BackupEntry& entry);
+    /* Wipes the instance root (except .backups/) and unpacks `entry`
+     * over it. Destructive and not undoable — callers must confirm. */
+    bool restoreBackup(const BackupEntry &entry);
 
-	bool exportBackup(const BackupEntry& entry, const QString& destPath);
-	BackupEntry importBackup(const QString& srcZipPath,
-							 const QString& label = {});
-	bool deleteBackup(const BackupEntry& entry);
+    bool exportBackup(const BackupEntry &entry, const QString &destPath);
+    BackupEntry importBackup(const QString &srcZipPath, const QString &label = {});
+    bool deleteBackup(const BackupEntry &entry);
 
-  private:
-	bool ensureBackupDir();
-	QString generateFileName(const QString& label) const;
-	BackupEntry entryFromFile(const QString& filePath) const;
+private:
+    bool ensureBackupDir();
+    QString generateFileName(const QString &label) const;
+    BackupEntry entryFromFile(const QString &filePath) const;
 
-	QString m_instanceId;
-	QString m_instanceRoot;
-	QString m_backupDir;
+    QString m_instanceId;
+    QString m_instanceRoot;
+    QString m_backupDir;
 };

@@ -14,7 +14,7 @@ set(XZ_SOURCES
     src/xz_dec_lzma2.c
     src/xz_dec_stream.c
 )
-add_library(xz-embedded ${XZ_SOURCES})
+add_library(xz-embedded STATIC ${XZ_SOURCES})
 add_library(xz-embedded::xz-embedded ALIAS xz-embedded)
 target_include_directories(xz-embedded
     PUBLIC

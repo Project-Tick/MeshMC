@@ -28,7 +28,7 @@ class QTreeWidgetItem;
 
 namespace Ui
 {
-	class SelectReleaseDialog;
+class SelectReleaseDialog;
 }
 
 /*!
@@ -41,39 +41,37 @@ namespace Ui
  */
 class SelectReleaseDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	SelectReleaseDialog(const Version& currentVersion,
-						const QList<GitHubRelease>& releases,
-						QWidget* parent = nullptr);
-	~SelectReleaseDialog() override;
+public:
+    SelectReleaseDialog(const Version &currentVersion, const QList<GitHubRelease> &releases, QWidget *parent = nullptr);
+    ~SelectReleaseDialog() override;
 
-	/*!
-	 * The release the user settled on.
-	 *
-	 * Invalid (isValid() == false) when the dialog was cancelled, or when it
-	 * was accepted without anything selected -- the caller checks, rather
-	 * than this class inventing a default the user never chose.
-	 */
-	GitHubRelease selectedRelease() const
-	{
-		return m_selectedRelease;
-	}
+    /*!
+     * The release the user settled on.
+     *
+     * Invalid (isValid() == false) when the dialog was cancelled, or when it
+     * was accepted without anything selected -- the caller checks, rather
+     * than this class inventing a default the user never chose.
+     */
+    GitHubRelease selectedRelease() const
+    {
+        return m_selectedRelease;
+    }
 
-  private slots:
-	void selectionChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+private slots:
+    void selectionChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
-  private:
-	void loadReleases();
-	void appendRelease(const GitHubRelease& release);
-	GitHubRelease releaseForItem(const QTreeWidgetItem* item) const;
+private:
+    void loadReleases();
+    void appendRelease(const GitHubRelease &release);
+    GitHubRelease releaseForItem(const QTreeWidgetItem *item) const;
 
-	QList<GitHubRelease> m_releases;
-	GitHubRelease m_selectedRelease;
-	Version m_currentVersion;
+    QList<GitHubRelease> m_releases;
+    GitHubRelease m_selectedRelease;
+    Version m_currentVersion;
 
-	Ui::SelectReleaseDialog* ui;
+    Ui::SelectReleaseDialog *ui;
 };
 
 /*!
@@ -90,28 +88,27 @@ class SelectReleaseDialog : public QDialog
  */
 class SelectReleaseAssetDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit SelectReleaseAssetDialog(const QList<GitHubReleaseAsset>& assets,
-									  QWidget* parent = nullptr);
-	~SelectReleaseAssetDialog() override;
+public:
+    explicit SelectReleaseAssetDialog(const QList<GitHubReleaseAsset> &assets, QWidget *parent = nullptr);
+    ~SelectReleaseAssetDialog() override;
 
-	GitHubReleaseAsset selectedAsset() const
-	{
-		return m_selectedAsset;
-	}
+    GitHubReleaseAsset selectedAsset() const
+    {
+        return m_selectedAsset;
+    }
 
-  private slots:
-	void selectionChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+private slots:
+    void selectionChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
-  private:
-	void loadAssets();
-	void appendAsset(const GitHubReleaseAsset& asset);
-	GitHubReleaseAsset assetForItem(const QTreeWidgetItem* item) const;
+private:
+    void loadAssets();
+    void appendAsset(const GitHubReleaseAsset &asset);
+    GitHubReleaseAsset assetForItem(const QTreeWidgetItem *item) const;
 
-	QList<GitHubReleaseAsset> m_assets;
-	GitHubReleaseAsset m_selectedAsset;
+    QList<GitHubReleaseAsset> m_assets;
+    GitHubReleaseAsset m_selectedAsset;
 
-	Ui::SelectReleaseDialog* ui;
+    Ui::SelectReleaseDialog *ui;
 };

@@ -31,272 +31,259 @@
 #include "BuildConfig.h"
 #include "ui/GuiUtil.h"
 
-MeshMCLogsDialog::MeshMCLogsDialog(QWidget* parent)
-	: QDialog(parent), ui(new Ui::MeshMCLogsDialog),
-	  m_liveWatcher(new QFileSystemWatcher(this))
+MeshMCLogsDialog::MeshMCLogsDialog(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::MeshMCLogsDialog)
+    , m_liveWatcher(new QFileSystemWatcher(this))
 {
-	ui->setupUi(this);
-	setWindowTitle(tr("MeshMC Logs"));
-	resize(750, 550);
+    ui->setupUi(this);
+    setWindowTitle(tr("MeshMC Logs"));
+    resize(750, 550);
 
-	connect(m_liveWatcher, &QFileSystemWatcher::fileChanged, this,
-			&MeshMCLogsDialog::onLogFileChanged);
+    connect(m_liveWatcher, &QFileSystemWatcher::fileChanged, this, &MeshMCLogsDialog::onLogFileChanged);
 
-	auto findShortcut = new QShortcut(QKeySequence(QKeySequence::Find), this);
-	connect(findShortcut, &QShortcut::activated, this,
-			[this]() { ui->searchBar->setFocus(); });
+    auto findShortcut = new QShortcut(QKeySequence(QKeySequence::Find), this);
+    connect(findShortcut, &QShortcut::activated, this, [this]() {
+        ui->searchBar->setFocus();
+    });
 
-	connect(ui->searchBar, &QLineEdit::returnPressed, this,
-			&MeshMCLogsDialog::on_findButton_clicked);
+    connect(ui->searchBar, &QLineEdit::returnPressed, this, &MeshMCLogsDialog::on_findButton_clicked);
 
-	populateLogList();
+    populateLogList();
 }
 
 MeshMCLogsDialog::~MeshMCLogsDialog()
 {
-	delete ui;
+    delete ui;
 }
 
 QString MeshMCLogsDialog::logDirectory() const
 {
-	return QDir::currentPath();
+    return QDir::currentPath();
 }
 
-QString MeshMCLogsDialog::logFilePath(const QString& name) const
+QString MeshMCLogsDialog::logFilePath(const QString &name) const
 {
-	return QDir(logDirectory()).absoluteFilePath(name);
+    return QDir(logDirectory()).absoluteFilePath(name);
 }
 
 void MeshMCLogsDialog::populateLogList()
 {
-	ui->selectLogBox->clear();
+    ui->selectLogBox->clear();
 
-	// Stop watching old file
-	if (m_watching0Log) {
-		auto watched = m_liveWatcher->files();
-		if (!watched.isEmpty())
-			m_liveWatcher->removePaths(watched);
-		m_watching0Log = false;
-	}
+    // Stop watching old file
+    if (m_watching0Log) {
+        auto watched = m_liveWatcher->files();
+        if (!watched.isEmpty())
+            m_liveWatcher->removePaths(watched);
+        m_watching0Log = false;
+    }
 
-	QDir dir(logDirectory());
-	QStringList logFiles;
+    QDir dir(logDirectory());
+    QStringList logFiles;
 
-	// MeshMC-0.log through MeshMC-4.log
-	for (int i = 0; i <= 4; i++) {
-		QString fileName = QString("MeshMC-%1.log").arg(i);
-		if (dir.exists(fileName)) {
-			logFiles.append(fileName);
-		}
-	}
+    // MeshMC-0.log through MeshMC-4.log
+    for (int i = 0; i <= 4; i++) {
+        QString fileName = QString("MeshMC-%1.log").arg(i);
+        if (dir.exists(fileName)) {
+            logFiles.append(fileName);
+        }
+    }
 
-	if (logFiles.isEmpty()) {
-		setControlsEnabled(false);
-		return;
-	}
+    if (logFiles.isEmpty()) {
+        setControlsEnabled(false);
+        return;
+    }
 
-	ui->selectLogBox->addItems(logFiles);
+    ui->selectLogBox->addItems(logFiles);
 
-	if (!m_currentFile.isEmpty()) {
-		int idx = ui->selectLogBox->findText(m_currentFile);
-		if (idx != -1)
-			ui->selectLogBox->setCurrentIndex(idx);
-		else
-			ui->selectLogBox->setCurrentIndex(0);
-	} else {
-		ui->selectLogBox->setCurrentIndex(0);
-	}
+    if (!m_currentFile.isEmpty()) {
+        int idx = ui->selectLogBox->findText(m_currentFile);
+        if (idx != -1)
+            ui->selectLogBox->setCurrentIndex(idx);
+        else
+            ui->selectLogBox->setCurrentIndex(0);
+    } else {
+        ui->selectLogBox->setCurrentIndex(0);
+    }
 }
 
 void MeshMCLogsDialog::on_selectLogBox_currentIndexChanged(int index)
 {
-	// Stop watching previous file
-	if (m_watching0Log) {
-		auto watched = m_liveWatcher->files();
-		if (!watched.isEmpty())
-			m_liveWatcher->removePaths(watched);
-		m_watching0Log = false;
-	}
+    // Stop watching previous file
+    if (m_watching0Log) {
+        auto watched = m_liveWatcher->files();
+        if (!watched.isEmpty())
+            m_liveWatcher->removePaths(watched);
+        m_watching0Log = false;
+    }
 
-	if (index < 0) {
-		m_currentFile.clear();
-		ui->textBrowser->clear();
-		setControlsEnabled(false);
-		return;
-	}
+    if (index < 0) {
+        m_currentFile.clear();
+        ui->textBrowser->clear();
+        setControlsEnabled(false);
+        return;
+    }
 
-	m_currentFile = ui->selectLogBox->itemText(index);
-	setControlsEnabled(true);
-	loadSelectedLog();
+    m_currentFile = ui->selectLogBox->itemText(index);
+    setControlsEnabled(true);
+    loadSelectedLog();
 
-	// Watch MeshMC-0.log for live updates
-	if (m_currentFile == QString("MeshMC-0.log")) {
-		QString fullPath = logFilePath(m_currentFile);
-		m_liveWatcher->addPath(fullPath);
-		m_watching0Log = true;
-	}
+    // Watch MeshMC-0.log for live updates
+    if (m_currentFile == QString("MeshMC-0.log")) {
+        QString fullPath = logFilePath(m_currentFile);
+        m_liveWatcher->addPath(fullPath);
+        m_watching0Log = true;
+    }
 }
 
 void MeshMCLogsDialog::loadSelectedLog()
 {
-	if (m_currentFile.isEmpty()) {
-		setControlsEnabled(false);
-		return;
-	}
+    if (m_currentFile.isEmpty()) {
+        setControlsEnabled(false);
+        return;
+    }
 
-	QString fullPath = logFilePath(m_currentFile);
-	QFile file(fullPath);
-	if (!file.open(QFile::ReadOnly | QFile::Text)) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Unable to open %1 for reading: %2")
-								  .arg(m_currentFile, file.errorString()));
-		setControlsEnabled(false);
-		return;
-	}
+    QString fullPath = logFilePath(m_currentFile);
+    QFile file(fullPath);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::critical(this, tr("Error"), tr("Unable to open %1 for reading: %2").arg(m_currentFile, file.errorString()));
+        setControlsEnabled(false);
+        return;
+    }
 
-	if (file.size() > (1024ll * 1024ll * 12ll)) {
-		ui->textBrowser->setPlainText(
-			tr("The file (%1) is too big. You may want to open it in a viewer "
-			   "optimized for large files.")
-				.arg(m_currentFile));
-		return;
-	}
+    if (file.size() > (1024ll * 1024ll * 12ll)) {
+        ui->textBrowser->setPlainText(tr("The file (%1) is too big. You may want to open it in a viewer "
+                                         "optimized for large files.")
+                                          .arg(m_currentFile));
+        return;
+    }
 
-	QString content = QString::fromUtf8(file.readAll());
+    QString content = QString::fromUtf8(file.readAll());
 
-	QString fontFamily = APPLICATION->settings()->get("ConsoleFont").toString();
-	bool conversionOk = false;
-	int fontSize =
-		APPLICATION->settings()->get("ConsoleFontSize").toInt(&conversionOk);
-	if (!conversionOk) {
-		fontSize = 11;
-	}
-	QTextDocument* doc = ui->textBrowser->document();
-	doc->setDefaultFont(QFont(fontFamily, fontSize));
-	ui->textBrowser->setPlainText(content);
+    QString fontFamily = APPLICATION->settings()->get("ConsoleFont").toString();
+    bool conversionOk = false;
+    int fontSize = APPLICATION->settings()->get("ConsoleFontSize").toInt(&conversionOk);
+    if (!conversionOk) {
+        fontSize = 11;
+    }
+    QTextDocument *doc = ui->textBrowser->document();
+    doc->setDefaultFont(QFont(fontFamily, fontSize));
+    ui->textBrowser->setPlainText(content);
 
-	// Scroll to bottom for 0.log (live log)
-	if (m_currentFile == QString("MeshMC-0.log")) {
-		ui->textBrowser->moveCursor(QTextCursor::End);
-		ui->textBrowser->ensureCursorVisible();
-	}
+    // Scroll to bottom for 0.log (live log)
+    if (m_currentFile == QString("MeshMC-0.log")) {
+        ui->textBrowser->moveCursor(QTextCursor::End);
+        ui->textBrowser->ensureCursorVisible();
+    }
 }
 
 void MeshMCLogsDialog::on_btnReload_clicked()
 {
-	populateLogList();
-	loadSelectedLog();
+    populateLogList();
+    loadSelectedLog();
 }
 
 void MeshMCLogsDialog::on_btnCopy_clicked()
 {
-	GuiUtil::setClipboardText(ui->textBrowser->toPlainText());
+    GuiUtil::setClipboardText(ui->textBrowser->toPlainText());
 }
 
 void MeshMCLogsDialog::on_btnUpload_clicked()
 {
-	GuiUtil::uploadPaste(ui->textBrowser->toPlainText(), this);
+    GuiUtil::uploadPaste(ui->textBrowser->toPlainText(), this);
 }
 
 void MeshMCLogsDialog::on_btnDelete_clicked()
 {
-	if (m_currentFile.isEmpty()) {
-		return;
-	}
-	if (QMessageBox::question(
-			this, tr("Delete"),
-			tr("Do you really want to delete %1?").arg(m_currentFile),
-			QMessageBox::Yes, QMessageBox::No) == QMessageBox::No) {
-		return;
-	}
-	QFile file(logFilePath(m_currentFile));
-	if (!file.remove()) {
-		QMessageBox::critical(this, tr("Error"),
-							  tr("Unable to delete %1: %2")
-								  .arg(m_currentFile, file.errorString()));
-	}
-	m_currentFile.clear();
-	populateLogList();
+    if (m_currentFile.isEmpty()) {
+        return;
+    }
+    if (QMessageBox::question(this, tr("Delete"), tr("Do you really want to delete %1?").arg(m_currentFile), QMessageBox::Yes, QMessageBox::No)
+        == QMessageBox::No) {
+        return;
+    }
+    QFile file(logFilePath(m_currentFile));
+    if (!file.remove()) {
+        QMessageBox::critical(this, tr("Error"), tr("Unable to delete %1: %2").arg(m_currentFile, file.errorString()));
+    }
+    m_currentFile.clear();
+    populateLogList();
 }
 
 void MeshMCLogsDialog::on_btnClean_clicked()
 {
-	QStringList toDelete;
-	QDir dir(logDirectory());
+    QStringList toDelete;
+    QDir dir(logDirectory());
 
-	for (int i = 0; i <= 4; i++) {
-		QString fileName = QString("MeshMC-%1.log").arg(i);
-		if (dir.exists(fileName)) {
-			toDelete.append(fileName);
-		}
-	}
+    for (int i = 0; i <= 4; i++) {
+        QString fileName = QString("MeshMC-%1.log").arg(i);
+        if (dir.exists(fileName)) {
+            toDelete.append(fileName);
+        }
+    }
 
-	if (toDelete.isEmpty())
-		return;
+    if (toDelete.isEmpty())
+        return;
 
-	QMessageBox* messageBox = new QMessageBox(this);
-	messageBox->setWindowTitle(tr("Clean up"));
-	messageBox->setText(tr("Do you really want to delete all log files?\n%1")
-							.arg(toDelete.join('\n')));
-	messageBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-	messageBox->setDefaultButton(QMessageBox::Ok);
-	messageBox->setIcon(QMessageBox::Question);
+    QMessageBox *messageBox = new QMessageBox(this);
+    messageBox->setWindowTitle(tr("Clean up"));
+    messageBox->setText(tr("Do you really want to delete all log files?\n%1").arg(toDelete.join('\n')));
+    messageBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    messageBox->setDefaultButton(QMessageBox::Ok);
+    messageBox->setIcon(QMessageBox::Question);
 
-	if (messageBox->exec() != QMessageBox::Ok) {
-		return;
-	}
+    if (messageBox->exec() != QMessageBox::Ok) {
+        return;
+    }
 
-	QStringList failed;
-	for (const auto& item : toDelete) {
-		QFile file(logFilePath(item));
-		if (!file.remove()) {
-			failed.push_back(item);
-		}
-	}
+    QStringList failed;
+    for (const auto &item : toDelete) {
+        QFile file(logFilePath(item));
+        if (!file.remove()) {
+            failed.push_back(item);
+        }
+    }
 
-	if (!failed.empty()) {
-		QMessageBox::critical(
-			this, tr("Error"),
-			tr("Couldn't delete some files:\n%1").arg(failed.join('\n')));
-	}
+    if (!failed.empty()) {
+        QMessageBox::critical(this, tr("Error"), tr("Couldn't delete some files:\n%1").arg(failed.join('\n')));
+    }
 
-	m_currentFile.clear();
-	populateLogList();
+    m_currentFile.clear();
+    populateLogList();
 }
 
 void MeshMCLogsDialog::on_findButton_clicked()
 {
-	auto modifiers = QApplication::keyboardModifiers();
-	bool reverse = modifiers & Qt::ShiftModifier;
-	ui->textBrowser->find(ui->searchBar->text(),
-						  reverse ? QTextDocument::FindFlag::FindBackward
-								  : QTextDocument::FindFlag(0));
+    auto modifiers = QApplication::keyboardModifiers();
+    bool reverse = modifiers & Qt::ShiftModifier;
+    ui->textBrowser->find(ui->searchBar->text(), reverse ? QTextDocument::FindFlag::FindBackward : QTextDocument::FindFlag(0));
 }
 
-void MeshMCLogsDialog::onLogFileChanged(const QString& path)
+void MeshMCLogsDialog::onLogFileChanged(const QString &path)
 {
-	Q_UNUSED(path)
-	// Reload current log when 0.log changes
-	if (m_watching0Log) {
-		loadSelectedLog();
-		// QFileSystemWatcher may stop watching after a file is modified
-		// (rewritten), re-add it
-		QString fullPath = logFilePath(QString("MeshMC-0.log"));
-		if (QFile::exists(fullPath)) {
-			auto watched = m_liveWatcher->files();
-			if (!watched.contains(fullPath)) {
-				m_liveWatcher->addPath(fullPath);
-			}
-		}
-	}
+    Q_UNUSED(path)
+    // Reload current log when 0.log changes
+    if (m_watching0Log) {
+        loadSelectedLog();
+        // QFileSystemWatcher may stop watching after a file is modified
+        // (rewritten), re-add it
+        QString fullPath = logFilePath(QString("MeshMC-0.log"));
+        if (QFile::exists(fullPath)) {
+            auto watched = m_liveWatcher->files();
+            if (!watched.contains(fullPath)) {
+                m_liveWatcher->addPath(fullPath);
+            }
+        }
+    }
 }
 
 void MeshMCLogsDialog::setControlsEnabled(bool enabled)
 {
-	ui->btnReload->setEnabled(true); // always allow reload
-	ui->btnCopy->setEnabled(enabled);
-	ui->btnUpload->setEnabled(enabled);
-	ui->btnDelete->setEnabled(enabled);
-	ui->btnClean->setEnabled(enabled);
-	ui->textBrowser->setEnabled(enabled);
+    ui->btnReload->setEnabled(true); // always allow reload
+    ui->btnCopy->setEnabled(enabled);
+    ui->btnUpload->setEnabled(enabled);
+    ui->btnDelete->setEnabled(enabled);
+    ui->btnClean->setEnabled(enabled);
+    ui->textBrowser->setEnabled(enabled);
 }

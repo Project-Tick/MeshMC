@@ -11,16 +11,16 @@
 
 class LogIngester
 {
-  public:
-	struct Bundle {
-		QString combinedText;
-		QStringList sources; // file paths we read
-		bool fromLatestLog = false;
-		bool fromCrashReport = false;
-	};
+public:
+    struct Bundle {
+        QString combinedText;
+        QStringList sources; // file paths we read
+        bool fromLatestLog = false;
+        bool fromCrashReport = false;
+    };
 
-	Bundle ingestForInstance(const QString& instancePath) const;
+    Bundle ingestForInstance(const QString &instancePath) const;
 
-	/* For testing — pull from an arbitrary path or directory. */
-	Bundle ingestFromPath(const QString& path) const;
+    /* For testing — pull from an arbitrary path or directory. */
+    Bundle ingestFromPath(const QString &path) const;
 };

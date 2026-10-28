@@ -23,29 +23,29 @@
 
 class ExternalUpdater : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	virtual void checkForUpdates() = 0;
+public:
+    virtual void checkForUpdates() = 0;
 
-	//! Whether unattended checks happen at all.
-	virtual bool getAutomaticallyChecksForUpdates() = 0;
+    //! Whether unattended checks happen at all.
+    virtual bool getAutomaticallyChecksForUpdates() = 0;
 
-	//! Seconds between unattended checks. 0 means "only at startup".
-	virtual double getUpdateCheckInterval() = 0;
+    //! Seconds between unattended checks. 0 means "only at startup".
+    virtual double getUpdateCheckInterval() = 0;
 
-	//! Whether pre-releases are offered alongside stable releases.
-	virtual bool getBetaAllowed() = 0;
+    //! Whether pre-releases are offered alongside stable releases.
+    virtual bool getBetaAllowed() = 0;
 
-	//! \see getAutomaticallyChecksForUpdates
-	virtual void setAutomaticallyChecksForUpdates(bool check) = 0;
+    //! \see getAutomaticallyChecksForUpdates
+    virtual void setAutomaticallyChecksForUpdates(bool check) = 0;
 
-	//! \see getUpdateCheckInterval
-	virtual void setUpdateCheckInterval(double seconds) = 0;
+    //! \see getUpdateCheckInterval
+    virtual void setUpdateCheckInterval(double seconds) = 0;
 
-	//! \see getBetaAllowed
-	virtual void setBetaAllowed(bool allowed) = 0;
+    //! \see getBetaAllowed
+    virtual void setBetaAllowed(bool allowed) = 0;
 
-  signals:
-	void canCheckForUpdatesChanged(bool canCheck);
+signals:
+    void canCheckForUpdatesChanged(bool canCheck);
 };

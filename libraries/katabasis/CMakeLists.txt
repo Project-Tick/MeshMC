@@ -29,7 +29,7 @@ set( katabasis_PUBLIC
     include/katabasis/RequestParameter.h
 )
 
-add_library(Katabasis ${katabasis_PRIVATE} ${katabasis_PUBLIC})
+add_library(Katabasis STATIC ${katabasis_PRIVATE} ${katabasis_PUBLIC})
 add_library(Katabasis::Katabasis ALIAS Katabasis)
 set_target_properties(Katabasis PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(Katabasis PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)

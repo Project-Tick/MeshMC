@@ -19,48 +19,49 @@
  */
 
 #include "ModListView.h"
+#include <QDrag>
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QDrag>
 #include <QRect>
 
-ModListView::ModListView(QWidget* parent) : QTreeView(parent)
+ModListView::ModListView(QWidget *parent)
+    : QTreeView(parent)
 {
-	setAllColumnsShowFocus(true);
-	setExpandsOnDoubleClick(false);
-	setRootIsDecorated(false);
-	setSortingEnabled(true);
-	setAlternatingRowColors(true);
-	setSelectionMode(QAbstractItemView::ExtendedSelection);
-	setHeaderHidden(false);
-	setSelectionBehavior(QAbstractItemView::SelectRows);
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-	setDropIndicatorShown(true);
-	setDragEnabled(true);
-	setDragDropMode(QAbstractItemView::DropOnly);
-	viewport()->setAcceptDrops(true);
+    setAllColumnsShowFocus(true);
+    setExpandsOnDoubleClick(false);
+    setRootIsDecorated(false);
+    setSortingEnabled(true);
+    setAlternatingRowColors(true);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setHeaderHidden(false);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setDropIndicatorShown(true);
+    setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::DropOnly);
+    viewport()->setAcceptDrops(true);
 }
 
-void ModListView::setModel(QAbstractItemModel* model)
+void ModListView::setModel(QAbstractItemModel *model)
 {
-	QTreeView::setModel(model);
-	auto head = header();
-	head->setStretchLastSection(false);
-	// HACK: this is true for the checkbox column of mod lists
-	auto string = model->headerData(0, head->orientation()).toString();
-	if (head->count() < 1) {
-		return;
-	}
-	if (!string.size()) {
-		head->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-		head->setSectionResizeMode(1, QHeaderView::Stretch);
-		for (int i = 2; i < head->count(); i++)
-			head->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-	} else {
-		head->setSectionResizeMode(0, QHeaderView::Stretch);
-		for (int i = 1; i < head->count(); i++)
-			head->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-	}
+    QTreeView::setModel(model);
+    auto head = header();
+    head->setStretchLastSection(false);
+    // HACK: this is true for the checkbox column of mod lists
+    auto string = model->headerData(0, head->orientation()).toString();
+    if (head->count() < 1) {
+        return;
+    }
+    if (!string.size()) {
+        head->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+        head->setSectionResizeMode(1, QHeaderView::Stretch);
+        for (int i = 2; i < head->count(); i++)
+            head->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+    } else {
+        head->setSectionResizeMode(0, QHeaderView::Stretch);
+        for (int i = 1; i < head->count(); i++)
+            head->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+    }
 }

@@ -19,36 +19,36 @@
 
 #pragma once
 
-#include <QString>
 #include <QRegularExpression>
+#include <QString>
 
 class Filter
 {
-  public:
-	virtual ~Filter();
-	virtual bool accepts(const QString& value) = 0;
+public:
+    virtual ~Filter();
+    virtual bool accepts(const QString &value) = 0;
 };
 
 class ContainsFilter : public Filter
 {
-  public:
-	ContainsFilter(const QString& pattern);
-	virtual ~ContainsFilter();
-	bool accepts(const QString& value) override;
+public:
+    ContainsFilter(const QString &pattern);
+    virtual ~ContainsFilter();
+    bool accepts(const QString &value) override;
 
-  private:
-	QString pattern;
+private:
+    QString pattern;
 };
 
 class ExactFilter : public Filter
 {
-  public:
-	ExactFilter(const QString& pattern);
-	virtual ~ExactFilter();
-	bool accepts(const QString& value) override;
+public:
+    ExactFilter(const QString &pattern);
+    virtual ~ExactFilter();
+    bool accepts(const QString &value) override;
 
-  private:
-	QString pattern;
+private:
+    QString pattern;
 };
 
 /* ExactFilter, except that a row which has nothing to say on the role is
@@ -64,23 +64,23 @@ class ExactFilter : public Filter
  * Minecraft version in the first place". */
 class ExactIfPresentFilter : public Filter
 {
-  public:
-	ExactIfPresentFilter(const QString& pattern);
-	virtual ~ExactIfPresentFilter();
-	bool accepts(const QString& value) override;
+public:
+    ExactIfPresentFilter(const QString &pattern);
+    virtual ~ExactIfPresentFilter();
+    bool accepts(const QString &value) override;
 
-  private:
-	QString pattern;
+private:
+    QString pattern;
 };
 
 class RegexpFilter : public Filter
 {
-  public:
-	RegexpFilter(const QString& regexp, bool invert);
-	virtual ~RegexpFilter();
-	bool accepts(const QString& value) override;
+public:
+    RegexpFilter(const QString &regexp, bool invert);
+    virtual ~RegexpFilter();
+    bool accepts(const QString &value) override;
 
-  private:
-	QRegularExpression pattern;
-	bool invert = false;
+private:
+    QRegularExpression pattern;
+    bool invert = false;
 };

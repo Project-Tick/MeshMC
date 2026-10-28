@@ -20,62 +20,62 @@
 
 #pragma once
 
-#include <memory>
-#include <QDialog>
-#include "ui/pages/BasePage.h"
 #include "JavaCommon.h"
+#include "ui/pages/BasePage.h"
 #include <Application.h>
+#include <QDialog>
 #include <QObjectPtr.h>
+#include <memory>
 
 class SettingsObject;
 
 namespace Ui
 {
-	class JavaPage;
+class JavaPage;
 }
 
 class JavaPage : public QWidget, public BasePage
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit JavaPage(QWidget* parent = 0);
-	~JavaPage();
+public:
+    explicit JavaPage(QWidget *parent = 0);
+    ~JavaPage();
 
-	QString displayName() const override
-	{
-		return tr("Java");
-	}
-	QIcon icon() const override
-	{
-		return APPLICATION->getThemedIcon("java");
-	}
-	QString id() const override
-	{
-		return "java-settings";
-	}
-	QString helpPage() const override
-	{
-		return "Java-settings";
-	}
-	bool apply() override;
+    QString displayName() const override
+    {
+        return tr("Java");
+    }
+    QIcon icon() const override
+    {
+        return APPLICATION->getThemedIcon("java");
+    }
+    QString id() const override
+    {
+        return "java-settings";
+    }
+    QString helpPage() const override
+    {
+        return "Java-settings";
+    }
+    bool apply() override;
 
-  private:
-	void applySettings();
-	void loadSettings();
-	void refreshInstalledJavas();
+private:
+    void applySettings();
+    void loadSettings();
+    void refreshInstalledJavas();
 
-  private slots:
-	void on_javaDetectBtn_clicked();
-	void on_javaTestBtn_clicked();
-	void on_javaBrowseBtn_clicked();
-	void on_javaDownloadBtn_clicked();
-	void on_javaRefreshBtn_clicked();
-	void on_javaRemoveBtn_clicked();
-	void on_javaUseBtn_clicked();
-	void checkerFinished();
+private slots:
+    void on_javaDetectBtn_clicked();
+    void on_javaTestBtn_clicked();
+    void on_javaBrowseBtn_clicked();
+    void on_javaDownloadBtn_clicked();
+    void on_javaRefreshBtn_clicked();
+    void on_javaRemoveBtn_clicked();
+    void on_javaUseBtn_clicked();
+    void checkerFinished();
 
-  private:
-	Ui::JavaPage* ui;
-	unique_qobject_ptr<JavaCommon::TestCheck> checker;
+private:
+    Ui::JavaPage *ui;
+    unique_qobject_ptr<JavaCommon::TestCheck> checker;
 };

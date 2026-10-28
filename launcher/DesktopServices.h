@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <QUrl>
 #include <QString>
+#include <QUrl>
 
 /**
  * This wraps around QDesktopServices and adds workarounds where needed
@@ -28,41 +28,39 @@
  */
 namespace DesktopServices
 {
-	/**
-	 * Open a file in whatever application is applicable
-	 */
-	bool openFile(const QString& path);
+/**
+ * Open a file in whatever application is applicable
+ */
+bool openFile(const QString &path);
 
-	/**
-	 * Open a file in the specified application
-	 */
-	bool openFile(const QString& application, const QString& path,
-				  const QString& workingDirectory = QString(), qint64* pid = 0);
+/**
+ * Open a file in the specified application
+ */
+bool openFile(const QString &application, const QString &path, const QString &workingDirectory = QString(), qint64 *pid = 0);
 
-	/**
-	 * Run an application
-	 */
-	bool run(const QString& application, const QStringList& args,
-			 const QString& workingDirectory = QString(), qint64* pid = 0);
+/**
+ * Run an application
+ */
+bool run(const QString &application, const QStringList &args, const QString &workingDirectory = QString(), qint64 *pid = 0);
 
-	/**
-	 * Open a directory
-	 */
-	bool openDirectory(const QString& path, bool ensureExists = false);
+/**
+ * Open a directory
+ */
+bool openDirectory(const QString &path, bool ensureExists = false);
 
-	/**
-	 * Open the URL, most likely in a browser. Maybe.
-	 */
-	bool openUrl(const QUrl& url);
+/**
+ * Open the URL, most likely in a browser. Maybe.
+ */
+bool openUrl(const QUrl &url);
 
-	/**
-	 * Whether this process is running inside a Flatpak sandbox.
-	 *
-	 * It matters wherever the launcher has to name or reach itself from the
-	 * outside: its own executable path means nothing to the host, so a
-	 * desktop entry has to go through `flatpak run` instead, and a file can
-	 * only be written outside the sandbox through the portal's own save
-	 * dialog.
-	 */
-	bool isFlatpak();
+/**
+ * Whether this process is running inside a Flatpak sandbox.
+ *
+ * It matters wherever the launcher has to name or reach itself from the
+ * outside: its own executable path means nothing to the host, so a
+ * desktop entry has to go through `flatpak run` instead, and a file can
+ * only be written outside the sandbox through the portal's own save
+ * dialog.
+ */
+bool isFlatpak();
 } // namespace DesktopServices

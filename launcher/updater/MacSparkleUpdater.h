@@ -26,30 +26,30 @@
 
 class MacSparkleUpdater : public ExternalUpdater
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	MacSparkleUpdater();
-	~MacSparkleUpdater() override;
+public:
+    MacSparkleUpdater();
+    ~MacSparkleUpdater() override;
 
-	void checkForUpdates() override;
+    void checkForUpdates() override;
 
-	bool getAutomaticallyChecksForUpdates() override;
-	double getUpdateCheckInterval() override;
-	bool getBetaAllowed() override;
+    bool getAutomaticallyChecksForUpdates() override;
+    double getUpdateCheckInterval() override;
+    bool getBetaAllowed() override;
 
-	void setAutomaticallyChecksForUpdates(bool check) override;
-	void setUpdateCheckInterval(double seconds) override;
-	void setBetaAllowed(bool allowed) override;
+    void setAutomaticallyChecksForUpdates(bool check) override;
+    void setUpdateCheckInterval(double seconds) override;
+    void setBetaAllowed(bool allowed) override;
 
-	QSet<QString> getAllowedChannels();
-	void setAllowedChannel(const QString& channel);
-	void setAllowedChannels(const QSet<QString>& channels);
+    QSet<QString> getAllowedChannels();
+    void setAllowedChannel(const QString &channel);
+    void setAllowedChannels(const QSet<QString> &channels);
 
-	//! Back to release-only.
-	void clearAllowedChannels();
+    //! Back to release-only.
+    void clearAllowedChannels();
 
-  private:
-	class Private;
-	Private* priv;
+private:
+    class Private;
+    Private *priv;
 };

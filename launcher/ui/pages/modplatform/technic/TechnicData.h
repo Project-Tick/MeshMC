@@ -25,24 +25,24 @@
 
 namespace Technic
 {
-	struct Modpack {
-		QString slug;
+struct Modpack {
+    QString slug;
 
-		QString name;
-		QString logoUrl;
-		QString logoName;
+    QString name;
+    QString logoUrl;
+    QString logoName;
 
-		bool broken = true;
+    bool broken = true;
 
-		QString url;
-		bool isSolder = false;
-		QString minecraftVersion;
+    QString url;
+    bool isSolder = false;
+    QString minecraftVersion;
 
-		bool metadataLoaded = false;
-		QString websiteUrl;
-		QString author;
-		QString description;
-	};
+    bool metadataLoaded = false;
+    QString websiteUrl;
+    QString author;
+    QString description;
+};
 } // namespace Technic
 
 Q_DECLARE_METATYPE(Technic::Modpack)

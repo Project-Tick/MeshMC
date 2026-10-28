@@ -20,14 +20,14 @@
 #pragma once
 
 #include <QApplication>
-#include <memory>
-#include <functional>
+#include <QDateTime>
 #include <QDebug>
 #include <QFlag>
-#include <QIcon>
-#include <QDateTime>
-#include <QUrl>
 #include <QHash>
+#include <QIcon>
+#include <QUrl>
+#include <functional>
+#include <memory>
 
 #include <BaseInstance.h>
 
@@ -62,7 +62,7 @@ class ExternalUpdater;
 
 namespace Meta
 {
-	class Index;
+class Index;
 }
 
 /**
@@ -73,272 +73,270 @@ namespace Meta
  * nothing. The profiler is deliberately not part of this -- it is an
  * instance setting now, not a property of one launch.
  */
-enum class LaunchMode
-{
-	/// Log in, launch.
-	Normal,
-	/// Launch with whatever the account cache already has.
-	Offline,
-	/// Launch the demo, without logging in at all.
-	Demo
+enum class LaunchMode {
+    /// Log in, launch.
+    Normal,
+    /// Launch with whatever the account cache already has.
+    Offline,
+    /// Launch the demo, without logging in at all.
+    Demo
 };
 
 #if defined(APPLICATION)
 #undef APPLICATION
 #endif
-#define APPLICATION (static_cast<Application*>(QCoreApplication::instance()))
+#define APPLICATION (static_cast<Application *>(QCoreApplication::instance()))
 
 class Application : public QApplication
 {
-	// friends for the purpose of limiting access to deprecated stuff
-	Q_OBJECT
-  public:
-	enum Status { StartingUp, Failed, Succeeded, Initialized };
+    // friends for the purpose of limiting access to deprecated stuff
+    Q_OBJECT
+public:
+    enum Status {
+        StartingUp,
+        Failed,
+        Succeeded,
+        Initialized
+    };
 
-  public:
-	Application(int& argc, char** argv);
-	~Application() override;
+public:
+    Application(int &argc, char **argv);
+    ~Application() override;
 
-	PluginManager* pluginManager() const
-	{
-		return m_pluginManager.get();
-	}
+    PluginManager *pluginManager() const
+    {
+        return m_pluginManager.get();
+    }
 
-	std::shared_ptr<SettingsObject> settings() const
-	{
-		return m_settings;
-	}
+    std::shared_ptr<SettingsObject> settings() const
+    {
+        return m_settings;
+    }
 
-	qint64 timeSinceStart() const
-	{
-		return startTime.msecsTo(QDateTime::currentDateTime());
-	}
+    qint64 timeSinceStart() const
+    {
+        return startTime.msecsTo(QDateTime::currentDateTime());
+    }
 
-	QIcon getThemedIcon(const QString& name);
+    QIcon getThemedIcon(const QString &name);
 
-	void setIconTheme(const QString& name);
+    void setIconTheme(const QString &name);
 
-	std::vector<ITheme*> getValidApplicationThemes();
+    std::vector<ITheme *> getValidApplicationThemes();
 
-	void setApplicationTheme(const QString& name, bool initial);
+    void setApplicationTheme(const QString &name, bool initial);
 
-	ThemeManager* themeManager() const;
+    ThemeManager *themeManager() const;
 
-	ExternalUpdater* updater()
-	{
-		return m_updater.get();
-	}
+    ExternalUpdater *updater()
+    {
+        return m_updater.get();
+    }
 
-	bool updaterEnabled();
+    bool updaterEnabled();
 
-	/// Where the updater binary sits, relative to the installation root.
-	QString updaterBinaryName();
+    /// Where the updater binary sits, relative to the installation root.
+    QString updaterBinaryName();
 
-	void triggerUpdateCheck();
+    void triggerUpdateCheck();
 
-	std::shared_ptr<TranslationsModel> translations();
+    std::shared_ptr<TranslationsModel> translations();
 
-	std::shared_ptr<JavaInstallList> javalist();
+    std::shared_ptr<JavaInstallList> javalist();
 
-	std::shared_ptr<InstanceList> instances() const
-	{
-		return m_instances;
-	}
+    std::shared_ptr<InstanceList> instances() const
+    {
+        return m_instances;
+    }
 
-	std::shared_ptr<IconList> icons() const
-	{
-		return m_icons;
-	}
+    std::shared_ptr<IconList> icons() const
+    {
+        return m_icons;
+    }
 
-	MCEditTool* mcedit() const
-	{
-		return m_mcedit.get();
-	}
+    MCEditTool *mcedit() const
+    {
+        return m_mcedit.get();
+    }
 
-	shared_qobject_ptr<AccountList> accounts() const
-	{
-		return m_accounts;
-	}
+    shared_qobject_ptr<AccountList> accounts() const
+    {
+        return m_accounts;
+    }
 
-	QString msaClientId() const;
+    QString msaClientId() const;
 
-	Status status() const
-	{
-		return m_status;
-	}
+    Status status() const
+    {
+        return m_status;
+    }
 
-	const QMap<QString, std::shared_ptr<BaseProfilerFactory>>& profilers() const
-	{
-		return m_profilers;
-	}
+    const QMap<QString, std::shared_ptr<BaseProfilerFactory>> &profilers() const
+    {
+        return m_profilers;
+    }
 
-	void updateProxySettings(QString proxyTypeStr, QString addr, int port,
-							 QString user, QString password);
+    void updateProxySettings(QString proxyTypeStr, QString addr, int port, QString user, QString password);
 
-	shared_qobject_ptr<QNetworkAccessManager> network();
+    shared_qobject_ptr<QNetworkAccessManager> network();
 
-	shared_qobject_ptr<HttpMetaCache> metacache();
+    shared_qobject_ptr<HttpMetaCache> metacache();
 
-	shared_qobject_ptr<Meta::Index> metadataIndex();
+    shared_qobject_ptr<Meta::Index> metadataIndex();
 
-	QString getJarsPath();
+    QString getJarsPath();
 
-	/// this is the root of the 'installation'. Used for automatic updates
-	const QString& root()
-	{
-		return m_rootPath;
-	}
+    /// this is the root of the 'installation'. Used for automatic updates
+    const QString &root()
+    {
+        return m_rootPath;
+    }
 
-	const QString javaPath();
+    const QString javaPath();
 
-	/*!
-	 * Opens a json file using either a system default editor, or, if not empty,
-	 * the editor specified in the settings
-	 */
-	bool openJsonEditor(const QString& filename);
+    /*!
+     * Opens a json file using either a system default editor, or, if not empty,
+     * the editor specified in the settings
+     */
+    bool openJsonEditor(const QString &filename);
 
-	InstanceWindow* showInstanceWindow(InstancePtr instance,
-									   QString page = QString());
-	MainWindow* showMainWindow(bool minimized = false);
-	MainWindow* mainWindow() const
-	{
-		return m_mainWindow;
-	}
+    InstanceWindow *showInstanceWindow(InstancePtr instance, QString page = QString());
+    MainWindow *showMainWindow(bool minimized = false);
+    MainWindow *mainWindow() const
+    {
+        return m_mainWindow;
+    }
 
-	void updateIsRunning(bool running);
-	bool updatesAreAllowed();
+    void updateIsRunning(bool running);
+    bool updatesAreAllowed();
 
-	void ShowGlobalSettings(class QWidget* parent,
-							QString open_page = QString());
+    void ShowGlobalSettings(class QWidget *parent, QString open_page = QString());
 
-	void registerGlobalSettingsPage(std::function<BasePage*()> creator);
+    void registerGlobalSettingsPage(std::function<BasePage *()> creator);
 
-  signals:
-	void updateAllowedChanged(bool status);
-	void globalSettingsAboutToOpen();
-	void globalSettingsClosed();
-	void instanceSettingsPageCreated(InstanceSettingsPage* page,
-									 BaseInstance* instance);
+signals:
+    void updateAllowedChanged(bool status);
+    void globalSettingsAboutToOpen();
+    void globalSettingsClosed();
+    void instanceSettingsPageCreated(InstanceSettingsPage *page, BaseInstance *instance);
 
-  public slots:
-	/**
-	 * Start an instance.
-	 *
-	 * The profiler is read from the instance's own settings, so every way
-	 * into the game profiles the same way; there is no per-launch profiler
-	 * argument left to forget to pass.
-	 */
-	bool launch(InstancePtr instance, LaunchMode mode = LaunchMode::Normal,
-				MinecraftServerTargetPtr serverToJoin = nullptr,
-				MinecraftAccountPtr accountToUse = nullptr);
-	bool kill(InstancePtr instance);
+public slots:
+    /**
+     * Start an instance.
+     *
+     * The profiler is read from the instance's own settings, so every way
+     * into the game profiles the same way; there is no per-launch profiler
+     * argument left to forget to pass.
+     */
+    bool launch(InstancePtr instance,
+                LaunchMode mode = LaunchMode::Normal,
+                MinecraftServerTargetPtr serverToJoin = nullptr,
+                MinecraftAccountPtr accountToUse = nullptr);
+    bool kill(InstancePtr instance);
 
-  private slots:
-	void on_windowClose();
-	void messageReceived(const QByteArray& message);
-	void controllerSucceeded();
-	void controllerFailed(const QString& error);
-	void setupWizardFinished(int status);
+private slots:
+    void on_windowClose();
+    void messageReceived(const QByteArray &message);
+    void controllerSucceeded();
+    void controllerFailed(const QString &error);
+    void setupWizardFinished(int status);
 
-  private:
-	bool createSetupWizard();
-	void performCLIAction();
-	void performMainStartupAction();
+private:
+    bool createSetupWizard();
+    void performCLIAction();
+    void performMainStartupAction();
 
-	// sets the fatal error message and m_status to Failed.
-	void showFatalErrorMessage(const QString& title, const QString& content);
+    // sets the fatal error message and m_status to Failed.
+    void showFatalErrorMessage(const QString &title, const QString &content);
 
-	// Constructor initialization helpers
-	void initPlatform();
-	QHash<QString, QVariant> parseCommandLine(int& argc, char** argv);
-	bool resolveDataPath(const QHash<QString, QVariant>& args,
-						 QString& dataPath, QString& adjustedBy,
-						 QString& origcwdPath);
-	bool initPeerInstance();
-	bool initLogging(const QString& dataPath);
-	void setupPaths(const QString& binPath, const QString& origcwdPath,
-					const QString& adjustedBy);
-	void initSettings();
-	void initSubsystems();
+    // Constructor initialization helpers
+    void initPlatform();
+    QHash<QString, QVariant> parseCommandLine(int &argc, char **argv);
+    bool resolveDataPath(const QHash<QString, QVariant> &args, QString &dataPath, QString &adjustedBy, QString &origcwdPath);
+    bool initPeerInstance();
+    bool initLogging(const QString &dataPath);
+    void setupPaths(const QString &binPath, const QString &origcwdPath, const QString &adjustedBy);
+    void initSettings();
+    void initSubsystems();
 
-  private:
-	bool reportUpdateMarkers();
+private:
+    bool reportUpdateMarkers();
 
-	void addRunningInstance();
-	void subRunningInstance();
-	bool shouldExitNow() const;
+    void addRunningInstance();
+    void subRunningInstance();
+    bool shouldExitNow() const;
 
-  private:
-	QDateTime startTime;
+private:
+    QDateTime startTime;
 
-	shared_qobject_ptr<QNetworkAccessManager> m_network;
+    shared_qobject_ptr<QNetworkAccessManager> m_network;
 
-	std::unique_ptr<ExternalUpdater> m_updater;
-	shared_qobject_ptr<AccountList> m_accounts;
+    std::unique_ptr<ExternalUpdater> m_updater;
+    shared_qobject_ptr<AccountList> m_accounts;
 
-	shared_qobject_ptr<HttpMetaCache> m_metacache;
-	shared_qobject_ptr<Meta::Index> m_metadataIndex;
+    shared_qobject_ptr<HttpMetaCache> m_metacache;
+    shared_qobject_ptr<Meta::Index> m_metadataIndex;
 
-	std::shared_ptr<SettingsObject> m_settings;
-	std::shared_ptr<InstanceList> m_instances;
-	std::shared_ptr<IconList> m_icons;
-	std::shared_ptr<JavaInstallList> m_javalist;
-	std::shared_ptr<TranslationsModel> m_translations;
-	std::shared_ptr<GenericPageProvider> m_globalSettingsProvider;
-	std::unique_ptr<ThemeManager> m_themeManager;
-	std::unique_ptr<MCEditTool> m_mcedit;
-	QString m_jarsPath;
-	QSet<QString> m_features;
+    std::shared_ptr<SettingsObject> m_settings;
+    std::shared_ptr<InstanceList> m_instances;
+    std::shared_ptr<IconList> m_icons;
+    std::shared_ptr<JavaInstallList> m_javalist;
+    std::shared_ptr<TranslationsModel> m_translations;
+    std::shared_ptr<GenericPageProvider> m_globalSettingsProvider;
+    std::unique_ptr<ThemeManager> m_themeManager;
+    std::unique_ptr<MCEditTool> m_mcedit;
+    QString m_jarsPath;
+    QSet<QString> m_features;
 
-	QMap<QString, std::shared_ptr<BaseProfilerFactory>> m_profilers;
+    QMap<QString, std::shared_ptr<BaseProfilerFactory>> m_profilers;
 
-	QString m_rootPath;
+    QString m_rootPath;
 
-	QString m_dataPath;
+    QString m_dataPath;
 
-	Status m_status = Application::StartingUp;
+    Status m_status = Application::StartingUp;
 
 #if defined Q_OS_WIN32
-	// used on Windows to attach the standard IO streams
-	bool consoleAttached = false;
+    // used on Windows to attach the standard IO streams
+    bool consoleAttached = false;
 #endif
 
-	// FIXME: attach to instances instead.
-	struct InstanceXtras {
-		InstanceWindow* window = nullptr;
-		shared_qobject_ptr<LaunchController> controller;
-	};
-	std::map<QString, InstanceXtras> m_instanceExtras;
+    // FIXME: attach to instances instead.
+    struct InstanceXtras {
+        InstanceWindow *window = nullptr;
+        shared_qobject_ptr<LaunchController> controller;
+    };
+    std::map<QString, InstanceXtras> m_instanceExtras;
 
-	// main state variables
-	size_t m_openWindows = 0;
-	size_t m_runningInstances = 0;
-	bool m_updateRunning = false;
+    // main state variables
+    size_t m_openWindows = 0;
+    size_t m_runningInstances = 0;
+    bool m_updateRunning = false;
 
-	// main window, if any
-	MainWindow* m_mainWindow = nullptr;
+    // main window, if any
+    MainWindow *m_mainWindow = nullptr;
 
-	// peer launcher instance connector - used to implement single instance
-	// launcher and signalling
-	LocalPeer* m_peerInstance = nullptr;
+    // peer launcher instance connector - used to implement single instance
+    // launcher and signalling
+    LocalPeer *m_peerInstance = nullptr;
 
-	SetupWizard* m_setupWizard = nullptr;
-	std::unique_ptr<PluginManager> m_pluginManager;
+    SetupWizard *m_setupWizard = nullptr;
+    std::unique_ptr<PluginManager> m_pluginManager;
 
-  public:
-	QString m_instanceIdToLaunch;
-	QString m_serverToJoin;
-	/* Save folder name of a world to open on launch, from --world. Mutually
-	 * exclusive with m_serverToJoin; startup rejects both being set. */
-	QString m_worldToJoin;
-	QString m_profileToUse;
-	bool m_liveCheck = false;
-	QUrl m_zipToImport;
+public:
+    QString m_instanceIdToLaunch;
+    QString m_serverToJoin;
+    /* Save folder name of a world to open on launch, from --world. Mutually
+     * exclusive with m_serverToJoin; startup rejects both being set. */
+    QString m_worldToJoin;
+    QString m_profileToUse;
+    bool m_liveCheck = false;
+    QUrl m_zipToImport;
 
-	// CLI-only flags (headless, exit after action)
-	bool m_cliListInstances = false;
-	QString m_cliInstanceInfoId;
-	QString m_cliExportId;
-	QString m_cliOutputPath;
-	std::unique_ptr<QFile> logFile;
+    // CLI-only flags (headless, exit after action)
+    bool m_cliListInstances = false;
+    QString m_cliInstanceInfoId;
+    QString m_cliExportId;
+    QString m_cliOutputPath;
+    std::unique_ptr<QFile> logFile;
 };

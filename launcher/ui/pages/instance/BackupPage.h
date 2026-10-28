@@ -29,52 +29,52 @@
 
 namespace Ui
 {
-	class BackupPage;
+class BackupPage;
 }
 
 class BackupPage : public QWidget, public BasePage
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit BackupPage(BaseInstance* inst, QWidget* parent = nullptr);
-	~BackupPage() override;
+public:
+    explicit BackupPage(BaseInstance *inst, QWidget *parent = nullptr);
+    ~BackupPage() override;
 
-	QString id() const override
-	{
-		return "backup-system";
-	}
-	QString displayName() const override
-	{
-		return tr("Backups");
-	}
-	QIcon icon() const override
-	{
-		return APPLICATION->getThemedIcon("backup");
-	}
-	QString helpPage() const override
-	{
-		return "Instance-Backups";
-	}
+    QString id() const override
+    {
+        return "backup-system";
+    }
+    QString displayName() const override
+    {
+        return tr("Backups");
+    }
+    QIcon icon() const override
+    {
+        return APPLICATION->getThemedIcon("backup");
+    }
+    QString helpPage() const override
+    {
+        return "Instance-Backups";
+    }
 
-	void openedImpl() override;
+    void openedImpl() override;
 
-  private slots:
-	void on_btnCreate_clicked();
-	void on_btnRestore_clicked();
-	void on_btnExport_clicked();
-	void on_btnImport_clicked();
-	void on_btnDelete_clicked();
-	void onSelectionChanged();
+private slots:
+    void on_btnCreate_clicked();
+    void on_btnRestore_clicked();
+    void on_btnExport_clicked();
+    void on_btnImport_clicked();
+    void on_btnDelete_clicked();
+    void onSelectionChanged();
 
-  private:
-	void refreshList();
-	void updateButtons();
-	BackupEntry selectedEntry() const;
-	static QString humanFileSize(qint64 bytes);
+private:
+    void refreshList();
+    void updateButtons();
+    BackupEntry selectedEntry() const;
+    static QString humanFileSize(qint64 bytes);
 
-	Ui::BackupPage* ui;
-	BaseInstance* m_inst;
-	std::unique_ptr<BackupManager> m_manager;
-	QList<BackupEntry> m_entries;
+    Ui::BackupPage *ui;
+    BaseInstance *m_inst;
+    std::unique_ptr<BackupManager> m_manager;
+    QList<BackupEntry> m_entries;
 };

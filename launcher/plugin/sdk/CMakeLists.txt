@@ -180,7 +180,7 @@ install(FILES ${SDK_LAUNCHER_HEADERS}
     DESTINATION "${SDK_INSTALL_DIR}"
 )
 install(FILES
-    ${CMAKE_SOURCE_DIR}/buildconfig/BuildConfig.h
+    ${CMAKE_SOURCE_DIR}/launcher/BuildConfig.h
     DESTINATION "${SDK_INSTALL_DIR}"
 )
 

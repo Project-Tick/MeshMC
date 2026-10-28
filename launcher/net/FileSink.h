@@ -23,32 +23,32 @@
 
 namespace Net
 {
-	class FileSink : public Sink
-	{
-	  public: /* con/des */
-		FileSink(QString filename);
-		virtual ~FileSink();
+class FileSink : public Sink
+{
+public: /* con/des */
+    FileSink(QString filename);
+    virtual ~FileSink();
 
-	  public: /* methods */
-		JobStatus init(QNetworkRequest& request) override;
-		JobStatus write(QByteArray& data) override;
-		JobStatus abort() override;
-		JobStatus finalize(QNetworkReply& reply) override;
-		bool hasLocalData() override;
+public: /* methods */
+    JobStatus init(QNetworkRequest &request) override;
+    JobStatus write(QByteArray &data) override;
+    JobStatus abort() override;
+    JobStatus finalize(QNetworkReply &reply) override;
+    bool hasLocalData() override;
 
-	  protected: /* methods */
-		virtual JobStatus initCache(QNetworkRequest&);
-		virtual JobStatus finalizeCache(QNetworkReply& reply);
+protected: /* methods */
+    virtual JobStatus initCache(QNetworkRequest &);
+    virtual JobStatus finalizeCache(QNetworkReply &reply);
 
-	  protected: /* data */
-		QString m_filename;
-		bool wroteAnyData = false;
-		/* Bytes handed to the file so far, so that finalize() can tell a
-		 * complete transfer from one the server cut short. Counted here
-		 * rather than asked of the file, because a QSaveFile reports on
-		 * its staging file and what matters is what the network gave
-		 * us. */
-		qint64 m_bytesWritten = 0;
-		std::unique_ptr<QSaveFile> m_output_file;
-	};
+protected: /* data */
+    QString m_filename;
+    bool wroteAnyData = false;
+    /* Bytes handed to the file so far, so that finalize() can tell a
+     * complete transfer from one the server cut short. Counted here
+     * rather than asked of the file, because a QSaveFile reports on
+     * its staging file and what matters is what the network gave
+     * us. */
+    qint64 m_bytesWritten = 0;
+    std::unique_ptr<QSaveFile> m_output_file;
+};
 } // namespace Net

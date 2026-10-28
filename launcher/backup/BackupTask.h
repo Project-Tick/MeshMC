@@ -43,50 +43,48 @@
  */
 class BackupTask : public Task
 {
-	Q_OBJECT
-  public:
-	/*!
-	 * \param label Optional label folded into the backup file name,
-	 *        e.g. "pre-launch".
-	 */
-	BackupTask(QString instanceId, QString instanceRoot, QString label = {},
-			   QObject* parent = nullptr);
-	~BackupTask() override;
+    Q_OBJECT
+public:
+    /*!
+     * \param label Optional label folded into the backup file name,
+     *        e.g. "pre-launch".
+     */
+    BackupTask(QString instanceId, QString instanceRoot, QString label = {}, QObject *parent = nullptr);
+    ~BackupTask() override;
 
-	/*!
-	 * A partially written archive is of no use to anybody and
-	 * MMCZip::compressDir() has no interruption point, so there is
-	 * nothing meaningful to abort.
-	 */
-	bool canAbort() const override
-	{
-		return false;
-	}
+    /*!
+     * A partially written archive is of no use to anybody and
+     * MMCZip::compressDir() has no interruption point, so there is
+     * nothing meaningful to abort.
+     */
+    bool canAbort() const override
+    {
+        return false;
+    }
 
-	/*!
-	 * The backup that was created. Only meaningful once the task has
-	 * succeeded.
-	 */
-	const BackupEntry& result() const
-	{
-		return m_result;
-	}
+    /*!
+     * The backup that was created. Only meaningful once the task has
+     * succeeded.
+     */
+    const BackupEntry &result() const
+    {
+        return m_result;
+    }
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-  private:
-	/* Called on the worker thread; hops onto our own thread before
-	 * touching anything the UI is connected to. */
-	void reportProgress(const QString& status, const QString& details,
-						qint64 current, qint64 total);
-	void backupFinished();
+private:
+    /* Called on the worker thread; hops onto our own thread before
+     * touching anything the UI is connected to. */
+    void reportProgress(const QString &status, const QString &details, qint64 current, qint64 total);
+    void backupFinished();
 
-	QString m_instanceId;
-	QString m_instanceRoot;
-	QString m_label;
-	BackupEntry m_result;
+    QString m_instanceId;
+    QString m_instanceRoot;
+    QString m_label;
+    BackupEntry m_result;
 
-	QFuture<BackupEntry> m_future;
-	QFutureWatcher<BackupEntry> m_watcher;
+    QFuture<BackupEntry> m_future;
+    QFutureWatcher<BackupEntry> m_watcher;
 };

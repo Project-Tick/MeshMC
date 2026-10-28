@@ -70,40 +70,38 @@
 namespace MMCArchive
 {
 #ifdef Q_OS_WIN32
-	/*!
-	 * The wide path libarchive's `_w` entry points want.
-	 *
-	 * Returned by value and kept alive by the caller for the duration of
-	 * the open call -- these functions copy the name they are given.
-	 */
-	inline std::wstring widePath(const QString& path)
-	{
-		return QDir::toNativeSeparators(path).toStdWString();
-	}
+/*!
+ * The wide path libarchive's `_w` entry points want.
+ *
+ * Returned by value and kept alive by the caller for the duration of
+ * the open call -- these functions copy the name they are given.
+ */
+inline std::wstring widePath(const QString &path)
+{
+    return QDir::toNativeSeparators(path).toStdWString();
+}
 #endif
 
-	//! archive_read_open_filename(), with the path encoded as the platform
-	//! actually reads it. Returns what libarchive returns.
-	inline int openForReading(struct archive* handle, const QString& path,
-							  size_t blockSize)
-	{
+//! archive_read_open_filename(), with the path encoded as the platform
+//! actually reads it. Returns what libarchive returns.
+inline int openForReading(struct archive *handle, const QString &path, size_t blockSize)
+{
 #ifdef Q_OS_WIN32
-		const std::wstring wide = widePath(path);
-		return archive_read_open_filename_w(handle, wide.c_str(), blockSize);
+    const std::wstring wide = widePath(path);
+    return archive_read_open_filename_w(handle, wide.c_str(), blockSize);
 #else
-		return archive_read_open_filename(handle, path.toUtf8().constData(),
-										  blockSize);
+    return archive_read_open_filename(handle, path.toUtf8().constData(), blockSize);
 #endif
-	}
+}
 
-	//! archive_write_open_filename(), likewise.
-	inline int openForWriting(struct archive* handle, const QString& path)
-	{
+//! archive_write_open_filename(), likewise.
+inline int openForWriting(struct archive *handle, const QString &path)
+{
 #ifdef Q_OS_WIN32
-		const std::wstring wide = widePath(path);
-		return archive_write_open_filename_w(handle, wide.c_str());
+    const std::wstring wide = widePath(path);
+    return archive_write_open_filename_w(handle, wide.c_str());
 #else
-		return archive_write_open_filename(handle, path.toUtf8().constData());
+    return archive_write_open_filename(handle, path.toUtf8().constData());
 #endif
-	}
+}
 } // namespace MMCArchive

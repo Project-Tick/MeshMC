@@ -21,62 +21,62 @@
 #include "PasteEEPage.h"
 #include "ui_PasteEEPage.h"
 
-#include <QMessageBox>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QStandardPaths>
 #include <QTabBar>
 
+#include "Application.h"
 #include "settings/SettingsObject.h"
 #include "tools/BaseProfiler.h"
-#include "Application.h"
 
-PasteEEPage::PasteEEPage(QWidget* parent)
-	: QWidget(parent), ui(new Ui::PasteEEPage)
+PasteEEPage::PasteEEPage(QWidget *parent)
+    : QWidget(parent)
+    , ui(new Ui::PasteEEPage)
 {
-	ui->setupUi(this);
-	ui->tabWidget->tabBar()->hide();
-	connect(ui->customAPIkeyEdit, &QLineEdit::textEdited, this,
-			&PasteEEPage::textEdited);
-	loadSettings();
+    ui->setupUi(this);
+    ui->tabWidget->tabBar()->hide();
+    connect(ui->customAPIkeyEdit, &QLineEdit::textEdited, this, &PasteEEPage::textEdited);
+    loadSettings();
 }
 
 PasteEEPage::~PasteEEPage()
 {
-	delete ui;
+    delete ui;
 }
 
 void PasteEEPage::loadSettings()
 {
-	auto s = APPLICATION->settings();
-	QString keyToUse = s->get("PasteEEAPIKey").toString();
-	if (keyToUse == "meshmc") {
-		ui->meshmcButton->setChecked(true);
-	} else {
-		ui->customButton->setChecked(true);
-		ui->customAPIkeyEdit->setText(keyToUse);
-	}
+    auto s = APPLICATION->settings();
+    QString keyToUse = s->get("PasteEEAPIKey").toString();
+    if (keyToUse == "meshmc") {
+        ui->meshmcButton->setChecked(true);
+    } else {
+        ui->customButton->setChecked(true);
+        ui->customAPIkeyEdit->setText(keyToUse);
+    }
 }
 
 void PasteEEPage::applySettings()
 {
-	auto s = APPLICATION->settings();
+    auto s = APPLICATION->settings();
 
-	QString pasteKeyToUse;
-	if (ui->customButton->isChecked())
-		pasteKeyToUse = ui->customAPIkeyEdit->text();
-	else {
-		pasteKeyToUse = "meshmc";
-	}
-	s->set("PasteEEAPIKey", pasteKeyToUse);
+    QString pasteKeyToUse;
+    if (ui->customButton->isChecked())
+        pasteKeyToUse = ui->customAPIkeyEdit->text();
+    else {
+        pasteKeyToUse = "meshmc";
+    }
+    s->set("PasteEEAPIKey", pasteKeyToUse);
 }
 
 bool PasteEEPage::apply()
 {
-	applySettings();
-	return true;
+    applySettings();
+    return true;
 }
 
-void PasteEEPage::textEdited(const QString& text)
+void PasteEEPage::textEdited(const QString &text)
 {
-	ui->customButton->setChecked(true);
+    ui->customButton->setChecked(true);
 }

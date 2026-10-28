@@ -25,49 +25,49 @@
 namespace UpdateLockFile
 {
 
-	//! Marker file names, relative to the data directory.
-	inline constexpr auto kLockFileName = ".meshmc_update.lock";
-	inline constexpr auto kFailMarkerName = ".meshmc_update.fail";
-	inline constexpr auto kSuccessMarkerName = ".meshmc_update.success";
-	inline constexpr auto kChangelogName = ".meshmc_update.changelog";
+//! Marker file names, relative to the data directory.
+inline constexpr auto kLockFileName = ".meshmc_update.lock";
+inline constexpr auto kFailMarkerName = ".meshmc_update.fail";
+inline constexpr auto kSuccessMarkerName = ".meshmc_update.success";
+inline constexpr auto kChangelogName = ".meshmc_update.changelog";
 
-	//! Left in the unpacked release, telling the second stage where to install.
-	inline constexpr auto kUnpackMarkerName = ".meshmc_updater_unpack.marker";
+//! Left in the unpacked release, telling the second stage where to install.
+inline constexpr auto kUnpackMarkerName = ".meshmc_updater_unpack.marker";
 
-	//! Records where the pre-update installation was copied to.
-	inline constexpr auto kBackupMarkerName = ".meshmc_update_backup_path.txt";
+//! Records where the pre-update installation was copied to.
+inline constexpr auto kBackupMarkerName = ".meshmc_update_backup_path.txt";
 
-	//! Where the unpacked release is staged, under the data directory.
-	inline constexpr auto kStagingDirName = "meshmc_update_release";
+//! Where the unpacked release is staged, under the data directory.
+inline constexpr auto kStagingDirName = "meshmc_update_release";
 
-	//! The updater's own narrative of the last attempt, under logs/.
-	inline constexpr auto kUpdateLogName = "meshmc_update.log";
+//! The updater's own narrative of the last attempt, under logs/.
+inline constexpr auto kUpdateLogName = "meshmc_update.log";
 
-	struct Contents {
-		QDateTime timestamp;
-		QString from;	  //!< Version being replaced.
-		QString to;		  //!< Version being installed.
-		QString target;	  //!< Installation root being written to.
-		QString dataPath; //!< Data directory the update is coordinated in.
-		int stage = 0;	  //!< Which pass wrote this: 1 or 2, 0 if unstated.
-		qint64 pid = 0;	  //!< That pass's process id, 0 if unstated.
-	};
+struct Contents {
+    QDateTime timestamp;
+    QString from; //!< Version being replaced.
+    QString to; //!< Version being installed.
+    QString target; //!< Installation root being written to.
+    QString dataPath; //!< Data directory the update is coordinated in.
+    int stage = 0; //!< Which pass wrote this: 1 or 2, 0 if unstated.
+    qint64 pid = 0; //!< That pass's process id, 0 if unstated.
+};
 
-	//! The pass that owns the lock while the installation is being written.
-	inline constexpr int kInstallStage = 2;
+//! The pass that owns the lock while the installation is being written.
+inline constexpr int kInstallStage = 2;
 
-	//! Absolute path of the lock file for \a dataDir.
-	QString lockPath(const QString& dataDir);
+//! Absolute path of the lock file for \a dataDir.
+QString lockPath(const QString &dataDir);
 
-	//! Absolute path of \a fileName within \a dataDir.
-	QString markerPath(const QString& dataDir, const QString& fileName);
+//! Absolute path of \a fileName within \a dataDir.
+QString markerPath(const QString &dataDir, const QString &fileName);
 
-	//! Absolute path of the update log for \a dataDir.
-	QString updateLogPath(const QString& dataDir);
+//! Absolute path of the update log for \a dataDir.
+QString updateLogPath(const QString &dataDir);
 
-	bool read(const QString& path, Contents* contents);
+bool read(const QString &path, Contents *contents);
 
-	//! Write a lock file. Returns false if it could not be written.
-	bool write(const QString& path, const Contents& contents);
+//! Write a lock file. Returns false if it could not be written.
+bool write(const QString &path, const Contents &contents);
 
 } // namespace UpdateLockFile

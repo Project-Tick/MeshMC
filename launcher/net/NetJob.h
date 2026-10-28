@@ -19,99 +19,99 @@
  */
 
 #pragma once
-#include <QtNetwork>
-#include <QUuid>
-#include <memory>
-#include "NetAction.h"
 #include "Download.h"
 #include "HttpMetaCache.h"
-#include "tasks/Task.h"
+#include "NetAction.h"
 #include "QObjectPtr.h"
+#include "tasks/Task.h"
+#include <QUuid>
+#include <QtNetwork>
+#include <memory>
 
 class NetJob;
 
 class NetJob : public Task
 {
-	Q_OBJECT
-  public:
-	using Ptr = shared_qobject_ptr<NetJob>;
+    Q_OBJECT
+public:
+    using Ptr = shared_qobject_ptr<NetJob>;
 
-	explicit NetJob(QString job_name,
-					shared_qobject_ptr<QNetworkAccessManager> network)
-		: Task(), m_network(network)
-	{
-		setObjectName(job_name);
-	}
-	virtual ~NetJob();
+    explicit NetJob(QString job_name, shared_qobject_ptr<QNetworkAccessManager> network)
+        : Task()
+        , m_network(network)
+    {
+        setObjectName(job_name);
+    }
+    virtual ~NetJob();
 
-	bool addNetAction(NetAction::Ptr action);
+    bool addNetAction(NetAction::Ptr action);
 
-	NetAction::Ptr operator[](int index)
-	{
-		return downloads[index];
-	}
-	const NetAction::Ptr at(const int index)
-	{
-		return downloads.at(index);
-	}
-	NetAction::Ptr first()
-	{
-		if (downloads.size())
-			return downloads[0];
-		return NetAction::Ptr();
-	}
-	int size() const
-	{
-		return downloads.size();
-	}
-	QStringList getFailedFiles();
+    NetAction::Ptr operator[](int index)
+    {
+        return downloads[index];
+    }
+    const NetAction::Ptr at(const int index)
+    {
+        return downloads.at(index);
+    }
+    NetAction::Ptr first()
+    {
+        if (downloads.size())
+            return downloads[0];
+        return NetAction::Ptr();
+    }
+    int size() const
+    {
+        return downloads.size();
+    }
+    QStringList getFailedFiles();
 
-	bool canAbort() const override;
+    bool canAbort() const override;
 
-	/// A job with several files in it shows one line per file being fetched.
-	bool isMultiStep() const override
-	{
-		return downloads.size() > 1;
-	}
+    /// A job with several files in it shows one line per file being fetched.
+    bool isMultiStep() const override
+    {
+        return downloads.size() > 1;
+    }
 
-	TaskStepProgressList getStepProgress() const override;
+    TaskStepProgressList getStepProgress() const override;
 
-  private slots:
-	void startMoreParts();
+private slots:
+    void startMoreParts();
 
-  public slots:
-	virtual void executeTask() override;
-	virtual bool abort() override;
+public slots:
+    virtual void executeTask() override;
+    virtual bool abort() override;
 
-  private slots:
-	void partProgress(int index, qint64 bytesReceived, qint64 bytesTotal);
-	void partSucceeded(int index);
-	void partFailed(int index);
-	void partAborted(int index);
+private slots:
+    void partProgress(int index, qint64 bytesReceived, qint64 bytesTotal);
+    void partSucceeded(int index);
+    void partFailed(int index);
+    void partAborted(int index);
 
-  private:
-	/// Reports the state of a single file to whoever is showing our progress.
-	void emitPartStep(int index, TaskStepState state);
-	/// Keeps our own one line summary in sync with the file counts.
-	void updateStatus();
+private:
+    /// Reports the state of a single file to whoever is showing our progress.
+    void emitPartStep(int index, TaskStepState state);
+    /// Keeps our own one line summary in sync with the file counts.
+    void updateStatus();
 
-  private:
-	shared_qobject_ptr<QNetworkAccessManager> m_network;
+private:
+    shared_qobject_ptr<QNetworkAccessManager> m_network;
 
-	struct part_info {
-		qint64 current_progress = 0;
-		qint64 total_progress = 1;
-		int failures = 0;
-		/// The line this file gets in the progress dialog. Shared so that the
-		/// list handed out by getStepProgress() stays up to date.
-		std::shared_ptr<TaskStepProgress> step;
-	};
-	QList<NetAction::Ptr> downloads;
-	QList<part_info> parts_progress;
-	QQueue<int> m_todo;
-	QSet<int> m_doing;
-	QSet<int> m_done;
-	QSet<int> m_failed;
-	qint64 m_current_progress = 0;
-	bool m_aborted = false;
+    struct part_info {
+        qint64 current_progress = 0;
+        qint64 total_progress = 1;
+        int failures = 0;
+        /// The line this file gets in the progress dialog. Shared so that the
+        /// list handed out by getStepProgress() stays up to date.
+        std::shared_ptr<TaskStepProgress> step;
+    };
+    QList<NetAction::Ptr> downloads;
+    QList<part_info> parts_progress;
+    QQueue<int> m_todo;
+    QSet<int> m_doing;
+    QSet<int> m_done;
+    QSet<int> m_failed;
+    qint64 m_current_progress = 0;
+    bool m_aborted = false;
 };

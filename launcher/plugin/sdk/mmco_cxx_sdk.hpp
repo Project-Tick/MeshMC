@@ -64,41 +64,41 @@
 #include "mmco_c_sdk.h"
 
 /* ── Qt facilities available to C++ plugins ─────────────────────────── */
+#include <QAction>
 #include <QApplication>
+#include <QCheckBox>
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>
-#include <QFileInfo>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QList>
-#include <QRegularExpression>
-#include <QString>
-#include <QStringList>
 #include <QFileDialog>
+#include <QFileInfo>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QIcon>
 #include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLabel>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QPointer>
-#include <QTimer>
 #include <QLineEdit>
+#include <QList>
+#include <QLocale>
 #include <QMenu>
 #include <QMessageBox>
+#include <QPointer>
 #include <QPushButton>
+#include <QRegularExpression>
+#include <QString>
+#include <QStringList>
+#include <QTimer>
 #include <QToolBar>
-#include <QAction>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QJsonDocument>
-#include <QLocale>
 
 /*
  * --- BasePage / BasePageContainer ---
@@ -116,45 +116,51 @@ class BasePageContainer; // forward-declared, plugin never deref's it
 
 class BasePage
 {
-  public:
-	virtual ~BasePage() {}
-	virtual QString id() const = 0;
-	virtual QString displayName() const = 0;
-	virtual QIcon icon() const = 0;
-	virtual bool apply()
-	{
-		return true;
-	}
-	virtual bool shouldDisplay() const
-	{
-		return true;
-	}
-	virtual QString helpPage() const
-	{
-		return QString();
-	}
-	void opened()
-	{
-		isOpened = true;
-		openedImpl();
-	}
-	void closed()
-	{
-		isOpened = false;
-		closedImpl();
-	}
-	virtual void openedImpl() {}
-	virtual void closedImpl() {}
-	virtual void setParentContainer(BasePageContainer* container)
-	{
-		m_container = container;
-	}
+public:
+    virtual ~BasePage()
+    {
+    }
+    virtual QString id() const = 0;
+    virtual QString displayName() const = 0;
+    virtual QIcon icon() const = 0;
+    virtual bool apply()
+    {
+        return true;
+    }
+    virtual bool shouldDisplay() const
+    {
+        return true;
+    }
+    virtual QString helpPage() const
+    {
+        return QString();
+    }
+    void opened()
+    {
+        isOpened = true;
+        openedImpl();
+    }
+    void closed()
+    {
+        isOpened = false;
+        closedImpl();
+    }
+    virtual void openedImpl()
+    {
+    }
+    virtual void closedImpl()
+    {
+    }
+    virtual void setParentContainer(BasePageContainer *container)
+    {
+        m_container = container;
+    }
 
-  public:
-	int stackIndex = -1;
-	int listIndex = -1;
+public:
+    int stackIndex = -1;
+    int listIndex = -1;
 
-  protected:
-	BasePageContainer* m_container = nullptr;
-	bool isOpened = false;
+protected:
+    BasePageContainer *m_container = nullptr;
+    bool isOpened = false;
 };

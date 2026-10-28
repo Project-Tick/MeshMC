@@ -20,42 +20,51 @@
 
 #pragma once
 
+#include "QObjectPtr.h"
 #include <QJsonObject>
 #include <QObject>
-#include "QObjectPtr.h"
 
 #include "net/Mode.h"
 #include "net/NetJob.h"
 
 namespace Meta
 {
-	class BaseEntity
-	{
-	  public: /* types */
-		using Ptr = std::shared_ptr<BaseEntity>;
-		enum class LoadStatus { NotLoaded, Local, Remote };
-		enum class UpdateStatus { NotDone, InProgress, Failed, Succeeded };
+class BaseEntity
+{
+public: /* types */
+    using Ptr = std::shared_ptr<BaseEntity>;
+    enum class LoadStatus {
+        NotLoaded,
+        Local,
+        Remote
+    };
+    enum class UpdateStatus {
+        NotDone,
+        InProgress,
+        Failed,
+        Succeeded
+    };
 
-	  public:
-		virtual ~BaseEntity();
+public:
+    virtual ~BaseEntity();
 
-		virtual void parse(const QJsonObject& obj) = 0;
+    virtual void parse(const QJsonObject &obj) = 0;
 
-		virtual QString localFilename() const = 0;
-		virtual QUrl url() const;
+    virtual QString localFilename() const = 0;
+    virtual QUrl url() const;
 
-		bool isLoaded() const;
-		bool shouldStartRemoteUpdate() const;
+    bool isLoaded() const;
+    bool shouldStartRemoteUpdate() const;
 
-		void load(Net::Mode loadType);
-		Task::Ptr getCurrentTask();
+    void load(Net::Mode loadType);
+    Task::Ptr getCurrentTask();
 
-	  protected: /* methods */
-		bool loadLocalFile();
+protected: /* methods */
+    bool loadLocalFile();
 
-	  private:
-		LoadStatus m_loadStatus = LoadStatus::NotLoaded;
-		UpdateStatus m_updateStatus = UpdateStatus::NotDone;
-		NetJob::Ptr m_updateTask;
-	};
+private:
+    LoadStatus m_loadStatus = LoadStatus::NotLoaded;
+    UpdateStatus m_updateStatus = UpdateStatus::NotDone;
+    NetJob::Ptr m_updateTask;
+};
 } // namespace Meta

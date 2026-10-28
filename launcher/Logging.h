@@ -60,41 +60,41 @@ Q_DECLARE_LOGGING_CATEGORY(minecraftlaunchLog)
 
 namespace Logging
 {
-	/**
-	 * @brief the launcher's log line layout, as a Qt message pattern
-	 *
-	 * Handed to qSetMessagePattern() so that Qt's own formatter does the
-	 * work; that is what makes %{category} and a readable %{function}
-	 * available at all.
-	 *
-	 * @param coloured whether to wrap the level letter in ANSI colour, which
-	 *                 is wanted for the console copy but not for the log file
-	 * @param withSourceLocation whether to append "(function:line)"
-	 *
-	 * withSourceLocation is a per-message decision, not a per-build one: Qt's
-	 * own libraries are built without QT_MESSAGELOGCONTEXT, so anything
-	 * raised inside Qt arrives with an empty context and must be rendered
-	 * without the suffix, or every such line ends in a useless "(unknown:0)".
-	 * The caller decides by looking at QMessageLogContext::line.
-	 */
-	QString messagePattern(bool coloured, bool withSourceLocation);
+/**
+ * @brief the launcher's log line layout, as a Qt message pattern
+ *
+ * Handed to qSetMessagePattern() so that Qt's own formatter does the
+ * work; that is what makes %{category} and a readable %{function}
+ * available at all.
+ *
+ * @param coloured whether to wrap the level letter in ANSI colour, which
+ *                 is wanted for the console copy but not for the log file
+ * @param withSourceLocation whether to append "(function:line)"
+ *
+ * withSourceLocation is a per-message decision, not a per-build one: Qt's
+ * own libraries are built without QT_MESSAGELOGCONTEXT, so anything
+ * raised inside Qt arrives with an empty context and must be rendered
+ * without the suffix, or every such line ends in a useless "(unknown:0)".
+ * The caller decides by looking at QMessageLogContext::line.
+ */
+QString messagePattern(bool coloured, bool withSourceLocation);
 
-	/**
-	 * @brief make the console able to render ANSI colour, and report whether
-	 *        it now can
-	 *
-	 * Call once, early, and after the console has been attached and the
-	 * standard streams reopened - the answer depends on what stderr actually
-	 * points at.
-	 *
-	 * This is not a formality on Windows: a console does not interpret escape
-	 * sequences until someone sets ENABLE_VIRTUAL_TERMINAL_PROCESSING on it,
-	 * and the classic console host starts with that bit clear. Printing
-	 * colour anyway is how a log line ends up reading "<ESC>[32mD:<ESC>[0m".
-	 */
-	bool prepareConsoleColour();
+/**
+ * @brief make the console able to render ANSI colour, and report whether
+ *        it now can
+ *
+ * Call once, early, and after the console has been attached and the
+ * standard streams reopened - the answer depends on what stderr actually
+ * points at.
+ *
+ * This is not a formality on Windows: a console does not interpret escape
+ * sequences until someone sets ENABLE_VIRTUAL_TERMINAL_PROCESSING on it,
+ * and the classic console host starts with that bit clear. Printing
+ * colour anyway is how a log line ends up reading "<ESC>[32mD:<ESC>[0m".
+ */
+bool prepareConsoleColour();
 
-	/// Whether the console copy of a log line may carry ANSI colour. False
-	/// until prepareConsoleColour() has said otherwise.
-	bool consoleColourEnabled();
+/// Whether the console copy of a log line may carry ANSI colour. False
+/// until prepareConsoleColour() has said otherwise.
+bool consoleColourEnabled();
 } // namespace Logging

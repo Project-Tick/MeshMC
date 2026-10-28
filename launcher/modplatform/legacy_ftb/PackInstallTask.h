@@ -21,65 +21,65 @@
 #include <optional>
 
 #include "InstanceTask.h"
-#include "net/NetJob.h"
+#include "PackHelpers.h"
 #include "meta/Index.h"
 #include "meta/Version.h"
 #include "meta/VersionList.h"
-#include "PackHelpers.h"
+#include "net/NetJob.h"
 
 #include "net/NetJob.h"
 
 namespace LegacyFTB
 {
 
-	class PackInstallTask : public InstanceTask
-	{
-		Q_OBJECT
+class PackInstallTask : public InstanceTask
+{
+    Q_OBJECT
 
-	  public:
-		explicit PackInstallTask(
-			shared_qobject_ptr<QNetworkAccessManager> network, Modpack pack,
-			QString version);
-		virtual ~PackInstallTask() {}
+public:
+    explicit PackInstallTask(shared_qobject_ptr<QNetworkAccessManager> network, Modpack pack, QString version);
+    virtual ~PackInstallTask()
+    {
+    }
 
-		bool canAbort() const override
-		{
-			/* Two abortable stretches, with a gap between them: the
-			 * pack's own download while `abortable` is set, and the
-			 * optional game-file download the base class runs once the
-			 * instance is built. Answering "always" would light up a
-			 * button that abort() then refuses to act on. */
-			return abortable || InstanceTask::canAbort();
-		}
-		bool abort() override;
+    bool canAbort() const override
+    {
+        /* Two abortable stretches, with a gap between them: the
+         * pack's own download while `abortable` is set, and the
+         * optional game-file download the base class runs once the
+         * instance is built. Answering "always" would light up a
+         * button that abort() then refuses to act on. */
+        return abortable || InstanceTask::canAbort();
+    }
+    bool abort() override;
 
-	  protected:
-		//! Entry point for tasks.
-		virtual void executeTask() override;
+protected:
+    //! Entry point for tasks.
+    virtual void executeTask() override;
 
-	  private:
-		void downloadPack();
-		void unzip();
-		void install();
+private:
+    void downloadPack();
+    void unzip();
+    void install();
 
-	  private slots:
-		void onDownloadSucceeded();
-		void onDownloadFailed(QString reason);
-		void onDownloadProgress(qint64 current, qint64 total);
+private slots:
+    void onDownloadSucceeded();
+    void onDownloadFailed(QString reason);
+    void onDownloadProgress(qint64 current, qint64 total);
 
-		void onUnzipFinished();
-		void onUnzipCanceled();
+    void onUnzipFinished();
+    void onUnzipCanceled();
 
-	  private: /* data */
-		shared_qobject_ptr<QNetworkAccessManager> m_network;
-		bool abortable = false;
-		QFuture<std::optional<QStringList>> m_extractFuture;
-		QFutureWatcher<std::optional<QStringList>> m_extractFutureWatcher;
-		NetJob::Ptr netJobContainer;
-		QString archivePath;
+private: /* data */
+    shared_qobject_ptr<QNetworkAccessManager> m_network;
+    bool abortable = false;
+    QFuture<std::optional<QStringList>> m_extractFuture;
+    QFutureWatcher<std::optional<QStringList>> m_extractFutureWatcher;
+    NetJob::Ptr netJobContainer;
+    QString archivePath;
 
-		Modpack m_pack;
-		QString m_version;
-	};
+    Modpack m_pack;
+    QString m_version;
+};
 
 } // namespace LegacyFTB

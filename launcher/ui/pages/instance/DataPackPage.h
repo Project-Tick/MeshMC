@@ -36,17 +36,17 @@ class ModFolderModel;
  * behave identically once you have the model, so one page serves both. */
 class DataPackPage : public ModFolderPage
 {
-	Q_OBJECT
-  public:
-	explicit DataPackPage(MinecraftInstance* instance,
-						  std::shared_ptr<ModFolderModel> model,
-						  QWidget* parent = nullptr);
-	virtual ~DataPackPage() {}
+    Q_OBJECT
+public:
+    explicit DataPackPage(MinecraftInstance *instance, std::shared_ptr<ModFolderModel> model, QWidget *parent = nullptr);
+    virtual ~DataPackPage()
+    {
+    }
 
-	virtual bool shouldDisplay() const override
-	{
-		return true;
-	}
+    virtual bool shouldDisplay() const override
+    {
+        return true;
+    }
 };
 
 /* Instance-level page for the global data pack folder.
@@ -59,28 +59,27 @@ class DataPackPage : public ModFolderPage
  * configured one. */
 class GlobalDataPackPage : public QWidget, public BasePage
 {
-	Q_OBJECT
-  public:
-	explicit GlobalDataPackPage(MinecraftInstance* instance,
-								QWidget* parent = nullptr);
+    Q_OBJECT
+public:
+    explicit GlobalDataPackPage(MinecraftInstance *instance, QWidget *parent = nullptr);
 
-	virtual QString id() const override
-	{
-		return "datapacks";
-	}
-	virtual QString displayName() const override;
-	virtual QIcon icon() const override;
-	virtual QString helpPage() const override;
-	virtual bool shouldDisplay() const override;
+    virtual QString id() const override
+    {
+        return "datapacks";
+    }
+    virtual QString displayName() const override;
+    virtual QIcon icon() const override;
+    virtual QString helpPage() const override;
+    virtual bool shouldDisplay() const override;
 
-	virtual bool apply() override;
-	virtual void openedImpl() override;
-	virtual void closedImpl() override;
-	virtual void setParentContainer(BasePageContainer* container) override;
+    virtual bool apply() override;
+    virtual void openedImpl() override;
+    virtual void closedImpl() override;
+    virtual void setParentContainer(BasePageContainer *container) override;
 
-  private:
-	void updateContent();
+private:
+    void updateContent();
 
-	MinecraftInstance* m_instance = nullptr;
-	DataPackPage* m_underlyingPage = nullptr;
+    MinecraftInstance *m_instance = nullptr;
+    DataPackPage *m_underlyingPage = nullptr;
 };

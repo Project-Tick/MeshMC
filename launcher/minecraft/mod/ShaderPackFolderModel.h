@@ -29,14 +29,13 @@
  * so they get their own model. */
 class ShaderPackFolderModel : public ModFolderModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit ShaderPackFolderModel(const QString& dir);
+public:
+    explicit ShaderPackFolderModel(const QString &dir);
 
-	QVariant headerData(int section, Qt::Orientation orientation,
-						int role) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-  protected:
-	bool acceptsFile(const QFileInfo& file, Mod::ModType type) const override;
+protected:
+    bool acceptsFile(const QFileInfo &file, Mod::ModType type) const override;
 };

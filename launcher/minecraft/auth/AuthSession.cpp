@@ -18,44 +18,44 @@
  */
 
 #include "AuthSession.h"
-#include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QStringList>
 
 QString AuthSession::serializeUserProperties()
 {
-	/*
-	 * If a plugin filled user_properties through MMCO_HOOK_SESSION_FILL,
-	 * pass it through as-is — it is expected to already be a valid JSON
-	 * object literal. Otherwise emit the empty-object default, which is
-	 * what vanilla Mojang flows want.
-	 */
-	const QString trimmed = user_properties.trimmed();
-	if (!trimmed.isEmpty()) {
-		QJsonParseError err{};
-		auto doc = QJsonDocument::fromJson(trimmed.toUtf8(), &err);
-		if (err.error == QJsonParseError::NoError && doc.isObject())
-			return doc.toJson(QJsonDocument::Compact);
-		/* Malformed → fall through to the empty default so the launch
-		 * doesn't break. */
-	}
-	return QJsonDocument(QJsonObject{}).toJson(QJsonDocument::Compact);
+    /*
+     * If a plugin filled user_properties through MMCO_HOOK_SESSION_FILL,
+     * pass it through as-is — it is expected to already be a valid JSON
+     * object literal. Otherwise emit the empty-object default, which is
+     * what vanilla Mojang flows want.
+     */
+    const QString trimmed = user_properties.trimmed();
+    if (!trimmed.isEmpty()) {
+        QJsonParseError err{};
+        auto doc = QJsonDocument::fromJson(trimmed.toUtf8(), &err);
+        if (err.error == QJsonParseError::NoError && doc.isObject())
+            return doc.toJson(QJsonDocument::Compact);
+        /* Malformed → fall through to the empty default so the launch
+         * doesn't break. */
+    }
+    return QJsonDocument(QJsonObject{}).toJson(QJsonDocument::Compact);
 }
 
 bool AuthSession::MakeOffline(QString offline_playername)
 {
-	if (status != PlayableOffline && status != PlayableOnline) {
-		return false;
-	}
-	session = "-";
-	player_name = offline_playername;
-	status = PlayableOffline;
-	return true;
+    if (status != PlayableOffline && status != PlayableOnline) {
+        return false;
+    }
+    session = "-";
+    player_name = offline_playername;
+    status = PlayableOffline;
+    return true;
 }
 
 void AuthSession::MakeDemo()
 {
-	player_name = "Player";
-	demo = true;
+    player_name = "Player";
+    demo = true;
 }

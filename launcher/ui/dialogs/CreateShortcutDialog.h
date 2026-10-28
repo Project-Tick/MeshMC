@@ -26,7 +26,7 @@ class MinecraftInstance;
 
 namespace Ui
 {
-	class CreateShortcutDialog;
+class CreateShortcutDialog;
 }
 
 /**
@@ -38,36 +38,35 @@ namespace Ui
  */
 class CreateShortcutDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit CreateShortcutDialog(MinecraftInstance* instance,
-								  QWidget* parent = nullptr);
-	~CreateShortcutDialog() override;
+public:
+    explicit CreateShortcutDialog(MinecraftInstance *instance, QWidget *parent = nullptr);
+    ~CreateShortcutDialog() override;
 
-	/// Write the shortcut the user just described.
-	void createShortcut();
+    /// Write the shortcut the user just described.
+    void createShortcut();
 
-  private slots:
-	void on_iconButton_clicked();
-	void on_overrideAccountCheckbox_toggled(bool checked);
-	void on_targetCheckbox_toggled(bool checked);
-	void on_worldTarget_toggled(bool checked);
-	void on_serverTarget_toggled(bool checked);
-	void on_worldSelectionBox_currentIndexChanged(int);
-	void on_serverAddressBox_textChanged(const QString&);
+private slots:
+    void on_iconButton_clicked();
+    void on_overrideAccountCheckbox_toggled(bool checked);
+    void on_targetCheckbox_toggled(bool checked);
+    void on_worldTarget_toggled(bool checked);
+    void on_serverTarget_toggled(bool checked);
+    void on_worldSelectionBox_currentIndexChanged(int);
+    void on_serverAddressBox_textChanged(const QString &);
 
-  private:
-	/** Rebuilds the suggested name and decides whether the chosen
-	 *  target is complete enough to accept. */
-	void refresh();
+private:
+    /** Rebuilds the suggested name and decides whether the chosen
+     *  target is complete enough to accept. */
+    void refresh();
 
-	Ui::CreateShortcutDialog* ui;
-	MinecraftInstance* m_instance;
-	QString m_iconKey;
+    Ui::CreateShortcutDialog *ui;
+    MinecraftInstance *m_instance;
+    QString m_iconKey;
 
-	/** Whether this instance's Minecraft can be told to open a world
-	 *  straight from the command line. Without it the target section is
-	 *  server-only. */
-	bool m_canJoinWorld = false;
+    /** Whether this instance's Minecraft can be told to open a world
+     *  straight from the command line. Without it the target section is
+     *  server-only. */
+    bool m_canJoinWorld = false;
 };

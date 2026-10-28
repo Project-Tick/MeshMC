@@ -19,35 +19,35 @@
 
 #include "MeshUpdaterApp.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	// Answered before a QApplication exists, because a probe has to work
-	// where one cannot be constructed: without a display, constructing
-	// QApplication aborts, and "the updater cannot start" would then be
-	// indistinguishable from "there is no screen".
-	if (MeshUpdaterApp::handleSelfTest(argc, argv))
-		return MeshUpdaterApp::ExitSuccess;
+    // Answered before a QApplication exists, because a probe has to work
+    // where one cannot be constructed: without a display, constructing
+    // QApplication aborts, and "the updater cannot start" would then be
+    // indistinguishable from "there is no screen".
+    if (MeshUpdaterApp::handleSelfTest(argc, argv))
+        return MeshUpdaterApp::ExitSuccess;
 
-	MeshUpdaterApp app(argc, argv);
+    MeshUpdaterApp app(argc, argv);
 
-	switch (app.status()) {
-		case MeshUpdaterApp::Starting:
-		case MeshUpdaterApp::Initialized:
-			// The work is queued on the event loop, so the exit code comes
-			// from whatever the app passes to QCoreApplication::exit().
-			return app.exec();
+    switch (app.status()) {
+    case MeshUpdaterApp::Starting:
+    case MeshUpdaterApp::Initialized:
+        // The work is queued on the event loop, so the exit code comes
+        // from whatever the app passes to QCoreApplication::exit().
+        return app.exec();
 
-		case MeshUpdaterApp::Succeeded:
-			return MeshUpdaterApp::ExitSuccess;
+    case MeshUpdaterApp::Succeeded:
+        return MeshUpdaterApp::ExitSuccess;
 
-		case MeshUpdaterApp::Failed:
-			return MeshUpdaterApp::ExitFailed;
+    case MeshUpdaterApp::Failed:
+        return MeshUpdaterApp::ExitFailed;
 
-		case MeshUpdaterApp::Aborted:
-			return MeshUpdaterApp::ExitAborted;
-	}
+    case MeshUpdaterApp::Aborted:
+        return MeshUpdaterApp::ExitAborted;
+    }
 
-	// Unreachable unless a new Status is added without being handled here,
-	// which must not silently look like success.
-	return MeshUpdaterApp::ExitFailed;
+    // Unreachable unless a new Status is added without being handled here,
+    // which must not silently look like success.
+    return MeshUpdaterApp::ExitFailed;
 }

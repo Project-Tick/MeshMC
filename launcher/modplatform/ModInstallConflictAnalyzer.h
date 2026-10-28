@@ -37,38 +37,35 @@ class ModMetadataIndex;
  */
 class ModInstallConflictAnalyzer
 {
-  public:
-	enum class Status {
-		Fresh,			  /* Nothing comparable on disk; install normally */
-		AlreadyInstalled, /* Same platform+projectId AND versionId present */
-		UpdateAvailable,  /* Same platform+projectId, different versionId */
-		NameConflict,	  /* Same normalized name from a different origin */
-		FileNameClash	  /* Same target file name from a different source */
-	};
+public:
+    enum class Status {
+        Fresh, /* Nothing comparable on disk; install normally */
+        AlreadyInstalled, /* Same platform+projectId AND versionId present */
+        UpdateAvailable, /* Same platform+projectId, different versionId */
+        NameConflict, /* Same normalized name from a different origin */
+        FileNameClash /* Same target file name from a different source */
+    };
 
-	struct Decision {
-		ModPlatform::DownloadItem item; /* Item, possibly with replaceExisting /
-										   replacesFileName set */
-		Status status = Status::Fresh;
-		QString reason; /* Human-readable detail, surfaced in the UI */
-	};
+    struct Decision {
+        ModPlatform::DownloadItem item; /* Item, possibly with replaceExisting /
+                                           replacesFileName set */
+        Status status = Status::Fresh;
+        QString reason; /* Human-readable detail, surfaced in the UI */
+    };
 
-	/* Classify each input item. The returned list has the same length and
-	 * ordering as `items`. `index` may be null, in which case every item
-	 * is treated as Fresh. */
-	static QList<Decision>
-	analyze(const QList<ModPlatform::DownloadItem>& items,
-			std::shared_ptr<ModMetadataIndex> index);
+    /* Classify each input item. The returned list has the same length and
+     * ordering as `items`. `index` may be null, in which case every item
+     * is treated as Fresh. */
+    static QList<Decision> analyze(const QList<ModPlatform::DownloadItem> &items, std::shared_ptr<ModMetadataIndex> index);
 
-	/* Filter a decision list down to what should actually be downloaded:
-	 *   - Fresh, NameConflict, FileNameClash: kept as-is.
-	 *   - UpdateAvailable: kept with `replaceExisting=true` and
-	 *     `replacesFileName` pointing at the old file.
-	 *   - AlreadyInstalled: dropped.
-	 * The caller is responsible for asking the user about NameConflict /
-	 * FileNameClash through whatever dialog is appropriate. */
-	static QList<ModPlatform::DownloadItem>
-	toDownloadPlan(const QList<Decision>& decisions);
+    /* Filter a decision list down to what should actually be downloaded:
+     *   - Fresh, NameConflict, FileNameClash: kept as-is.
+     *   - UpdateAvailable: kept with `replaceExisting=true` and
+     *     `replacesFileName` pointing at the old file.
+     *   - AlreadyInstalled: dropped.
+     * The caller is responsible for asking the user about NameConflict /
+     * FileNameClash through whatever dialog is appropriate. */
+    static QList<ModPlatform::DownloadItem> toDownloadPlan(const QList<Decision> &decisions);
 
-	static const char* statusLabel(Status s);
+    static const char *statusLabel(Status s);
 };

@@ -24,7 +24,7 @@
 
 namespace Ui
 {
-	class UntrustedModsDialog;
+class UntrustedModsDialog;
 }
 
 /* Consent prompt for installing code the launcher cannot vouch for.
@@ -46,13 +46,12 @@ namespace Ui
  */
 class UntrustedModsDialog : public QDialog
 {
-	Q_OBJECT
-  public:
-	/* @p paths are the files in question, as instance-relative paths. */
-	explicit UntrustedModsDialog(const QStringList& paths,
-								 QWidget* parent = nullptr);
-	~UntrustedModsDialog() override;
+    Q_OBJECT
+public:
+    /* @p paths are the files in question, as instance-relative paths. */
+    explicit UntrustedModsDialog(const QStringList &paths, QWidget *parent = nullptr);
+    ~UntrustedModsDialog() override;
 
-  private:
-	Ui::UntrustedModsDialog* m_ui;
+private:
+    Ui::UntrustedModsDialog *m_ui;
 };

@@ -29,55 +29,54 @@
 namespace Ftb
 {
 
-	struct Logo {
-		QString fullpath;
-		NetJob::Ptr downloadJob;
-		QIcon result;
-		bool failed = false;
-	};
+struct Logo {
+    QString fullpath;
+    NetJob::Ptr downloadJob;
+    QIcon result;
+    bool failed = false;
+};
 
-	typedef QMap<QString, Logo> LogoMap;
-	typedef std::function<void(QString)> LogoCallback;
+typedef QMap<QString, Logo> LogoMap;
+typedef std::function<void(QString)> LogoCallback;
 
-	class ListModel : public QAbstractListModel
-	{
-		Q_OBJECT
+class ListModel : public QAbstractListModel
+{
+    Q_OBJECT
 
-	  public:
-		ListModel(QObject* parent);
-		virtual ~ListModel();
+public:
+    ListModel(QObject *parent);
+    virtual ~ListModel();
 
-		int rowCount(const QModelIndex& parent) const override;
-		int columnCount(const QModelIndex& parent) const override;
-		QVariant data(const QModelIndex& index, int role) const override;
+    int rowCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
 
-		void request();
+    void request();
 
-		void getLogo(const QString& logo, const QString& logoUrl,
-					 LogoCallback callback);
+    void getLogo(const QString &logo, const QString &logoUrl, LogoCallback callback);
 
-	  private slots:
-		void requestFinished();
-		void requestFailed(QString reason);
+private slots:
+    void requestFinished();
+    void requestFailed(QString reason);
 
-		void requestPack();
-		void packRequestFinished();
-		void packRequestFailed(QString reason);
+    void requestPack();
+    void packRequestFinished();
+    void packRequestFailed(QString reason);
 
-		void logoFailed(QString logo);
-		void logoLoaded(QString logo, bool stale);
+    void logoFailed(QString logo);
+    void logoLoaded(QString logo, bool stale);
 
-	  private:
-		void requestLogo(QString file, QString url);
+private:
+    void requestLogo(QString file, QString url);
 
-	  private:
-		QList<ModpacksCH::Modpack> modpacks;
-		LogoMap m_logoMap;
+private:
+    QList<ModpacksCH::Modpack> modpacks;
+    LogoMap m_logoMap;
 
-		NetJob::Ptr jobPtr;
-		int currentPack;
-		QList<int> remainingPacks;
-		QByteArray response;
-	};
+    NetJob::Ptr jobPtr;
+    int currentPack;
+    QList<int> remainingPacks;
+    QByteArray response;
+};
 
 } // namespace Ftb

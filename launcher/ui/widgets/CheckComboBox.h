@@ -43,56 +43,56 @@
  * is what a list arriving from the network needs. */
 class CheckComboBox final : public QComboBox
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit CheckComboBox(QWidget* parent = nullptr);
+public:
+    explicit CheckComboBox(QWidget *parent = nullptr);
 
-	/* Shown when nothing is ticked, in place of the joined entries. */
-	QString defaultText() const
-	{
-		return m_defaultText;
-	}
-	void setDefaultText(const QString& text);
+    /* Shown when nothing is ticked, in place of the joined entries. */
+    QString defaultText() const
+    {
+        return m_defaultText;
+    }
+    void setDefaultText(const QString &text);
 
-	/* Placed between ticked entries in the closed box. Defaults to
-	 * ", ". */
-	QString separator() const
-	{
-		return m_separator;
-	}
-	void setSeparator(const QString& separator);
+    /* Placed between ticked entries in the closed box. Defaults to
+     * ", ". */
+    QString separator() const
+    {
+        return m_separator;
+    }
+    void setSeparator(const QString &separator);
 
-	/* Replaces the entries, keeping the ticks on any that are still
-	 * there. Entries the user had ticked and that are gone from the new
-	 * list are dropped, which is the honest answer: the filter can no
-	 * longer express them. */
-	void setItems(const QStringList& items);
+    /* Replaces the entries, keeping the ticks on any that are still
+     * there. Entries the user had ticked and that are gone from the new
+     * list are dropped, which is the honest answer: the filter can no
+     * longer express them. */
+    void setItems(const QStringList &items);
 
-	QStringList checkedItems() const;
-	/* Ticks exactly these, unticking everything else. Names that are
-	 * not among the entries are ignored. */
-	void setCheckedItems(const QStringList& items);
+    QStringList checkedItems() const;
+    /* Ticks exactly these, unticking everything else. Names that are
+     * not among the entries are ignored. */
+    void setCheckedItems(const QStringList &items);
 
-  signals:
-	/* Emitted once per tick, and by setItems() when refilling changed
-	 * which entries are ticked. */
-	void checkedItemsChanged(const QStringList& items);
+signals:
+    /* Emitted once per tick, and by setItems() when refilling changed
+     * which entries are ticked. */
+    void checkedItemsChanged(const QStringList &items);
 
-  protected:
-	/* The closed box shows the ticked entries, not the current one. */
-	void paintEvent(QPaintEvent* event) override;
-	/* Kept open while entries are being ticked. */
-	void hidePopup() override;
-	bool eventFilter(QObject* watched, QEvent* event) override;
+protected:
+    /* The closed box shows the ticked entries, not the current one. */
+    void paintEvent(QPaintEvent *event) override;
+    /* Kept open while entries are being ticked. */
+    void hidePopup() override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
-  private:
-	void toggleItem(int index);
+private:
+    void toggleItem(int index);
 
-  private:
-	QString m_defaultText;
-	QString m_separator;
-	/* Set while a press is landing on an entry of the open popup, so
-	 * that the click that ticks it does not also close the popup. */
-	bool m_pressOnItem = false;
+private:
+    QString m_defaultText;
+    QString m_separator;
+    /* Set while a press is landing on an entry of the open popup, so
+     * that the click that ticks it does not also close the popup. */
+    bool m_pressOnItem = false;
 };

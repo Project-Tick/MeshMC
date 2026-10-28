@@ -21,14 +21,12 @@
 #include "LaunchStep.h"
 #include "LaunchTask.h"
 
-void LaunchStep::bind(LaunchTask* parent)
+void LaunchStep::bind(LaunchTask *parent)
 {
-	m_parent = parent;
-	connect(this, &LaunchStep::readyForLaunch, parent,
-			&LaunchTask::onReadyForLaunch);
-	connect(this, &LaunchStep::logLine, parent, &LaunchTask::onLogLine);
-	connect(this, &LaunchStep::logLines, parent, &LaunchTask::onLogLines);
-	connect(this, &LaunchStep::finished, parent, &LaunchTask::onStepFinished);
-	connect(this, &LaunchStep::progressReportingRequest, parent,
-			&LaunchTask::onProgressReportingRequested);
+    m_parent = parent;
+    connect(this, &LaunchStep::readyForLaunch, parent, &LaunchTask::onReadyForLaunch);
+    connect(this, &LaunchStep::logLine, parent, &LaunchTask::onLogLine);
+    connect(this, &LaunchStep::logLines, parent, &LaunchTask::onLogLines);
+    connect(this, &LaunchStep::finished, parent, &LaunchTask::onStepFinished);
+    connect(this, &LaunchStep::progressReportingRequest, parent, &LaunchTask::onProgressReportingRequested);
 }

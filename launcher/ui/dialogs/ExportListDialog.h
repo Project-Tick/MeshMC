@@ -47,52 +47,51 @@ class QTextEdit;
  */
 class ExportListDialog final : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	/* `name` names what is being exported and is offered as the file
-	 * name; it usually is the instance's name. */
-	ExportListDialog(QString name, QList<ContentListExport::Item> items,
-					 QWidget* parent = nullptr);
+public:
+    /* `name` names what is being exported and is offered as the file
+     * name; it usually is the instance's name. */
+    ExportListDialog(QString name, QList<ContentListExport::Item> items, QWidget *parent = nullptr);
 
-	void done(int result) override;
+    void done(int result) override;
 
-  private:
-	void buildUi();
-	void formatChanged(int index);
+private:
+    void buildUi();
+    void formatChanged(int index);
 
-	/* Re-renders from the current format and options. Cheap enough to
-	 * run on every keystroke in the template box. */
-	void regenerate();
+    /* Re-renders from the current format and options. Cheap enough to
+     * run on every keystroke in the template box. */
+    void regenerate();
 
-	void insertPlaceholder(ContentListExport::Field field);
+    void insertPlaceholder(ContentListExport::Field field);
 
-	/* Custom mode swaps the option checkboxes for buttons that insert
-	 * the matching placeholder, since a template says for itself which
-	 * fields it wants and in what order. */
-	void setCustomMode(bool custom);
+    /* Custom mode swaps the option checkboxes for buttons that insert
+     * the matching placeholder, since a template says for itself which
+     * fields it wants and in what order. */
+    void setCustomMode(bool custom);
 
-	ContentListExport::Fields selectedFields() const;
+    ContentListExport::Fields selectedFields() const;
 
-	QList<ContentListExport::Item> m_items;
-	QString m_name;
-	ContentListExport::Format m_format = ContentListExport::Format::Html;
+    QList<ContentListExport::Item> m_items;
+    QString m_name;
+    ContentListExport::Format m_format = ContentListExport::Format::Html;
 
-	/* Set once the user has changed the template themselves, after which
-	 * switching format no longer overwrites what they wrote. */
-	bool m_templateEdited = false;
+    /* Set once the user has changed the template themselves, after which
+     * switching format no longer overwrites what they wrote. */
+    bool m_templateEdited = false;
 
-	QComboBox* m_formatBox = nullptr;
-	QGroupBox* m_templateGroup = nullptr;
-	QTextEdit* m_templateText = nullptr;
-	QCheckBox* m_versionCheck = nullptr;
-	QCheckBox* m_authorsCheck = nullptr;
-	QCheckBox* m_urlCheck = nullptr;
-	QCheckBox* m_fileNameCheck = nullptr;
-	QPushButton* m_versionButton = nullptr;
-	QPushButton* m_authorsButton = nullptr;
-	QPushButton* m_urlButton = nullptr;
-	QPushButton* m_fileNameButton = nullptr;
-	QPlainTextEdit* m_finalText = nullptr;
-	QTextBrowser* m_resultText = nullptr;
+    QComboBox *m_formatBox = nullptr;
+    QGroupBox *m_templateGroup = nullptr;
+    QTextEdit *m_templateText = nullptr;
+    QCheckBox *m_versionCheck = nullptr;
+    QCheckBox *m_authorsCheck = nullptr;
+    QCheckBox *m_urlCheck = nullptr;
+    QCheckBox *m_fileNameCheck = nullptr;
+    QPushButton *m_versionButton = nullptr;
+    QPushButton *m_authorsButton = nullptr;
+    QPushButton *m_urlButton = nullptr;
+    QPushButton *m_fileNameButton = nullptr;
+    QPlainTextEdit *m_finalText = nullptr;
+    QTextBrowser *m_resultText = nullptr;
 };

@@ -27,35 +27,34 @@
 #include "HoeDown.h"
 #include "MMCStrings.h"
 
-UpdateAvailableDialog::UpdateAvailableDialog(const QString& currentVersion,
-											 const QString& availableVersion,
-											 const QString& releaseNotes,
-											 QWidget* parent)
-	: QDialog(parent), ui(new Ui::UpdateAvailableDialog)
+UpdateAvailableDialog::UpdateAvailableDialog(const QString &currentVersion, const QString &availableVersion, const QString &releaseNotes, QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::UpdateAvailableDialog)
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
 
-	ui->headerLabel->setText(tr("A new version of MeshMC is available!"));
-	ui->versionAvailableLabel->setText(
-		tr("Version %1 is now available - you have %2 . Would you like to "
-		   "download it now?")
-			.arg(availableVersion, currentVersion));
-	ui->icon->setPixmap(QIcon::fromTheme("checkupdate").pixmap(64));
+    ui->headerLabel->setText(tr("A new version of MeshMC is available!"));
+    ui->versionAvailableLabel->setText(tr("Version %1 is now available - you have %2 . Would you like to "
+                                          "download it now?")
+                                           .arg(availableVersion, currentVersion));
+    ui->icon->setPixmap(QIcon::fromTheme("checkupdate").pixmap(64));
 
-	HoeDown markdown;
-	ui->releaseNotes->setHtml(
-		Strings::htmlListPatch(markdown.process(releaseNotes.toUtf8())));
-	ui->releaseNotes->setOpenExternalLinks(true);
+    HoeDown markdown;
+    ui->releaseNotes->setHtml(Strings::htmlListPatch(markdown.process(releaseNotes.toUtf8())));
+    ui->releaseNotes->setOpenExternalLinks(true);
 
-	connect(ui->skipButton, &QPushButton::clicked, this,
-			[this]() { done(ResultCode::Skip); });
-	connect(ui->delayButton, &QPushButton::clicked, this,
-			[this]() { done(ResultCode::DontInstall); });
-	connect(ui->installButton, &QPushButton::clicked, this,
-			[this]() { done(ResultCode::Install); });
+    connect(ui->skipButton, &QPushButton::clicked, this, [this]() {
+        done(ResultCode::Skip);
+    });
+    connect(ui->delayButton, &QPushButton::clicked, this, [this]() {
+        done(ResultCode::DontInstall);
+    });
+    connect(ui->installButton, &QPushButton::clicked, this, [this]() {
+        done(ResultCode::Install);
+    });
 }
 
 UpdateAvailableDialog::~UpdateAvailableDialog()
 {
-	delete ui;
+    delete ui;
 }

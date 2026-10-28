@@ -20,46 +20,46 @@
 
 #pragma once
 
-#include <memory>
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 #include <QWidget>
+#include <memory>
 
 class LanguageSelectionWidget;
 
 class LanguagePage : public QWidget, public BasePage
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	explicit LanguagePage(QWidget* parent = 0);
-	virtual ~LanguagePage();
+public:
+    explicit LanguagePage(QWidget *parent = 0);
+    virtual ~LanguagePage();
 
-	QString displayName() const override
-	{
-		return tr("Language");
-	}
-	QIcon icon() const override
-	{
-		return APPLICATION->getThemedIcon("language");
-	}
-	QString id() const override
-	{
-		return "language-settings";
-	}
-	QString helpPage() const override
-	{
-		return "Language-settings";
-	}
-	bool apply() override;
+    QString displayName() const override
+    {
+        return tr("Language");
+    }
+    QIcon icon() const override
+    {
+        return APPLICATION->getThemedIcon("language");
+    }
+    QString id() const override
+    {
+        return "language-settings";
+    }
+    QString helpPage() const override
+    {
+        return "Language-settings";
+    }
+    bool apply() override;
 
-	void changeEvent(QEvent*) override;
+    void changeEvent(QEvent *) override;
 
-  private:
-	void applySettings();
-	void loadSettings();
-	void retranslate();
+private:
+    void applySettings();
+    void loadSettings();
+    void retranslate();
 
-  private:
-	LanguageSelectionWidget* mainWidget;
+private:
+    LanguageSelectionWidget *mainWidget;
 };

@@ -31,19 +31,18 @@
 namespace
 {
 
-	//! Column layout shared by both dialogs: a wide name, a snug date.
-	void setUpTree(QTreeWidget* tree, const QString& firstColumn,
-				   const QString& secondColumn)
-	{
-		tree->setColumnCount(2);
-		tree->setHeaderLabels({firstColumn, secondColumn});
-		tree->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-		tree->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-		tree->header()->setStretchLastSection(false);
-	}
+//! Column layout shared by both dialogs: a wide name, a snug date.
+void setUpTree(QTreeWidget *tree, const QString &firstColumn, const QString &secondColumn)
+{
+    tree->setColumnCount(2);
+    tree->setHeaderLabels({firstColumn, secondColumn});
+    tree->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    tree->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    tree->header()->setStretchLastSection(false);
+}
 
-	//! Items carry the id of what they stand for; ids are stable, rows are not.
-	constexpr int kIdRole = Qt::UserRole;
+//! Items carry the id of what they stand for; ids are stable, rows are not.
+constexpr int kIdRole = Qt::UserRole;
 
 } // namespace
 
@@ -51,151 +50,142 @@ namespace
 // SelectReleaseDialog
 // ---------------------------------------------------------------------------
 
-SelectReleaseDialog::SelectReleaseDialog(const Version& currentVersion,
-										 const QList<GitHubRelease>& releases,
-										 QWidget* parent)
-	: QDialog(parent), m_releases(releases), m_currentVersion(currentVersion),
-	  ui(new Ui::SelectReleaseDialog)
+SelectReleaseDialog::SelectReleaseDialog(const Version &currentVersion, const QList<GitHubRelease> &releases, QWidget *parent)
+    : QDialog(parent)
+    , m_releases(releases)
+    , m_currentVersion(currentVersion)
+    , ui(new Ui::SelectReleaseDialog)
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
 
-	ui->changelogTextBrowser->setOpenExternalLinks(true);
-	ui->changelogTextBrowser->setLineWrapMode(QTextBrowser::WidgetWidth);
-	ui->changelogTextBrowser->setVerticalScrollBarPolicy(
-		Qt::ScrollBarAsNeeded);
+    ui->changelogTextBrowser->setOpenExternalLinks(true);
+    ui->changelogTextBrowser->setLineWrapMode(QTextBrowser::WidgetWidth);
+    ui->changelogTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-	setUpTree(ui->versionsTree, tr("Version"), tr("Published Date"));
+    setUpTree(ui->versionsTree, tr("Version"), tr("Published Date"));
 
-	ui->explainLabel->setText(tr("Select a version to install.\n"
-								 "\n"
-								 "Currently installed version: %1")
-								  .arg(m_currentVersion.toString()));
+    ui->explainLabel->setText(tr("Select a version to install.\n"
+                                 "\n"
+                                 "Currently installed version: %1")
+                                  .arg(m_currentVersion.toString()));
 
-	loadReleases();
+    loadReleases();
 
-	connect(ui->versionsTree, &QTreeWidget::currentItemChanged, this,
-			&SelectReleaseDialog::selectionChanged);
+    connect(ui->versionsTree, &QTreeWidget::currentItemChanged, this, &SelectReleaseDialog::selectionChanged);
 
-	// The button box is wired to accept/reject in the .ui file; the labels are
-	// set here so they go through our translations rather than Qt's.
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
-	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
+    // The button box is wired to accept/reject in the .ui file; the labels are
+    // set here so they go through our translations rather than Qt's.
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
 SelectReleaseDialog::~SelectReleaseDialog()
 {
-	delete ui;
+    delete ui;
 }
 
 void SelectReleaseDialog::loadReleases()
 {
-	for (const GitHubRelease& release : m_releases) {
-		appendRelease(release);
-	}
+    for (const GitHubRelease &release : m_releases) {
+        appendRelease(release);
+    }
 }
 
-void SelectReleaseDialog::appendRelease(const GitHubRelease& release)
+void SelectReleaseDialog::appendRelease(const GitHubRelease &release)
 {
-	auto* item = new QTreeWidgetItem(ui->versionsTree);
-	item->setText(0, release.tagName);
-	item->setText(1, QLocale().toString(release.publishedAt.toLocalTime(),
-										QLocale::ShortFormat));
-	item->setData(0, kIdRole, QVariant::fromValue(release.id));
-	item->setExpanded(true);
+    auto *item = new QTreeWidgetItem(ui->versionsTree);
+    item->setText(0, release.tagName);
+    item->setText(1, QLocale().toString(release.publishedAt.toLocalTime(), QLocale::ShortFormat));
+    item->setData(0, kIdRole, QVariant::fromValue(release.id));
+    item->setExpanded(true);
 
-	ui->versionsTree->addTopLevelItem(item);
+    ui->versionsTree->addTopLevelItem(item);
 }
 
-GitHubRelease
-SelectReleaseDialog::releaseForItem(const QTreeWidgetItem* item) const
+GitHubRelease SelectReleaseDialog::releaseForItem(const QTreeWidgetItem *item) const
 {
-	if (!item)
-		return {};
+    if (!item)
+        return {};
 
-	const qint64 id = item->data(0, kIdRole).toLongLong();
-	for (const GitHubRelease& release : m_releases) {
-		if (release.id == id)
-			return release;
-	}
-	return {};
+    const qint64 id = item->data(0, kIdRole).toLongLong();
+    for (const GitHubRelease &release : m_releases) {
+        if (release.id == id)
+            return release;
+    }
+    return {};
 }
 
-void SelectReleaseDialog::selectionChanged(QTreeWidgetItem* current,
-										   QTreeWidgetItem* /*previous*/)
+void SelectReleaseDialog::selectionChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
 {
-	m_selectedRelease = releaseForItem(current);
+    m_selectedRelease = releaseForItem(current);
 
-	HoeDown markdown;
-	ui->changelogTextBrowser->setHtml(Strings::htmlListPatch(
-		markdown.process(m_selectedRelease.body.toUtf8())));
+    HoeDown markdown;
+    ui->changelogTextBrowser->setHtml(Strings::htmlListPatch(markdown.process(m_selectedRelease.body.toUtf8())));
 }
 
 // ---------------------------------------------------------------------------
 // SelectReleaseAssetDialog
 // ---------------------------------------------------------------------------
 
-SelectReleaseAssetDialog::SelectReleaseAssetDialog(
-	const QList<GitHubReleaseAsset>& assets, QWidget* parent)
-	: QDialog(parent), m_assets(assets), ui(new Ui::SelectReleaseDialog)
+SelectReleaseAssetDialog::SelectReleaseAssetDialog(const QList<GitHubReleaseAsset> &assets, QWidget *parent)
+    : QDialog(parent)
+    , m_assets(assets)
+    , ui(new Ui::SelectReleaseDialog)
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
 
-	setUpTree(ui->versionsTree, tr("Version"), tr("Published Date"));
+    setUpTree(ui->versionsTree, tr("Version"), tr("Published Date"));
 
-	ui->explainLabel->setText(tr("Select a version to install."));
+    ui->explainLabel->setText(tr("Select a version to install."));
 
-	// An asset has no release notes; the pane would only ever be blank.
-	ui->changelogTextBrowser->setHidden(true);
+    // An asset has no release notes; the pane would only ever be blank.
+    ui->changelogTextBrowser->setHidden(true);
 
-	loadAssets();
+    loadAssets();
 
-	connect(ui->versionsTree, &QTreeWidget::currentItemChanged, this,
-			&SelectReleaseAssetDialog::selectionChanged);
+    connect(ui->versionsTree, &QTreeWidget::currentItemChanged, this, &SelectReleaseAssetDialog::selectionChanged);
 
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
-	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
 SelectReleaseAssetDialog::~SelectReleaseAssetDialog()
 {
-	delete ui;
+    delete ui;
 }
 
 void SelectReleaseAssetDialog::loadAssets()
 {
-	for (const GitHubReleaseAsset& asset : m_assets) {
-		appendAsset(asset);
-	}
+    for (const GitHubReleaseAsset &asset : m_assets) {
+        appendAsset(asset);
+    }
 }
 
-void SelectReleaseAssetDialog::appendAsset(const GitHubReleaseAsset& asset)
+void SelectReleaseAssetDialog::appendAsset(const GitHubReleaseAsset &asset)
 {
-	auto* item = new QTreeWidgetItem(ui->versionsTree);
-	item->setText(0, asset.name);
-	item->setText(1, QLocale().toString(asset.updatedAt.toLocalTime(),
-										QLocale::ShortFormat));
-	item->setData(0, kIdRole, QVariant::fromValue(asset.id));
-	item->setExpanded(true);
+    auto *item = new QTreeWidgetItem(ui->versionsTree);
+    item->setText(0, asset.name);
+    item->setText(1, QLocale().toString(asset.updatedAt.toLocalTime(), QLocale::ShortFormat));
+    item->setData(0, kIdRole, QVariant::fromValue(asset.id));
+    item->setExpanded(true);
 
-	ui->versionsTree->addTopLevelItem(item);
+    ui->versionsTree->addTopLevelItem(item);
 }
 
-GitHubReleaseAsset
-SelectReleaseAssetDialog::assetForItem(const QTreeWidgetItem* item) const
+GitHubReleaseAsset SelectReleaseAssetDialog::assetForItem(const QTreeWidgetItem *item) const
 {
-	if (!item)
-		return {};
+    if (!item)
+        return {};
 
-	const qint64 id = item->data(0, kIdRole).toLongLong();
-	for (const GitHubReleaseAsset& asset : m_assets) {
-		if (asset.id == id)
-			return asset;
-	}
-	return {};
+    const qint64 id = item->data(0, kIdRole).toLongLong();
+    for (const GitHubReleaseAsset &asset : m_assets) {
+        if (asset.id == id)
+            return asset;
+    }
+    return {};
 }
 
-void SelectReleaseAssetDialog::selectionChanged(QTreeWidgetItem* current,
-												QTreeWidgetItem* /*previous*/)
+void SelectReleaseAssetDialog::selectionChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
 {
-	m_selectedAsset = assetForItem(current);
+    m_selectedAsset = assetForItem(current);
 }

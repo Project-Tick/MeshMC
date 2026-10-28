@@ -28,95 +28,100 @@
 
 namespace MMCZip
 {
-	ExtractZipTask::ExtractZipTask(QString input, QDir outputDir,
-								   QString subdirectory, QObject* parent)
-		: Task(parent), m_input(std::move(input)),
-		  m_outputDir(std::move(outputDir)),
-		  m_subdirectory(std::move(subdirectory))
-	{
-	}
+ExtractZipTask::ExtractZipTask(QString input, QDir outputDir, QString subdirectory, QObject *parent)
+    : Task(parent)
+    , m_input(std::move(input))
+    , m_outputDir(std::move(outputDir))
+    , m_subdirectory(std::move(subdirectory))
+{
+}
 
-	void ExtractZipTask::executeTask()
-	{
-		setStatus(tr("Extracting files..."));
-		setProgress(0, 0);
+void ExtractZipTask::executeTask()
+{
+    setStatus(tr("Extracting files..."));
+    setProgress(0, 0);
 
-		m_future = QtConcurrent::run(QThreadPool::globalInstance(),
-									 [this]() { return extractZip(); });
-		connect(&m_watcher, &QFutureWatcher<ZipResult>::finished, this,
-				&ExtractZipTask::finish);
-		m_watcher.setFuture(m_future);
-	}
+    m_future = QtConcurrent::run(QThreadPool::globalInstance(), [this]() {
+        return extractZip();
+    });
+    connect(&m_watcher, &QFutureWatcher<ZipResult>::finished, this, &ExtractZipTask::finish);
+    m_watcher.setFuture(m_future);
+}
 
-	bool ExtractZipTask::abort()
-	{
-		if (m_future.isRunning()) {
-			m_cancelled.store(true);
-			/* The worker cleans up what it already wrote and returns;
-			 * finish() is what turns that into an abort. */
-			return true;
-		}
-		return false;
-	}
+bool ExtractZipTask::abort()
+{
+    if (m_future.isRunning()) {
+        m_cancelled.store(true);
+        /* The worker cleans up what it already wrote and returns;
+         * finish() is what turns that into an abort. */
+        return true;
+    }
+    return false;
+}
 
-	void ExtractZipTask::reportStatus(const QString& status)
-	{
-		QMetaObject::invokeMethod(
-			this, [this, status] { setStatus(status); }, Qt::QueuedConnection);
-	}
+void ExtractZipTask::reportStatus(const QString &status)
+{
+    QMetaObject::invokeMethod(
+        this,
+        [this, status] {
+            setStatus(status);
+        },
+        Qt::QueuedConnection);
+}
 
-	void ExtractZipTask::reportProgress(qint64 current, qint64 total)
-	{
-		QMetaObject::invokeMethod(
-			this, [this, current, total] { setProgress(current, total); },
-			Qt::QueuedConnection);
-	}
+void ExtractZipTask::reportProgress(qint64 current, qint64 total)
+{
+    QMetaObject::invokeMethod(
+        this,
+        [this, current, total] {
+            setProgress(current, total);
+        },
+        Qt::QueuedConnection);
+}
 
-	auto ExtractZipTask::extractZip() -> ZipResult
-	{
-		/* Both reports come from the extracting thread, so neither may
-		 * touch task state directly. See the header. */
-		ExtractReporting reporting;
-		reporting.progress = [this](qint64 current, qint64 total) {
-			reportProgress(current, total);
-		};
-		reporting.isCancelled = [this]() { return m_cancelled.load(); };
-		reporting.entryStarted = [this](const QString& name) {
-			if (!name.isEmpty()) {
-				reportStatus(tr("Unpacking: %1").arg(name));
-			}
-		};
+auto ExtractZipTask::extractZip() -> ZipResult
+{
+    /* Both reports come from the extracting thread, so neither may
+     * touch task state directly. See the header. */
+    ExtractReporting reporting;
+    reporting.progress = [this](qint64 current, qint64 total) {
+        reportProgress(current, total);
+    };
+    reporting.isCancelled = [this]() {
+        return m_cancelled.load();
+    };
+    reporting.entryStarted = [this](const QString &name) {
+        if (!name.isEmpty()) {
+            reportStatus(tr("Unpacking: %1").arg(name));
+        }
+    };
 
-		const auto extracted =
-			extractSubDir(m_input, m_subdirectory, m_outputDir.absolutePath(),
-						  reporting);
-		if (!extracted.has_value()) {
-			/* Cancellation comes back through the same "no result" door
-			 * as a damaged archive; only we know which it was. */
-			if (m_cancelled.load()) {
-				return ZipResult();
-			}
-			return ZipResult(
-				tr("Failed to unpack %1. The archive appears to be damaged.")
-					.arg(QFileInfo(m_input).fileName()));
-		}
+    const auto extracted = extractSubDir(m_input, m_subdirectory, m_outputDir.absolutePath(), reporting);
+    if (!extracted.has_value()) {
+        /* Cancellation comes back through the same "no result" door
+         * as a damaged archive; only we know which it was. */
+        if (m_cancelled.load()) {
+            return ZipResult();
+        }
+        return ZipResult(tr("Failed to unpack %1. The archive appears to be damaged.").arg(QFileInfo(m_input).fileName()));
+    }
 
-		m_extracted = extracted.value();
-		return ZipResult();
-	}
+    m_extracted = extracted.value();
+    return ZipResult();
+}
 
-	void ExtractZipTask::finish()
-	{
-		if (m_cancelled.load()) {
-			emitAborted();
-			return;
-		}
+void ExtractZipTask::finish()
+{
+    if (m_cancelled.load()) {
+        emitAborted();
+        return;
+    }
 
-		const ZipResult result = m_future.result();
-		if (result.has_value()) {
-			emitFailed(result.value());
-			return;
-		}
-		emitSucceeded();
-	}
+    const ZipResult result = m_future.result();
+    if (result.has_value()) {
+        emitFailed(result.value());
+        return;
+    }
+    emitSucceeded();
+}
 } // namespace MMCZip

@@ -48,61 +48,62 @@ class ModMetadataIndex;
  */
 class ModUpdateCheckTask : public Task
 {
-	Q_OBJECT
-  public:
-	struct UpdateInfo {
-		QString currentFileName;
-		QString currentVersionId;
-		QString newVersionId;
-		QString name;
-		QString platform;
-		ModPlatform::DownloadItem item;
-	};
+    Q_OBJECT
+public:
+    struct UpdateInfo {
+        QString currentFileName;
+        QString currentVersionId;
+        QString newVersionId;
+        QString name;
+        QString platform;
+        ModPlatform::DownloadItem item;
+    };
 
-	/* `loader` is ignored for content that has no loaders (resource
-	 * packs, shader packs, data packs) - see the constructor. */
-	ModUpdateCheckTask(std::shared_ptr<ModMetadataIndex> index,
-					   QString mcVersion, QString loader,
-					   ModPlatform::ContentType contentType,
-					   QObject* parent = nullptr);
+    /* `loader` is ignored for content that has no loaders (resource
+     * packs, shader packs, data packs) - see the constructor. */
+    ModUpdateCheckTask(std::shared_ptr<ModMetadataIndex> index,
+                       QString mcVersion,
+                       QString loader,
+                       ModPlatform::ContentType contentType,
+                       QObject *parent = nullptr);
 
-	/* Whatever was found so far. Still meaningful after abort(): the
-	 * mods that were checked before the user gave up are checked, and
-	 * throwing that away would only make them do it again. */
-	QList<UpdateInfo> availableUpdates() const
-	{
-		return m_updates;
-	}
+    /* Whatever was found so far. Still meaningful after abort(): the
+     * mods that were checked before the user gave up are checked, and
+     * throwing that away would only make them do it again. */
+    QList<UpdateInfo> availableUpdates() const
+    {
+        return m_updates;
+    }
 
-	/* One lookup per tracked mod, so a large instance takes a while and
-	 * the progress dialog offers an Abort button for it. */
-	bool canAbort() const override
-	{
-		return true;
-	}
+    /* One lookup per tracked mod, so a large instance takes a while and
+     * the progress dialog offers an Abort button for it. */
+    bool canAbort() const override
+    {
+        return true;
+    }
 
-  public slots:
-	bool abort() override;
+public slots:
+    bool abort() override;
 
-  protected:
-	void executeTask() override;
+protected:
+    void executeTask() override;
 
-  private:
-	void onOneDone();
+private:
+    void onOneDone();
 
-	std::shared_ptr<ModMetadataIndex> m_index;
-	QString m_mcVersion;
-	QString m_loader;
-	ModPlatform::ContentType m_contentType = ModPlatform::ContentType::Mod;
-	QList<UpdateInfo> m_updates;
-	int m_pending = 0;
-	int m_total = 0;
-	int m_completed = 0;
+    std::shared_ptr<ModMetadataIndex> m_index;
+    QString m_mcVersion;
+    QString m_loader;
+    ModPlatform::ContentType m_contentType = ModPlatform::ContentType::Mod;
+    QList<UpdateInfo> m_updates;
+    int m_pending = 0;
+    int m_total = 0;
+    int m_completed = 0;
 
-	/* Lookups still in flight, so abort() can call them off. Guarded
-	 * pointers because a job deletes itself once it has reported. */
-	QList<QPointer<NetJob>> m_activeJobs;
-	/* Latched by abort(): replies still arrive but are dropped, and no
-	 * second verdict is given on top of the aborted one. */
-	bool m_aborted = false;
+    /* Lookups still in flight, so abort() can call them off. Guarded
+     * pointers because a job deletes itself once it has reported. */
+    QList<QPointer<NetJob>> m_activeJobs;
+    /* Latched by abort(): replies still arrive but are dropped, and no
+     * second verdict is given on top of the aborted one. */
+    bool m_aborted = false;
 };

@@ -25,33 +25,31 @@
 namespace Ftb
 {
 
-	class FilterModel : public QSortFilterProxyModel
-	{
-		Q_OBJECT
+class FilterModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
 
-	  public:
-		FilterModel(QObject* parent = Q_NULLPTR);
-		enum Sorting {
-			ByPlays,
-			ByInstalls,
-			ByName,
-		};
-		const QMap<QString, Sorting> getAvailableSortings();
-		QString translateCurrentSorting();
-		void setSorting(Sorting sorting);
-		Sorting getCurrentSorting();
-		void setSearchTerm(const QString& term);
+public:
+    FilterModel(QObject *parent = Q_NULLPTR);
+    enum Sorting {
+        ByPlays,
+        ByInstalls,
+        ByName,
+    };
+    const QMap<QString, Sorting> getAvailableSortings();
+    QString translateCurrentSorting();
+    void setSorting(Sorting sorting);
+    Sorting getCurrentSorting();
+    void setSearchTerm(const QString &term);
 
-	  protected:
-		bool filterAcceptsRow(int sourceRow,
-							  const QModelIndex& sourceParent) const override;
-		bool lessThan(const QModelIndex& left,
-					  const QModelIndex& right) const override;
+protected:
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 
-	  private:
-		QMap<QString, Sorting> sortings;
-		Sorting currentSorting;
-		QString searchTerm{""};
-	};
+private:
+    QMap<QString, Sorting> sortings;
+    Sorting currentSorting;
+    QString searchTerm{""};
+};
 
 } // namespace Ftb

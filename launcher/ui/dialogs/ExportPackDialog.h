@@ -32,7 +32,7 @@ class MinecraftInstance;
 
 namespace Ui
 {
-	class ExportPackDialog;
+class ExportPackDialog;
 }
 
 /*
@@ -58,52 +58,52 @@ namespace Ui
  */
 class ExportPackDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-  public:
-	/*
-	 * Which pack format is being written.
-	 *
-	 * Deliberately not the `"modrinth"` / `"curseforge"` strings the rest
-	 * of the launcher identifies providers by: this is not a lookup into
-	 * anything, it picks a layout and an output format, and a switch the
-	 * compiler checks is worth more here than a string that agrees with
-	 * ContentApi::id().
-	 */
-	enum class Format { ModrinthPack, CurseForgePack };
+public:
+    /*
+     * Which pack format is being written.
+     *
+     * Deliberately not the `"modrinth"` / `"curseforge"` strings the rest
+     * of the launcher identifies providers by: this is not a lookup into
+     * anything, it picks a layout and an output format, and a switch the
+     * compiler checks is worth more here than a string that agrees with
+     * ContentApi::id().
+     */
+    enum class Format {
+        ModrinthPack,
+        CurseForgePack
+    };
 
-	explicit ExportPackDialog(MinecraftInstance* instance,
-							  QWidget* parent = nullptr,
-							  Format format = Format::ModrinthPack);
-	~ExportPackDialog() override;
+    explicit ExportPackDialog(MinecraftInstance *instance, QWidget *parent = nullptr, Format format = Format::ModrinthPack);
+    ~ExportPackDialog() override;
 
-	void done(int result) override;
+    void done(int result) override;
 
-  private:
-	/* Ask where the pack should go, honouring the format's extension.
-	 * Empty when the user changed their mind. */
-	QString askForOutputPath(const QString& packName);
+private:
+    /* Ask where the pack should go, honouring the format's extension.
+     * Empty when the user changed their mind. */
+    QString askForOutputPath(const QString &packName);
 
-	/* Build the export task for the current format, already filled in
-	 * from the dialog. */
-	std::unique_ptr<Task> buildExportTask(const QString& packName,
-										  const QString& output);
+    /* Build the export task for the current format, already filled in
+     * from the dialog. */
+    std::unique_ptr<Task> buildExportTask(const QString &packName, const QString &output);
 
-	/* Persist what was typed, so the next export of this instance starts
-	 * where this one left off. */
-	void saveInputs();
+    /* Persist what was typed, so the next export of this instance starts
+     * where this one left off. */
+    void saveInputs();
 
-	QString ignoreFileName() const;
+    QString ignoreFileName() const;
 
-  private:
-	Ui::ExportPackDialog* ui;
-	MinecraftInstance* m_instance;
-	FileIgnoreProxy* m_proxyModel;
-	FastFileIconProvider m_icons;
-	const Format m_format;
+private:
+    Ui::ExportPackDialog *ui;
+    MinecraftInstance *m_instance;
+    FileIgnoreProxy *m_proxyModel;
+    FastFileIconProvider m_icons;
+    const Format m_format;
 
-  private slots:
-	/* The Ok button is only meaningful once the manifest can be
-	 * generated. */
-	void validate();
+private slots:
+    /* The Ok button is only meaningful once the manifest can be
+     * generated. */
+    void validate();
 };

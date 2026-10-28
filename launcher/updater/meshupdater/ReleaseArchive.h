@@ -25,20 +25,20 @@
 namespace ReleaseArchive
 {
 
-	struct Result {
-		bool ok = false;
-		QString error; //!< Set when ok is false.
-		int fileCount = 0;
-		qint64 byteCount = 0;
+struct Result {
+    bool ok = false;
+    QString error; //!< Set when ok is false.
+    int fileCount = 0;
+    qint64 byteCount = 0;
 
-		int linkCount = 0;
+    int linkCount = 0;
 
-		//! Everything extracted, links included, relative to the destination.
-		QStringList paths;
-	};
+    //! Everything extracted, links included, relative to the destination.
+    QStringList paths;
+};
 
-	Result extract(const QString& archivePath, const QString& destDir);
+Result extract(const QString &archivePath, const QString &destDir);
 
-	QString descendIntoSingleRoot(const QString& dir);
+QString descendIntoSingleRoot(const QString &dir);
 
 } // namespace ReleaseArchive

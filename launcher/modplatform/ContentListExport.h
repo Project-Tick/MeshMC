@@ -35,45 +35,52 @@
  */
 namespace ContentListExport
 {
-	enum class Format { Html, Markdown, PlainText, Json, Csv, Custom };
+enum class Format {
+    Html,
+    Markdown,
+    PlainText,
+    Json,
+    Csv,
+    Custom
+};
 
-	/* Which of the optional columns to include. The name is always
-	 * there, everything else is asked for. */
-	enum Field {
-		NoFields = 0,
-		Authors = 1 << 0,
-		Url = 1 << 1,
-		Version = 1 << 2,
-		FileName = 1 << 3
-	};
-	Q_DECLARE_FLAGS(Fields, Field)
+/* Which of the optional columns to include. The name is always
+ * there, everything else is asked for. */
+enum Field {
+    NoFields = 0,
+    Authors = 1 << 0,
+    Url = 1 << 1,
+    Version = 1 << 2,
+    FileName = 1 << 3
+};
+Q_DECLARE_FLAGS(Fields, Field)
 
-	struct Item {
-		QString name;
-		QString version;
-		QString url;
-		QString fileName;
-		/* The mod's own id as declared inside the archive, not the
-		 * platform's project id. Only reachable through the custom
-		 * template, which is also the only place it is any use. */
-		QString modId;
-		QStringList authors;
-	};
+struct Item {
+    QString name;
+    QString version;
+    QString url;
+    QString fileName;
+    /* The mod's own id as declared inside the archive, not the
+     * platform's project id. Only reachable through the custom
+     * template, which is also the only place it is any use. */
+    QString modId;
+    QStringList authors;
+};
 
-	/* One of the built-in formats. `fields` is ignored by Custom, which
-	 * has no way to express it - use the template overload instead. */
-	QString render(const QList<Item>& items, Format format, Fields fields);
+/* One of the built-in formats. `fields` is ignored by Custom, which
+ * has no way to express it - use the template overload instead. */
+QString render(const QList<Item> &items, Format format, Fields fields);
 
-	/* One line per item, with `{name}`, `{mod_id}`, `{url}`,
-	 * `{version}`, `{authors}` and `{filename}` substituted. */
-	QString render(const QList<Item>& items, const QString& lineTemplate);
+/* One line per item, with `{name}`, `{mod_id}`, `{url}`,
+ * `{version}`, `{authors}` and `{filename}` substituted. */
+QString render(const QList<Item> &items, const QString &lineTemplate);
 
-	/* The line a format's own output looks like, offered as the starting
-	 * point when the user switches to a custom template. */
-	QString exampleLine(Format format);
+/* The line a format's own output looks like, offered as the starting
+ * point when the user switches to a custom template. */
+QString exampleLine(Format format);
 
-	/* Suffix to propose in the save dialog. */
-	QString fileExtension(Format format);
+/* Suffix to propose in the save dialog. */
+QString fileExtension(Format format);
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ContentListExport::Fields)
