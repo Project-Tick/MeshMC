@@ -28,7 +28,7 @@ runs:
       with:
         arch: ${{ inputs.vcvars-arch }}
 
-    - name: Setup Java (MSVC)
+    - name: Setup Java
       uses: actions/setup-java@v6
       with:
         # NOTE(@YongDo-Hyun): We should probably stay on Zulu.

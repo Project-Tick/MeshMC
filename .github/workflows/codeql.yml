@@ -38,12 +38,12 @@ jobs:
         uses: ./.github/actions/setup-dependencies
         with:
           build-type: Debug
-          qt-version: 6.9.3
+          qt-version: 6.12.0
           qt-major: 6
 
       - name: Configure and Build
         run: |
-          cmake --preset linux -DLauncher_USE_PCH=OFF
+          cmake --preset linux
           cmake --build --preset linux --config Debug
 
       - name: Run tests
