@@ -7,13 +7,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: projtlauncher\n"
 "X-Crowdin-Project-ID: 863014\n"
-"X-Crowdin-Language: de\n"
+"X-Crowdin-Language: de-CH\n"
 "X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
 "X-Crowdin-File-ID: 95\n"
 "Project-Id-Version: projtlauncher\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
-"PO-Revision-Date: 2026-10-28 22:14\n"
+"Language-Team: German, Switzerland\n"
+"Language: de_CH\n"
+"PO-Revision-Date: 2026-10-28 22:16\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -43,7 +43,7 @@ msgstr "Unbekannter Mod-Typ: %1"
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to find version for %1 loader"
-msgstr "Konnte Version für %1 Loader nicht finden"
+msgstr "Keine Version für %1 Loader gefunden"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:257
 msgctxt "ATLauncher::PackInstallTask|"
@@ -90,7 +90,7 @@ msgstr "Mod herunterladen"
 #, qt-format
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Unsupported download type: %1"
-msgstr "Nicht unterstützter Download-Typ: %1"
+msgstr "Download-Typ %1 wird nicht unterstützt"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:573
 #, qt-format
@@ -111,7 +111,7 @@ msgstr "Mods werden entpackt..."
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:787
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Modpack wird installiert"
+msgstr "Modpack installieren"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:810
 msgctxt "ATLauncher::PackInstallTask|"
@@ -151,7 +151,7 @@ msgstr "Build Datum:"
 #: launcher/ui/dialogs/AboutDialog.ui:205
 msgctxt "AboutDialog|"
 msgid "Commit:"
-msgstr "Commit:"
+msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.ui:221
 msgctxt "AboutDialog|"
@@ -186,7 +186,7 @@ msgstr "Über Qt"
 #: launcher/ui/dialogs/AboutDialog.ui:348
 msgctxt "AboutDialog|"
 msgid "Close"
-msgstr "Schließen"
+msgstr "Schliessen"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:73
 msgctxt "AboutDialog|"
@@ -202,7 +202,7 @@ msgstr "Plattform"
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Commit: %1"
-msgstr "Commit: %1"
+msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.cpp:102
 #, qt-format
@@ -237,12 +237,12 @@ msgstr "Nicht markiert"
 #: launcher/minecraft/auth/AccountList.cpp:338
 msgctxt "AccountList|Account status"
 msgid "Offline"
-msgstr "Offline"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:341
 msgctxt "AccountList|Account status"
 msgid "Online"
-msgstr "Online"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:344
 msgctxt "AccountList|Account status"
@@ -277,7 +277,7 @@ msgstr "Typ"
 #: launcher/minecraft/auth/AccountList.cpp:394
 msgctxt "AccountList|"
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:396
 msgctxt "AccountList|"
@@ -501,7 +501,7 @@ msgstr "Authentifizierung fehlgeschlagen. Das Konto existiert nicht mehr."
 #: launcher/minecraft/auth/AccountTask.cpp:57
 msgctxt "AccountTask|"
 msgid "..."
-msgstr "..."
+msgstr ""
 
 #: launcher/minecraft/auth/AccountTask.cpp:105
 #, qt-format
@@ -650,7 +650,7 @@ msgstr "Gespeicherte Benutzerregel. Klicken Sie auf <b>Erneute Analyse</b> um si
 #: launcher/ui/pages/global/AppearancePage.ui:52
 msgctxt "AppearancePage|"
 msgid "&Theme:"
-msgstr "&Theme:"
+msgstr ""
 
 #: launcher/ui/pages/global/AppearancePage.ui:75
 msgctxt "AppearancePage|"
@@ -864,7 +864,7 @@ msgstr "Konnte die Versionsliste nicht herunterladen!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr "ATLauncher"
+msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
@@ -884,7 +884,7 @@ msgstr "Vorgang läuft..."
 #: launcher/ui/pages/instance/BackupPage.ui:27
 msgctxt "BackupPage|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.ui:32
 msgctxt "BackupPage|"
@@ -1003,7 +1003,7 @@ msgstr "Sicherung wiederherstellen..."
 #: launcher/ui/pages/instance/BackupPage.cpp:173
 msgctxt "BackupPage|"
 msgid "Restore Complete"
-msgstr "Restore Complete"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:174
 msgctxt "BackupPage|"
@@ -1128,12 +1128,12 @@ msgstr "Profiler gestoppt"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 msgctxt "BlockedModsDialog|"
 msgid "<b>Status</b>"
-msgstr "<b>Status</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:71
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:156
@@ -1144,7 +1144,7 @@ msgstr "Fehlend"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:74
 msgctxt "BlockedModsDialog|"
 msgid "Download"
-msgstr "Download"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:95
 msgctxt "BlockedModsDialog|"
@@ -1270,7 +1270,7 @@ msgstr "Lader"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:264
 msgctxt "ContentFilterWidget|"
 msgid "NeoForge"
-msgstr "NeoForge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:265
 msgctxt "ContentFilterWidget|"
@@ -1285,12 +1285,12 @@ msgstr "Stoff"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:267
 msgctxt "ContentFilterWidget|"
 msgid "Quilt"
-msgstr "Quilt"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:273
 msgctxt "ContentFilterWidget|"
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 msgctxt "ContentFilterWidget|"
@@ -1310,7 +1310,7 @@ msgstr "Altes Stoff"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 msgctxt "ContentFilterWidget|"
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 msgctxt "ContentFilterWidget|"
@@ -1335,7 +1335,7 @@ msgstr "Kunde"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:335
 msgctxt "ContentFilterWidget|"
 msgid "Server"
-msgstr "Server"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:349
 msgctxt "ContentFilterWidget|"
@@ -1370,12 +1370,12 @@ msgstr "Freigabe"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:376
 msgctxt "ContentFilterWidget|"
 msgid "Beta"
-msgstr "Beta"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:377
 msgctxt "ContentFilterWidget|"
 msgid "Alpha"
-msgstr "Alpha"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:382
 msgctxt "ContentFilterWidget|"
@@ -1433,7 +1433,7 @@ msgstr "von %1"
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:592
 msgctxt "ContentProviderPage|"
 msgid " [installed]"
-msgstr " [installed]"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:599
 msgctxt "ContentProviderPage|"
@@ -1491,7 +1491,7 @@ msgstr "Instanz kopieren"
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:74
 msgctxt "CopyInstanceDialog|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:90
 msgctxt "CopyInstanceDialog|"
@@ -1526,12 +1526,12 @@ msgstr "<h2 style='color: #cc0000;'>MeshMC ist fehlgeschlagen</h2><p>Ein unerwar
 #: launcher/crashreporter/CrashReportDialog.cpp:56
 msgctxt "CrashReportDialog|"
 msgid "QR Codes"
-msgstr "QR Codes"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:64
 msgctxt "CrashReportDialog|"
 msgid "[...truncated...]\n"
-msgstr "[...truncated...]\n"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:75
 #: launcher/crashreporter/CrashReportDialog.cpp:92
@@ -1547,7 +1547,7 @@ msgstr "Vollständiges Log"
 #: launcher/crashreporter/CrashReportDialog.cpp:94
 msgctxt "CrashReportDialog|"
 msgid "Paste.ee Log"
-msgstr "Paste.ee Log"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:105
 #, qt-format
@@ -1610,12 +1610,12 @@ msgstr "Speichern nach:"
 #: launcher/ui/dialogs/CreateShortcutDialog.ui:57
 msgctxt "CreateShortcutDialog|"
 msgid "Name:"
-msgstr "Name:"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.ui:64
 msgctxt "CreateShortcutDialog|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.ui:75
 msgctxt "CreateShortcutDialog|"
@@ -1672,7 +1672,7 @@ msgstr "%1 [%2] - Zuletzt abgespielt: %3"
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:91
 msgctxt "CreateShortcutDialog|"
 msgid "Desktop"
-msgstr "Desktop"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:95
 msgctxt "CreateShortcutDialog|"
@@ -1694,13 +1694,13 @@ msgstr "%1 (in Verwendung)"
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:192
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - Server %2"
-msgstr "%1 - Server %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:210
 msgctxt "CreateShortcutDialog|"
@@ -1715,7 +1715,7 @@ msgstr "Welt"
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:221
 msgctxt "CreateShortcutDialog|"
 msgid "server"
-msgstr "server"
+msgstr ""
 
 #: launcher/ui/widgets/CustomCommands.ui:32
 msgctxt "CustomCommands|"
@@ -1815,7 +1815,7 @@ msgstr "Strg+Zurück"
 #, qt-format
 msgctxt "DownloadContentDialog|"
 msgid "Download %1"
-msgstr "Download %1"
+msgstr ""
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:287
 #, qt-format
@@ -1984,17 +1984,17 @@ msgstr "Einstellungen"
 #: launcher/ui/dialogs/ExportListDialog.cpp:97
 msgctxt "ExportListDialog|"
 msgid "Format"
-msgstr "Format"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:99
 msgctxt "ExportListDialog|"
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:100
 msgctxt "ExportListDialog|"
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 msgctxt "ExportListDialog|"
@@ -2004,12 +2004,12 @@ msgstr "Einfacher Text"
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 msgctxt "ExportListDialog|"
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 msgctxt "ExportListDialog|"
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 msgctxt "ExportListDialog|"
@@ -2045,7 +2045,7 @@ msgstr "Optionale Info"
 #: launcher/ui/dialogs/ExportListDialog.cpp:135
 msgctxt "ExportListDialog|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:132
 #: launcher/ui/dialogs/ExportListDialog.cpp:136
@@ -2057,7 +2057,7 @@ msgstr "Autoren"
 #: launcher/ui/dialogs/ExportListDialog.cpp:137
 msgctxt "ExportListDialog|"
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:134
 #: launcher/ui/dialogs/ExportListDialog.cpp:138
@@ -2094,7 +2094,7 @@ msgstr "Abbrechen"
 #, qt-format
 msgctxt "ExportListDialog|"
 msgid "Export %1"
-msgstr "Export %1"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:336
 msgctxt "ExportListDialog|"
@@ -2109,17 +2109,17 @@ msgstr "&Beschreibung"
 #: launcher/ui/dialogs/ExportPackDialog.ui:31
 msgctxt "ExportPackDialog|"
 msgid "&Name:"
-msgstr "&Name:"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:44
 msgctxt "ExportPackDialog|"
 msgid "&Version:"
-msgstr "&Version:"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
@@ -2144,7 +2144,7 @@ msgstr "&Empfohlener Speicher:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr " MiB"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
@@ -2181,7 +2181,7 @@ msgstr "Abbrechen"
 #, qt-format
 msgctxt "ExportPackDialog|"
 msgid "Export %1"
-msgstr "Export %1"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:230
 msgctxt "ExportPackDialog|"
@@ -2475,7 +2475,7 @@ msgstr " von "
 #: launcher/ui/pages/modplatform/flame/FlamePage.h:51
 msgctxt "FlamePage|"
 msgid "CurseForge"
-msgstr "CurseForge"
+msgstr ""
 
 #: launcher/minecraft/update/FoldersTask.cpp:34
 msgctxt "FoldersTask|"
@@ -2510,7 +2510,7 @@ msgstr "Suchen und filtern ..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
@@ -2556,7 +2556,7 @@ msgstr "Unbekannt (%1)"
 #: launcher/minecraft/World.cpp:78
 msgctxt "GameType|"
 msgid "Undefined"
-msgstr "Undefiniert"
+msgstr "Nicht festgelegt"
 
 #: launcher/minecraft/auth/steps/GetSkinStep.cpp:33
 msgctxt "GetSkinStep|"
@@ -2591,12 +2591,12 @@ msgstr "Dateien"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
@@ -2616,7 +2616,7 @@ msgstr "Ausgewählte wiederherstellen"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:91
 msgctxt "GitVersioningPage|"
 msgid "Tag…"
-msgstr "Tag…"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:97
 msgctxt "GitVersioningPage|"
@@ -2647,7 +2647,7 @@ msgstr "Noch keine Versionshistorie. Snapshot jetzt um die Änderungen an dieser
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "HEAD: <b>%1</b>"
-msgstr "HEAD: <b>%1</b>"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:136
 #, qt-format
@@ -2664,13 +2664,13 @@ msgstr "Arbeitender Baum bereinigen"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr "Snapshot"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
@@ -2749,7 +2749,7 @@ msgstr "Datenpakete"
 #: launcher/ui/dialogs/IconPickerDialog.ui:14
 msgctxt "IconPickerDialog|"
 msgid "Pick icon"
-msgstr "Symbol auswählen"
+msgstr "Icon auswählen"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:72
 msgctxt "IconPickerDialog|"
@@ -2759,7 +2759,7 @@ msgstr "Symbol hinzufügen"
 #: launcher/ui/dialogs/IconPickerDialog.cpp:73
 msgctxt "IconPickerDialog|"
 msgid "Remove Icon"
-msgstr "Symbol entfernen"
+msgstr "Icon entfernen"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:88
 msgctxt "IconPickerDialog|"
@@ -2831,7 +2831,7 @@ msgstr "Loader installieren"
 #: launcher/ui/widgets/InstanceCardWidget.ui:27
 msgctxt "InstanceCardWidget|"
 msgid "&Name:"
-msgstr "&Name:"
+msgstr ""
 
 #: launcher/ui/widgets/InstanceCardWidget.ui:40
 msgctxt "InstanceCardWidget|"
@@ -3128,7 +3128,7 @@ msgstr "Instanz bearbeiten (%1)"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:29
 msgctxt "InstanceSettingsPage|"
 msgid "Open Global Settings"
-msgstr "Globale Einstellungen öffnen"
+msgstr "Öffne Globale Einstellungen"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:32
 msgctxt "InstanceSettingsPage|"
@@ -3323,12 +3323,12 @@ msgstr "Ordner (relativ zu .minecraft):"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:552
 msgctxt "InstanceSettingsPage|"
 msgid "datapacks"
-msgstr "datapacks"
+msgstr ""
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:341
 msgctxt "InstanceSettingsPage|"
 msgid "Select a Java version"
-msgstr "Java-Version auswählen"
+msgstr "Wähle eine Java-Version"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:361
 msgctxt "InstanceSettingsPage|"
@@ -3376,7 +3376,7 @@ msgstr "Hilfe"
 #: launcher/ui/InstanceWindow.cpp:101
 msgctxt "InstanceWindow|"
 msgid "Launch Offline"
-msgstr "Offline starten"
+msgstr "Offline spielen"
 
 #: launcher/ui/InstanceWindow.cpp:107
 msgctxt "InstanceWindow|"
@@ -3437,7 +3437,7 @@ msgstr "Anbieter"
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:71
 msgctxt "JavaDownloadDialog|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:78
 msgctxt "JavaDownloadDialog|"
@@ -3452,7 +3452,7 @@ msgstr "Wählen Sie einen Java-Provider, Version und Build zum Download."
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:108
 msgctxt "JavaDownloadDialog|"
 msgid "Download"
-msgstr "Download"
+msgstr ""
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:112
 msgctxt "JavaDownloadDialog|"
@@ -3783,7 +3783,7 @@ msgstr "Installierte Java-Laufzeiten"
 #: launcher/ui/pages/global/JavaPage.ui:287
 msgctxt "JavaPage|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/ui/pages/global/JavaPage.ui:292
 msgctxt "JavaPage|"
@@ -3818,7 +3818,7 @@ msgstr "Ausgewählte verwenden"
 #: launcher/ui/pages/global/JavaPage.cpp:145
 msgctxt "JavaPage|"
 msgid "Select a Java version"
-msgstr "Java-Version auswählen"
+msgstr "Wähle eine Java-Version"
 
 #: launcher/ui/pages/global/JavaPage.cpp:159
 msgctxt "JavaPage|"
@@ -4172,7 +4172,7 @@ msgstr "Nach Spielversion sortieren"
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:105
 msgctxt "LegacyFTB::ListModel|"
 msgid "Public Modpack"
-msgstr "Öffentliches Modpack"
+msgstr "Öffentliche Mod-Pakete"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:107
 msgctxt "LegacyFTB::ListModel|"
@@ -4220,7 +4220,7 @@ msgstr "Entpacke Modpack"
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:142
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Modpack wird installiert"
+msgstr "Installiere Modpack"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:148
 msgctxt "LegacyFTB::PackInstallTask|"
@@ -4265,7 +4265,7 @@ msgstr "Ausgewähltes Modpack entfernen"
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.ui:109
 msgctxt "LegacyFTB::Page|"
 msgid "Version selected:"
-msgstr "Ausgewählte Version:"
+msgstr "Gewählte Version:"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:230
 msgctxt "LegacyFTB::Page|"
@@ -4304,7 +4304,7 @@ msgstr "Bist du sicher das du das Modpack %1 entfernen möchten?"
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.h:59
 msgctxt "LegacyFTB::Page|"
 msgid "FTB Legacy"
-msgstr "FTB Legacy"
+msgstr ""
 
 #: launcher/minecraft/legacy/LegacyInstance.cpp:218
 msgctxt "LegacyInstance|"
@@ -4432,7 +4432,7 @@ msgstr "Aktuell halten"
 #: launcher/ui/pages/instance/LogPage.ui:70
 msgctxt "LogPage|"
 msgid "Wrap lines"
-msgstr "Zeilenumbruch"
+msgstr "Zeilensprung"
 
 #: launcher/ui/pages/instance/LogPage.ui:93
 msgctxt "LogPage|"
@@ -4442,7 +4442,7 @@ msgstr "Kopiere das gesamte Log in die Zwischenablage"
 #: launcher/ui/pages/instance/LogPage.ui:96
 msgctxt "LogPage|"
 msgid "&Copy"
-msgstr "&Kopieren"
+msgstr "Kopieren"
 
 #: launcher/ui/pages/instance/LogPage.ui:103
 msgctxt "LogPage|"
@@ -4487,7 +4487,7 @@ msgstr "Zum Ende"
 #: launcher/ui/pages/instance/LogPage.h:46
 msgctxt "LogPage|"
 msgid "Minecraft Log"
-msgstr "Minecraft-Log"
+msgstr "Minecraft Protokoll"
 
 #. Message displayed on instance exit
 #: launcher/LoggedProcess.cpp:119
@@ -4678,7 +4678,7 @@ msgstr "Bringen Sie die Instanz, die Sie zuletzt in den Papierkorb geschickt hab
 #: launcher/ui/MainWindow.ui:289
 msgctxt "MainWindow|"
 msgid "Launcher Root"
-msgstr "Launcher Root"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:292
 msgctxt "MainWindow|"
@@ -4708,7 +4708,7 @@ msgstr "Zentralen Mod-Ordner in einem Dateimanager öffnen."
 #: launcher/ui/MainWindow.ui:331
 msgctxt "MainWindow|"
 msgid "Skins"
-msgstr "Skins"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:334
 msgctxt "MainWindow|"
@@ -4768,7 +4768,7 @@ msgstr "Öffnen Sie den Instanz-Icon-Ordner in einem Datei-Browser."
 #: launcher/ui/MainWindow.ui:415
 msgctxt "MainWindow|"
 msgid "Logs"
-msgstr "Logs"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:418
 msgctxt "MainWindow|"
@@ -4820,7 +4820,7 @@ msgstr "Es ist ein fluffiges Kätzchen :3"
 #: launcher/ui/MainWindow.ui:491
 msgctxt "MainWindow|"
 msgid "Manage Accounts"
-msgstr "Konten verwalten"
+msgstr "Verwalte Konten"
 
 #: launcher/ui/MainWindow.ui:494
 msgctxt "MainWindow|"
@@ -4896,7 +4896,7 @@ msgstr "Starten"
 #: launcher/ui/MainWindow.ui:589
 msgctxt "MainWindow|"
 msgid "Launch the selected instance."
-msgstr "Starte die ausgewählte Instanz."
+msgstr "Die ausgewählte Instanz starten."
 
 #: launcher/ui/MainWindow.ui:600
 msgctxt "MainWindow|"
@@ -4916,12 +4916,12 @@ msgstr ""
 #: launcher/ui/MainWindow.ui:617 launcher/ui/MainWindow.cpp:944
 msgctxt "MainWindow|"
 msgid "Launch Offline"
-msgstr "Offline starten"
+msgstr "Offline spielen"
 
 #: launcher/ui/MainWindow.ui:620
 msgctxt "MainWindow|"
 msgid "Launch the selected instance in offline mode."
-msgstr "Starte die ausgewählte Instanz im Offline-Modus."
+msgstr "Die ausgewählte Instanz im Offline-Modus starten."
 
 #: launcher/ui/MainWindow.ui:631
 msgctxt "MainWindow|"
@@ -5052,17 +5052,17 @@ msgstr "Exportieren Sie die ausgewählte Instanz in unterstützte Formate."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
-msgstr "Modrinth (mrpack)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr "CurseForge (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
@@ -5077,7 +5077,7 @@ msgstr "Ausgewählte Instanz löschen."
 #: launcher/ui/MainWindow.ui:849
 msgctxt "MainWindow|"
 msgid "Copy Instance"
-msgstr "Instanz kopieren"
+msgstr "Kopiere Instanz"
 
 #: launcher/ui/MainWindow.ui:852
 msgctxt "MainWindow|"
@@ -5108,7 +5108,7 @@ msgstr "Öffne den Bug-Tracker, um einen Fehler mit %1 zu melden."
 #: launcher/ui/MainWindow.ui:891
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr "Discord"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:894
 #, qt-format
@@ -5119,7 +5119,7 @@ msgstr "Öffne %1's Discord Chat."
 #: launcher/ui/MainWindow.ui:905
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr "Reddit"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:908
 #, qt-format
@@ -5130,7 +5130,7 @@ msgstr "Öffne %1's Subreddit."
 #: launcher/ui/MainWindow.ui:919
 msgctxt "MainWindow|"
 msgid "Plugins"
-msgstr "Plugins"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:922
 msgctxt "MainWindow|"
@@ -5185,7 +5185,7 @@ msgstr "Hilfe mit %1 oder Minecraft bekommen."
 #: launcher/ui/MainWindow.cpp:1150
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr "Profiles"
+msgstr ""
 
 #: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
 msgctxt "MainWindow|"
@@ -5473,7 +5473,7 @@ msgstr "Aus Datei aktualisieren"
 #: launcher/ui/pages/instance/ManagedPackPage.ui:183
 msgctxt "ManagedPackPage|"
 msgid "Changelog"
-msgstr "Changelog"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:189
 msgctxt "ManagedPackPage|"
@@ -5494,7 +5494,7 @@ msgstr "Website: <a href=%1>%2</a>    | Pack-ID: %3    | Version-ID: %4"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:323
 msgctxt "ManagedPackPage|"
 msgid "URL:"
-msgstr "URL:"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:324
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:547
@@ -5577,7 +5577,7 @@ msgstr "CurseForge Paket"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:745
 msgctxt "ManagedPackPage|"
 msgid "Modpack"
-msgstr "Modpack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:750
 msgctxt "ManagedPackPage|"
@@ -5756,7 +5756,7 @@ msgstr "MeshMC-Protokolle"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr "Reload"
+msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
@@ -5924,12 +5924,12 @@ msgstr "&Symbole:"
 #: launcher/ui/pages/global/MeshMCPage.ui:191
 msgctxt "MeshMCPage|"
 msgid "&Skins:"
-msgstr "&Skins:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:211
 msgctxt "MeshMCPage|"
 msgid "&Java:"
-msgstr "&Java:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:228
 msgctxt "MeshMCPage|"
@@ -6102,7 +6102,7 @@ msgstr "Zusätzlicher Instanzordner"
 #: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
-msgstr "Duplicate directory"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
@@ -6875,7 +6875,7 @@ msgstr ""
 #: launcher/meta/Index.cpp:76
 msgctxt "Meta::Index|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:865
 msgctxt "MinecraftInstance|"
@@ -6890,7 +6890,7 @@ msgstr "<ZUGANGS TOKEN>"
 #: launcher/minecraft/MinecraftInstance.cpp:869
 msgctxt "MinecraftInstance|"
 msgid "<CLIENT TOKEN>"
-msgstr "<CLIENT TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
@@ -6906,7 +6906,7 @@ msgstr "kaputt"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -6983,7 +6983,7 @@ msgstr "Speichere die Spielzeit aller Instanzen"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
@@ -7023,12 +7023,12 @@ msgstr "Datei"
 #: launcher/minecraft/mod/ModFolderModel.cpp:545
 msgctxt "ModFolderModel|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/minecraft/mod/ModFolderModel.cpp:547
 msgctxt "ModFolderModel|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/minecraft/mod/ModFolderModel.cpp:549
 msgctxt "ModFolderModel|"
@@ -7058,7 +7058,7 @@ msgstr "Zeit und Datum, wann diese Mod zuletzt verändert oder hinzugefügt wurd
 #: launcher/ui/pages/instance/ModFolderPage.ui:39
 msgctxt "ModFolderPage|"
 msgid "Filter:"
-msgstr "Filter:"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:75
 msgctxt "ModFolderPage|"
@@ -7123,7 +7123,7 @@ msgstr "Ordner ö&ffnen"
 #: launcher/ui/pages/instance/ModFolderPage.ui:146
 msgctxt "ModFolderPage|"
 msgid "&Download"
-msgstr "&Download"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:149
 msgctxt "ModFolderPage|"
@@ -7213,7 +7213,7 @@ msgstr "%1 auswählen"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr "No Mod Loader"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
@@ -7391,7 +7391,7 @@ msgstr "%1 Mod(s) haben neuere kompatible Versionen. Wählen Sie die Versionen, 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
@@ -7465,7 +7465,7 @@ msgstr "Fehler beim Kopieren der Dateien"
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:208
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Installing modpack"
+msgstr ""
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
@@ -7541,12 +7541,12 @@ msgstr "Auftrag '%1' scheiterte bei:\n"
 #: launcher/ui/dialogs/NewComponentDialog.ui:17
 msgctxt "NewComponentDialog|"
 msgid "Add Empty Component"
-msgstr "Leere Komponente hinzufügen"
+msgstr "Füge Platzhalter hinzu"
 
 #: launcher/ui/dialogs/NewComponentDialog.ui:30
 msgctxt "NewComponentDialog|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 msgctxt "NewComponentDialog|"
@@ -7572,7 +7572,7 @@ msgstr "&Ordner:"
 #: launcher/ui/dialogs/NewInstanceDialog.ui:65
 msgctxt "NewInstanceDialog|"
 msgid "&Name:"
-msgstr "&Name:"
+msgstr ""
 
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:73
 msgctxt "NewInstanceDialog|"
@@ -7638,7 +7638,7 @@ msgstr "Offiziell"
 #, qt-format
 msgctxt "NewsViewerDialog|"
 msgid "Feed %1"
-msgstr "Feed %1"
+msgstr ""
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:155
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:162
@@ -7776,7 +7776,7 @@ msgstr "Konnte %1 nicht löschen: %2"
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:212
 msgctxt "OtherLogsPage|"
 msgid "Clean up"
-msgstr "Bereinigen"
+msgstr "Löschen"
 
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:214
 msgctxt "OtherLogsPage|"
@@ -7812,12 +7812,12 @@ msgstr "Andere Logs"
 #: launcher/minecraft/PackProfile.cpp:820
 msgctxt "PackProfile|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/minecraft/PackProfile.cpp:822
 msgctxt "PackProfile|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/ui/pagedialog/PageDialog.cpp:50
 msgctxt "PageDialog|"
@@ -7857,7 +7857,7 @@ msgstr "<html><head/><body><p><a href=\"https://paste.ee\">Einfügen. e</a> wird
 #: launcher/ui/pages/global/PasteEEPage.h:43
 msgctxt "PasteEEPage|"
 msgid "Log Upload"
-msgstr "Log hochladen"
+msgstr "Protokolldatei hochladen"
 
 #: launcher/net/PasteUpload.cpp:139
 msgctxt "PasteUpload|"
@@ -7931,7 +7931,7 @@ msgstr "Signatur"
 #: launcher/ui/dialogs/PluginsDialog.ui:111
 msgctxt "PluginsDialog|"
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:211
 msgctxt "PluginsDialog|"
@@ -7990,18 +7990,18 @@ msgstr "Profil auswählen"
 #: launcher/ui/dialogs/ProfileSelectDialog.ui:38
 msgctxt "ProfileSelectDialog|"
 msgid "Use as default?"
-msgstr "Als Standard verwenden?"
+msgstr "Als Voreinstellung benutzen?"
 
 #: launcher/ui/dialogs/ProfileSelectDialog.ui:45
 msgctxt "ProfileSelectDialog|"
 msgid "Use as default for this instance only?"
-msgstr "Nur für diese Instanz als Standard verwenden?"
+msgstr "Nur für diese Instanz als Voreinstellung benutzen?"
 
 #: launcher/ui/dialogs/ProfileSelectDialog.cpp:46
 #: launcher/ui/dialogs/ProfileSelectDialog.cpp:48
 msgctxt "ProfileSelectDialog|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/ui/dialogs/ProfileSelectDialog.cpp:55
 #, qt-format
@@ -8138,7 +8138,7 @@ msgstr "Überspringen"
 #, qt-format
 msgctxt "ProjectItemDelegate|"
 msgid "%1 [installed]"
-msgstr "%1 [installed]"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:42
 msgctxt "ProxyPage|"
@@ -8168,12 +8168,12 @@ msgstr "&Keiner"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 msgctxt "ProxyPage|"
 msgid "SOC&KS5"
-msgstr "SOC&KS5"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 msgctxt "ProxyPage|"
 msgid "H&TTP"
-msgstr "H&TTP"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:107
 msgctxt "ProxyPage|"
@@ -8203,7 +8203,7 @@ msgstr "Hinweis: Der Proxy-Benutzername und das Passwort werden im Klartext in d
 #: launcher/ui/pages/global/ProxyPage.h:44
 msgctxt "ProxyPage|"
 msgid "Proxy"
-msgstr "Proxy"
+msgstr ""
 
 #: launcher/InstanceImportTask.cpp:1806
 msgctxt "QObject|"
@@ -8324,7 +8324,7 @@ msgstr "Daten für %1"
 #: launcher/minecraft/Component.cpp:320
 msgctxt "QObject|"
 msgid "Patch is not loaded yet."
-msgstr "Patch ist noch nicht geladen."
+msgstr "Der Patch ist noch nicht geladen."
 
 #: launcher/minecraft/MojangVersionFormat.cpp:170
 #, qt-format
@@ -8558,25 +8558,25 @@ msgstr "Nach Neuestem sortieren"
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 B"
-msgstr "%1 B"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:14
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 KiB"
-msgstr "%1 KiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:17
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 MiB"
-msgstr "%1 MiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:19
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 GiB"
-msgstr "%1 GiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.h:32
 msgctxt "QObject|"
@@ -8586,7 +8586,7 @@ msgstr "Versionshistorie"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Git Versioning"
-msgstr "Git Versioning"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:133
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:234
@@ -8738,12 +8738,12 @@ msgstr "Erzwingt Minecraft, die NVIDIA diskrete GPU auf Optimus Laptops zu verwe
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.h:40
 msgctxt "QObject|"
 msgid "Offline Wiki"
-msgstr "Offline Wiki"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:303
 msgctxt "QObject|"
 msgid "System Tray"
-msgstr "System Tray"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:308
 msgctxt "QObject|"
@@ -8895,12 +8895,12 @@ msgstr "In MeshMC eingebaut"
 #: launcher/ui/dialogs/PluginsDialog.cpp:82
 msgctxt "QObject|"
 msgid "Name:"
-msgstr "Name:"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:83
 msgctxt "QObject|"
 msgid "Version:"
-msgstr "Version:"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:84
 msgctxt "QObject|"
@@ -8940,7 +8940,7 @@ msgstr "Unterschriftendetail:"
 #: launcher/ui/dialogs/PluginsDialog.cpp:116
 msgctxt "QObject|"
 msgid " (optional)"
-msgstr " (optional)"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:119
 msgctxt "QObject|"
@@ -8952,7 +8952,7 @@ msgstr "Abhängigkeiten:"
 #: launcher/ui/dialogs/PluginsDialog.cpp:130
 msgctxt "QObject|"
 msgid "Status:"
-msgstr "Status:"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:128
 msgctxt "QObject|"
@@ -9020,22 +9020,22 @@ msgstr "Ein helles Fusion-basiertes Theme mit grünen Akzenten"
 #: launcher/ui/themes/SystemTheme.cpp:70
 msgctxt "QObject|"
 msgid "Windows Vista"
-msgstr "Windows Vista"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:72
 msgctxt "QObject|"
 msgid "Windows 9x"
-msgstr "Windows 9x"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:74
 msgctxt "QObject|"
 msgid "Windows 11"
-msgstr "Windows 11"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:76
 msgctxt "QObject|"
 msgid "System"
-msgstr "System"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:85
 msgctxt "QObject|"
@@ -9295,7 +9295,7 @@ msgstr "Der <a href=\"%1\">Link zum hochgeladenen Log</a> wurde in die Zwischena
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:417
 msgctxt "ScreenshotsPage|"
 msgid "Are you sure?"
-msgstr "Bist du sicher?"
+msgstr "Bist du dir sicher?"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:418
 msgctxt "ScreenshotsPage|"
@@ -9378,7 +9378,7 @@ msgstr "Ausführung der Aufgabe %1 von %2"
 #: launcher/ui/pages/instance/ServersPage.cpp:282
 msgctxt "ServersModel|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/ui/pages/instance/ServersPage.cpp:284
 msgctxt "ServersModel|"
@@ -9393,7 +9393,7 @@ msgstr "Verzögerungszeit"
 #: launcher/ui/pages/instance/ServersPage.ui:72
 msgctxt "ServersPage|"
 msgid "&Name"
-msgstr "&Name"
+msgstr ""
 
 #: launcher/ui/pages/instance/ServersPage.ui:85
 msgctxt "ServersPage|"
@@ -9438,12 +9438,12 @@ msgstr "Entfernen"
 #: launcher/ui/pages/instance/ServersPage.ui:165
 msgctxt "ServersPage|"
 msgid "Move Up"
-msgstr "Nach oben"
+msgstr "Bewege nach oben"
 
 #: launcher/ui/pages/instance/ServersPage.ui:170
 msgctxt "ServersPage|"
 msgid "Move Down"
-msgstr "Nach unten"
+msgstr "Bewege nach unten"
 
 #: launcher/ui/pages/instance/ServersPage.ui:175
 msgctxt "ServersPage|"
@@ -10093,12 +10093,12 @@ msgstr "Alte Entwicklungsversionen"
 #: launcher/ui/pages/modplatform/VanillaPage.ui:84
 msgctxt "VanillaPage|"
 msgid "Betas"
-msgstr "Betas"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:94
 msgctxt "VanillaPage|"
 msgid "Alphas"
-msgstr "Alphas"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:104
 msgctxt "VanillaPage|"
@@ -10113,7 +10113,7 @@ msgstr "Aktualisieren"
 #: launcher/ui/pages/modplatform/VanillaPage.h:45
 msgctxt "VanillaPage|"
 msgid "Vanilla"
-msgstr "Vanilla"
+msgstr ""
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:158
 #, qt-format
@@ -10240,12 +10240,12 @@ msgstr "Herunterladen von Java %1fehlgeschlagen: %2"
 #: launcher/ui/widgets/VersionListView.cpp:30
 msgctxt "VersionListView|"
 msgid "No versions are currently available."
-msgstr "Derzeit sind keine Versionen verfügbar."
+msgstr "Keine Versionen sind momentan verfügbar."
 
 #: launcher/ui/pages/instance/VersionPage.ui:60
 msgctxt "VersionPage|"
 msgid "Filter:"
-msgstr "Filter:"
+msgstr ""
 
 #: launcher/ui/pages/instance/VersionPage.ui:82
 msgctxt "VersionPage|"
@@ -10265,7 +10265,7 @@ msgstr "Version des ausgewählten Pakets ändern."
 #: launcher/ui/pages/instance/VersionPage.ui:131
 msgctxt "VersionPage|"
 msgid "Move up"
-msgstr "Nach oben"
+msgstr "Bewege nach oben"
 
 #: launcher/ui/pages/instance/VersionPage.ui:134
 msgctxt "VersionPage|"
@@ -10275,7 +10275,7 @@ msgstr "Lässt das ausgewählte Paket früher angewendet werden."
 #: launcher/ui/pages/instance/VersionPage.ui:139
 msgctxt "VersionPage|"
 msgid "Move down"
-msgstr "Nach unten"
+msgstr "Bewege nach unten"
 
 #: launcher/ui/pages/instance/VersionPage.ui:142
 msgctxt "VersionPage|"
@@ -10400,7 +10400,7 @@ msgstr "Öffne den .minecraft Ordner der Instanz."
 #: launcher/ui/pages/instance/VersionPage.ui:240
 msgctxt "VersionPage|"
 msgid "Open libraries"
-msgstr "Bibliotheken öffnen"
+msgstr "Programmbibliotheken öffnen"
 
 #: launcher/ui/pages/instance/VersionPage.ui:243
 msgctxt "VersionPage|"
@@ -10505,17 +10505,17 @@ msgstr "Fehler beim Aktualisieren der Instanz"
 #: launcher/ui/pages/instance/VersionPage.h:43
 msgctxt "VersionPage|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:106
 msgctxt "VersionProxyModel|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:108
 msgctxt "VersionProxyModel|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:110
 msgctxt "VersionProxyModel|"
@@ -10525,7 +10525,7 @@ msgstr "Versionszweig"
 #: launcher/VersionProxyModel.cpp:112
 msgctxt "VersionProxyModel|"
 msgid "Type"
-msgstr "Typ"
+msgstr "Art"
 
 #: launcher/VersionProxyModel.cpp:114
 msgctxt "VersionProxyModel|"
@@ -10555,7 +10555,7 @@ msgstr "Minecraft-Version"
 #: launcher/VersionProxyModel.cpp:128
 msgctxt "VersionProxyModel|"
 msgid "The version's branch"
-msgstr "Der Versionszweig"
+msgstr "Der Versions-Branch"
 
 #: launcher/VersionProxyModel.cpp:130
 msgctxt "VersionProxyModel|"
@@ -10575,7 +10575,7 @@ msgstr "Dateisystempfad zu dieser Version"
 #: launcher/VersionProxyModel.cpp:136
 msgctxt "VersionProxyModel|"
 msgid "Release date of this version"
-msgstr "Veröffentlichungsdatum dieser Version"
+msgstr "Veröffentlichungsdatum für diese Version"
 
 #: launcher/VersionProxyModel.cpp:158
 #, qt-format
@@ -10596,7 +10596,7 @@ msgstr "Neueste"
 #: launcher/ui/dialogs/VersionSelectDialog.cpp:89
 msgctxt "VersionSelectDialog|"
 msgid "Choose Version"
-msgstr "Version auswählen"
+msgstr "Wähle Version"
 
 #: launcher/ui/dialogs/VersionSelectDialog.cpp:90
 msgctxt "VersionSelectDialog|"
@@ -10645,7 +10645,7 @@ msgstr "<p><i>Artikel nicht gefunden: %1</i></p>"
 #: launcher/minecraft/WorldList.cpp:238
 msgctxt "WorldList|"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: launcher/minecraft/WorldList.cpp:240
 msgctxt "WorldList|"
@@ -10670,7 +10670,7 @@ msgstr "Der Name der Welt."
 #: launcher/minecraft/WorldList.cpp:254
 msgctxt "WorldList|"
 msgid "Game mode of the world."
-msgstr "Spielmodus der Welt."
+msgstr "Game-Mode der Welt."
 
 #: launcher/minecraft/WorldList.cpp:256
 msgctxt "WorldList|"
@@ -10710,7 +10710,7 @@ msgstr "Entfernen"
 #: launcher/ui/pages/instance/WorldListPage.ui:117
 msgctxt "WorldListPage|"
 msgid "MCEdit"
-msgstr "MCEdit"
+msgstr "Bearbeiten"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:122
 msgctxt "WorldListPage|"
@@ -10809,7 +10809,7 @@ msgstr "Minecraft Welt ZIP-Datei (*.zip)"
 #: launcher/ui/pages/instance/WorldListPage.cpp:419
 msgctxt "WorldListPage|"
 msgid "Copy World"
-msgstr "Welt kopieren"
+msgstr "Kopiere Welt"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:420
 msgctxt "WorldListPage|"
