@@ -27,6 +27,7 @@
 
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/ProgressDialog.h"
+#include <KLocalizedString>
 
 LegacyUpgradePage::LegacyUpgradePage(InstancePtr inst, QWidget* parent)
 	: QWidget(parent), ui(new Ui::LegacyUpgradePage), m_inst(inst)
@@ -42,12 +43,12 @@ LegacyUpgradePage::~LegacyUpgradePage()
 void LegacyUpgradePage::runModalTask(Task* task)
 {
 	connect(task, &Task::failed, [this](QString reason) {
-		CustomMessageBox::selectable(this, tr("Error"), reason,
+		CustomMessageBox::selectable(this, i18n("Error"), reason,
 									 QMessageBox::Warning)
 			->show();
 	});
 	ProgressDialog loadDialog(this);
-	loadDialog.setSkipButton(true, tr("Abort"));
+	loadDialog.setSkipButton(true, i18n("Abort"));
 	if (loadDialog.execWithTask(task) == QDialog::Accepted) {
 		m_container->requestClose();
 	}
@@ -55,7 +56,7 @@ void LegacyUpgradePage::runModalTask(Task* task)
 
 void LegacyUpgradePage::on_upgradeButton_clicked()
 {
-	QString newName = tr("%1 (Migrated)").arg(m_inst->name());
+	QString newName = i18n("%1 (Migrated)", m_inst->name());
 	auto upgradeTask = new LegacyUpgradeTask(m_inst);
 	upgradeTask->setName(newName);
 	upgradeTask->setGroup(

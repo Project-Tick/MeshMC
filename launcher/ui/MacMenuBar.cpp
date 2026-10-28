@@ -33,6 +33,7 @@
 #include "Application.h"
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
+#include <KLazyLocalizedString>
 
 namespace
 {
@@ -59,7 +60,7 @@ namespace
 	}
 
 	struct MenuSpec {
-		const char* title;          // untranslated, context kContext
+		KLazyLocalizedString title;          // untranslated, context kContext
 		const char* const* entries; // nullptr-terminated
 	};
 
@@ -133,14 +134,14 @@ namespace
 
 	/// Everything left of the Window menu, in the order macOS expects.
 	const MenuSpec kLeadingMenus[] = {
-		{QT_TRANSLATE_NOOP("MacMenuBar", "&File"), kFileEntries},
-		{QT_TRANSLATE_NOOP("MacMenuBar", "&Instance"), kInstanceEntries},
-		{QT_TRANSLATE_NOOP("MacMenuBar", "F&olders"), kFolderEntries},
-		{QT_TRANSLATE_NOOP("MacMenuBar", "&View"), kViewEntries},
+		{kli18nc("@title:menu", "&File"), kFileEntries},
+		{kli18nc("@title:menu", "&Instance"), kInstanceEntries},
+		{kli18nc("@title:menu", "F&olders"), kFolderEntries},
+		{kli18nc("@title:menu", "&View"), kViewEntries},
 	};
 
 	/// Help sits last, after Window and Accounts.
-	const MenuSpec kHelpMenu = {QT_TRANSLATE_NOOP("MacMenuBar", "&Help"),
+	const MenuSpec kHelpMenu = {kli18nc("@title:menu", "&Help"),
 								kHelpEntries};
 
 	/**

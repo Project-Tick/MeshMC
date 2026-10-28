@@ -28,6 +28,7 @@
 #include <QUrl>
 
 #include "modplatform/flame/FlameApi.h"
+#include <KLocalizedString>
 
 BlockedModsDialog::BlockedModsDialog(QWidget* parent, const QString& title,
 									 const QString& text,
@@ -57,8 +58,8 @@ BlockedModsDialog::BlockedModsDialog(QWidget* parent, const QString& title,
 	grid->setColumnStretch(2, 0); // button
 
 	// Header row
-	auto* headerName = new QLabel(tr("<b>Mod</b>"), scrollWidget);
-	auto* headerStatus = new QLabel(tr("<b>Status</b>"), scrollWidget);
+	auto* headerName = new QLabel(i18n("<b>Mod</b>"), scrollWidget);
+	auto* headerStatus = new QLabel(i18n("<b>Status</b>"), scrollWidget);
 	grid->addWidget(headerName, 0, 0);
 	grid->addWidget(headerStatus, 0, 1);
 
@@ -68,10 +69,10 @@ BlockedModsDialog::BlockedModsDialog(QWidget* parent, const QString& title,
 		auto* nameLabel = new QLabel(m_mods[i].fileName, scrollWidget);
 		nameLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
-		auto* statusLabel = new QLabel(tr("Missing"), scrollWidget);
+		auto* statusLabel = new QLabel(i18n("Missing"), scrollWidget);
 		statusLabel->setStyleSheet("color: #cc3333; font-weight: bold;");
 
-		auto* downloadBtn = new QPushButton(tr("Download"), scrollWidget);
+		auto* downloadBtn = new QPushButton(i18n("Download"), scrollWidget);
 		connect(downloadBtn, &QPushButton::clicked, this,
 				[this, i]() { openModDownload(i); });
 
@@ -92,7 +93,7 @@ BlockedModsDialog::BlockedModsDialog(QWidget* parent, const QString& title,
 	// Button box at bottom
 	m_buttons = new QDialogButtonBox(
 		QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-	m_buttons->button(QDialogButtonBox::Ok)->setText(tr("Continue"));
+	m_buttons->button(QDialogButtonBox::Ok)->setText(i18n("Continue"));
 	m_buttons->button(QDialogButtonBox::Ok)->setEnabled(false);
 	connect(m_buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -148,12 +149,12 @@ void BlockedModsDialog::updateModStatus()
 	for (int i = 0; i < m_mods.size(); i++) {
 		if (m_mods[i].found) {
 			m_rows[i].statusLabel->setText(QString::fromUtf8("\u2714 ") +
-										   tr("Found"));
+										   i18n("Found"));
 			m_rows[i].statusLabel->setStyleSheet(
 				"color: #33aa33; font-weight: bold;");
 			m_rows[i].downloadButton->setEnabled(false);
 		} else {
-			m_rows[i].statusLabel->setText(tr("Missing"));
+			m_rows[i].statusLabel->setText(i18n("Missing"));
 			m_rows[i].statusLabel->setStyleSheet(
 				"color: #cc3333; font-weight: bold;");
 			m_rows[i].downloadButton->setEnabled(true);

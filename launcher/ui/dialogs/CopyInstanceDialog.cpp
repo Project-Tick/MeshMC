@@ -32,6 +32,7 @@
 #include "tasks/Task.h"
 #include "BaseInstance.h"
 #include "InstanceList.h"
+#include <KLocalizedString>
 
 CopyInstanceDialog::CopyInstanceDialog(InstancePtr original, QWidget* parent)
 	: QDialog(parent), ui(new Ui::CopyInstanceDialog), m_original(original)
@@ -56,7 +57,7 @@ CopyInstanceDialog::CopyInstanceDialog(InstancePtr original, QWidget* parent)
 		index = 0;
 	}
 	ui->groupBox->setCurrentIndex(index);
-	ui->groupBox->lineEdit()->setPlaceholderText(tr("No group"));
+	ui->groupBox->lineEdit()->setPlaceholderText(i18n("No group"));
 	ui->copySavesCheckbox->setChecked(m_copySaves);
 	ui->keepPlaytimeCheckbox->setChecked(m_keepPlaytime);
 }

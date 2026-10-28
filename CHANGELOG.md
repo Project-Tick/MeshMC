@@ -2,7 +2,12 @@
 
 ## Highlights
 
+## New Dependencies
 
+* KDE Frameworks 5/6 I18n
+* KDE Frameworks 5/6 GuiAddons
+* KDE Frameworks 5/6 CoreAddons
+* KDE Frameworks 5/6 XmlGui
 
 ## Added
 
@@ -15,6 +20,7 @@
 
 ## Changed
 
+* MeshMC version information is no longer displayed in the title.
 * The logging system has been updated. We now use categorical logging. You can disable unwanted categories using qtlogging.ini.
 * We have revised the update system. Updates are handled via Sparkle for macOS and ZSync for AppImage. A setup.exe installation package is used for Windows, while a two-stage update mechanism is employed for portable Windows and Linux versions.
 * The MainWindow used to have its UI drawn via .cpp code; now, Designer UI is used.
@@ -30,8 +36,15 @@
 ## Removed
 
 * The iconfix library has been removed because it is no longer in use.
+* Removed custom about page and switched to KAboutData
 
 ## Deprecated
+
+
+
+## Support
+
+* Support for macOS 12 has been removed, and the minimum version has been updated to 13.3.
 
 ## CI/CD Updates
 

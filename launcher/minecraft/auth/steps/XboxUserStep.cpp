@@ -25,6 +25,7 @@
 
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
+#include <KLocalizedString>
 
 XboxUserStep::XboxUserStep(AccountData* data) : AuthStep(data) {}
 
@@ -32,7 +33,7 @@ XboxUserStep::~XboxUserStep() noexcept = default;
 
 QString XboxUserStep::describe()
 {
-	return tr("Logging in as an Xbox user.");
+	return i18n("Logging in as an Xbox user.");
 }
 
 void XboxUserStep::rehydrate()
@@ -76,7 +77,7 @@ void XboxUserStep::onRequestDone(QNetworkReply::NetworkError error,
 	if (error != QNetworkReply::NoError) {
 		qWarning() << "Reply error:" << error;
 		emit finished(AccountTaskState::STATE_FAILED_SOFT,
-					  tr("XBox user authentication failed."));
+					  i18n("XBox user authentication failed."));
 		return;
 	}
 
@@ -85,9 +86,9 @@ void XboxUserStep::onRequestDone(QNetworkReply::NetworkError error,
 		qWarning() << "Could not parse user authentication response...";
 		emit finished(
 			AccountTaskState::STATE_FAILED_SOFT,
-			tr("XBox user authentication response could not be understood."));
+			i18n("XBox user authentication response could not be understood."));
 		return;
 	}
 	m_data->userToken = temp;
-	emit finished(AccountTaskState::STATE_WORKING, tr("Got Xbox user token"));
+	emit finished(AccountTaskState::STATE_WORKING, i18n("Got Xbox user token"));
 }

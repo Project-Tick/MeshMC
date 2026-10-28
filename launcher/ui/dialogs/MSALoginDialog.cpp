@@ -25,6 +25,7 @@
 
 #include <QtWidgets/QPushButton>
 #include <QUrl>
+#include <KLocalizedString>
 
 MSALoginDialog::MSALoginDialog(QWidget* parent)
 	: QDialog(parent), ui(new Ui::MSALoginDialog)
@@ -41,7 +42,7 @@ int MSALoginDialog::exec()
 	setUserInputsEnabled(false);
 	ui->progressBar->setVisible(true);
 	ui->progressBar->setMaximum(0); // Indeterminate progress
-	ui->label->setText(tr("Opening your browser for Microsoft login..."));
+	ui->label->setText(i18n("Opening your browser for Microsoft login..."));
 
 	// Setup the login task and start it
 	m_account = MinecraftAccount::createBlankMSA();
@@ -70,11 +71,10 @@ void MSALoginDialog::onAuthorizeWithBrowser(const QUrl& url)
 {
 	QString urlString = url.toString();
 	QString linkString =
-		QString("<a href=\"%1\">%2</a>").arg(urlString, tr("here"));
+		QString("<a href=\"%1\">%2</a>").arg(urlString, i18n("here"));
 	ui->label->setText(
-		tr("<p>A browser window will open for Microsoft login.</p>"
-		   "<p>If it doesn't open automatically, click %1.</p>")
-			.arg(linkString));
+		i18n("<p>A browser window will open for Microsoft login.</p>"
+		   "<p>If it doesn't open automatically, click %1.</p>", linkString));
 }
 
 void MSALoginDialog::setUserInputsEnabled(bool enable)

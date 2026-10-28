@@ -2,21 +2,22 @@
  * SPDX-License-Identifier: Apache-2.0 */
 
 #include "GitVersioningPage.h"
+#include <KLocalizedString>
 
 namespace
 {
 	QString humanSize(qint64 bytes)
 	{
 		if (bytes < 1024)
-			return QObject::tr("%1 B").arg(bytes);
+			return i18n("%1 B", bytes);
 		double v = bytes / 1024.0;
 		if (v < 1024.0)
-			return QObject::tr("%1 KiB").arg(QString::number(v, 'f', 1));
+			return i18n("%1 KiB", QString::number(v, 'f', 1));
 		v /= 1024.0;
 		if (v < 1024.0)
-			return QObject::tr("%1 MiB").arg(QString::number(v, 'f', 1));
+			return i18n("%1 MiB", QString::number(v, 'f', 1));
 		v /= 1024.0;
-		return QObject::tr("%1 GiB").arg(QString::number(v, 'f', 2));
+		return i18n("%1 GiB", QString::number(v, 'f', 2));
 	}
 } // namespace
 
@@ -63,8 +64,8 @@ void GitVersioningPage::buildUi()
 	layout->addWidget(m_statusLabel);
 
 	m_tree = new QTreeWidget(this);
-	m_tree->setHeaderLabels({tr("When"), tr("Commit"), tr("Subject"),
-							 tr("Files"), tr("+"), tr("-")});
+	m_tree->setHeaderLabels({i18n("When"), i18n("Commit"), i18n("Subject"),
+							 i18n("Files"), i18n("+"), i18n("-")});
 	m_tree->setRootIsDecorated(false);
 	m_tree->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_tree->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -76,26 +77,26 @@ void GitVersioningPage::buildUi()
 
 	auto* btnRow = new QHBoxLayout();
 
-	m_commitBtn = new QPushButton(tr("Snapshot now"), this);
-	m_commitBtn->setToolTip(tr("Commit the current state of the instance"));
+	m_commitBtn = new QPushButton(i18n("Snapshot now"), this);
+	m_commitBtn->setToolTip(i18n("Commit the current state of the instance"));
 	connect(m_commitBtn, &QPushButton::clicked, this,
 			&GitVersioningPage::onCommitClicked);
 	btnRow->addWidget(m_commitBtn);
 
-	m_restoreBtn = new QPushButton(tr("Restore selected"), this);
+	m_restoreBtn = new QPushButton(i18n("Restore selected"), this);
 	m_restoreBtn->setEnabled(false);
 	connect(m_restoreBtn, &QPushButton::clicked, this,
 			&GitVersioningPage::onRestoreClicked);
 	btnRow->addWidget(m_restoreBtn);
 
-	m_tagBtn = new QPushButton(tr("Tag…"), this);
+	m_tagBtn = new QPushButton(i18n("Tag…"), this);
 	m_tagBtn->setEnabled(false);
 	connect(m_tagBtn, &QPushButton::clicked, this,
 			&GitVersioningPage::onTagClicked);
 	btnRow->addWidget(m_tagBtn);
 
-	m_dropBtn = new QPushButton(tr("Drop last commit"), this);
-	m_dropBtn->setToolTip(tr("Hard-reset HEAD by one commit. The dropped "
+	m_dropBtn = new QPushButton(i18n("Drop last commit"), this);
+	m_dropBtn->setToolTip(i18n("Hard-reset HEAD by one commit. The dropped "
 							 "commit is unreachable but reachable again via "
 							 "the reflog for ~30 days."));
 	connect(m_dropBtn, &QPushButton::clicked, this,
@@ -104,7 +105,7 @@ void GitVersioningPage::buildUi()
 
 	btnRow->addStretch();
 
-	m_refreshBtn = new QPushButton(tr("Refresh"), this);
+	m_refreshBtn = new QPushButton(i18n("Refresh"), this);
 	connect(m_refreshBtn, &QPushButton::clicked, this,
 			&GitVersioningPage::onRefresh);
 	btnRow->addWidget(m_refreshBtn);
@@ -116,7 +117,7 @@ void GitVersioningPage::reloadHistory()
 {
 	auto st = m_repo.status();
 	if (!GitRepo::gitAvailable()) {
-		m_statusLabel->setText(tr("<b>git</b> is not installed on your system. "
+		m_statusLabel->setText(i18n("<b>git</b> is not installed on your system. "
 								  "Install Git and reopen this page."));
 		m_commitBtn->setEnabled(false);
 		m_restoreBtn->setEnabled(false);
@@ -127,20 +128,17 @@ void GitVersioningPage::reloadHistory()
 
 	if (!st.initialized) {
 		m_statusLabel->setText(
-			tr("No version history yet. Snapshot now to start tracking "
+			i18n("No version history yet. Snapshot now to start tracking "
 			   "changes to this instance."));
 	} else {
 		QStringList parts;
-		parts << tr("HEAD: <b>%1</b>").arg(st.head);
+		parts << i18n("HEAD: <b>%1</b>", st.head);
 		if (st.dirty) {
-			parts << tr("Modified: %1, Deleted: %2, Untracked: %3")
-						 .arg(st.modifiedCount)
-						 .arg(st.deletedCount)
-						 .arg(st.untrackedCount);
+			parts << i18n("Modified: %1, Deleted: %2, Untracked: %3", st.modifiedCount, st.deletedCount, st.untrackedCount);
 		} else {
-			parts << tr("Clean working tree");
+			parts << i18n("Clean working tree");
 		}
-		parts << tr("git %1").arg(GitRepo::gitVersion());
+		parts << i18n("git %1", GitRepo::gitVersion());
 		m_statusLabel->setText(parts.join(QStringLiteral(" — ")));
 	}
 
@@ -192,24 +190,22 @@ void GitVersioningPage::onCommitClicked()
 {
 	bool ok = false;
 	QString msg = QInputDialog::getText(
-		this, tr("Snapshot"),
-		tr("Describe the changes you're snapshotting (leave blank for an "
+		this, i18n("Snapshot"),
+		i18n("Describe the changes you're snapshotting (leave blank for an "
 		   "auto-generated message):"),
 		QLineEdit::Normal,
-		tr("Manual snapshot %1")
-			.arg(QDateTime::currentDateTime().toString(
-				QStringLiteral("yyyy-MM-dd HH:mm"))),
+		i18n("Manual snapshot %1", QDateTime::currentDateTime().toString( QStringLiteral("yyyy-MM-dd HH:mm"))),
 		&ok);
 	if (!ok)
 		return;
 	QString err;
 	QString sha = m_repo.commit(msg, /*isPreLaunch=*/false, &err);
 	if (sha.isEmpty() && !err.isEmpty()) {
-		QMessageBox::warning(this, tr("Snapshot failed"), err);
+		QMessageBox::warning(this, i18n("Snapshot failed"), err);
 	} else if (sha.isEmpty()) {
 		QMessageBox::information(
-			this, tr("Snapshot"),
-			tr("Nothing to commit — the working tree was clean."));
+			this, i18n("Snapshot"),
+			i18n("Nothing to commit — the working tree was clean."));
 	}
 	reloadHistory();
 }
@@ -219,16 +215,15 @@ void GitVersioningPage::onRestoreClicked()
 	auto c = selectedCommit();
 	if (c.fullSha.isEmpty())
 		return;
-	if (!confirm(tr("Restore?"),
-				 tr("Restore the instance to commit %1 (%2)?\n\n"
+	if (!confirm(i18n("Restore?"),
+				 i18n("Restore the instance to commit %1 (%2)?\n\n"
 					"An auto-snapshot of the current state is taken first, "
 					"so this can be undone by restoring the previous "
-					"snapshot.")
-					 .arg(c.sha, c.subject)))
+					"snapshot.", c.sha, c.subject)))
 		return;
 	QString err;
 	if (!m_repo.restore(c.fullSha, &err))
-		QMessageBox::warning(this, tr("Restore failed"), err);
+		QMessageBox::warning(this, i18n("Restore failed"), err);
 	reloadHistory();
 }
 
@@ -239,7 +234,7 @@ void GitVersioningPage::onTagClicked()
 		return;
 	bool ok = false;
 	QString name = QInputDialog::getText(
-		this, tr("Tag commit"), tr("Tag name:"), QLineEdit::Normal,
+		this, i18n("Tag commit"), i18n("Tag name:"), QLineEdit::Normal,
 		QStringLiteral("milestone-%1")
 			.arg(c.when.toString(QStringLiteral("yyyyMMdd"))),
 		&ok);
@@ -247,18 +242,18 @@ void GitVersioningPage::onTagClicked()
 		return;
 	QString err;
 	if (!m_repo.tag(name, c.fullSha, &err))
-		QMessageBox::warning(this, tr("Tag failed"), err);
+		QMessageBox::warning(this, i18n("Tag failed"), err);
 }
 
 void GitVersioningPage::onDropClicked()
 {
-	if (!confirm(tr("Drop last commit?"),
-				 tr("This hard-resets HEAD by one commit. The working "
+	if (!confirm(i18n("Drop last commit?"),
+				 i18n("This hard-resets HEAD by one commit. The working "
 					"tree is reset to the parent commit too. Continue?")))
 		return;
 	QString err;
 	if (!m_repo.dropHead(&err))
-		QMessageBox::warning(this, tr("Drop failed"), err);
+		QMessageBox::warning(this, i18n("Drop failed"), err);
 	reloadHistory();
 }
 

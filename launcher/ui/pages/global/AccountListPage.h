@@ -27,6 +27,7 @@
 
 #include "minecraft/auth/AccountList.h"
 #include "Application.h"
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -44,7 +45,7 @@ class AccountListPage : public QMainWindow, public BasePage
 
 	QString displayName() const override
 	{
-		return tr("Accounts");
+		return i18n("Accounts");
 	}
 	QIcon icon() const override
 	{

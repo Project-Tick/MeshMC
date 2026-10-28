@@ -27,6 +27,7 @@
 #include <QDebug>
 
 #include <algorithm>
+#include <KLocalizedString>
 
 NewsChecker::NewsChecker(shared_qobject_ptr<QNetworkAccessManager> network,
 						 const QString& feedUrl)
@@ -184,7 +185,7 @@ void NewsChecker::rssDownloadFailed(int feedIndex, QString reason)
 	feed.entries.clear();
 
 	const QString message =
-		tr("Failed to load news RSS feed:\n%1").arg(reason);
+		i18n("Failed to load news RSS feed:\n%1", reason);
 
 	if (feedIndex == 0) {
 		// The primary feed is the one the news bar speaks for.

@@ -27,6 +27,7 @@
 #include <QPushButton>
 #include <QUrl>
 #include <QVBoxLayout>
+#include <KLocalizedString>
 
 #ifdef MESHMC_HAS_QRENCODE
 #include <qrencode.h>
@@ -36,7 +37,7 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 									 const QString& logContent, QWidget* parent)
 	: QDialog(parent)
 {
-	setWindowTitle(tr("MeshMC Crash Report"));
+	setWindowTitle(i18n("MeshMC Crash Report"));
 	setMinimumSize(550, 450);
 
 	auto* mainLayout = new QVBoxLayout(this);
@@ -44,7 +45,7 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	// Error message
 	m_messageLabel = new QLabel(this);
 	m_messageLabel->setText(
-		tr("<h2 style='color: #cc0000;'>MeshMC has failed</h2>"
+		i18n("<h2 style='color: #cc0000;'>MeshMC has failed</h2>"
 		   "<p>An unexpected error occurred and MeshMC had to close.</p>"
 		   "<p>Your logs have been uploaded to paste.ee for "
 		   "troubleshooting.</p>"));
@@ -53,7 +54,7 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	mainLayout->addWidget(m_messageLabel);
 
 	// QR codes area
-	auto* qrGroupBox = new QGroupBox(tr("QR Codes"), this);
+	auto* qrGroupBox = new QGroupBox(i18n("QR Codes"), this);
 	auto* qrLayout = new QHBoxLayout(qrGroupBox);
 
 	// QR for full log text (truncated to fit QR capacity)
@@ -61,7 +62,7 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	// so the most recent (and most relevant) log lines are included.
 	QString truncatedLog = logContent;
 	if (truncatedLog.size() > 2000) {
-		truncatedLog = tr("[...truncated...]\n") + logContent.right(2000);
+		truncatedLog = i18n("[...truncated...]\n") + logContent.right(2000);
 	}
 
 	auto* qrLogGroup = new QVBoxLayout();
@@ -72,9 +73,9 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	if (!logQR.isNull()) {
 		m_qrLogLabel->setPixmap(logQR);
 	} else {
-		m_qrLogLabel->setText(tr("[QR Code - requires libqrencode]"));
+		m_qrLogLabel->setText(i18n("[QR Code - requires libqrencode]"));
 	}
-	auto* logQRTitle = new QLabel(tr("Full Log"), this);
+	auto* logQRTitle = new QLabel(i18n("Full Log"), this);
 	logQRTitle->setAlignment(Qt::AlignCenter);
 	qrLogGroup->addWidget(m_qrLogLabel);
 	qrLogGroup->addWidget(logQRTitle);
@@ -89,9 +90,9 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	if (!pasteQR.isNull()) {
 		m_qrPasteLabel->setPixmap(pasteQR);
 	} else {
-		m_qrPasteLabel->setText(tr("[QR Code - requires libqrencode]"));
+		m_qrPasteLabel->setText(i18n("[QR Code - requires libqrencode]"));
 	}
-	auto* pasteQRTitle = new QLabel(tr("Paste.ee Log"), this);
+	auto* pasteQRTitle = new QLabel(i18n("Paste.ee Log"), this);
 	pasteQRTitle->setAlignment(Qt::AlignCenter);
 	qrPasteGroup->addWidget(m_qrPasteLabel);
 	qrPasteGroup->addWidget(pasteQRTitle);
@@ -102,7 +103,7 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	// Paste.ee link
 	m_pasteLinkLabel = new QLabel(this);
 	m_pasteLinkLabel->setText(
-		tr("Paste.ee link: <a href=\"%1\">%1</a>").arg(pasteLink));
+		i18n("Paste.ee link: <a href=\"%1\">%1</a>", pasteLink));
 	m_pasteLinkLabel->setOpenExternalLinks(true);
 	m_pasteLinkLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
 	m_pasteLinkLabel->setAlignment(Qt::AlignCenter);
@@ -112,17 +113,17 @@ CrashReportDialog::CrashReportDialog(const QString& pasteLink,
 	// Buttons
 	auto* buttonLayout = new QHBoxLayout();
 
-	auto* copyLinkBtn = new QPushButton(tr("Copy Link"), this);
+	auto* copyLinkBtn = new QPushButton(i18n("Copy Link"), this);
 	connect(copyLinkBtn, &QPushButton::clicked, this,
 			[pasteLink]() { QApplication::clipboard()->setText(pasteLink); });
 	buttonLayout->addWidget(copyLinkBtn);
 
-	auto* openBtn = new QPushButton(tr("Open in Browser"), this);
+	auto* openBtn = new QPushButton(i18n("Open in Browser"), this);
 	connect(openBtn, &QPushButton::clicked, this,
 			[pasteLink]() { QDesktopServices::openUrl(QUrl(pasteLink)); });
 	buttonLayout->addWidget(openBtn);
 
-	auto* closeBtn = new QPushButton(tr("Close"), this);
+	auto* closeBtn = new QPushButton(i18n("Close"), this);
 	connect(closeBtn, &QPushButton::clicked, this, &QDialog::accept);
 	buttonLayout->addWidget(closeBtn);
 

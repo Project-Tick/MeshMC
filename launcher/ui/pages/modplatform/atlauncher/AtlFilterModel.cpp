@@ -25,6 +25,7 @@
 #include <modplatform/atlauncher/ATLPackIndex.h>
 #include <Version.h>
 #include <MMCStrings.h>
+#include <KLocalizedString>
 
 namespace Atl
 {
@@ -32,9 +33,9 @@ namespace Atl
 	FilterModel::FilterModel(QObject* parent) : QSortFilterProxyModel(parent)
 	{
 		currentSorting = Sorting::ByPopularity;
-		sortings.insert(tr("Sort by popularity"), Sorting::ByPopularity);
-		sortings.insert(tr("Sort by name"), Sorting::ByName);
-		sortings.insert(tr("Sort by game version"), Sorting::ByGameVersion);
+		sortings.insert(i18n("Sort by popularity"), Sorting::ByPopularity);
+		sortings.insert(i18n("Sort by name"), Sorting::ByName);
+		sortings.insert(i18n("Sort by game version"), Sorting::ByGameVersion);
 
 		searchTerm = "";
 	}

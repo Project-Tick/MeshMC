@@ -34,7 +34,7 @@
 
 #include "BuildConfig.h"
 #include "minecraft/skins/SkinEntry.h"
-#include "rainbow.h"
+#include <KColorUtils>
 #include "ui/dialogs/skins/render/CubeMesh.h"
 #include "ui/dialogs/skins/render/PlayerScene.h"
 
@@ -68,10 +68,10 @@ namespace skinrender
 		 * a dark surface than darkening of a light one. */
 		QColor contrastingColour(const QColor& colour)
 		{
-			if (Rainbow::luma(colour) < 0.5) {
-				return Rainbow::lighten(colour, 0.05);
+			if (KColorUtils::luma(colour) < 0.5) {
+				return KColorUtils::lighten(colour, 0.05);
 			}
-			return Rainbow::darken(colour, 0.2);
+			return KColorUtils::darken(colour, 0.2);
 		}
 
 		/* The chequerboard behind the model, in two shades of the dialog's
@@ -81,11 +81,11 @@ namespace skinrender
 		{
 			QImage image(width, height, QImage::Format_RGB888);
 
-			const bool darkBase = Rainbow::luma(base) < 0.5;
+			const bool darkBase = KColorUtils::luma(base) < 0.5;
 			const qreal contrast = darkBase ? 0.05 : 0.45;
 			const auto shade = [darkBase, contrast](const QColor& colour) {
-				return darkBase ? Rainbow::lighten(colour, contrast, 1.0)
-								: Rainbow::darken(colour, contrast, 1.0);
+				return darkBase ? KColorUtils::lighten(colour, contrast, 1.0)
+								: KColorUtils::darken(colour, contrast, 1.0);
 			};
 
 			const QColor light = shade(base);

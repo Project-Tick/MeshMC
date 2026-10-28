@@ -23,6 +23,7 @@
 #include <QHttpMultiPart>
 
 #include "Application.h"
+#include <KLocalizedString>
 
 QByteArray getVariant(SkinUpload::Model model)
 {
@@ -68,7 +69,7 @@ void SkinUpload::executeTask()
 	QNetworkReply* rep = APPLICATION->network()->post(request, multiPart);
 	m_reply = shared_qobject_ptr<QNetworkReply>(rep);
 
-	setStatus(tr("Uploading skin"));
+	setStatus(i18n("Uploading skin"));
 	connect(rep, &QNetworkReply::uploadProgress, this, &Task::setProgress);
 	connect(rep, &QNetworkReply::errorOccurred, this,
 			&SkinUpload::downloadError);

@@ -18,6 +18,7 @@
  */
 
 #include "TexturePackFolderModel.h"
+#include <KLocalizedString>
 
 TexturePackFolderModel::TexturePackFolderModel(const QString& dir)
 	: ModFolderModel(dir)
@@ -31,13 +32,13 @@ QVariant TexturePackFolderModel::headerData(int section,
 	if (role == Qt::ToolTipRole) {
 		switch (section) {
 			case ActiveColumn:
-				return tr("Is the texture pack enabled?");
+				return i18n("Is the texture pack enabled?");
 			case NameColumn:
-				return tr("The name of the texture pack.");
+				return i18n("The name of the texture pack.");
 			case VersionColumn:
-				return tr("The version of the texture pack.");
+				return i18n("The version of the texture pack.");
 			case DateColumn:
-				return tr("The date and time this texture pack was last "
+				return i18n("The date and time this texture pack was last "
 						  "changed (or added).");
 			default:
 				return QVariant();

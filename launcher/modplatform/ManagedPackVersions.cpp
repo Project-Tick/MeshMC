@@ -26,6 +26,7 @@
 #include <algorithm>
 
 #include "Json.h"
+#include <KLocalizedString>
 
 namespace ManagedPack
 {
@@ -114,8 +115,7 @@ namespace ManagedPack
 			}
 			if (gameVersionPart.isEmpty()) {
 				gameVersionPart =
-					QCoreApplication::translate("ManagedPack", " for %1")
-						.arg(mcVersion);
+					i18nc("ManagedPack", " for %1", mcVersion);
 			}
 		}
 

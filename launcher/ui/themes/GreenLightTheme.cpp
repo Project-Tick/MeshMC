@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#include <KLocalizedString>
+
 QString GreenLightTheme::id()
 {
 	return "green-light";
@@ -28,12 +30,12 @@ QString GreenLightTheme::id()
 
 QString GreenLightTheme::name()
 {
-	return QObject::tr("Green Light");
+	return i18n("Green Light");
 }
 
 QString GreenLightTheme::tooltip()
 {
-	return QObject::tr("A bright Fusion-based theme with green accents");
+	return i18n("A bright Fusion-based theme with green accents");
 }
 
 bool GreenLightTheme::hasColorScheme()

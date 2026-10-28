@@ -29,6 +29,7 @@
 #include <QByteArray>
 
 #include <QDebug>
+#include <KLocalizedString>
 
 AccountTask::AccountTask(AccountData* data, QObject* parent)
 	: Task(parent), m_data(data)
@@ -42,19 +43,19 @@ QString AccountTask::getStateMessage() const
 		case AccountTaskState::STATE_CREATED:
 			return "Waiting...";
 		case AccountTaskState::STATE_WORKING:
-			return tr("Sending request to auth servers...");
+			return i18n("Sending request to auth servers...");
 		case AccountTaskState::STATE_SUCCEEDED:
-			return tr("Authentication task succeeded.");
+			return i18n("Authentication task succeeded.");
 		case AccountTaskState::STATE_OFFLINE:
-			return tr("Failed to contact the authentication server.");
+			return i18n("Failed to contact the authentication server.");
 		case AccountTaskState::STATE_FAILED_SOFT:
-			return tr("Encountered an error during authentication.");
+			return i18n("Encountered an error during authentication.");
 		case AccountTaskState::STATE_FAILED_HARD:
-			return tr("Failed to authenticate. The session has expired.");
+			return i18n("Failed to authenticate. The session has expired.");
 		case AccountTaskState::STATE_FAILED_GONE:
-			return tr("Failed to authenticate. The account no longer exists.");
+			return i18n("Failed to authenticate. The account no longer exists.");
 		default:
-			return tr("...");
+			return i18n("...");
 	}
 }
 
@@ -102,7 +103,7 @@ bool AccountTask::changeState(AccountTaskState newState, QString reason)
 		}
 		default: {
 			QString error =
-				tr("Unknown account task state: %1").arg(int(newState));
+				i18n("Unknown account task state: %1", int(newState));
 			m_data->accountState = AccountState::Errored;
 			emitFailed(error);
 			return false;

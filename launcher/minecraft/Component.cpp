@@ -31,6 +31,7 @@
 #include "Application.h"
 
 #include <assert.h>
+#include <KLocalizedString>
 
 namespace
 {
@@ -317,7 +318,7 @@ const QList<PatchProblem> Component::getProblems() const
 	if (file) {
 		return file->getProblems();
 	}
-	return {{ProblemSeverity::Error, QObject::tr("Patch is not loaded yet.")}};
+	return {{ProblemSeverity::Error, i18n("Patch is not loaded yet.")}};
 }
 
 void Component::setVersion(const QString& version)

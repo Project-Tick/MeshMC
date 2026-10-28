@@ -21,6 +21,7 @@
 #include <Json.h>
 #include "minecraft/ParseUtils.h"
 #include <minecraft/MojangVersionFormat.h>
+#include <KLocalizedString>
 
 using namespace Json;
 
@@ -165,7 +166,7 @@ VersionFilePtr OneSixVersionFormat::versionFileFromJson(
 	if (hasPlusLibs && hasLibs) {
 		out->addProblem(
 			ProblemSeverity::Warning,
-			QObject::tr("Version file has both '+libraries' and 'libraries'. "
+			i18n("Version file has both '+libraries' and 'libraries'. "
 						"This is no longer supported."));
 		readLibs("libraries", out->libraries);
 		readLibs("+libraries", out->libraries);
@@ -200,8 +201,7 @@ VersionFilePtr OneSixVersionFormat::versionFileFromJson(
 		else {
 			out->addProblem(
 				ProblemSeverity::Error,
-				QObject::tr(
-					"URL for the main jar could not be determined - Mojang "
+				i18n("URL for the main jar could not be determined - Mojang "
 					"removed the server that we used as fallback."));
 		}
 		out->mainJar = lib;
@@ -230,29 +230,26 @@ VersionFilePtr OneSixVersionFormat::versionFileFromJson(
 	if (root.contains("tweakers")) {
 		out->addProblem(
 			ProblemSeverity::Error,
-			QObject::tr(
-				"Version file contains unsupported element 'tweakers'"));
+			i18n("Version file contains unsupported element 'tweakers'"));
 	}
 	if (root.contains("-libraries")) {
 		out->addProblem(
 			ProblemSeverity::Error,
-			QObject::tr(
-				"Version file contains unsupported element '-libraries'"));
+			i18n("Version file contains unsupported element '-libraries'"));
 	}
 	if (root.contains("-tweakers")) {
 		out->addProblem(
 			ProblemSeverity::Error,
-			QObject::tr(
-				"Version file contains unsupported element '-tweakers'"));
+			i18n("Version file contains unsupported element '-tweakers'"));
 	}
 	if (root.contains("-minecraftArguments")) {
 		out->addProblem(ProblemSeverity::Error,
-						QObject::tr("Version file contains unsupported element "
+						i18n("Version file contains unsupported element "
 									"'-minecraftArguments'"));
 	}
 	if (root.contains("+minecraftArguments")) {
 		out->addProblem(ProblemSeverity::Error,
-						QObject::tr("Version file contains unsupported element "
+						i18n("Version file contains unsupported element "
 									"'+minecraftArguments'"));
 	}
 	return out;

@@ -34,6 +34,7 @@
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/pages/modplatform/ContentProviderPage.h"
 #include "ui/widgets/PageContainer.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -115,12 +116,11 @@ DownloadContentDialog::DownloadContentDialog(
 	detectInstanceProfile();
 
 	auto* okButton = m_buttons.button(QDialogButtonBox::Ok);
-	okButton->setText(tr("Review and confirm"));
+	okButton->setText(i18n("Review and confirm"));
 	okButton->setToolTip(
-		tr("Close this window and review the %1 you picked before anything "
-		   "is downloaded. Shortcut: Ctrl+Return")
-			.arg(contentsNoun()));
-	okButton->setShortcut(tr("Ctrl+Return"));
+		i18n("Close this window and review the %1 you picked before anything "
+		   "is downloaded. Shortcut: Ctrl+Return", contentsNoun()));
+	okButton->setShortcut(i18n("Ctrl+Return"));
 	okButton->setDefault(true);
 	okButton->setAutoDefault(true);
 	okButton->setEnabled(false);
@@ -234,8 +234,7 @@ QList<BasePage*> DownloadContentDialog::getPages()
 
 QString DownloadContentDialog::dialogTitle()
 {
-	return tr("Download %1")
-		.arg(ModPlatform::contentTypeDisplayName(m_contentType));
+	return i18n("Download %1", ModPlatform::contentTypeDisplayName(m_contentType));
 }
 
 QString DownloadContentDialog::contentNoun() const
@@ -284,7 +283,7 @@ bool DownloadContentDialog::openForVersionChange(const QString& platform,
 	}
 
 	m_container->selectPage(platform);
-	setWindowTitle(tr("Change %1 version").arg(name));
+	setWindowTitle(i18n("Change %1 version", name));
 	/* No provider to choose any more, and the dialog's own buttons are
 	 * replaced by the page's Reinstall/Cancel pair. */
 	m_container->hidePageList();
@@ -427,11 +426,9 @@ void DownloadContentDialog::reject()
 	if (!m_queue.isEmpty()) {
 		const auto reply =
 			CustomMessageBox::selectable(
-				this, tr("Confirmation Needed"),
-				tr("You have %1 selected %2.\n"
-				   "Are you sure you want to close this dialog?")
-					.arg(m_queue.size())
-					.arg(contentsNoun()),
+				this, i18n("Confirmation Needed"),
+				i18n("You have %1 selected %2.\n"
+				   "Are you sure you want to close this dialog?", m_queue.size(), contentsNoun()),
 				QMessageBox::Question, QMessageBox::Yes | QMessageBox::No,
 				QMessageBox::No)
 				->exec();

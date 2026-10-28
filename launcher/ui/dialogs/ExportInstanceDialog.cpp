@@ -43,6 +43,7 @@
 #include "archive/ExportToZipTask.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/ProgressDialog.h"
+#include <KLocalizedString>
 
 ExportInstanceDialog::ExportInstanceDialog(InstancePtr instance,
 										   QWidget* parent)
@@ -133,7 +134,7 @@ void ExportInstanceDialog::doExport()
 	const auto name = FS::RemoveInvalidFilenameChars(m_instance->name());
 
 	const QString output = QFileDialog::getSaveFileName(
-		this, tr("Export %1").arg(m_instance->name()),
+		this, i18n("Export %1", m_instance->name()),
 		FS::PathCombine(QDir::homePath(), name + ".zip"), "Zip (*.zip)",
 		nullptr);
 	/* No DontConfirmOverwrite: the dialog's own "replace this file?"
@@ -152,8 +153,8 @@ void ExportInstanceDialog::doExport()
 			m_instance->instanceRoot(), QString(), &files,
 			std::bind(&FileIgnoreProxy::filterFile, m_proxyModel,
 					  std::placeholders::_1))) {
-		QMessageBox::warning(this, tr("Error"),
-							 tr("Unable to export instance"));
+		QMessageBox::warning(this, i18n("Error"),
+							 i18n("Unable to export instance"));
 		QDialog::done(QDialog::Rejected);
 		return;
 	}
@@ -175,13 +176,13 @@ void ExportInstanceDialog::doExport()
 				if (exportTask->wasAborted()) {
 					return;
 				}
-				CustomMessageBox::selectable(this, tr("Error"), reason,
+				CustomMessageBox::selectable(this, i18n("Error"), reason,
 											 QMessageBox::Critical)
 					->exec();
 			});
 
 	ProgressDialog progress(this);
-	progress.setSkipButton(true, tr("Abort"));
+	progress.setSkipButton(true, i18n("Abort"));
 	QDialog::done(progress.execWithTask(std::move(task)));
 }
 

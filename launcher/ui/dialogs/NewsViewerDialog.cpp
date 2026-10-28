@@ -30,6 +30,8 @@
 #include <QUrl>
 #include <QVBoxLayout>
 
+#include <KLocalizedString>
+
 #include <cmark.h>
 
 #include "news/NewsChecker.h"
@@ -46,7 +48,7 @@ namespace
 NewsViewerDialog::NewsViewerDialog(NewsChecker* checker, QWidget* parent)
 	: QDialog(parent), m_checker(checker)
 {
-	setWindowTitle(tr("News"));
+	setWindowTitle(i18n("News"));
 	setSizeGripEnabled(true);
 	resize(800, 500);
 
@@ -80,9 +82,9 @@ NewsViewerDialog::NewsViewerDialog(NewsChecker* checker, QWidget* parent)
 	splitLayout->addLayout(rightLayout);
 
 	/* ── Bottom row ── */
-	m_toggleListButton = new QPushButton(tr("Hide article list"), this);
+	m_toggleListButton = new QPushButton(i18n("Hide article list"), this);
 
-	m_closeButton = new QPushButton(tr("Close"), this);
+	m_closeButton = new QPushButton(i18n("Close"), this);
 	QSizePolicy closePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	closePolicy.setHorizontalStretch(10);
 	m_closeButton->setSizePolicy(closePolicy);
@@ -118,8 +120,8 @@ void NewsViewerDialog::setArticleListHidden(bool hidden)
 {
 	m_articleListHidden = hidden;
 	m_articleList->setHidden(hidden);
-	m_toggleListButton->setText(hidden ? tr("Show article list")
-									   : tr("Hide article list"));
+	m_toggleListButton->setText(hidden ? i18n("Show article list")
+									   : i18n("Hide article list"));
 }
 
 void NewsViewerDialog::showPlaceholder(const QString& message)
@@ -131,7 +133,7 @@ void NewsViewerDialog::showPlaceholder(const QString& message)
 QString NewsViewerDialog::feedLabel(int feedIndex) const
 {
 	if (feedIndex == 0)
-		return tr("Official");
+		return i18n("Official");
 
 	if (m_checker) {
 		const QStringList urls = m_checker->feedUrls();
@@ -141,7 +143,7 @@ QString NewsViewerDialog::feedLabel(int feedIndex) const
 				return host;
 		}
 	}
-	return tr("Feed %1").arg(feedIndex);
+	return i18n("Feed %1", feedIndex);
 }
 
 void NewsViewerDialog::loadEntries(bool listVisible)
@@ -152,20 +154,20 @@ void NewsViewerDialog::loadEntries(bool listVisible)
 	setArticleListHidden(!listVisible);
 
 	if (!m_checker) {
-		showPlaceholder(tr("No news available."));
+		showPlaceholder(i18n("No news available."));
 		return;
 	}
 
 	m_entries = m_checker->getNewsEntries();
 	if (m_entries.isEmpty()) {
-		showPlaceholder(m_checker->isLoadingNews() ? tr("Loading news...")
-												   : tr("No news available."));
+		showPlaceholder(m_checker->isLoadingNews() ? i18n("Loading news...")
+												   : i18n("No news available."));
 		return;
 	}
 
 	for (const auto& entry : m_entries) {
 		auto* item = new QListWidgetItem(m_articleList);
-		item->setText(entry->title.isEmpty() ? tr("(no title)")
+		item->setText(entry->title.isEmpty() ? i18n("(no title)")
 											 : entry->title);
 		/* Which feed an entry came from is only interesting when there
 		 * is more than one, and it has no room in the list itself. */
@@ -191,7 +193,7 @@ void NewsViewerDialog::selectedArticleChanged(int row)
 
 	const NewsEntryPtr& entry = m_entries[row];
 	const QString title =
-		entry->title.isEmpty() ? tr("(no title)") : entry->title;
+		entry->title.isEmpty() ? i18n("(no title)") : entry->title;
 
 	if (entry->link.isEmpty()) {
 		m_articleTitleLabel->setText(title.toHtmlEscaped());

@@ -40,6 +40,7 @@
 #include <chrono>
 
 #include "Logging.h"
+#include <KLocalizedString>
 
 enum AccountListVersion { MojangOnly = 2, MojangMSA = 3 };
 
@@ -332,25 +333,25 @@ QVariant AccountList::data(const QModelIndex& index, int role) const
 				case StatusColumn: {
 					switch (account->accountState()) {
 						case AccountState::Unchecked: {
-							return tr("Unchecked", "Account status");
+							return i18nc("Account status", "Unchecked");
 						}
 						case AccountState::Offline: {
-							return tr("Offline", "Account status");
+							return i18nc("Account status", "Offline");
 						}
 						case AccountState::Online: {
-							return tr("Online", "Account status");
+							return i18nc("Account status", "Online");
 						}
 						case AccountState::Working: {
-							return tr("Working", "Account status");
+							return i18nc("Account status", "Working");
 						}
 						case AccountState::Errored: {
-							return tr("Errored", "Account status");
+							return i18nc("Account status", "Errored");
 						}
 						case AccountState::Expired: {
-							return tr("Expired", "Account status");
+							return i18nc("Account status", "Expired");
 						}
 						case AccountState::Gone: {
-							return tr("Gone", "Account status");
+							return i18nc("Account status", "Gone");
 						}
 					}
 				}
@@ -387,13 +388,13 @@ QVariant AccountList::headerData(int section, Qt::Orientation, int role) const
 		case Qt::DisplayRole:
 			switch (section) {
 				case NameColumn:
-					return tr("Account");
+					return i18n("Account");
 				case TypeColumn:
-					return tr("Type");
+					return i18n("Type");
 				case StatusColumn:
-					return tr("Status");
+					return i18n("Status");
 				case ProfileNameColumn:
-					return tr("Profile");
+					return i18n("Profile");
 				default:
 					return QVariant();
 			}
@@ -401,13 +402,13 @@ QVariant AccountList::headerData(int section, Qt::Orientation, int role) const
 		case Qt::ToolTipRole:
 			switch (section) {
 				case NameColumn:
-					return tr("User name of the account.");
+					return i18n("User name of the account.");
 				case TypeColumn:
-					return tr("Type of the account.");
+					return i18n("Type of the account.");
 				case StatusColumn:
-					return tr("Current status of the account.");
+					return i18n("Current status of the account.");
 				case ProfileNameColumn:
-					return tr("Name of the Minecraft profile associated with "
+					return i18n("Name of the Minecraft profile associated with "
 							  "the account.");
 				default:
 					return QVariant();

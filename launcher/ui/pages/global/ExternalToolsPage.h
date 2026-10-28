@@ -24,6 +24,7 @@
 
 #include "ui/pages/BasePage.h"
 #include <Application.h>
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -40,7 +41,7 @@ class ExternalToolsPage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return tr("External Tools");
+		return i18n("External Tools");
 	}
 	QIcon icon() const override
 	{

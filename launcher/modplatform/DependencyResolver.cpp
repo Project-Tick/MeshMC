@@ -33,6 +33,7 @@
 #include <QJsonObject>
 #include <QRegularExpression>
 #include <QUrl>
+#include <KLocalizedString>
 
 namespace
 {
@@ -181,7 +182,7 @@ void DependencyResolver::executeTask()
 		emitSucceeded();
 		return;
 	}
-	setStatus(tr("Resolving dependencies..."));
+	setStatus(i18n("Resolving dependencies..."));
 	m_currentModIndex = 0;
 	resolveNextMod();
 }

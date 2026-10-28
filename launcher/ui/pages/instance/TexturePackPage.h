@@ -21,6 +21,7 @@
 
 #include "ModFolderPage.h"
 #include "ui_ModFolderPage.h"
+#include <KLocalizedString>
 
 class TexturePackPage : public ModFolderPage
 {
@@ -28,7 +29,7 @@ class TexturePackPage : public ModFolderPage
   public:
 	explicit TexturePackPage(MinecraftInstance* instance, QWidget* parent = 0)
 		: ModFolderPage(instance, instance->texturePackList(), "texturepacks",
-						"resourcepacks", tr("Texture packs"), "Texture-packs",
+						"resourcepacks", i18n("Texture packs"), "Texture-packs",
 						parent)
 	{
 		ui->actionView_configs->setVisible(false);

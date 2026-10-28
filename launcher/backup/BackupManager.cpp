@@ -30,6 +30,7 @@
 
 #include "FileSystem.h"
 #include "MMCZip.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -105,7 +106,7 @@ BackupEntry BackupManager::createBackup(const QString& label,
 
 	MMCZip::ProgressFunction zipProgress;
 	if (progress) {
-		progress(QObject::tr("Compressing backup..."), QString(), 0, 0);
+		progress(i18n("Compressing backup..."), QString(), 0, 0);
 
 		/* compressDir() calls back once per file. Forwarding every one
 		 * of them would be a queued call per file for no visible gain,
@@ -117,7 +118,7 @@ BackupEntry BackupManager::createBackup(const QString& label,
 				return;
 			*lastReported = current / step;
 			progress(QString(),
-					 QObject::tr("%1 / %2 files").arg(current).arg(total),
+					 i18n("%1 / %2 files", current, total),
 					 current, total);
 		};
 	}

@@ -87,6 +87,8 @@
 #include <unordered_map>
 #include <utility>
 
+#include <KLocalizedString>
+
 #ifdef Q_OS_WIN
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -1634,7 +1636,7 @@ int PluginManager::api_zip_compress_dir(void* mh, const char* zip,
 			*lastReported = current / step;
 			task->reportProgress(
 				QString(),
-				PluginManager::tr("%1 / %2 files").arg(current).arg(total),
+				i18n("%1 / %2 files", current, total),
 				current, total);
 		};
 	}
