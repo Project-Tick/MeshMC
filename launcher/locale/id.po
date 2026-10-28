@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
-"PO-Revision-Date: 2026-09-01 21:52\n"
+"PO-Revision-Date: 2026-10-28 22:15\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -188,117 +188,116 @@ msgctxt "AboutDialog|"
 msgid "Close"
 msgstr "Tutup"
 
-#: launcher/ui/dialogs/AboutDialog.cpp:75
-#, qt-format
+#: launcher/ui/dialogs/AboutDialog.cpp:73
 msgctxt "AboutDialog|"
-msgid "About %1"
-msgstr "Tentang %1"
+msgid "About MeshMC"
+msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:91
+#: launcher/ui/dialogs/AboutDialog.cpp:89
 msgctxt "AboutDialog|"
 msgid "Platform"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:98
+#: launcher/ui/dialogs/AboutDialog.cpp:96
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Commit: %1"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:104
+#: launcher/ui/dialogs/AboutDialog.cpp:102
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Build date: %1"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:109
+#: launcher/ui/dialogs/AboutDialog.cpp:107
 msgctxt "AboutDialog|"
 msgid "Version Channel"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:115
+#: launcher/ui/dialogs/AboutDialog.cpp:113
 msgctxt "AboutDialog|"
 msgid "Update Channel"
 msgstr ""
 
-#: launcher/ui/dialogs/AboutDialog.cpp:121
+#: launcher/ui/dialogs/AboutDialog.cpp:119
 msgctxt "AboutDialog|"
 msgid "<p>We keep <b>MeshMC</b> open source because we believe it's important to be able to see the source code of a project like this, and we do this using the Apache license.</p>\n"
 "<p>One reason we use the Apache license is that we don't want people using the name <b>MeshMC</b> when they fork the project. This means people should examine the source code and remove all references to <b>MeshMC</b>, including the project icon and window titles (the title should not contain the phrase <b>MeshMC-fork</b>). The Apache license covers reasonable use of the name; mentioning the project's origins in the About dialog and license is acceptable. However, it must be explicitly stated that the project is a fork, which does not mean you have our approval.</p>\n"
 "<p>However, we give you the freedom to distribute this project as you wish, in any non-exclusive way, without changing its functionality, on a voluntary basis to package managers, without expecting any financial gain. Take the project and distribute it wherever people can reach it. But abide by our restrictions."
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:333
+#: launcher/minecraft/auth/AccountList.cpp:335
 msgctxt "AccountList|Account status"
 msgid "Unchecked"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:336
+#: launcher/minecraft/auth/AccountList.cpp:338
 msgctxt "AccountList|Account status"
 msgid "Offline"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:339
+#: launcher/minecraft/auth/AccountList.cpp:341
 msgctxt "AccountList|Account status"
 msgid "Online"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:342
+#: launcher/minecraft/auth/AccountList.cpp:344
 msgctxt "AccountList|Account status"
 msgid "Working"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:345
+#: launcher/minecraft/auth/AccountList.cpp:347
 msgctxt "AccountList|Account status"
 msgid "Errored"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:348
+#: launcher/minecraft/auth/AccountList.cpp:350
 msgctxt "AccountList|Account status"
 msgid "Expired"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:351
+#: launcher/minecraft/auth/AccountList.cpp:353
 msgctxt "AccountList|Account status"
 msgid "Gone"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:388
+#: launcher/minecraft/auth/AccountList.cpp:390
 msgctxt "AccountList|"
 msgid "Account"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:390
+#: launcher/minecraft/auth/AccountList.cpp:392
 msgctxt "AccountList|"
 msgid "Type"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:392
+#: launcher/minecraft/auth/AccountList.cpp:394
 msgctxt "AccountList|"
 msgid "Status"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:394
+#: launcher/minecraft/auth/AccountList.cpp:396
 msgctxt "AccountList|"
 msgid "Profile"
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:402
+#: launcher/minecraft/auth/AccountList.cpp:404
 msgctxt "AccountList|"
 msgid "User name of the account."
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:404
+#: launcher/minecraft/auth/AccountList.cpp:406
 msgctxt "AccountList|"
 msgid "Type of the account."
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:406
+#: launcher/minecraft/auth/AccountList.cpp:408
 msgctxt "AccountList|"
 msgid "Current status of the account."
 msgstr ""
 
-#: launcher/minecraft/auth/AccountList.cpp:408
+#: launcher/minecraft/auth/AccountList.cpp:410
 msgctxt "AccountList|"
 msgid "Name of the Minecraft profile associated with the account."
 msgstr ""
@@ -324,7 +323,7 @@ msgid "Upload Skin"
 msgstr ""
 
 #: launcher/ui/pages/global/AccountListPage.ui:90
-#: launcher/ui/pages/global/AccountListPage.cpp:316
+#: launcher/ui/pages/global/AccountListPage.cpp:326
 msgctxt "AccountListPage|"
 msgid "Delete Skin"
 msgstr ""
@@ -432,19 +431,29 @@ msgctxt "AccountListPage|"
 msgid "An offline account named \"%1\" already exists. Offline account names must be unique — please pick a different one."
 msgstr ""
 
-#: launcher/ui/pages/global/AccountListPage.cpp:317
+#: launcher/ui/pages/global/AccountListPage.cpp:302
+msgctxt "AccountListPage|"
+msgid "Offline account"
+msgstr ""
+
+#: launcher/ui/pages/global/AccountListPage.cpp:303
+msgctxt "AccountListPage|"
+msgid "Skins can only be managed for Microsoft accounts."
+msgstr ""
+
+#: launcher/ui/pages/global/AccountListPage.cpp:327
 #, qt-format
 msgctxt "AccountListPage|"
 msgid "Are you sure you want to delete the skin for account \"%1\"?\n"
 "This action cannot be undone."
 msgstr ""
 
-#: launcher/ui/pages/global/AccountListPage.cpp:328
+#: launcher/ui/pages/global/AccountListPage.cpp:338
 msgctxt "AccountListPage|"
 msgid "Skin Delete"
 msgstr ""
 
-#: launcher/ui/pages/global/AccountListPage.cpp:329
+#: launcher/ui/pages/global/AccountListPage.cpp:339
 msgctxt "AccountListPage|"
 msgid "Failed to delete current skin!"
 msgstr ""
@@ -632,26 +641,6 @@ msgctxt "AnalysisPage|"
 msgid "Saved user rule. Click <b>Re-analyse</b> to load it."
 msgstr ""
 
-#: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:63
-msgctxt "AnalyticsWizardPage|"
-msgid "Analytics"
-msgstr ""
-
-#: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:64
-msgctxt "AnalyticsWizardPage|"
-msgid "We track some anonymous statistics about users."
-msgstr ""
-
-#: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:66
-msgctxt "AnalyticsWizardPage|"
-msgid "<html><body><p>MeshMC sends anonymous usage statistics on every start of the application. This helps us decide what platforms and issues to focus on.</p><p>The data is processed by Google Analytics, see their <a href=\"https://support.google.com/analytics/answer/6004245?hl=en\">article on the matter</a>.</p><p>The following data is collected:</p><ul><li>A random unique ID of the installation.<br />It is stored in the application settings file.</li><li>Anonymized (partial) IP address.</li><li>MeshMC version.</li><li>Operating system name, version and architecture.</li><li>CPU architecture (kernel architecture on linux).</li><li>Size of system memory.</li><li>Java version, architecture and memory settings.</li></ul><p>If we change the tracked information, you will see this page again.</p></body></html>"
-msgstr ""
-
-#: launcher/ui/setupwizard/AnalyticsWizardPage.cpp:85
-msgctxt "AnalyticsWizardPage|"
-msgid "Enable Analytics"
-msgstr ""
-
 #: launcher/ui/pages/global/AppearancePage.ui:52
 msgctxt "AppearancePage|"
 msgid "&Theme:"
@@ -703,51 +692,59 @@ msgctxt "AppearancePage|"
 msgid "Appearance"
 msgstr ""
 
-#: launcher/Application.cpp:1127
+#: launcher/Application.cpp:1172
 msgctxt "Application|"
 msgid "Settings"
 msgstr "Pengaturan"
 
-#: launcher/updater/MeshMCUpdater/ApplyStage.cpp:66
-#, qt-format
-msgctxt "ApplyStage|"
-msgid "The first stage of the update did not exit (pid %1). Nothing has been changed."
+#: launcher/Application.cpp:1932
+msgctxt "Application|"
+msgid "Update In Progress"
 msgstr ""
 
-#: launcher/updater/MeshMCUpdater/ApplyStage.cpp:84
+#: launcher/Application.cpp:1933
 #, qt-format
-msgctxt "ApplyStage|"
-msgid "The unpacked update contains no files:\n"
-"%1"
+msgctxt "Application|"
+msgid "This installation has an update lock file at: %1\n\n"
+"Timestamp: %2\n"
+"Updating from version %3 to %4\n"
+"Target install path: %5\n"
+"Data path: %6\n\n"
+"This usually means an update attempt failed. Please make sure your installation still works before continuing.\n"
+"The updater log at:\n"
+"%7\n"
+"has the details of the last attempt.\n\n"
+"To delete this lock and continue, choose \"Ignore\"."
 msgstr ""
 
-#: launcher/updater/MeshMCUpdater/ApplyStage.cpp:141
-#, qt-format
-msgctxt "ApplyStage|"
-msgid "Cannot create the backup directory:\n"
-"%1"
+#: launcher/Application.cpp:1971
+msgctxt "Application|"
+msgid "Update Failed"
 msgstr ""
 
-#: launcher/updater/MeshMCUpdater/ApplyStage.cpp:157
+#: launcher/Application.cpp:1972
 #, qt-format
-msgctxt "ApplyStage|"
-msgid "Could not back up the current version before updating.\n\n"
-"%1\n\n"
-"Nothing has been changed."
+msgctxt "Application|"
+msgid "An update attempt failed.\n\n"
+"Please make sure your installation still works before continuing.\n"
+"The updater log at:\n"
+"%1\n"
+"has the details of the last attempt."
 msgstr ""
 
-#: launcher/updater/MeshMCUpdater/ApplyStage.cpp:184
-#, qt-format
-msgctxt "ApplyStage|"
-msgid "Could not install the update.\n\n"
-"%1\n\n"
-"%2 of %3 file(s) had already been replaced. The previous version was saved to:\n"
-"%4"
+#: launcher/Application.cpp:2000
+msgctxt "Application|"
+msgid "Update Succeeded"
 msgstr ""
 
-#: launcher/updater/MeshMCUpdater/ApplyStage.cpp:191
-msgctxt "ApplyStage|"
-msgid "(no backup was made)"
+#: launcher/Application.cpp:2001
+#, qt-format
+msgctxt "Application|"
+msgid "The update succeeded.\n\n"
+"You are now running %1.\n"
+"The updater log at:\n"
+"%2\n"
+"has the details."
 msgstr ""
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:38
@@ -863,17 +860,17 @@ msgctxt "AtlPage|"
 msgid "ATLauncher"
 msgstr ""
 
-#: launcher/minecraft/auth/flows/AuthFlow.cpp:39
+#: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
 msgid "Finished all authentication steps"
 msgstr "Menyelesaikan semua langkah autentikasi"
 
-#: launcher/minecraft/auth/flows/AuthFlow.cpp:47
+#: launcher/minecraft/auth/flows/AuthFlow.cpp:48
 msgctxt "AuthFlow|"
 msgid "Initializing"
 msgstr "Memulai Inisialisasi"
 
-#: launcher/minecraft/auth/flows/AuthFlow.cpp:77
+#: launcher/minecraft/auth/flows/AuthFlow.cpp:78
 msgctxt "AuthFlow|"
 msgid "Working..."
 msgstr "Mengerjakan..."
@@ -1386,86 +1383,86 @@ msgctxt "ContentProviderPage|"
 msgid "Select for download"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:170
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:172
 #, qt-format
 msgctxt "ContentProviderPage|"
 msgid "Search for %1..."
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:336
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:338
 msgctxt "ContentProviderPage|"
 msgid "Reinstall"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:337
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:339
 msgctxt "ContentProviderPage|"
 msgid "Ctrl+Return"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:345
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:347
 msgctxt "ContentProviderPage|"
 msgid "Cancel"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:390
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:392
 msgctxt "ContentProviderPage|"
 msgid "The resource was not found"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:503
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:505
 #, qt-format
 msgctxt "ContentProviderPage|"
 msgid "by %1"
 msgstr ""
 
 #. Marks the version of a mod that is already on disk
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:590
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:592
 msgctxt "ContentProviderPage|"
 msgid " [installed]"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:597
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:599
 msgctxt "ContentProviderPage|"
 msgid "No valid version found."
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:622
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:645
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:624
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:647
 #, qt-format
 msgctxt "ContentProviderPage|"
 msgid "Select %1 for download"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:628
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:630
 #, qt-format
 msgctxt "ContentProviderPage|"
 msgid "Deselect %1 for download"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:634
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:636
 msgctxt "ContentProviderPage|"
 msgid "Loading versions..."
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:640
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:642
 msgctxt "ContentProviderPage|"
 msgid "Cannot select invalid version :("
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:688
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:720
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:690
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:722
 msgctxt "ContentProviderPage|"
 msgid "No versions available"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:689
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:691
 #, qt-format
 msgctxt "ContentProviderPage|"
 msgid "No versions of '%1' are available for this instance.\n"
 "The author may have blocked third-party launchers, or there may be no build for this Minecraft version."
 msgstr ""
 
-#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:721
+#: launcher/ui/pages/modplatform/ContentProviderPage.cpp:723
 #, qt-format
 msgctxt "ContentProviderPage|"
 msgid "Every version of '%1' is on a release channel that the filter is currently hiding."
@@ -1695,12 +1692,12 @@ msgctxt "CreateShortcutDialog|"
 msgid "instance"
 msgstr ""
 
-#: launcher/ui/dialogs/CreateShortcutDialog.cpp:220
+#: launcher/ui/dialogs/CreateShortcutDialog.cpp:216
 msgctxt "CreateShortcutDialog|"
 msgid "world"
 msgstr ""
 
-#: launcher/ui/dialogs/CreateShortcutDialog.cpp:225
+#: launcher/ui/dialogs/CreateShortcutDialog.cpp:221
 msgctxt "CreateShortcutDialog|"
 msgid "server"
 msgstr ""
@@ -1921,12 +1918,12 @@ msgctxt "EditAccountDialog|"
 msgid "Password"
 msgstr ""
 
-#: launcher/minecraft/auth/steps/EntitlementsStep.cpp:34
+#: launcher/minecraft/auth/steps/EntitlementsStep.cpp:36
 msgctxt "EntitlementsStep|"
 msgid "Determining game ownership."
 msgstr "Mencari tahu apakah anda mempunyai gamenya."
 
-#: launcher/minecraft/auth/steps/EntitlementsStep.cpp:77
+#: launcher/minecraft/auth/steps/EntitlementsStep.cpp:79
 msgctxt "EntitlementsStep|"
 msgid "Got entitlements"
 msgstr "Mendapat hak"
@@ -2494,12 +2491,12 @@ msgctxt "FtbPage|"
 msgid "FTB"
 msgstr ""
 
-#: launcher/minecraft/gameoptions/GameOptions.cpp:95
+#: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
 msgid "Key"
 msgstr ""
 
-#: launcher/minecraft/gameoptions/GameOptions.cpp:97
+#: launcher/minecraft/gameoptions/GameOptions.cpp:98
 msgctxt "GameOptions|"
 msgid "Value"
 msgstr "Nilai"
@@ -2509,33 +2506,33 @@ msgctxt "GameOptionsPage|"
 msgid "Game Options"
 msgstr "Opsi Game"
 
-#: launcher/minecraft/World.cpp:69
+#: launcher/minecraft/World.cpp:64
 msgctxt "GameType|"
 msgid "Survival"
 msgstr "Bertahan Hidup"
 
-#: launcher/minecraft/World.cpp:71
+#: launcher/minecraft/World.cpp:66
 msgctxt "GameType|"
 msgid "Creative"
 msgstr "Kreatif"
 
-#: launcher/minecraft/World.cpp:73
+#: launcher/minecraft/World.cpp:68
 msgctxt "GameType|"
 msgid "Adventure"
 msgstr "Petualangan"
 
-#: launcher/minecraft/World.cpp:75
+#: launcher/minecraft/World.cpp:70
 msgctxt "GameType|"
 msgid "Spectator"
 msgstr "Penonton"
 
-#: launcher/minecraft/World.cpp:80
+#: launcher/minecraft/World.cpp:75
 #, qt-format
 msgctxt "GameType|"
 msgid "Unknown (%1)"
 msgstr "Tidak diketahui (%1)"
 
-#: launcher/minecraft/World.cpp:83
+#: launcher/minecraft/World.cpp:78
 msgctxt "GameType|"
 msgid "Undefined"
 msgstr "Tidak terdefinisi"
@@ -3071,13 +3068,13 @@ msgid "The launcher has no record of which files the installed version of this m
 "Instances installed before the launcher started keeping that record have no list. This update writes one, so the update after it will be able to clean up."
 msgstr ""
 
-#: launcher/InstanceList.cpp:265
+#: launcher/InstanceList.cpp:267
 #, qt-format
 msgctxt "InstanceList|"
 msgid "%1 Instance"
 msgstr "Instansi %1"
 
-#: launcher/InstanceList.cpp:1455
+#: launcher/InstanceList.cpp:1457
 #, qt-format
 msgctxt "InstanceList|"
 msgid "Could not remove a file the updated pack no longer includes: %1"
@@ -3314,7 +3311,7 @@ msgctxt "InstanceSettingsPage|"
 msgid "Settings"
 msgstr "Pengaturan"
 
-#: launcher/InstanceList.cpp:1255
+#: launcher/InstanceList.cpp:1257
 msgctxt "InstanceStaging|"
 msgid "Failed to commit instance, even after multiple retries. It is being blocked by something."
 msgstr "Gagal melakukan instansi, bahkan setelah percobaan berulang kali. instansi sedang diblokir oleh sesuatu."
@@ -3577,91 +3574,91 @@ msgid "Failed to download Java:\n"
 "%1"
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:52
+#: launcher/java/download/JavaDownloadTask.cpp:53
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading %1..."
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:62
-#: launcher/java/download/JavaDownloadTask.cpp:185
+#: launcher/java/download/JavaDownloadTask.cpp:63
+#: launcher/java/download/JavaDownloadTask.cpp:186
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to create target directory: %1"
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:66
+#: launcher/java/download/JavaDownloadTask.cpp:67
 msgctxt "JavaDownloadTask|"
 msgid "Java download"
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:105
+#: launcher/java/download/JavaDownloadTask.cpp:106
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to download Java: %1"
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:110
+#: launcher/java/download/JavaDownloadTask.cpp:111
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Extracting %1..."
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:134
+#: launcher/java/download/JavaDownloadTask.cpp:135
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Unsupported archive format: %1"
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:143
+#: launcher/java/download/JavaDownloadTask.cpp:144
 msgctxt "JavaDownloadTask|"
 msgid "Failed to extract Java archive."
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:165
+#: launcher/java/download/JavaDownloadTask.cpp:166
 msgctxt "JavaDownloadTask|"
 msgid "Could not find java binary in extracted archive."
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:181
+#: launcher/java/download/JavaDownloadTask.cpp:182
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading manifest for %1..."
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:190
+#: launcher/java/download/JavaDownloadTask.cpp:191
 msgctxt "JavaDownloadTask|"
 msgid "Java manifest download"
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:219
+#: launcher/java/download/JavaDownloadTask.cpp:220
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to parse Java manifest: %1"
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:225
+#: launcher/java/download/JavaDownloadTask.cpp:226
 msgctxt "JavaDownloadTask|"
 msgid "Failed to parse Java manifest."
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:242
+#: launcher/java/download/JavaDownloadTask.cpp:243
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading %1 files..."
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:244
+#: launcher/java/download/JavaDownloadTask.cpp:245
 msgctxt "JavaDownloadTask|"
 msgid "Java runtime files"
 msgstr ""
 
-#: launcher/java/download/JavaDownloadTask.cpp:310
+#: launcher/java/download/JavaDownloadTask.cpp:311
 msgctxt "JavaDownloadTask|"
 msgid "Could not find java binary in downloaded runtime."
 msgstr ""
 
-#: launcher/java/JavaInstallList.cpp:143
+#: launcher/java/JavaInstallList.cpp:144
 msgctxt "JavaListLoadTask|"
 msgid "Detecting Java installations..."
 msgstr "Mendeteksi Instalasi Java..."
@@ -3814,53 +3811,49 @@ msgid "No Java version selected"
 msgstr "Tidak ada versi Java yang terpilih"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:176
-#, qt-format
 msgctxt "JavaSettingsWidget|"
 msgid "You didn't select a Java version or selected something that doesn't work.\n"
-"%1 will not be able to start Minecraft.\n"
+"MeshMC will not be able to start Minecraft.\n"
 "Do you wish to proceed without any Java?\n\n"
 "You can change the Java version in the settings later.\n"
-msgstr "Anda tidak memilih versi Java atau memilih sesuatu yang tidak bekerja.\n"
-"%1 tidak dapat memulai Minecraft.\n"
-"Apakah anda ingin melanjutkan tanpa Java?\n\n"
-"Anda dapat mengubah versi Java di pengaturan nanti.\n"
+msgstr ""
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:278
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:277
 msgctxt "JavaSettingsWidget|"
 msgid "Find Java executable"
 msgstr "Cari file Java"
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:426
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:425
 msgctxt "JavaSettingsWidget|"
 msgid "Memory"
 msgstr "Ram"
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:428
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:427
 msgctxt "JavaSettingsWidget|"
 msgid "The maximum amount of memory Minecraft is allowed to use."
 msgstr "Jumlah maksimum Ram yang dapat digunakan oleh Minecraft."
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:429
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:428
 msgctxt "JavaSettingsWidget|"
 msgid "Minimum memory allocation:"
 msgstr "Minimal Pengalokasian Ram:"
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:430
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:429
 msgctxt "JavaSettingsWidget|"
 msgid "Maximum memory allocation:"
 msgstr "Maksimal pengalokasian Ram:"
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:432
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:431
 msgctxt "JavaSettingsWidget|"
 msgid "The amount of memory Minecraft is started with."
 msgstr "Jumlah memori (Ram) bawaan yang digunakan untuk menjalankan minecraft."
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:434
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:433
 msgctxt "JavaSettingsWidget|"
 msgid "The amount of memory available to store loaded Java classes."
 msgstr "Jumlah memori (ram) yang tersedia untuk menyimpan kelas Java yang dimuat."
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:435
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:434
 msgctxt "JavaSettingsWidget|"
 msgid "Browse"
 msgstr "Telusuri"
@@ -3899,10 +3892,9 @@ msgid "Language"
 msgstr "Bahasa"
 
 #: launcher/ui/setupwizard/LanguageWizardPage.cpp:64
-#, qt-format
 msgctxt "LanguageWizardPage|"
-msgid "Select the language to use in %1"
-msgstr "Pilih bahasa yang akan digunakan di %1"
+msgid "Select the language to use in MeshMC"
+msgstr ""
 
 #: launcher/LaunchController.cpp:54
 msgctxt "LaunchController|"
@@ -4034,7 +4026,7 @@ msgctxt "LaunchController|"
 msgid "Failed to launch."
 msgstr "Gagal menjalankan."
 
-#: launcher/LaunchController.cpp:395 launcher/LaunchController.cpp:541
+#: launcher/LaunchController.cpp:395 launcher/LaunchController.cpp:540
 msgctxt "LaunchController|"
 msgid "Error!"
 msgstr ""
@@ -4049,13 +4041,13 @@ msgctxt "LaunchController|"
 msgid "Couldn't instantiate a launcher."
 msgstr "Tidak dapat memulai instansi."
 
-#: launcher/LaunchController.cpp:542
+#: launcher/LaunchController.cpp:541
 #, qt-format
 msgctxt "LaunchController|"
 msgid "Couldn't start profiler: %1"
 msgstr "Tidak dapat memulai profiler: %1"
 
-#: launcher/LaunchController.cpp:552
+#: launcher/LaunchController.cpp:551
 #, qt-format
 msgctxt "LaunchController|"
 msgid "The game launch is delayed until you press the button. This is the right time to setup the profiler, as the profiler server is running now.\n\n"
@@ -4063,58 +4055,58 @@ msgid "The game launch is delayed until you press the button. This is the right 
 msgstr "Peluncuran game ditunda hingga Anda menekan tombol. Ini adalah waktu yang tepat untuk mengatur profiler, karena server profiler sedang berjalan sekarang.\n\n"
 "%1"
 
-#: launcher/LaunchController.cpp:557
+#: launcher/LaunchController.cpp:556
 msgctxt "LaunchController|"
 msgid "Waiting."
 msgstr "Menunggu."
 
-#: launcher/LaunchController.cpp:559
+#: launcher/LaunchController.cpp:558
 msgctxt "LaunchController|"
 msgid "Launch"
 msgstr "Jalankan"
 
-#: launcher/LaunchController.cpp:567
+#: launcher/LaunchController.cpp:566
 #, qt-format
 msgctxt "LaunchController|"
 msgid "Couldn't start the profiler: %1"
 msgstr "Tidak dapat memulai profiler: %1"
 
-#: launcher/LaunchController.cpp:568
+#: launcher/LaunchController.cpp:567
 msgctxt "LaunchController|"
 msgid "Error"
 msgstr ""
 
-#: launcher/LaunchController.cpp:609
+#: launcher/LaunchController.cpp:608
 msgctxt "LaunchController|"
 msgid "Abort"
 msgstr "Batalkan"
 
-#: launcher/LaunchController.cpp:626
+#: launcher/LaunchController.cpp:625
 msgctxt "LaunchController|"
 msgid "Already stopping"
 msgstr ""
 
-#: launcher/LaunchController.cpp:627
+#: launcher/LaunchController.cpp:626
 msgctxt "LaunchController|"
 msgid "MeshMC is already shutting this instance down. Give it a few seconds - if the game does not react, it gets killed automatically."
 msgstr ""
 
-#: launcher/LaunchController.cpp:634
+#: launcher/LaunchController.cpp:633
 msgctxt "LaunchController|"
 msgid "Can't kill Minecraft"
 msgstr ""
 
-#: launcher/LaunchController.cpp:635
+#: launcher/LaunchController.cpp:634
 msgctxt "LaunchController|"
 msgid "This instance is at a point in the launch process that can't be interrupted. Please try again in a moment."
 msgstr ""
 
-#: launcher/LaunchController.cpp:643
+#: launcher/LaunchController.cpp:642
 msgctxt "LaunchController|"
 msgid "Kill Minecraft?"
 msgstr "Matikan Minecraft?"
 
-#: launcher/LaunchController.cpp:644
+#: launcher/LaunchController.cpp:643
 msgctxt "LaunchController|"
 msgid "This can cause the instance to get corrupted and should only be used if Minecraft is frozen for some reason"
 msgstr "Hal ini dapat menyababkan instansi menjadi rusak dan sebaiknya hanya digunakan jika Minecraft beku untuk suatu alasan"
@@ -4126,27 +4118,27 @@ msgid "MeshMC stopped watching the game log because the log length surpassed %1 
 "You may have to fix your mods because the game is still logging to files and likely wasting harddrive space at an alarming rate!"
 msgstr ""
 
-#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:39
+#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:42
 msgctxt "LegacyFTB::FilterModel|"
 msgid "Sort by name"
 msgstr "Urutkan berdasarkan nama"
 
-#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:40
+#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:43
 msgctxt "LegacyFTB::FilterModel|"
 msgid "Sort by game version"
 msgstr "Urutkan berdasarkan versi game"
 
-#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:102
+#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:105
 msgctxt "LegacyFTB::ListModel|"
 msgid "Public Modpack"
 msgstr "Modpack Publik"
 
-#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:104
+#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:107
 msgctxt "LegacyFTB::ListModel|"
 msgid "Third Party Modpack"
 msgstr "Modpack Pihak Ketiga"
 
-#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:106
+#: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:109
 msgctxt "LegacyFTB::ListModel|"
 msgid "Private Modpack"
 msgstr "Modpack Pribadi"
@@ -4457,31 +4449,31 @@ msgid "Minecraft Log"
 msgstr "Riwayat Minecraft"
 
 #. Message displayed on instance exit
-#: launcher/LoggedProcess.cpp:108
+#: launcher/LoggedProcess.cpp:119
 #, qt-format
 msgctxt "LoggedProcess|"
 msgid "Process exited with code %1."
 msgstr ""
 
 #. Message displayed on instance crashed
-#: launcher/LoggedProcess.cpp:114
+#: launcher/LoggedProcess.cpp:125
 msgctxt "LoggedProcess|"
 msgid "Process crashed."
 msgstr "Proses gagal."
 
-#: launcher/LoggedProcess.cpp:117
+#: launcher/LoggedProcess.cpp:128
 #, qt-format
 msgctxt "LoggedProcess|"
 msgid "Process crashed with exitcode %1."
 msgstr ""
 
 #. Message displayed after the instance exits due to kill request
-#: launcher/LoggedProcess.cpp:123
+#: launcher/LoggedProcess.cpp:134
 msgctxt "LoggedProcess|"
 msgid "Process was killed by user."
 msgstr "Proses telah dimatikan oleh pengguna."
 
-#: launcher/LoggedProcess.cpp:132
+#: launcher/LoggedProcess.cpp:143
 msgctxt "LoggedProcess|"
 msgid "The process failed to start."
 msgstr "Proses gagal dijalankan."
@@ -4512,820 +4504,792 @@ msgctxt "MSAStep|"
 msgid "Login successful! You can close this page and return to MeshMC."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MSAStep.cpp:59
+#: launcher/minecraft/auth/steps/MSAStep.cpp:62
 msgctxt "MSAStep|"
 msgid "Logging in with Microsoft account."
 msgstr "Masuk dengan akun Microsoft."
 
-#: launcher/minecraft/auth/steps/MSAStep.cpp:90
+#: launcher/minecraft/auth/steps/MSAStep.cpp:97
 msgctxt "MSAStep|"
 msgid "Failed to start local HTTP server for OAuth2 callback."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MSAStep.cpp:129
+#: launcher/minecraft/auth/steps/MSAStep.cpp:141
 msgctxt "MSAStep|"
 msgid "Got MSA token."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MSAStep.cpp:140
+#: launcher/minecraft/auth/steps/MSAStep.cpp:152
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed due to a network error."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MSAStep.cpp:147
+#: launcher/minecraft/auth/steps/MSAStep.cpp:159
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MSAStep.cpp:151
+#: launcher/minecraft/auth/steps/MSAStep.cpp:164
 msgctxt "MSAStep|"
 msgid "Microsoft authentication token expired."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MSAStep.cpp:155
+#: launcher/minecraft/auth/steps/MSAStep.cpp:169
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed with an unrecognized error."
 msgstr ""
 
-#: launcher/ui/MacMenuBar.cpp:137
+#: launcher/ui/MacMenuBar.cpp:136
 msgctxt "MacMenuBar|"
 msgid "&File"
 msgstr ""
 
-#: launcher/ui/MacMenuBar.cpp:138
+#: launcher/ui/MacMenuBar.cpp:137
 msgctxt "MacMenuBar|"
 msgid "&Instance"
 msgstr ""
 
-#: launcher/ui/MacMenuBar.cpp:139
+#: launcher/ui/MacMenuBar.cpp:138
 msgctxt "MacMenuBar|"
 msgid "F&olders"
 msgstr ""
 
-#: launcher/ui/MacMenuBar.cpp:140
+#: launcher/ui/MacMenuBar.cpp:139
 msgctxt "MacMenuBar|"
 msgid "&View"
 msgstr ""
 
-#: launcher/ui/MacMenuBar.cpp:144
+#: launcher/ui/MacMenuBar.cpp:143
 msgctxt "MacMenuBar|"
 msgid "&Help"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:421
+#: launcher/ui/MainWindow.ui:41
+msgctxt "MainWindow|"
+msgid "Instance ToolBar"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:77
 msgctxt "MainWindow|"
 msgid "Main Toolbar"
 msgstr "Bilah alat Utama"
 
-#: launcher/ui/MainWindow.cpp:427
+#: launcher/ui/MainWindow.ui:107
+msgctxt "MainWindow|"
+msgid "News Toolbar"
+msgstr "Toolbar baru"
+
+#: launcher/ui/MainWindow.ui:143
+msgctxt "MainWindow|"
+msgid "&File"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:166
+msgctxt "MainWindow|"
+msgid "&Edit"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:178
+msgctxt "MainWindow|"
+msgid "&Instance"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:196
+msgctxt "MainWindow|"
+msgid "&View"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:208
+msgctxt "MainWindow|"
+msgid "F&olders"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:229
+msgctxt "MainWindow|"
+msgid "&Help"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:245
+msgctxt "MainWindow|"
+msgid "&Accounts"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:261
 msgctxt "MainWindow|"
 msgid "Add Instance"
 msgstr "Tambahkan Instansi"
 
-#: launcher/ui/MainWindow.cpp:429
+#: launcher/ui/MainWindow.ui:264
 msgctxt "MainWindow|"
 msgid "Add a new instance."
 msgstr "Tambahkan instansi terbaru."
 
-#: launcher/ui/MainWindow.cpp:437
+#: launcher/ui/MainWindow.ui:275
 msgctxt "MainWindow|"
 msgid "Undo Last Instance Deletion"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:438 launcher/ui/MainWindow.cpp:1883
+#: launcher/ui/MainWindow.ui:278 launcher/ui/MainWindow.cpp:866
 msgctxt "MainWindow|"
 msgid "Bring the instance you last sent to the trash back, along with its shortcuts."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:456
+#: launcher/ui/MainWindow.ui:289
 msgctxt "MainWindow|"
 msgid "Launcher Root"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:457
+#: launcher/ui/MainWindow.ui:292
 msgctxt "MainWindow|"
 msgid "Open the launcher's root folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:470
+#: launcher/ui/MainWindow.ui:303
 msgctxt "MainWindow|"
 msgid "Instances"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:471
+#: launcher/ui/MainWindow.ui:306
 msgctxt "MainWindow|"
 msgid "Open the instance folder in a file browser."
 msgstr "Buka folder instansi di dalam file explorer."
 
-#: launcher/ui/MainWindow.cpp:482
+#: launcher/ui/MainWindow.ui:317
 msgctxt "MainWindow|"
 msgid "Central Mods"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:483
+#: launcher/ui/MainWindow.ui:320
 msgctxt "MainWindow|"
 msgid "Open the central mods folder in a file browser."
 msgstr "Buka folder utama mod di dalam browser."
 
-#: launcher/ui/MainWindow.cpp:494
+#: launcher/ui/MainWindow.ui:331
 msgctxt "MainWindow|"
 msgid "Skins"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:495
+#: launcher/ui/MainWindow.ui:334
 msgctxt "MainWindow|"
 msgid "Open the skins folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:506
+#: launcher/ui/MainWindow.ui:345
 msgctxt "MainWindow|"
 msgid "Java"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:507
+#: launcher/ui/MainWindow.ui:348
 msgctxt "MainWindow|"
 msgid "Open the Java folder in a file browser. Only available if the built-in Java downloader is used."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:520
+#: launcher/ui/MainWindow.ui:359
 msgctxt "MainWindow|"
 msgid "Icon Theme"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:521
+#: launcher/ui/MainWindow.ui:362
 msgctxt "MainWindow|"
 msgid "Open the icon theme folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:532
+#: launcher/ui/MainWindow.ui:373
 msgctxt "MainWindow|"
 msgid "Widget Themes"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:533
+#: launcher/ui/MainWindow.ui:376
 msgctxt "MainWindow|"
 msgid "Open the widget themes folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:544
+#: launcher/ui/MainWindow.ui:387
 msgctxt "MainWindow|"
 msgid "Cat Packs"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:545
+#: launcher/ui/MainWindow.ui:390
 msgctxt "MainWindow|"
 msgid "Open the cat packs folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:556
+#: launcher/ui/MainWindow.ui:401
 msgctxt "MainWindow|"
 msgid "Instance Icons"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:557
+#: launcher/ui/MainWindow.ui:404
 msgctxt "MainWindow|"
 msgid "Open the instance icons folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:570
+#: launcher/ui/MainWindow.ui:415
 msgctxt "MainWindow|"
 msgid "Logs"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:571
+#: launcher/ui/MainWindow.ui:418
 msgctxt "MainWindow|"
 msgid "Open the logs folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:577 launcher/ui/MainWindow.cpp:1399
-msgctxt "MainWindow|"
-msgid "Folders"
-msgstr "Folder"
-
-#: launcher/ui/MainWindow.cpp:578
-msgctxt "MainWindow|"
-msgid "Open one of the folders shared between instances."
-msgstr "Buka folder yang dibagi antar instansi."
-
-#: launcher/ui/MainWindow.cpp:594
+#: launcher/ui/MainWindow.ui:429
 msgctxt "MainWindow|"
 msgid "Settings"
 msgstr "Pengaturan"
 
-#: launcher/ui/MainWindow.cpp:596
+#: launcher/ui/MainWindow.ui:432
 msgctxt "MainWindow|"
 msgid "Change settings."
 msgstr "Ubah pengaturan."
 
-#: launcher/ui/MainWindow.cpp:608
-msgctxt "MainWindow|"
-msgid "Report a Bug"
-msgstr "Laporkan Bug"
-
-#: launcher/ui/MainWindow.cpp:609
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Open the bug tracker to report a bug with %1."
-msgstr "Buka pelacak bug untuk melaporkan bug dalam %1."
-
-#: launcher/ui/MainWindow.cpp:619
-msgctxt "MainWindow|"
-msgid "Discord"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:621
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Open %1 discord voice chat."
-msgstr "Buka voice chat discord %1."
-
-#: launcher/ui/MainWindow.cpp:630
-msgctxt "MainWindow|"
-msgid "Reddit"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:632
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Open %1 subreddit."
-msgstr "Buka subreddit %1."
-
-#: launcher/ui/MainWindow.cpp:641
-msgctxt "MainWindow|"
-msgid "Plugins"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:642
-msgctxt "MainWindow|"
-msgid "View and manage MMCO Plugins."
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:652
+#: launcher/ui/MainWindow.ui:443
 msgctxt "MainWindow|"
 msgid "MeshMC Logs"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:653
+#: launcher/ui/MainWindow.ui:446
 msgctxt "MainWindow|"
 msgid "View and manage MeshMC application logs."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:662
+#: launcher/ui/MainWindow.ui:457
 #, qt-format
 msgctxt "MainWindow|"
 msgid "About %1"
 msgstr "Tentang %1"
 
-#: launcher/ui/MainWindow.cpp:664
+#: launcher/ui/MainWindow.ui:460
 #, qt-format
 msgctxt "MainWindow|"
 msgid "View information about %1."
 msgstr "Lihat informasi tentang %1."
 
-#: launcher/ui/MainWindow.cpp:669 launcher/ui/MainWindow.cpp:1400
-msgctxt "MainWindow|"
-msgid "Help"
-msgstr "Bantuan"
-
-#: launcher/ui/MainWindow.cpp:671
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Get help with %1 or Minecraft."
-msgstr "Dapatkan bantuan dengan %1 atau Minecraft."
-
-#: launcher/ui/MainWindow.cpp:690
-msgctxt "MainWindow|"
-msgid "Update"
-msgstr "Pembaruan"
-
-#: launcher/ui/MainWindow.cpp:691
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Check for new updates for %1."
-msgstr "Periksa pembaruan untuk %1."
-
-#: launcher/ui/MainWindow.cpp:704
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Support %1"
-msgstr "Dukung %1"
-
-#: launcher/ui/MainWindow.cpp:705
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Open the %1 Patreon page."
-msgstr "Buka halaman Patreon %1."
-
-#: launcher/ui/MainWindow.cpp:714
+#: launcher/ui/MainWindow.ui:474
 msgctxt "MainWindow|"
 msgid "Meow"
 msgstr "UWU"
 
-#: launcher/ui/MainWindow.cpp:716
+#: launcher/ui/MainWindow.ui:477
 msgctxt "MainWindow|"
 msgid "It's a fluffy kitty :3"
 msgstr "Saia Kucing imut UWU"
 
-#: launcher/ui/MainWindow.cpp:726
+#: launcher/ui/MainWindow.ui:491
 msgctxt "MainWindow|"
 msgid "Manage Accounts"
 msgstr "Kelola Akun"
 
-#: launcher/ui/MainWindow.cpp:738
+#: launcher/ui/MainWindow.ui:494
+msgctxt "MainWindow|"
+msgid "Manage Microsoft Accounts."
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:505
+msgctxt "MainWindow|"
+msgid "Manage Skins"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:508
+msgctxt "MainWindow|"
+msgid "Manage the skins of the currently selected account."
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:519
 msgctxt "MainWindow|"
 msgid "Lock Toolbars"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:739
+#: launcher/ui/MainWindow.ui:522
 msgctxt "MainWindow|"
 msgid "Prevent the toolbars from being dragged around."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:766
-msgctxt "MainWindow|"
-msgid "News Toolbar"
-msgstr "Toolbar baru"
-
-#: launcher/ui/MainWindow.cpp:772
+#: launcher/ui/MainWindow.ui:533
 msgctxt "MainWindow|"
 msgid "More news..."
 msgstr "Berita lainnya..."
 
-#: launcher/ui/MainWindow.cpp:773
+#: launcher/ui/MainWindow.ui:536
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Open the development blog to read more news about %1."
 msgstr "Buka blog pengembangan untuk membaca lebih banyak berita tentang %1."
 
-#: launcher/ui/MainWindow.cpp:862
+#: launcher/ui/MainWindow.ui:547
 msgctxt "MainWindow|"
 msgid "Menu Bar Instead of Tool Bar"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:863
+#: launcher/ui/MainWindow.ui:550
 msgctxt "MainWindow|"
 msgid "Keep this menu bar and hide the main toolbar. Without it, tap Alt to show the menu bar for a moment."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:906
-msgctxt "MainWindow|"
-msgid "Instance Toolbar"
-msgstr "Toolbar Instansi"
-
-#: launcher/ui/MainWindow.cpp:916
+#: launcher/ui/MainWindow.ui:558
 msgctxt "MainWindow|"
 msgid "Change Icon"
 msgstr "Ubah Ikon"
 
-#: launcher/ui/MainWindow.cpp:917
+#: launcher/ui/MainWindow.ui:561
 msgctxt "MainWindow|"
 msgid "Change the selected instance's icon."
 msgstr "Ubah ikon pada instansi yang dipilih."
 
-#: launcher/ui/MainWindow.cpp:937
+#: launcher/ui/MainWindow.ui:572
 msgctxt "MainWindow|"
 msgid "Rename"
 msgstr "Namai Ulang"
 
-#: launcher/ui/MainWindow.cpp:939
+#: launcher/ui/MainWindow.ui:575
 msgctxt "MainWindow|"
 msgid "Rename the selected instance."
 msgstr "Namai ulang instansi yang dipilih."
 
-#: launcher/ui/MainWindow.cpp:955 launcher/ui/MainWindow.cpp:1956
+#: launcher/ui/MainWindow.ui:586 launcher/ui/MainWindow.cpp:939
 msgctxt "MainWindow|"
 msgid "Launch"
 msgstr "Jalankan"
 
-#: launcher/ui/MainWindow.cpp:957
+#: launcher/ui/MainWindow.ui:589
 msgctxt "MainWindow|"
 msgid "Launch the selected instance."
 msgstr "Jalankan instansi yang dipilih."
 
-#: launcher/ui/MainWindow.cpp:965
+#: launcher/ui/MainWindow.ui:600
 msgctxt "MainWindow|"
 msgid "Kill"
 msgstr "Matikan"
 
-#: launcher/ui/MainWindow.cpp:967
+#: launcher/ui/MainWindow.ui:603
 msgctxt "MainWindow|"
 msgid "Kill the running instance."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:976 launcher/ui/MainWindow.cpp:1961
+#: launcher/ui/MainWindow.ui:606
+msgctxt "MainWindow|"
+msgid "Ctrl+K"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:617 launcher/ui/MainWindow.cpp:944
 msgctxt "MainWindow|"
 msgid "Launch Offline"
 msgstr "Jalankan secara Offline"
 
-#: launcher/ui/MainWindow.cpp:977
+#: launcher/ui/MainWindow.ui:620
 msgctxt "MainWindow|"
 msgid "Launch the selected instance in offline mode."
 msgstr "Jalankan instansi terpilih secara offline."
 
-#: launcher/ui/MainWindow.cpp:986
+#: launcher/ui/MainWindow.ui:631
 msgctxt "MainWindow|"
 msgid "Edit Instance"
 msgstr "Ubah Instansi"
 
-#: launcher/ui/MainWindow.cpp:987
+#: launcher/ui/MainWindow.ui:634
 msgctxt "MainWindow|"
 msgid "Change the instance settings, mods and versions."
 msgstr "Ubah pengaturan instansi, mods dan versi."
 
-#: launcher/ui/MainWindow.cpp:997
+#: launcher/ui/MainWindow.ui:645
 msgctxt "MainWindow|"
 msgid "Instance Settings"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:998
+#: launcher/ui/MainWindow.ui:648
 msgctxt "MainWindow|"
 msgid "Open the settings for the selected instance."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1007
+#: launcher/ui/MainWindow.ui:659
 msgctxt "MainWindow|"
 msgid "Edit Notes"
 msgstr "Ubah Catatan"
 
-#: launcher/ui/MainWindow.cpp:1008
+#: launcher/ui/MainWindow.ui:662
 msgctxt "MainWindow|"
 msgid "Edit the notes for the selected instance."
 msgstr "Ubah catatan untuk instansi yang sedang dipilih."
 
-#: launcher/ui/MainWindow.cpp:1015
+#: launcher/ui/MainWindow.ui:673
 msgctxt "MainWindow|"
 msgid "View Mods"
 msgstr "Lihat Mod"
 
-#: launcher/ui/MainWindow.cpp:1017
+#: launcher/ui/MainWindow.ui:676
 msgctxt "MainWindow|"
 msgid "View the mods of this instance."
 msgstr "Lihat mod di instansi ini."
 
-#: launcher/ui/MainWindow.cpp:1023
+#: launcher/ui/MainWindow.ui:687
 msgctxt "MainWindow|"
 msgid "View Worlds"
 msgstr "Lihat Dunia"
 
-#: launcher/ui/MainWindow.cpp:1024
+#: launcher/ui/MainWindow.ui:690
 msgctxt "MainWindow|"
 msgid "View the worlds of this instance."
 msgstr "Lihat dunia dari instansi ini."
 
-#: launcher/ui/MainWindow.cpp:1032
+#: launcher/ui/MainWindow.ui:701
 msgctxt "MainWindow|"
 msgid "Manage Screenshots"
 msgstr "Kelola Screenshot"
 
-#: launcher/ui/MainWindow.cpp:1033
+#: launcher/ui/MainWindow.ui:704
 msgctxt "MainWindow|"
 msgid "View and upload screenshots for this instance."
 msgstr "Lihat dan unggah screenshot untuk instansi ini."
 
-#: launcher/ui/MainWindow.cpp:1042
+#: launcher/ui/MainWindow.ui:715
 msgctxt "MainWindow|"
 msgid "Change Group"
 msgstr "Ubah Grup"
 
-#: launcher/ui/MainWindow.cpp:1043
+#: launcher/ui/MainWindow.ui:718
 msgctxt "MainWindow|"
 msgid "Change the selected instance's group."
 msgstr "Ubah grup pada instansi yang dipilih."
 
-#: launcher/ui/MainWindow.cpp:1055
-msgctxt "MainWindow|"
-msgid "View Backups"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1056
-msgctxt "MainWindow|"
-msgid "View and manage backups for this instance."
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1067
+#: launcher/ui/MainWindow.ui:729
 msgctxt "MainWindow|"
 msgid "Minecraft Folder"
 msgstr "Folder Minecraft"
 
-#: launcher/ui/MainWindow.cpp:1068
+#: launcher/ui/MainWindow.ui:732
 msgctxt "MainWindow|"
 msgid "Open the selected instance's minecraft folder in a file browser."
 msgstr "Buka folder instansi minecraft yang dipilih di file explorer."
 
-#: launcher/ui/MainWindow.cpp:1079
+#: launcher/ui/MainWindow.ui:743
 msgctxt "MainWindow|"
 msgid "Mods Folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1080
+#: launcher/ui/MainWindow.ui:746
 msgctxt "MainWindow|"
 msgid "Open the selected instance's mods folder in a file browser."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1091
+#: launcher/ui/MainWindow.ui:757
 msgctxt "MainWindow|"
 msgid "Config Folder"
 msgstr "Folder Pengaturan"
 
-#: launcher/ui/MainWindow.cpp:1092
+#: launcher/ui/MainWindow.ui:760
 msgctxt "MainWindow|"
 msgid "Open the instance's config folder."
 msgstr "Buka folder pengaturan instansi."
 
-#: launcher/ui/MainWindow.cpp:1102
+#: launcher/ui/MainWindow.ui:771
 msgctxt "MainWindow|"
 msgid "Instance Folder"
 msgstr "Folder Instansi"
 
-#: launcher/ui/MainWindow.cpp:1103
+#: launcher/ui/MainWindow.ui:774
 msgctxt "MainWindow|"
 msgid "Open the selected instance's root folder in a file browser."
 msgstr "Buka folder utama instansi di penjelajah file."
 
-#: launcher/ui/MainWindow.cpp:1119
+#: launcher/ui/MainWindow.ui:785
 msgctxt "MainWindow|"
 msgid "E&xport..."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1125
+#: launcher/ui/MainWindow.ui:788
 msgctxt "MainWindow|"
 msgid "Export Instance"
 msgstr "Ekspor Instansi"
 
-#: launcher/ui/MainWindow.cpp:1126
+#: launcher/ui/MainWindow.ui:791
 msgctxt "MainWindow|"
 msgid "Export the selected instance to supported formats."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1147
+#: launcher/ui/MainWindow.ui:802
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1156
+#: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1165
+#: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1180
+#: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
 msgid "Delete"
 msgstr "Hapus"
 
-#: launcher/ui/MainWindow.cpp:1182
+#: launcher/ui/MainWindow.ui:838
 msgctxt "MainWindow|"
 msgid "Delete the selected instance."
 msgstr "Hapus instansi yang dipilih."
 
-#: launcher/ui/MainWindow.cpp:1189
+#: launcher/ui/MainWindow.ui:849
 msgctxt "MainWindow|"
 msgid "Copy Instance"
 msgstr "Salin Instansi"
 
-#: launcher/ui/MainWindow.cpp:1191
+#: launcher/ui/MainWindow.ui:852
 msgctxt "MainWindow|"
 msgid "Copy the selected instance."
 msgstr "Salin instansi yang terpilih."
 
-#: launcher/ui/MainWindow.cpp:1200
+#: launcher/ui/MainWindow.ui:863
 msgctxt "MainWindow|"
 msgid "Create Shortcut"
 msgstr "Buat pintasan"
 
-#: launcher/ui/MainWindow.cpp:1201
+#: launcher/ui/MainWindow.ui:866
 msgctxt "MainWindow|"
 msgid "Create a shortcut in a folder of your choosing that launches the selected instance."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1380
+#: launcher/ui/MainWindow.ui:877
+msgctxt "MainWindow|"
+msgid "Report a Bug"
+msgstr "Laporkan Bug"
+
+#: launcher/ui/MainWindow.ui:880
 #, qt-format
-msgctxt "MainWindow|MeshMC - Version X"
-msgid "%1 - Version %2"
+msgctxt "MainWindow|"
+msgid "Open the bug tracker to report a bug with %1."
+msgstr "Buka pelacak bug untuk melaporkan bug dalam %1."
+
+#: launcher/ui/MainWindow.ui:891
+msgctxt "MainWindow|"
+msgid "Discord"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1384
+#: launcher/ui/MainWindow.ui:894
+#, qt-format
+msgctxt "MainWindow|"
+msgid "Open %1 discord voice chat."
+msgstr "Buka voice chat discord %1."
+
+#: launcher/ui/MainWindow.ui:905
+msgctxt "MainWindow|"
+msgid "Reddit"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:908
+#, qt-format
+msgctxt "MainWindow|"
+msgid "Open %1 subreddit."
+msgstr "Buka subreddit %1."
+
+#: launcher/ui/MainWindow.ui:919
+msgctxt "MainWindow|"
+msgid "Plugins"
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:922
+msgctxt "MainWindow|"
+msgid "View and manage MMCO Plugins."
+msgstr ""
+
+#: launcher/ui/MainWindow.ui:933
+msgctxt "MainWindow|"
+msgid "Update"
+msgstr "Pembaruan"
+
+#: launcher/ui/MainWindow.ui:936
+#, qt-format
+msgctxt "MainWindow|"
+msgid "Check for new updates for %1."
+msgstr "Periksa pembaruan untuk %1."
+
+#: launcher/ui/MainWindow.ui:947
+#, qt-format
+msgctxt "MainWindow|"
+msgid "Support %1"
+msgstr "Dukung %1"
+
+#: launcher/ui/MainWindow.ui:950
+#, qt-format
+msgctxt "MainWindow|"
+msgid "Open the %1 Patreon page."
+msgstr "Buka halaman Patreon %1."
+
+#: launcher/ui/MainWindow.ui:961
+msgctxt "MainWindow|"
+msgid "Folders"
+msgstr "Folder"
+
+#: launcher/ui/MainWindow.ui:964
+msgctxt "MainWindow|"
+msgid "Open one of the folders shared between instances."
+msgstr "Buka folder yang dibagi antar instansi."
+
+#: launcher/ui/MainWindow.ui:975
+msgctxt "MainWindow|"
+msgid "Help"
+msgstr "Bantuan"
+
+#: launcher/ui/MainWindow.ui:978
+#, qt-format
+msgctxt "MainWindow|"
+msgid "Get help with %1 or Minecraft."
+msgstr "Dapatkan bantuan dengan %1 atau Minecraft."
+
+#: launcher/ui/MainWindow.ui:986 launcher/ui/MainWindow.cpp:697
+#: launcher/ui/MainWindow.cpp:1150
+msgctxt "MainWindow|"
+msgid "Profiles"
+msgstr ""
+
+#: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
+msgctxt "MainWindow|"
+msgid "No instance selected"
+msgstr "Tidak instansi yang dipilih"
+
+#: launcher/ui/MainWindow.cpp:532
+msgctxt "MainWindow|"
+msgid "Total playtime: 0s"
+msgstr "Total waktu bermain: 0d"
+
+#: launcher/ui/MainWindow.cpp:679
+#, qt-format
+msgctxt "MainWindow|MeshMC - Version X"
+msgid "MeshMC - Version %1"
+msgstr ""
+
+#: launcher/ui/MainWindow.cpp:682
 #, qt-format
 msgctxt "MainWindow|on platform, as in operating system"
 msgid " on %1"
 msgstr " pada %1"
 
-#: launcher/ui/MainWindow.cpp:1407
-msgctxt "MainWindow|"
-msgid "&File"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1408
-msgctxt "MainWindow|"
-msgid "&Edit"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1409
-msgctxt "MainWindow|"
-msgid "&Instance"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1410
-msgctxt "MainWindow|"
-msgid "&View"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1411
-msgctxt "MainWindow|"
-msgid "F&olders"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1412
-msgctxt "MainWindow|"
-msgid "&Help"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1550 launcher/ui/MainWindow.cpp:1718
-msgctxt "MainWindow|"
-msgid "No instance selected"
-msgstr "Tidak instansi yang dipilih"
-
-#: launcher/ui/MainWindow.cpp:1551
-msgctxt "MainWindow|"
-msgid "Total playtime: 0s"
-msgstr "Total waktu bermain: 0d"
-
-#: launcher/ui/MainWindow.cpp:1588
-msgctxt "MainWindow|"
-msgid "&Accounts"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1712 launcher/ui/MainWindow.cpp:2146
-msgctxt "MainWindow|"
-msgid "Profiles"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:1831
+#: launcher/ui/MainWindow.cpp:814
 msgctxt "MainWindow|"
 msgid "Create instance"
 msgstr "Buat instansi"
 
-#: launcher/ui/MainWindow.cpp:1847
+#: launcher/ui/MainWindow.cpp:830
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Delete group '%1'"
 msgstr "Hapus grup '%1'"
 
-#: launcher/ui/MainWindow.cpp:1880
+#: launcher/ui/MainWindow.cpp:863
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Undo Deletion of \"%1\""
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1969
+#: launcher/ui/MainWindow.cpp:952
 msgctxt "MainWindow|"
 msgid "Launch &Demo"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1977
+#: launcher/ui/MainWindow.cpp:960
 msgctxt "MainWindow|"
 msgid "This Minecraft version has no demo mode. It was added in 1.3.1."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1984
+#: launcher/ui/MainWindow.cpp:967
 msgctxt "MainWindow|"
 msgid "Profilers"
 msgstr "Profiler"
 
-#: launcher/ui/MainWindow.cpp:1991
+#: launcher/ui/MainWindow.cpp:974
 msgctxt "MainWindow|"
 msgid "No Profiler"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2010
+#: launcher/ui/MainWindow.cpp:993
 msgctxt "MainWindow|"
 msgid "Profiler not setup correctly. Go into settings, \"External Tools\"."
 msgstr "Profiler tidak diatur secara baik. Pergi ke pengaturan dibagian tab \"Perkakas Eksternal\"."
 
-#: launcher/ui/MainWindow.cpp:2048
+#: launcher/ui/MainWindow.cpp:1011
+msgctxt "MainWindow|"
+msgid "Launch &As"
+msgstr ""
+
+#: launcher/ui/MainWindow.cpp:1048
 msgctxt "MainWindow|"
 msgid "No accounts added!"
 msgstr "Tidak ada akun yang ditambahkan!"
 
-#: launcher/ui/MainWindow.cpp:2078
+#: launcher/ui/MainWindow.cpp:1078
 msgctxt "MainWindow|"
 msgid "No Default Account"
 msgstr "Tidak ada akun bawaan"
 
-#: launcher/ui/MainWindow.cpp:2187
+#: launcher/ui/MainWindow.cpp:1191
 msgctxt "MainWindow|"
 msgid "Loading news..."
 msgstr "Memuat Berita..."
 
-#: launcher/ui/MainWindow.cpp:2195
+#: launcher/ui/MainWindow.cpp:1199
 msgctxt "MainWindow|"
 msgid "No news available."
 msgstr "Tidak ada berita baru."
 
-#: launcher/ui/MainWindow.cpp:2217
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Preparing update to version %1..."
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2220
-#, qt-format
-msgctxt "MainWindow|"
-msgid "Download URL: %1"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2224
-msgctxt "MainWindow|"
-msgid "Launching updater..."
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2230
-msgctxt "MainWindow|"
-msgid "Updater launched. MeshMC will now close."
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2237
-msgctxt "MainWindow|"
-msgid "Failed to launch the updater."
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2242
-msgctxt "MainWindow|"
-msgid "No Download URL"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2243
-#, qt-format
-msgctxt "MainWindow|"
-msgid "An update to version %1 is available, but no download URL was found for your platform (%2).\n"
-"Please visit the project website to download it manually."
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2334 launcher/ui/MainWindow.cpp:2387
-#: launcher/ui/MainWindow.cpp:2397
+#: launcher/ui/MainWindow.cpp:1270 launcher/ui/MainWindow.cpp:1323
+#: launcher/ui/MainWindow.cpp:1333
 msgctxt "MainWindow|"
 msgid "Error"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2342
+#: launcher/ui/MainWindow.cpp:1278
 msgctxt "MainWindow|"
 msgid "Warnings"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2347 launcher/ui/MainWindow.cpp:2392
+#: launcher/ui/MainWindow.cpp:1283 launcher/ui/MainWindow.cpp:1328
 msgctxt "MainWindow|"
 msgid "Abort"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2398
+#: launcher/ui/MainWindow.cpp:1334
 msgctxt "MainWindow|"
 msgid "MeshMC cannot download Minecraft or update instances unless you have at least one account added.\n"
 "Please add your Mojang or Minecraft account."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2543
+#: launcher/ui/MainWindow.cpp:1471
 msgctxt "MainWindow|"
 msgid "Group name"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2544
+#: launcher/ui/MainWindow.cpp:1472
 msgctxt "MainWindow|"
 msgid "Enter a new group name."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2566
+#: launcher/ui/MainWindow.cpp:1494
 msgctxt "MainWindow|"
 msgid "Delete group"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2567
+#: launcher/ui/MainWindow.cpp:1495
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Are you sure you want to delete the group %1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2651
-msgctxt "MainWindow|"
-msgid "Checking for updates..."
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2806
+#: launcher/ui/MainWindow.cpp:1710
 msgctxt "MainWindow|"
 msgid "Instance is running"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2807
+#: launcher/ui/MainWindow.cpp:1711
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\"%1\" is running. Stop it first -- deleting an instance while the game has its files open would leave both in a mess."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2823
+#: launcher/ui/MainWindow.cpp:1727
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\n\n"
@@ -5334,22 +5298,22 @@ msgid_plural "\n\n"
 "%n shortcut(s) to it will go the same way."
 msgstr[0] ""
 
-#: launcher/ui/MainWindow.cpp:2833
+#: launcher/ui/MainWindow.cpp:1737
 msgctxt "MainWindow|"
 msgid "It will be moved to the trash. To bring it back, right-click the instance list and pick Restore."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2835
+#: launcher/ui/MainWindow.cpp:1739
 msgctxt "MainWindow|"
 msgid "There is no usable trash on this system, so this is permanent."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2843
+#: launcher/ui/MainWindow.cpp:1747
 msgctxt "MainWindow|"
 msgid "Delete instance?"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2844
+#: launcher/ui/MainWindow.cpp:1748
 #, qt-format
 msgctxt "MainWindow|"
 msgid "About to delete: %1\n"
@@ -5357,61 +5321,60 @@ msgid "About to delete: %1\n"
 "Are you sure?"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2881
+#: launcher/ui/MainWindow.cpp:1785
 msgctxt "MainWindow|"
 msgid "Restore Instance"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2882
+#: launcher/ui/MainWindow.cpp:1786
 msgctxt "MainWindow|"
 msgid "Not everything could be put back. Check your trash to recover the rest by hand."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2940
+#: launcher/ui/MainWindow.cpp:1844
 msgctxt "MainWindow|"
 msgid "Cannot export"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2941
+#: launcher/ui/MainWindow.cpp:1845
 msgctxt "MainWindow|"
 msgid "CurseForge modpacks cannot be made from a snapshot version of Minecraft."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3187
+#: launcher/ui/MainWindow.cpp:2097
 msgctxt "MainWindow|"
 msgid "Rename Instance"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3209
+#: launcher/ui/MainWindow.cpp:2119
 msgctxt "MainWindow|"
 msgid "This is a problem: <br/> - MeshMC will likely be deleted without warning by the operating system <br/> - close MeshMC now and extract it to a real location, not a temporary folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3221
+#: launcher/ui/MainWindow.cpp:2131
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains '!' and this is known to cause Java problems!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3225
-#, qt-format
+#: launcher/ui/MainWindow.cpp:2135
 msgctxt "MainWindow|"
-msgid "You have now two options: <br/> - change the instance folder in the settings <br/> - move this installation of %1 to a different folder"
+msgid "You have now two options: <br/> - change the instance folder in the settings <br/> - move this installation of MeshMC to a different folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3237
+#: launcher/ui/MainWindow.cpp:2146
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains 'Rar$' - that means you haven't extracted MeshMC archive!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3247
+#: launcher/ui/MainWindow.cpp:2156
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' is in a temporary folder: '%2'!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:3265
+#: launcher/ui/MainWindow.cpp:2174
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Total playtime: %1"
@@ -5631,23 +5594,103 @@ msgctxt "ManagedPackPage|"
 msgid "The instance updated to pack version %1 successfully."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:34
+#: launcher/updater/MeshMCExternalUpdater.cpp:223
+#: launcher/updater/MeshMCExternalUpdater.cpp:225
+msgctxt "MeshMCExternalUpdater|"
+msgid "Checking for updates..."
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:257
+#: launcher/updater/MeshMCExternalUpdater.cpp:274
+msgctxt "MeshMCExternalUpdater|"
+msgid "Update Check Failed"
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:258
+#, qt-format
+msgctxt "MeshMCExternalUpdater|"
+msgid "Failed to start after 5 seconds\n"
+"Reason: %1."
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:275
+#, qt-format
+msgctxt "MeshMCExternalUpdater|"
+msgid "Updater failed to close 60 seconds\n"
+"Reason: %1."
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:294
+msgctxt "MeshMCExternalUpdater|"
+msgid "No Update Available"
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:295
+msgctxt "MeshMCExternalUpdater|"
+msgid "You are running the latest version."
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:303
+#: launcher/updater/MeshMCExternalUpdater.cpp:330
+msgctxt "MeshMCExternalUpdater|"
+msgid "Update Check Error"
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:304
+#: launcher/updater/MeshMCExternalUpdater.cpp:331
+msgctxt "MeshMCExternalUpdater|"
+msgid "There was an error running the update check."
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:332
+#: launcher/updater/MeshMCExternalUpdater.cpp:351
+#, qt-format
+msgctxt "MeshMCExternalUpdater|"
+msgid "StdOut: %1\n"
+"StdErr: %2"
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:347
+msgctxt "MeshMCExternalUpdater|"
+msgid "Unknown Update Error"
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:348
+#, qt-format
+msgctxt "MeshMCExternalUpdater|"
+msgid "The updater exited with an unknown condition.\n"
+"Exit Code: %1"
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:440
+msgctxt "MeshMCExternalUpdater|"
+msgid "Update Failed"
+msgstr ""
+
+#: launcher/updater/MeshMCExternalUpdater.cpp:441
+#, qt-format
+msgctxt "MeshMCExternalUpdater|"
+msgid "Could not start the updater.\n"
+"Reason: %1."
+msgstr ""
+
+#: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:36
 msgctxt "MeshMCLoginStep|"
 msgid "Accessing Mojang services."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:80
+#: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:82
 #, qt-format
 msgctxt "MeshMCLoginStep|"
 msgid "Failed to get Minecraft access token: %1"
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:92
+#: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:94
 msgctxt "MeshMCLoginStep|"
 msgid "Failed to parse the Minecraft access token response."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:95
+#: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:97
 msgctxt "MeshMCLoginStep|"
 msgid ""
 msgstr ""
@@ -5689,7 +5732,7 @@ msgid "Delete the selected log file"
 msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:66
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:210
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:207
 msgctxt "MeshMCLogsDialog|"
 msgid "Delete"
 msgstr ""
@@ -5714,50 +5757,50 @@ msgctxt "MeshMCLogsDialog|"
 msgid "Find"
 msgstr ""
 
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:152
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:217
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:263
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:150
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:214
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:259
 msgctxt "MeshMCLogsDialog|"
 msgid "Error"
 msgstr ""
 
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:153
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:151
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Unable to open %1 for reading: %2"
 msgstr ""
 
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:161
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:159
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "The file (%1) is too big. You may want to open it in a viewer optimized for large files."
 msgstr ""
 
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:211
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:208
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Do you really want to delete %1?"
 msgstr ""
 
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:218
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:215
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Unable to delete %1: %2"
 msgstr ""
 
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:242
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:238
 msgctxt "MeshMCLogsDialog|"
 msgid "Clean up"
 msgstr ""
 
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:243
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:239
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Do you really want to delete all log files?\n"
 "%1"
 msgstr ""
 
-#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:264
+#: launcher/ui/dialogs/MeshMCLogsDialog.cpp:260
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Couldn't delete some files:\n"
@@ -5776,305 +5819,288 @@ msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:57
 msgctxt "MeshMCPage|"
-msgid "Check for updates on start?"
+msgid "Check for updates automatically"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:64
+#: launcher/ui/pages/global/MeshMCPage.ui:66
 msgctxt "MeshMCPage|"
-msgid "Up&date Channel:"
+msgid "How Often?"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:81
+#: launcher/ui/pages/global/MeshMCPage.ui:82
 msgctxt "MeshMCPage|"
-msgid "No channel selected."
+msgid "Set to 0 to only check on launch"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:94
+#: launcher/ui/pages/global/MeshMCPage.ui:85
+msgctxt "MeshMCPage|"
+msgid "On Launch"
+msgstr ""
+
+#: launcher/ui/pages/global/MeshMCPage.ui:88
+msgctxt "MeshMCPage|"
+msgid " hours"
+msgstr ""
+
+#: launcher/ui/pages/global/MeshMCPage.ui:91
+msgctxt "MeshMCPage|"
+msgid "Every "
+msgstr ""
+
+#: launcher/ui/pages/global/MeshMCPage.ui:122
 msgctxt "MeshMCPage|"
 msgid "Folders"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:100
+#: launcher/ui/pages/global/MeshMCPage.ui:128
 msgctxt "MeshMCPage|"
 msgid "I&nstances:"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:120
+#: launcher/ui/pages/global/MeshMCPage.ui:148
 msgctxt "MeshMCPage|"
 msgid "&Mods:"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:143
+#: launcher/ui/pages/global/MeshMCPage.ui:171
 msgctxt "MeshMCPage|"
 msgid "&Icons:"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:163
+#: launcher/ui/pages/global/MeshMCPage.ui:191
 msgctxt "MeshMCPage|"
 msgid "&Skins:"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:183
+#: launcher/ui/pages/global/MeshMCPage.ui:211
 msgctxt "MeshMCPage|"
 msgid "&Java:"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:200
+#: launcher/ui/pages/global/MeshMCPage.ui:228
 msgctxt "MeshMCPage|"
 msgid "Additional instance directories"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:211
+#: launcher/ui/pages/global/MeshMCPage.ui:239
 msgctxt "MeshMCPage|"
 msgid "Add"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:218
+#: launcher/ui/pages/global/MeshMCPage.ui:246
 msgctxt "MeshMCPage|"
 msgid "Remove"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:240
+#: launcher/ui/pages/global/MeshMCPage.ui:268
 msgctxt "MeshMCPage|"
 msgid "Move the data to new location (will restart MeshMC)"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:247
+#: launcher/ui/pages/global/MeshMCPage.ui:275
 msgctxt "MeshMCPage|"
 msgid "Backup System"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:253
+#: launcher/ui/pages/global/MeshMCPage.ui:281
 msgctxt "MeshMCPage|"
 msgid "Creates a snapshot of each instance before launching. Backups are saved in the instance's .backups folder with the label \"pre-launch\"."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:256
+#: launcher/ui/pages/global/MeshMCPage.ui:284
 msgctxt "MeshMCPage|"
 msgid "Automatically &backup instances before launch"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:266
+#: launcher/ui/pages/global/MeshMCPage.ui:294
 msgctxt "MeshMCPage|"
 msgid "Instance creation"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:272
+#: launcher/ui/pages/global/MeshMCPage.ui:300
 msgctxt "MeshMCPage|"
 msgid "When installing a modpack that is already installed, offer to update that instance instead of creating a second copy of it."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:275
+#: launcher/ui/pages/global/MeshMCPage.ui:303
 msgctxt "MeshMCPage|"
 msgid "&Suggest updating an existing instance during modpack installation"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:282
+#: launcher/ui/pages/global/MeshMCPage.ui:310
 msgctxt "MeshMCPage|"
 msgid "Download the game's libraries and assets while the instance is being created, instead of waiting until the first time it is launched."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:285
+#: launcher/ui/pages/global/MeshMCPage.ui:313
 msgctxt "MeshMCPage|"
 msgid "&Download the game's files while creating an instance"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:309
+#: launcher/ui/pages/global/MeshMCPage.ui:337
 msgctxt "MeshMCPage|"
 msgid "User Interface"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:315
+#: launcher/ui/pages/global/MeshMCPage.ui:343
 msgctxt "MeshMCPage|"
 msgid "MeshMC notifications"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:321
+#: launcher/ui/pages/global/MeshMCPage.ui:349
 msgctxt "MeshMCPage|"
 msgid "Reset hidden notifications"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:337
+#: launcher/ui/pages/global/MeshMCPage.ui:365
 msgctxt "MeshMCPage|"
 msgid "Instance view sorting mode"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:343
+#: launcher/ui/pages/global/MeshMCPage.ui:371
 msgctxt "MeshMCPage|"
 msgid "By &last launched"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:353
+#: launcher/ui/pages/global/MeshMCPage.ui:381
 msgctxt "MeshMCPage|"
 msgid "By &name"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:380
+#: launcher/ui/pages/global/MeshMCPage.ui:408
 msgctxt "MeshMCPage|"
 msgid "Console"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:386
+#: launcher/ui/pages/global/MeshMCPage.ui:414
 msgctxt "MeshMCPage|"
 msgid "Console Settings"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:392
+#: launcher/ui/pages/global/MeshMCPage.ui:420
 msgctxt "MeshMCPage|"
 msgid "Show console while the game is running?"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:399
+#: launcher/ui/pages/global/MeshMCPage.ui:427
 msgctxt "MeshMCPage|"
 msgid "Automatically close console when the game quits?"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:406
+#: launcher/ui/pages/global/MeshMCPage.ui:434
 msgctxt "MeshMCPage|"
 msgid "Show console when the game crashes?"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:416
+#: launcher/ui/pages/global/MeshMCPage.ui:444
 msgctxt "MeshMCPage|"
 msgid "History limit"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:422
+#: launcher/ui/pages/global/MeshMCPage.ui:450
 msgctxt "MeshMCPage|"
 msgid "Stop logging when log overflows"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:435
+#: launcher/ui/pages/global/MeshMCPage.ui:463
 msgctxt "MeshMCPage|"
 msgid " lines"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:463
+#: launcher/ui/pages/global/MeshMCPage.ui:491
 msgctxt "MeshMCPage|"
 msgid "Console font"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.ui:515
-msgctxt "MeshMCPage|"
-msgid "Analytics"
-msgstr ""
-
-#: launcher/ui/pages/global/MeshMCPage.ui:521
-msgctxt "MeshMCPage|"
-msgid "Analytics Settings"
-msgstr ""
-
-#: launcher/ui/pages/global/MeshMCPage.ui:527
-msgctxt "MeshMCPage|"
-msgid "Send anonymous usage statistics?"
-msgstr ""
-
-#: launcher/ui/pages/global/MeshMCPage.ui:541
-msgctxt "MeshMCPage|"
-msgid "<html><head/>\n"
-"<body>\n"
-"<p>MeshMC sends anonymous usage statistics on every start of the application.</p><p>The following data is collected:</p>\n"
-"<ul>\n"
-"<li>MeshMC version.</li>\n"
-"<li>Operating system name, version and architecture.</li>\n"
-"<li>CPU architecture (kernel architecture on linux).</li>\n"
-"<li>Size of system memory.</li>\n"
-"<li>Java version, architecture and memory settings.</li>\n"
-"</ul>\n"
-"</body></html>"
-msgstr ""
-
-#: launcher/ui/pages/global/MeshMCPage.cpp:106
+#: launcher/ui/pages/global/MeshMCPage.cpp:94
 msgctxt "MeshMCPage|"
 msgid "You're trying to specify an instance folder which's path contains at least one '!'. Java is known to cause problems if that is the case, your instances (probably) won't start!"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:111
+#: launcher/ui/pages/global/MeshMCPage.cpp:99
 msgctxt "MeshMCPage|"
 msgid "Do you really want to use this path? Selecting \"No\" will close this and not alter your instance path."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:131
-#, qt-format
+#: launcher/ui/pages/global/MeshMCPage.cpp:119
 msgctxt "MeshMCPage|"
 msgid "You're trying to specify an instance folder which was granted temporarily via Flatpak.\n"
 "This is known to cause problems. After a restart the launcher might break, because it will no longer have access to that directory.\n\n"
-"Granting %1 access to it via Flatseal is recommended."
+"Granting MeshMC access to it via Flatseal is recommended."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:138
+#: launcher/ui/pages/global/MeshMCPage.cpp:125
 msgctxt "MeshMCPage|"
 msgid "Do you want to proceed anyway?"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:149
+#: launcher/ui/pages/global/MeshMCPage.cpp:136
 msgctxt "MeshMCPage|"
 msgid "Instance Folder"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:172
+#: launcher/ui/pages/global/MeshMCPage.cpp:159
 msgctxt "MeshMCPage|"
 msgid "Additional Instance Folder"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:199
-#: launcher/ui/pages/global/MeshMCPage.cpp:206
+#: launcher/ui/pages/global/MeshMCPage.cpp:186
+#: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:200
+#: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
 msgid "This is already your primary instance directory."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:207
+#: launcher/ui/pages/global/MeshMCPage.cpp:194
 msgctxt "MeshMCPage|"
 msgid "This directory has already been added."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:230
+#: launcher/ui/pages/global/MeshMCPage.cpp:217
 msgctxt "MeshMCPage|"
 msgid "Icons Folder"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:241
+#: launcher/ui/pages/global/MeshMCPage.cpp:228
 msgctxt "MeshMCPage|"
 msgid "Skins Folder"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:252
+#: launcher/ui/pages/global/MeshMCPage.cpp:239
 msgctxt "MeshMCPage|"
 msgid "Java Folder"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:263
+#: launcher/ui/pages/global/MeshMCPage.cpp:250
 msgctxt "MeshMCPage|"
 msgid "Mods Folder"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:274
+#: launcher/ui/pages/global/MeshMCPage.cpp:261
 msgctxt "MeshMCPage|"
 msgid "Automatic macOS Migration"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:275
-#, qt-format
+#: launcher/ui/pages/global/MeshMCPage.cpp:262
 msgctxt "MeshMCPage|"
-msgid "%1 now stores macOS data under your Library/Application Support folder automatically."
+msgid "MeshMC now stores macOS data under your Library/Application Support folder automatically."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:433
+#: launcher/ui/pages/global/MeshMCPage.cpp:406
 msgctxt "MeshMCPage|"
 msgid "[Something/ERROR] A spooky error!"
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:442
+#: launcher/ui/pages/global/MeshMCPage.cpp:415
 msgctxt "MeshMCPage|"
 msgid "[Test/INFO] A harmless message..."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:451
+#: launcher/ui/pages/global/MeshMCPage.cpp:424
 msgctxt "MeshMCPage|"
 msgid "[Something/WARN] A not so spooky warning."
 msgstr ""
@@ -6102,55 +6128,745 @@ msgctxt "MeshMCPartLaunch|"
 msgid "The game did not react to the abort request. Killing it."
 msgstr ""
 
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:421
+msgctxt "MeshUpdaterApp|"
+msgid "Installs MeshMC updates."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:424
+msgctxt "MeshUpdaterApp|"
+msgid "Use a custom path as application root (use '.' for current directory)."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:426
+msgctxt "MeshUpdaterApp|"
+msgid "directory"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:428
+msgctxt "MeshUpdaterApp|"
+msgid "Treat this as the installed launcher version instead of asking the launcher."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:430
+msgctxt "MeshUpdaterApp|"
+msgid "installed version"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:432
+msgctxt "MeshUpdaterApp|"
+msgid "Install a specific version."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:432
+msgctxt "MeshUpdaterApp|"
+msgid "version name"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:434
+msgctxt "MeshUpdaterApp|"
+msgid "Update from the specified repository."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:434
+msgctxt "MeshUpdaterApp|"
+msgid "github repo url"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:436
+msgctxt "MeshUpdaterApp|"
+msgid "Install the release already unpacked in this directory. Used by the updater itself for the second pass of an install."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:438
+msgctxt "MeshUpdaterApp|"
+msgid "unpacked release directory"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:440
+msgctxt "MeshUpdaterApp|"
+msgid "Print a token and exit, to prove this binary can run."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:442
+msgctxt "MeshUpdaterApp|"
+msgid "Only check whether an update is needed. Exit status 100 if it is, 0 if it is not, non-zero on error."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:445
+msgctxt "MeshUpdaterApp|"
+msgid "Allow updating to pre-releases."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:447
+msgctxt "MeshUpdaterApp|"
+msgid "Update even when one is not needed."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:449
+msgctxt "MeshUpdaterApp|"
+msgid "List the available releases."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:450
+msgctxt "MeshUpdaterApp|"
+msgid "Log debug output to the console."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:452
+msgctxt "MeshUpdaterApp|"
+msgid "Select the version to install with a GUI."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:454
+msgctxt "MeshUpdaterApp|"
+msgid "Allow downgrading to an earlier version."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:482
+msgctxt "MeshUpdaterApp|"
+msgid "default"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:482
+msgctxt "MeshUpdaterApp|"
+msgid "command line"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:517
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1413
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1432
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1457
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1484
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1515
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2123
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2253
+msgctxt "MeshUpdaterApp|"
+msgid "Update Failed"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:518
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The update marker at %1 does not say where to install to."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:541
+msgctxt "MeshUpdaterApp|"
+msgid "macOS Is Not Supported"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:542
+msgctxt "MeshUpdaterApp|"
+msgid "The updater does not support installations on macOS. Updates are handled by the launcher itself."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:557
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:568
+msgctxt "MeshUpdaterApp|"
+msgid "Unsupported Installation"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:558
+msgctxt "MeshUpdaterApp|"
+msgid "This looks like an AppImage, but the APPIMAGE environment variable is missing, so there is no file to update."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:569
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The updater cannot find the main executable at:\n"
+"%1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:675
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:707
+msgctxt "MeshUpdaterApp|"
+msgid "The launcher data folder is not writable!"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:676
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The updater could not create its log directory at:\n"
+"%1\n\n"
+"Make sure you have write permissions to the data folder.\n\n"
+"The updater cannot continue until this is fixed."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:708
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The updater could not create a log file - %1.\n\n"
+"Make sure you have write permissions to the data folder.\n"
+"(%2)\n\n"
+"The updater cannot continue until this is fixed."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:777
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Cannot list releases: %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:810
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not fetch %1: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:819
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not read the release list from %1: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1000
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The repository has no published releases%1."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1002
+msgctxt "MeshUpdaterApp|"
+msgid " (pre-releases excluded)"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1041
+msgctxt "MeshUpdaterApp|"
+msgid "Updating Flatpak Is Not Supported"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1042
+msgctxt "MeshUpdaterApp|"
+msgid "This is the Flatpak build of MeshMC, which is updated through Flatpak itself.\n\n"
+"Run this to update:\n"
+"flatpak update org.projecttick.MeshMC\n\n"
+"Checking for updates works, but installing them here does not."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1081
+msgctxt "MeshUpdaterApp|"
+msgid "No Release for That Version"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1082
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "There is no GitHub release for version %1."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1090
+msgctxt "MeshUpdaterApp|"
+msgid "No version was selected."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1159
+msgctxt "MeshUpdaterApp|"
+msgid "No Valid Release Assets"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1160
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Release %1 has no files for this installation: %2, portable: %3."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1164
+msgctxt "MeshUpdaterApp|"
+msgid "unknown build"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1166
+msgctxt "MeshUpdaterApp|"
+msgid "yes"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1166
+msgctxt "MeshUpdaterApp|"
+msgid "no"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1181
+msgctxt "MeshUpdaterApp|"
+msgid "No file was selected."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1189
+msgctxt "MeshUpdaterApp|"
+msgid "Failed to Download"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1190
+msgctxt "MeshUpdaterApp|"
+msgid "The update file could not be downloaded."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1252
+msgctxt "MeshUpdaterApp|"
+msgid "An update is already in progress."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1254
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "This installation has an update lock file at: %1\n\n"
+"Timestamp: %2\n"
+"Updating from version %3 to %4\n"
+"Target install path: %5\n"
+"Data path: %6\n\n"
+"This usually means a previous update attempt failed. Please make sure your installation still works before continuing.\n"
+"The updater log at:\n"
+"%7\n"
+"has the details of the last attempt.\n\n"
+"To ignore this lock and update anyway, choose \"Ignore\"."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1282
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The update was aborted: an update lock from an earlier attempt is present at %1."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1297
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Updating from %1 to %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1312
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Updating the installation at %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1337
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Running the installer at %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1348
+msgctxt "MeshUpdaterApp|"
+msgid "The installer was started."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1349
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The installer could not be started: %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1377
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Failed to unpack %1: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1379
+msgctxt "MeshUpdaterApp|"
+msgid "Failed to Extract Archive"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1380
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not unpack %1 into %2:\n"
+"%3"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1387
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Unpacked %1 files and %2 links (%3) into %4"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1410
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The unpacked release has no launcher at %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1414
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The downloaded release does not contain MeshMC at:\n"
+"%1\n\n"
+"Your installation has not been changed.\n"
+"The updater log has the details:\n"
+"%2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1430
+msgctxt "MeshUpdaterApp|"
+msgid "No usable second pass was found for this release."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1433
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The update cannot be installed, because no program that is able to install it could be started.\n\n"
+"Your installation has not been changed. You can install this release by downloading it yourself.\n\n"
+"The updater log has what was tried and why each attempt failed:\n"
+"%1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1448
+msgctxt "MeshUpdaterApp|"
+msgid "Backing up the current installation"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1456
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not write the update marker at %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1458
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not write the update marker at:\n"
+"%1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1477
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Starting the second pass: %1 %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1482
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not start %1: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1485
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not start the second pass of the update:\n"
+"%1\n\n"
+"%2\n\n"
+"Your installation has not been changed."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1507
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The second pass (pid %1) did not take the update over within %2 seconds and is %3."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1511
+msgctxt "MeshUpdaterApp|"
+msgid "still running"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1512
+msgctxt "MeshUpdaterApp|"
+msgid "no longer running"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1517
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The second pass of the update was started but never reported that it had taken over, and it is still running.\n\n"
+"Check that MeshMC still starts before using it. The previous installation was backed up, and the updater log has the details:\n"
+"%1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1526
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The second pass of the update stopped before it began installing.\n\n"
+"Your installation has not been changed. The updater log has the details:\n"
+"%1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1539
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Handed the update over to the second pass (pid %1)."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1576
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not copy %1 to %2: %3"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1586
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not make %1 executable."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1596
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "There is no file at %1."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1607
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "%1 could not be started: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1616
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "%1 did not answer the self test within %2 seconds."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1628
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "%1 failed the self test (exit code %2): %3"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1634
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "%1 passed the self test: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1643
+msgctxt "MeshUpdaterApp|"
+msgid "Looking for a program to install the update with."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1654
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Trying the release's own updater at %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1662
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "%1 does not know --finish-update, so it is from before the current updater; not running it."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1691
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1702
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Trying this updater inside the release, as %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1719
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Trying this updater on its own, as %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1733
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Waiting for the second pass (pid %1) to take the update over."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1786
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not create the backup directory %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1799
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Backing up the installation at %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1807
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Backing up:\n"
+"  %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1828
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1836
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not back up %1: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1855
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2037
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Not present, ignoring: %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1865
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Backed the installation up to %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1892
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Took the update lock over (pid %1)."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1897
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not take the update lock at %1 over."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1921
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Removed the second pass's copy at %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1923
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not remove %1; it may end up installed."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1931
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Completing the update: installing %1 into %2, from %3"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1953
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The first pass (pid %1) is still running after %2 seconds; installing anyway."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1959
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "The first pass (pid %1) has exited."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1979
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Installing the following into %1:\n"
+"  %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1984
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Installing from %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2007
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2017
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Failed to install %1: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2053
+msgctxt "MeshUpdaterApp|"
+msgid "There were errors installing the update."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2054
+msgctxt "MeshUpdaterApp|"
+msgid "The update succeeded."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2071
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not restart the launcher: %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2106
+msgctxt "MeshUpdaterApp|"
+msgid "AppImageUpdate Not Found"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2107
+msgctxt "MeshUpdaterApp|"
+msgid "This AppImage is updated with AppImageUpdate, which could not be found.\n\n"
+"Install AppImageUpdate, or download the new version manually."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2124
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not start AppImageUpdate:\n"
+"%1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2206
+msgctxt "MeshUpdaterApp|"
+msgid "The installation was not modified; dropped the update lock."
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2225
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Removing the old backup at %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2227
+#, qt-format
+msgctxt "MeshUpdaterApp|"
+msgid "Could not fully remove %1"
+msgstr ""
+
 #: launcher/meta/Index.cpp:76
 msgctxt "Meta::Index|"
 msgid "Name"
 msgstr ""
 
-#: launcher/minecraft/MinecraftInstance.cpp:854
+#: launcher/minecraft/MinecraftInstance.cpp:865
 msgctxt "MinecraftInstance|"
 msgid "<SESSION ID>"
 msgstr ""
 
-#: launcher/minecraft/MinecraftInstance.cpp:856
+#: launcher/minecraft/MinecraftInstance.cpp:867
 msgctxt "MinecraftInstance|"
 msgid "<ACCESS TOKEN>"
 msgstr ""
 
-#: launcher/minecraft/MinecraftInstance.cpp:858
+#: launcher/minecraft/MinecraftInstance.cpp:869
 msgctxt "MinecraftInstance|"
 msgid "<CLIENT TOKEN>"
 msgstr ""
 
-#: launcher/minecraft/MinecraftInstance.cpp:860
+#: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
 msgid "<PROFILE ID>"
 msgstr ""
 
-#: launcher/minecraft/MinecraftInstance.cpp:935
+#: launcher/minecraft/MinecraftInstance.cpp:946
 msgctxt "MinecraftInstance|"
 msgid "broken"
 msgstr "rusak"
 
-#: launcher/minecraft/MinecraftInstance.cpp:942
+#: launcher/minecraft/MinecraftInstance.cpp:953
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
 msgstr ""
 
-#: launcher/minecraft/MinecraftInstance.cpp:946
+#: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid ", last played for %1"
 msgstr ", terakhir dimain untuk %1"
 
-#: launcher/minecraft/MinecraftInstance.cpp:952
+#: launcher/minecraft/MinecraftInstance.cpp:963
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid ", total played for %1"
 msgstr ", total waktu bermain %1"
 
-#: launcher/minecraft/MinecraftInstance.cpp:957
+#: launcher/minecraft/MinecraftInstance.cpp:968
 msgctxt "MinecraftInstance|"
 msgid ", has crashed."
 msgstr ", telah crash."
@@ -6215,27 +6931,27 @@ msgctxt "MinecraftPage|"
 msgid "Minecraft"
 msgstr ""
 
-#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:35
+#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
 msgid "Fetching the Minecraft profile."
 msgstr "Mengambil profil Minecraft."
 
-#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:73
+#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:75
 msgctxt "MinecraftProfileStep|"
 msgid "Account has no Minecraft profile."
 msgstr "Akun tidak memiliki profil Minecraft."
 
-#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:86
+#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:88
 msgctxt "MinecraftProfileStep|"
 msgid "Minecraft Java profile acquisition failed."
 msgstr "Akuisisi profil Minecraft Java gagal."
 
-#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:93
+#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:95
 msgctxt "MinecraftProfileStep|"
 msgid "Minecraft Java profile response could not be parsed"
 msgstr "Tanggapan dari profil Minecraft Java tidak dapat diuraikan"
 
-#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:98
+#: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:100
 msgctxt "MinecraftProfileStep|"
 msgid "Minecraft Java profile acquisition succeeded."
 msgstr "Akuisisi profil Minecraft Java berhasil."
@@ -6812,7 +7528,7 @@ msgctxt "NewInstanceDialog|"
 msgid "Default (%1)"
 msgstr ""
 
-#: launcher/news/NewsChecker.cpp:186
+#: launcher/news/NewsChecker.cpp:187
 #, qt-format
 msgctxt "NewsChecker|"
 msgid "Failed to load news RSS feed:\n"
@@ -7086,12 +7802,12 @@ msgctxt "PasteEEPage|"
 msgid "Log Upload"
 msgstr "Unggah Riwayat"
 
-#: launcher/net/PasteUpload.cpp:137
+#: launcher/net/PasteUpload.cpp:139
 msgctxt "PasteUpload|"
 msgid "Uploading to paste.ee"
 msgstr "Unggah ke paste.ee"
 
-#: launcher/net/PasteUpload.cpp:165
+#: launcher/net/PasteUpload.cpp:167
 msgctxt "PasteUpload|"
 msgid "paste.ee returned an error. Please consult the logs for more information"
 msgstr "paste.ee kembali dengan sebuah error. Mohon konsultasikan daftar riwayat untuk info lebih lanjut"
@@ -7204,103 +7920,6 @@ msgctxt "PreLaunchCommand|"
 msgid "Pre-Launch command ran successfully.\n\n"
 msgstr "Perintah Pra-Peluncuran berjalan dengan sukses.\n\n"
 
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:113
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "Cannot create the download directory:\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:122
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "Cannot write to the download directory:\n"
-"%1\n\n"
-"%2"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:186
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "Could not download the update.\n\n"
-"%1%2"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:188
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "\n"
-"HTTP status: %1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:196
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "The downloaded update is empty:\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:219
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "Could not unpack the update.\n\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:250
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "The downloaded update does not look like a MeshMC release: it contains no %1.\n\n"
-"Unpacked to:\n"
-"%2"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:257
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "The downloaded update does not contain %1.\n\n"
-"Unpacked to:\n"
-"%2"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:283
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "Could not start the downloaded installer:\n"
-"%1\n\n"
-"%2"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:296
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "This update is a Windows installer and cannot be applied on this platform:\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:312
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "MeshMC is still running and did not exit within %1 seconds.\n\n"
-"Close MeshMC and try again."
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:342
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "Could not start the second stage of the update:\n"
-"%1\n\n"
-"%2"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/PrepareStage.cpp:354
-#, qt-format
-msgctxt "PrepareStage|"
-msgid "The update could not be handed over to the version being installed.\n\n"
-"Its updater (%1) did not start. This happens when the release being installed is older than the current update mechanism.\n\n"
-"Nothing has been changed -- %2 is still installed and working. Please install the new version manually."
-msgstr ""
-
 #: launcher/ui/dialogs/ProfileSelectDialog.ui:14
 msgctxt "ProfileSelectDialog|"
 msgid "Select an Account"
@@ -7377,6 +7996,70 @@ msgctxt "ProfileSetupDialog|"
 msgid "The server returned the following error:"
 msgstr ""
 
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:65
+#, qt-format
+msgctxt "ProfileSkinImport|"
+msgid "Looking up %1"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:68
+msgctxt "ProfileSkinImport|"
+msgid "Look up user"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:80
+msgctxt "ProfileSkinImport|"
+msgid "failed to get user UUID"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:90
+msgctxt "ProfileSkinImport|"
+msgid "failed to parse get user UUID response"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:99
+msgctxt "ProfileSkinImport|"
+msgid "user id is empty"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:110
+#, qt-format
+msgctxt "ProfileSkinImport|"
+msgid "Fetching the profile of %1"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:113
+msgctxt "ProfileSkinImport|"
+msgid "Download user profile"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:122
+msgctxt "ProfileSkinImport|"
+msgid "failed to get user profile"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:127
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:141
+msgctxt "ProfileSkinImport|"
+msgid "failed to parse get user profile response"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:152
+#, qt-format
+msgctxt "ProfileSkinImport|"
+msgid "Downloading the skin of %1"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:154
+msgctxt "ProfileSkinImport|"
+msgid "Download user skin"
+msgstr ""
+
+#: launcher/minecraft/skins/ProfileSkinImport.cpp:161
+msgctxt "ProfileSkinImport|"
+msgid "failed to download skin"
+msgstr ""
+
 #: launcher/ui/dialogs/ProgressDialog.ui:26
 msgctxt "ProgressDialog|"
 msgid "Please wait..."
@@ -7393,7 +8076,7 @@ msgid "Skip"
 msgstr "Lewati"
 
 #. Suffix on a search result the user already has installed
-#: launcher/ui/widgets/ProjectItemDelegate.cpp:167
+#: launcher/ui/widgets/ProjectItemDelegate.cpp:169
 #, qt-format
 msgctxt "ProjectItemDelegate|"
 msgid "%1 [installed]"
@@ -7511,7 +8194,7 @@ msgctxt "QObject|"
 msgid "<br />Warnings:<br /><font color=\"orange\">%1</font>"
 msgstr "<br />Peringatan:<br /><font color=\"orange\">%1</font>"
 
-#: launcher/JavaCommon.cpp:65 launcher/ui/widgets/JavaSettingsWidget.cpp:336
+#: launcher/JavaCommon.cpp:65 launcher/ui/widgets/JavaSettingsWidget.cpp:335
 msgctxt "QObject|"
 msgid "Java test success"
 msgstr "Tes Java sukses"
@@ -7522,7 +8205,7 @@ msgid "The specified java binary didn't work with the arguments you provided:<br
 msgstr "Biner java yang ditentukan tidak berfungsi dengan argumen yang Anda berikan:<br />"
 
 #: launcher/JavaCommon.cpp:78 launcher/JavaCommon.cpp:89
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:335
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:334
 msgctxt "QObject|"
 msgid "Java test failure"
 msgstr "Test java gagal"
@@ -7550,18 +8233,18 @@ msgctxt "QObject|"
 msgid "%1d %2h %3m"
 msgstr "%1h %2j %3m"
 
-#: launcher/backup/BackupManager.cpp:107
+#: launcher/backup/BackupManager.cpp:108
 msgctxt "QObject|"
 msgid "Compressing backup..."
 msgstr ""
 
-#: launcher/backup/BackupManager.cpp:119
+#: launcher/backup/BackupManager.cpp:120
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 / %2 files"
 msgstr ""
 
-#: launcher/meta/BaseEntity.cpp:111
+#: launcher/meta/BaseEntity.cpp:112
 #, qt-format
 msgctxt "QObject|"
 msgid "Download of meta file %1"
@@ -7593,10 +8276,10 @@ msgstr "processArguments ditetapkan ke nilai tidak dikenal '%1'"
 #: launcher/minecraft/MojangVersionFormat.cpp:194
 #, qt-format
 msgctxt "QObject|"
-msgid "The 'minimumMeshMCVersion' value of this version (%1) is higher than supported by %3 (%2). It might not work properly!"
+msgid "The 'minimumMeshMCVersion' value of this version (%1) is higher than supported by MeshMC (%2). It might not work properly!"
 msgstr ""
 
-#: launcher/minecraft/MojangVersionFormat.cpp:312
+#: launcher/minecraft/MojangVersionFormat.cpp:311
 #, qt-format
 msgctxt "QObject|"
 msgid "Library %1 name is broken and cannot be processed."
@@ -7983,37 +8666,17 @@ msgctxt "QObject|"
 msgid "Offline Wiki"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerPlugin.cpp:89
-msgctxt "QObject|"
-msgid "No account selected"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerPlugin.cpp:90
-msgctxt "QObject|"
-msgid "Select a Microsoft account from the list and click Upload Skin again."
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerPlugin.cpp:112
-msgctxt "QObject|"
-msgid "Offline account"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerPlugin.cpp:113
-msgctxt "QObject|"
-msgid "Offline accounts have no Mojang profile to upload a skin to. Pick a Microsoft account instead."
-msgstr ""
-
-#: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:301
+#: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:303
 msgctxt "QObject|"
 msgid "System Tray"
 msgstr ""
 
-#: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:306
+#: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:308
 msgctxt "QObject|"
 msgid "Show MeshMC system tray icon (Restart required.)"
 msgstr ""
 
-#: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:309
+#: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:311
 msgctxt "QObject|"
 msgid "When on, MeshMC keeps a persistent tray icon with quick-launch shortcuts and an optional minimise-to-tray close handler.\n\n"
 "Toggle takes effect after restarting MeshMC."
@@ -8054,54 +8717,36 @@ msgctxt "QObject|"
 msgid "Path does not seem to be a MCEdit path"
 msgstr "Jalur yang dipilih nampaknya bukan jalur menuju MCEdit"
 
-#: launcher/ui/GuiUtil.cpp:48 launcher/ui/GuiUtil.cpp:58
+#: launcher/ui/GuiUtil.cpp:49 launcher/ui/GuiUtil.cpp:59
 msgctxt "QObject|"
 msgid "Upload failed"
 msgstr "Gagal Mengunggah"
 
-#: launcher/ui/GuiUtil.cpp:49
+#: launcher/ui/GuiUtil.cpp:50
 msgctxt "QObject|"
 msgid "The log file is too big. You'll have to upload it manually."
 msgstr "File catatan riwayat terlalu besar. Anda harus mengunggah nya secara manual."
 
-#: launcher/ui/GuiUtil.cpp:66
+#: launcher/ui/GuiUtil.cpp:67
 msgctxt "QObject|"
 msgid "Upload finished"
 msgstr "Selesai mengunggah"
 
-#: launcher/ui/GuiUtil.cpp:67
+#: launcher/ui/GuiUtil.cpp:68
 #, qt-format
 msgctxt "QObject|"
 msgid "The <a href=\"%1\">link to the uploaded log</a> has been placed in your clipboard."
 msgstr "<a href=\"%1\">Link untuk mengunggah catatan riwayat</a>telah disalin ke papan klip anda."
 
-#: launcher/ui/MainWindow.cpp:119
+#: launcher/ui/MainWindow.cpp:120
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 (in use)"
 msgstr "%1 (sedang digunakan)"
 
-#: launcher/ui/MainWindow.cpp:2658
-#, qt-format
-msgctxt "QObject|"
-msgid "Update check failed: %1"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2666
-#, qt-format
-msgctxt "QObject|"
-msgid "Update available: version %1"
-msgstr ""
-
-#: launcher/ui/MainWindow.cpp:2675
-msgctxt "QObject|"
-msgid "You are running the latest version."
-msgstr ""
-
 #: launcher/ui/dialogs/AboutDialog.cpp:47
-#, qt-format
 msgctxt "QObject|"
-msgid "%1 Developers"
+msgid "MeshMC Developers"
 msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.cpp:48
@@ -8243,7 +8888,7 @@ msgctxt "QObject|"
 msgid "Discovered (not loaded)"
 msgstr ""
 
-#: launcher/ui/pages/instance/ServersPage.cpp:44
+#: launcher/ui/pages/instance/ServersPage.cpp:45
 msgctxt "QObject|"
 msgid "Minecraft Server"
 msgstr "Server Minecraft"
@@ -8270,8 +8915,8 @@ msgctxt "QObject|"
 msgid "License: %1"
 msgstr ""
 
-#: launcher/ui/themes/DarkTheme.cpp:31 launcher/ui/themes/ThemeManager.cpp:397
-#: launcher/ui/themes/ThemeManager.cpp:399
+#: launcher/ui/themes/DarkTheme.cpp:31 launcher/ui/themes/ThemeManager.cpp:406
+#: launcher/ui/themes/ThemeManager.cpp:408
 msgctxt "QObject|"
 msgid "Dark"
 msgstr "Gelap"
@@ -8341,102 +8986,150 @@ msgctxt "QObject|"
 msgid "Your current system theme"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:380
-#: launcher/ui/themes/ThemeManager.cpp:380
+#: launcher/ui/themes/ThemeManager.cpp:389
+#: launcher/ui/themes/ThemeManager.cpp:389
 msgctxt "QObject|"
 msgid "Default"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:384
-#: launcher/ui/themes/ThemeManager.cpp:385
+#: launcher/ui/themes/ThemeManager.cpp:393
+#: launcher/ui/themes/ThemeManager.cpp:394
 msgctxt "QObject|"
 msgid "Simple (Dark Icons)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:386
-#: launcher/ui/themes/ThemeManager.cpp:387
+#: launcher/ui/themes/ThemeManager.cpp:395
+#: launcher/ui/themes/ThemeManager.cpp:396
 msgctxt "QObject|"
 msgid "Simple (Light Icons)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:388
-#: launcher/ui/themes/ThemeManager.cpp:389
+#: launcher/ui/themes/ThemeManager.cpp:397
+#: launcher/ui/themes/ThemeManager.cpp:398
 msgctxt "QObject|"
 msgid "Simple (Blue Icons)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:390
-#: launcher/ui/themes/ThemeManager.cpp:391
+#: launcher/ui/themes/ThemeManager.cpp:399
+#: launcher/ui/themes/ThemeManager.cpp:400
 msgctxt "QObject|"
 msgid "Simple (Colored Icons)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:394
+#: launcher/ui/themes/ThemeManager.cpp:403
 msgctxt "QObject|"
 msgid "Flat (Light)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:395
-#: launcher/ui/themes/ThemeManager.cpp:401
+#: launcher/ui/themes/ThemeManager.cpp:404
+#: launcher/ui/themes/ThemeManager.cpp:410
 msgctxt "QObject|"
 msgid "Light"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:396
+#: launcher/ui/themes/ThemeManager.cpp:405
 msgctxt "QObject|"
 msgid "Flat (Dark)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:398
+#: launcher/ui/themes/ThemeManager.cpp:407
 msgctxt "QObject|"
 msgid "Breeze (Dark)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:400
+#: launcher/ui/themes/ThemeManager.cpp:409
 msgctxt "QObject|"
 msgid "Breeze (Light)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:454
+#: launcher/ui/themes/ThemeManager.cpp:463
 msgctxt "QObject|"
 msgid "Background Cat (from MultiMC)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:455
+#: launcher/ui/themes/ThemeManager.cpp:464
 msgctxt "QObject|"
 msgid "Rory ID 11 (drawn by Ashtaka)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:457
+#: launcher/ui/themes/ThemeManager.cpp:466
 msgctxt "QObject|"
 msgid "Rory ID 11 (flat edition, drawn by Ashtaka)"
 msgstr ""
 
-#: launcher/ui/themes/ThemeManager.cpp:458
+#: launcher/ui/themes/ThemeManager.cpp:467
 msgctxt "QObject|"
 msgid "Teawie (drawn by SympathyTea)"
 msgstr ""
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:296
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:295
 msgctxt "QObject|"
 msgid "The specified file either doesn't exist or is not a proper executable."
 msgstr "File yang ditentukan tidak ada atau tidak dapat dijalankan dengan benar."
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:301
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:300
 msgctxt "QObject|"
 msgid "The specified java binary didn't start properly.<br />"
 msgstr "Biner java yang ditentukan tidak mulai dengan benar.<br />"
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:312
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:311
 msgctxt "QObject|"
 msgid "The specified java binary returned unexpected results:<br />"
 msgstr "Biner java yang ditentukan mengembalikan hasil yang tidak terduga: <br />"
 
-#: launcher/ui/widgets/JavaSettingsWidget.cpp:323
+#: launcher/ui/widgets/JavaSettingsWidget.cpp:322
 #, qt-format
 msgctxt "QObject|"
 msgid "Java test succeeded!<br />Platform reported: %1<br />Java version reported: %2<br />"
 msgstr "Pengetesan Java sukses<br />Platform dilaporkan: %1<br />Versi java dilaporkan: %2<br />"
+
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:48
+#, qt-format
+msgctxt "ReleaseDownload|"
+msgid "Downloading %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:51
+msgctxt "ReleaseDownload|"
+msgid "No network access is configured."
+msgstr ""
+
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:56
+#, qt-format
+msgctxt "ReleaseDownload|"
+msgid "Could not create %1."
+msgstr ""
+
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:69
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:110
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:148
+#, qt-format
+msgctxt "ReleaseDownload|"
+msgid "Could not write %1: %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:121
+#, qt-format
+msgctxt "ReleaseDownload|"
+msgid "%1 of %2"
+msgstr ""
+
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:135
+msgctxt "ReleaseDownload|"
+msgid "The download ended unexpectedly."
+msgstr ""
+
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:160
+#, qt-format
+msgctxt "ReleaseDownload|"
+msgid "The download is %1, but %2 was expected."
+msgstr ""
+
+#: launcher/updater/meshupdater/ReleaseDownload.cpp:170
+#, qt-format
+msgctxt "ReleaseDownload|"
+msgid "Could not move the download into place at %1."
+msgstr ""
 
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:34
 msgctxt "ResourcePackFolderModel|"
@@ -8538,23 +9231,85 @@ msgctxt "ScreenshotsPage|"
 msgid "Screenshots"
 msgstr "Screenshot"
 
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:143
+msgctxt "SelectReleaseAssetDialog|"
+msgid "Version"
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:143
+msgctxt "SelectReleaseAssetDialog|"
+msgid "Published Date"
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:145
+msgctxt "SelectReleaseAssetDialog|"
+msgid "Select a version to install."
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:155
+msgctxt "SelectReleaseAssetDialog|"
+msgid "OK"
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:156
+msgctxt "SelectReleaseAssetDialog|"
+msgid "Cancel"
+msgstr ""
+
+#: launcher/updater/meshupdater/SelectReleaseDialog.ui:14
+msgctxt "SelectReleaseDialog|"
+msgid "Select Release to Install"
+msgstr ""
+
+#: launcher/updater/meshupdater/SelectReleaseDialog.ui:23
+msgctxt "SelectReleaseDialog|"
+msgid "Please select the release you wish to update to."
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:67
+msgctxt "SelectReleaseDialog|"
+msgid "Version"
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:67
+msgctxt "SelectReleaseDialog|"
+msgid "Published Date"
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:69
+#, qt-format
+msgctxt "SelectReleaseDialog|"
+msgid "Select a version to install.\n\n"
+"Currently installed version: %1"
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:81
+msgctxt "SelectReleaseDialog|"
+msgid "OK"
+msgstr ""
+
+#: launcher/updater/meshupdater/UpdaterDialogs.cpp:82
+msgctxt "SelectReleaseDialog|"
+msgid "Cancel"
+msgstr ""
+
 #: launcher/tasks/SequentialTask.cpp:37
 #, qt-format
 msgctxt "SequentialTask|"
 msgid "Executing task %1 out of %2"
 msgstr ""
 
-#: launcher/ui/pages/instance/ServersPage.cpp:281
+#: launcher/ui/pages/instance/ServersPage.cpp:282
 msgctxt "ServersModel|"
 msgid "Name"
 msgstr "Nama"
 
-#: launcher/ui/pages/instance/ServersPage.cpp:283
+#: launcher/ui/pages/instance/ServersPage.cpp:284
 msgctxt "ServersModel|"
 msgid "Address"
 msgstr "Alamat"
 
-#: launcher/ui/pages/instance/ServersPage.cpp:285
+#: launcher/ui/pages/instance/ServersPage.cpp:286
 msgctxt "ServersModel|"
 msgid "Latency"
 msgstr "Latensi"
@@ -8619,7 +9374,7 @@ msgctxt "ServersPage|"
 msgid "Join"
 msgstr "Gabung"
 
-#: launcher/ui/pages/instance/ServersPage.cpp:583
+#: launcher/ui/pages/instance/ServersPage.cpp:584
 msgctxt "ServersPage|"
 msgid "Context menu"
 msgstr "Menu konteks"
@@ -8629,31 +9384,30 @@ msgctxt "ServersPage|"
 msgid "Servers"
 msgstr "Server"
 
-#: launcher/ui/setupwizard/SetupWizard.cpp:50
+#: launcher/ui/setupwizard/SetupWizard.cpp:48
 msgctxt "SetupWizard|"
 msgid "&Next >"
 msgstr "&Berikutnya>"
 
-#: launcher/ui/setupwizard/SetupWizard.cpp:51
+#: launcher/ui/setupwizard/SetupWizard.cpp:49
 msgctxt "SetupWizard|"
 msgid "< &Back"
 msgstr "<&Kembali"
 
-#: launcher/ui/setupwizard/SetupWizard.cpp:52
+#: launcher/ui/setupwizard/SetupWizard.cpp:50
 msgctxt "SetupWizard|"
 msgid "&Finish"
 msgstr "&Selesai"
 
-#: launcher/ui/setupwizard/SetupWizard.cpp:53
+#: launcher/ui/setupwizard/SetupWizard.cpp:51
 msgctxt "SetupWizard|"
 msgid "&Refresh"
 msgstr "&Segarkan"
 
-#: launcher/ui/setupwizard/SetupWizard.cpp:54
-#, qt-format
+#: launcher/ui/setupwizard/SetupWizard.cpp:52
 msgctxt "SetupWizard|"
-msgid "%1 Quick Setup"
-msgstr "%1 Pengaturan cepat"
+msgid "MeshMC Quick Setup"
+msgstr ""
 
 #: launcher/minecraft/mod/ShaderPackFolderModel.cpp:38
 msgctxt "ShaderPackFolderModel|"
@@ -8685,259 +9439,262 @@ msgctxt "SkinDelete|"
 msgid "Deleting skin"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:14
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:414
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:423
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:444
-msgctxt "SkinManagerDialog|"
+#: launcher/minecraft/skins/SkinLibrary.cpp:390
+msgctxt "SkinLibrary|"
+msgid "Path is empty."
+msgstr ""
+
+#: launcher/minecraft/skins/SkinLibrary.cpp:395
+msgctxt "SkinLibrary|"
+msgid "File doesn't exist."
+msgstr ""
+
+#: launcher/minecraft/skins/SkinLibrary.cpp:398
+msgctxt "SkinLibrary|"
+msgid "Not a file."
+msgstr ""
+
+#: launcher/minecraft/skins/SkinLibrary.cpp:401
+msgctxt "SkinLibrary|"
+msgid "File is not readable."
+msgstr ""
+
+#: launcher/minecraft/skins/SkinLibrary.cpp:410
+msgctxt "SkinLibrary|"
+msgid "Skin images must be 64x64 or 64x32 pixel PNG files."
+msgstr ""
+
+#: launcher/minecraft/skins/SkinLibrary.cpp:416
+msgctxt "SkinLibrary|"
+msgid "Unable to find a free file name in the skins folder."
+msgstr ""
+
+#: launcher/minecraft/skins/SkinLibrary.cpp:420
+msgctxt "SkinLibrary|"
+msgid "Unable to copy file"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:14
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:578
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:611
+msgctxt "SkinManageDialog|"
 msgid "Skin Upload"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:19
-msgctxt "SkinManagerDialog|"
-msgid "Account: —"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:21
-msgctxt "SkinManagerDialog|"
-msgid "font-weight: bold; padding: 4px 0;"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:45
-msgctxt "SkinManagerDialog|"
-msgid "Skin file"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:52
-msgctxt "SkinManagerDialog|"
-msgid "Keep current skin, or pick a new PNG…"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:59
-msgctxt "SkinManagerDialog|"
-msgid "Browse…"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:67
-msgctxt "SkinManagerDialog|"
-msgid "Tip: drag-and-drop a 64×64 PNG onto the preview."
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:70
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:138
-msgctxt "SkinManagerDialog|"
-msgid "color: palette(mid); font-size: 11px;"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:81
-msgctxt "SkinManagerDialog|"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:33
+msgctxt "SkinManageDialog|"
 msgid "Model"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:85
-msgctxt "SkinManagerDialog|"
-msgid "Classic (4-pixel arms, Steve)"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:39
+msgctxt "SkinManageDialog|"
+msgid "Classic"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:91
-msgctxt "SkinManagerDialog|"
-msgid "Slim (3-pixel arms, Alex)"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:49
+msgctxt "SkinManageDialog|"
+msgid "Slim"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:100
-msgctxt "SkinManagerDialog|"
-msgid "Preview"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:104
-msgctxt "SkinManagerDialog|"
-msgid "Show second-layer overlay"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:110
-msgctxt "SkinManagerDialog|"
-msgid "Auto-rotate"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:119
-msgctxt "SkinManagerDialog|"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:59
+msgctxt "SkinManageDialog|"
 msgid "Cape"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:123
-msgctxt "SkinManagerDialog|"
-msgid "Active cape:"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:65
+msgctxt "SkinManageDialog|"
+msgid "Preview Elytra"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:158
-msgctxt "SkinManagerDialog|"
-msgid "Reset to default skin…"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:110
+msgctxt "SkinManageDialog|"
+msgid "Open Folder"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.ui:160
-msgctxt "SkinManagerDialog|"
-msgid "Remove the active custom skin and revert to Steve / Alex."
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:117
+msgctxt "SkinManageDialog|"
+msgid "Reset Skin"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:95
-#, qt-format
-msgctxt "SkinManagerDialog|"
-msgid "Skin Upload — %1"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:131
+msgctxt "SkinManageDialog|"
+msgid "Import URL"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:96
-msgctxt "SkinManagerDialog|"
-msgid "(no account)"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:138
+msgctxt "SkinManageDialog|"
+msgid "Import user"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:141
-#, qt-format
-msgctxt "SkinManagerDialog|"
-msgid "Account: %1"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:145
+msgctxt "SkinManageDialog|"
+msgid "Import File"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:179
-msgctxt "SkinManagerDialog|"
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:167
+msgctxt "SkinManageDialog|"
+msgid "&Delete Skin"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:170
+msgctxt "SkinManageDialog|"
+msgid "Deletes selected skin"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:173
+msgctxt "SkinManageDialog|"
+msgid "Del"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:178
+msgctxt "SkinManageDialog|"
+msgid "&Rename Skin"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:181
+msgctxt "SkinManageDialog|"
+msgid "Rename selected skin"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.ui:184
+msgctxt "SkinManageDialog|"
+msgid "F2"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:154
+msgctxt "SkinManageDialog|"
+msgid "Cancel"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:155
+msgctxt "SkinManageDialog|"
+msgid "OK"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:241
+msgctxt "SkinManageDialog|"
 msgid "No Cape"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:229
-msgctxt "SkinManagerDialog|"
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:250
+msgctxt "SkinManageDialog|"
+msgid "Download capes"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:457
+msgctxt "SkinManageDialog|"
 msgid "Select Skin Texture"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:230
-msgctxt "SkinManagerDialog|"
-msgid "Minecraft skin (*.png)"
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:467
+msgctxt "SkinManageDialog|"
+msgid "Selected file is not a valid skin"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:246
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:477
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:477
+msgctxt "SkinManageDialog|"
+msgid "Invalid url"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:486
+msgctxt "SkinManageDialog|"
+msgid "Download skin"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:495
+msgctxt "SkinManageDialog|"
+msgid "URL is not a valid skin"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:497
+msgctxt "SkinManageDialog|"
+msgid "Skin images must be 64x64 or 64x32 pixel PNG files."
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:498
 #, qt-format
-msgctxt "SkinManagerDialog|"
-msgid "Skin PNGs must be 64×64 (modern) or 64×32 (legacy). The chosen file is %1×%2."
+msgctxt "SkinManageDialog|"
+msgid "Unable to download the skin: '%1'."
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:278
-msgctxt "SkinManagerDialog|"
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:538
+msgctxt "SkinManageDialog|"
+msgid "the skin is invalid"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:541
+msgctxt "SkinManageDialog|"
+msgid "Username not found"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:542
+#, qt-format
+msgctxt "SkinManageDialog|"
+msgid "Unable to find the skin for '%1'\n"
+" because: %2."
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:579
+msgctxt "SkinManageDialog|"
+msgid "Skin file does not exist!"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:592
+msgctxt "SkinManageDialog|"
+msgid "Change skin"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:612
+msgctxt "SkinManageDialog|"
+msgid "Failed to upload skin!"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:629
+msgctxt "SkinManageDialog|"
 msgid "Reset skin"
 msgstr ""
 
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:279
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:636
+msgctxt "SkinManageDialog|"
+msgid "Skin Delete"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:637
+msgctxt "SkinManageDialog|"
+msgid "Failed to delete current skin!"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:648
+msgctxt "SkinManageDialog|"
+msgid "Context menu"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:691
+msgctxt "SkinManageDialog|"
+msgid "Delete error"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:692
+msgctxt "SkinManageDialog|"
+msgid "Can not delete skin that is in use."
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:706
+msgctxt "SkinManageDialog|"
+msgid "Confirm Deletion"
+msgstr ""
+
+#: launcher/ui/dialogs/skins/SkinManageDialog.cpp:707
 #, qt-format
-msgctxt "SkinManagerDialog|"
-msgid "Remove the active custom skin for %1?\n\n"
-"Mojang will revert the account to the default Steve or Alex skin."
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:290
-msgctxt "SkinManagerDialog|"
-msgid "Skin reset failed"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:291
-msgctxt "SkinManagerDialog|"
-msgid "Mojang did not process the request."
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:299
-msgctxt "SkinManagerDialog|"
-msgid "Skin reset to the Mojang default."
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:386
-#, qt-format
-msgctxt "SkinManagerDialog|"
-msgid "Could not read %1: %2"
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:415
-msgctxt "SkinManagerDialog|"
-msgid "Failed to apply skin changes."
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:424
-msgctxt "SkinManagerDialog|"
-msgid "Failed to apply cape change."
-msgstr ""
-
-#: launcher/plugin/plugins/SkinManager/SkinManagerDialog.cpp:445
-msgctxt "SkinManagerDialog|"
-msgid "Successfully applied skin changes."
+msgctxt "SkinManageDialog|"
+msgid "You are about to delete \"%1\".\n"
+"Are you sure?"
 msgstr ""
 
 #: launcher/minecraft/services/SkinUpload.cpp:71
 msgctxt "SkinUpload|"
 msgid "Uploading skin"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.ui:14
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:57
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:67
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:80
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:103
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:110
-msgctxt "SkinUploadDialog|"
-msgid "Skin Upload"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.ui:20
-msgctxt "SkinUploadDialog|"
-msgid "Skin File"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.ui:51
-msgctxt "SkinUploadDialog|"
-msgid "Player Model"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.ui:57
-msgctxt "SkinUploadDialog|"
-msgid "Steve Model"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.ui:67
-msgctxt "SkinUploadDialog|"
-msgid "Alex Model"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.ui:77
-msgctxt "SkinUploadDialog|"
-msgid "Cape"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:58
-msgctxt "SkinUploadDialog|"
-msgid "Using remote URLs for setting skins is not implemented yet."
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:68
-msgctxt "SkinUploadDialog|"
-msgid "You cannot use an invalid URL for uploading skins."
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:81
-msgctxt "SkinUploadDialog|"
-msgid "Skin file does not exist!"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:104
-msgctxt "SkinUploadDialog|"
-msgid "Failed to upload skin!"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:110
-msgctxt "SkinUploadDialog|"
-msgid "Success"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:119
-msgctxt "SkinUploadDialog|"
-msgid "Select Skin Texture"
-msgstr ""
-
-#: launcher/ui/dialogs/SkinUploadDialog.cpp:135
-msgctxt "SkinUploadDialog|"
-msgid "No Cape"
 msgstr ""
 
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:48
@@ -9192,173 +9949,46 @@ msgctxt "Update|"
 msgid "Instance update failed because: %1\n\n"
 msgstr "Pembaruan Instansi gagal karena: %1\n\n"
 
-#: launcher/updater/UpdateChecker.cpp:408
+#: launcher/ui/dialogs/UpdateAvailableDialog.ui:14
+msgctxt "UpdateAvailableDialog|"
+msgid "Update Available"
+msgstr ""
+
+#: launcher/ui/dialogs/UpdateAvailableDialog.ui:73
+msgctxt "UpdateAvailableDialog|"
+msgid "A new version is available!"
+msgstr ""
+
+#: launcher/ui/dialogs/UpdateAvailableDialog.ui:80
+#: launcher/ui/dialogs/UpdateAvailableDialog.cpp:40
 #, qt-format
-msgctxt "UpdateChecker|"
-msgid "Failed to parse update feed: %1"
+msgctxt "UpdateAvailableDialog|"
+msgid "Version %1 is now available - you have %2 . Would you like to download it now?"
 msgstr ""
 
-#: launcher/updater/UpdateChecker.cpp:418
-#, qt-format
-msgctxt "UpdateChecker|"
-msgid "The update feed has no release for the %1 channel."
+#: launcher/ui/dialogs/UpdateAvailableDialog.ui:93
+msgctxt "UpdateAvailableDialog|"
+msgid "Release Notes:"
 msgstr ""
 
-#: launcher/UpdateController.cpp:52
-msgctxt "UpdateController|"
-msgid "Updater Not Found"
+#: launcher/ui/dialogs/UpdateAvailableDialog.ui:109
+msgctxt "UpdateAvailableDialog|"
+msgid "Skip This Version"
 msgstr ""
 
-#: launcher/UpdateController.cpp:54
-#, qt-format
-msgctxt "UpdateController|"
-msgid "The updater binary could not be found at:\n"
-"%1\n\n"
-"Please reinstall %2."
+#: launcher/ui/dialogs/UpdateAvailableDialog.ui:129
+msgctxt "UpdateAvailableDialog|"
+msgid "Remind Me Later"
 msgstr ""
 
-#: launcher/UpdateController.cpp:85
-msgctxt "UpdateController|"
-msgid "Update Failed"
+#: launcher/ui/dialogs/UpdateAvailableDialog.ui:142
+msgctxt "UpdateAvailableDialog|"
+msgid "Install Update"
 msgstr ""
 
-#: launcher/UpdateController.cpp:86
-#, qt-format
-msgctxt "UpdateController|"
-msgid "Could not launch the updater binary.\n"
-"Please update %1 manually."
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateDialog.ui:14
-msgctxt "UpdateDialog|"
-msgid "MeshMC Update"
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateDialog.ui:61
-msgctxt "UpdateDialog|"
-msgid "Update now"
-msgstr "Perbarui sekarang"
-
-#: launcher/ui/dialogs/UpdateDialog.ui:74
-msgctxt "UpdateDialog|"
-msgid "Don't update yet"
-msgstr "Jangan perbarui terlebih dahulu"
-
-#: launcher/ui/dialogs/UpdateDialog.cpp:33
-#, qt-format
-msgctxt "UpdateDialog|"
-msgid "<b>%1 %2</b> is available!"
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateDialog.cpp:40
-msgctxt "UpdateDialog|"
-msgid "<center><p>No release notes available.</p></center>"
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateDialog.cpp:43
-#, qt-format
-msgctxt "UpdateDialog|"
-msgid "You are running the latest version of %1."
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateDialog.cpp:46
-msgctxt "UpdateDialog|"
-msgid "<center><p>No updates found.</p></center>"
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateDialog.cpp:48
-msgctxt "UpdateDialog|"
-msgid "Close"
-msgstr "Tutup"
-
-#: launcher/ui/dialogs/UpdateProgressDialog.cpp:26
-msgctxt "UpdateProgressDialog|"
-msgid "MeshMC Update"
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateProgressDialog.cpp:32
-msgctxt "UpdateProgressDialog|"
-msgid "Checking for updates..."
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateProgressDialog.cpp:51
-msgctxt "UpdateProgressDialog|"
-msgid "Cancel"
-msgstr ""
-
-#: launcher/ui/dialogs/UpdateProgressDialog.cpp:78
-msgctxt "UpdateProgressDialog|"
-msgid "Close"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:127
-#, qt-format
-msgctxt "UpdaterOptions|"
-msgid "--wait-pid expects a process id, got \"%1\"."
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:141
-msgctxt "UpdaterOptions|"
-msgid "No installation root was given (--root)."
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:146
-#, qt-format
-msgctxt "UpdaterOptions|"
-msgid "The installation root does not exist:\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:151
-#, qt-format
-msgctxt "UpdaterOptions|"
-msgid "The installation root is not a directory:\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:156
-#, qt-format
-msgctxt "UpdaterOptions|"
-msgid "The installation root is not writable:\n"
-"%1\n\n"
-"MeshMC cannot update itself without write access to its own installation."
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:165
-msgctxt "UpdaterOptions|"
-msgid "No download URL was given (--url)."
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:170
-#, qt-format
-msgctxt "UpdaterOptions|"
-msgid "The download URL is not a valid URL:\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:177
-#, qt-format
-msgctxt "UpdaterOptions|"
-msgid "Refusing to download an update over \"%1\". Only http and https are supported."
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:184
-#, qt-format
-msgctxt "UpdaterOptions|"
-msgid "The binary to restart does not exist:\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:190
-msgctxt "UpdaterOptions|"
-msgid "No unpacked update was given (--source)."
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/UpdaterOptions.cpp:193
-#, qt-format
-msgctxt "UpdaterOptions|"
-msgid "The unpacked update is missing:\n"
-"%1"
+#: launcher/ui/dialogs/UpdateAvailableDialog.cpp:38
+msgctxt "UpdateAvailableDialog|"
+msgid "A new version of MeshMC is available!"
 msgstr ""
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:41
@@ -9406,123 +10036,123 @@ msgctxt "VanillaPage|"
 msgid "Vanilla"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:157
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:158
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Current Java version %1 does not meet the requirement of Java %2."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:164
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:165
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Found installed Java %1 at: %2"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:173
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:386
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:174
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:387
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java path set to: %1"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:183
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:184
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java %1 is required but not installed. Automatic Java download is disabled."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:190
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:191
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "No installed Java %1 found. Downloading..."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:195
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:196
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java %1 is required but not installed. Please install it manually."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:212
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:213
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Using Java vendor: %1"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:223
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:224
 msgctxt "VerifyJavaInstall|"
 msgid "Fetch Java versions"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:237
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:238
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to parse Java version list from meta server: %1"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:243
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:244
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to parse Java version list from meta server."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:261
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:262
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java %1 is not available for download from the selected vendor. Please install it manually or try a different vendor in settings."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:270
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:271
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to fetch Java version list: %1. Please install Java %2 manually."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:289
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:290
 msgctxt "VerifyJavaInstall|"
 msgid "Fetch Java runtime details"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:301
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:302
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to parse Java runtime details: %1"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:306
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:307
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to parse Java runtime details."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:316
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:317
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Downloading %1 (%2)..."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:324
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:325
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "No Java %1 download available for your platform (%2). Please install it manually."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:331
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:332
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to fetch Java runtime details: %1"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:354
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:355
 msgctxt "VerifyJavaInstall|"
 msgid "Java was downloaded but the binary could not be found."
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:358
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:359
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Java downloaded and installed at: %1"
 msgstr ""
 
-#: launcher/minecraft/launch/VerifyJavaInstall.cpp:365
+#: launcher/minecraft/launch/VerifyJavaInstall.cpp:366
 #, qt-format
 msgctxt "VerifyJavaInstall|"
 msgid "Failed to download Java %1: %2"
@@ -9932,35 +10562,45 @@ msgctxt "WikiPage|"
 msgid "<p><i>Article not found: %1</i></p>"
 msgstr ""
 
-#: launcher/minecraft/WorldList.cpp:210
+#: launcher/minecraft/WorldList.cpp:238
 msgctxt "WorldList|"
 msgid "Name"
 msgstr "Nama"
 
-#: launcher/minecraft/WorldList.cpp:212
+#: launcher/minecraft/WorldList.cpp:240
 msgctxt "WorldList|"
 msgid "Game Mode"
 msgstr "Mode Game"
 
-#: launcher/minecraft/WorldList.cpp:214
+#: launcher/minecraft/WorldList.cpp:242
 msgctxt "WorldList|"
 msgid "Last Played"
 msgstr "Terakhir kali dimainkan"
 
-#: launcher/minecraft/WorldList.cpp:222
+#: launcher/minecraft/WorldList.cpp:244
+msgctxt "WorldList|"
+msgid "Day Count"
+msgstr ""
+
+#: launcher/minecraft/WorldList.cpp:252
 msgctxt "WorldList|"
 msgid "The name of the world."
 msgstr "Nama dunia."
 
-#: launcher/minecraft/WorldList.cpp:224
+#: launcher/minecraft/WorldList.cpp:254
 msgctxt "WorldList|"
 msgid "Game mode of the world."
 msgstr "Mode Game dunia."
 
-#: launcher/minecraft/WorldList.cpp:226
+#: launcher/minecraft/WorldList.cpp:256
 msgctxt "WorldList|"
 msgid "Date and time the world was last played."
 msgstr "Tanggal dan waktu dunia terakhir dimainkan."
+
+#: launcher/minecraft/WorldList.cpp:258
+msgctxt "WorldList|"
+msgid "The in-game day the world is on."
+msgstr ""
 
 #: launcher/ui/pages/instance/WorldListPage.ui:65
 msgctxt "WorldListPage|"
@@ -10027,17 +10667,17 @@ msgctxt "WorldListPage|"
 msgid "Manage datapacks inside the world."
 msgstr "Kelola datapacks didalam dunia."
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:128
+#: launcher/ui/pages/instance/WorldListPage.cpp:130
 msgctxt "WorldListPage|"
 msgid "Context menu"
 msgstr "Menu Konteks"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:176
+#: launcher/ui/pages/instance/WorldListPage.cpp:178
 msgctxt "WorldListPage|"
 msgid "Are you sure?"
 msgstr "Apakah anda yakin?"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:177
+#: launcher/ui/pages/instance/WorldListPage.cpp:179
 msgctxt "WorldListPage|"
 msgid "This will remove the selected world permenantly.\n"
 "The world will be gone forever (A LONG TIME).\n\n"
@@ -10046,70 +10686,70 @@ msgstr "Hal ini akan menghapus dunia yang dipilih secara permanen.\n"
 "Dunia ini akan hilang selamanya (WAKTU YANG PANJANG).\n\n"
 "Apakah anda ingin melanjutkan?"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:225
+#: launcher/ui/pages/instance/WorldListPage.cpp:227
 #, qt-format
 msgctxt "WorldListPage|"
 msgid "Data packs for %1"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:342
+#: launcher/ui/pages/instance/WorldListPage.cpp:344
 msgctxt "WorldListPage|"
 msgid "No MCEdit found or set up!"
 msgstr "Tidak ada MCEdit yang ditemukan atau ter atur!"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:343
+#: launcher/ui/pages/instance/WorldListPage.cpp:345
 msgctxt "WorldListPage|"
 msgid "You do not have MCEdit set up or it was moved.\n"
 "You can set it up in the global settings."
 msgstr "Anda tidak memiliki MCEdit yang ter atur atau MCEdit terpindahkan.\n"
 "Anda dapat mengaturnya di pengaturan global."
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:351
+#: launcher/ui/pages/instance/WorldListPage.cpp:353
 msgctxt "WorldListPage|"
 msgid "MCEdit failed to start!"
 msgstr "MCEdit gagal dijalankan!"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:352
+#: launcher/ui/pages/instance/WorldListPage.cpp:354
 msgctxt "WorldListPage|"
 msgid "MCEdit failed to start.\n"
 "It may be necessary to reinstall it."
 msgstr "MCEdit gagal dijalankan.\n"
 "Disarankan untuk menginstall ulang MCEdit."
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:396
+#: launcher/ui/pages/instance/WorldListPage.cpp:398
 msgctxt "WorldListPage|"
 msgid "Select a Minecraft world zip"
 msgstr "Pilih dunia Minecraft yang berbentuk zip"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:397
+#: launcher/ui/pages/instance/WorldListPage.cpp:399
 msgctxt "WorldListPage|"
 msgid "Minecraft World Zip File (*.zip)"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:417
+#: launcher/ui/pages/instance/WorldListPage.cpp:419
 msgctxt "WorldListPage|"
 msgid "Copy World"
 msgstr "Salin Dunia"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:418
+#: launcher/ui/pages/instance/WorldListPage.cpp:420
 msgctxt "WorldListPage|"
 msgid "Changing a world while Minecraft is running is potentially unsafe.\n"
 "Do you wish to proceed?"
 msgstr "Mengubah dunia disaat minecraft sedang berjalan berpotensi tidak aman.\n"
 "Apakah anda ingin melanjutkan?"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:440
-#: launcher/ui/pages/instance/WorldListPage.cpp:463
+#: launcher/ui/pages/instance/WorldListPage.cpp:442
+#: launcher/ui/pages/instance/WorldListPage.cpp:465
 msgctxt "WorldListPage|"
 msgid "World name"
 msgstr "Nama Dunia"
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:441
+#: launcher/ui/pages/instance/WorldListPage.cpp:443
 msgctxt "WorldListPage|"
 msgid "Enter a new name for the copy."
 msgstr "Masukkan nama baru untuk salinan."
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:464
+#: launcher/ui/pages/instance/WorldListPage.cpp:466
 msgctxt "WorldListPage|"
 msgid "Enter a new world name."
 msgstr "Masukkan nama baru dunia."
@@ -10119,60 +10759,60 @@ msgctxt "WorldListPage|"
 msgid "Worlds"
 msgstr "Dunia"
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:42
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:44
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "Getting authorization to access %1 services."
 msgstr "Mendapatkan otorisasi untuk mengakses layanan %1."
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:94
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:96
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "Failed to get authorization for %1 services. Error %1."
 msgstr ""
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:103
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:105
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "Could not parse authorization response for access to %1 services."
 msgstr "Tidak dapat menguraikan tanggapan otorisasi untuk akses ke %1 layanan."
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:111
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:113
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "Server has changed %1 authorization user hash in the reply. Something is wrong."
 msgstr "Server telah mengubah %1 hash pengguna otorisasi dalam balasan. Sesuatu ada yang tidak benar."
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:120
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:122
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "Got authorization to access %1"
 msgstr "Mendapat otorisasi untuk mengakses %1"
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:135
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:137
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "Cannot parse %1 authorization error response as JSON: %2"
 msgstr "Tidak dapat memproses respons kesalahan otorisasi %1 sebagai JSON: %2"
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:144
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:146
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "XErr element is missing from %1 authorization error response."
 msgstr "Elemen XErr hilang dari respons kesalahan otorisasi %1."
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:153
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:155
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "This Microsoft account does not have an XBox Live profile. Buy the game on %1 first."
 msgstr "Akun Microsoft ini tidak mempunyai profil XBox Live. Beli Minecraft di %1 dulu."
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:163
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:165
 msgctxt "XboxAuthorizationStep|"
 msgid "XBox Live is not available in your country. You've been blocked."
 msgstr "XBox Live tidak tersedia di negara anda. Anda telah diblokir."
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:170
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:172
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "This Microsoft account is underaged and is not linked to a family.\n\n"
@@ -10180,7 +10820,7 @@ msgid "This Microsoft account is underaged and is not linked to a family.\n\n"
 msgstr "Akun Microsoft ini dibawah umur dan tidak dilink ke keluarga. \n\n"
 "Tolong atur akun anda menurut %1."
 
-#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:181
+#: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:183
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "XSTS authentication ended with unrecognized error(s):\n\n"
@@ -10188,72 +10828,38 @@ msgid "XSTS authentication ended with unrecognized error(s):\n\n"
 msgstr "Otentikasi XSTS berakhir dengan 1 atau lebih error yang tidak ditahui:\n\n"
 "%1"
 
-#: launcher/minecraft/auth/steps/XboxProfileStep.cpp:34
+#: launcher/minecraft/auth/steps/XboxProfileStep.cpp:36
 msgctxt "XboxProfileStep|"
 msgid "Fetching Xbox profile."
 msgstr "Mendapatkan profil Xbox."
 
-#: launcher/minecraft/auth/steps/XboxProfileStep.cpp:85
+#: launcher/minecraft/auth/steps/XboxProfileStep.cpp:87
 msgctxt "XboxProfileStep|"
 msgid "Failed to retrieve the Xbox profile."
 msgstr "Gagal mendapatkan profil Xbox."
 
-#: launcher/minecraft/auth/steps/XboxProfileStep.cpp:93
+#: launcher/minecraft/auth/steps/XboxProfileStep.cpp:95
 msgctxt "XboxProfileStep|"
 msgid "Got Xbox profile"
 msgstr "Dapat profil Xbox"
 
-#: launcher/minecraft/auth/steps/XboxUserStep.cpp:33
+#: launcher/minecraft/auth/steps/XboxUserStep.cpp:35
 msgctxt "XboxUserStep|"
 msgid "Logging in as an Xbox user."
 msgstr "Masuk sebagai pengguna Xbox."
 
-#: launcher/minecraft/auth/steps/XboxUserStep.cpp:77
+#: launcher/minecraft/auth/steps/XboxUserStep.cpp:79
 msgctxt "XboxUserStep|"
 msgid "XBox user authentication failed."
 msgstr "Otentikasi akun XBox gagal."
 
-#: launcher/minecraft/auth/steps/XboxUserStep.cpp:86
+#: launcher/minecraft/auth/steps/XboxUserStep.cpp:88
 msgctxt "XboxUserStep|"
 msgid "XBox user authentication response could not be understood."
 msgstr "Respons untuk otentikasi pengguna XBox tidak bisa dimengerti."
 
-#: launcher/minecraft/auth/steps/XboxUserStep.cpp:90
+#: launcher/minecraft/auth/steps/XboxUserStep.cpp:92
 msgctxt "XboxUserStep|"
 msgid "Got Xbox user token"
 msgstr "Dapat token Xbox"
-
-#: launcher/updater/MeshMCUpdater/main.cpp:93
-#, qt-format
-msgctxt "main|"
-msgid "Full log:\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/main.cpp:153
-#: launcher/updater/MeshMCUpdater/main.cpp:164
-#: launcher/updater/MeshMCUpdater/main.cpp:198
-msgctxt "main|"
-msgid "Update Failed"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/main.cpp:154
-#, qt-format
-msgctxt "main|"
-msgid "The updater was started with arguments it does not understand.\n\n"
-"%1"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/main.cpp:176
-msgctxt "main|"
-msgid "Update Already Running"
-msgstr ""
-
-#: launcher/updater/MeshMCUpdater/main.cpp:177
-#, qt-format
-msgctxt "main|"
-msgid "Another MeshMC update is already in progress.\n\n"
-"%1\n\n"
-"Wait for it to finish, or close it and try again."
-msgstr ""
 
