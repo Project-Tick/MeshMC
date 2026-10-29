@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2026-10-29 08:48\n"
+"PO-Revision-Date: 2026-10-29 09:43\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -5794,33 +5794,33 @@ msgstr "&Kopyala"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:53
 msgctxt "MeshMCLogsDialog|"
 msgid "Upload the log to paste.ee"
-msgstr ""
+msgstr "Günlük kaydını paste.ee'ye yükleyin"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:56
 msgctxt "MeshMCLogsDialog|"
 msgid "Upload"
-msgstr ""
+msgstr "Yükle"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:63
 msgctxt "MeshMCLogsDialog|"
 msgid "Delete the selected log file"
-msgstr ""
+msgstr "Seçili günlük dosyasını sil"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:66
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:207
 msgctxt "MeshMCLogsDialog|"
 msgid "Delete"
-msgstr ""
+msgstr "Sil"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:73
 msgctxt "MeshMCLogsDialog|"
 msgid "Delete all MeshMC log files"
-msgstr ""
+msgstr "Tüm MeshMC günlük dosyalarını silin"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:76
 msgctxt "MeshMCLogsDialog|"
 msgid "Clean"
-msgstr ""
+msgstr "Temizle"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:100
 msgctxt "MeshMCLogsDialog|"
@@ -5830,107 +5830,109 @@ msgstr "Ara:"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:110
 msgctxt "MeshMCLogsDialog|"
 msgid "Find"
-msgstr ""
+msgstr "Bul"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:150
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:214
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:259
 msgctxt "MeshMCLogsDialog|"
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:151
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Unable to open %1 for reading: %2"
-msgstr ""
+msgstr "%1, okuma amacıyla açılamıyor: %2"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:159
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "The file (%1) is too big. You may want to open it in a viewer optimized for large files."
-msgstr ""
+msgstr "Dosya (%1) çok büyük. Bunu, büyük dosyalar için optimize edilmiş bir görüntüleyiciyle açmak isteyebilirsiniz."
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:208
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Do you really want to delete %1?"
-msgstr ""
+msgstr "%1 öğesini gerçekten silmek istiyor musunuz?"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:215
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Unable to delete %1: %2"
-msgstr ""
+msgstr "%1 silinemiyor: %2"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:238
 msgctxt "MeshMCLogsDialog|"
 msgid "Clean up"
-msgstr ""
+msgstr "Temizle"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:239
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Do you really want to delete all log files?\n"
 "%1"
-msgstr ""
+msgstr "Tüm günlük dosyalarını gerçekten silmek istiyor musunuz?\n"
+"%1"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:260
 #, qt-format
 msgctxt "MeshMCLogsDialog|"
 msgid "Couldn't delete some files:\n"
 "%1"
-msgstr ""
+msgstr "Bazı dosyalar silinemedi:\n"
+"%1"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:45
 msgctxt "MeshMCPage|"
 msgid "Features"
-msgstr ""
+msgstr "Özellikler"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:51
 msgctxt "MeshMCPage|"
 msgid "Update Settings"
-msgstr ""
+msgstr "Güncelleme Ayarları"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:57
 msgctxt "MeshMCPage|"
 msgid "Check for updates automatically"
-msgstr ""
+msgstr "Güncellemeleri otomatik olarak denetle"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:66
 msgctxt "MeshMCPage|"
 msgid "How Often?"
-msgstr ""
+msgstr "Ne sıklıkla?"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:82
 msgctxt "MeshMCPage|"
 msgid "Set to 0 to only check on launch"
-msgstr ""
+msgstr "Yalnızca başlatma sırasında kontrol etmek için 0 olarak ayarlayın"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:85
 msgctxt "MeshMCPage|"
 msgid "On Launch"
-msgstr ""
+msgstr "Başlatıldığında"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:88
 msgctxt "MeshMCPage|"
 msgid " hours"
-msgstr ""
+msgstr " saat"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:91
 msgctxt "MeshMCPage|"
 msgid "Every "
-msgstr ""
+msgstr "Her "
 
 #: launcher/ui/pages/global/MeshMCPage.ui:122
 msgctxt "MeshMCPage|"
 msgid "Folders"
-msgstr ""
+msgstr "Klasörler"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:128
 msgctxt "MeshMCPage|"
 msgid "I&nstances:"
-msgstr ""
+msgstr "P&rofiller:"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:148
 msgctxt "MeshMCPage|"
@@ -5940,215 +5942,217 @@ msgstr "&Modlar:"
 #: launcher/ui/pages/global/MeshMCPage.ui:171
 msgctxt "MeshMCPage|"
 msgid "&Icons:"
-msgstr ""
+msgstr "&İkonlar:"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:191
 msgctxt "MeshMCPage|"
 msgid "&Skins:"
-msgstr ""
+msgstr "&Skinler:"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:211
 msgctxt "MeshMCPage|"
 msgid "&Java:"
-msgstr ""
+msgstr "&Java:"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:228
 msgctxt "MeshMCPage|"
 msgid "Additional instance directories"
-msgstr ""
+msgstr "Ek profil dizinleri"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:239
 msgctxt "MeshMCPage|"
 msgid "Add"
-msgstr ""
+msgstr "Ekle"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:246
 msgctxt "MeshMCPage|"
 msgid "Remove"
-msgstr ""
+msgstr "Kaldır"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:268
 msgctxt "MeshMCPage|"
 msgid "Move the data to new location (will restart MeshMC)"
-msgstr ""
+msgstr "Verileri yeni konuma taşıyın (MeshMC yeniden başlatılacaktır)"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:275
 msgctxt "MeshMCPage|"
 msgid "Backup System"
-msgstr ""
+msgstr "Yedekleme Sistemi"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:281
 msgctxt "MeshMCPage|"
 msgid "Creates a snapshot of each instance before launching. Backups are saved in the instance's .backups folder with the label \"pre-launch\"."
-msgstr ""
+msgstr "Başlatma işleminden önce her bir profilin anlık görüntüsünü oluşturur. Yedekler, profilin .backups klasörüne \"pre-launch\" etiketiyle kaydedilir."
 
 #: launcher/ui/pages/global/MeshMCPage.ui:284
 msgctxt "MeshMCPage|"
 msgid "Automatically &backup instances before launch"
-msgstr ""
+msgstr "Başlatma öncesinde örnekleri otomatik olarak &yedekle"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:294
 msgctxt "MeshMCPage|"
 msgid "Instance creation"
-msgstr ""
+msgstr "Profil oluşturma"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:300
 msgctxt "MeshMCPage|"
 msgid "When installing a modpack that is already installed, offer to update that instance instead of creating a second copy of it."
-msgstr ""
+msgstr "Hâlihazırda yüklü olan bir mod paketini kurarken, ikinci bir kopyasını oluşturmak yerine mevcut kurulumu güncelleme seçeneği sunun."
 
 #: launcher/ui/pages/global/MeshMCPage.ui:303
 msgctxt "MeshMCPage|"
 msgid "&Suggest updating an existing instance during modpack installation"
-msgstr ""
+msgstr "Mod paketi kurulumu &sırasında mevcut bir örneğin güncellenmesini önerin"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:310
 msgctxt "MeshMCPage|"
 msgid "Download the game's libraries and assets while the instance is being created, instead of waiting until the first time it is launched."
-msgstr ""
+msgstr "Oyunun kütüphanelerini ve varlıklarını, ilk kez başlatılmasını beklemek yerine, profil oluşturulurken indirin."
 
 #: launcher/ui/pages/global/MeshMCPage.ui:313
 msgctxt "MeshMCPage|"
 msgid "&Download the game's files while creating an instance"
-msgstr ""
+msgstr "Bir profil oluştururken oyunun &dosyalarını indirin"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:337
 msgctxt "MeshMCPage|"
 msgid "User Interface"
-msgstr ""
+msgstr "Kullanıcı Arayüzü"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:343
 msgctxt "MeshMCPage|"
 msgid "MeshMC notifications"
-msgstr ""
+msgstr "MeshMC bildirimleri"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:349
 msgctxt "MeshMCPage|"
 msgid "Reset hidden notifications"
-msgstr ""
+msgstr "Gizli bildirimleri sıfırla"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:365
 msgctxt "MeshMCPage|"
 msgid "Instance view sorting mode"
-msgstr ""
+msgstr "Profil görünümü sıralama modu"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:371
 msgctxt "MeshMCPage|"
 msgid "By &last launched"
-msgstr ""
+msgstr "Son baş&latılma zamanına göre"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:381
 msgctxt "MeshMCPage|"
 msgid "By &name"
-msgstr ""
+msgstr "İsme &göre"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:408
 msgctxt "MeshMCPage|"
 msgid "Console"
-msgstr ""
+msgstr "Konsol"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:414
 msgctxt "MeshMCPage|"
 msgid "Console Settings"
-msgstr ""
+msgstr "Konsol Ayarları"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:420
 msgctxt "MeshMCPage|"
 msgid "Show console while the game is running?"
-msgstr ""
+msgstr "Oyun çalışırken konsol gösterilsin mi?"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:427
 msgctxt "MeshMCPage|"
 msgid "Automatically close console when the game quits?"
-msgstr ""
+msgstr "Oyun kapandığında konsol otomatik olarak kapatılsın mı?"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:434
 msgctxt "MeshMCPage|"
 msgid "Show console when the game crashes?"
-msgstr ""
+msgstr "Oyun çöktüğünde konsolu göster?"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:444
 msgctxt "MeshMCPage|"
 msgid "History limit"
-msgstr ""
+msgstr "Geçmiş sınırı"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:450
 msgctxt "MeshMCPage|"
 msgid "Stop logging when log overflows"
-msgstr ""
+msgstr "Günlük dolduğunda günlük kaydını durdur"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:463
 msgctxt "MeshMCPage|"
 msgid " lines"
-msgstr ""
+msgstr " satırlar"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:491
 msgctxt "MeshMCPage|"
 msgid "Console font"
-msgstr ""
+msgstr "Konsol yazı tipi"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:94
 msgctxt "MeshMCPage|"
 msgid "You're trying to specify an instance folder which's path contains at least one '!'. Java is known to cause problems if that is the case, your instances (probably) won't start!"
-msgstr ""
+msgstr "Yolu en az bir adet '!' karakteri içeren bir profil klasörü belirtmeye çalışıyorsunuz. Java'nın bu gibi durumlarda sorun çıkardığı bilinmektedir; profilleriniz (muhtemelen) başlatılamayacaktır!"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:99
 msgctxt "MeshMCPage|"
 msgid "Do you really want to use this path? Selecting \"No\" will close this and not alter your instance path."
-msgstr ""
+msgstr "Bu yolu gerçekten kullanmak istiyor musunuz? \"Hayır\" seçeneğini belirlemek bu pencereyi kapatacak ve profil yolunuzu değiştirmeyecektir."
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:119
 msgctxt "MeshMCPage|"
 msgid "You're trying to specify an instance folder which was granted temporarily via Flatpak.\n"
 "This is known to cause problems. After a restart the launcher might break, because it will no longer have access to that directory.\n\n"
 "Granting MeshMC access to it via Flatseal is recommended."
-msgstr ""
+msgstr "Flatpak aracılığıyla geçici olarak erişim izni verilmiş bir profil klasörünü belirtmeye çalışıyorsunuz.\n"
+"Bunun sorunlara yol açtığı bilinmektedir. Yeniden başlatma sonrasında başlatıcı, söz konusu dizine artık erişemeyeceği için çalışmayabilir.\n\n"
+"MeshMC'ye bu dizine erişim iznini Flatseal üzerinden vermeniz önerilir."
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:125
 msgctxt "MeshMCPage|"
 msgid "Do you want to proceed anyway?"
-msgstr ""
+msgstr "Yine de devam etmek istiyor musunuz?"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:136
 msgctxt "MeshMCPage|"
 msgid "Instance Folder"
-msgstr ""
+msgstr "Profil Klasörü"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:159
 msgctxt "MeshMCPage|"
 msgid "Additional Instance Folder"
-msgstr ""
+msgstr "Ek Profil Klasörü"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:186
 #: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
-msgstr ""
+msgstr "Yinelenen dizin"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
 msgid "This is already your primary instance directory."
-msgstr ""
+msgstr "Burası hâlihazırda birincil profil dizininizdir."
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:194
 msgctxt "MeshMCPage|"
 msgid "This directory has already been added."
-msgstr ""
+msgstr "Bu dizin zaten eklenmiş."
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:217
 msgctxt "MeshMCPage|"
 msgid "Icons Folder"
-msgstr ""
+msgstr "Simgeler Klasörü"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:228
 msgctxt "MeshMCPage|"
 msgid "Skins Folder"
-msgstr ""
+msgstr "Skin Klasörü"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:239
 msgctxt "MeshMCPage|"
 msgid "Java Folder"
-msgstr ""
+msgstr "Java Klasörü"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:250
 msgctxt "MeshMCPage|"
@@ -6158,155 +6162,155 @@ msgstr "Mod Klasörü"
 #: launcher/ui/pages/global/MeshMCPage.cpp:261
 msgctxt "MeshMCPage|"
 msgid "Automatic macOS Migration"
-msgstr ""
+msgstr "Otomatik macOS Geçişi"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:262
 msgctxt "MeshMCPage|"
 msgid "MeshMC now stores macOS data under your Library/Application Support folder automatically."
-msgstr ""
+msgstr "MeshMC artık macOS verilerini otomatik olarak Library/Application Support klasörünüzün altında saklıyor."
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:406
 msgctxt "MeshMCPage|"
 msgid "[Something/ERROR] A spooky error!"
-msgstr ""
+msgstr "[Something/ERROR] Ürkütücü bir hata!"
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:415
 msgctxt "MeshMCPage|"
 msgid "[Test/INFO] A harmless message..."
-msgstr ""
+msgstr "[Test/INFO] Zararsız bir mesaj..."
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:424
 msgctxt "MeshMCPage|"
 msgid "[Something/WARN] A not so spooky warning."
-msgstr ""
+msgstr "[Something/WARN] Pek de ürkütücü olmayan bir uyarı."
 
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:130
 #, qt-format
 msgctxt "MeshMCPartLaunch|"
 msgid "The wrapper command \"%1\" couldn't be found."
-msgstr ""
+msgstr "\"%1\" sarmalayıcı komutu bulunamadı."
 
 #. Error message displayed if instace can't start
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:150
 msgctxt "MeshMCPartLaunch|"
 msgid "Could not launch minecraft!"
-msgstr ""
+msgstr "Minecraft başlatılamadı!"
 
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:158
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:166
 msgctxt "MeshMCPartLaunch|"
 msgid "Game crashed."
-msgstr ""
+msgstr "Oyun çöktü."
 
 #: launcher/minecraft/launch/MeshMCPartLaunch.cpp:227
 msgctxt "MeshMCPartLaunch|"
 msgid "The game did not react to the abort request. Killing it."
-msgstr ""
+msgstr "Oyun, sonlandırma talebine yanıt vermedi. Kapatılıyor."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:421
 msgctxt "MeshUpdaterApp|"
 msgid "Installs MeshMC updates."
-msgstr ""
+msgstr "MeshMC güncellemelerini yükler."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:424
 msgctxt "MeshUpdaterApp|"
 msgid "Use a custom path as application root (use '.' for current directory)."
-msgstr ""
+msgstr "Uygulama kök dizini olarak özel bir yol kullanın (mevcut dizin için '.' kullanın)."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:426
 msgctxt "MeshUpdaterApp|"
 msgid "directory"
-msgstr ""
+msgstr "dizin"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:428
 msgctxt "MeshUpdaterApp|"
 msgid "Treat this as the installed launcher version instead of asking the launcher."
-msgstr ""
+msgstr "Bunu, başlatıcıya sormak yerine, yüklü başlatıcı sürümü olarak kabul edin."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:430
 msgctxt "MeshUpdaterApp|"
 msgid "installed version"
-msgstr ""
+msgstr "yüklü sürüm"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:432
 msgctxt "MeshUpdaterApp|"
 msgid "Install a specific version."
-msgstr ""
+msgstr "Belirli bir sürümü yükleyin."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:432
 msgctxt "MeshUpdaterApp|"
 msgid "version name"
-msgstr ""
+msgstr "sürüm adı"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:434
 msgctxt "MeshUpdaterApp|"
 msgid "Update from the specified repository."
-msgstr ""
+msgstr "Belirtilen depodan güncelleme yapın."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:434
 msgctxt "MeshUpdaterApp|"
 msgid "github repo url"
-msgstr ""
+msgstr "GitHub depo URL'si"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:436
 msgctxt "MeshUpdaterApp|"
 msgid "Install the release already unpacked in this directory. Used by the updater itself for the second pass of an install."
-msgstr ""
+msgstr "Bu dizinde hâlihazırda açılmış olan sürümü kurun. Güncelleyicinin kendisi tarafından, kurulumun ikinci aşamasında kullanılır."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:438
 msgctxt "MeshUpdaterApp|"
 msgid "unpacked release directory"
-msgstr ""
+msgstr "içeriği açılmış sürüm dizini"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:440
 msgctxt "MeshUpdaterApp|"
 msgid "Print a token and exit, to prove this binary can run."
-msgstr ""
+msgstr "Bu ikili dosyanın çalışabildiğini kanıtlamak için bir belirteç yazdırın ve çıkış yapın."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:442
 msgctxt "MeshUpdaterApp|"
 msgid "Only check whether an update is needed. Exit status 100 if it is, 0 if it is not, non-zero on error."
-msgstr ""
+msgstr "Yalnızca güncelleme gerekip gerekmediğini kontrol edin. Varsa 100'den, değilse 0'dan, hata durumunda sıfırdan farklı bir durumda çıkın."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:445
 msgctxt "MeshUpdaterApp|"
 msgid "Allow updating to pre-releases."
-msgstr ""
+msgstr "Ön sürümlere güncellenmesine izin ver."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:447
 msgctxt "MeshUpdaterApp|"
 msgid "Update even when one is not needed."
-msgstr ""
+msgstr "Gerekli olmadığı durumlarda bile güncelleme yapın."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:449
 msgctxt "MeshUpdaterApp|"
 msgid "List the available releases."
-msgstr ""
+msgstr "Mevcut sürümleri listeleyin."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:450
 msgctxt "MeshUpdaterApp|"
 msgid "Log debug output to the console."
-msgstr ""
+msgstr "Hata ayıklama çıktılarını konsola kaydedin."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:452
 msgctxt "MeshUpdaterApp|"
 msgid "Select the version to install with a GUI."
-msgstr ""
+msgstr "Grafik arayüz ile kurulacak sürümü seçin."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:454
 msgctxt "MeshUpdaterApp|"
 msgid "Allow downgrading to an earlier version."
-msgstr ""
+msgstr "Daha önceki bir sürüme geri dönülmesine izin verin."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:482
 msgctxt "MeshUpdaterApp|"
 msgid "default"
-msgstr ""
+msgstr "varsayılan"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:482
 msgctxt "MeshUpdaterApp|"
 msgid "command line"
-msgstr ""
+msgstr "komut satırı"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:517
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1413
@@ -6318,47 +6322,48 @@ msgstr ""
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2253
 msgctxt "MeshUpdaterApp|"
 msgid "Update Failed"
-msgstr ""
+msgstr "Güncelleme Başarısız"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:518
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The update marker at %1 does not say where to install to."
-msgstr ""
+msgstr "%1 konumundaki güncelleme işareti, kurulumun nereye yapılacağını belirtmiyor."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:541
 msgctxt "MeshUpdaterApp|"
 msgid "macOS Is Not Supported"
-msgstr ""
+msgstr "macOS desteklenmiyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:542
 msgctxt "MeshUpdaterApp|"
 msgid "The updater does not support installations on macOS. Updates are handled by the launcher itself."
-msgstr ""
+msgstr "Güncelleyici, macOS üzerindeki kurulumları desteklemez. Güncellemeler, bizzat başlatıcı tarafından gerçekleştirilir."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:557
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:568
 msgctxt "MeshUpdaterApp|"
 msgid "Unsupported Installation"
-msgstr ""
+msgstr "Desteklenmeyen Kurulum"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:558
 msgctxt "MeshUpdaterApp|"
 msgid "This looks like an AppImage, but the APPIMAGE environment variable is missing, so there is no file to update."
-msgstr ""
+msgstr "Bu bir AppImage gibi görünüyor, ancak APPIMAGE ortam değişkeni eksik; dolayısıyla güncellenecek bir dosya bulunmuyor."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:569
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The updater cannot find the main executable at:\n"
 "%1"
-msgstr ""
+msgstr "Güncelleyici ana yürütülebilir dosyayı şu konumda bulamıyor:\n"
+"%1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:675
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:707
 msgctxt "MeshUpdaterApp|"
 msgid "The launcher data folder is not writable!"
-msgstr ""
+msgstr "Başlatıcı veri klasörü yazılabilir değil!"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:676
 #, qt-format
@@ -6367,7 +6372,10 @@ msgid "The updater could not create its log directory at:\n"
 "%1\n\n"
 "Make sure you have write permissions to the data folder.\n\n"
 "The updater cannot continue until this is fixed."
-msgstr ""
+msgstr "Güncelleyici, şu konumda günlük dizinini oluşturamadı:\n"
+"%1\n\n"
+"Veri klasörüne yazma izinlerinizin olduğundan emin olun.\n\n"
+"Bu sorun giderilene kadar güncelleyici devam edemez."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:708
 #, qt-format
@@ -6376,41 +6384,44 @@ msgid "The updater could not create a log file - %1.\n\n"
 "Make sure you have write permissions to the data folder.\n"
 "(%2)\n\n"
 "The updater cannot continue until this is fixed."
-msgstr ""
+msgstr "Güncelleyici bir günlük dosyası oluşturamadı - %1.\n\n"
+"Veri klasörüne yazma izinlerinizin olduğundan emin olun.\n"
+"(%2)\n\n"
+"Bu sorun giderilene kadar güncelleyici devam edemez."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:777
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Cannot list releases: %1"
-msgstr ""
+msgstr "Yayınlar listelenemiyor: %1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:810
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not fetch %1: %2"
-msgstr ""
+msgstr "%1 alınamadı: %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:819
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not read the release list from %1: %2"
-msgstr ""
+msgstr "%1 kaynağından sürüm listesi okunamadı: %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1000
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The repository has no published releases%1."
-msgstr ""
+msgstr "Deponun yayımlanmış hiçbir sürümü bulunmuyor%1."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1002
 msgctxt "MeshUpdaterApp|"
 msgid " (pre-releases excluded)"
-msgstr ""
+msgstr " (ön sürümler hariç)"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1041
 msgctxt "MeshUpdaterApp|"
 msgid "Updating Flatpak Is Not Supported"
-msgstr ""
+msgstr "Flatpak Güncelleme İşlemi Desteklenmiyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1042
 msgctxt "MeshUpdaterApp|"
@@ -6418,69 +6429,72 @@ msgid "This is the Flatpak build of MeshMC, which is updated through Flatpak its
 "Run this to update:\n"
 "flatpak update org.projecttick.MeshMC\n\n"
 "Checking for updates works, but installing them here does not."
-msgstr ""
+msgstr "Bu, MeshMC'nin Flatpak derlemesidir ve güncellemeleri bizzat Flatpak aracılığıyla alır.\n\n"
+"Güncellemek için şu komutu çalıştırın:\n"
+"flatpak update org.projecttick.MeshMC\n\n"
+"Güncellemeleri denetlemek mümkündür, ancak bunları buradan yükleyemezsiniz."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1081
 msgctxt "MeshUpdaterApp|"
 msgid "No Release for That Version"
-msgstr ""
+msgstr "Bu Sürüm İçin Yayın Yok"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1082
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "There is no GitHub release for version %1."
-msgstr ""
+msgstr "%1 sürümü için bir GitHub sürümü bulunmuyor."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1090
 msgctxt "MeshUpdaterApp|"
 msgid "No version was selected."
-msgstr ""
+msgstr "Hiçbir sürüm seçilmedi."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1159
 msgctxt "MeshUpdaterApp|"
 msgid "No Valid Release Assets"
-msgstr ""
+msgstr "Geçerli Sürüm Varlığı Yok"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1160
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Release %1 has no files for this installation: %2, portable: %3."
-msgstr ""
+msgstr "%1 sürümü, bu kurulum için herhangi bir dosya içermiyor: %2, taşınabilir: %3."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1164
 msgctxt "MeshUpdaterApp|"
 msgid "unknown build"
-msgstr ""
+msgstr "bilinmeyen derleme"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1166
 msgctxt "MeshUpdaterApp|"
 msgid "yes"
-msgstr ""
+msgstr "evet"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1166
 msgctxt "MeshUpdaterApp|"
 msgid "no"
-msgstr ""
+msgstr "hayır"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1181
 msgctxt "MeshUpdaterApp|"
 msgid "No file was selected."
-msgstr ""
+msgstr "Hiçbir dosya seçilmedi."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1189
 msgctxt "MeshUpdaterApp|"
 msgid "Failed to Download"
-msgstr ""
+msgstr "İndirme başarısız oldu"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1190
 msgctxt "MeshUpdaterApp|"
 msgid "The update file could not be downloaded."
-msgstr ""
+msgstr "Güncelleme dosyası indirilemedi."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1252
 msgctxt "MeshUpdaterApp|"
 msgid "An update is already in progress."
-msgstr ""
+msgstr "Hâlihazırda bir güncelleme devam ediyor."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1254
 #, qt-format
@@ -6495,72 +6509,82 @@ msgid "This installation has an update lock file at: %1\n\n"
 "%7\n"
 "has the details of the last attempt.\n\n"
 "To ignore this lock and update anyway, choose \"Ignore\"."
-msgstr ""
+msgstr "Bu kurulumda şu konumda bir güncelleme kilit dosyası bulunuyor: %1\n\n"
+"Zaman damgası: %2\n"
+"%3 sürümünden %4 sürümüne güncelleniyor\n"
+"Hedef kurulum yolu: %5\n"
+"Veri yolu: %6\n\n"
+"Bu durum genellikle daha önceki bir güncelleme denemesinin başarısız olduğu anlamına gelir. Lütfen devam etmeden önce kurulumunuzun hâlâ düzgün çalıştığından emin olun.\n"
+"Şu konumda bulunan güncelleme günlüğü:\n"
+"%7\n"
+"son denemeye dair ayrıntıları içermektedir.\n\n"
+"Bu kilidi göz ardı edip güncellemeyi yine de gerçekleştirmek için \"Yoksay\" seçeneğini belirleyin."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1282
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The update was aborted: an update lock from an earlier attempt is present at %1."
-msgstr ""
+msgstr "Güncelleme iptal edildi: daha önceki bir denemeden kalma bir güncelleme kilidi %1 konumunda mevcut."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1297
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Updating from %1 to %2"
-msgstr ""
+msgstr "%1 sürümünden %2 sürümüne güncelleniyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1312
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Updating the installation at %1"
-msgstr ""
+msgstr "%1 konumundaki kurulum güncelleniyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1337
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Running the installer at %1"
-msgstr ""
+msgstr "Yükleyici %1 konumunda çalıştırılıyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1348
 msgctxt "MeshUpdaterApp|"
 msgid "The installer was started."
-msgstr ""
+msgstr "Yükleyici başlatıldı."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1349
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The installer could not be started: %1"
-msgstr ""
+msgstr "Kurulum programı başlatılamadı: %1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1377
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Failed to unpack %1: %2"
-msgstr ""
+msgstr "Paket açma işlemi başarısız oldu %1: %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1379
 msgctxt "MeshUpdaterApp|"
 msgid "Failed to Extract Archive"
-msgstr ""
+msgstr "Arşiv Çıkarılamadı"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1380
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not unpack %1 into %2:\n"
 "%3"
-msgstr ""
+msgstr "%1, %2 konumuna açılamadı:\n"
+"%3"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1387
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Unpacked %1 files and %2 links (%3) into %4"
-msgstr ""
+msgstr "%1 dosya ve %2 bağlantı (%3), %4 konumuna açıldı"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1410
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The unpacked release has no launcher at %1"
-msgstr ""
+msgstr "Paketten çıkarılmış sürümde %1 konumunda bir başlatıcı bulunmuyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1414
 #, qt-format
@@ -6570,12 +6594,16 @@ msgid "The downloaded release does not contain MeshMC at:\n"
 "Your installation has not been changed.\n"
 "The updater log has the details:\n"
 "%2"
-msgstr ""
+msgstr "İndirilen sürüm, şu konumda MeshMC içermiyor:\n"
+"%1\n\n"
+"Kurulumunuzda herhangi bir değişiklik yapılmadı.\n"
+"Ayrıntılar güncelleme günlüğünde yer almaktadır:\n"
+"%2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1430
 msgctxt "MeshUpdaterApp|"
 msgid "No usable second pass was found for this release."
-msgstr ""
+msgstr "Bu sürüm için kullanılabilir ikinci bir geçiş bulunamadı."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1433
 #, qt-format
@@ -6584,37 +6612,41 @@ msgid "The update cannot be installed, because no program that is able to instal
 "Your installation has not been changed. You can install this release by downloading it yourself.\n\n"
 "The updater log has what was tried and why each attempt failed:\n"
 "%1"
-msgstr ""
+msgstr "Güncelleme yüklenemiyor; çünkü güncellemeyi gerçekleştirebilecek hiçbir program başlatılamadı.\n\n"
+"Yüklemenizde herhangi bir değişiklik yapılmadı. Bu sürümü kendiniz indirerek yükleyebilirsiniz.\n\n"
+"Güncelleme günlüğü, nelerin denendiğini ve her bir denemenin neden başarısız olduğunu içermektedir:\n"
+"%1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1448
 msgctxt "MeshUpdaterApp|"
 msgid "Backing up the current installation"
-msgstr ""
+msgstr "Mevcut kurulumun yedeğini alma"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1456
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not write the update marker at %1"
-msgstr ""
+msgstr "Güncelleme işareti %1 konumuna yazılamadı"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1458
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not write the update marker at:\n"
 "%1"
-msgstr ""
+msgstr "Güncelleme işaretçisi şu konumda yazılamadı:\n"
+"%1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1477
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Starting the second pass: %1 %2"
-msgstr ""
+msgstr "İkinci geçiş başlatılıyor: %1 %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1482
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not start %1: %2"
-msgstr ""
+msgstr "%1 başlatılamadı: %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1485
 #, qt-format
@@ -6623,23 +6655,26 @@ msgid "Could not start the second pass of the update:\n"
 "%1\n\n"
 "%2\n\n"
 "Your installation has not been changed."
-msgstr ""
+msgstr "Güncellemenin ikinci aşaması başlatılamadı:\n"
+"%1\n\n"
+"%2\n\n"
+"Kurulumunuzda herhangi bir değişiklik yapılmadı."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1507
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The second pass (pid %1) did not take the update over within %2 seconds and is %3."
-msgstr ""
+msgstr "İkinci geçiş (pid %1), güncellemeyi %2 saniye içinde devralmadı ve şu anki durumu: %3."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1511
 msgctxt "MeshUpdaterApp|"
 msgid "still running"
-msgstr ""
+msgstr "hâlâ çalışıyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1512
 msgctxt "MeshUpdaterApp|"
 msgid "no longer running"
-msgstr ""
+msgstr "artık çalışmıyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1517
 #, qt-format
@@ -6647,7 +6682,9 @@ msgctxt "MeshUpdaterApp|"
 msgid "The second pass of the update was started but never reported that it had taken over, and it is still running.\n\n"
 "Check that MeshMC still starts before using it. The previous installation was backed up, and the updater log has the details:\n"
 "%1"
-msgstr ""
+msgstr "Güncellemenin ikinci aşaması başlatıldı ancak devraldığına dair hiçbir rapor verilmedi ve hala çalışıyor.\n\n"
+"Kullanmadan önce MeshMC'nin hala başlatılabildiğinden emin olun. Önceki kurulum yedeklendi ve güncelleme günlüğünde ayrıntılar mevcut:\n"
+"%1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1526
 #, qt-format
@@ -6655,268 +6692,274 @@ msgctxt "MeshUpdaterApp|"
 msgid "The second pass of the update stopped before it began installing.\n\n"
 "Your installation has not been changed. The updater log has the details:\n"
 "%1"
-msgstr ""
+msgstr "Güncellemenin ikinci aşaması, yükleme başlamadan önce durdu.\n\n"
+"Yüklemenizde herhangi bir değişiklik yapılmadı. Güncelleme günlüğünde ayrıntılar yer almaktadır:\n"
+"%1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1539
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Handed the update over to the second pass (pid %1)."
-msgstr ""
+msgstr "Güncellemeyi ikinci geçişe (pid %1) devretti."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1576
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not copy %1 to %2: %3"
-msgstr ""
+msgstr "%1, %2 konumuna kopyalanamadı: %3"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1586
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not make %1 executable."
-msgstr ""
+msgstr "%1 yürütülebilir hale getirilemedi."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1596
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "There is no file at %1."
-msgstr ""
+msgstr "%1 konumunda dosya yok."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1607
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "%1 could not be started: %2"
-msgstr ""
+msgstr "%1 başlatılamadı: %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1616
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "%1 did not answer the self test within %2 seconds."
-msgstr ""
+msgstr "%1, kendi kendini sınama işlemine %2 saniye içinde yanıt vermedi."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1628
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "%1 failed the self test (exit code %2): %3"
-msgstr ""
+msgstr "%1, kendi kendini sınama (self test) aşamasında başarısız oldu (çıkış kodu %2): %3"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1634
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "%1 passed the self test: %2"
-msgstr ""
+msgstr "%1 kendi kendini sınama testini geçti: %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1643
 msgctxt "MeshUpdaterApp|"
 msgid "Looking for a program to install the update with."
-msgstr ""
+msgstr "Güncellemeyi yüklemek için bir program arıyorum."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1654
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Trying the release's own updater at %1"
-msgstr ""
+msgstr "Sürümün kendi güncelleyicisini %1'de deniyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1662
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "%1 does not know --finish-update, so it is from before the current updater; not running it."
-msgstr ""
+msgstr "%1, --finish-update parametresini tanımıyor; yani mevcut güncelleme aracından daha eski bir sürüme ait; bu yüzden çalıştırılmıyor."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1691
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1702
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Trying this updater inside the release, as %1"
-msgstr ""
+msgstr "Bu güncelleyiciyi sürümün içinde, %1 olarak deniyorum"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1719
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Trying this updater on its own, as %1"
-msgstr ""
+msgstr "Bu güncelleyiciyi tek başına, %1 olarak deniyorum"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1733
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Waiting for the second pass (pid %1) to take the update over."
-msgstr ""
+msgstr "Güncellemeyi devralması için ikinci geçişin (pid %1) gerçekleşmesi bekleniyor."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1786
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not create the backup directory %1"
-msgstr ""
+msgstr "Yedekleme dizini %1 oluşturulamadı"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1799
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Backing up the installation at %1"
-msgstr ""
+msgstr "%1 konumundaki kurulumun yedeği alınıyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1807
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Backing up:\n"
 "  %1"
-msgstr ""
+msgstr "Yedekleniyor:\n"
+"  %1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1828
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1836
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not back up %1: %2"
-msgstr ""
+msgstr "%1 yedeklenemedi: %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1855
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2037
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Not present, ignoring: %1"
-msgstr ""
+msgstr "Mevcut değil, yoksayılıyor: %1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1865
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Backed the installation up to %1"
-msgstr ""
+msgstr "Kurulum %1'e kadar yedeklendi."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1892
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Took the update lock over (pid %1)."
-msgstr ""
+msgstr "Güncelleme kilidini devraldı (pid %1)."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1897
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not take the update lock at %1 over."
-msgstr ""
+msgstr "%1 üzerinde güncelleme kilidi alınamadı."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1921
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Removed the second pass's copy at %1"
-msgstr ""
+msgstr "İkinci geçişin %1 konumundaki kopyası kaldırıldı"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1923
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not remove %1; it may end up installed."
-msgstr ""
+msgstr "%1 kaldırılamadı; yüklü kalmış olabilir."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1931
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Completing the update: installing %1 into %2, from %3"
-msgstr ""
+msgstr "Güncelleme tamamlanıyor: %1, %3 konumundan %2 konumuna yükleniyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1953
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The first pass (pid %1) is still running after %2 seconds; installing anyway."
-msgstr ""
+msgstr "İlk geçiş (pid %1), %2 saniye geçmesine rağmen hâlâ çalışıyor; yine de kuruluma devam ediliyor."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1959
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "The first pass (pid %1) has exited."
-msgstr ""
+msgstr "İlk geçiş (pid %1) sona erdi."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1979
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Installing the following into %1:\n"
 "  %2"
-msgstr ""
+msgstr "Aşağıdakiler %1'e yükleniyor:\n"
+"  %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1984
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Installing from %1"
-msgstr ""
+msgstr "%1 konumundan yükleniyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2007
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2017
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Failed to install %1: %2"
-msgstr ""
+msgstr "%1 yüklenemedi: %2"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2053
 msgctxt "MeshUpdaterApp|"
 msgid "There were errors installing the update."
-msgstr ""
+msgstr "Güncelleme yüklenirken hatalar oluştu."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2054
 msgctxt "MeshUpdaterApp|"
 msgid "The update succeeded."
-msgstr ""
+msgstr "Güncelleme başarılı oldu."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2071
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not restart the launcher: %1"
-msgstr ""
+msgstr "Başlatıcı yeniden başlatılamadı: %1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2106
 msgctxt "MeshUpdaterApp|"
 msgid "AppImageUpdate Not Found"
-msgstr ""
+msgstr "AppImageUpdate Bulunamadı"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2107
 msgctxt "MeshUpdaterApp|"
 msgid "This AppImage is updated with AppImageUpdate, which could not be found.\n\n"
 "Install AppImageUpdate, or download the new version manually."
-msgstr ""
+msgstr "Bu AppImage, bulunamayan AppImageUpdate aracıyla güncellenmektedir.\n\n"
+"AppImageUpdate'i kurun ya da yeni sürümü manuel olarak indirin."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2124
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not start AppImageUpdate:\n"
 "%1"
-msgstr ""
+msgstr "AppImageUpdate başlatılamadı:\n"
+"%1"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2206
 msgctxt "MeshUpdaterApp|"
 msgid "The installation was not modified; dropped the update lock."
-msgstr ""
+msgstr "Kurulum değiştirilmedi; güncelleme kilidi kaldırıldı."
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2225
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Removing the old backup at %1"
-msgstr ""
+msgstr "%1 konumundaki eski yedek kaldırılıyor"
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2227
 #, qt-format
 msgctxt "MeshUpdaterApp|"
 msgid "Could not fully remove %1"
-msgstr ""
+msgstr "%1 tam olarak kaldırılamadı"
 
 #: launcher/meta/Index.cpp:76
 msgctxt "Meta::Index|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 #: launcher/minecraft/MinecraftInstance.cpp:865
 msgctxt "MinecraftInstance|"
 msgid "<SESSION ID>"
-msgstr ""
+msgstr "<SESSION ID>"
 
 #: launcher/minecraft/MinecraftInstance.cpp:867
 msgctxt "MinecraftInstance|"
 msgid "<ACCESS TOKEN>"
-msgstr ""
+msgstr "<ACCESS TOKEN>"
 
 #: launcher/minecraft/MinecraftInstance.cpp:869
 msgctxt "MinecraftInstance|"
 msgid "<CLIENT TOKEN>"
-msgstr ""
+msgstr "<CLIENT TOKEN>"
 
 #: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
 msgid "<PROFILE ID>"
-msgstr ""
+msgstr "<PROFILE ID>"
 
 #: launcher/minecraft/MinecraftInstance.cpp:946
 msgctxt "MinecraftInstance|"
@@ -6927,7 +6970,7 @@ msgstr "bozuk"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr ""
+msgstr "Minecraft %1 (%2)"
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -7004,7 +7047,7 @@ msgstr "Profillerde oynanan süreyi kaydet"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr ""
+msgstr "Minecraft"
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
@@ -7144,79 +7187,79 @@ msgstr "Klasörü &Görüntüle"
 #: launcher/ui/pages/instance/ModFolderPage.ui:146
 msgctxt "ModFolderPage|"
 msgid "&Download"
-msgstr ""
+msgstr "İn&dir"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:149
 msgctxt "ModFolderPage|"
 msgid "Download content from CurseForge and Modrinth"
-msgstr ""
+msgstr "CurseForge ve Modrinth'ten içerik indirin"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:154
 msgctxt "ModFolderPage|"
 msgid "Check for &Updates"
-msgstr ""
+msgstr "Güncellemeleri &Denetle"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:157
 msgctxt "ModFolderPage|"
 msgid "Check tracked mods for newer compatible versions and update them."
-msgstr ""
+msgstr "Takip edilen modlar için daha yeni, uyumlu sürümler olup olmadığını kontrol edin ve bunları güncelleyin."
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:165
 msgctxt "ModFolderPage|"
 msgid "Change &Version"
-msgstr ""
+msgstr "Sürümü D&eğiştir"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:168
 msgctxt "ModFolderPage|"
 msgid "Change a mod's version."
-msgstr ""
+msgstr "Bir modun sürümünü değiştirin."
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:173
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1129
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1150
 msgctxt "ModFolderPage|"
 msgid "Verify Dependencies"
-msgstr ""
+msgstr "Bağımlılıkları Doğrula"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:176
 msgctxt "ModFolderPage|"
 msgid "Check that the dependencies of the installed mods are present, and offer to install the ones that are missing."
-msgstr ""
+msgstr "Yüklü modların bağımlılıklarının mevcut olup olmadığını kontrol edin ve eksik olanların yüklenmesini önerin."
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:184
 msgctxt "ModFolderPage|"
 msgid "Reset update metadata"
-msgstr ""
+msgstr "Güncelleme meta verilerini sıfırla"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:187
 msgctxt "ModFolderPage|"
 msgid "Forget where the selected files came from. They stay where they are, but are no longer tracked for updates."
-msgstr ""
+msgstr "Seçilen dosyaların nereden geldiğini unutun. Dosyalar bulundukları yerde kalırlar, ancak artık güncellemeler için takip edilmezler."
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:195
 msgctxt "ModFolderPage|"
 msgid "View Homepage"
-msgstr ""
+msgstr "Ana Sayfayı Görüntüle"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:198
 msgctxt "ModFolderPage|"
 msgid "View the homepages of all selected items."
-msgstr ""
+msgstr "Seçili tüm öğelerin ana sayfalarını görüntüleyin."
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:203
 msgctxt "ModFolderPage|"
 msgid "Export List"
-msgstr ""
+msgstr "Listeyi Dışa Aktar"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:206
 msgctxt "ModFolderPage|"
 msgid "Export this list to text."
-msgstr ""
+msgstr "Bu listeyi metin olarak dışa aktar."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:233
 msgctxt "ModFolderPage|"
 msgid "Check for Updates"
-msgstr ""
+msgstr "Güncellemeleri Denetle"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:272
 msgctxt "ModFolderPage|"
@@ -7234,40 +7277,40 @@ msgstr "Seç %1"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr ""
+msgstr "Mod Yükleyici Yok"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
 msgid "This instance's component list could not be read, so it is not possible to tell which mod loader it uses."
-msgstr ""
+msgstr "Bu örneğin bileşen listesi okunamadı; dolayısıyla hangi mod yükleyicisini kullandığını söylemek mümkün değil."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:555
 msgctxt "ModFolderPage|"
 msgid "Mods need a loader to run, and this instance has none. Would you like to install one now?"
-msgstr ""
+msgstr "Modların çalışabilmesi için bir yükleyiciye ihtiyaç vardır; ancak bu profilde herhangi bir yükleyici bulunmuyor. Şimdi bir tane kurmak ister misiniz?"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:584
 msgctxt "ModFolderPage|"
 msgid "This instance still has no loader that CurseForge or Modrinth can be searched by, so there is nothing to browse."
-msgstr ""
+msgstr "Bu profilde, CurseForge veya Modrinth üzerinde arama yapmayı sağlayacak herhangi bir yükleyici henüz bulunmuyor; dolayısıyla göz atılabilecek hiçbir şey yok."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:773
 #: launcher/ui/pages/instance/ModFolderPage.cpp:795
 msgctxt "ModFolderPage|"
 msgid "Cannot Change Version"
-msgstr ""
+msgstr "Sürüm Değiştirilemiyor"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:774
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "There is no record of where '%1' came from, so its other versions cannot be listed. Download it through this page once and the version can be changed from then on."
-msgstr ""
+msgstr "'%1' öğesinin nereden geldiğine dair bir kayıt bulunmadığından, diğer sürümleri listelenemiyor. Bu sayfadan bir kez indirdiğiniz takdirde, daha sonra sürümünü değiştirebilirsiniz."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:796
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "'%1' was installed from a source this page cannot browse."
-msgstr ""
+msgstr "'%1', bu sayfanın göz atamayacağı bir kaynaktan yüklendi."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:841
 #: launcher/ui/pages/instance/ModFolderPage.cpp:918
@@ -7276,88 +7319,90 @@ msgstr ""
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1358
 msgctxt "ModFolderPage|"
 msgid "Abort"
-msgstr ""
+msgstr "İptal Et"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:901
 msgctxt "ModFolderPage|"
 msgid "Nothing to do"
-msgstr ""
+msgstr "Yapacak bir şey yok"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:902
 msgctxt "ModFolderPage|"
 msgid "Every selected mod (and its dependencies) is already installed at the requested version."
-msgstr ""
+msgstr "Seçilen her bir mod (ve bağımlılıkları), talep edilen sürümüyle hâlihazırda yüklü durumdadır."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:930
 msgctxt "ModFolderPage|"
 msgid "Download Failed"
-msgstr ""
+msgstr "İndirme Başarısız"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:931
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "Some files failed to download: %1"
-msgstr ""
+msgstr "Bazı dosyalar indirilemedi: %1"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:969
 msgctxt "ModFolderPage|"
 msgid "Restricted Downloads"
-msgstr ""
+msgstr "Kısıtlı İndirmeler"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:970
 msgctxt "ModFolderPage|"
 msgid "The authors of these files have blocked downloads outside the CurseForge website, and fetching them through it did not work.\n"
 "Click Download next to each one to open its page in your browser. Once the files are in your Downloads folder, click Continue and they will be moved into place."
-msgstr ""
+msgstr "Bu dosyaların yazarları, CurseForge web sitesi dışından indirme işlemlerini engellemiştir; bu nedenle dosyaları site üzerinden edinme girişimi sonuç vermedi.\n"
+"Her birinin yanındaki İndir düğmesine tıklayarak ilgili sayfayı tarayıcınızda açın. Dosyalar İndirilenler klasörünüze ulaştığında Devam Et düğmesine tıklayın; dosyalar otomatik olarak yerlerine taşınacaktır."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1092
 msgctxt "ModFolderPage|"
 msgid "Cannot Verify Dependencies"
-msgstr ""
+msgstr "Bağımlılıklar Doğrulanamıyor"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1093
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1327
 msgctxt "ModFolderPage|"
 msgid "This instance has no Minecraft version configured."
-msgstr ""
+msgstr "Bu profil için yapılandırılmış bir Minecraft sürümü bulunmuyor."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1130
 msgctxt "ModFolderPage|"
 msgid "None of the installed mods has a recorded origin, so there is nothing to look up. Download mods through this page and their dependencies can be checked from then on."
-msgstr ""
+msgstr "Yüklü modların hiçbirinin kayıtlı bir kökeni bulunmuyor, dolayısıyla incelenebilecek bir veri yok. Modları bu sayfa üzerinden indirdiğiniz takdirde, bundan sonraki süreçte modların bağımlılıkları kontrol edilebilir."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1151
 msgctxt "ModFolderPage|"
 msgid "Every dependency of the installed mods is present."
-msgstr ""
+msgstr "Yüklü modların tüm bağımlılıkları mevcuttur."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1182
 msgctxt "ModFolderPage|"
 msgid "Confirm Removal"
-msgstr ""
+msgstr "Silme İşlemini Onayla"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1183
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "You are about to remove the metadata for %1 files.\n"
 "Are you sure?"
-msgstr ""
+msgstr "%1 dosyanın meta verilerini kaldırmak üzeresiniz.\n"
+"Emin misiniz?"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1326
 msgctxt "ModFolderPage|"
 msgid "Cannot Check Updates"
-msgstr ""
+msgstr "Güncellemeler Denetlenemiyor"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1364
 msgctxt "ModFolderPage|"
 msgid "Update Failed"
-msgstr ""
+msgstr "Güncelleme Başarısız Oldu"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1365
 #, qt-format
 msgctxt "ModFolderPage|"
 msgid "Some updates failed to download: %1"
-msgstr ""
+msgstr "Bazı güncellemeler indirilemedi: %1"
 
 #: launcher/minecraft/launch/ModMinecraftJar.cpp:40
 msgctxt "ModMinecraftJar|"
@@ -7373,7 +7418,7 @@ msgstr "Gereksiz jar dosyası kaldırılamadı: %1"
 #: launcher/minecraft/launch/ModMinecraftJar.cpp:63
 msgctxt "ModMinecraftJar|"
 msgid "Couldn't determine the Minecraft jar to add the jar mods to."
-msgstr ""
+msgstr "Jar modlarının ekleneceği Minecraft jar dosyası belirlenemedi."
 
 #: launcher/minecraft/launch/ModMinecraftJar.cpp:69
 msgctxt "ModMinecraftJar|"
@@ -7383,127 +7428,128 @@ msgstr "Özel Minecraft jar dosyası oluşturulamadı."
 #: launcher/modplatform/ModUpdateCheckTask.cpp:230
 msgctxt "ModUpdateCheckTask|"
 msgid "No tracked mods to check."
-msgstr ""
+msgstr "Kontrol edilecek takip edilen mod yok."
 
 #: launcher/modplatform/ModUpdateCheckTask.cpp:235
 #, qt-format
 msgctxt "ModUpdateCheckTask|"
 msgid "Checking %1 mod(s) for updates..."
-msgstr ""
+msgstr "%1 mod için güncellemeler kontrol ediliyor..."
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:40
 msgctxt "ModUpdateDialog|"
 msgid "Available Mod Updates"
-msgstr ""
+msgstr "Mevcut Mod Güncellemeleri"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:47
 msgctxt "ModUpdateDialog|"
 msgid "All mods are up to date."
-msgstr ""
+msgstr "Tüm modlar günceldir."
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:49
 #, qt-format
 msgctxt "ModUpdateDialog|"
 msgid "%1 mod(s) have newer compatible versions. Tick the ones you want to update."
-msgstr ""
+msgstr "%1 modun daha yeni, uyumlu sürümleri mevcut. Güncellemek istediklerinizi işaretleyin."
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr ""
+msgstr "Mod"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Source"
-msgstr ""
+msgstr "Kaynak"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Current"
-msgstr ""
+msgstr "Mevcut"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "New"
-msgstr ""
+msgstr "Yeni"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:74
 #, qt-format
 msgctxt "ModUpdateDialog|"
 msgid "%1 → %2\n"
 "File: %3 → %4"
-msgstr ""
+msgstr "%1 → %2\n"
+"Dosya: %3 → %4"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:84
 msgctxt "ModUpdateDialog|"
 msgid "Select all"
-msgstr ""
+msgstr "Tümünü seç"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:85
 msgctxt "ModUpdateDialog|"
 msgid "Select none"
-msgstr ""
+msgstr "Hiçbirini seçme"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:102
 msgctxt "ModUpdateDialog|"
 msgid "Update"
-msgstr ""
+msgstr "Güncelle"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:75
 #, qt-format
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Failed to find pack version %1"
-msgstr ""
+msgstr "Paket sürümü %1 bulunamadı."
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:114
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Could not understand pack manifest:\n"
-msgstr ""
+msgstr "Paket manifestosu anlaşılamadı:"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:131
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Downloading mods..."
-msgstr ""
+msgstr "Modlar indiriliyor..."
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:133
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Mod download"
-msgstr ""
+msgstr "Mod indirme"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:194
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Copying modpack files"
-msgstr ""
+msgstr "Mod paketi dosyaları kopyalanıyor"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:203
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Failed to copy files"
-msgstr ""
+msgstr "Dosyalar kopyalanamadı"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:208
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr ""
+msgstr "Mod paketi yükleniyor"
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
 msgid "Searching for files..."
-msgstr ""
+msgstr "Dosyalar aranıyor..."
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:300
 msgctxt "ModrinthPackExportTask|"
 msgid "Could not read the instance's files."
-msgstr ""
+msgstr "Profile ait dosyalar okunamadı."
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:318
 msgctxt "ModrinthPackExportTask|"
 msgid "Looking up files on Modrinth..."
-msgstr ""
+msgstr "Modrinth üzerinde dosyalar aranıyor..."
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:435
 msgctxt "ModrinthPackExportTask|"
 msgid "Adding files..."
-msgstr ""
+msgstr "Dosyalar ekleniyor..."
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:52
 msgctxt "ModrinthPage|"
@@ -7523,30 +7569,30 @@ msgstr "Ara ve filtrele ..."
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.cpp:121
 msgctxt "ModrinthPage|"
 msgid " by "
-msgstr ""
+msgstr " tarafından "
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.h:50
 msgctxt "ModrinthPage|"
 msgid "Modrinth"
-msgstr ""
+msgstr "Modrinth"
 
 #: launcher/net/NetJob.cpp:62
 #, qt-format
 msgctxt "NetJob|"
 msgid "%1 of %2"
-msgstr ""
+msgstr "%2'nin %1'i"
 
 #: launcher/net/NetJob.cpp:83
 #, qt-format
 msgctxt "NetJob|"
 msgid "%1 out of %2 files done"
-msgstr ""
+msgstr "%2 dosyadan %1'i tamamlandı"
 
 #: launcher/net/NetJob.cpp:86
 #, qt-format
 msgctxt "NetJob|"
 msgid "%1: %2 out of %3 files done"
-msgstr ""
+msgstr "%1: %3 dosyadan %2'si tamamlandı"
 
 #: launcher/net/NetJob.cpp:198
 #, qt-format
@@ -7569,7 +7615,7 @@ msgstr "İsim"
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 msgctxt "NewComponentDialog|"
 msgid "uid"
-msgstr ""
+msgstr "uid"
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:17
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:163
@@ -7585,7 +7631,7 @@ msgstr "&Grup:"
 #: launcher/ui/dialogs/NewInstanceDialog.ui:49
 msgctxt "NewInstanceDialog|"
 msgid "&Folder:"
-msgstr ""
+msgstr "&Klasör:"
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:65
 msgctxt "NewInstanceDialog|"
@@ -7601,7 +7647,7 @@ msgstr "Grup yok"
 #, qt-format
 msgctxt "NewInstanceDialog|"
 msgid "Default (%1)"
-msgstr ""
+msgstr "Varsayılan (%1)"
 
 #: launcher/news/NewsChecker.cpp:187
 #, qt-format
@@ -7629,51 +7675,51 @@ msgstr "Bilinmeyen Yetkili"
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:49
 msgctxt "NewsViewerDialog|"
 msgid "News"
-msgstr ""
+msgstr "Haber"
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:83
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:122
 msgctxt "NewsViewerDialog|"
 msgid "Hide article list"
-msgstr ""
+msgstr "Makale listesini gizle"
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:85
 msgctxt "NewsViewerDialog|"
 msgid "Close"
-msgstr ""
+msgstr "Kapat"
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:121
 msgctxt "NewsViewerDialog|"
 msgid "Show article list"
-msgstr ""
+msgstr "Makale listesini göster"
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:134
 msgctxt "NewsViewerDialog|"
 msgid "Official"
-msgstr ""
+msgstr "Resmi"
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:144
 #, qt-format
 msgctxt "NewsViewerDialog|"
 msgid "Feed %1"
-msgstr ""
+msgstr "Feed %1"
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:155
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:162
 msgctxt "NewsViewerDialog|"
 msgid "No news available."
-msgstr ""
+msgstr "Yeni haber yok."
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:161
 msgctxt "NewsViewerDialog|"
 msgid "Loading news..."
-msgstr ""
+msgstr "Haberler yükleniyor..."
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:168
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:194
 msgctxt "NewsViewerDialog|"
 msgid "(no title)"
-msgstr ""
+msgstr "(başlıksız)"
 
 #: launcher/ui/pages/instance/NotesPage.h:43
 msgctxt "NotesPage|"
@@ -7840,12 +7886,12 @@ msgstr "Sürüm"
 #: launcher/ui/pagedialog/PageDialog.cpp:50
 msgctxt "PageDialog|"
 msgid "Close"
-msgstr ""
+msgstr "Kapat"
 
 #: launcher/ui/pagedialog/PageDialog.cpp:51
 msgctxt "PageDialog|"
 msgid "Help"
-msgstr ""
+msgstr "Yardım"
 
 #: launcher/ui/pages/global/PasteEEPage.ui:39
 msgctxt "PasteEEPage|"
@@ -7855,7 +7901,7 @@ msgstr "paste.ee API anahtarı"
 #: launcher/ui/pages/global/PasteEEPage.ui:45
 msgctxt "PasteEEPage|"
 msgid "MeshMC key - 12MB &upload limit"
-msgstr ""
+msgstr "MeshMC anahtarı - 12 MB &yükleme sınırı"
 
 #: launcher/ui/pages/global/PasteEEPage.ui:55
 msgctxt "PasteEEPage|"
@@ -7870,7 +7916,7 @@ msgstr "API anahtarınızı buraya yapıştırın!"
 #: launcher/ui/pages/global/PasteEEPage.ui:82
 msgctxt "PasteEEPage|"
 msgid "<html><head/><body><p><a href=\"https://paste.ee\">paste.ee</a> is used by MeshMC for log uploads. If you have a <a href=\"https://paste.ee\">paste.ee</a> account, you can add your API key here and have your uploaded logs paired with your account.</p></body></html>"
-msgstr ""
+msgstr "<html><head/><body><p><a href=\"https://paste.ee\">paste.ee</a>, MeshMC tarafından günlük yüklemeleri için kullanılır. Eğer bir <a href=\"https://paste.ee\">paste.ee</a> hesabınız varsa, API anahtarınızı buraya ekleyerek yüklediğiniz günlüklerin hesabınızla ilişkilendirilmesini sağlayabilirsiniz.</p></body></html>"
 
 #: launcher/ui/pages/global/PasteEEPage.h:43
 msgctxt "PasteEEPage|"
@@ -7891,75 +7937,75 @@ msgstr "paste.ee bir hata verdi. Daha fazla ayrıntı için sistem kayıtlarına
 #, qt-format
 msgctxt "PluginHookTask|"
 msgid "Running %1..."
-msgstr ""
+msgstr "Çalışıyor %1..."
 
 #: launcher/plugin/PluginHookTask.cpp:89
 #, qt-format
 msgctxt "PluginHookTask|"
 msgid "%1 registered a hook without a callback."
-msgstr ""
+msgstr "%1, geri çağırma işlevi olmayan bir kanca kaydetti."
 
 #: launcher/plugin/PluginHookTask.cpp:133
 #, qt-format
 msgctxt "PluginHookTask|"
 msgid "%1 called off the operation."
-msgstr ""
+msgstr "%1 operasyonu iptal etti."
 
 #: launcher/plugin/PluginManager.cpp:1637
 #, qt-format
 msgctxt "PluginManager|"
 msgid "%1 / %2 files"
-msgstr ""
+msgstr "%1 / %2 dosya"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:23
 msgctxt "PluginsDialog|"
 msgid "MMCO Plugins"
-msgstr ""
+msgstr "MMCO Eklentileri"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:29
 msgctxt "PluginsDialog|"
 msgid "Enabling or disabling a plugin takes effect after restarting MeshMC."
-msgstr ""
+msgstr "Bir eklentiyi etkinleştirmek veya devre dışı bırakmak, MeshMC yeniden başlatıldıktan sonra geçerli olur."
 
 #: launcher/ui/dialogs/PluginsDialog.ui:58
 msgctxt "PluginsDialog|"
 msgid "MeshMC MMCO Plugins List:"
-msgstr ""
+msgstr "MeshMC MMCO Eklenti Listesi:"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:78
 msgctxt "PluginsDialog|"
 msgid "Close"
-msgstr ""
+msgstr "Kapat"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:96
 msgctxt "PluginsDialog|"
 msgid "Enabled"
-msgstr ""
+msgstr "Etkin"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:101
 msgctxt "PluginsDialog|"
 msgid "Module"
-msgstr ""
+msgstr "Modül"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:106
 msgctxt "PluginsDialog|"
 msgid "Signature"
-msgstr ""
+msgstr "İmza"
 
 #: launcher/ui/dialogs/PluginsDialog.ui:111
 msgctxt "PluginsDialog|"
 msgid "Status"
-msgstr ""
+msgstr "Durum"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:211
 msgctxt "PluginsDialog|"
 msgid "Loaded"
-msgstr ""
+msgstr "Yüklendi"
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:213
 msgctxt "PluginsDialog|"
 msgid "Discovered"
-msgstr ""
+msgstr "Bulundu"
 
 #: launcher/launch/steps/PostLaunchCommand.cpp:38
 #, qt-format
@@ -8030,24 +8076,25 @@ msgstr "%1 (kullanımda)"
 #: launcher/ui/dialogs/ProfileSetupDialog.ui:14
 msgctxt "ProfileSetupDialog|"
 msgid "Choose Minecraft name"
-msgstr ""
+msgstr "Minecraft ismi seçin"
 
 #: launcher/ui/dialogs/ProfileSetupDialog.ui:26
 msgctxt "ProfileSetupDialog|"
 msgid "You just need to take one more step to be able to play Minecraft on this account.\n\n"
 "Choose your name carefully:"
-msgstr ""
+msgstr "Bu hesapta Minecraft oynayabilmek için sadece bir adım daha atmanız gerekiyor.\n\n"
+"Adınızı dikkatlice seçin:"
 
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:112
 msgctxt "ProfileSetupDialog|"
 msgid "Name is too short - must be between 3 and 16 characters long."
-msgstr ""
+msgstr "İsim çok kısa; 3 ila 16 karakter uzunluğunda olmalıdır."
 
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:178
 #, qt-format
 msgctxt "ProfileSetupDialog|"
 msgid "Minecraft profile with name %1 already exists."
-msgstr ""
+msgstr "%1 adında bir Minecraft profili zaten mevcut."
 
 #: launcher/ui/dialogs/ProfileSetupDialog.cpp:182
 #, qt-format
