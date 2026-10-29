@@ -7,12 +7,12 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: projtlauncher\n"
 "X-Crowdin-Project-ID: 863014\n"
-"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-Language: zh-TW\n"
 "X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
 "X-Crowdin-File-ID: 95\n"
 "Project-Id-Version: projtlauncher\n"
-"Language-Team: Chinese Simplified\n"
-"Language: zh_CN\n"
+"Language-Team: Chinese Traditional\n"
+"Language: zh_TW\n"
 "PO-Revision-Date: 2026-10-29 09:43\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
@@ -116,7 +116,7 @@ msgstr "正在安装整合包......"
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:810
 msgctxt "ATLauncher::PackInstallTask|"
 msgid "Failed to create libraries component"
-msgstr "创建库组件失败"
+msgstr "無法建立組件函式庫"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:847
 msgctxt "ATLauncher::PackInstallTask|"
@@ -131,7 +131,7 @@ msgstr "未能创建包组件"
 #: launcher/ui/dialogs/AboutDialog.ui:107
 msgctxt "AboutDialog|"
 msgid "About"
-msgstr "关于"
+msgstr "關於"
 
 #: launcher/ui/dialogs/AboutDialog.ui:116
 msgctxt "AboutDialog|"
@@ -186,7 +186,7 @@ msgstr "关于Qt"
 #: launcher/ui/dialogs/AboutDialog.ui:348
 msgctxt "AboutDialog|"
 msgid "Close"
-msgstr "关闭"
+msgstr "關閉"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:73
 msgctxt "AboutDialog|"
@@ -500,7 +500,7 @@ msgstr "认证失败，此账户已不存在。"
 #: launcher/minecraft/auth/AccountTask.cpp:57
 msgctxt "AccountTask|"
 msgid "..."
-msgstr "..."
+msgstr "…"
 
 #: launcher/minecraft/auth/AccountTask.cpp:105
 #, qt-format
@@ -699,7 +699,7 @@ msgstr "外观"
 #: launcher/Application.cpp:1172
 msgctxt "Application|"
 msgid "Settings"
-msgstr "设置"
+msgstr "設定"
 
 #: launcher/Application.cpp:1932
 msgctxt "Application|"
@@ -796,12 +796,12 @@ msgstr "按热度排序"
 #: launcher/ui/pages/modplatform/atlauncher/AtlFilterModel.cpp:36
 msgctxt "Atl::FilterModel|"
 msgid "Sort by name"
-msgstr "按名称排序"
+msgstr "依名稱排序"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlFilterModel.cpp:37
 msgctxt "Atl::FilterModel|"
 msgid "Sort by game version"
-msgstr "按游戏版本排序"
+msgstr "依遊戲版本排序"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui:14
 msgctxt "AtlOptionalModDialog|"
@@ -811,7 +811,7 @@ msgstr "选择模组以安装"
 #: launcher/ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui:20
 msgctxt "AtlOptionalModDialog|"
 msgid "Install"
-msgstr "安装"
+msgstr "安裝"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlOptionalModDialog.ui:30
 msgctxt "AtlOptionalModDialog|"
@@ -857,12 +857,12 @@ msgstr "当前没有版本可用"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.cpp:180
 msgctxt "AtlPage|"
 msgid "Couldn't load or download the version lists!"
-msgstr "无法加载或下载版本列表！"
+msgstr "無法載入或下載版本清單！"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr "ATLauncher"
+msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
@@ -999,7 +999,7 @@ msgstr "正在恢复备份..."
 #: launcher/ui/pages/instance/BackupPage.cpp:173
 msgctxt "BackupPage|"
 msgid "Restore Complete"
-msgstr "Restore Complete"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:174
 msgctxt "BackupPage|"
@@ -1124,7 +1124,7 @@ msgstr "性能分析器已终止"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 msgctxt "BlockedModsDialog|"
@@ -1266,12 +1266,12 @@ msgstr "加载器"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:264
 msgctxt "ContentFilterWidget|"
 msgid "NeoForge"
-msgstr "NeoForge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:265
 msgctxt "ContentFilterWidget|"
 msgid "Forge"
-msgstr "Forge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:266
 msgctxt "ContentFilterWidget|"
@@ -1286,7 +1286,7 @@ msgstr "基尔特"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:273
 msgctxt "ContentFilterWidget|"
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 msgctxt "ContentFilterWidget|"
@@ -1296,7 +1296,7 @@ msgstr "巴布里州"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:275
 msgctxt "ContentFilterWidget|"
 msgid "BTA (Babric)"
-msgstr "BTA (Babric)"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:276
 msgctxt "ContentFilterWidget|"
@@ -1306,7 +1306,7 @@ msgstr "古代法布文"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 msgctxt "ContentFilterWidget|"
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 msgctxt "ContentFilterWidget|"
@@ -1429,7 +1429,7 @@ msgstr "由 %1"
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:592
 msgctxt "ContentProviderPage|"
 msgid " [installed]"
-msgstr " [installed]"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:599
 msgctxt "ContentProviderPage|"
@@ -1482,12 +1482,12 @@ msgstr "每个版本的 '%1' 都在过滤器当前隐藏的释放频道上。"
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:17
 msgctxt "CopyInstanceDialog|"
 msgid "Copy Instance"
-msgstr "复制实例"
+msgstr "複製實例"
 
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:74
 msgctxt "CopyInstanceDialog|"
 msgid "Name"
-msgstr "名称"
+msgstr "名稱"
 
 #: launcher/ui/dialogs/CopyInstanceDialog.ui:90
 msgctxt "CopyInstanceDialog|"
@@ -1522,12 +1522,12 @@ msgstr ""
 #: launcher/crashreporter/CrashReportDialog.cpp:56
 msgctxt "CrashReportDialog|"
 msgid "QR Codes"
-msgstr "QR Codes"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:64
 msgctxt "CrashReportDialog|"
 msgid "[...truncated...]\n"
-msgstr "[...truncated...]\n"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:75
 #: launcher/crashreporter/CrashReportDialog.cpp:92
@@ -1586,7 +1586,7 @@ msgstr "预启动备份失败: %1"
 #: launcher/minecraft/launch/CreateGameFolders.cpp:36
 msgctxt "CreateGameFolders|"
 msgid "Couldn't create the main game folder"
-msgstr "无法创建主游戏文件夹"
+msgstr "無法建立遊戲資料夾"
 
 #: launcher/ui/dialogs/CreateShortcutDialog.ui:14
 msgctxt "CreateShortcutDialog|"
@@ -1690,7 +1690,7 @@ msgstr "%1 (正在使用)"
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:192
 #, qt-format
@@ -1741,7 +1741,7 @@ msgstr ""
 #: launcher/ui/pages/global/CustomCommandsPage.h:40
 msgctxt "CustomCommandsPage|"
 msgid "Custom Commands"
-msgstr "自定义命令"
+msgstr "自訂命令"
 
 #: launcher/minecraft/mod/DataPackFolderModel.cpp:38
 msgctxt "DataPackFolderModel|"
@@ -1789,7 +1789,7 @@ msgstr "无法启动 Minecraft！"
 #: launcher/minecraft/launch/DirectJavaLaunch.cpp:117
 msgctxt "DirectJavaLaunch|"
 msgid "Game crashed."
-msgstr "游戏已崩溃。"
+msgstr "遊戲崩潰了。"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:118
 msgctxt "DownloadContentDialog|"
@@ -1943,24 +1943,24 @@ msgstr "已经购买过游戏了"
 #: launcher/ui/dialogs/ExportInstanceDialog.ui:14
 msgctxt "ExportInstanceDialog|"
 msgid "Export Instance"
-msgstr "导出实例"
+msgstr "匯出實例"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:136
 #, qt-format
 msgctxt "ExportInstanceDialog|"
 msgid "Export %1"
-msgstr "导出 %1"
+msgstr "匯出 %1"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:155
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:178
 msgctxt "ExportInstanceDialog|"
 msgid "Error"
-msgstr "错误"
+msgstr "錯誤"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:156
 msgctxt "ExportInstanceDialog|"
 msgid "Unable to export instance"
-msgstr "无法导出实例"
+msgstr "無法匯出實例"
 
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:184
 msgctxt "ExportInstanceDialog|"
@@ -1985,12 +1985,12 @@ msgstr "格式"
 #: launcher/ui/dialogs/ExportListDialog.cpp:99
 msgctxt "ExportListDialog|"
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:100
 msgctxt "ExportListDialog|"
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 msgctxt "ExportListDialog|"
@@ -2000,12 +2000,12 @@ msgstr "纯文本"
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 msgctxt "ExportListDialog|"
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 msgctxt "ExportListDialog|"
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 msgctxt "ExportListDialog|"
@@ -2110,7 +2110,7 @@ msgstr "&版本:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
@@ -2135,7 +2135,7 @@ msgstr "&推荐内存："
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr " MiB"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
@@ -2239,7 +2239,7 @@ msgstr "无法完成'%1'： %2"
 #: launcher/ui/pages/global/ExternalToolsPage.ui:133
 msgctxt "ExternalToolsPage|"
 msgid "Check"
-msgstr "检查"
+msgstr "檢查"
 
 #: launcher/ui/pages/global/ExternalToolsPage.ui:150
 msgctxt "ExternalToolsPage|"
@@ -2249,7 +2249,7 @@ msgstr "外部编辑器（留空则使用系统默认编辑器）"
 #: launcher/ui/pages/global/ExternalToolsPage.ui:159
 msgctxt "ExternalToolsPage|"
 msgid "Text Editor:"
-msgstr "文本编辑器："
+msgstr "文字編輯器："
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:92
 msgctxt "ExternalToolsPage|"
@@ -2264,7 +2264,7 @@ msgstr "JProriler 文件夹"
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:190
 msgctxt "ExternalToolsPage|"
 msgid "Error"
-msgstr "错误"
+msgstr "錯誤"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:100
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:115
@@ -2333,7 +2333,7 @@ msgstr "MCEdit配置正确"
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:201
 msgctxt "ExternalToolsPage|"
 msgid "JSON Editor"
-msgstr "JSON编辑器"
+msgstr "JSON 編輯器"
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:224
 msgctxt "ExternalToolsPage|"
@@ -2501,7 +2501,7 @@ msgstr "搜索并过滤..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
@@ -2531,7 +2531,7 @@ msgstr "创造模式"
 #: launcher/minecraft/World.cpp:68
 msgctxt "GameType|"
 msgid "Adventure"
-msgstr "冒险模式"
+msgstr "冒險"
 
 #: launcher/minecraft/World.cpp:70
 msgctxt "GameType|"
@@ -2547,17 +2547,17 @@ msgstr "未知（%1）"
 #: launcher/minecraft/World.cpp:78
 msgctxt "GameType|"
 msgid "Undefined"
-msgstr "未定义"
+msgstr "未定義"
 
 #: launcher/minecraft/auth/steps/GetSkinStep.cpp:33
 msgctxt "GetSkinStep|"
 msgid "Getting skin."
-msgstr "正在获取皮肤。"
+msgstr "正在取得外觀。"
 
 #: launcher/minecraft/auth/steps/GetSkinStep.cpp:62
 msgctxt "GetSkinStep|"
 msgid "Got skin"
-msgstr "已获取皮肤"
+msgstr "已取得外觀"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:66
 msgctxt "GitVersioningPage|"
@@ -2582,12 +2582,12 @@ msgstr "文件"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
@@ -2638,7 +2638,7 @@ msgstr "尚无版本历史记录。快来开始跟踪此实例的变化。"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "HEAD: <b>%1</b>"
-msgstr "HEAD: <b>%1</b>"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:136
 #, qt-format
@@ -2655,13 +2655,13 @@ msgstr "清理工作树"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr "Snapshot"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
@@ -2740,12 +2740,12 @@ msgstr "数据包"
 #: launcher/ui/dialogs/IconPickerDialog.ui:14
 msgctxt "IconPickerDialog|"
 msgid "Pick icon"
-msgstr "选择图标"
+msgstr "選擇圖示"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:72
 msgctxt "IconPickerDialog|"
 msgid "Add Icon"
-msgstr "添加图标"
+msgstr "新增圖示"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:73
 msgctxt "IconPickerDialog|"
@@ -2755,24 +2755,24 @@ msgstr "移除图标"
 #: launcher/ui/dialogs/IconPickerDialog.cpp:88
 msgctxt "IconPickerDialog|"
 msgid "Open Folder"
-msgstr "打开文件夹"
+msgstr "開啟資料夾"
 
 #. The title of the select icons open file dialog
 #: launcher/ui/dialogs/IconPickerDialog.cpp:118
 msgctxt "IconPickerDialog|"
 msgid "Select Icons"
-msgstr "选择图标"
+msgstr "選擇圖示"
 
 #: launcher/ui/dialogs/IconPickerDialog.cpp:122
 #, qt-format
 msgctxt "IconPickerDialog|"
 msgid "Icons %1"
-msgstr "图标 %1"
+msgstr "圖示 %1"
 
 #: launcher/ui/pages/modplatform/ImportPage.ui:17
 msgctxt "ImportPage|"
 msgid "Browse"
-msgstr "浏览"
+msgstr "瀏覽"
 
 #: launcher/ui/pages/modplatform/ImportPage.ui:31
 msgctxt "ImportPage|"
@@ -2901,7 +2901,7 @@ msgstr "解压modpack失败。归档似乎已损坏。"
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Could not fix permissions for %1"
-msgstr "无法修复 %1 的权限"
+msgstr "無法修正 %1 的權限"
 
 #: launcher/InstanceImportTask.cpp:596 launcher/InstanceImportTask.cpp:1091
 #: launcher/InstanceImportTask.cpp:1432 launcher/InstanceImportTask.cpp:1491
@@ -2955,7 +2955,7 @@ msgstr "安装已取消：不接受modpack的不可信任内容。"
 #: launcher/InstanceImportTask.cpp:831
 msgctxt "InstanceImportTask|"
 msgid "Mod download"
-msgstr "Mod下载"
+msgstr "模組包下載"
 
 #: launcher/InstanceImportTask.cpp:862 launcher/InstanceImportTask.cpp:1269
 msgctxt "InstanceImportTask|"
@@ -3088,7 +3088,7 @@ msgstr "启动器没有记录此modpack 已安装的文件放置到哪里。 这
 #, qt-format
 msgctxt "InstanceList|"
 msgid "%1 Instance"
-msgstr "%1 实例"
+msgstr "%1 實例"
 
 #: launcher/InstanceList.cpp:1457
 #, qt-format
@@ -3115,7 +3115,7 @@ msgstr "编辑实例（%1）"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:29
 msgctxt "InstanceSettingsPage|"
 msgid "Open Global Settings"
-msgstr "打开全局设置"
+msgstr "開啟全域設定"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:32
 msgctxt "InstanceSettingsPage|"
@@ -3125,22 +3125,22 @@ msgstr "此处的设置将会覆盖全局设置。"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:55
 msgctxt "InstanceSettingsPage|"
 msgid "Java insta&llation"
-msgstr "Java 路径（&L）"
+msgstr "Java 安裝(&L)"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:70
 msgctxt "InstanceSettingsPage|"
 msgid "Auto-detect..."
-msgstr "自动检测..."
+msgstr "自動偵測…"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:77
 msgctxt "InstanceSettingsPage|"
 msgid "Browse..."
-msgstr "浏览..."
+msgstr "瀏覽…"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:84
 msgctxt "InstanceSettingsPage|"
 msgid "Test"
-msgstr "测试"
+msgstr "測試"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:97
 msgctxt "InstanceSettingsPage|"
@@ -3150,7 +3150,7 @@ msgstr "内存（&Y）"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:109
 msgctxt "InstanceSettingsPage|"
 msgid "Minimum memory allocation:"
-msgstr "最小内存分配："
+msgstr "允許使用的最小記憶體使用量："
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:116
 msgctxt "InstanceSettingsPage|"
@@ -3170,7 +3170,7 @@ msgstr "可用于储存加载的Java类的内存总量。"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:189
 msgctxt "InstanceSettingsPage|"
 msgid "Maximum memory allocation:"
-msgstr "最大内存分配："
+msgstr "允許使用的最大記憶體使用量："
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:196
 msgctxt "InstanceSettingsPage|"
@@ -3195,12 +3195,12 @@ msgstr "从 Java 下载："
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:256
 msgctxt "InstanceSettingsPage|"
 msgid "Game windows"
-msgstr "游戏窗口"
+msgstr "遊戲視窗"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:265
 msgctxt "InstanceSettingsPage|"
 msgid "Game Window"
-msgstr "游戏窗口"
+msgstr "遊戲視窗"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:277
 msgctxt "InstanceSettingsPage|"
@@ -3210,12 +3210,12 @@ msgstr "是否在启动时将Minecraft窗口最大化？"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:286
 msgctxt "InstanceSettingsPage|"
 msgid "Window height:"
-msgstr "窗口高度："
+msgstr "視窗高度："
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:293
 msgctxt "InstanceSettingsPage|"
 msgid "Window width:"
-msgstr "窗口宽度："
+msgstr "視窗寬度："
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:337
 msgctxt "InstanceSettingsPage|"
@@ -3235,12 +3235,12 @@ msgstr "退出游戏时自动关闭控制台？"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:363
 msgctxt "InstanceSettingsPage|"
 msgid "Show console when the game crashes?"
-msgstr "游戏崩溃时显示控制台？"
+msgstr "遊戲崩潰時顯示控制台"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:387
 msgctxt "InstanceSettingsPage|"
 msgid "Custom commands"
-msgstr "自定义命令"
+msgstr "自訂命令"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:397
 msgctxt "InstanceSettingsPage|"
@@ -3250,7 +3250,7 @@ msgstr "运行环境"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:406
 msgctxt "InstanceSettingsPage|"
 msgid "Native libraries"
-msgstr "本地库"
+msgstr "原生函式庫"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:418
 msgctxt "InstanceSettingsPage|"
@@ -3290,7 +3290,7 @@ msgstr "设置服务器以便在启动时加入"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:507
 msgctxt "InstanceSettingsPage|"
 msgid "Server address:"
-msgstr "服务器地址："
+msgstr "伺服器位址："
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:522
 msgctxt "InstanceSettingsPage|"
@@ -3325,7 +3325,7 @@ msgstr "寻找Java可执行文件"
 #: launcher/ui/pages/instance/InstanceSettingsPage.h:47
 msgctxt "InstanceSettingsPage|"
 msgid "Settings"
-msgstr "设置"
+msgstr "設定"
 
 #: launcher/InstanceList.cpp:1257
 msgctxt "InstanceStaging|"
@@ -3353,22 +3353,22 @@ msgstr "正在下载游戏文件..."
 #: launcher/ui/InstanceWindow.cpp:45
 msgctxt "InstanceWindow|"
 msgid "Console window for "
-msgstr "控制台窗口 "
+msgstr "控制台視窗，版本："
 
 #: launcher/ui/InstanceWindow.cpp:85
 msgctxt "InstanceWindow|"
 msgid "Help"
-msgstr "帮助"
+msgstr "幫助"
 
 #: launcher/ui/InstanceWindow.cpp:101
 msgctxt "InstanceWindow|"
 msgid "Launch Offline"
-msgstr "离线启动"
+msgstr "離線啟動"
 
 #: launcher/ui/InstanceWindow.cpp:107
 msgctxt "InstanceWindow|"
 msgid "Close"
-msgstr "关闭"
+msgstr "關閉"
 
 #: launcher/ui/InstanceWindow.cpp:155
 msgctxt "InstanceWindow|"
@@ -3404,7 +3404,7 @@ msgstr "Profiler 已终止"
 #: launcher/tools/JVisualVM.cpp:52
 msgctxt "JVisualVM|"
 msgid "JVisualVM started"
-msgstr "JVisualVM 已启动"
+msgstr "已啟動 JVisualVM"
 
 #: launcher/tools/JVisualVM.cpp:58
 msgctxt "JVisualVM|"
@@ -3694,7 +3694,7 @@ msgstr "设置"
 #: launcher/ui/pages/global/JavaPage.ui:45
 msgctxt "JavaPage|"
 msgid "Memory"
-msgstr "内存"
+msgstr "記憶體"
 
 #: launcher/ui/pages/global/JavaPage.ui:51
 msgctxt "JavaPage|"
@@ -3704,12 +3704,12 @@ msgstr "Minecraft 允许使用的最大内存大小。"
 #: launcher/ui/pages/global/JavaPage.ui:73
 msgctxt "JavaPage|"
 msgid "Minimum memory allocation:"
-msgstr "最小内存分配："
+msgstr "允許使用的最小記憶體使用量："
 
 #: launcher/ui/pages/global/JavaPage.ui:80
 msgctxt "JavaPage|"
 msgid "Maximum memory allocation:"
-msgstr "最大内存分配："
+msgstr "允許使用的最大記憶體使用量："
 
 #: launcher/ui/pages/global/JavaPage.ui:87
 msgctxt "JavaPage|"
@@ -3754,7 +3754,7 @@ msgstr "自动检测……"
 #: launcher/ui/pages/global/JavaPage.ui:244
 msgctxt "JavaPage|"
 msgid "Test"
-msgstr "测试"
+msgstr "測試"
 
 #: launcher/ui/pages/global/JavaPage.ui:268
 msgctxt "JavaPage|"
@@ -3827,7 +3827,7 @@ msgstr "您确定要删除此 Java 安装吗？\n\n"
 #: launcher/ui/pages/global/JavaPage.h:47
 msgctxt "JavaPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:175
 msgctxt "JavaSettingsWidget|"
@@ -3850,7 +3850,7 @@ msgstr "寻找 Java 可执行文件"
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:425
 msgctxt "JavaSettingsWidget|"
 msgid "Memory"
-msgstr "内存"
+msgstr "記憶體"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:427
 msgctxt "JavaSettingsWidget|"
@@ -3860,12 +3860,12 @@ msgstr "Minecraft 可以使用的最大内存大小。"
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:428
 msgctxt "JavaSettingsWidget|"
 msgid "Minimum memory allocation:"
-msgstr "最小内存分配："
+msgstr "允許使用的最小記憶體分配量："
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:429
 msgctxt "JavaSettingsWidget|"
 msgid "Maximum memory allocation:"
-msgstr "最大内存分配："
+msgstr "允許使用的最大記憶體分配量："
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:431
 msgctxt "JavaSettingsWidget|"
@@ -3880,12 +3880,12 @@ msgstr "可用于储存加载的Java类的内存总量。"
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:434
 msgctxt "JavaSettingsWidget|"
 msgid "Browse"
-msgstr "浏览"
+msgstr "瀏覽"
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:137
 msgctxt "JavaWizardPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:138
 msgctxt "JavaWizardPage|"
@@ -3904,18 +3904,18 @@ msgstr "自动从 Java 下载："
 #: launcher/ui/pages/global/LanguagePage.h:40
 msgctxt "LanguagePage|"
 msgid "Language"
-msgstr "语言"
+msgstr "語言"
 
 #: launcher/ui/widgets/LanguageSelectionWidget.cpp:72
 #, qt-format
 msgctxt "LanguageSelectionWidget|"
 msgid "Don't see your language or the quality is poor?<br/><a href=\"%1\">Help us with translations!</a>"
-msgstr "没有找到你的语言或翻译质量不尽人意？<br/><a href=\"%1\">帮助我们翻译吧！</a>"
+msgstr "找不到您的語言？或是翻譯品質很差？<br/><a href=\"%1\">協助我們翻譯！</a>"
 
 #: launcher/ui/setupwizard/LanguageWizardPage.cpp:62
 msgctxt "LanguageWizardPage|"
 msgid "Language"
-msgstr "语言"
+msgstr "語言"
 
 #: launcher/ui/setupwizard/LanguageWizardPage.cpp:64
 msgctxt "LanguageWizardPage|"
@@ -4013,8 +4013,9 @@ msgctxt "LaunchController|"
 msgid "This account does not own Minecraft.\n"
 "You need to purchase the game first to play it.\n\n"
 "Do you want to play the demo?"
-msgstr "此账户尚未拥有 Minecraft。您需要先购买游戏才能进行游玩。\n\n"
-"您想先体验一下试玩版吗？"
+msgstr "這個帳號尚未擁有 Minecraft。\n"
+"您需要先購買遊戲才能進行遊玩。\n\n"
+"您想要先遊玩試玩版嗎？"
 
 #: launcher/LaunchController.cpp:331
 msgctxt "LaunchController|"
@@ -4034,7 +4035,7 @@ msgstr "帐户已过期，需要手动登录。"
 #: launcher/LaunchController.cpp:366
 msgctxt "LaunchController|"
 msgid "Account refresh failed"
-msgstr "账户刷新失败"
+msgstr "帳號重新整理失敗"
 
 #: launcher/LaunchController.cpp:374
 msgctxt "LaunchController|"
@@ -4049,17 +4050,17 @@ msgstr "账户遗失了"
 #: launcher/LaunchController.cpp:386
 msgctxt "LaunchController|"
 msgid "Failed to launch."
-msgstr "启动失败。"
+msgstr "無法啟動。"
 
 #: launcher/LaunchController.cpp:395 launcher/LaunchController.cpp:540
 msgctxt "LaunchController|"
 msgid "Error!"
-msgstr "错误！"
+msgstr "錯誤！"
 
 #: launcher/LaunchController.cpp:396 launcher/LaunchController.cpp:397
 msgctxt "LaunchController|"
 msgid "Couldn't load the instance profile."
-msgstr "无法加载实例配置文件。"
+msgstr "無法載入實例設定檔。"
 
 #: launcher/LaunchController.cpp:403
 msgctxt "LaunchController|"
@@ -4077,7 +4078,7 @@ msgstr "无法启动 Profiler：%1"
 msgctxt "LaunchController|"
 msgid "The game launch is delayed until you press the button. This is the right time to setup the profiler, as the profiler server is running now.\n\n"
 "%1"
-msgstr "游戏启动会延迟，直到你按下按钮。现在 Profiler 服务器正在运行，你应该在此时设置 Profiler。\n\n"
+msgstr "已將遊戲啟動暫停，直到您按下按鈕。分析器伺服器正在執行中，您現在可以設定分析器。\n\n"
 "%1"
 
 #: launcher/LaunchController.cpp:556
@@ -4099,7 +4100,7 @@ msgstr "无法启动 Profiler：%1"
 #: launcher/LaunchController.cpp:567
 msgctxt "LaunchController|"
 msgid "Error"
-msgstr "错误"
+msgstr "錯誤"
 
 #: launcher/LaunchController.cpp:608
 msgctxt "LaunchController|"
@@ -4147,12 +4148,12 @@ msgstr "MeshMC 停止观看游戏日志，因为日志长度超过 %1 行。\n"
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:42
 msgctxt "LegacyFTB::FilterModel|"
 msgid "Sort by name"
-msgstr "按名称排序"
+msgstr "依名稱排序"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:43
 msgctxt "LegacyFTB::FilterModel|"
 msgid "Sort by game version"
-msgstr "按游戏版本排序"
+msgstr "依遊戲版本排序"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:105
 msgctxt "LegacyFTB::ListModel|"
@@ -4205,7 +4206,7 @@ msgstr "正在解压整合包"
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:142
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "正在安装整合包"
+msgstr "正在安裝模組包"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:148
 msgctxt "LegacyFTB::PackInstallTask|"
@@ -4220,7 +4221,7 @@ msgstr "打开 pack.json失败！"
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:227
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "No installation method found!"
-msgstr "未找到安装方法！"
+msgstr "無法找到安裝方式！"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.ui:21
 msgctxt "LegacyFTB::Page|"
@@ -4289,7 +4290,7 @@ msgstr "是否确定要删除包 %1 ？"
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.h:59
 msgctxt "LegacyFTB::Page|"
 msgid "FTB Legacy"
-msgstr "FTB（旧版）"
+msgstr "FTB 舊版"
 
 #: launcher/minecraft/legacy/LegacyInstance.cpp:218
 msgctxt "LegacyInstance|"
@@ -4309,12 +4310,12 @@ msgstr ""
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:39
 msgctxt "LegacyUpgradePage|"
 msgid "Upgrade the instance"
-msgstr "升级实例"
+msgstr "升級實例"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:45
 msgctxt "LegacyUpgradePage|"
 msgid "Error"
-msgstr "错误"
+msgstr "錯誤"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:50
 msgctxt "LegacyUpgradePage|"
@@ -4330,7 +4331,7 @@ msgstr "%1 （已迁移）"
 #: launcher/ui/pages/instance/LegacyUpgradePage.h:44
 msgctxt "LegacyUpgradePage|"
 msgid "Upgrade"
-msgstr "升级"
+msgstr "升級"
 
 #: launcher/minecraft/legacy/LegacyUpgradeTask.cpp:39
 #, qt-format
@@ -4376,10 +4377,10 @@ msgid "Some artifacts marked as 'local' are missing their files:\n"
 "%1\n\n"
 "You need to either add the files, or removed the packages that require them.\n"
 "You'll have to correct this problem manually."
-msgstr "一些被标记为“本地”的包缺失文件。\n"
+msgstr "這些標記為「本機」的檔案遺失了：\n"
 "%1\n\n"
-"你需要添加这些文件，或删除要求这些文件的包。\n"
-"你必须手动修正这个问题。"
+"您需要增加這些檔案，或是移除需要它們的套件。\n"
+"您必須手動修復這個問題。"
 
 #: launcher/minecraft/update/LibrariesTask.cpp:111
 #, qt-format
@@ -4422,7 +4423,7 @@ msgstr "自动换行"
 #: launcher/ui/pages/instance/LogPage.ui:93
 msgctxt "LogPage|"
 msgid "Copy the whole log into the clipboard"
-msgstr "复制整个日志到剪贴板"
+msgstr "複製整個紀錄至剪貼簿"
 
 #: launcher/ui/pages/instance/LogPage.ui:96
 msgctxt "LogPage|"
@@ -4437,7 +4438,7 @@ msgstr "上传日志到 paste.ee - 只会保留一个月"
 #: launcher/ui/pages/instance/LogPage.ui:106
 msgctxt "LogPage|"
 msgid "Upload"
-msgstr "上传"
+msgstr "上傳"
 
 #: launcher/ui/pages/instance/LogPage.ui:113
 msgctxt "LogPage|"
@@ -4447,12 +4448,12 @@ msgstr "清空日志"
 #: launcher/ui/pages/instance/LogPage.ui:116
 msgctxt "LogPage|"
 msgid "Clear"
-msgstr "清空"
+msgstr "清除"
 
 #: launcher/ui/pages/instance/LogPage.ui:125
 msgctxt "LogPage|"
 msgid "Search:"
-msgstr "搜索："
+msgstr "搜尋："
 
 #: launcher/ui/pages/instance/LogPage.ui:132
 msgctxt "LogPage|"
@@ -4502,7 +4503,7 @@ msgstr "游戏被用户强行关闭。"
 #: launcher/LoggedProcess.cpp:143
 msgctxt "LoggedProcess|"
 msgid "The process failed to start."
-msgstr "进程启动失败。"
+msgstr "程序啟動失敗。"
 
 #: launcher/ui/dialogs/MSALoginDialog.ui:20
 msgctxt "MSALoginDialog|"
@@ -4578,7 +4579,7 @@ msgstr "实例"
 #: launcher/ui/MacMenuBar.cpp:138
 msgctxt "MacMenuBar|"
 msgid "F&olders"
-msgstr "F&olders"
+msgstr ""
 
 #: launcher/ui/MacMenuBar.cpp:139
 msgctxt "MacMenuBar|"
@@ -4598,12 +4599,12 @@ msgstr ""
 #: launcher/ui/MainWindow.ui:77
 msgctxt "MainWindow|"
 msgid "Main Toolbar"
-msgstr "主工具栏"
+msgstr "主工具列"
 
 #: launcher/ui/MainWindow.ui:107
 msgctxt "MainWindow|"
 msgid "News Toolbar"
-msgstr "新闻工具栏"
+msgstr "新聞資訊列"
 
 #: launcher/ui/MainWindow.ui:143
 msgctxt "MainWindow|"
@@ -4628,7 +4629,7 @@ msgstr "&查看"
 #: launcher/ui/MainWindow.ui:208
 msgctxt "MainWindow|"
 msgid "F&olders"
-msgstr "F&olders"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:229
 msgctxt "MainWindow|"
@@ -4643,7 +4644,7 @@ msgstr "账户"
 #: launcher/ui/MainWindow.ui:261
 msgctxt "MainWindow|"
 msgid "Add Instance"
-msgstr "添加实例"
+msgstr "新增實例"
 
 #: launcher/ui/MainWindow.ui:264
 msgctxt "MainWindow|"
@@ -4703,7 +4704,7 @@ msgstr "在文件浏览器中打开皮肤文件夹。"
 #: launcher/ui/MainWindow.ui:345
 msgctxt "MainWindow|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:348
 msgctxt "MainWindow|"
@@ -4763,12 +4764,12 @@ msgstr "在文件浏览器打开日志文件夹。"
 #: launcher/ui/MainWindow.ui:429
 msgctxt "MainWindow|"
 msgid "Settings"
-msgstr "设置"
+msgstr "設定"
 
 #: launcher/ui/MainWindow.ui:432
 msgctxt "MainWindow|"
 msgid "Change settings."
-msgstr "更改设置。"
+msgstr "更改設定。"
 
 #: launcher/ui/MainWindow.ui:443
 msgctxt "MainWindow|"
@@ -4784,13 +4785,13 @@ msgstr "查看和管理 MeshMC 应用程序日志。"
 #, qt-format
 msgctxt "MainWindow|"
 msgid "About %1"
-msgstr "关于 %1"
+msgstr "關於 %1"
 
 #: launcher/ui/MainWindow.ui:460
 #, qt-format
 msgctxt "MainWindow|"
 msgid "View information about %1."
-msgstr "查看关于 %1 的信息。"
+msgstr "顯示 %1 的相關資訊。"
 
 #: launcher/ui/MainWindow.ui:474
 msgctxt "MainWindow|"
@@ -4805,7 +4806,7 @@ msgstr "这是一只毛茸茸的小猫 :3"
 #: launcher/ui/MainWindow.ui:491
 msgctxt "MainWindow|"
 msgid "Manage Accounts"
-msgstr "管理账户"
+msgstr "管理帳號"
 
 #: launcher/ui/MainWindow.ui:494
 msgctxt "MainWindow|"
@@ -4856,7 +4857,7 @@ msgstr "保留此菜单栏并隐藏主工具栏。没有它，点击Alt显示菜
 #: launcher/ui/MainWindow.ui:558
 msgctxt "MainWindow|"
 msgid "Change Icon"
-msgstr "更改图标"
+msgstr "變更圖示"
 
 #: launcher/ui/MainWindow.ui:561
 msgctxt "MainWindow|"
@@ -4876,7 +4877,7 @@ msgstr "重命名选择的实例。"
 #: launcher/ui/MainWindow.ui:586 launcher/ui/MainWindow.cpp:939
 msgctxt "MainWindow|"
 msgid "Launch"
-msgstr "启动"
+msgstr "啟動"
 
 #: launcher/ui/MainWindow.ui:589
 msgctxt "MainWindow|"
@@ -4901,7 +4902,7 @@ msgstr ""
 #: launcher/ui/MainWindow.ui:617 launcher/ui/MainWindow.cpp:944
 msgctxt "MainWindow|"
 msgid "Launch Offline"
-msgstr "离线启动"
+msgstr "離線啟動"
 
 #: launcher/ui/MainWindow.ui:620
 msgctxt "MainWindow|"
@@ -4911,7 +4912,7 @@ msgstr "在离线模式下运行实例。"
 #: launcher/ui/MainWindow.ui:631
 msgctxt "MainWindow|"
 msgid "Edit Instance"
-msgstr "编辑实例"
+msgstr "編輯實例"
 
 #: launcher/ui/MainWindow.ui:634
 msgctxt "MainWindow|"
@@ -4941,17 +4942,17 @@ msgstr "编辑所选实例的备注。"
 #: launcher/ui/MainWindow.ui:673
 msgctxt "MainWindow|"
 msgid "View Mods"
-msgstr "查看模组"
+msgstr "檢視模組"
 
 #: launcher/ui/MainWindow.ui:676
 msgctxt "MainWindow|"
 msgid "View the mods of this instance."
-msgstr "查看此实例的模组。"
+msgstr "檢視這個實例中的模組。"
 
 #: launcher/ui/MainWindow.ui:687
 msgctxt "MainWindow|"
 msgid "View Worlds"
-msgstr "查看世界"
+msgstr "檢視世界"
 
 #: launcher/ui/MainWindow.ui:690
 msgctxt "MainWindow|"
@@ -4971,7 +4972,7 @@ msgstr "管理并上传本实例的截图。"
 #: launcher/ui/MainWindow.ui:715
 msgctxt "MainWindow|"
 msgid "Change Group"
-msgstr "更改组"
+msgstr "變更群組"
 
 #: launcher/ui/MainWindow.ui:718
 msgctxt "MainWindow|"
@@ -5001,17 +5002,17 @@ msgstr "在文件浏览器中打开所选实例的 mods 文件夹。"
 #: launcher/ui/MainWindow.ui:757
 msgctxt "MainWindow|"
 msgid "Config Folder"
-msgstr "配置文件夹"
+msgstr "組態資料夾"
 
 #: launcher/ui/MainWindow.ui:760
 msgctxt "MainWindow|"
 msgid "Open the instance's config folder."
-msgstr "打开实例的配置文件夹。"
+msgstr "在檔案總管中開啟所選實例的組態資料夾。"
 
 #: launcher/ui/MainWindow.ui:771
 msgctxt "MainWindow|"
 msgid "Instance Folder"
-msgstr "实例文件夹"
+msgstr "實例資料夾"
 
 #: launcher/ui/MainWindow.ui:774
 msgctxt "MainWindow|"
@@ -5026,7 +5027,7 @@ msgstr "&xport..."
 #: launcher/ui/MainWindow.ui:788
 msgctxt "MainWindow|"
 msgid "Export Instance"
-msgstr "导出实例"
+msgstr "匯出實例"
 
 #: launcher/ui/MainWindow.ui:791
 msgctxt "MainWindow|"
@@ -5037,7 +5038,7 @@ msgstr "导出所选实例到支持的格式。"
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
@@ -5047,12 +5048,12 @@ msgstr "Modrint(mrpack)"
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr "CurseForge (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
 msgid "Delete"
-msgstr "删除"
+msgstr "刪除"
 
 #: launcher/ui/MainWindow.ui:838
 msgctxt "MainWindow|"
@@ -5062,7 +5063,7 @@ msgstr "删除选择的实例。"
 #: launcher/ui/MainWindow.ui:849
 msgctxt "MainWindow|"
 msgid "Copy Instance"
-msgstr "复制实例"
+msgstr "複製實例"
 
 #: launcher/ui/MainWindow.ui:852
 msgctxt "MainWindow|"
@@ -5093,7 +5094,7 @@ msgstr "打开漏洞追踪器来报告 %1 的漏洞。"
 #: launcher/ui/MainWindow.ui:891
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr "Discord"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:894
 #, qt-format
@@ -5104,7 +5105,7 @@ msgstr "打开 %1 Discord 语音聊天室。"
 #: launcher/ui/MainWindow.ui:905
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr "Reddit"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:908
 #, qt-format
@@ -5158,7 +5159,7 @@ msgstr "打开实例间共用的文件夹之一。"
 #: launcher/ui/MainWindow.ui:975
 msgctxt "MainWindow|"
 msgid "Help"
-msgstr "帮助"
+msgstr "幫助"
 
 #: launcher/ui/MainWindow.ui:978
 #, qt-format
@@ -5170,7 +5171,7 @@ msgstr "获取 %1 或 Minecraft 的帮助。"
 #: launcher/ui/MainWindow.cpp:1150
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr "Profiles"
+msgstr ""
 
 #: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
 msgctxt "MainWindow|"
@@ -5197,7 +5198,7 @@ msgstr " 运行在 %1"
 #: launcher/ui/MainWindow.cpp:814
 msgctxt "MainWindow|"
 msgid "Create instance"
-msgstr "创建实例"
+msgstr "建立實例"
 
 #: launcher/ui/MainWindow.cpp:830
 #, qt-format
@@ -5244,7 +5245,7 @@ msgstr ""
 #: launcher/ui/MainWindow.cpp:1048
 msgctxt "MainWindow|"
 msgid "No accounts added!"
-msgstr "未添加账户！"
+msgstr "未新增任何帳號！"
 
 #: launcher/ui/MainWindow.cpp:1078
 msgctxt "MainWindow|"
@@ -5265,7 +5266,7 @@ msgstr "没有可用的新闻。"
 #: launcher/ui/MainWindow.cpp:1333
 msgctxt "MainWindow|"
 msgid "Error"
-msgstr "错误"
+msgstr "錯誤"
 
 #: launcher/ui/MainWindow.cpp:1278
 msgctxt "MainWindow|"
@@ -5556,7 +5557,7 @@ msgstr "曲线Forge 包"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:745
 msgctxt "ManagedPackPage|"
 msgid "Modpack"
-msgstr "Modpack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:750
 msgctxt "ManagedPackPage|"
@@ -5733,7 +5734,7 @@ msgstr "MeshMC 日志"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr "Reload"
+msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
@@ -6078,7 +6079,7 @@ msgstr "其他实例文件夹"
 #: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
-msgstr "Duplicate directory"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
@@ -6856,22 +6857,22 @@ msgstr "名称"
 #: launcher/minecraft/MinecraftInstance.cpp:865
 msgctxt "MinecraftInstance|"
 msgid "<SESSION ID>"
-msgstr "<SESSION ID>"
+msgstr "<對話 ID>"
 
 #: launcher/minecraft/MinecraftInstance.cpp:867
 msgctxt "MinecraftInstance|"
 msgid "<ACCESS TOKEN>"
-msgstr "<ACCESS TOKEN>"
+msgstr "<存取權杖>"
 
 #: launcher/minecraft/MinecraftInstance.cpp:869
 msgctxt "MinecraftInstance|"
 msgid "<CLIENT TOKEN>"
-msgstr "<CLIENT TOKEN>"
+msgstr "<用戶端權杖>"
 
 #: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
 msgid "<PROFILE ID>"
-msgstr "<PROFILE ID>"
+msgstr "<設定檔 ID>"
 
 #: launcher/minecraft/MinecraftInstance.cpp:946
 msgctxt "MinecraftInstance|"
@@ -6882,7 +6883,7 @@ msgstr "损坏"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -6904,7 +6905,7 @@ msgstr "，最后一次运行发生崩溃。"
 #: launcher/ui/pages/global/MinecraftPage.ui:48
 msgctxt "MinecraftPage|"
 msgid "Window Size"
-msgstr "窗口大小"
+msgstr "視窗大小"
 
 #: launcher/ui/pages/global/MinecraftPage.ui:54
 msgctxt "MinecraftPage|"
@@ -6959,7 +6960,7 @@ msgstr "记录单实例的游玩时间"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
@@ -6989,17 +6990,17 @@ msgstr "Minecraft Java 版个人资料获取成功。"
 #: launcher/minecraft/mod/ModFolderModel.cpp:444
 msgctxt "ModFolderModel|"
 msgid "Folder"
-msgstr "文件夹"
+msgstr "資料夾"
 
 #: launcher/minecraft/mod/ModFolderModel.cpp:446
 msgctxt "ModFolderModel|"
 msgid "File"
-msgstr "文件"
+msgstr "檔案"
 
 #: launcher/minecraft/mod/ModFolderModel.cpp:545
 msgctxt "ModFolderModel|"
 msgid "Name"
-msgstr "名称"
+msgstr "名稱"
 
 #: launcher/minecraft/mod/ModFolderModel.cpp:547
 msgctxt "ModFolderModel|"
@@ -7014,7 +7015,7 @@ msgstr "最后一次修改"
 #: launcher/minecraft/mod/ModFolderModel.cpp:557
 msgctxt "ModFolderModel|"
 msgid "Is the mod enabled?"
-msgstr "Mod是否启用？"
+msgstr "啟用該模組"
 
 #: launcher/minecraft/mod/ModFolderModel.cpp:559
 msgctxt "ModFolderModel|"
@@ -7049,7 +7050,7 @@ msgstr "添加（&A）"
 #: launcher/ui/pages/instance/ModFolderPage.ui:104
 msgctxt "ModFolderPage|"
 msgid "Add mods"
-msgstr "添加模组"
+msgstr "新增模組"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:109
 msgctxt "ModFolderPage|"
@@ -7176,20 +7177,20 @@ msgstr "检查更新"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:272
 msgctxt "ModFolderPage|"
 msgid "Context menu"
-msgstr "上下文菜单"
+msgstr "功能表"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:427
 #, qt-format
 msgctxt "ModFolderPage|Select whatever type of files the page contains. Example: 'Loader Mods'"
 msgid "Select %1"
-msgstr "选择 %1"
+msgstr "選擇 %1"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:540
 #: launcher/ui/pages/instance/ModFolderPage.cpp:554
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr "No Mod Loader"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
@@ -7335,7 +7336,7 @@ msgstr "无法决定 Minecraft jar 添加到 jar 模组。"
 #: launcher/minecraft/launch/ModMinecraftJar.cpp:69
 msgctxt "ModMinecraftJar|"
 msgid "Failed to create the custom Minecraft jar file."
-msgstr "无法创建自定义 Minecraft jar 文件。"
+msgstr "無法建立自訂的 Minecraft.jar 檔。"
 
 #: launcher/modplatform/ModUpdateCheckTask.cpp:230
 msgctxt "ModUpdateCheckTask|"
@@ -7367,7 +7368,7 @@ msgstr "%1 mod(s)有较新的兼容版本。请选择您想要更新的版本。
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
@@ -7441,7 +7442,7 @@ msgstr "复制文件失败"
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:208
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Installing modpack"
+msgstr ""
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
@@ -7471,7 +7472,7 @@ msgstr "已选择的版本："
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:67
 msgctxt "ModrinthPage|"
 msgid "Search"
-msgstr "搜索"
+msgstr "搜尋"
 
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.ui:74
 msgctxt "ModrinthPage|"
@@ -7517,23 +7518,23 @@ msgstr "任务“%1”处理失败：\n"
 #: launcher/ui/dialogs/NewComponentDialog.ui:17
 msgctxt "NewComponentDialog|"
 msgid "Add Empty Component"
-msgstr "添加空组件"
+msgstr "新增空白組件"
 
 #: launcher/ui/dialogs/NewComponentDialog.ui:30
 msgctxt "NewComponentDialog|"
 msgid "Name"
-msgstr "名称"
+msgstr "名稱"
 
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 msgctxt "NewComponentDialog|"
 msgid "uid"
-msgstr "uid"
+msgstr ""
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:17
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:163
 msgctxt "NewInstanceDialog|"
 msgid "New Instance"
-msgstr "新实例"
+msgstr "新的實例"
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:39
 msgctxt "NewInstanceDialog|"
@@ -7572,7 +7573,7 @@ msgstr "加载新闻 RSS 订阅失败：\n"
 #: launcher/news/NewsEntry.cpp:28 launcher/news/NewsEntry.cpp:66
 msgctxt "NewsEntry|"
 msgid "Untitled"
-msgstr "无标题"
+msgstr "未命名"
 
 #: launcher/news/NewsEntry.cpp:29 launcher/news/NewsEntry.cpp:67
 msgctxt "NewsEntry|"
@@ -7582,7 +7583,7 @@ msgstr "无内容。"
 #: launcher/news/NewsEntry.cpp:31 launcher/news/NewsEntry.cpp:69
 msgctxt "NewsEntry|"
 msgid "Unknown Author"
-msgstr "未知作者"
+msgstr "未知的作者"
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:49
 msgctxt "NewsViewerDialog|"
@@ -7653,12 +7654,12 @@ msgstr "不再提示"
 #: launcher/ui/dialogs/NotificationDialog.cpp:51
 msgctxt "NotificationDialog|"
 msgid "Close"
-msgstr "关闭"
+msgstr "關閉"
 
 #: launcher/NullInstance.h:39
 msgctxt "NullInstance|"
 msgid "Unknown instance type"
-msgstr "未知实例类型"
+msgstr "未知的實例類型"
 
 #: launcher/ui/pages/instance/OtherLogsPage.ui:42
 msgctxt "OtherLogsPage|"
@@ -7668,7 +7669,7 @@ msgstr "寻找"
 #: launcher/ui/pages/instance/OtherLogsPage.ui:67
 msgctxt "OtherLogsPage|"
 msgid "Copy the whole log into the clipboard"
-msgstr "复制整个日志到剪贴板"
+msgstr "複製整個紀錄至剪貼簿"
 
 #: launcher/ui/pages/instance/OtherLogsPage.ui:70
 msgctxt "OtherLogsPage|"
@@ -7685,7 +7686,7 @@ msgstr "清空日志"
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:192
 msgctxt "OtherLogsPage|"
 msgid "Delete"
-msgstr "删除"
+msgstr "刪除"
 
 #: launcher/ui/pages/instance/OtherLogsPage.ui:87
 msgctxt "OtherLogsPage|"
@@ -7695,7 +7696,7 @@ msgstr "上传日志到 paste.ee - 只会保留一个月"
 #: launcher/ui/pages/instance/OtherLogsPage.ui:90
 msgctxt "OtherLogsPage|"
 msgid "Upload"
-msgstr "上传"
+msgstr "上傳"
 
 #: launcher/ui/pages/instance/OtherLogsPage.ui:100
 msgctxt "OtherLogsPage|"
@@ -7705,19 +7706,19 @@ msgstr "清空"
 #: launcher/ui/pages/instance/OtherLogsPage.ui:107
 msgctxt "OtherLogsPage|"
 msgid "Reload"
-msgstr "重新加载"
+msgstr "重新載入"
 
 #: launcher/ui/pages/instance/OtherLogsPage.ui:126
 msgctxt "OtherLogsPage|"
 msgid "Search:"
-msgstr "搜索："
+msgstr "搜尋："
 
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:127
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:199
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:238
 msgctxt "OtherLogsPage|"
 msgid "Error"
-msgstr "错误"
+msgstr "錯誤"
 
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:128
 #, qt-format
@@ -7764,7 +7765,7 @@ msgstr "你真的要删除所有的日志文件吗？"
 msgctxt "OtherLogsPage|"
 msgid "Do you really want to delete these files?\n"
 "%1"
-msgstr "你真的想要删除这些文件吗？\n"
+msgstr "您確定要刪除下列檔案？\n"
 "%1"
 
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:240
@@ -7783,12 +7784,12 @@ msgstr "无法删除某些文件：\n"
 #: launcher/ui/pages/instance/OtherLogsPage.h:51
 msgctxt "OtherLogsPage|"
 msgid "Other logs"
-msgstr "其他日志"
+msgstr "紀錄日誌"
 
 #: launcher/minecraft/PackProfile.cpp:820
 msgctxt "PackProfile|"
 msgid "Name"
-msgstr "名称"
+msgstr "名稱"
 
 #: launcher/minecraft/PackProfile.cpp:822
 msgctxt "PackProfile|"
@@ -7934,7 +7935,7 @@ msgstr "启动后指令执行失败，错误代码 %1。\n\n"
 #: launcher/launch/steps/PostLaunchCommand.cpp:64
 msgctxt "PostLaunchCommand|"
 msgid "Post-Launch command ran successfully.\n\n"
-msgstr "后执行命令成功执行。\n\n"
+msgstr "啟動後命令已成功地執行。\n\n"
 
 #: launcher/launch/steps/PreLaunchCommand.cpp:38
 #, qt-format
@@ -7951,7 +7952,7 @@ msgstr "预执行命令执行失败，代码：%1。\n\n"
 #: launcher/launch/steps/PreLaunchCommand.cpp:64
 msgctxt "PreLaunchCommand|"
 msgid "Pre-Launch command ran successfully.\n\n"
-msgstr "预执行命令成功执行。\n\n"
+msgstr "預啟動命令已成功地執行。\n\n"
 
 #: launcher/ui/dialogs/ProfileSelectDialog.ui:14
 msgctxt "ProfileSelectDialog|"
@@ -7977,7 +7978,7 @@ msgstr "仅对本实例用作默认？"
 #: launcher/ui/dialogs/ProfileSelectDialog.cpp:48
 msgctxt "ProfileSelectDialog|"
 msgid "Name"
-msgstr "名称"
+msgstr "名稱"
 
 #: launcher/ui/dialogs/ProfileSelectDialog.cpp:55
 #, qt-format
@@ -8106,14 +8107,14 @@ msgstr "任务状态……"
 #: launcher/ui/dialogs/ProgressDialog.ui:136
 msgctxt "ProgressDialog|"
 msgid "Skip"
-msgstr "跳过"
+msgstr "略過"
 
 #. Suffix on a search result the user already has installed
 #: launcher/ui/widgets/ProjectItemDelegate.cpp:169
 #, qt-format
 msgctxt "ProjectItemDelegate|"
 msgid "%1 [installed]"
-msgstr "%1 [installed]"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:42
 msgctxt "ProxyPage|"
@@ -8123,7 +8124,7 @@ msgstr "这只适用于MeshMC. 。Minecraft不接受代理设置。"
 #: launcher/ui/pages/global/ProxyPage.ui:55
 msgctxt "ProxyPage|"
 msgid "Type"
-msgstr "类型"
+msgstr "類型"
 
 #: launcher/ui/pages/global/ProxyPage.ui:61
 msgctxt "ProxyPage|"
@@ -8143,12 +8144,12 @@ msgstr "无（&N）"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 msgctxt "ProxyPage|"
 msgid "SOC&KS5"
-msgstr "SOC&KS5"
+msgstr "SOCKS5(&K)"
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 msgctxt "ProxyPage|"
 msgid "H&TTP"
-msgstr "H&TTP"
+msgstr "HTTP(&T)"
 
 #: launcher/ui/pages/global/ProxyPage.ui:107
 msgctxt "ProxyPage|"
@@ -8158,17 +8159,17 @@ msgstr "地址及端口"
 #: launcher/ui/pages/global/ProxyPage.ui:139
 msgctxt "ProxyPage|"
 msgid "Authentication"
-msgstr "认证"
+msgstr "驗證"
 
 #: launcher/ui/pages/global/ProxyPage.ui:148
 msgctxt "ProxyPage|"
 msgid "Username:"
-msgstr "用户名："
+msgstr "使用者名稱："
 
 #: launcher/ui/pages/global/ProxyPage.ui:155
 msgctxt "ProxyPage|"
 msgid "Password:"
-msgstr "密码："
+msgstr "密碼："
 
 #: launcher/ui/pages/global/ProxyPage.ui:169
 msgctxt "ProxyPage|"
@@ -8214,13 +8215,13 @@ msgstr "你尝试手动设置 JVM 内存选项（使用“-XX:PermSize”，-XX-
 #: launcher/JavaCommon.cpp:40
 msgctxt "QObject|"
 msgid "JVM arguments warning"
-msgstr "JVM 参数警告"
+msgstr "JVM 引數警告"
 
 #: launcher/JavaCommon.cpp:52
 #, qt-format
 msgctxt "QObject|"
 msgid "Java test succeeded!<br />Platform reported: %1<br />Java version reported: %2<br />Java vendor reported: %3<br />"
-msgstr "Java测试成功！<br />平台：%1<br />Java版本：%2<br />Java 供应商： %3<br />"
+msgstr "Java 測試成功！<br />平台報告：%1<br />Java 版本報告：%2<br />Java 供應商報告：%3<br />"
 
 #: launcher/JavaCommon.cpp:62
 #, qt-format
@@ -8247,7 +8248,7 @@ msgstr "Java测试失败"
 #: launcher/JavaCommon.cpp:86
 msgctxt "QObject|"
 msgid "The specified java binary didn't work.<br />You should use the auto-detect feature, or set the path to the java executable.<br />"
-msgstr "指定的 Java 二进制文件无法工作。<br />你应该使用自动检测功能，或者设置 Java 可执行文件的路径。<br />"
+msgstr "指定的 Java 二進制檔案無法使用。<br />您應該使用自動偵測功能，或者設定 Java 可執行檔的路徑。<br />"
 
 #: launcher/MMCTime.cpp:35
 #, qt-format
@@ -8533,25 +8534,25 @@ msgstr "按最新排序"
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 B"
-msgstr "%1 B"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:14
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 KiB"
-msgstr "%1 KiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:17
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 MiB"
-msgstr "%1 MiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:19
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 GiB"
-msgstr "%1 GiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.h:32
 msgctxt "QObject|"
@@ -8561,7 +8562,7 @@ msgstr "版本历史记录"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Git Versioning"
-msgstr "Git Versioning"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:133
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:234
@@ -8709,7 +8710,7 @@ msgstr "强制Minecraft使用NVIDIA 离散的 GPU 在最优化电脑上。\n"
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.h:40
 msgctxt "QObject|"
 msgid "Offline Wiki"
-msgstr "Offline Wiki"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:303
 msgctxt "QObject|"
@@ -8735,22 +8736,22 @@ msgstr "错误分析"
 #: launcher/tools/JProfiler.cpp:114 launcher/tools/JVisualVM.cpp:106
 msgctxt "QObject|"
 msgid "Empty path"
-msgstr "空路径"
+msgstr "空白路徑"
 
 #: launcher/tools/JProfiler.cpp:119 launcher/tools/MCEditTool.cpp:54
 msgctxt "QObject|"
 msgid "Path does not exist"
-msgstr "路径不存在"
+msgstr "路徑不存在"
 
 #: launcher/tools/JProfiler.cpp:125
 msgctxt "QObject|"
 msgid "Invalid JProfiler install"
-msgstr "无效的 JProfiler 安装"
+msgstr "無效的 JProfiler 安裝"
 
 #: launcher/tools/JVisualVM.cpp:111
 msgctxt "QObject|"
 msgid "Invalid path to JVisualVM"
-msgstr "无效的 JVisualVM 路径"
+msgstr "無效的 JVisualVM 檔案路徑"
 
 #: launcher/tools/MCEditTool.cpp:49
 msgctxt "QObject|"
@@ -8765,7 +8766,7 @@ msgstr "这个路径似乎不是 MCEdit 的路径"
 #: launcher/ui/GuiUtil.cpp:49 launcher/ui/GuiUtil.cpp:59
 msgctxt "QObject|"
 msgid "Upload failed"
-msgstr "上传失败"
+msgstr "上傳失敗"
 
 #: launcher/ui/GuiUtil.cpp:50
 msgctxt "QObject|"
@@ -8775,7 +8776,7 @@ msgstr "日志文件太大。你需要手动上传它。"
 #: launcher/ui/GuiUtil.cpp:67
 msgctxt "QObject|"
 msgid "Upload finished"
-msgstr "上传完成"
+msgstr "上傳完成"
 
 #: launcher/ui/GuiUtil.cpp:68
 #, qt-format
@@ -8937,7 +8938,7 @@ msgstr "发现(未加载)"
 #: launcher/ui/pages/instance/ServersPage.cpp:45
 msgctxt "QObject|"
 msgid "Minecraft Server"
-msgstr "Minecraft服务器"
+msgstr "Minecraft 伺服器"
 
 #: launcher/ui/themes/BrightTheme.cpp:31
 msgctxt "QObject|"
@@ -8990,17 +8991,17 @@ msgstr "一个以光明聚变为基础的主题，具有绿色的音调"
 #: launcher/ui/themes/SystemTheme.cpp:70
 msgctxt "QObject|"
 msgid "Windows Vista"
-msgstr "Windows Vista"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:72
 msgctxt "QObject|"
 msgid "Windows 9x"
-msgstr "Windows 9x"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:74
 msgctxt "QObject|"
 msgid "Windows 11"
-msgstr "Windows 11"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:76
 msgctxt "QObject|"
@@ -9127,7 +9128,7 @@ msgstr "指定的 Java 二进制文件无法使用你提供的参数工作：<br
 #, qt-format
 msgctxt "QObject|"
 msgid "Java test succeeded!<br />Platform reported: %1<br />Java version reported: %2<br />"
-msgstr "Java 测试成功！<br />平台已报告：%1<br />Java 版本已报告：%2<br />"
+msgstr "Java 測試成功！<br />平台報告：%1<br />Java 版本報告：%2<br />"
 
 #: launcher/updater/meshupdater/ReleaseDownload.cpp:48
 #, qt-format
@@ -9180,7 +9181,7 @@ msgstr ""
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:34
 msgctxt "ResourcePackFolderModel|"
 msgid "Is the resource pack enabled?"
-msgstr "资源包是否启用？"
+msgstr "啟用該資源包"
 
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:36
 msgctxt "ResourcePackFolderModel|"
@@ -9190,7 +9191,7 @@ msgstr "资源包的名字。"
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:38
 msgctxt "ResourcePackFolderModel|"
 msgid "The version of the resource pack."
-msgstr "资源包的版本。"
+msgstr "資源包的版本。"
 
 #: launcher/minecraft/mod/ResourcePackFolderModel.cpp:40
 msgctxt "ResourcePackFolderModel|"
@@ -9200,22 +9201,22 @@ msgstr "此资源包最后一次修改（或添加）的日期和时间。"
 #: launcher/ui/pages/instance/ResourcePackPage.h:31
 msgctxt "ResourcePackPage|"
 msgid "Resource packs"
-msgstr "资源包"
+msgstr "資源包"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.ui:41
 msgctxt "ScreenshotsPage|"
 msgid "Actions"
-msgstr "行动"
+msgstr "動作"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.ui:59
 msgctxt "ScreenshotsPage|"
 msgid "Upload"
-msgstr "上传"
+msgstr "上傳"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.ui:64
 msgctxt "ScreenshotsPage|"
 msgid "Delete"
-msgstr "删除"
+msgstr "刪除"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.ui:69
 msgctxt "ScreenshotsPage|"
@@ -9230,7 +9231,7 @@ msgstr "查看文件夹（&V）"
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:314
 msgctxt "ScreenshotsPage|"
 msgid "Context menu"
-msgstr "上下文菜单"
+msgstr "功能表"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:360
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:396
@@ -9242,13 +9243,13 @@ msgstr "截屏上传失败！"
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:397
 msgctxt "ScreenshotsPage|"
 msgid "Unknown error"
-msgstr "未知错误"
+msgstr "未知錯誤"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:368
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:404
 msgctxt "ScreenshotsPage|"
 msgid "Upload finished"
-msgstr "上传完成"
+msgstr "上傳完成"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:369
 #, qt-format
@@ -9348,17 +9349,17 @@ msgstr ""
 #: launcher/ui/pages/instance/ServersPage.cpp:282
 msgctxt "ServersModel|"
 msgid "Name"
-msgstr "名称"
+msgstr "名稱"
 
 #: launcher/ui/pages/instance/ServersPage.cpp:284
 msgctxt "ServersModel|"
 msgid "Address"
-msgstr "地址"
+msgstr "位址"
 
 #: launcher/ui/pages/instance/ServersPage.cpp:286
 msgctxt "ServersModel|"
 msgid "Latency"
-msgstr "延迟"
+msgstr "延遲"
 
 #: launcher/ui/pages/instance/ServersPage.ui:72
 msgctxt "ServersPage|"
@@ -9368,7 +9369,7 @@ msgstr "名称（&N）"
 #: launcher/ui/pages/instance/ServersPage.ui:85
 msgctxt "ServersPage|"
 msgid "Address"
-msgstr "地址"
+msgstr "位址(&A)"
 
 #: launcher/ui/pages/instance/ServersPage.ui:98
 msgctxt "ServersPage|"
@@ -9383,27 +9384,27 @@ msgstr "要求下载时下载"
 #: launcher/ui/pages/instance/ServersPage.ui:114
 msgctxt "ServersPage|"
 msgid "Always download"
-msgstr "总是下载"
+msgstr "總是下載"
 
 #: launcher/ui/pages/instance/ServersPage.ui:119
 msgctxt "ServersPage|"
 msgid "Never download"
-msgstr "从不下载"
+msgstr "永不下載"
 
 #: launcher/ui/pages/instance/ServersPage.ui:130
 msgctxt "ServersPage|"
 msgid "Actions"
-msgstr "行动"
+msgstr "動作"
 
 #: launcher/ui/pages/instance/ServersPage.ui:155
 msgctxt "ServersPage|"
 msgid "Add"
-msgstr "添加"
+msgstr "新增(&A)"
 
 #: launcher/ui/pages/instance/ServersPage.ui:160
 msgctxt "ServersPage|"
 msgid "Remove"
-msgstr "删除"
+msgstr "移除(&R)"
 
 #: launcher/ui/pages/instance/ServersPage.ui:165
 msgctxt "ServersPage|"
@@ -9423,12 +9424,12 @@ msgstr "加入"
 #: launcher/ui/pages/instance/ServersPage.cpp:584
 msgctxt "ServersPage|"
 msgid "Context menu"
-msgstr "上下文菜单"
+msgstr "功能表"
 
 #: launcher/ui/pages/instance/ServersPage.h:51
 msgctxt "ServersPage|"
 msgid "Servers"
-msgstr "服务器"
+msgstr "伺服器"
 
 #: launcher/ui/setupwizard/SetupWizard.cpp:48
 msgctxt "SetupWizard|"
@@ -9778,7 +9779,7 @@ msgstr "解压modpack失败。下载的存档已损坏；它已被丢弃，因�
 #, qt-format
 msgctxt "Technic::SingleZipPackInstallTask|"
 msgid "Could not fix permissions for %1"
-msgstr "无法修复 %1 的权限"
+msgstr "無法修正 %1 的權限"
 
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:191
 msgctxt "Technic::SingleZipPackInstallTask|"
@@ -9835,7 +9836,7 @@ msgstr "解压整合包时失败"
 #, qt-format
 msgctxt "Technic::SolderPackInstallTask|"
 msgid "Could not fix permissions for %1"
-msgstr "无法修复 %1 的权限"
+msgstr "無法修正 %1 的權限"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:251
 msgctxt "Technic::SolderPackInstallTask|"
@@ -9893,7 +9894,7 @@ msgstr "搜索和过滤..."
 #: launcher/ui/pages/modplatform/technic/TechnicPage.ui:39
 msgctxt "TechnicPage|"
 msgid "Search"
-msgstr "搜索"
+msgstr "搜尋"
 
 #: launcher/ui/pages/modplatform/technic/TechnicPage.cpp:194
 msgctxt "TechnicPage|"
@@ -9938,14 +9939,14 @@ msgid "%1:\n"
 "%3 fuzzy\n"
 "%4 total"
 msgstr "%1：\n"
-"%2 已翻译\n"
-"%3 模糊\n"
-"%4 总计"
+"已翻譯：%2\n"
+"未確定：%3\n"
+"總計：%4"
 
 #: launcher/translations/TranslationsModel.cpp:356
 msgctxt "TranslationsModel|"
 msgid "Language"
-msgstr "语言"
+msgstr "語言"
 
 #: launcher/translations/TranslationsModel.cpp:359
 msgctxt "TranslationsModel|"
@@ -10053,32 +10054,32 @@ msgstr "常规发布"
 #: launcher/ui/pages/modplatform/VanillaPage.ui:64
 msgctxt "VanillaPage|"
 msgid "Snapshots"
-msgstr "快照"
+msgstr "快照版"
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:74
 msgctxt "VanillaPage|"
 msgid "Old Snapshots"
-msgstr "旧快照"
+msgstr "過往快照版"
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:84
 msgctxt "VanillaPage|"
 msgid "Betas"
-msgstr "Beta"
+msgstr "Beta 版"
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:94
 msgctxt "VanillaPage|"
 msgid "Alphas"
-msgstr "Alpha"
+msgstr "Alpha 版"
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:104
 msgctxt "VanillaPage|"
 msgid "Experiments"
-msgstr "实验"
+msgstr "實驗版"
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:127
 msgctxt "VanillaPage|"
 msgid "Refresh"
-msgstr "刷新"
+msgstr "重新整理"
 
 #: launcher/ui/pages/modplatform/VanillaPage.h:45
 msgctxt "VanillaPage|"
@@ -10220,7 +10221,7 @@ msgstr "过滤器："
 #: launcher/ui/pages/instance/VersionPage.ui:82
 msgctxt "VersionPage|"
 msgid "Actions"
-msgstr "行动"
+msgstr "動作"
 
 #: launcher/ui/pages/instance/VersionPage.ui:123
 msgctxt "VersionPage|"
@@ -10255,7 +10256,7 @@ msgstr "延后应用所选包。"
 #: launcher/ui/pages/instance/VersionPage.ui:147
 msgctxt "VersionPage|"
 msgid "Remove"
-msgstr "删除"
+msgstr "移除"
 
 #: launcher/ui/pages/instance/VersionPage.ui:150
 msgctxt "VersionPage|"
@@ -10265,7 +10266,7 @@ msgstr "从实例删除选定包。"
 #: launcher/ui/pages/instance/VersionPage.ui:155
 msgctxt "VersionPage|"
 msgid "Customize"
-msgstr "自定义"
+msgstr "自訂"
 
 #: launcher/ui/pages/instance/VersionPage.ui:158
 msgctxt "VersionPage|"
@@ -10275,7 +10276,7 @@ msgstr "自定义选定包。"
 #: launcher/ui/pages/instance/VersionPage.ui:163
 msgctxt "VersionPage|"
 msgid "Edit"
-msgstr "编辑"
+msgstr "編輯"
 
 #: launcher/ui/pages/instance/VersionPage.ui:166
 msgctxt "VersionPage|"
@@ -10305,12 +10306,12 @@ msgstr "安装模组加载器 - Forge、NeoForge、Fabric、Quilt 或 LiteLoader
 #: launcher/ui/pages/instance/VersionPage.ui:187
 msgctxt "VersionPage|"
 msgid "Install mods"
-msgstr "安装模组"
+msgstr "安裝模組"
 
 #: launcher/ui/pages/instance/VersionPage.ui:190
 msgctxt "VersionPage|"
 msgid "Install normal mods."
-msgstr "安装普通模组。"
+msgstr "安裝一般的模組。"
 
 #: launcher/ui/pages/instance/VersionPage.ui:195
 msgctxt "VersionPage|"
@@ -10325,7 +10326,7 @@ msgstr "将一个模组安装到 Minecraft.jar 文件中。"
 #: launcher/ui/pages/instance/VersionPage.ui:203
 msgctxt "VersionPage|"
 msgid "Replace Minecraft.jar"
-msgstr "替换 Minecraft.jar"
+msgstr "取代 Minecraft.jar"
 
 #: launcher/ui/pages/instance/VersionPage.ui:208
 msgctxt "VersionPage|"
@@ -10340,7 +10341,7 @@ msgstr "新建一个空的自定义包。"
 #: launcher/ui/pages/instance/VersionPage.ui:216
 msgctxt "VersionPage|"
 msgid "Reload"
-msgstr "重新加载"
+msgstr "重新載入"
 
 #: launcher/ui/pages/instance/VersionPage.ui:219
 msgctxt "VersionPage|"
@@ -10365,7 +10366,7 @@ msgstr "打开 .minecraft 目录"
 #: launcher/ui/pages/instance/VersionPage.ui:235
 msgctxt "VersionPage|"
 msgid "Open the instance's .minecraft folder."
-msgstr "打开实例的 .minecraft 文件夹。"
+msgstr "開啟本實例的 .minecraft 資料夾。"
 
 #: launcher/ui/pages/instance/VersionPage.ui:240
 msgctxt "VersionPage|"
@@ -10380,29 +10381,29 @@ msgstr "打开实例的本地 libraries 文件夹。"
 #: launcher/ui/pages/instance/VersionPage.cpp:164
 msgctxt "VersionPage|"
 msgid "Context menu"
-msgstr "上下文菜单"
+msgstr "功能表"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:182
 #, qt-format
 msgctxt "VersionPage|"
 msgid "%1 possibly has issues."
-msgstr "%1 可能有问题。"
+msgstr "%1 可能發生問題。"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:185
 #, qt-format
 msgctxt "VersionPage|"
 msgid "%1 has issues!"
-msgstr "%1 有问题！"
+msgstr "%1 發生問題！"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:197
 msgctxt "VersionPage|"
 msgid "Error: "
-msgstr "错误： "
+msgstr "錯誤："
 
 #: launcher/ui/pages/instance/VersionPage.cpp:199
 msgctxt "VersionPage|"
 msgid "Warning: "
-msgstr "警告： "
+msgstr "警告："
 
 #: launcher/ui/pages/instance/VersionPage.cpp:266
 #: launcher/ui/pages/instance/VersionPage.cpp:269
@@ -10412,27 +10413,27 @@ msgstr "警告： "
 #: launcher/ui/pages/instance/VersionPage.cpp:416
 msgctxt "VersionPage|"
 msgid "Error"
-msgstr "错误"
+msgstr "錯誤"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:270
 msgctxt "VersionPage|"
 msgid "Couldn't load the instance profile."
-msgstr "无法加载实例配置文件。"
+msgstr "無法載入本實例的設定檔。"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:287
 msgctxt "VersionPage|"
 msgid "Couldn't remove file"
-msgstr "无法删除文件"
+msgstr "無法移除檔案"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:305
 msgctxt "VersionPage|"
 msgid "Select jar mods"
-msgstr "选择 jar 模组"
+msgstr "選擇 .jar 模組"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:305
 msgctxt "VersionPage|"
 msgid "Minecraft.jar mods (*.zip *.jar)"
-msgstr "需要添加到 Minecraft.jar 中的模组 (*.zip *.jar)"
+msgstr "Minecraft.jar 模組 (*.zip *.jar)"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:317
 msgctxt "VersionPage|"
@@ -10469,7 +10470,7 @@ msgstr ""
 #: launcher/ui/pages/instance/VersionPage.cpp:511
 msgctxt "VersionPage|"
 msgid "Error updating instance"
-msgstr "更新实例时出错"
+msgstr "更新實例時發生錯誤"
 
 #: launcher/ui/pages/instance/VersionPage.h:43
 msgctxt "VersionPage|"
@@ -10484,7 +10485,7 @@ msgstr "版本"
 #: launcher/VersionProxyModel.cpp:108
 msgctxt "VersionProxyModel|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:110
 msgctxt "VersionProxyModel|"
@@ -10494,7 +10495,7 @@ msgstr "分支"
 #: launcher/VersionProxyModel.cpp:112
 msgctxt "VersionProxyModel|"
 msgid "Type"
-msgstr "类型"
+msgstr "類型"
 
 #: launcher/VersionProxyModel.cpp:114
 msgctxt "VersionProxyModel|"
@@ -10504,7 +10505,7 @@ msgstr "架构"
 #: launcher/VersionProxyModel.cpp:116
 msgctxt "VersionProxyModel|"
 msgid "Path"
-msgstr "路径"
+msgstr "路徑"
 
 #: launcher/VersionProxyModel.cpp:118
 msgctxt "VersionProxyModel|"
@@ -10524,7 +10525,7 @@ msgstr "Minecraft 版本"
 #: launcher/VersionProxyModel.cpp:128
 msgctxt "VersionProxyModel|"
 msgid "The version's branch"
-msgstr "版本的分支"
+msgstr "版本分支"
 
 #: launcher/VersionProxyModel.cpp:130
 msgctxt "VersionProxyModel|"
@@ -10555,22 +10556,22 @@ msgstr "%1 （已安装）"
 #: launcher/VersionProxyModel.cpp:192
 msgctxt "VersionProxyModel|"
 msgid "Recommended"
-msgstr "推荐的"
+msgstr "建議"
 
 #: launcher/VersionProxyModel.cpp:197 launcher/VersionProxyModel.cpp:200
 msgctxt "VersionProxyModel|"
 msgid "Latest"
-msgstr "最新的"
+msgstr "最新"
 
 #: launcher/ui/dialogs/VersionSelectDialog.cpp:89
 msgctxt "VersionSelectDialog|"
 msgid "Choose Version"
-msgstr "选择版本"
+msgstr "選擇版本"
 
 #: launcher/ui/dialogs/VersionSelectDialog.cpp:90
 msgctxt "VersionSelectDialog|"
 msgid "Reloads the version list."
-msgstr "重新加载版本列表。"
+msgstr "重新載入版本清單。"
 
 #: launcher/ui/dialogs/VersionSelectDialog.cpp:91
 msgctxt "VersionSelectDialog|"
@@ -10580,14 +10581,14 @@ msgstr "刷新（&R）"
 #: launcher/ui/widgets/VersionSelectWidget.cpp:153
 msgctxt "VersionSelectWidget|"
 msgid "Error"
-msgstr "错误"
+msgstr "錯誤"
 
 #: launcher/ui/widgets/VersionSelectWidget.cpp:154
 #, qt-format
 msgctxt "VersionSelectWidget|"
 msgid "List update failed:\n"
 "%1"
-msgstr "列表更新失败：\n"
+msgstr "清單更新失敗：\n"
 "%1"
 
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.cpp:28
@@ -10614,12 +10615,12 @@ msgstr "<p><i>文章未找到： %1</i></p>"
 #: launcher/minecraft/WorldList.cpp:238
 msgctxt "WorldList|"
 msgid "Name"
-msgstr "名称"
+msgstr "名稱"
 
 #: launcher/minecraft/WorldList.cpp:240
 msgctxt "WorldList|"
 msgid "Game Mode"
-msgstr "游戏模式"
+msgstr "遊戲模式"
 
 #: launcher/minecraft/WorldList.cpp:242
 msgctxt "WorldList|"
@@ -10654,12 +10655,12 @@ msgstr ""
 #: launcher/ui/pages/instance/WorldListPage.ui:65
 msgctxt "WorldListPage|"
 msgid "Actions"
-msgstr "行动"
+msgstr "動作"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:97
 msgctxt "WorldListPage|"
 msgid "Add"
-msgstr "添加"
+msgstr "新增"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:102
 msgctxt "WorldListPage|"
@@ -10669,7 +10670,7 @@ msgstr "重命名"
 #: launcher/ui/pages/instance/WorldListPage.ui:107
 msgctxt "WorldListPage|"
 msgid "Copy"
-msgstr "复制"
+msgstr "複製"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:112
 msgctxt "WorldListPage|"
@@ -10679,27 +10680,27 @@ msgstr "移除"
 #: launcher/ui/pages/instance/WorldListPage.ui:117
 msgctxt "WorldListPage|"
 msgid "MCEdit"
-msgstr "MCEdit"
+msgstr ""
 
 #: launcher/ui/pages/instance/WorldListPage.ui:122
 msgctxt "WorldListPage|"
 msgid "Copy Seed"
-msgstr "复制种子"
+msgstr "複製種子碼"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:127
 msgctxt "WorldListPage|"
 msgid "Refresh"
-msgstr "刷新"
+msgstr "重新整理"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:132
 msgctxt "WorldListPage|"
 msgid "View Folder"
-msgstr "查看文件夹"
+msgstr "檢視資料夾"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:137
 msgctxt "WorldListPage|"
 msgid "Reset Icon"
-msgstr "重置图标"
+msgstr "重設圖示"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:140
 msgctxt "WorldListPage|"
@@ -10709,17 +10710,17 @@ msgstr "删除世界图标以便游戏在下次加载时重新生成图标。"
 #: launcher/ui/pages/instance/WorldListPage.ui:145
 msgctxt "WorldListPage|"
 msgid "Datapacks"
-msgstr "数据包"
+msgstr "資料包"
 
 #: launcher/ui/pages/instance/WorldListPage.ui:148
 msgctxt "WorldListPage|"
 msgid "Manage datapacks inside the world."
-msgstr "管理世界内的数据包。"
+msgstr "管理這個世界中的資料包。"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:130
 msgctxt "WorldListPage|"
 msgid "Context menu"
-msgstr "上下文菜单"
+msgstr "功能表"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:178
 msgctxt "WorldListPage|"
@@ -10731,9 +10732,9 @@ msgctxt "WorldListPage|"
 msgid "This will remove the selected world permenantly.\n"
 "The world will be gone forever (A LONG TIME).\n\n"
 "Do you want to continue?"
-msgstr "这会永久删除所选世界。\n"
-"这个世界将会永远消失（真的很久！！）\n\n"
-"你想继续吗？"
+msgstr "這將會永久移除所選的世界。\n"
+"此世界將會永遠消失（非 常 久）。\n\n"
+"您真的要繼續嗎？"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:227
 #, qt-format
@@ -10750,20 +10751,20 @@ msgstr "未找到 MCEdit 或未设置！"
 msgctxt "WorldListPage|"
 msgid "You do not have MCEdit set up or it was moved.\n"
 "You can set it up in the global settings."
-msgstr "你没有设置好 MCEdit 或者它的路径变了。\n"
-"你可以在全局设置里面设置它。"
+msgstr "您尚未設定 MCEdit，或其路徑已被變更。\n"
+"您可以在全域設定中進行設定。"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:353
 msgctxt "WorldListPage|"
 msgid "MCEdit failed to start!"
-msgstr "MCEdit 启动失败！"
+msgstr "無法啟動 MCEdit！"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:354
 msgctxt "WorldListPage|"
 msgid "MCEdit failed to start.\n"
 "It may be necessary to reinstall it."
-msgstr "MCEdit 启动失败。\n"
-"可能需要重新安装它。"
+msgstr "無法啟動 MCEdit。\n"
+"可能需要重新安裝它。"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:398
 msgctxt "WorldListPage|"
@@ -10791,7 +10792,7 @@ msgstr "在 Minecraft 运行时修改世界可能导致错误。\n"
 #: launcher/ui/pages/instance/WorldListPage.cpp:465
 msgctxt "WorldListPage|"
 msgid "World name"
-msgstr "世界名称"
+msgstr "世界名稱"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:443
 msgctxt "WorldListPage|"
@@ -10801,7 +10802,7 @@ msgstr "为复制键入一个新的名称。"
 #: launcher/ui/pages/instance/WorldListPage.cpp:466
 msgctxt "WorldListPage|"
 msgid "Enter a new world name."
-msgstr "输入一个新的世界名称。"
+msgstr "輸入新世界的名稱。"
 
 #: launcher/ui/pages/instance/WorldListPage.h:49
 msgctxt "WorldListPage|"
@@ -10824,7 +10825,7 @@ msgstr "无法获得 %1 服务的授权。错误 %1。"
 #, qt-format
 msgctxt "XboxAuthorizationStep|"
 msgid "Could not parse authorization response for access to %1 services."
-msgstr "无法解析访问 %1 服务的授权响应。"
+msgstr "無法解析存取 %1 服務的授權回應。"
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:113
 #, qt-format
@@ -10895,7 +10896,7 @@ msgstr "成功获取 Xbox 个人资料"
 #: launcher/minecraft/auth/steps/XboxUserStep.cpp:35
 msgctxt "XboxUserStep|"
 msgid "Logging in as an Xbox user."
-msgstr "以 Xbox 用户身份登录。"
+msgstr "正在以 Xbox 使用者登入。"
 
 #: launcher/minecraft/auth/steps/XboxUserStep.cpp:79
 msgctxt "XboxUserStep|"
