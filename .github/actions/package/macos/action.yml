@@ -183,11 +183,11 @@ runs:
     - name: Upload binary tarball
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-${{ inputs.artifact-name }}-Qt${{ inputs.qt-major }}-${{ inputs.version }}-${{ inputs.build-type }}
+        name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
         path: MeshMC.zip
 
     - name: Upload disk image
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-${{ inputs.artifact-name }}-Qt${{ inputs.qt-major }}-${{ inputs.version }}-${{ inputs.build-type }}-Qt${{ inputs.qt-major }}.dmg
+        name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}.dmg
         path: MeshMC.dmg
