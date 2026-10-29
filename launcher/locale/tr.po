@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2026-10-29 09:43\n"
+"PO-Revision-Date: 2026-10-29 10:04\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -3050,7 +3050,7 @@ msgstr "Modlar indiriliyor..."
 #: launcher/InstanceImportTask.cpp:1104
 msgctxt "InstanceImportTask|"
 msgid "Could not understand Modrinth modpack manifest:\n"
-msgstr "Modrinth mod paketi manifesti anlaşılamadı:"
+msgstr "Modrinth mod paketi manifesti anlaşılamadı:\n"
 
 #: launcher/InstanceImportTask.cpp:1242
 msgctxt "InstanceImportTask|"
@@ -3873,7 +3873,7 @@ msgid "You didn't select a Java version or selected something that doesn't work.
 msgstr "Bir Java sürümü seçmediniz ya da çalışmayan bir sürüm seçtiniz.\n"
 "MeshMC, Minecraft'ı başlatamayacak.\n"
 "Herhangi bir Java sürümü olmadan devam etmek istiyor musunuz?\n\n"
-"Java sürümünü daha sonra ayarlardan değiştirebilirsiniz."
+"Java sürümünü daha sonra ayarlardan değiştirebilirsiniz.\n"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:277
 msgctxt "JavaSettingsWidget|"
@@ -5530,7 +5530,7 @@ msgid "This is a local modpack.\n"
 msgstr "Bu, yerel bir mod paketidir.\n"
 "Bu paket, %1 biçimindeki bir dosya ya da bir URL kullanılarak güncellenebilir.\n"
 "Belirtilenin dışında bir biçim kullanmayın; aksi takdirde mod paketi profili bozulabilir.\n"
-"Ayrıca, kullandığınız URL'ye güvendiğinizden emin olun."
+"Ayrıca, kullandığınız URL'ye güvendiğinizden emin olun.\n"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:426
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:542
@@ -7504,7 +7504,7 @@ msgstr "Paket sürümü %1 bulunamadı."
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:114
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Could not understand pack manifest:\n"
-msgstr "Paket manifestosu anlaşılamadı:"
+msgstr "Paket manifestosu anlaşılamadı:\n"
 
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:131
 msgctxt "ModpacksCH::PackInstallTask|"
