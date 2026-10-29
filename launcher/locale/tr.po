@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2026-10-29 07:40\n"
+"PO-Revision-Date: 2026-10-29 08:48\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -3769,12 +3769,12 @@ msgstr "JVM değişkenleri:"
 #: launcher/ui/pages/global/JavaPage.ui:202
 msgctxt "JavaPage|"
 msgid "Auto-download Java"
-msgstr ""
+msgstr "Java'yı otomatik indir"
 
 #: launcher/ui/pages/global/JavaPage.ui:215
 msgctxt "JavaPage|"
 msgid "Auto-download from:"
-msgstr ""
+msgstr "Otomatik indirme kaynağı:"
 
 #: launcher/ui/pages/global/JavaPage.ui:231
 msgctxt "JavaPage|"
@@ -3784,52 +3784,52 @@ msgstr "Otomatik Bul..."
 #: launcher/ui/pages/global/JavaPage.ui:244
 msgctxt "JavaPage|"
 msgid "Test"
-msgstr ""
+msgstr "Deneme"
 
 #: launcher/ui/pages/global/JavaPage.ui:268
 msgctxt "JavaPage|"
 msgid "Installations"
-msgstr ""
+msgstr "Yüklemeler"
 
 #: launcher/ui/pages/global/JavaPage.ui:274
 msgctxt "JavaPage|"
 msgid "Installed Java Runtimes"
-msgstr ""
+msgstr "Yüklü Java Çalışma Zamanları"
 
 #: launcher/ui/pages/global/JavaPage.ui:287
 msgctxt "JavaPage|"
 msgid "Version"
-msgstr ""
+msgstr "Sürüm"
 
 #: launcher/ui/pages/global/JavaPage.ui:292
 msgctxt "JavaPage|"
 msgid "Vendor"
-msgstr ""
+msgstr "Sağlayıcı"
 
 #: launcher/ui/pages/global/JavaPage.ui:297
 msgctxt "JavaPage|"
 msgid "Path"
-msgstr ""
+msgstr "Dizin Yolu"
 
 #: launcher/ui/pages/global/JavaPage.ui:307
 msgctxt "JavaPage|"
 msgid "Download Java..."
-msgstr ""
+msgstr "Java'yı İndir..."
 
 #: launcher/ui/pages/global/JavaPage.ui:314
 msgctxt "JavaPage|"
 msgid "Refresh"
-msgstr ""
+msgstr "Yenile"
 
 #: launcher/ui/pages/global/JavaPage.ui:321
 msgctxt "JavaPage|"
 msgid "Remove"
-msgstr ""
+msgstr "Kaldır"
 
 #: launcher/ui/pages/global/JavaPage.ui:341
 msgctxt "JavaPage|"
 msgid "Use Selected"
-msgstr ""
+msgstr "Seçileni Kullan"
 
 #: launcher/ui/pages/global/JavaPage.cpp:145
 msgctxt "JavaPage|"
@@ -3844,19 +3844,20 @@ msgstr "Yürütülebilir Java'yı bul"
 #: launcher/ui/pages/global/JavaPage.cpp:225
 msgctxt "JavaPage|"
 msgid "Remove Java Installation"
-msgstr ""
+msgstr "Java Kurulumunu Kaldır"
 
 #: launcher/ui/pages/global/JavaPage.cpp:226
 #, qt-format
 msgctxt "JavaPage|"
 msgid "Are you sure you want to remove this Java installation?\n\n"
 "%1"
-msgstr ""
+msgstr "Bu Java kurulumunu kaldırmak istediğinizden emin misiniz?\n\n"
+"%1"
 
 #: launcher/ui/pages/global/JavaPage.h:47
 msgctxt "JavaPage|"
 msgid "Java"
-msgstr ""
+msgstr "Java"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:175
 msgctxt "JavaSettingsWidget|"
@@ -3869,7 +3870,10 @@ msgid "You didn't select a Java version or selected something that doesn't work.
 "MeshMC will not be able to start Minecraft.\n"
 "Do you wish to proceed without any Java?\n\n"
 "You can change the Java version in the settings later.\n"
-msgstr ""
+msgstr "Bir Java sürümü seçmediniz ya da çalışmayan bir sürüm seçtiniz.\n"
+"MeshMC, Minecraft'ı başlatamayacak.\n"
+"Herhangi bir Java sürümü olmadan devam etmek istiyor musunuz?\n\n"
+"Java sürümünü daha sonra ayarlardan değiştirebilirsiniz."
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:277
 msgctxt "JavaSettingsWidget|"
@@ -3914,19 +3918,21 @@ msgstr "Gözat"
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:137
 msgctxt "JavaWizardPage|"
 msgid "Java"
-msgstr ""
+msgstr "Java"
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:138
 msgctxt "JavaWizardPage|"
 msgid "You do not have a working Java set up yet or it went missing.\n"
 "Please select one of the following or browse for a java executable.\n"
 "You can also choose which vendor to use for automatic Java downloads."
-msgstr ""
+msgstr "Henüz çalışan bir Java kurulumunuz yok ya da kurulumunuz kaybolmuş.\n"
+"Lütfen aşağıdakilerden birini seçin veya bir Java yürütülebilir dosyası (executable) arayıp bulun.\n"
+"Ayrıca, otomatik Java indirmeleri için hangi sağlayıcıyı kullanacağınızı da seçebilirsiniz."
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:143
 msgctxt "JavaWizardPage|"
 msgid "Auto-download Java from:"
-msgstr ""
+msgstr "Java'yı şu adresten otomatik olarak indirin:"
 
 #: launcher/ui/pages/global/LanguagePage.h:40
 msgctxt "LanguagePage|"
@@ -3947,7 +3953,7 @@ msgstr "Dil"
 #: launcher/ui/setupwizard/LanguageWizardPage.cpp:64
 msgctxt "LanguageWizardPage|"
 msgid "Select the language to use in MeshMC"
-msgstr ""
+msgstr "MeshMC'de kullanılacak dili seçin"
 
 #: launcher/LaunchController.cpp:54
 msgctxt "LaunchController|"
@@ -3958,7 +3964,7 @@ msgstr "Belirtilen profil yok!"
 #: launcher/LaunchController.cpp:141
 msgctxt "LaunchController|"
 msgid "User"
-msgstr ""
+msgstr "Kullanıcı"
 
 #: launcher/LaunchController.cpp:92
 msgctxt "LaunchController|"
@@ -3968,17 +3974,17 @@ msgstr "Hesap Yok"
 #: launcher/LaunchController.cpp:93
 msgctxt "LaunchController|"
 msgid "In order to play Minecraft, you must have at least one Microsoft account logged in.Would you like to open the account manager to add an account now?"
-msgstr ""
+msgstr "Minecraft oynayabilmek için oturum açmış en az bir Microsoft hesabınızın bulunması gerekir. Bir hesap eklemek üzere hesap yöneticisini şimdi açmak ister misiniz?"
 
 #: launcher/LaunchController.cpp:107
 msgctxt "LaunchController|"
 msgid "No Account — Play Demo?"
-msgstr ""
+msgstr "Hesap Yok — Demo Oyna?"
 
 #: launcher/LaunchController.cpp:110
 msgctxt "LaunchController|"
 msgid "<b>No Microsoft account is linked.</b><br><br>Without a Microsoft account you cannot play the full version of Minecraft.<br><br><b>Demo Mode</b> lets you try Minecraft with the following limitations:<br>&nbsp;&bull;&nbsp;Only a small area of the world is accessible<br>&nbsp;&bull;&nbsp;Progress is not saved after the demo ends<br>&nbsp;&bull;&nbsp;Multiplayer is not available<br><br>Would you like to launch Minecraft in Demo Mode?"
-msgstr ""
+msgstr "<b>Herhangi bir Microsoft hesabı bağlı değil.</b><br><br>Bir Microsoft hesabınız olmadan Minecraft'ın tam sürümünü oynayamazsınız.<br><br><b>Demo Modu</b>, Minecraft'ı aşağıdaki kısıtlamalarla denemenize olanak tanır:<br>&nbsp;&bull;&nbsp;Dünyanın yalnızca küçük bir kısmına erişilebilir<br>&nbsp;&bull;&nbsp;Demo sona erdikten sonra ilerleme kaydedilmez<br>&nbsp;&bull;&nbsp;Çok oyunculu mod kullanılamaz<br><br>Minecraft'ı Demo Modunda başlatmak ister misiniz?"
 
 #: launcher/LaunchController.cpp:122 launcher/LaunchController.cpp:320
 msgctxt "LaunchController|"
@@ -3993,12 +3999,12 @@ msgstr "İptal"
 #: launcher/LaunchController.cpp:131
 msgctxt "LaunchController|"
 msgid "Demo Mode — Choose Username"
-msgstr ""
+msgstr "Demo Modu — Kullanıcı Adı Seçin"
 
 #: launcher/LaunchController.cpp:132
 msgctxt "LaunchController|"
 msgid "Enter a username to use in Demo Mode:"
-msgstr ""
+msgstr "Demo Modu'nda kullanılacak bir kullanıcı adı girin:"
 
 #: launcher/LaunchController.cpp:165
 msgctxt "LaunchController|"
@@ -4013,22 +4019,22 @@ msgstr "Başlatmak için hiçbir profil seçilmedi."
 #: launcher/LaunchController.cpp:208
 msgctxt "LaunchController|"
 msgid "Your account is currently not logged in. Please enter your password to log in again. <br /> <br /> This could be caused by a password change."
-msgstr ""
+msgstr "Hesabınız şu anda oturum açılmış durumda değil. Yeniden oturum açmak için lütfen parolanızı girin. <br /> <br /> Bunun nedeni, parolanızın değiştirilmiş olması olabilir."
 
 #: launcher/LaunchController.cpp:275
 msgctxt "LaunchController|"
 msgid "Player name"
-msgstr ""
+msgstr "Oyuncu adı"
 
 #: launcher/LaunchController.cpp:276
 msgctxt "LaunchController|"
 msgid "Choose your offline mode player name."
-msgstr ""
+msgstr "Çevrim dışı modda kullanacağınız oyuncu adınızı seçin."
 
 #: launcher/LaunchController.cpp:302
 msgctxt "LaunchController|"
 msgid "Received undetermined session status during login."
-msgstr ""
+msgstr "Oturum açma sırasında belirsiz oturum durumu alındı."
 
 #: launcher/LaunchController.cpp:314
 msgctxt "LaunchController|"
@@ -4057,7 +4063,7 @@ msgstr "Çevrım Dışı Oyna"
 #: launcher/LaunchController.cpp:363
 msgctxt "LaunchController|"
 msgid "The account has expired and needs to be logged into manually again."
-msgstr ""
+msgstr "Hesabın süresi dolmuştur; yeniden manuel olarak giriş yapılması gerekmektedir."
 
 #: launcher/LaunchController.cpp:366
 msgctxt "LaunchController|"
@@ -4137,22 +4143,22 @@ msgstr "İptal Et"
 #: launcher/LaunchController.cpp:625
 msgctxt "LaunchController|"
 msgid "Already stopping"
-msgstr ""
+msgstr "Şimdiden duruyor"
 
 #: launcher/LaunchController.cpp:626
 msgctxt "LaunchController|"
 msgid "MeshMC is already shutting this instance down. Give it a few seconds - if the game does not react, it gets killed automatically."
-msgstr ""
+msgstr "MeshMC bu profili hâlihazırda kapatıyor. Birkaç saniye bekleyin; oyun tepki vermezse otomatik olarak sonlandırılacaktır."
 
 #: launcher/LaunchController.cpp:633
 msgctxt "LaunchController|"
 msgid "Can't kill Minecraft"
-msgstr ""
+msgstr "Minecraft'ı öldürülemiyor"
 
 #: launcher/LaunchController.cpp:634
 msgctxt "LaunchController|"
 msgid "This instance is at a point in the launch process that can't be interrupted. Please try again in a moment."
-msgstr ""
+msgstr "Bu örnek, başlatma sürecinin kesintiye uğratılamayacak bir noktasındadır. Lütfen kısa bir süre sonra tekrar deneyin."
 
 #: launcher/LaunchController.cpp:642
 msgctxt "LaunchController|"
@@ -4242,7 +4248,7 @@ msgstr "ZIP'ten çıkartılmış Minecraft taşınamadı!"
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:181
 msgctxt "LegacyFTB::PackInstallTask|"
 msgid "Failed to open pack.json!"
-msgstr ""
+msgstr "pack.json dosyası açılamadı!"
 
 #: launcher/modplatform/legacy_ftb/PackInstallTask.cpp:227
 msgctxt "LegacyFTB::PackInstallTask|"
@@ -4331,7 +4337,7 @@ msgstr "Eski sürümlerden profil dosyası."
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:29
 msgctxt "LegacyUpgradePage|"
 msgid "<html><body><h1>Upgrade is required</h1><p>MeshMC now supports old Minecraft versions and all the required features in the new (OneSix) instance format. As a consequence, the old (Legacy) format has been entirely disabled and old instances need to be upgraded.</p><p>The upgrade will create a new instance with the same contents as the current one, in the new format. The original instance will remain untouched, in case anything goes wrong in the process.</p><p>Please report any issues on our <a href=\"https://github.com/Project-Tick/MeshMC/issues\">GitHub page</a>.</p><p>There is also a <a href=\"https://discord.gg/PMxPTqwEwj\">discord channel for testing here</a>.</p></body></html>"
-msgstr ""
+msgstr "<html><body><h1>Yükseltme gerekiyor</h1><p>MeshMC artık eski Minecraft sürümlerini ve yeni (OneSix) örnek biçimindeki tüm gerekli özellikleri destekliyor. Bu nedenle, eski (Legacy) biçim tamamen devre dışı bırakıldı ve mevcut örneklerin yükseltilmesi gerekiyor.</p><p>Yükseltme işlemi, mevcut örneğinizle aynı içeriğe sahip, yeni biçimde bir örnek oluşturacaktır. İşlem sırasında bir sorun yaşanması ihtimaline karşı, orijinal örneğiniz olduğu gibi korunacaktır.</p><p>Karşılaştığınız sorunları lütfen <a href=\"https://github.com/Project-Tick/MeshMC/issues\">GitHub sayfamız</a> üzerinden bildirin.</p><p>Ayrıca, test süreçleri için bir <a href=\"https://discord.gg/PMxPTqwEwj\">Discord kanalımız</a> da mevcuttur.</p></body></html>"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:39
 msgctxt "LegacyUpgradePage|"
@@ -4422,19 +4428,19 @@ msgstr "Oyun güncellemesi başarısız: zorunlu kütüphanelerin getirilmesi im
 #, qt-format
 msgctxt "LoaderVersionPage|"
 msgid "%1 does not run on Minecraft %2. The earliest version it supports is %3."
-msgstr ""
+msgstr "%1, Minecraft %2 üzerinde çalışmaz. Desteklediği en eski sürüm %3'tür."
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:52
 #, qt-format
 msgctxt "LoaderVersionPage|"
 msgid "No %1 builds are published for Minecraft %2."
-msgstr ""
+msgstr "Minecraft %2 için hiçbir %1 sürümü yayımlanmamıştır."
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:55
 #, qt-format
 msgctxt "LoaderVersionPage|"
 msgid "The %1 version list could not be downloaded."
-msgstr ""
+msgstr "%1 sürüm listesi indirilemedi."
 
 #: launcher/ui/pages/instance/LogPage.ui:60
 msgctxt "LogPage|"
@@ -4506,7 +4512,7 @@ msgstr "Minecraft Sistem Kayıtları"
 #, qt-format
 msgctxt "LoggedProcess|"
 msgid "Process exited with code %1."
-msgstr ""
+msgstr "İşlem %1 koduyla sonlandı."
 
 #. Message displayed on instance crashed
 #: launcher/LoggedProcess.cpp:125
@@ -4518,7 +4524,7 @@ msgstr "İşlem çöktü."
 #, qt-format
 msgctxt "LoggedProcess|"
 msgid "Process crashed with exitcode %1."
-msgstr ""
+msgstr "İşlem, %1 çıkış koduyla çöktü."
 
 #. Message displayed after the instance exits due to kill request
 #: launcher/LoggedProcess.cpp:134
@@ -4534,28 +4540,28 @@ msgstr "İşlem başlatılamadı."
 #: launcher/ui/dialogs/MSALoginDialog.ui:20
 msgctxt "MSALoginDialog|"
 msgid "Add Microsoft Account"
-msgstr ""
+msgstr "Microsoft Hesabı Ekle"
 
 #: launcher/ui/dialogs/MSALoginDialog.cpp:44
 msgctxt "MSALoginDialog|"
 msgid "Opening your browser for Microsoft login..."
-msgstr ""
+msgstr "Microsoft girişi için tarayıcınız açılıyor..."
 
 #: launcher/ui/dialogs/MSALoginDialog.cpp:73
 msgctxt "MSALoginDialog|"
 msgid "here"
-msgstr ""
+msgstr "burada"
 
 #: launcher/ui/dialogs/MSALoginDialog.cpp:75
 #, qt-format
 msgctxt "MSALoginDialog|"
 msgid "<p>A browser window will open for Microsoft login.</p><p>If it doesn't open automatically, click %1.</p>"
-msgstr ""
+msgstr "<p>Microsoft oturum açma işlemi için bir tarayıcı penceresi açılacaktır.</p><p>Otomatik olarak açılmazsa %1 öğesine tıklayın.</p>"
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:35
 msgctxt "MSAStep|"
 msgid "Login successful! You can close this page and return to MeshMC."
-msgstr ""
+msgstr "Giriş başarılı! Bu sayfayı kapatıp MeshMC'ye dönebilirsiniz."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:62
 msgctxt "MSAStep|"
@@ -4565,62 +4571,62 @@ msgstr "Microsoft hesabıyla oturum açılıyor."
 #: launcher/minecraft/auth/steps/MSAStep.cpp:97
 msgctxt "MSAStep|"
 msgid "Failed to start local HTTP server for OAuth2 callback."
-msgstr ""
+msgstr "OAuth2 geri çağırma işlemi için yerel HTTP sunucusu başlatılamadı."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:141
 msgctxt "MSAStep|"
 msgid "Got MSA token."
-msgstr ""
+msgstr "MSA belirteci alındı."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:152
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed due to a network error."
-msgstr ""
+msgstr "Ağ hatası nedeniyle Microsoft kimlik doğrulaması başarısız oldu."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:159
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed."
-msgstr ""
+msgstr "Microsoft kimlik doğrulaması başarısız oldu."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:164
 msgctxt "MSAStep|"
 msgid "Microsoft authentication token expired."
-msgstr ""
+msgstr "Microsoft kimlik doğrulama belirtecinin süresi doldu."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:169
 msgctxt "MSAStep|"
 msgid "Microsoft authentication failed with an unrecognized error."
-msgstr ""
+msgstr "Microsoft kimlik doğrulaması, tanımlanamayan bir hata nedeniyle başarısız oldu."
 
 #: launcher/ui/MacMenuBar.cpp:136
 msgctxt "MacMenuBar|"
 msgid "&File"
-msgstr ""
+msgstr "&Dosya"
 
 #: launcher/ui/MacMenuBar.cpp:137
 msgctxt "MacMenuBar|"
 msgid "&Instance"
-msgstr ""
+msgstr "&Profil"
 
 #: launcher/ui/MacMenuBar.cpp:138
 msgctxt "MacMenuBar|"
 msgid "F&olders"
-msgstr ""
+msgstr "D&izinler"
 
 #: launcher/ui/MacMenuBar.cpp:139
 msgctxt "MacMenuBar|"
 msgid "&View"
-msgstr ""
+msgstr "&Görüntü"
 
 #: launcher/ui/MacMenuBar.cpp:143
 msgctxt "MacMenuBar|"
 msgid "&Help"
-msgstr ""
+msgstr "&Yardım"
 
 #: launcher/ui/MainWindow.ui:41
 msgctxt "MainWindow|"
 msgid "Instance ToolBar"
-msgstr ""
+msgstr "Profil Araç Çubuğu"
 
 #: launcher/ui/MainWindow.ui:77
 msgctxt "MainWindow|"
@@ -4635,37 +4641,37 @@ msgstr "Haberler Araç Çubuğu"
 #: launcher/ui/MainWindow.ui:143
 msgctxt "MainWindow|"
 msgid "&File"
-msgstr ""
+msgstr "&Dosya"
 
 #: launcher/ui/MainWindow.ui:166
 msgctxt "MainWindow|"
 msgid "&Edit"
-msgstr ""
+msgstr "D&üzenle"
 
 #: launcher/ui/MainWindow.ui:178
 msgctxt "MainWindow|"
 msgid "&Instance"
-msgstr ""
+msgstr "&Profil"
 
 #: launcher/ui/MainWindow.ui:196
 msgctxt "MainWindow|"
 msgid "&View"
-msgstr ""
+msgstr "&Görüntü"
 
 #: launcher/ui/MainWindow.ui:208
 msgctxt "MainWindow|"
 msgid "F&olders"
-msgstr ""
+msgstr "D&izinler"
 
 #: launcher/ui/MainWindow.ui:229
 msgctxt "MainWindow|"
 msgid "&Help"
-msgstr ""
+msgstr "&Yardım"
 
 #: launcher/ui/MainWindow.ui:245
 msgctxt "MainWindow|"
 msgid "&Accounts"
-msgstr ""
+msgstr "&Hesaplar"
 
 #: launcher/ui/MainWindow.ui:261
 msgctxt "MainWindow|"
@@ -4680,27 +4686,27 @@ msgstr "Yeni profil ekle."
 #: launcher/ui/MainWindow.ui:275
 msgctxt "MainWindow|"
 msgid "Undo Last Instance Deletion"
-msgstr ""
+msgstr "Son Silme İşlemini Geri Al"
 
 #: launcher/ui/MainWindow.ui:278 launcher/ui/MainWindow.cpp:866
 msgctxt "MainWindow|"
 msgid "Bring the instance you last sent to the trash back, along with its shortcuts."
-msgstr ""
+msgstr "En son çöpe gönderdiğiniz öğeyi, kısayollarıyla birlikte geri getirin."
 
 #: launcher/ui/MainWindow.ui:289
 msgctxt "MainWindow|"
 msgid "Launcher Root"
-msgstr ""
+msgstr "Başlatıcı Kökü"
 
 #: launcher/ui/MainWindow.ui:292
 msgctxt "MainWindow|"
 msgid "Open the launcher's root folder in a file browser."
-msgstr ""
+msgstr "Başlatıcının kök klasörünü bir dosya tarayıcısında açın."
 
 #: launcher/ui/MainWindow.ui:303
 msgctxt "MainWindow|"
 msgid "Instances"
-msgstr ""
+msgstr "Profiller"
 
 #: launcher/ui/MainWindow.ui:306
 msgctxt "MainWindow|"
@@ -4710,7 +4716,7 @@ msgstr "Profil klasörünü dosya tarayıcısında aç."
 #: launcher/ui/MainWindow.ui:317
 msgctxt "MainWindow|"
 msgid "Central Mods"
-msgstr ""
+msgstr "Merkezi Modlar"
 
 #: launcher/ui/MainWindow.ui:320
 msgctxt "MainWindow|"
@@ -4720,72 +4726,72 @@ msgstr "Merkezi mod klasörünü dosya tarayıcısında aç."
 #: launcher/ui/MainWindow.ui:331
 msgctxt "MainWindow|"
 msgid "Skins"
-msgstr ""
+msgstr "Skinler"
 
 #: launcher/ui/MainWindow.ui:334
 msgctxt "MainWindow|"
 msgid "Open the skins folder in a file browser."
-msgstr ""
+msgstr "Dosya gezgininde skins klasörünü açın."
 
 #: launcher/ui/MainWindow.ui:345
 msgctxt "MainWindow|"
 msgid "Java"
-msgstr ""
+msgstr "Java"
 
 #: launcher/ui/MainWindow.ui:348
 msgctxt "MainWindow|"
 msgid "Open the Java folder in a file browser. Only available if the built-in Java downloader is used."
-msgstr ""
+msgstr "Dosya tarayıcısında Java klasörünü açın. Yalnızca yerleşik Java indiricisi kullanıldığında geçerlidir."
 
 #: launcher/ui/MainWindow.ui:359
 msgctxt "MainWindow|"
 msgid "Icon Theme"
-msgstr ""
+msgstr "Simge Teması"
 
 #: launcher/ui/MainWindow.ui:362
 msgctxt "MainWindow|"
 msgid "Open the icon theme folder in a file browser."
-msgstr ""
+msgstr "Simge teması klasörünü bir dosya tarayıcısında açın."
 
 #: launcher/ui/MainWindow.ui:373
 msgctxt "MainWindow|"
 msgid "Widget Themes"
-msgstr ""
+msgstr "Araç Temaları"
 
 #: launcher/ui/MainWindow.ui:376
 msgctxt "MainWindow|"
 msgid "Open the widget themes folder in a file browser."
-msgstr ""
+msgstr "Dosya tarayıcısında araç temaları klasörünü açın."
 
 #: launcher/ui/MainWindow.ui:387
 msgctxt "MainWindow|"
 msgid "Cat Packs"
-msgstr ""
+msgstr "Kedi Paketleri"
 
 #: launcher/ui/MainWindow.ui:390
 msgctxt "MainWindow|"
 msgid "Open the cat packs folder in a file browser."
-msgstr ""
+msgstr "Bir dosya tarayıcısında kedi paketleri klasörünü açın."
 
 #: launcher/ui/MainWindow.ui:401
 msgctxt "MainWindow|"
 msgid "Instance Icons"
-msgstr ""
+msgstr "Örnek Simgeleri"
 
 #: launcher/ui/MainWindow.ui:404
 msgctxt "MainWindow|"
 msgid "Open the instance icons folder in a file browser."
-msgstr ""
+msgstr "Dosya tarayıcısında profil simgeleri klasörünü açın."
 
 #: launcher/ui/MainWindow.ui:415
 msgctxt "MainWindow|"
 msgid "Logs"
-msgstr ""
+msgstr "Kayıtlar"
 
 #: launcher/ui/MainWindow.ui:418
 msgctxt "MainWindow|"
 msgid "Open the logs folder in a file browser."
-msgstr ""
+msgstr "Dosya gezgininde kayıtlar klasörünü açın."
 
 #: launcher/ui/MainWindow.ui:429
 msgctxt "MainWindow|"
@@ -4800,12 +4806,12 @@ msgstr "Ayarları değiştir."
 #: launcher/ui/MainWindow.ui:443
 msgctxt "MainWindow|"
 msgid "MeshMC Logs"
-msgstr ""
+msgstr "MeshMC Günlükleri"
 
 #: launcher/ui/MainWindow.ui:446
 msgctxt "MainWindow|"
 msgid "View and manage MeshMC application logs."
-msgstr ""
+msgstr "MeshMC uygulama günlüklerini görüntüleyin ve yönetin."
 
 #: launcher/ui/MainWindow.ui:457
 #, qt-format
@@ -4837,27 +4843,27 @@ msgstr "Hesapları Yönet"
 #: launcher/ui/MainWindow.ui:494
 msgctxt "MainWindow|"
 msgid "Manage Microsoft Accounts."
-msgstr ""
+msgstr "Microsoft Hesaplarını yönetin."
 
 #: launcher/ui/MainWindow.ui:505
 msgctxt "MainWindow|"
 msgid "Manage Skins"
-msgstr ""
+msgstr "Görünümleri Yönet"
 
 #: launcher/ui/MainWindow.ui:508
 msgctxt "MainWindow|"
 msgid "Manage the skins of the currently selected account."
-msgstr ""
+msgstr "Şu anda seçili olan hesabın görünümlerini yönetin."
 
 #: launcher/ui/MainWindow.ui:519
 msgctxt "MainWindow|"
 msgid "Lock Toolbars"
-msgstr ""
+msgstr "Araç Çubuklarını Kilitle"
 
 #: launcher/ui/MainWindow.ui:522
 msgctxt "MainWindow|"
 msgid "Prevent the toolbars from being dragged around."
-msgstr ""
+msgstr "Araç çubuklarının sürüklenerek yerlerinin değiştirilmesini önleyin."
 
 #: launcher/ui/MainWindow.ui:533
 msgctxt "MainWindow|"
@@ -4873,12 +4879,12 @@ msgstr "%1 hakkında daha fazla haber için %1 geliştirici blogunu aç."
 #: launcher/ui/MainWindow.ui:547
 msgctxt "MainWindow|"
 msgid "Menu Bar Instead of Tool Bar"
-msgstr ""
+msgstr "Araç Çubuğu Yerine Menü Çubuğu"
 
 #: launcher/ui/MainWindow.ui:550
 msgctxt "MainWindow|"
 msgid "Keep this menu bar and hide the main toolbar. Without it, tap Alt to show the menu bar for a moment."
-msgstr ""
+msgstr "Bu menü çubuğunu tutun ve ana araç çubuğunu gizleyin. Araç çubuğu gizliyken, menü çubuğunu kısa bir süreliğine görüntülemek için Alt tuşuna basın."
 
 #: launcher/ui/MainWindow.ui:558
 msgctxt "MainWindow|"
@@ -4918,12 +4924,12 @@ msgstr "Durdur"
 #: launcher/ui/MainWindow.ui:603
 msgctxt "MainWindow|"
 msgid "Kill the running instance."
-msgstr ""
+msgstr "Çalışan profili durdur."
 
 #: launcher/ui/MainWindow.ui:606
 msgctxt "MainWindow|"
 msgid "Ctrl+K"
-msgstr ""
+msgstr "Ctrl+K"
 
 #: launcher/ui/MainWindow.ui:617 launcher/ui/MainWindow.cpp:944
 msgctxt "MainWindow|"
@@ -4948,12 +4954,12 @@ msgstr "Profil ayarlarını, modları ve sürümleri değiştir."
 #: launcher/ui/MainWindow.ui:645
 msgctxt "MainWindow|"
 msgid "Instance Settings"
-msgstr ""
+msgstr "Profil Ayarları"
 
 #: launcher/ui/MainWindow.ui:648
 msgctxt "MainWindow|"
 msgid "Open the settings for the selected instance."
-msgstr ""
+msgstr "Seçili profil için ayarları açın."
 
 #: launcher/ui/MainWindow.ui:659
 msgctxt "MainWindow|"
@@ -5048,7 +5054,7 @@ msgstr "Seçili profilin kök dizinini dosya tarayıcısında aç."
 #: launcher/ui/MainWindow.ui:785
 msgctxt "MainWindow|"
 msgid "E&xport..."
-msgstr ""
+msgstr "Dışa &Aktar..."
 
 #: launcher/ui/MainWindow.ui:788
 msgctxt "MainWindow|"
@@ -5058,23 +5064,23 @@ msgstr "Profili Dışa Aktar"
 #: launcher/ui/MainWindow.ui:791
 msgctxt "MainWindow|"
 msgid "Export the selected instance to supported formats."
-msgstr ""
+msgstr "Seçili örneği desteklenen biçimlere dışa aktarın."
 
 #: launcher/ui/MainWindow.ui:802
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr ""
+msgstr "%1 (zip)"
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
-msgstr ""
+msgstr "Modrinth (mrpack)"
 
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr ""
+msgstr "CurseForge (zip)"
 
 #: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
@@ -5104,7 +5110,7 @@ msgstr "Kısayol Yarat"
 #: launcher/ui/MainWindow.ui:866
 msgctxt "MainWindow|"
 msgid "Create a shortcut in a folder of your choosing that launches the selected instance."
-msgstr ""
+msgstr "Seçili örneği başlatan bir kısayolu, dilediğiniz bir klasörde oluşturun."
 
 #: launcher/ui/MainWindow.ui:877
 msgctxt "MainWindow|"
@@ -5120,7 +5126,7 @@ msgstr "%1'ye sorun bildirmek için hata izleyiciyi aç."
 #: launcher/ui/MainWindow.ui:891
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr ""
+msgstr "Discord"
 
 #: launcher/ui/MainWindow.ui:894
 #, qt-format
@@ -5131,7 +5137,7 @@ msgstr "%1 discord sesli konuşmasını aç."
 #: launcher/ui/MainWindow.ui:905
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr ""
+msgstr "Reddit"
 
 #: launcher/ui/MainWindow.ui:908
 #, qt-format
@@ -5142,12 +5148,12 @@ msgstr "%1 subreddit'ini aç."
 #: launcher/ui/MainWindow.ui:919
 msgctxt "MainWindow|"
 msgid "Plugins"
-msgstr ""
+msgstr "Pluginler"
 
 #: launcher/ui/MainWindow.ui:922
 msgctxt "MainWindow|"
 msgid "View and manage MMCO Plugins."
-msgstr ""
+msgstr "MMCO Eklentilerini görüntüleyin ve yönetin."
 
 #: launcher/ui/MainWindow.ui:933
 msgctxt "MainWindow|"
@@ -5197,7 +5203,7 @@ msgstr "%1 veya Minecraft hakkında yardım al."
 #: launcher/ui/MainWindow.cpp:1150
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr ""
+msgstr "Profiller"
 
 #: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
 msgctxt "MainWindow|"
@@ -5213,7 +5219,7 @@ msgstr "Toplam oynama süresi: 0s"
 #, qt-format
 msgctxt "MainWindow|MeshMC - Version X"
 msgid "MeshMC - Version %1"
-msgstr ""
+msgstr "MeshMC - Sürüm %1"
 
 #: launcher/ui/MainWindow.cpp:682
 #, qt-format
@@ -5236,17 +5242,17 @@ msgstr "'%1' grubunu sil"
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Undo Deletion of \"%1\""
-msgstr ""
+msgstr "\"%1\" öğesinin silinmesini geri al"
 
 #: launcher/ui/MainWindow.cpp:952
 msgctxt "MainWindow|"
 msgid "Launch &Demo"
-msgstr ""
+msgstr "&Demoyu Başlat"
 
 #: launcher/ui/MainWindow.cpp:960
 msgctxt "MainWindow|"
 msgid "This Minecraft version has no demo mode. It was added in 1.3.1."
-msgstr ""
+msgstr "Bu Minecraft sürümünde demo modu bulunmuyor. Demo modu 1.3.1 sürümüyle eklenmişti."
 
 #: launcher/ui/MainWindow.cpp:967
 msgctxt "MainWindow|"
@@ -5256,7 +5262,7 @@ msgstr "Profilleyiciler"
 #: launcher/ui/MainWindow.cpp:974
 msgctxt "MainWindow|"
 msgid "No Profiler"
-msgstr ""
+msgstr "Profilleyici Yok"
 
 #: launcher/ui/MainWindow.cpp:993
 msgctxt "MainWindow|"
@@ -5266,7 +5272,7 @@ msgstr "Profilleyici doğru kurulmamış. Ayarlar'dan \"Harici Araçlar\"a git."
 #: launcher/ui/MainWindow.cpp:1011
 msgctxt "MainWindow|"
 msgid "Launch &As"
-msgstr ""
+msgstr "Şu Şekilde B&aşlat"
 
 #: launcher/ui/MainWindow.cpp:1048
 msgctxt "MainWindow|"
@@ -5297,50 +5303,51 @@ msgstr "Hata"
 #: launcher/ui/MainWindow.cpp:1278
 msgctxt "MainWindow|"
 msgid "Warnings"
-msgstr ""
+msgstr "Uyarılar"
 
 #: launcher/ui/MainWindow.cpp:1283 launcher/ui/MainWindow.cpp:1328
 msgctxt "MainWindow|"
 msgid "Abort"
-msgstr ""
+msgstr "İptal Et"
 
 #: launcher/ui/MainWindow.cpp:1334
 msgctxt "MainWindow|"
 msgid "MeshMC cannot download Minecraft or update instances unless you have at least one account added.\n"
 "Please add your Mojang or Minecraft account."
-msgstr ""
+msgstr "MeshMC, en az bir hesap eklemediğiniz sürece Minecraft'ı indiremez veya örnekleri (instance) güncelleyemez.\n"
+"Lütfen Mojang veya Minecraft hesabınızı ekleyin."
 
 #: launcher/ui/MainWindow.cpp:1471
 msgctxt "MainWindow|"
 msgid "Group name"
-msgstr ""
+msgstr "Grup adı"
 
 #: launcher/ui/MainWindow.cpp:1472
 msgctxt "MainWindow|"
 msgid "Enter a new group name."
-msgstr ""
+msgstr "Yeni bir grup adı girin."
 
 #: launcher/ui/MainWindow.cpp:1494
 msgctxt "MainWindow|"
 msgid "Delete group"
-msgstr ""
+msgstr "Grubu sil"
 
 #: launcher/ui/MainWindow.cpp:1495
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Are you sure you want to delete the group %1"
-msgstr ""
+msgstr "%1 grubunu silmek istediğinizden emin misiniz?"
 
 #: launcher/ui/MainWindow.cpp:1710
 msgctxt "MainWindow|"
 msgid "Instance is running"
-msgstr ""
+msgstr "Profil çalışıyor"
 
 #: launcher/ui/MainWindow.cpp:1711
 #, qt-format
 msgctxt "MainWindow|"
 msgid "\"%1\" is running. Stop it first -- deleting an instance while the game has its files open would leave both in a mess."
-msgstr ""
+msgstr "\"%1\" çalışıyor. Öncelikle onu durdurun; oyun dosyaları açıkken bir profili silmek, her ikisinin de birbirine girmesine ve bozulmasına yol açar."
 
 #: launcher/ui/MainWindow.cpp:1727
 #, qt-format
@@ -5349,23 +5356,25 @@ msgid "\n\n"
 "%n shortcut(s) to it will go the same way."
 msgid_plural "\n\n"
 "%n shortcut(s) to it will go the same way."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "\n\n"
+"Ona giden %n kısayol da aynı akıbete uğrayacak."
+msgstr[1] "\n\n"
+"Ona giden %n kısayol da aynı akıbete uğrayacak."
 
 #: launcher/ui/MainWindow.cpp:1737
 msgctxt "MainWindow|"
 msgid "It will be moved to the trash. To bring it back, right-click the instance list and pick Restore."
-msgstr ""
+msgstr "Çöp kutusuna taşınacaktır. Geri getirmek için örnek listesine sağ tıklayın ve Geri Yükle seçeneğini belirleyin."
 
 #: launcher/ui/MainWindow.cpp:1739
 msgctxt "MainWindow|"
 msgid "There is no usable trash on this system, so this is permanent."
-msgstr ""
+msgstr "Bu sistemde kullanılabilir bir çöp kutusu bulunmuyor, dolayısıyla bu işlem kalıcıdır."
 
 #: launcher/ui/MainWindow.cpp:1747
 msgctxt "MainWindow|"
 msgid "Delete instance?"
-msgstr ""
+msgstr "Profil silinsin mi?"
 
 #: launcher/ui/MainWindow.cpp:1748
 #, qt-format
@@ -5373,141 +5382,143 @@ msgctxt "MainWindow|"
 msgid "About to delete: %1\n"
 "%2%3\n\n"
 "Are you sure?"
-msgstr ""
+msgstr "Silinmek üzere: %1\n"
+"%2%3\n\n"
+"Emin misiniz?"
 
 #: launcher/ui/MainWindow.cpp:1785
 msgctxt "MainWindow|"
 msgid "Restore Instance"
-msgstr ""
+msgstr "Örneği Geri Yükle"
 
 #: launcher/ui/MainWindow.cpp:1786
 msgctxt "MainWindow|"
 msgid "Not everything could be put back. Check your trash to recover the rest by hand."
-msgstr ""
+msgstr "Her şey geri yerleştirilemedi. Geri kalanları elle kurtarmak için çöp kutunuzu kontrol edin."
 
 #: launcher/ui/MainWindow.cpp:1844
 msgctxt "MainWindow|"
 msgid "Cannot export"
-msgstr ""
+msgstr "Dışa aktarılamıyor"
 
 #: launcher/ui/MainWindow.cpp:1845
 msgctxt "MainWindow|"
 msgid "CurseForge modpacks cannot be made from a snapshot version of Minecraft."
-msgstr ""
+msgstr "CurseForge mod paketleri, Minecraft'ın anlık sürümü (snapshot) kullanılarak oluşturulamaz."
 
 #: launcher/ui/MainWindow.cpp:2097
 msgctxt "MainWindow|"
 msgid "Rename Instance"
-msgstr ""
+msgstr "Örneği Yeniden Adlandır"
 
 #: launcher/ui/MainWindow.cpp:2119
 msgctxt "MainWindow|"
 msgid "This is a problem: <br/> - MeshMC will likely be deleted without warning by the operating system <br/> - close MeshMC now and extract it to a real location, not a temporary folder"
-msgstr ""
+msgstr "Bu bir sorundur: <br/> - MeshMC, işletim sistemi tarafından muhtemelen hiçbir uyarı verilmeksizin silinecektir <br/> - MeshMC'yi hemen kapatın ve geçici bir klasöre değil, kalıcı bir konuma çıkartın"
 
 #: launcher/ui/MainWindow.cpp:2131
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains '!' and this is known to cause Java problems!"
-msgstr ""
+msgstr "'%1' adlı örnek klasörünüz '!' karakterini içeriyor; bunun Java ile ilgili sorunlara yol açtığı bilinmektedir!"
 
 #: launcher/ui/MainWindow.cpp:2135
 msgctxt "MainWindow|"
 msgid "You have now two options: <br/> - change the instance folder in the settings <br/> - move this installation of MeshMC to a different folder"
-msgstr ""
+msgstr "Artık iki seçeneğiniz var: <br/> - ayarlardan profil klasörünü değiştirmek <br/> - MeshMC'nin bu kurulumunu farklı bir klasöre taşımak"
 
 #: launcher/ui/MainWindow.cpp:2146
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' contains 'Rar$' - that means you haven't extracted MeshMC archive!"
-msgstr ""
+msgstr "'%1' adlı profil klasörünüz 'Rar$' içeriyor; bu, MeshMC arşivini henüz dışa aktarmadığınız anlamına gelir!"
 
 #: launcher/ui/MainWindow.cpp:2156
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder '%1' is in a temporary folder: '%2'!"
-msgstr ""
+msgstr "Örnek klasörünüz '%1', geçici bir klasör olan '%2' içinde bulunuyor!"
 
 #: launcher/ui/MainWindow.cpp:2174
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Total playtime: %1"
-msgstr ""
+msgstr "Toplam oynama süresi: %1"
 
 #: launcher/modplatform/ManagedPackVersions.cpp:117
 #, qt-format
 msgctxt "ManagedPack|"
 msgid " for %1"
-msgstr ""
+msgstr " %1 için"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:37
 msgctxt "ManagedPackPage|"
 msgid "Pack Information"
-msgstr ""
+msgstr "Paket Bilgisi"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:45
 msgctxt "ManagedPackPage|"
 msgid "Pack Name:"
-msgstr ""
+msgstr "Paket Adı:"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:63
 msgctxt "ManagedPackPage|"
 msgid "Current version:"
-msgstr ""
+msgstr "Mevcut sürüm:"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:87
 msgctxt "ManagedPackPage|"
 msgid "Provider information:"
-msgstr ""
+msgstr "Sağlayıcı bilgileri:"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:133
 msgctxt "ManagedPackPage|"
 msgid "Update to version:"
-msgstr ""
+msgstr "Sürüm güncellemesi:"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:155
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:347
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:931
 msgctxt "ManagedPackPage|"
 msgid "Fetching versions..."
-msgstr ""
+msgstr "Sürümler getiriliyor..."
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:168
 msgctxt "ManagedPackPage|"
 msgid "Update From File"
-msgstr ""
+msgstr "Dosyadan Güncelle"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:183
 msgctxt "ManagedPackPage|"
 msgid "Changelog"
-msgstr ""
+msgstr "Değişiklik günlüğü"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:189
 msgctxt "ManagedPackPage|"
 msgid "No changelog available for this version!"
-msgstr ""
+msgstr "Bu sürüm için herhangi bir değişiklik günlüğü bulunmuyor!"
 
 #: launcher/ui/pages/instance/ManagedPackPage.ui:204
 msgctxt "ManagedPackPage|"
 msgid "Reload page"
-msgstr ""
+msgstr "Sayfayı yeniden yükle"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:308
 #, qt-format
 msgctxt "ManagedPackPage|"
 msgid "Website: <a href=%1>%2</a>    |    Pack ID: %3    |    Version ID: %4"
-msgstr ""
+msgstr "Web sitesi: <a href=%1>%2</a>    | Paket Kimliği: %3    | Sürüm Kimliği: %4"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:323
 msgctxt "ManagedPackPage|"
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:324
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:547
 msgctxt "ManagedPackPage|"
 msgid "Update Pack"
-msgstr ""
+msgstr "Paketi Güncelle"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:330
 #, qt-format
@@ -5516,92 +5527,95 @@ msgid "This is a local modpack.\n"
 "This can be updated either using a file in %1 format or an URL.\n"
 "Do not use a different format than the one mentioned as it may break the instance.\n"
 "Make sure you also trust the URL.\n"
-msgstr ""
+msgstr "Bu, yerel bir mod paketidir.\n"
+"Bu paket, %1 biçimindeki bir dosya ya da bir URL kullanılarak güncellenebilir.\n"
+"Belirtilenin dışında bir biçim kullanmayın; aksi takdirde mod paketi profili bozulabilir.\n"
+"Ayrıca, kullandığınız URL'ye güvendiğinizden emin olun."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:426
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:542
 msgctxt "ManagedPackPage|"
 msgid "Fetching changelogs..."
-msgstr ""
+msgstr "Değişiklik günlükleri getiriliyor..."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:504
 #, qt-format
 msgctxt "ManagedPackPage|"
 msgid "%1 (Current)"
-msgstr ""
+msgstr "%1 (Mevcut)"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:553
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:669
 msgctxt "ManagedPackPage|"
 msgid "Cannot update!"
-msgstr ""
+msgstr "Güncellenemiyor!"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:620
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:667
 msgctxt "ManagedPackPage|"
 msgid "Failed to request changelog data for this modpack."
-msgstr ""
+msgstr "Bu mod paketi için değişiklik günlüğü verileri istenemedi."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:663
 msgctxt "ManagedPackPage|"
 msgid "Failed to search for available versions."
-msgstr ""
+msgstr "Mevcut sürümler aranamadı."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:684
 msgctxt "ManagedPackPage|"
 msgid "No URL"
-msgstr ""
+msgstr "URL Yok"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:685
 msgctxt "ManagedPackPage|"
 msgid "Enter the URL of the modpack to update from, or use \"Update From File\" instead."
-msgstr ""
+msgstr "Güncellemenin yapılacağı mod paketinin URL'sini girin ya da bunun yerine \"Dosyadan Güncelle\" seçeneğini kullanın."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:696
 msgctxt "ManagedPackPage|"
 msgid "Invalid URL"
-msgstr ""
+msgstr "Geçersiz URL"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:697
 #, qt-format
 msgctxt "ManagedPackPage|"
 msgid "\"%1\" is not a valid http or https URL."
-msgstr ""
+msgstr "\"%1\" geçerli bir http veya https URL'si değildir."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:739
 msgctxt "ManagedPackPage|"
 msgid "Modrinth pack"
-msgstr ""
+msgstr "Modrinth paketi"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:742
 msgctxt "ManagedPackPage|"
 msgid "CurseForge pack"
-msgstr ""
+msgstr "CurseForge paketi"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:745
 msgctxt "ManagedPackPage|"
 msgid "Modpack"
-msgstr ""
+msgstr "Mod Paketi"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:750
 msgctxt "ManagedPackPage|"
 msgid "Choose update file"
-msgstr ""
+msgstr "Güncelleme dosyasını seçin"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:778
 msgctxt "ManagedPackPage|"
 msgid "Instance is running"
-msgstr ""
+msgstr "Profil çalışıyor"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:779
 msgctxt "ManagedPackPage|"
 msgid "This instance is currently running. Close the game before updating the modpack - an update replaces the files the game has open."
-msgstr ""
+msgstr "Bu örnek şu anda çalışıyor. Mod paketini güncellemeden önce oyunu kapatın; güncelleme işlemi, oyunun halihazırda açık tuttuğu dosyaların yerini alır."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:839
 msgctxt "ManagedPackPage|"
 msgid "Change instance name"
-msgstr ""
+msgstr "Profil adını değiştir"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:840
 #, qt-format
@@ -5609,92 +5623,96 @@ msgctxt "ManagedPackPage|"
 msgid "The instance's name includes the version being replaced. Would you like to update it?\n\n"
 "Old name: %1\n"
 "New name: %2"
-msgstr ""
+msgstr "Profilin adı, değiştirilmekte olan sürümü içeriyor. Bunu güncellemek ister misiniz?\n\n"
+"Eski ad: %1\n"
+"Yeni ad: %2"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:875
 msgctxt "ManagedPackPage|"
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:882
 msgctxt "ManagedPackPage|"
 msgid "Warnings"
-msgstr ""
+msgstr "Uyarılar"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:890
 msgctxt "ManagedPackPage|"
 msgid "Abort"
-msgstr ""
+msgstr "İptal Et"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:905
 msgctxt "ManagedPackPage|"
 msgid "Update Failed"
-msgstr ""
+msgstr "Güncelleme Başarısız"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:906
 #, qt-format
 msgctxt "ManagedPackPage|"
 msgid "The instance failed to update to pack version %1. Please check launcher logs for more information."
-msgstr ""
+msgstr "Örnek, %1 paket sürümüne güncellenemedi. Daha fazla bilgi için lütfen başlatıcı günlüklerini kontrol edin."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:937
 msgctxt "ManagedPackPage|"
 msgid "Update Successful"
-msgstr ""
+msgstr "Güncelleme Başarılı"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:938
 #, qt-format
 msgctxt "ManagedPackPage|"
 msgid "The instance updated to pack version %1 successfully."
-msgstr ""
+msgstr "Profil, %1 paket sürümüne başarıyla güncellendi."
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:223
 #: launcher/updater/MeshMCExternalUpdater.cpp:225
 msgctxt "MeshMCExternalUpdater|"
 msgid "Checking for updates..."
-msgstr ""
+msgstr "Güncellemeler kontrol ediliyor..."
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:257
 #: launcher/updater/MeshMCExternalUpdater.cpp:274
 msgctxt "MeshMCExternalUpdater|"
 msgid "Update Check Failed"
-msgstr ""
+msgstr "Güncellemelerin Kontrolü Başarısız"
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:258
 #, qt-format
 msgctxt "MeshMCExternalUpdater|"
 msgid "Failed to start after 5 seconds\n"
 "Reason: %1."
-msgstr ""
+msgstr "5 saniye sonra başlatılamadı\n"
+"Sebep: %1."
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:275
 #, qt-format
 msgctxt "MeshMCExternalUpdater|"
 msgid "Updater failed to close 60 seconds\n"
 "Reason: %1."
-msgstr ""
+msgstr "Güncelleyici 60 saniye boyunca kapanamadı.\n"
+"Sebep: %1."
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:294
 msgctxt "MeshMCExternalUpdater|"
 msgid "No Update Available"
-msgstr ""
+msgstr "Güncelleme bulunmuyor"
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:295
 msgctxt "MeshMCExternalUpdater|"
 msgid "You are running the latest version."
-msgstr ""
+msgstr "En güncel sürümü kullanıyorsunuz."
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:303
 #: launcher/updater/MeshMCExternalUpdater.cpp:330
 msgctxt "MeshMCExternalUpdater|"
 msgid "Update Check Error"
-msgstr ""
+msgstr "Güncelleme Denetimi Hatası"
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:304
 #: launcher/updater/MeshMCExternalUpdater.cpp:331
 msgctxt "MeshMCExternalUpdater|"
 msgid "There was an error running the update check."
-msgstr ""
+msgstr "Güncelleme denetimi çalıştırılırken bir hata oluştu."
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:332
 #: launcher/updater/MeshMCExternalUpdater.cpp:351
@@ -5702,47 +5720,50 @@ msgstr ""
 msgctxt "MeshMCExternalUpdater|"
 msgid "StdOut: %1\n"
 "StdErr: %2"
-msgstr ""
+msgstr "StdOut: %1\n"
+"StdErr: %2"
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:347
 msgctxt "MeshMCExternalUpdater|"
 msgid "Unknown Update Error"
-msgstr ""
+msgstr "Bilinmeyen Güncelleme Hatası"
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:348
 #, qt-format
 msgctxt "MeshMCExternalUpdater|"
 msgid "The updater exited with an unknown condition.\n"
 "Exit Code: %1"
-msgstr ""
+msgstr "Güncelleyici bilinmeyen bir durumla sonlandı.\n"
+"Çıkış Kodu: %1"
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:440
 msgctxt "MeshMCExternalUpdater|"
 msgid "Update Failed"
-msgstr ""
+msgstr "Güncelleme Başarısız Oldu"
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:441
 #, qt-format
 msgctxt "MeshMCExternalUpdater|"
 msgid "Could not start the updater.\n"
 "Reason: %1."
-msgstr ""
+msgstr "Güncelleyici başlatılamadı.\n"
+"Neden: %1."
 
 #: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:36
 msgctxt "MeshMCLoginStep|"
 msgid "Accessing Mojang services."
-msgstr ""
+msgstr "Mojang hizmetlerine erişiliyor."
 
 #: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:82
 #, qt-format
 msgctxt "MeshMCLoginStep|"
 msgid "Failed to get Minecraft access token: %1"
-msgstr ""
+msgstr "Minecraft erişim belirteci alınamadı: %1"
 
 #: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:94
 msgctxt "MeshMCLoginStep|"
 msgid "Failed to parse the Minecraft access token response."
-msgstr ""
+msgstr "Minecraft erişim belirteci yanıtı ayrıştırılamadı."
 
 #: launcher/minecraft/auth/steps/MeshMCLoginStep.cpp:97
 msgctxt "MeshMCLoginStep|"
@@ -5753,22 +5774,22 @@ msgstr ""
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:39
 msgctxt "MeshMCLogsDialog|"
 msgid "MeshMC Logs"
-msgstr ""
+msgstr "MeshMC Günlükleri"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr ""
+msgstr "Yeniden yükle"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
 msgid "Copy the whole log into the clipboard"
-msgstr ""
+msgstr "Günlüğün tamamını panoya kopyalayın"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:46
 msgctxt "MeshMCLogsDialog|"
 msgid "&Copy"
-msgstr ""
+msgstr "&Kopyala"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:53
 msgctxt "MeshMCLogsDialog|"
