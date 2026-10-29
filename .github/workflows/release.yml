@@ -55,8 +55,8 @@ jobs:
           mv MeshMC-Qt5-macOS-ARM*/MeshMC.dmg MeshMC-Qt5-macOS-ARM-${{ env.VERSION }}.dmg
           mv MeshMC-Qt6-macOS*/MeshMC.zip MeshMC-Qt6-macOS-${{ env.VERSION }}.zip
           mv MeshMC-Qt6-macOS*/MeshMC.dmg MeshMC-Qt6-macOS-${{ env.VERSION }}.dmg
-          mv MeshMC-Qt6-macOS-Legacy*/MeshMC.zip MeshMC-Qt6-macOS-Legacy-${{ env.VERSION }}.zip
-          mv MeshMC-Qt6-macOS-Legacy*/MeshMC.dmg MeshMC-Qt6-macOS-Legacy-${{ env.VERSION }}.dmg
+          mv MeshMC-Qt6-Legacy-macOS*/MeshMC.zip MeshMC-Qt6-Legacy-macOS-${{ env.VERSION }}.zip
+          mv MeshMC-Qt6-Legacy-macOS*/MeshMC.dmg MeshMC-Qt6-Legacy-macOS-${{ env.VERSION }}.dmg
 
           tar --exclude='.git' -czf MeshMC-${{ env.VERSION }}.tar.gz MeshMC-${{ env.VERSION }}
 
@@ -151,6 +151,6 @@ jobs:
             MeshMC-Qt5-macOS-ARM-${{ env.VERSION }}.dmg
             MeshMC-Qt6-macOS-${{ env.VERSION }}.zip
             MeshMC-Qt6-macOS-${{ env.VERSION }}.dmg
-            MeshMC-Qt6-macOS-Legacy-${{ env.VERSION }}.zip
-            MeshMC-Qt6-macOS-Legacy-${{ env.VERSION }}.dmg
+            MeshMC-Qt6-Legacy-macOS-${{ env.VERSION }}.zip
+            MeshMC-Qt6-Legacy-macOS-${{ env.VERSION }}.dmg
             MeshMC-${{ env.VERSION }}.tar.gz
