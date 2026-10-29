@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2026-10-28 22:15\n"
+"PO-Revision-Date: 2026-10-29 07:40\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -191,7 +191,7 @@ msgstr "Kapat"
 #: launcher/ui/dialogs/AboutDialog.cpp:73
 msgctxt "AboutDialog|"
 msgid "About MeshMC"
-msgstr ""
+msgstr "MeshMC Hakkında"
 
 #: launcher/ui/dialogs/AboutDialog.cpp:89
 msgctxt "AboutDialog|"
@@ -438,12 +438,12 @@ msgstr "\"%1\" isimli çevrimdışı hesap zaten mevcut. Çevrimdışı hesap ad
 #: launcher/ui/pages/global/AccountListPage.cpp:302
 msgctxt "AccountListPage|"
 msgid "Offline account"
-msgstr ""
+msgstr "Çevrimdışı hesap"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:303
 msgctxt "AccountListPage|"
 msgid "Skins can only be managed for Microsoft accounts."
-msgstr ""
+msgstr "Kaplamalar yalnızca Microsoft hesapları için yönetilebilir."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:327
 #, qt-format
@@ -706,7 +706,7 @@ msgstr "Ayarlar"
 #: launcher/Application.cpp:1932
 msgctxt "Application|"
 msgid "Update In Progress"
-msgstr ""
+msgstr "Güncelleme Sürüyor"
 
 #: launcher/Application.cpp:1933
 #, qt-format
@@ -721,12 +721,21 @@ msgid "This installation has an update lock file at: %1\n\n"
 "%7\n"
 "has the details of the last attempt.\n\n"
 "To delete this lock and continue, choose \"Ignore\"."
-msgstr ""
+msgstr "Bu kurulumda şu konumda bir güncelleme kilit dosyası bulunuyor: %1\n\n"
+"Zaman damgası: %2\n"
+"%3 sürümünden %4 sürümüne güncelleniyor\n"
+"Hedef kurulum yolu: %5\n"
+"Veri yolu: %6\n\n"
+"Bu durum genellikle bir güncelleme denemesinin başarısız olduğu anlamına gelir. Lütfen devam etmeden önce kurulumunuzun hâlâ düzgün çalıştığından emin olun.\n"
+"Şu konumda bulunan güncelleme günlüğü:\n"
+"%7\n"
+"son denemeye dair ayrıntıları içermektedir.\n\n"
+"Bu kilidi silip devam etmek için \"Yoksay\" seçeneğini belirleyin."
 
 #: launcher/Application.cpp:1971
 msgctxt "Application|"
 msgid "Update Failed"
-msgstr ""
+msgstr "Güncelleme Başarısız"
 
 #: launcher/Application.cpp:1972
 #, qt-format
@@ -736,12 +745,15 @@ msgid "An update attempt failed.\n\n"
 "The updater log at:\n"
 "%1\n"
 "has the details of the last attempt."
-msgstr ""
+msgstr "Güncelleme girişimi başarısız oldu.\n\n"
+"Devam etmeden önce kurulumunuzun hâlâ çalıştığından emin olun.\n"
+"%1\n"
+"konumundaki güncelleme günlüğü, son girişime dair ayrıntıları içermektedir."
 
 #: launcher/Application.cpp:2000
 msgctxt "Application|"
 msgid "Update Succeeded"
-msgstr ""
+msgstr "Güncelleme Başarılı"
 
 #: launcher/Application.cpp:2001
 #, qt-format
@@ -751,7 +763,11 @@ msgid "The update succeeded.\n\n"
 "The updater log at:\n"
 "%2\n"
 "has the details."
-msgstr ""
+msgstr "Güncelleme başarılı oldu.\n\n"
+"Şu anda %1 sürümünü kullanıyorsunuz.\n"
+"Güncelleme günlüğü:\n"
+"%2\n"
+"dosyasında ayrıntıları bulabilirsiniz."
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:38
 msgctxt "AssetUpdateTask|"
@@ -2883,7 +2899,8 @@ msgstr "Mod paketi arşivini inceleme"
 msgctxt "InstanceImportTask|"
 msgid "Modpack archive is missing or empty:\n"
 "%1"
-msgstr ""
+msgstr "Modpack arşivi eksik veya boş:\n"
+"%1"
 
 #: launcher/InstanceImportTask.cpp:225 launcher/InstanceImportTask.cpp:381
 msgctxt "InstanceImportTask|"
@@ -2898,12 +2915,12 @@ msgstr "Mod paketi çıkartılıyor"
 #: launcher/InstanceImportTask.cpp:319
 msgctxt "InstanceImportTask|"
 msgid "Failed to extract modpack. The downloaded archive is damaged; it has been discarded, so trying again will download it afresh."
-msgstr ""
+msgstr "Mod paketi ayıklanamadı. İndirilen arşiv hasarlı; bu nedenle silindi; yeniden denediğinizde arşiv baştan indirilecektir."
 
 #: launcher/InstanceImportTask.cpp:324
 msgctxt "InstanceImportTask|"
 msgid "Failed to extract modpack. The archive appears to be damaged."
-msgstr ""
+msgstr "Mod paketi ayıklanamadı. Arşiv hasarlı görünüyor."
 
 #: launcher/InstanceImportTask.cpp:359
 #, qt-format
@@ -2915,12 +2932,12 @@ msgstr "%1 için yetkiler düzeltilemedi"
 #: launcher/InstanceImportTask.cpp:1432 launcher/InstanceImportTask.cpp:1491
 msgctxt "InstanceImportTask|"
 msgid "Installation cancelled."
-msgstr ""
+msgstr "Yükleme iptal edildi."
 
 #: launcher/InstanceImportTask.cpp:608
 msgctxt "InstanceImportTask|"
 msgid "Could not understand pack manifest:\n"
-msgstr ""
+msgstr "Paket manifesti anlaşılamadı:\n"
 
 #: launcher/InstanceImportTask.cpp:616
 msgctxt "InstanceImportTask|"
@@ -2931,34 +2948,34 @@ msgstr "Üzerine yazılanlar (overrides) klasörü yeniden adlandırılamadı:\n
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "The specified overrides folder (%1) is missing. Maybe the modpack was already used before?"
-msgstr ""
+msgstr "Belirtilen geçersiz kılma klasörü (%1) eksik. Belki de mod paketi daha önce kullanılmıştır?"
 
 #: launcher/InstanceImportTask.cpp:646
 msgctxt "InstanceImportTask|"
 msgid "Unable to resolve mod IDs:\n"
-msgstr ""
+msgstr "Mod ID'leri çözümlenemedi:\n"
 
 #: launcher/InstanceImportTask.cpp:710
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Unknown mod loader in manifest: %1"
-msgstr ""
+msgstr "Manifest içerisinde bilinmeyen mod yükleyicisi: %1"
 
 #: launcher/InstanceImportTask.cpp:724
 msgctxt "InstanceImportTask|"
 msgid "Mysterious trailing dots removed from Minecraft version while importing pack."
-msgstr ""
+msgstr "Paket içe aktarılırken Minecraft sürümündeki gizemli, sonda yer alan noktalar kaldırıldı."
 
 #: launcher/InstanceImportTask.cpp:738
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Could not map recommended forge version for Minecraft %1"
-msgstr ""
+msgstr "Minecraft %1 için önerilen Forge sürümü saptanamadı"
 
 #: launcher/InstanceImportTask.cpp:825 launcher/InstanceImportTask.cpp:1146
 msgctxt "InstanceImportTask|"
 msgid "Installation cancelled: the modpack's untrusted content was not accepted."
-msgstr ""
+msgstr "Kurulum iptal edildi: mod paketindeki güvenilmeyen içerik kabul edilmedi."
 
 #: launcher/InstanceImportTask.cpp:831
 msgctxt "InstanceImportTask|"
@@ -2968,31 +2985,31 @@ msgstr "Mod indir"
 #: launcher/InstanceImportTask.cpp:862 launcher/InstanceImportTask.cpp:1269
 msgctxt "InstanceImportTask|"
 msgid "Checking files already installed..."
-msgstr ""
+msgstr "Hâlihazırda yüklü olan dosyalar kontrol ediliyor..."
 
 #: launcher/InstanceImportTask.cpp:881
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "This 'Folder' may need extracting: %1"
-msgstr ""
+msgstr "Bu 'Klasör'ün ayıklanması gerekebilir: %1"
 
 #: launcher/InstanceImportTask.cpp:902
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Skipping mod %1 (project %2) - no download URL and no filename available"
-msgstr ""
+msgstr "%1 numaralı mod (%2 projesi) atlanıyor - indirilecek URL ve dosya adı mevcut değil"
 
 #: launcher/InstanceImportTask.cpp:950
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Nesting modpacks in modpacks is not implemented, nothing was downloaded: %1"
-msgstr ""
+msgstr "Mod paketlerinin içine başka mod paketleri yerleştirme özelliği desteklenmemektedir; hiçbir şey indirilmedi: %1"
 
 #: launcher/InstanceImportTask.cpp:959
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Unrecognized/unhandled PackageType for: %1"
-msgstr ""
+msgstr "Şunun için tanınmayan/işlenemeyen PackageType: %1"
 
 #: launcher/InstanceImportTask.cpp:980
 msgctxt "InstanceImportTask|"
@@ -3004,24 +3021,26 @@ msgctxt "InstanceImportTask|"
 msgid "The following mods have restricted downloads and are not available through the API.\n"
 "Click the Download button next to each mod to open its download page in your browser.\n"
 "Once all files appear in your Downloads folder, click Continue."
-msgstr ""
+msgstr "Aşağıdaki modların indirilmesi kısıtlıdır ve API üzerinden kullanılamazlar.\n"
+"Her modun yanındaki İndir düğmesine tıklayarak indirme sayfasını tarayıcınızda açın.\n"
+"Tüm dosyalar İndirilenler klasörünüzde göründüğünde Devam'a tıklayın."
 
 #: launcher/InstanceImportTask.cpp:1002
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Failed to copy %1 from downloads folder"
-msgstr ""
+msgstr "%1, indirilenler klasöründen kopyalanamadı"
 
 #: launcher/InstanceImportTask.cpp:1008
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "User cancelled restricted mod downloads - %1 mod(s) will be missing"
-msgstr ""
+msgstr "Kullanıcı, kısıtlanmış mod indirmelerini iptal etti; %1 mod eksik olacak"
 
 #: launcher/InstanceImportTask.cpp:1018 launcher/InstanceImportTask.cpp:1353
 msgctxt "InstanceImportTask|"
 msgid "Update cancelled."
-msgstr ""
+msgstr "Güncelleme iptal edildi."
 
 #: launcher/InstanceImportTask.cpp:1048 launcher/InstanceImportTask.cpp:1385
 msgctxt "InstanceImportTask|"
@@ -3031,34 +3050,34 @@ msgstr "Modlar indiriliyor..."
 #: launcher/InstanceImportTask.cpp:1104
 msgctxt "InstanceImportTask|"
 msgid "Could not understand Modrinth modpack manifest:\n"
-msgstr ""
+msgstr "Modrinth mod paketi manifesti anlaşılamadı:"
 
 #: launcher/InstanceImportTask.cpp:1242
 msgctxt "InstanceImportTask|"
 msgid "Modrinth mod download"
-msgstr ""
+msgstr "Modrinth mod indirme"
 
 #: launcher/InstanceImportTask.cpp:1312
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid "Skipping file with no download URL: %1"
-msgstr ""
+msgstr "İndirme bağlantısı olmayan dosya atlanıyor: %1"
 
 #: launcher/InstanceImportTask.cpp:1421
 msgctxt "InstanceImportTask|"
 msgid "The Technic pack could not be processed."
-msgstr ""
+msgstr "Technic paketi işlenemedi."
 
 #: launcher/InstanceImportTask.cpp:1671
 #, qt-format
 msgctxt "InstanceImportTask|"
 msgid ", at version %1"
-msgstr ""
+msgstr ", %1 sürümünde"
 
 #: launcher/InstanceImportTask.cpp:1674
 msgctxt "InstanceImportTask|"
 msgid "This modpack is already installed"
-msgstr ""
+msgstr "Bu mod paketi zaten yüklü"
 
 #: launcher/InstanceImportTask.cpp:1675
 #, qt-format
@@ -3066,29 +3085,33 @@ msgctxt "InstanceImportTask|"
 msgid "The instance \"%1\" was installed from this modpack%2.\n\n"
 "Updating it replaces the pack's own files and keeps everything that is yours: worlds, screenshots, play time and the instance's settings. Creating a separate instance leaves it untouched.\n\n"
 "Back up anything you cannot afford to lose before updating. An update replaces the pack's configuration files, and a pack that changes or removes mods can leave worlds made with the older version unusable."
-msgstr ""
+msgstr "\"%1\" profili, bu mod paketinden (%2) yüklenmiştir.\n\n"
+"Güncelleme işlemi, pakete ait dosyaların yerini yenileriyle değiştirirken size özel olan her şeyi (dünyalar, ekran görüntüleri, oynama süresi ve örnek ayarları) korur. Ayrı bir profil oluşturduğunuzda ise mevcut profil olduğu gibi kalır.\n\n"
+"Güncelleme yapmadan önce, kaybetmeyi göze alamayacağınız her şeyin yedeğini alın. Güncelleme, paketin yapılandırma dosyalarını değiştirir; ayrıca modları değiştiren veya kaldıran bir paket, eski sürümle oluşturulmuş dünyaların kullanılamaz hale gelmesine yol açabilir."
 
 #: launcher/InstanceImportTask.cpp:1690
 msgctxt "InstanceImportTask|"
 msgid "Update existing instance"
-msgstr ""
+msgstr "Mevcut örneği güncelle"
 
 #: launcher/InstanceImportTask.cpp:1692
 msgctxt "InstanceImportTask|"
 msgid "Create separate instance"
-msgstr ""
+msgstr "Ayrı bir örnek oluştur"
 
 #: launcher/InstanceImportTask.cpp:1874
 msgctxt "InstanceImportTask|"
 msgid "No file list for the installed version"
-msgstr ""
+msgstr "Yüklü sürüm için dosya listesi bulunmuyor"
 
 #: launcher/InstanceImportTask.cpp:1875
 msgctxt "InstanceImportTask|"
 msgid "The launcher has no record of which files the installed version of this modpack put into this instance, so it cannot remove the ones the new version no longer ships.\n\n"
 "The update will work, but anything the new version dropped stays behind - usually as an older copy of a mod sitting next to the one that replaced it.\n\n"
 "Instances installed before the launcher started keeping that record have no list. This update writes one, so the update after it will be able to clean up."
-msgstr ""
+msgstr "Başlatıcı, bu mod paketinin yüklü sürümünün ilgili profile hangi dosyaları yerleştirdiğine dair bir kayda sahip değildir; bu nedenle, yeni sürümde artık bulunmayan dosyaları kaldıramaz.\n\n"
+"Güncelleme gerçekleşecektir, ancak yeni sürümden çıkarılan öğeler geride kalır; genellikle de yerini alan modun hemen yanında, o modun eski bir kopyası olarak varlığını sürdürür.\n\n"
+"Başlatıcının bu kayıtları tutmaya başlamasından önce oluşturulan örnekler için herhangi bir liste mevcut değildir. Mevcut güncelleme bir liste oluşturacaktır; böylece bir sonraki güncellemede gereksiz dosyalar temizlenebilecektir."
 
 #: launcher/InstanceList.cpp:267
 #, qt-format
@@ -3100,7 +3123,7 @@ msgstr "%1 Profili"
 #, qt-format
 msgctxt "InstanceList|"
 msgid "Could not remove a file the updated pack no longer includes: %1"
-msgstr ""
+msgstr "Güncellenen pakette artık yer almayan bir dosya kaldırılamadı: %1"
 
 #: launcher/InstancePageProvider.h:75
 msgctxt "InstancePageProvider|"
@@ -3146,7 +3169,7 @@ msgstr "Gözat..."
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:84
 msgctxt "InstanceSettingsPage|"
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:97
 msgctxt "InstanceSettingsPage|"
@@ -3191,12 +3214,12 @@ msgstr "Java değişkenleri"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:230
 msgctxt "InstanceSettingsPage|"
 msgid "Java auto-download &vendor"
-msgstr ""
+msgstr "Java otomatik indirme &sağlayıcısı"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:242
 msgctxt "InstanceSettingsPage|"
 msgid "Download Java from:"
-msgstr ""
+msgstr "Java'yı şuradan indirin:"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:256
 msgctxt "InstanceSettingsPage|"
@@ -3291,7 +3314,7 @@ msgstr "Bu profilde oynanan süreyi kaydet"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:487
 msgctxt "InstanceSettingsPage|"
 msgid "Set a server to join on launch"
-msgstr ""
+msgstr "Başlatıldığında katılınacak bir sunucu ayarla"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:507
 msgctxt "InstanceSettingsPage|"
@@ -3301,22 +3324,22 @@ msgstr "Sunucu adresi:"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:522
 msgctxt "InstanceSettingsPage|"
 msgid "Global data packs folder"
-msgstr ""
+msgstr "Küresel veri paketleri klasörü"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:525
 msgctxt "InstanceSettingsPage|"
 msgid "Manage one data pack folder shared by every world. Minecraft only reads data packs from each world's own folder, so this needs a loader such as Paxi or OpenLoader to have any effect. Use the Worlds page to manage a single world's data packs."
-msgstr ""
+msgstr "Tüm dünyalar tarafından paylaşılan tek bir veri paketi  klasörünü yönetin. Minecraft, veri paketlerini yalnızca her dünyanın kendi klasöründen okuduğu için, bunun işe yaraması adına Paxi veya OpenLoader gibi bir yükleyiciye ihtiyaç duyulur. Belirli bir dünyaya ait veri paketlerini yönetmek için Dünyalar sayfasını kullanın."
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:545
 msgctxt "InstanceSettingsPage|"
 msgid "Folder (relative to .minecraft):"
-msgstr ""
+msgstr "Klasör (.minecraft dizinine göre):"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:552
 msgctxt "InstanceSettingsPage|"
 msgid "datapacks"
-msgstr ""
+msgstr "veripaketleri"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:341
 msgctxt "InstanceSettingsPage|"
@@ -3341,19 +3364,20 @@ msgstr "Birden fazla denemeye rağmen, profil gönderimi başarısız. Görünen
 #: launcher/InstanceTask.cpp:77
 msgctxt "InstanceTask|"
 msgid "Skip"
-msgstr ""
+msgstr "Atla"
 
 #: launcher/InstanceTask.cpp:101
 #, qt-format
 msgctxt "InstanceTask|"
 msgid "The instance was installed, but its game files could not be downloaded yet: %1\n"
 "They will be downloaded when you launch it."
-msgstr ""
+msgstr "Profil kuruldu ancak oyun dosyaları henüz indirilemedi: %1\n"
+"Bunlar, uygulamayı başlattığınızda indirilecektir."
 
 #: launcher/InstanceTask.cpp:117
 msgctxt "InstanceTask|"
 msgid "Downloading the game's files..."
-msgstr ""
+msgstr "Oyun dosyaları indiriliyor..."
 
 #: launcher/ui/InstanceWindow.cpp:45
 msgctxt "InstanceWindow|"
@@ -3419,49 +3443,49 @@ msgstr "Profilleyici iptal edildi"
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:43
 msgctxt "JavaDownloadDialog|"
 msgid "Download Java"
-msgstr ""
+msgstr "Java'yı İndir"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:58
 msgctxt "JavaDownloadDialog|"
 msgid "Provider"
-msgstr ""
+msgstr "Sağlayıcı"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:71
 msgctxt "JavaDownloadDialog|"
 msgid "Version"
-msgstr ""
+msgstr "Sürüm"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:78
 msgctxt "JavaDownloadDialog|"
 msgid "Build"
-msgstr ""
+msgstr "Derleme"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:90
 msgctxt "JavaDownloadDialog|"
 msgid "Select a Java provider, version, and build to download."
-msgstr ""
+msgstr "İndirilecek Java sağlayıcısını, sürümünü ve derlemesini seçin."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:108
 msgctxt "JavaDownloadDialog|"
 msgid "Download"
-msgstr ""
+msgstr "İndir"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:112
 msgctxt "JavaDownloadDialog|"
 msgid "Cancel"
-msgstr ""
+msgstr "İptal Et"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:147
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Loading versions for %1..."
-msgstr ""
+msgstr "%1 için sürümler yükleniyor..."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:162
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Loading builds for %1..."
-msgstr ""
+msgstr "%1 için derlemeler yükleniyor..."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:175
 #, qt-format
@@ -3470,88 +3494,91 @@ msgid "Ready to download: %1\n"
 "Version: %2\n"
 "Platform: %3\n"
 "Checksum: %4"
-msgstr ""
+msgstr "İndirilmeye hazır: %1\n"
+"Sürüm: %2\n"
+"Platform: %3\n"
+"Sağlama toplamı: %4"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:181
 msgctxt "JavaDownloadDialog|"
 msgid "None"
-msgstr ""
+msgstr "Hiçbiri"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:182
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Yes (%1)"
-msgstr ""
+msgstr "Evet (%1)"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:192
 msgctxt "JavaDownloadDialog|"
 msgid "Fetch Java versions"
-msgstr ""
+msgstr "Java sürümlerini getir"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:204
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to parse version list: %1"
-msgstr ""
+msgstr "Sürüm listesini ayrıştırma başarısız oldu: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:208
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to parse version list."
-msgstr ""
+msgstr "Sürüm listesi ayrıştırılamadı."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:224
 msgctxt "JavaDownloadDialog|"
 msgid "Select a version."
-msgstr ""
+msgstr "Bir sürüm seçin."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:227
 msgctxt "JavaDownloadDialog|"
 msgid "No versions available for this provider."
-msgstr ""
+msgstr "Bu sağlayıcı için mevcut sürüm bulunmuyor."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:233
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to load versions: %1"
-msgstr ""
+msgstr "Sürümler yüklenemedi: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:248
 msgctxt "JavaDownloadDialog|"
 msgid "Fetch Java runtime details"
-msgstr ""
+msgstr "Java çalışma zamanı ayrıntılarını getir"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:260
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to parse runtime details: %1"
-msgstr ""
+msgstr "Çalışma zamanı ayrıntılarını ayrıştırma başarısız oldu: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:264
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to parse runtime details."
-msgstr ""
+msgstr "Çalışma zamanı ayrıntıları ayrıştırılamadı."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:282
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "No builds available for your platform (%1)."
-msgstr ""
+msgstr "Platformunuz (%1) için herhangi bir derleme mevcut değil."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:285
 msgctxt "JavaDownloadDialog|"
 msgid "Select a build to download."
-msgstr ""
+msgstr "İndirmek için bir derleme seçin."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:293
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to load runtime details: %1"
-msgstr ""
+msgstr "Çalışma zamanı ayrıntıları yüklenemedi: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:321
 msgctxt "JavaDownloadDialog|"
 msgid "Already Installed"
-msgstr ""
+msgstr "Zaten Yüklü"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:322
 #, qt-format
@@ -3559,126 +3586,130 @@ msgctxt "JavaDownloadDialog|"
 msgid "This Java version appears to be already installed at:\n"
 "%1\n\n"
 "Do you want to reinstall it?"
-msgstr ""
+msgstr "Bu Java sürümü halihazırda şu konumda yüklü görünüyor:\n"
+"%1\n\n"
+"Yeniden yüklemek istiyor musunuz?"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:358
 msgctxt "JavaDownloadDialog|"
 msgid "Java installed successfully!"
-msgstr ""
+msgstr "Java başarıyla yüklendi!"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:361
 msgctxt "JavaDownloadDialog|"
 msgid "Download Complete"
-msgstr ""
+msgstr "İndirme Tamamlandı"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:362
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Java has been downloaded and installed successfully.\n\n"
 "Java binary: %1"
-msgstr ""
+msgstr "Java başarıyla indirildi ve kuruldu.\n\n"
+"Java ikili dosyası: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:372
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Download failed: %1"
-msgstr ""
+msgstr "İndirme başarısız: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:379
 msgctxt "JavaDownloadDialog|"
 msgid "Download Failed"
-msgstr ""
+msgstr "İndirme Başarısız"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:380
 #, qt-format
 msgctxt "JavaDownloadDialog|"
 msgid "Failed to download Java:\n"
 "%1"
-msgstr ""
+msgstr "Java indirme başarısız oldu:\n"
+"%1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:53
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading %1..."
-msgstr ""
+msgstr "%1 indiriliyor..."
 
 #: launcher/java/download/JavaDownloadTask.cpp:63
 #: launcher/java/download/JavaDownloadTask.cpp:186
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to create target directory: %1"
-msgstr ""
+msgstr "Hedef dizin oluşturulamadı: %1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:67
 msgctxt "JavaDownloadTask|"
 msgid "Java download"
-msgstr ""
+msgstr "Java indir"
 
 #: launcher/java/download/JavaDownloadTask.cpp:106
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to download Java: %1"
-msgstr ""
+msgstr "Java indirme başarısız oldu: %1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:111
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Extracting %1..."
-msgstr ""
+msgstr "%1 çıkarılıyor..."
 
 #: launcher/java/download/JavaDownloadTask.cpp:135
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Unsupported archive format: %1"
-msgstr ""
+msgstr "Desteklenmeyen arşiv formatı: %1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:144
 msgctxt "JavaDownloadTask|"
 msgid "Failed to extract Java archive."
-msgstr ""
+msgstr "Java arşivi ayıklanamadı."
 
 #: launcher/java/download/JavaDownloadTask.cpp:166
 msgctxt "JavaDownloadTask|"
 msgid "Could not find java binary in extracted archive."
-msgstr ""
+msgstr "Ayıklanan arşivde java ikili dosyası bulunamadı."
 
 #: launcher/java/download/JavaDownloadTask.cpp:182
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading manifest for %1..."
-msgstr ""
+msgstr "%1 için bildirim dosyası indiriliyor..."
 
 #: launcher/java/download/JavaDownloadTask.cpp:191
 msgctxt "JavaDownloadTask|"
 msgid "Java manifest download"
-msgstr ""
+msgstr "Java manifest indir"
 
 #: launcher/java/download/JavaDownloadTask.cpp:220
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Failed to parse Java manifest: %1"
-msgstr ""
+msgstr "Java manifest dosyasını ayrıştırma başarısız oldu: %1"
 
 #: launcher/java/download/JavaDownloadTask.cpp:226
 msgctxt "JavaDownloadTask|"
 msgid "Failed to parse Java manifest."
-msgstr ""
+msgstr "Java manifesti ayrıştırılamadı."
 
 #: launcher/java/download/JavaDownloadTask.cpp:243
 #, qt-format
 msgctxt "JavaDownloadTask|"
 msgid "Downloading %1 files..."
-msgstr ""
+msgstr "%1 dosya indiriliyor..."
 
 #: launcher/java/download/JavaDownloadTask.cpp:245
 msgctxt "JavaDownloadTask|"
 msgid "Java runtime files"
-msgstr ""
+msgstr "Java çalışma zamanı dosyaları"
 
 #: launcher/java/download/JavaDownloadTask.cpp:311
 msgctxt "JavaDownloadTask|"
 msgid "Could not find java binary in downloaded runtime."
-msgstr ""
+msgstr "İndirilen çalışma zamanında (runtime) java ikili dosyası (binary) bulunamadı."
 
 #: launcher/java/JavaInstallList.cpp:144
 msgctxt "JavaListLoadTask|"
@@ -3688,7 +3719,7 @@ msgstr "Java kurulumları aranıyor..."
 #: launcher/ui/pages/global/JavaPage.ui:39
 msgctxt "JavaPage|"
 msgid "Settings"
-msgstr ""
+msgstr "Ayarlar"
 
 #: launcher/ui/pages/global/JavaPage.ui:45
 msgctxt "JavaPage|"
