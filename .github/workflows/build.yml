@@ -93,7 +93,7 @@ jobs:
             build-name: macOS Universal Qt6
 
           - os: macos-26
-            artifact-name: macOS-Legacy
+            artifact-name: Legacy-macOS
             cmake-preset: macos_universal
             macosx-deployment-target: 12.0
             qt-version: 6.9.3
