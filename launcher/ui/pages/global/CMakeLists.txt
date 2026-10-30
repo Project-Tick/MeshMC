@@ -1,0 +1,31 @@
+target_sources(MeshMC_logic PRIVATE
+    # GUI - global settings pages
+    AccountListPage.cpp
+    AccountListPage.h
+    AccountListPage.ui
+    AppearancePage.cpp
+    AppearancePage.h
+    AppearancePage.ui
+    CustomCommandsPage.cpp
+    CustomCommandsPage.h
+    ExternalToolsPage.cpp
+    ExternalToolsPage.h
+    ExternalToolsPage.ui
+    JavaPage.cpp
+    JavaPage.h
+    JavaPage.ui
+    LanguagePage.cpp
+    LanguagePage.h
+    MinecraftPage.cpp
+    MinecraftPage.h
+    MinecraftPage.ui
+    MeshMCPage.cpp
+    MeshMCPage.h
+    MeshMCPage.ui
+    ProxyPage.cpp
+    ProxyPage.h
+    ProxyPage.ui
+    PasteEEPage.cpp
+    PasteEEPage.h
+    PasteEEPage.ui
+)

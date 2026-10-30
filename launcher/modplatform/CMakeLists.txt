@@ -1,0 +1,30 @@
+target_sources(MeshMC_logic PRIVATE
+    ContentApi.h
+    ManagedPackVersions.h
+    ManagedPackVersions.cpp
+    PackContents.h
+    PackContents.cpp
+    VersionPicker.h
+    VersionPicker.cpp
+    ContentProviderModel.h
+    ContentProviderModel.cpp
+    ContentListExport.h
+    ContentListExport.cpp
+    ContentType.h
+    ModDownloadTypes.h
+    DependencyResolver.h
+    DependencyResolver.cpp
+    ContentDownloadTask.h
+    ContentDownloadTask.cpp
+    ModInstallConflictAnalyzer.h
+    ModInstallConflictAnalyzer.cpp
+    ModUpdateCheckTask.h
+    ModUpdateCheckTask.cpp
+)
+
+add_subdirectory(atlauncher)
+add_subdirectory(flame)
+add_subdirectory(legacy_ftb)
+add_subdirectory(modpacksch)
+add_subdirectory(modrinth)
+add_subdirectory(technic)

@@ -40,7 +40,6 @@
 
 #include "Application.h"
 #include "FileIgnoreProxy.h"
-#include "archive/ExportToZipTask.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/ProgressDialog.h"
 

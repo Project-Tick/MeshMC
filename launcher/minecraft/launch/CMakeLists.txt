@@ -1,0 +1,24 @@
+target_sources(MeshMC_logic PRIVATE
+    ClaimAccount.cpp
+    ClaimAccount.h
+    CreateGameFolders.cpp
+    CreateGameFolders.h
+    ModMinecraftJar.cpp
+    ModMinecraftJar.h
+    DirectJavaLaunch.cpp
+    DirectJavaLaunch.h
+    ExtractNatives.cpp
+    ExtractNatives.h
+    MeshMCPartLaunch.cpp
+    MeshMCPartLaunch.h
+    MinecraftServerTarget.cpp
+    MinecraftServerTarget.h
+    PrintInstanceInfo.cpp
+    PrintInstanceInfo.h
+    ReconstructAssets.cpp
+    ReconstructAssets.h
+    ScanModFolders.cpp
+    ScanModFolders.h
+    VerifyJavaInstall.cpp
+    VerifyJavaInstall.h
+)

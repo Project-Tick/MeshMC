@@ -1,3 +1,9 @@
+# MeshMC 12.0.0 (DRAFT)
+
+## Changed
+
+* The complexity in the build system has been reduced.
+
 # MeshMC 11.0.0 (DRAFT)
 
 ## Highlights

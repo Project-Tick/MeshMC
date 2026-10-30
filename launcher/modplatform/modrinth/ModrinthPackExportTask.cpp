@@ -36,7 +36,7 @@
 #include <utility>
 
 #include "Application.h"
-#include "archive/ExportToZipTask.h"
+#include "MMCZip.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 #include "minecraft/mod/ModMetadataIndex.h"

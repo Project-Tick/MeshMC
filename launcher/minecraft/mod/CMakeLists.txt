@@ -1,0 +1,25 @@
+target_sources(MeshMC_logic PRIVATE
+    Mod.h
+    Mod.cpp
+    ModDetails.h
+    ModFolderModel.h
+    ModFolderModel.cpp
+    ModFolderLoadTask.h
+    ModFolderLoadTask.cpp
+    LocalModParseTask.h
+    LocalModParseTask.cpp
+    ModMetadataIndex.h
+    ModMetadataIndex.cpp
+    PackwizSidecar.h
+    PackwizSidecar.cpp
+    PackLayout.h
+    PackLayout.cpp
+    ResourcePackFolderModel.h
+    ResourcePackFolderModel.cpp
+    TexturePackFolderModel.h
+    TexturePackFolderModel.cpp
+    ShaderPackFolderModel.h
+    ShaderPackFolderModel.cpp
+    DataPackFolderModel.h
+    DataPackFolderModel.cpp
+)

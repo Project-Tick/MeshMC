@@ -24,7 +24,6 @@
 #include "Application.h"
 #include "InstanceList.h"
 #include "MMCZip.h"
-#include "archive/ExtractZipTask.h"
 #include "NullInstance.h"
 #include "settings/INISettingsObject.h"
 #include "icons/IconUtils.h"
