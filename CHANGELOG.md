@@ -26,6 +26,7 @@
 
 * Fixed buttons that remained active even when no instance was selected in the MainWindow.
 * An issue where the Publisher ID written to the registry during NSIS installations appeared as "MeshMC Contributors" has been resolved; it has been corrected to "Project Tick".
+* The URL on the translation page has been corrected.
 
 ## Removed
 
