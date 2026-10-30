@@ -1,4 +1,12 @@
-# MeshMC 9.1.0
+# MeshMC 9.2.0
+
+## Changed
+
+* The URL on the translation page has been corrected.
+
+## Previous versions
+
+## MeshMC 9.1.0
 
 ## Highlights
 
@@ -12,8 +20,6 @@ Updater has been completely revamped. [BACKPORT FROM 10.0.0]
 ## Fixed
 
 Manifest.txt generation has been fixed. [BACKPORT FROM 10.0.0]
-
-## Previous versions
 
 ## MeshMC 9.0.0
 

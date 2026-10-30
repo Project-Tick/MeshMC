@@ -63,6 +63,14 @@
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="9.2.0" date="2026-11-02">
+      <description>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>The URL on the translation page has been corrected. [BACKPORT FROM 11.0.0]</li>
+        </ul>
+      </description>
+    </release>
     <release version="9.1.0" date="2026-09-05">
       <description>
         <p><em>Highlights</em></p>
