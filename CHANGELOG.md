@@ -1,4 +1,12 @@
-# MeshMC 10.0.0
+# MeshMC 10.1.0
+
+## Changed
+
+* The URL on the translation page has been corrected.
+
+## Previous versions
+
+## MeshMC 10.0.0
 
 ## A Big Change
 
@@ -77,8 +85,6 @@
 ## Deprecated
 
 * MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.
-
-## Previous versions
 
 ## MeshMC 9.0.0
 
