@@ -20,15 +20,22 @@
 
 #pragma once
 
+#include <QByteArray>
 #include <QString>
+#include <QStringList>
 #include <QFileInfo>
 #include <QFileInfoList>
+#include <QFuture>
+#include <QFutureWatcher>
+#include <QHash>
 #include <QDir>
 #include <QSet>
 #include <QDateTime>
+#include "tasks/Task.h"
 #include "minecraft/mod/Mod.h"
 #include <functional>
 #include <optional>
+#include <atomic>
 
 struct archive;
 
@@ -283,4 +290,171 @@ namespace MMCZip
 	 * Get the modification time of a specific entry in a zip archive.
 	 */
 	QDateTime getEntryModTime(const QString& zipPath, const QString& entryName);
+
+	/*
+	 * Writing a list of files into a zip, off the UI thread.
+	 *
+	 * The export dialogs used to call MMCZip::compressDir() straight
+	 * from the dialog's accept handler: the window froze for as long as
+	 * the instance took to compress - minutes for a modpack with a
+	 * world in it - with no progress and no way out. This is the same
+	 * job as a task, so the progress dialog can show which file is being
+	 * written and the user can change their mind.
+	 *
+	 * The file list is decided by the caller rather than walked here,
+	 * because the callers already know it: they built the tree the user
+	 * unchecked entries in, and a pack export additionally needs the
+	 * same list to write its manifest. See
+	 * MMCZip::collectFileListRecursively().
+	 *
+	 * `destinationPrefix` is prepended to every entry, which is how a
+	 * pack export puts an instance's files under `overrides/`.
+	 * `excludeFiles` names entries - relative to `dir` - to skip, which
+	 * is how it then leaves out the mods the manifest says to download
+	 * rather than shipping them twice. `extraFiles` are generated
+	 * entries (the manifest itself) and are written before anything from
+	 * disk, so a truncated archive still starts with something a reader
+	 * can identify.
+	 */
+	class ExportToZipTask : public Task
+	{
+		Q_OBJECT
+	  public:
+		ExportToZipTask(QString outputPath, QDir dir, QFileInfoList files,
+						QString destinationPrefix = QString(),
+						bool followSymlinks = false, QObject* parent = nullptr);
+		ExportToZipTask(QString outputPath, const QString& dir,
+						QFileInfoList files,
+						QString destinationPrefix = QString(),
+						bool followSymlinks = false, QObject* parent = nullptr);
+		~ExportToZipTask() override = default;
+
+		void setExcludeFiles(QStringList excludeFiles)
+		{
+			m_excludeFiles = std::move(excludeFiles);
+		}
+		void addExtraFile(const QString& fileName, const QByteArray& data)
+		{
+			m_extraFiles.insert(fileName, data);
+		}
+
+		bool canAbort() const override
+		{
+			return true;
+		}
+		bool abort() override;
+
+	  protected:
+		void executeTask() override;
+
+	  private:
+		/* Empty on success, the reason on failure. */
+		using ZipResult = std::optional<QString>;
+
+		ZipResult exportZip();
+		void finish();
+
+		/*
+		 * setStatus() / setProgress(), as called from the worker thread.
+		 *
+		 * Those two write plain members - m_status is a QString - and
+		 * ProgressDialog reads them straight off the task when it
+		 * attaches to one that is already running, as does
+		 * ConcurrentTask when it folds a subtask into its step list.
+		 * Writing them from the thread doing the compressing while the
+		 * UI thread reads them is a race over a refcounted string, not
+		 * merely a stale number.
+		 *
+		 * So the report hops back to the thread this task lives on
+		 * first, and only touches task state there. Same reasoning, and
+		 * the same shape, as BackupTask::reportProgress().
+		 */
+		void reportStatus(const QString& status);
+		void reportProgress(qint64 current, qint64 total);
+
+		QString m_outputPath;
+		QDir m_dir;
+		QFileInfoList m_files;
+		QString m_destinationPrefix;
+		bool m_followSymlinks;
+		QStringList m_excludeFiles;
+		QHash<QString, QByteArray> m_extraFiles;
+
+		/* Cancellation is tracked here rather than through
+		 * QFuture::cancel(): the future QtConcurrent::run() hands back
+		 * does not support being cancelled, so isCanceled() on it stays
+		 * false forever and an abort would be silently ignored. */
+		std::atomic<bool> m_cancelled{false};
+
+		QFuture<ZipResult> m_future;
+		QFutureWatcher<ZipResult> m_watcher;
+	};
+
+	/*
+	 * Unpacking an archive, off the UI thread, with a progress bar and a
+	 * way out.
+	 *
+	 * The modpack importer used to hand MMCZip::extractSubDir() to
+	 * QtConcurrent::run() and watch the future: the work did happen in
+	 * the background, but nothing came back until it was over. A
+	 * multi-gigabyte pack looked like a frozen "Extracting modpack"
+	 * label with a bar that never moved, and pressing the dialog's abort
+	 * button did nothing at all, because there was nothing to press it
+	 * against.
+	 *
+	 * `subdirectory` is a prefix inside the archive; only entries under
+	 * it are written out, with the prefix removed. Empty means the whole
+	 * archive - which is what the formats that ship their files at the
+	 * root need.
+	 */
+	class ExtractZipTask : public Task
+	{
+		Q_OBJECT
+	  public:
+		ExtractZipTask(QString input, QDir outputDir,
+					   QString subdirectory = QString(),
+					   QObject* parent = nullptr);
+		~ExtractZipTask() override = default;
+
+		/* The absolute paths of everything that was written. Only
+		 * meaningful after the task succeeded. */
+		QStringList extractedFiles() const
+		{
+			return m_extracted;
+		}
+
+		bool canAbort() const override
+		{
+			return true;
+		}
+		bool abort() override;
+
+	  protected:
+		void executeTask() override;
+
+	  private:
+		/* Empty on success, the reason on failure. */
+		using ZipResult = std::optional<QString>;
+
+		ZipResult extractZip();
+		void finish();
+
+		/* See ExportToZipTask: the unpacking runs on a worker thread,
+		 * and task state may only be touched on the thread the task
+		 * lives on. */
+		void reportStatus(const QString& status);
+		void reportProgress(qint64 current, qint64 total);
+
+		QString m_input;
+		QDir m_outputDir;
+		QString m_subdirectory;
+		QStringList m_extracted;
+
+		/* See ExportToZipTask: the future from QtConcurrent::run() cannot
+		 * be cancelled, so the flag has to be ours. */
+		std::atomic<bool> m_cancelled{false};
+
+		QFuture<ZipResult> m_future;
+		QFutureWatcher<ZipResult> m_watcher;
+	};
 } // namespace MMCZip

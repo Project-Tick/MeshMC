@@ -1,0 +1,84 @@
+target_sources(MeshMC_logic PRIVATE
+    # GUI - dialogs
+    AboutDialog.cpp
+    AboutDialog.h
+    AboutDialog.ui
+    BlockedModsDialog.cpp
+    BlockedModsDialog.h
+    ProfileSelectDialog.cpp
+    ProfileSelectDialog.h
+    ProfileSelectDialog.ui
+    ProfileSetupDialog.cpp
+    ProfileSetupDialog.h
+    ProfileSetupDialog.ui
+    CopyInstanceDialog.cpp
+    CopyInstanceDialog.h
+    CopyInstanceDialog.ui
+    CreateShortcutDialog.cpp
+    CreateShortcutDialog.h
+    CreateShortcutDialog.ui
+    CustomMessageBox.cpp
+    CustomMessageBox.h
+    EditAccountDialog.cpp
+    EditAccountDialog.h
+    EditAccountDialog.ui
+    ExportInstanceDialog.cpp
+    ExportInstanceDialog.h
+    ExportInstanceDialog.ui
+    ExportPackDialog.cpp
+    ExportPackDialog.h
+    ExportPackDialog.ui
+    IconPickerDialog.cpp
+    IconPickerDialog.h
+    IconPickerDialog.ui
+    InstallLoaderDialog.cpp
+    InstallLoaderDialog.h
+    MSALoginDialog.cpp
+    MSALoginDialog.h
+    MSALoginDialog.ui
+    NewComponentDialog.cpp
+    NewComponentDialog.h
+    NewComponentDialog.ui
+    NewInstanceDialog.cpp
+    NewInstanceDialog.h
+    NewInstanceDialog.ui
+    NewsViewerDialog.cpp
+    NewsViewerDialog.h
+    NotificationDialog.cpp
+    NotificationDialog.h
+    NotificationDialog.ui
+    PluginsDialog.cpp
+    PluginsDialog.h
+    PluginsDialog.ui
+    ProgressDialog.cpp
+    ProgressDialog.h
+    ProgressDialog.ui
+    UpdateAvailableDialog.cpp
+    UpdateAvailableDialog.h
+    UpdateAvailableDialog.ui
+    VersionSelectDialog.cpp
+    VersionSelectDialog.h
+    DownloadContentDialog.cpp
+    DownloadContentDialog.h
+    DownloadSummaryDialog.cpp
+    DownloadSummaryDialog.h
+    ModUpdateDialog.cpp
+    ModUpdateDialog.h
+    ExportListDialog.cpp
+    ExportListDialog.h
+    MeshMCLogsDialog.cpp
+    MeshMCLogsDialog.h
+    MeshMCLogsDialog.ui
+    UntrustedModsDialog.cpp
+    UntrustedModsDialog.h
+    UntrustedModsDialog.ui
+)
+
+if(NOT MeshMC_DISABLE_JAVA_DOWNLOADER)
+    target_sources(MeshMC_logic PRIVATE
+        JavaDownloadDialog.cpp
+        JavaDownloadDialog.h
+    )
+endif()
+
+add_subdirectory(skins)
