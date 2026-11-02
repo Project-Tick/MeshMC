@@ -67,6 +67,51 @@
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="11.0.0" date="2026-11-02">
+      <description>
+        <p><em>Highlights</em></p>
+        <ul>
+          <li>We’ve made some general improvements!</li>
+          <li>We hope MeshMC now offers a better experience for you.</li>
+        </ul>
+        <p><em>Added</em></p>
+        <ul>
+          <li>Automatic icon refreshing upon theme change has been added.</li>
+          <li>Support for reading non-ASCII paths has been added.</li>
+          <li>A feature to view the number of days in your worlds has been added.</li>
+          <li>The --world parameter has been added.</li>
+          <li>A skin management system has been added.</li>
+          <li>An option has been added to launch the instance using other accounts via the "Launch as" option.</li>
+        </ul>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>The logging system has been updated. We now use categorical logging. You can disable unwanted categories using qtlogging.ini.</li>
+          <li>We have revised the update system. Updates are handled via Sparkle for macOS and ZSync for AppImage. A setup.exe installation package is used for Windows, while a two-stage update mechanism is employed for portable Windows and Linux versions.</li>
+          <li>The MainWindow used to have its UI drawn via .cpp code; now, Designer UI is used.</li>
+          <li>The XDGIcon structure has been removed, and the system has switched to the internal Qt icon infrastructure.</li>
+          <li>The logo has been revised to better align with standards for macOS Big Sur and other platforms.</li>
+          <li>Deep branding has been completed.</li>
+          <li>The URL on the translation page has been corrected.</li>
+        </ul>
+        <p><em>Fixed</em></p>
+        <ul>
+          <li>Fixed buttons that remained active even when no instance was selected in the MainWindow.</li>
+          <li>An issue where the Publisher ID written to the registry during NSIS installations appeared as "MeshMC Contributors" has been resolved; it has been corrected to "Project Tick".</li>
+        </ul>
+        <p><em>Removed</em></p>
+        <ul>
+          <li>The iconfix library has been removed because it is no longer in use.</li>
+        </ul>
+      </description>
+    </release>
+    <release version="10.1.0" date="2026-11-02">
+      <description>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>The URL on the translation page has been corrected. [BACKPORT FROM 11.0.0]</li>
+        </ul>
+      </description>
+    </release>
     <release version="10.0.0" date="2026-09-03">
       <description>
         <p><em>A Big Change</em></p>
@@ -146,6 +191,14 @@
         <p><em>Deprecated</em></p>
         <ul>
           <li>MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.</li>
+        </ul>
+      </description>
+    </release>
+    <release version="9.2.0" date="2026-11-02">
+      <description>
+        <p><em>Changed</em></p>
+        <ul>
+          <li>The URL on the translation page has been corrected. [BACKPORT FROM 11.0.0]</li>
         </ul>
       </description>
     </release>

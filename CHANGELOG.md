@@ -1,8 +1,9 @@
-# MeshMC 11.0.0 (DRAFT)
+# MeshMC 11.0.0
 
 ## Highlights
 
-
+* We’ve made some general improvements!
+* We hope MeshMC now offers a better experience for you.
 
 ## Added
 
@@ -21,26 +22,24 @@
 * The XDGIcon structure has been removed, and the system has switched to the internal Qt icon infrastructure.
 * The logo has been revised to better align with standards for macOS Big Sur and other platforms.
 * Deep branding has been completed.
+* The URL on the translation page has been corrected.
 
 ## Fixed
 
 * Fixed buttons that remained active even when no instance was selected in the MainWindow.
 * An issue where the Publisher ID written to the registry during NSIS installations appeared as "MeshMC Contributors" has been resolved; it has been corrected to "Project Tick".
-* The URL on the translation page has been corrected.
 
 ## Removed
 
 * The iconfix library has been removed because it is no longer in use.
 
-## Deprecated
-
-## CI/CD Updates
-
-* Linux CI images have been updated to 26.04.
-* The Backport Action has been updated to version 4.7.0.
-* The Developer Container base image version has been updated to the latest digest.
-
 ## Previous versions
+
+## MeshMC 10.1.0
+
+### Changed
+
+* The URL on the translation page has been corrected.
 
 ## MeshMC 10.0.0
 
@@ -122,6 +121,12 @@
 ## Deprecated
 
 * MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.
+
+## MeshMC 9.2.0
+
+### Changed
+
+* The URL on the translation page has been corrected.
 
 ## MeshMC 9.1.0
 
