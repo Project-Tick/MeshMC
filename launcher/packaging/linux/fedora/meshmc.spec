@@ -33,7 +33,7 @@
 %global build_platform CentOS
 %endif
 
-%global version v10.0.0
+%global version v11.0.0
 
 Name:           meshmc
 Version:        %{version}
