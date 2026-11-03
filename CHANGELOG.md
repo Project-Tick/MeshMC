@@ -1,10 +1,16 @@
-# MeshMC 10.1.0
+# MeshMC 10.1.1
+
+## CI Fixes
+
+* Fixed GHA MinGW Clang64 CI.
+
+## Previous versions
+
+## MeshMC 10.1.0
 
 ## Changed
 
 * The URL on the translation page has been corrected.
-
-## Previous versions
 
 ## MeshMC 10.0.0
 
