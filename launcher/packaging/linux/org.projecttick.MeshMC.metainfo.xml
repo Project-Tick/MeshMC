@@ -67,6 +67,14 @@
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="11.0.1" date="2026-11-03">
+      <description>
+        <p><em>CI Fixes</em></p>
+        <ul>
+          <li>Fixed GHA MinGW Clang64 CI.</li>
+        </ul>
+      </description>
+    </release>
     <release version="11.0.0" date="2026-11-02">
       <description>
         <p><em>Highlights</em></p>
@@ -101,6 +109,14 @@
         <p><em>Removed</em></p>
         <ul>
           <li>The iconfix library has been removed because it is no longer in use.</li>
+        </ul>
+      </description>
+    </release>
+    <release version="10.1.1" date="2026-11-03">
+      <description>
+        <p><em>CI Fixes</em></p>
+        <ul>
+          <li>Fixed GHA MinGW Clang64 CI.</li>
         </ul>
       </description>
     </release>
@@ -191,6 +207,14 @@
         <p><em>Deprecated</em></p>
         <ul>
           <li>MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.</li>
+        </ul>
+      </description>
+    </release>
+    <release version="9.2.1" date="2026-11-03">
+      <description>
+        <p><em>CI Fixes</em></p>
+        <ul>
+          <li>Fixed GHA MinGW Clang64 CI.</li>
         </ul>
       </description>
     </release>

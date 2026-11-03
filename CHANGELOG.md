@@ -6,6 +6,12 @@
 
 ## Previous versions
 
+## MeshMC 11.0.1
+
+### CI Fixes
+
+* Fixed GHA MinGW Clang64 CI.
+
 ## MeshMC 11.0.0
 
 ### Highlights
@@ -40,6 +46,12 @@
 ### Removed
 
 * The iconfix library has been removed because it is no longer in use.
+
+## MeshMC 10.1.1
+
+### CI Fixes
+
+* Fixed GHA MinGW Clang64 CI.
 
 ## MeshMC 10.1.0
 
@@ -127,6 +139,12 @@
 ## Deprecated
 
 * MMCO API: The ability to add input to the Instance Toolbar has been deprecated and changed to no-op.
+
+## MeshMC 9.2.1
+
+### CI Fixes
+
+* Fixed GHA MinGW Clang64 CI.
 
 ## MeshMC 9.2.0
 
