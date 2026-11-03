@@ -1,4 +1,12 @@
-# MeshMC 11.0.0
+# MeshMC 11.0.1
+
+## CI Fixes
+
+* Fixed GHA MinGW Clang64 CI.
+
+## Previous versions
+
+## MeshMC 11.0.0
 
 ## Highlights
 
@@ -32,8 +40,6 @@
 ## Removed
 
 * The iconfix library has been removed because it is no longer in use.
-
-## Previous versions
 
 ## MeshMC 10.1.0
 
