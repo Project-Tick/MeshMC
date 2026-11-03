@@ -61,6 +61,8 @@ runs:
           qt${{ inputs.qt-major }}-networkauth:p
           qt${{ inputs.qt-major }}-tools:p
           gpgme:p
+          qgpgme:p
+          gpgmepp:p
 
     - name: List pacman packages (MinGW)
       if: ${{ inputs.msystem != '' }}
