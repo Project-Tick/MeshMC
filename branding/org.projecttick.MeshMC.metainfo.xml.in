@@ -63,6 +63,14 @@
     <memory>2048</memory>
   </recommends>
   <releases>
+    <release version="9.2.1" date="2026-11-03">
+      <description>
+        <p><em>CI Fixes</em></p>
+        <ul>
+          <li>Fixed GHA MinGW Clang64 CI.</li>
+        </ul>
+      </description>
+    </release>
     <release version="9.2.0" date="2026-11-02">
       <description>
         <p><em>Changed</em></p>

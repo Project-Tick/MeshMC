@@ -1,10 +1,16 @@
-# MeshMC 9.2.0
+# MeshMC 9.2.1
+
+## CI Fixes
+
+* Fixed GHA MinGW Clang64 CI.
+
+## Previous versions
+
+## MeshMC 9.2.0
 
 ## Changed
 
 * The URL on the translation page has been corrected.
-
-## Previous versions
 
 ## MeshMC 9.1.0
 
