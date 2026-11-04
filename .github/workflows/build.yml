@@ -107,14 +107,6 @@ jobs:
             qt-major: 5
             build-name: Linux x86_64 Qt5
 
-          - os: windows-2025
-            artifact-name: Windows-MinGW-w64
-            cmake-preset: windows_mingw
-            msystem: CLANG64
-            vcvars-arch: amd64_x86
-            qt-major: 5
-            build-name: Windows MinGW x86_64 Qt5
-
           - os: windows-2022
             artifact-name: Windows-MSVC
             cmake-preset: windows_msvc

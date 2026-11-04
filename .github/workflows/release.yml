@@ -90,17 +90,6 @@ jobs:
             cd ..
           done
 
-          for d in MeshMC-Qt5-Windows-MinGW-w64*; do
-            cd "${d}" || continue
-            INST="$(echo -n ${d} | grep -o Setup || true)"
-            PORT="$(echo -n ${d} | grep -o Portable || true)"
-            NAME="MeshMC-Qt5-Windows-MinGW-w64"
-            test -z "${PORT}" || NAME="${NAME}-Portable"
-            test -z "${INST}" || mv MeshMC-*.exe ../${NAME}-Setup-${{ env.VERSION }}.exe
-            test -n "${INST}" || zip -r -9 "../${NAME}-${{ env.VERSION }}.zip" *
-            cd ..
-          done
-
           for d in MeshMC-Qt6-Windows-MinGW-w64*; do
             cd "${d}" || continue
             INST="$(echo -n ${d} | grep -o Setup || true)"
@@ -132,9 +121,6 @@ jobs:
             MeshMC-Qt5-Linux-Portable-${{ env.VERSION }}.tar.gz
             MeshMC-Qt6-Linux-Portable-${{ env.VERSION }}.tar.gz
             MeshMC-Qt6-Linux-aarch64-Portable-${{ env.VERSION }}.tar.gz
-            MeshMC-Qt5-Windows-MinGW-w64-${{ env.VERSION }}.zip
-            MeshMC-Qt5-Windows-MinGW-w64-Portable-${{ env.VERSION }}.zip
-            MeshMC-Qt5-Windows-MinGW-w64-Setup-${{ env.VERSION }}.exe
             MeshMC-Qt6-Windows-MinGW-w64-${{ env.VERSION }}.zip
             MeshMC-Qt6-Windows-MinGW-w64-Portable-${{ env.VERSION }}.zip
             MeshMC-Qt6-Windows-MinGW-w64-Setup-${{ env.VERSION }}.exe

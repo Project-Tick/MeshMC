@@ -1,10 +1,16 @@
-# MeshMC 11.0.1
+# MeshMC 11.0.2
+
+## CI Removes
+
+* Removed GHA MinGW Qt5 Clang64 CI.
+
+## Previous versions
+
+## MeshMC 11.0.1
 
 ## CI Fixes
 
 * Fixed GHA MinGW Clang64 CI.
-
-## Previous versions
 
 ## MeshMC 11.0.0
 
