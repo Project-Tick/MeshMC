@@ -10,12 +10,12 @@ runs:
       run: |
         sudo apt-get -y update
         sudo apt-get -y install \
-          dpkg-dev \
+          dpkg-dev build-essential \
           ninja-build pkg-config scdoc gamemode-dev \
           libxcb-cursor-dev libtomlplusplus-dev libvulkan-dev \
           libgpg-error-dev libassuan-dev libksba-dev \
           libnpth0-dev libbotan-3-dev autoconf automake libtool gettext \
-          autoconf-archive
+          autoconf-archive cmake mono-complete
 
     - name: Setup Java
       uses: actions/setup-java@v6
@@ -24,6 +24,42 @@ runs:
         # Temurin doesn't have Java 17 builds for WoA
         distribution: zulu
         java-version: 17
+
+    - name: Setup vcpkg cache
+      shell: bash
+      env:
+        USERNAME: ${{ github.repository_owner }}
+        GITHUB_TOKEN: ${{ github.token }}
+        FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+      run: |
+        if [ "$(uname -m)" = "aarch64" ]; then
+          export VCPKG_FORCE_SYSTEM_BINARIES=1
+          echo "VCPKG_FORCE_SYSTEM_BINARIES=1" >> "$GITHUB_ENV"
+        fi
+
+        nuget_output="$(vcpkg fetch nuget 2>&1)" || true
+        NUGET_EXE="$(printf '%s\n' "$nuget_output" | tail -n 1)"
+        if [ ! -f "$NUGET_EXE" ]; then
+          # The binary cache is an optimisation: say what went wrong, but do not fail the build.
+          echo "::warning::vcpkg could not provide nuget, building without the NuGet binary cache"
+          printf '%s\n' "$nuget_output"
+          exit 0
+        fi
+
+        mono "$NUGET_EXE" \
+          sources add \
+          -Source "$FEED_URL" \
+          -StorePasswordInClearText \
+          -Name GitHubPackages \
+          -UserName "$USERNAME" \
+          -Password "$GITHUB_TOKEN"
+        mono "$NUGET_EXE" \
+          setapikey "$GITHUB_TOKEN" \
+          -Source "$FEED_URL"
+        echo "VCPKG_BINARY_SOURCES=clear;nuget,$FEED_URL,readwrite" >> "$GITHUB_ENV"
+        # Own package ids, see the Windows step: the plain vcpkg ids in the org feed belong to
+        # packages GITHUB_TOKEN may not write to (403 Forbidden).
+        echo "X_VCPKG_NUGET_ID_PREFIX=meshmc." >> "$GITHUB_ENV"
 
     - name: Setup AppImage tooling
       shell: bash
