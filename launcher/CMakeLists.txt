@@ -55,20 +55,13 @@ add_unit_test(GradleSpecifier
     LIBS MeshMC_logic
     )
 
-add_executable(PackageManifest
-    mojang/PackageManifest_test.cpp
-)
-target_link_libraries(PackageManifest
-    MeshMC_logic
-    Qt${QT_VERSION_MAJOR}::Test
+ecm_add_test(mojang/PackageManifest_test.cpp
+    TEST_NAME PackageManifest
+    LINK_LIBRARIES MeshMC_logic Qt${QT_VERSION_MAJOR}::Test
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 target_include_directories(PackageManifest
     PRIVATE ../cmake/UnitTest/
-)
-add_test(
-    NAME PackageManifest
-    COMMAND PackageManifest
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 add_unit_test(MojangVersionFormat
@@ -304,7 +297,7 @@ add_unit_test(IconTheme
 target_compile_definitions(IconTheme_test PRIVATE
     MESHMC_MAINWINDOW_UI_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/MainWindow.ui")
 
-set_tests_properties(IconTheme PROPERTIES
+set_tests_properties(IconTheme_test PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QPA_PLATFORMTHEME="
     )
 

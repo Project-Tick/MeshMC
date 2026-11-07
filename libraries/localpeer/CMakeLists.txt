@@ -27,7 +27,7 @@ if(WIN32)
     )
 endif()
 
-add_library(LocalPeer ${SINGLE_SOURCES})
+add_library(LocalPeer STATIC ${SINGLE_SOURCES})
 set_target_properties(LocalPeer PROPERTIES POSITION_INDEPENDENT_CODE ON)
 add_library(LocalPeer::LocalPeer ALIAS LocalPeer)
 target_include_directories(LocalPeer

@@ -3,28 +3,9 @@ cmake_minimum_required(VERSION 3.24)
 # SPDX-FileContributor: Project Tick
 # SPDX-License-Identifier: Apache-2.0
 
-# Required for CMAKE_MSVC_DEBUG_INFORMATION_FORMAT to work (avoids /Zi PDB conflicts with sccache)
 cmake_policy(SET CMP0141 NEW)
-
-# Required so CMAKE_MSVC_RUNTIME_LIBRARY controls the CRT (/MD vs /MDd) instead
-# of it being baked into CMAKE_CXX_FLAGS. The CRT is pinned to /MD in the
-# if(MSVC) block below, to match how the vcpkg dependencies are built; see the
-# note there. Must be set before project().
 cmake_policy(SET CMP0091 NEW)
 
-# Never search our own install prefix when resolving find_package().
-#
-# The presets install into <source>/install, and project() would otherwise add
-# CMAKE_INSTALL_PREFIX to CMAKE_SYSTEM_PREFIX_PATH — so after one
-# `cmake --install`, the next configure starts finding our own installed
-# artifacts as if they were system packages. That is how a half-installed ECM
-# (only ECMConfig.cmake landed under install/share/ECM, none of the modules)
-# made find_package(ECM) succeed against a broken prefix and took the whole
-# configure down with "could not find ECMUseFindModules.cmake".
-#
-# Nothing we legitimately depend on lives in our own install tree, so refusing
-# to look there removes that entire class of self-poisoning. Must be set before
-# project(), which is when CMAKE_SYSTEM_PREFIX_PATH is built.
 set(CMAKE_FIND_NO_INSTALL_PREFIX TRUE)
 
 project(MeshMC)
@@ -36,7 +17,18 @@ find_package(ECM NO_MODULE REQUIRED)
 set(CMAKE_MODULE_PATH "${ECM_MODULE_PATH};${CMAKE_MODULE_PATH}")
 
 include(CTest)
+include(KDEInstallDirs)
+if(APPLE)
+    set(KDE_SKIP_RPATH_SETTINGS ON)
+endif()
+include(KDECMakeSettings NO_POLICY_SCOPE)
+include(FeatureSummary)
+include(ECMSetupVersion)
+include(GenerateExportHeader)
+include(ECMQtDeclareLoggingCategory)
+include(ECMDeprecationSettings)
 include(ECMAddTests)
+
 if(BUILD_TESTING)
     enable_testing()
 endif()
@@ -54,16 +46,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     endif()
 endif()
 
-set(MeshMC_COMPILER_NAME ${CMAKE_CXX_COMPILER_ID})
-set(MeshMC_COMPILER_VERSION ${CMAKE_CXX_COMPILER_VERSION})
-set(MeshMC_COMPILER_TARGET_SYSTEM ${CMAKE_SYSTEM_NAME})
-set(MeshMC_COMPILER_TARGET_SYSTEM_VERSION ${CMAKE_SYSTEM_VERSION})
-set(MeshMC_COMPILER_TARGET_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
-
 ##################################### Set CMake options #####################################
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
 
 # Output all executables and shared libs in the main build folder, not in subfolders.
@@ -79,23 +62,17 @@ set(CMAKE_C_STANDARD_REQUIRED true)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
-include(GenerateExportHeader)
+include(KDECompilerSettings NO_POLICY_SCOPE)
+
+set(CMAKE_MACOSX_BUNDLE OFF)
+set(CMAKE_WIN32_EXECUTABLE OFF)
+
+kde_enable_exceptions()
+
 if(MSVC)
-    set(CMAKE_CXX_FLAGS " /W4 ${CMAKE_CXX_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DQT_NO_DEPRECATED_WARNINGS=Y")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
     set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG Release "")
-else()
-    # FIXME: readd -Werror flag
-    set(CMAKE_CXX_FLAGS " -Wall -pedantic -Wno-deprecated-declarations -fstack-protector-strong --param=ssp-buffer-size=4 -O3 -D_FORTIFY_SOURCE=2 ${CMAKE_CXX_FLAGS}")
-    if(UNIX AND APPLE)
-        set(CMAKE_CXX_FLAGS " -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
-    endif()
-    # FIXME: readd this: set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Werror=return-type")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_DEPRECATED_WARNINGS=Y")
 endif()
-
-include(ECMQtDeclareLoggingCategory)
 
 option(ENABLE_LTO "Enable Link Time Optimization" off)
 option(MeshMC_DISABLE_JAVA_DOWNLOADER "Disable the built-in Java downloader feature" OFF)
@@ -321,19 +298,21 @@ message(STATUS "Git tag: ${MeshMC_GIT_TAG}")
 string(TIMESTAMP TODAY "%Y-%m-%d")
 set(MeshMC_BUILD_TIMESTAMP "${TODAY}")
 
+######## Secondly, please set version numbers ########
+# ECM splits the version into MeshMC_VERSION, MeshMC_VERSION_MAJOR/MINOR/PATCH and
+# MeshMC_SOVERSION (the major version).
+ecm_setup_version(12.0.0 VARIABLE_PREFIX MeshMC)
+# "Hotfix" is what this project has always called the patch component.
+set(MeshMC_VERSION_HOTFIX ${MeshMC_VERSION_PATCH})
+
+set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION}")
+set(MeshMC_RELEASE_TWO_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}")
+set(MeshMC_VERSION_NAME4 "${MeshMC_VERSION}.0")
+set(MeshMC_VERSION_NAME4_COMMA "${MeshMC_VERSION_MAJOR},${MeshMC_VERSION_MINOR},${MeshMC_VERSION_HOTFIX},0")
+
 #### Custom target to just print the version.
 add_custom_target(version echo "Version: ${MeshMC_RELEASE_VERSION_NAME}")
 add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MESHMC_VERSION\\' value=\\'${MeshMC_RELEASE_VERSION_NAME}\\']")
-
-######## Secondly, please set version numbers ########
-set(MeshMC_VERSION_MAJOR    12)
-set(MeshMC_VERSION_MINOR    0)
-set(MeshMC_VERSION_HOTFIX   0)
-
-set(MeshMC_RELEASE_VERSION_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}")
-set(MeshMC_RELEASE_TWO_NAME "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}")
-set(MeshMC_VERSION_NAME4 "${MeshMC_VERSION_MAJOR}.${MeshMC_VERSION_MINOR}.${MeshMC_VERSION_HOTFIX}.0")
-set(MeshMC_VERSION_NAME4_COMMA "${MeshMC_VERSION_MAJOR},${MeshMC_VERSION_MINOR},${MeshMC_VERSION_HOTFIX},0")
 
 ######## Thirdly, please define URLs and API keys ########
 
@@ -351,14 +330,6 @@ set(MeshMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platfo
 # Updater: the repository releases are read from.
 set(MeshMC_UPDATER_GITHUB_REPO "https://github.com/Project-Tick/MeshMC" CACHE STRING "GitHub repository the updater reads releases from.")
 
-# Updater: the release channel this build subscribes to.
-#
-# A "beta" build has pre-releases enabled by default, so a beta user is never
-# stranded on an older version than the stable line. Users can change this
-# afterwards; this only sets the default.
-#
-# This is deliberately NOT MeshMC_VERSION_CHANNEL / BuildConfig.VERSION_CHANNEL,
-# which is just the git branch name and purely informational.
 set(MeshMC_UPDATE_CHANNEL "stable" CACHE STRING "Release channel this build subscribes to: stable | beta.")
 set_property(CACHE MeshMC_UPDATE_CHANNEL PROPERTY STRINGS stable beta)
 
@@ -442,7 +413,12 @@ configure_file(launcher/packaging/windows/nsis/win_install.nsi.in win_install.ns
 ####################################### Install layout #######################################
 
 if(NOT (UNIX AND APPLE))
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${MeshMC_Portable_File}" DESTINATION "." COMPONENT portable EXCLUDE_FROM_ALL)
+    install(
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/${MeshMC_Portable_File}"
+        DESTINATION "."
+        COMPONENT portable
+        EXCLUDE_FROM_ALL
+    )
 endif()
 
 if(UNIX AND APPLE)
@@ -524,20 +500,13 @@ if(UNIX AND APPLE)
 
 
 elseif(UNIX)
-    include(GNUInstallDirs)
-
-    set(BINARY_DEST_DIR "${CMAKE_INSTALL_BINDIR}")
-    set(LIBRARY_DEST_DIR "${CMAKE_INSTALL_LIBDIR}")
+    set(BINARY_DEST_DIR "${KDE_INSTALL_BINDIR}")
+    set(LIBRARY_DEST_DIR "${KDE_INSTALL_LIBDIR}")
     set(JARS_DEST_DIR "share/MeshMC")
     set(MMCO_MODULES_DEST_DIR "share/MeshMC/mmcmodules")
     set(MMCO_PLUGIN_DATA_DEST_DIR "${MMCO_MODULES_DEST_DIR}")
-    set(PRIVATE_LIBRARY_DEST_DIR "${CMAKE_INSTALL_LIBDIR}/meshmc")
+    set(PRIVATE_LIBRARY_DEST_DIR "${KDE_INSTALL_LIBDIR}/meshmc")
     SET(MeshMC_BINARY_RPATH "$ORIGIN/../${PRIVATE_LIBRARY_DEST_DIR}")
-    set(KDE_INSTALL_APPDIR      "${CMAKE_INSTALL_DATAROOTDIR}/applications")
-    set(KDE_INSTALL_METAINFODIR "${CMAKE_INSTALL_DATAROOTDIR}/metainfo")
-    set(KDE_INSTALL_ICONDIR     "${CMAKE_INSTALL_DATAROOTDIR}/icons")
-    set(KDE_INSTALL_MIMEDIR     "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages")
-    set(KDE_INSTALL_MANDIR      "${CMAKE_INSTALL_MANDIR}")
 
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/org.projecttick.MeshMC.desktop DESTINATION ${KDE_INSTALL_APPDIR})
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/launcher/packaging/linux/org.projecttick.MeshMC.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
@@ -609,21 +578,9 @@ add_subdirectory(libraries/localpeer) # fork of a library from Qt solutions
 add_subdirectory(libraries/classparser) # Java class file parser
 add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too much
 
-# Two libraries under libraries/ build as shared objects (rainbow hardcodes
-# SHARED, nbt++ opts in via NBT_BUILD_SHARED), so they have to be deployed
-# where the launcher can load them: alongside the binary on Windows,
-# LIBRARY_DEST_DIR elsewhere (covered by the RPATH, $ORIGIN/../lib).
-#
-# Installed explicitly rather than left to install(RUNTIME_DEPENDENCY_SET),
-# which scans the built binary and searches a directory list — it did not pick
-# these up. Their own subprojects do install them, but to
-# ${CMAKE_INSTALL_BINDIR} (install/bin/) while meshmc.exe sits at the install
-# root, so the launcher died on startup with "nbt++.dll not found". These are
-# our own targets and we know exactly where they belong; no point rediscovering
-# it by scanning a binary.
 set_target_properties(nbt++ rainbow PROPERTIES
     VERSION   "${MeshMC_RELEASE_VERSION_NAME}"
-    SOVERSION "${MeshMC_VERSION_MAJOR}")
+    SOVERSION "${MeshMC_SOVERSION}")
 
 if(NOT DEFINED PRIVATE_LIBRARY_DEST_DIR)
     set(PRIVATE_LIBRARY_DEST_DIR "${LIBRARY_DEST_DIR}")
@@ -661,3 +618,9 @@ endif()
 if(APPLE AND QT_VERSION_MAJOR EQUAL 5)
     include("${CMAKE_SOURCE_DIR}/cmake/FixQt5MacBundle.cmake")
 endif()
+
+feature_summary(
+    WHAT ALL
+    INCLUDE_QUIET_PACKAGES
+    FATAL_ON_MISSING_REQUIRED_PACKAGES
+)
