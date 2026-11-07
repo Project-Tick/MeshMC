@@ -59,6 +59,7 @@ ecm_add_test(mojang/PackageManifest_test.cpp
     TEST_NAME PackageManifest
     LINK_LIBRARIES MeshMC_logic Qt6::Test
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    ENVIRONMENT ${MeshMC_TEST_ENVIRONMENT}
 )
 target_include_directories(PackageManifest
     PRIVATE ../cmake/UnitTest/
@@ -297,8 +298,10 @@ add_unit_test(IconTheme
 target_compile_definitions(IconTheme_test PRIVATE
     MESHMC_MAINWINDOW_UI_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/MainWindow.ui")
 
-set_tests_properties(IconTheme_test PROPERTIES
-    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QPA_PLATFORMTHEME="
+# APPEND: replacing ENVIRONMENT here would drop the variables add_unit_test() set.
+set_property(TEST IconTheme_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    "QT_QPA_PLATFORMTHEME="
     )
 
 target_link_libraries(MeshMC_logic
@@ -333,6 +336,9 @@ target_link_libraries(MeshMC_logic
     Qt6::Widgets
     Qt6::OpenGL
     KF6::I18n
+    KF6::GuiAddons
+    KF6::CoreAddons
+    KF6::XmlGui
     LibArchive::LibArchive
     cmark::cmark
     rainbow

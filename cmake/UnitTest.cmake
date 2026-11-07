@@ -5,6 +5,15 @@ set(TEST_RESOURCE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
 message(${TEST_RESOURCE_PATH})
 
+# Environment every test runs with.
+#
+# QT_FORCE_STDERR_LOGGING: on Windows, Qt (and QTest's own PASS/FAIL/QDEBUG/QWARN
+# output) only writes to stderr/stdout when a console window is attached
+# (GetConsoleWindow()). Under CTest/CI the output goes through pipes, so everything
+# silently went to OutputDebugString and nothing showed up in the log. This makes
+# qDebug()/qWarning()/qCDebug() and QTest's output reach the pipe. Harmless elsewhere.
+set(MeshMC_TEST_ENVIRONMENT "QT_FORCE_STDERR_LOGGING=1")
+
 # Thin wrapper around ecm_add_test(): the executable and the test are both called
 # <name>_test. ECM creates them (console application, QT_FORCE_ASSERTS, buildtests
 # target, QT_PLUGIN_PATH for the test); this adds what is specific to MeshMC:
@@ -25,6 +34,7 @@ function(add_unit_test name)
         TEST_NAME ${name}_test
         LINK_LIBRARIES Qt6::Test ${OPT_LIBS}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        ENVIRONMENT ${MeshMC_TEST_ENVIRONMENT}
     )
 
     if(NOT "${OPT_DATA}" STREQUAL "")

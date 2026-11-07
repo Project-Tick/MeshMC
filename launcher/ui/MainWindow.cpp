@@ -57,6 +57,9 @@
 #include <QtWidgets/QProgressDialog>
 #include <QShortcut>
 
+#include <KAboutApplicationDialog>
+#include <KAboutData>
+
 #include <BaseInstance.h>
 #include <InstanceList.h>
 #include <MMCZip.h>
@@ -90,7 +93,6 @@
 #include "ui/widgets/LabeledToolButton.h"
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "ui/dialogs/ProgressDialog.h"
-#include "ui/dialogs/AboutDialog.h"
 #include "ui/dialogs/NewsViewerDialog.h"
 #include "ui/dialogs/MeshMCLogsDialog.h"
 #include "ui/dialogs/PluginsDialog.h"
@@ -1677,7 +1679,10 @@ void MainWindow::newsButtonClicked()
 
 void MainWindow::on_actionAbout_triggered()
 {
-	AboutDialog dialog(this);
+	KAboutApplicationDialog dialog(
+		KAboutData::applicationData(),
+		this
+	);
 	dialog.exec();
 }
 

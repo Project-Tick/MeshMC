@@ -16,6 +16,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(ECM NO_MODULE REQUIRED)
 set(CMAKE_MODULE_PATH "${ECM_MODULE_PATH};${CMAKE_MODULE_PATH}")
 
+# Tell ECM which Qt this is before any KDE module is included. Without it
+# QtVersionOption.cmake picks Qt 5 (the Qt 6 default needs find_package(ECM) to be
+# given a version >= 5.240.0, and the KDE modules below run before Qt is found), so
+# KDEInstallDirs loaded its Qt 5 layout and, on Windows, KDECompilerSettings
+# targeted Windows Vista (-D_WIN32_WINNT=0x0600).
+set(QT_MAJOR_VERSION 6)
+
 include(CTest)
 include(KDEInstallDirs)
 if(APPLE)
@@ -153,6 +160,9 @@ find_package(Qt6 6.4.0 REQUIRED COMPONENTS Core
 )
 
 find_package(KF6 REQUIRED COMPONENTS I18n
+    GuiAddons
+    CoreAddons
+    XmlGui
 )
 
 if(UNIX)
@@ -596,3 +606,5 @@ feature_summary(
     INCLUDE_QUIET_PACKAGES
     FATAL_ON_MISSING_REQUIRED_PACKAGES
 )
+
+ki18n_install(po)
