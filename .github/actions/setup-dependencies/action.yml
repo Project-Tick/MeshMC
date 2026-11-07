@@ -131,8 +131,24 @@ runs:
       with:
         aqtsource: "git+https://github.com/miurahr/aqtinstall.git@076e1659807d0b362a3ed684d54c2e9c775eb9c7"
         version: ${{ inputs.qt-version }}
-        modules: qtimageformats qtnetworkauth
+        modules: qtimageformats qtnetworkauth qtshadertools qtspeech qtmultimedia qttasktree
         cache: ${{ inputs.build-type == 'Debug' }}
+
+    - name: Setup KDE Frameworks 6
+      if: ${{ inputs.msystem == '' && inputs.qt-major == '6' }}
+      uses: ./.github/actions/setup-kf6
+      env:
+        # The frameworks are cached by the action itself; keep them out of sccache.
+        CMAKE_C_COMPILER_LAUNCHER: ""
+        CMAKE_CXX_COMPILER_LAUNCHER: ""
+      with:
+        version: 6.31.0
+        # Always Release: like the old vcpkg triplets, dependencies don't need a debug half.
+        build-type: Release
+        linkage: shared
+        # TODO: set to false once KF6 builds cleanly everywhere. While bringing up a platform,
+        # this reports every failing framework in one run instead of only the first.
+        keep-going: true
 
     - name: Setup bundled OpenSSL
       uses: ./.github/actions/setup-openssl

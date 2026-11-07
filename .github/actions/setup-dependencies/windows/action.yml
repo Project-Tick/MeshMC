@@ -88,9 +88,23 @@ runs:
           qt${{ inputs.qt-major }}-imageformats:p
           qt${{ inputs.qt-major }}-networkauth:p
           qt${{ inputs.qt-major }}-tools:p
+          qt${{ inputs.qt-major }}-declarative:p
           gpgme:p
           qgpgme:p
           gpgmepp:p
+          gettext:p
+          bzip2:p
+          xz:p
+          libxml2:p
+          cmark:p
+          gpgme:p
+          qrencode:p
+          libarchive:p
+          libxslt:p
+          docbook-xml:p
+          docbook5-xml:p
+          docbook-xsl:p
+          kf6:p
 
     - name: List pacman packages (MinGW)
       if: ${{ inputs.msystem != '' }}

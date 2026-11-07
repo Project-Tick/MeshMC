@@ -914,6 +914,12 @@ if(WIN32 OR (UNIX AND APPLE))
 
         install(CODE [[
             file(GLOB QT_IMAGEFORMAT_DLLS "${QT_PLUGINS_DIR}/imageformats/*.dll")
+            # Only resolve the dependencies of Qt's own image plugins. The pacman KF6 group
+            # also puts KImageFormats' kimg_*.dll in this directory; kimg_avif/heif/raw link
+            # libavif/libheif/libraw, which pacman does not install with it, so resolving them
+            # fails the whole install ("Could not resolve runtime dependencies"). MeshMC does
+            # not use these formats, so there is nothing worth bundling for them.
+            list(FILTER QT_IMAGEFORMAT_DLLS EXCLUDE REGEX "/kimg_[^/]*\\.dll$")
             set(CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL objdump)
             file(GET_RUNTIME_DEPENDENCIES
                 RESOLVED_DEPENDENCIES_VAR imageformatdeps

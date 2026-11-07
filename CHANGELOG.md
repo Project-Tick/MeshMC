@@ -1,8 +1,18 @@
 # MeshMC 12.0.0 (DRAFT)
 
+## Added
+
+* Added Installation step of KDE Frameworks 6 to CI.
+* KF6 Setup script has been added.
+
 ## Changed
 
 * The complexity in the build system has been reduced.
+
+## Removed
+
+* Removed support of Universal macOS Build.
+* Removed Qt5 build matrix to CI.
 
 ## Previous versions
 
