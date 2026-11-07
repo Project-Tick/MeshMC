@@ -24,6 +24,7 @@
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 #include <QWidget>
+#include <KLocalizedString>
 
 class LanguageSelectionWidget;
 
@@ -37,7 +38,7 @@ class LanguagePage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return tr("Language");
+		return i18n("Language");
 	}
 	QIcon icon() const override
 	{

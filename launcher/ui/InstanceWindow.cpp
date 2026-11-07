@@ -35,6 +35,7 @@
 #include "InstancePageProvider.h"
 
 #include "icons/IconList.h"
+#include <KLocalizedString>
 
 InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
 	: QMainWindow(parent), m_instance(instance)
@@ -42,7 +43,7 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
 	setAttribute(Qt::WA_DeleteOnClose);
 
 	auto icon = APPLICATION->icons()->getIcon(m_instance->iconKey());
-	QString windowTitle = tr("Console window for ") + m_instance->name();
+	QString windowTitle = i18n("Console window for ") + m_instance->name();
 
 	// Set window properties
 	{
@@ -82,7 +83,7 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
 		horizontalLayout->setContentsMargins(6, -1, 6, -1);
 
 		auto btnHelp = new QPushButton();
-		btnHelp->setText(tr("Help"));
+		btnHelp->setText(i18n("Help"));
 		horizontalLayout->addWidget(btnHelp);
 		connect(btnHelp, &QPushButton::clicked, m_container,
 				&PageContainer::help);
@@ -98,13 +99,13 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
 
 		m_launchOfflineButton = new QPushButton();
 		horizontalLayout->addWidget(m_launchOfflineButton);
-		m_launchOfflineButton->setText(tr("Launch Offline"));
+		m_launchOfflineButton->setText(i18n("Launch Offline"));
 		updateLaunchButtons();
 		connect(m_launchOfflineButton, &QPushButton::clicked, this,
 				&InstanceWindow::on_btnLaunchMinecraftOffline_clicked);
 
 		m_closeButton = new QPushButton();
-		m_closeButton->setText(tr("Close"));
+		m_closeButton->setText(i18n("Close"));
 		horizontalLayout->addWidget(m_closeButton);
 		connect(m_closeButton, &QPushButton::clicked, this,
 				&InstanceWindow::on_closeButton_clicked);
@@ -152,20 +153,20 @@ void InstanceWindow::updateLaunchButtons()
 {
 	if (m_instance->isRunning()) {
 		m_launchOfflineButton->setEnabled(false);
-		m_killButton->setText(tr("Kill"));
+		m_killButton->setText(i18n("Kill"));
 		m_killButton->setObjectName("killButton");
-		m_killButton->setToolTip(tr("Kill the running instance"));
+		m_killButton->setToolTip(i18n("Kill the running instance"));
 	} else if (!m_instance->canLaunch()) {
 		m_launchOfflineButton->setEnabled(false);
-		m_killButton->setText(tr("Launch"));
+		m_killButton->setText(i18n("Launch"));
 		m_killButton->setObjectName("launchButton");
-		m_killButton->setToolTip(tr("Launch the instance"));
+		m_killButton->setToolTip(i18n("Launch the instance"));
 		m_killButton->setEnabled(false);
 	} else {
 		m_launchOfflineButton->setEnabled(true);
-		m_killButton->setText(tr("Launch"));
+		m_killButton->setText(i18n("Launch"));
 		m_killButton->setObjectName("launchButton");
-		m_killButton->setToolTip(tr("Launch the instance"));
+		m_killButton->setToolTip(i18n("Launch the instance"));
 	}
 	// NOTE: this is a hack to force the button to recalculate its style
 	m_killButton->setStyleSheet("/* */");

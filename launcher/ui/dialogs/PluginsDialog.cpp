@@ -29,6 +29,7 @@
 #include "BuildConfig.h"
 #include "plugin/PluginManager.h"
 #include "plugin/PluginSignature.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -42,19 +43,19 @@ namespace
 	{
 		switch (r) {
 			case PluginDisableReason::None:
-				return QObject::tr("OK");
+				return i18n("OK");
 			case PluginDisableReason::UserDisabled:
-				return QObject::tr("Disabled by user");
+				return i18n("Disabled by user");
 			case PluginDisableReason::SignatureRequired:
-				return QObject::tr("Signature required");
+				return i18n("Signature required");
 			case PluginDisableReason::SignatureInvalid:
-				return QObject::tr("Invalid signature");
+				return i18n("Invalid signature");
 			case PluginDisableReason::DependencyMissing:
-				return QObject::tr("Missing dependency");
+				return i18n("Missing dependency");
 			case PluginDisableReason::DependencyCycle:
-				return QObject::tr("Dependency cycle");
+				return i18n("Dependency cycle");
 			case PluginDisableReason::SupersededByCore:
-				return QObject::tr("Built into MeshMC");
+				return i18n("Built into MeshMC");
 		}
 		return QString();
 	}
@@ -79,11 +80,11 @@ namespace
 						.arg(label.toHtmlEscaped(), value.toHtmlEscaped());
 		};
 
-		row(QObject::tr("Name:"), mod.name);
-		row(QObject::tr("Version:"), mod.version);
-		row(QObject::tr("Author:"), mod.author);
-		row(QObject::tr("License:"), mod.license);
-		row(QObject::tr("Description:"), mod.description);
+		row(i18n("Name:"), mod.name);
+		row(i18n("Version:"), mod.version);
+		row(i18n("Author:"), mod.author);
+		row(i18n("License:"), mod.license);
+		row(i18n("Description:"), mod.description);
 
 		if (!mod.codeLink.isEmpty()) {
 			QString cell;
@@ -96,14 +97,14 @@ namespace
 			}
 			html += QStringLiteral(
 						"<tr><td class=\"label\">%1</td><td>%2</td></tr>")
-						.arg(QObject::tr("Source Code:").toHtmlEscaped(), cell);
+						.arg(i18n("Source Code:").toHtmlEscaped(), cell);
 		}
 
 		// Signature
-		row(QObject::tr("Signature:"),
+		row(i18n("Signature:"),
 			QString::fromUtf8(PluginSignature::stateLabel(mod.signatureState)));
-		row(QObject::tr("Signing Key:"), mod.signatureFingerprint);
-		row(QObject::tr("Signature Detail:"), mod.signatureDetail);
+		row(i18n("Signing Key:"), mod.signatureFingerprint);
+		row(i18n("Signature Detail:"), mod.signatureDetail);
 
 		// Dependencies
 		if (!mod.dependencies.isEmpty()) {
@@ -113,21 +114,21 @@ namespace
 				if (!d.minVersion.isEmpty())
 					s += QStringLiteral(" >= %1").arg(d.minVersion);
 				if (d.optional)
-					s += QObject::tr(" (optional)");
+					s += i18n(" (optional)");
 				parts.append(s);
 			}
-			row(QObject::tr("Dependencies:"), parts.join(QStringLiteral(", ")));
+			row(i18n("Dependencies:"), parts.join(QStringLiteral(", ")));
 		}
 
 		// Disable / status info
 		if (mod.disabled) {
-			row(QObject::tr("Status:"),
+			row(i18n("Status:"),
 				QStringLiteral("%1 — %2").arg(
 					disableReasonLabel(mod.disableReason), mod.disableDetail));
 		} else if (mod.initialized) {
-			row(QObject::tr("Status:"), QObject::tr("Loaded"));
+			row(i18n("Status:"), i18n("Loaded"));
 		} else {
-			row(QObject::tr("Status:"), QObject::tr("Discovered (not loaded)"));
+			row(i18n("Status:"), i18n("Discovered (not loaded)"));
 		}
 
 		html += QLatin1String("</table>");
@@ -208,9 +209,9 @@ void PluginsDialog::populateTree()
 		if (mod.disabled)
 			item->setText(3, disableReasonLabel(mod.disableReason));
 		else if (mod.initialized)
-			item->setText(3, tr("Loaded"));
+			item->setText(3, i18n("Loaded"));
 		else
-			item->setText(3, tr("Discovered"));
+			item->setText(3, i18n("Discovered"));
 
 		// Grey out disabled modules (but not the checkbox itself).
 		if (mod.disabled) {

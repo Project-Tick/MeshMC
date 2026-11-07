@@ -62,6 +62,7 @@
 #include "ui/dialogs/ModUpdateDialog.h"
 
 #include "Version.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -230,7 +231,7 @@ ModFolderPage::ModFolderPage(BaseInstance* inst,
 	 * rather than the action itself: an action that owns a menu opens it
 	 * on click, so the menu needs its own way of asking for the check. */
 	auto* updateMenu = new QMenu(this);
-	auto* checkEntry = updateMenu->addAction(tr("Check for Updates"));
+	auto* checkEntry = updateMenu->addAction(i18n("Check for Updates"));
 	connect(checkEntry, &QAction::triggered, this,
 			[this] { runUpdateCheck(); });
 
@@ -269,7 +270,7 @@ QMenu* ModFolderPage::createPopupMenu()
 
 void ModFolderPage::ShowContextMenu(const QPoint& pos)
 {
-	auto menu = ui->actionsToolbar->createContextMenu(this, tr("Context menu"));
+	auto menu = ui->actionsToolbar->createContextMenu(this, i18n("Context menu"));
 	menu->exec(ui->modTreeView->mapToGlobal(pos));
 	delete menu;
 }
@@ -424,9 +425,8 @@ void ModFolderPage::on_actionAdd_triggered()
 	}
 	auto list = GuiUtil::BrowseForFiles(
 		m_helpName,
-		tr("Select %1", "Select whatever type of files the page contains. "
-						"Example: 'Loader Mods'")
-			.arg(m_displayName),
+		i18nc("Select whatever type of files the page contains. "
+						"Example: 'Loader Mods'", "Select %1", m_displayName),
 		m_fileSelectionFilter.arg(m_displayName),
 		APPLICATION->settings()->get("CentralModsDir").toString(),
 		this->parentWidget());
@@ -537,8 +537,8 @@ bool ModFolderPage::ensureModLoaderPresent()
 		 * rather than failing silently and leaving a click that appears
 		 * to do nothing. */
 		QMessageBox::warning(
-			this->parentWidget(), tr("No Mod Loader"),
-			tr("This instance's component list could not be read, so it is "
+			this->parentWidget(), i18n("No Mod Loader"),
+			i18n("This instance's component list could not be read, so it is "
 			   "not possible to tell which mod loader it uses."));
 		return false;
 	}
@@ -551,8 +551,8 @@ bool ModFolderPage::ensureModLoaderPresent()
 	 * on it without going and finding the version page. Offer to do it
 	 * from here instead. */
 	const auto answer = QMessageBox::question(
-		this->parentWidget(), tr("No Mod Loader"),
-		tr("Mods need a loader to run, and this instance has none. Would "
+		this->parentWidget(), i18n("No Mod Loader"),
+		i18n("Mods need a loader to run, and this instance has none. Would "
 		   "you like to install one now?"),
 		QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 	if (answer != QMessageBox::Yes) {
@@ -580,8 +580,8 @@ bool ModFolderPage::ensureModLoaderPresent()
 		 * platform offers a LiteLoader filter, so there is no browse to
 		 * open. */
 		CustomMessageBox::selectable(
-			this->parentWidget(), tr("No Mod Loader"),
-			tr("This instance still has no loader that CurseForge or "
+			this->parentWidget(), i18n("No Mod Loader"),
+			i18n("This instance still has no loader that CurseForge or "
 			   "Modrinth can be searched by, so there is nothing to browse."),
 			QMessageBox::Warning)
 			->show();
@@ -770,11 +770,10 @@ void ModFolderPage::on_actionChangeVersion_triggered()
 	const auto entry = selectedModOrigin();
 	if (!entry.hasPlatformOrigin()) {
 		QMessageBox::information(
-			this->parentWidget(), tr("Cannot Change Version"),
-			tr("There is no record of where '%1' came from, so its other "
+			this->parentWidget(), i18n("Cannot Change Version"),
+			i18n("There is no record of where '%1' came from, so its other "
 			   "versions cannot be listed. Download it through this page "
-			   "once and the version can be changed from then on.")
-				.arg(mod.name()));
+			   "once and the version can be changed from then on.", mod.name()));
 		return;
 	}
 
@@ -792,9 +791,8 @@ void ModFolderPage::on_actionChangeVersion_triggered()
 			entry.platform, entry.projectId,
 			entry.name.isEmpty() ? mod.name() : entry.name)) {
 		QMessageBox::information(
-			this->parentWidget(), tr("Cannot Change Version"),
-			tr("'%1' was installed from a source this page cannot browse.")
-				.arg(mod.name()));
+			this->parentWidget(), i18n("Cannot Change Version"),
+			i18n("'%1' was installed from a source this page cannot browse.", mod.name()));
 		return;
 	}
 
@@ -838,7 +836,7 @@ void ModFolderPage::installSelection(
 		ProgressDialog depProgress(this->parentWidget());
 		/* "Abort" rather than "Skip", matching the reference launcher's
 		 * wording on every one of these dialogs. */
-		depProgress.setSkipButton(true, tr("Abort"));
+		depProgress.setSkipButton(true, i18n("Abort"));
 		if (depProgress.execWithTask(resolver.get()) != QDialog::Accepted) {
 			if (!resolver->wasSuccessful()) {
 				qWarning() << "Dependency resolution failed or was skipped";
@@ -898,8 +896,8 @@ void ModFolderPage::reviewAndInstall(
 
 	if (plan.isEmpty()) {
 		QMessageBox::information(
-			this->parentWidget(), tr("Nothing to do"),
-			tr("Every selected mod (and its dependencies) is already "
+			this->parentWidget(), i18n("Nothing to do"),
+			i18n("Every selected mod (and its dependencies) is already "
 			   "installed at the requested version."));
 		return;
 	}
@@ -915,7 +913,7 @@ void ModFolderPage::reviewAndInstall(
 		new ContentDownloadTask(plan, targetDir));
 	downloadTask->setMetadataIndex(m_mods->metadataIndex());
 	ProgressDialog downloadProgress(this->parentWidget());
-	downloadProgress.setSkipButton(true, tr("Abort"));
+	downloadProgress.setSkipButton(true, i18n("Abort"));
 	downloadProgress.execWithTask(downloadTask.get());
 
 	if (downloadTask->wasAborted()) {
@@ -927,9 +925,8 @@ void ModFolderPage::reviewAndInstall(
 	} else if (!offerManualDownloads(plan, targetDir)) {
 		/* Not something the manual route can fix, so say what went
 		 * wrong. */
-		QMessageBox::warning(this->parentWidget(), tr("Download Failed"),
-							 tr("Some files failed to download: %1")
-								 .arg(downloadTask->failReason()));
+		QMessageBox::warning(this->parentWidget(), i18n("Download Failed"),
+							 i18n("Some files failed to download: %1", downloadTask->failReason()));
 	}
 
 	m_mods->update();
@@ -966,8 +963,8 @@ bool ModFolderPage::offerManualDownloads(
 	}
 
 	BlockedModsDialog dialog(
-		this->parentWidget(), tr("Restricted Downloads"),
-		tr("The authors of these files have blocked downloads outside the "
+		this->parentWidget(), i18n("Restricted Downloads"),
+		i18n("The authors of these files have blocked downloads outside the "
 		   "CurseForge website, and fetching them through it did not work.\n"
 		   "Click Download next to each one to open its page in your "
 		   "browser. Once the files are in your Downloads folder, click "
@@ -1089,8 +1086,8 @@ void ModFolderPage::verifyDependencies()
 	const QString mcVersion = instanceMcVersion();
 	if (mcVersion.isEmpty()) {
 		QMessageBox::warning(
-			this->parentWidget(), tr("Cannot Verify Dependencies"),
-			tr("This instance has no Minecraft version configured."));
+			this->parentWidget(), i18n("Cannot Verify Dependencies"),
+			i18n("This instance has no Minecraft version configured."));
 		return;
 	}
 
@@ -1126,8 +1123,8 @@ void ModFolderPage::verifyDependencies()
 
 	if (installed.isEmpty()) {
 		QMessageBox::information(
-			this->parentWidget(), tr("Verify Dependencies"),
-			tr("None of the installed mods has a recorded origin, so there "
+			this->parentWidget(), i18n("Verify Dependencies"),
+			i18n("None of the installed mods has a recorded origin, so there "
 			   "is nothing to look up. Download mods through this page and "
 			   "their dependencies can be checked from then on."));
 		return;
@@ -1138,7 +1135,7 @@ void ModFolderPage::verifyDependencies()
 	resolver->setInstalledIndex(index);
 
 	ProgressDialog progress(this->parentWidget());
-	progress.setSkipButton(true, tr("Abort"));
+	progress.setSkipButton(true, i18n("Abort"));
 	progress.execWithTask(resolver.get());
 
 	/* Whatever was resolved before Abort is still worth offering. */
@@ -1147,8 +1144,8 @@ void ModFolderPage::verifyDependencies()
 
 	if (dependencies.isEmpty() && unresolved.isEmpty()) {
 		QMessageBox::information(
-			this->parentWidget(), tr("Verify Dependencies"),
-			tr("Every dependency of the installed mods is present."));
+			this->parentWidget(), i18n("Verify Dependencies"),
+			i18n("Every dependency of the installed mods is present."));
 		return;
 	}
 
@@ -1179,10 +1176,9 @@ void ModFolderPage::on_actionResetMetadata_triggered()
 	if (rows.size() > 1) {
 		auto response =
 			CustomMessageBox::selectable(
-				this->parentWidget(), tr("Confirm Removal"),
-				tr("You are about to remove the metadata for %1 files.\n"
-				   "Are you sure?")
-					.arg(rows.size()),
+				this->parentWidget(), i18n("Confirm Removal"),
+				i18n("You are about to remove the metadata for %1 files.\n"
+				   "Are you sure?", rows.size()),
 				QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No,
 				QMessageBox::No)
 				->exec();
@@ -1323,8 +1319,8 @@ void ModFolderPage::runUpdateCheck()
 
 	if (mcVersion.isEmpty()) {
 		QMessageBox::warning(
-			this->parentWidget(), tr("Cannot Check Updates"),
-			tr("This instance has no Minecraft version configured."));
+			this->parentWidget(), i18n("Cannot Check Updates"),
+			i18n("This instance has no Minecraft version configured."));
 		return;
 	}
 
@@ -1335,7 +1331,7 @@ void ModFolderPage::runUpdateCheck()
 	shared_qobject_ptr<ModUpdateCheckTask> check(
 		new ModUpdateCheckTask(index, mcVersion, loader, m_contentType));
 	ProgressDialog progress(this->parentWidget());
-	progress.setSkipButton(true, tr("Abort"));
+	progress.setSkipButton(true, i18n("Abort"));
 	progress.execWithTask(check.get());
 
 	/* Whatever was checked before Abort is still worth offering. */
@@ -1355,13 +1351,13 @@ void ModFolderPage::runUpdateCheck()
 		new ContentDownloadTask(plan, m_mods->dir().absolutePath()));
 	dl->setMetadataIndex(index);
 	ProgressDialog dlProgress(this->parentWidget());
-	dlProgress.setSkipButton(true, tr("Abort"));
+	dlProgress.setSkipButton(true, i18n("Abort"));
 	dlProgress.execWithTask(dl.get());
 	if (dl->wasAborted() || dl->wasSuccessful()) {
 		m_mods->update();
 	} else {
 		QMessageBox::warning(
-			this->parentWidget(), tr("Update Failed"),
-			tr("Some updates failed to download: %1").arg(dl->failReason()));
+			this->parentWidget(), i18n("Update Failed"),
+			i18n("Some updates failed to download: %1", dl->failReason()));
 	}
 }

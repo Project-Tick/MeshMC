@@ -332,6 +332,7 @@ target_link_libraries(MeshMC_logic
     Qt6::Gui
     Qt6::Widgets
     Qt6::OpenGL
+    KF6::I18n
     LibArchive::LibArchive
     cmark::cmark
     rainbow
@@ -532,6 +533,7 @@ if(NOT APPLE)
         Qt6::Gui
         Qt6::Widgets
         Qt6::Network
+        KF6::I18n
         LibArchive::LibArchive
         cmark::cmark
         BuildConfig

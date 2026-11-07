@@ -28,6 +28,7 @@
 #include "GitRepo.h"
 #include "GitVersioningPage.h"
 #include <QHash>
+#include <KLocalizedString>
 
 MMCO_DEFINE_MODULE("GitVersioning", "1.0.0", "Project Tick",
 				   "Track instance changes as Git commits — snapshot, restore, "
@@ -125,23 +126,22 @@ static void injectCheckboxIntoMeshMCPage()
 	if (!layout)
 		return;
 
-	auto* groupBox = new QGroupBox(QObject::tr("Git Versioning"));
+	auto* groupBox = new QGroupBox(i18n("Git Versioning"));
 	groupBox->setObjectName(QStringLiteral("gitVersioningGroupBox"));
 	auto* gl = new QVBoxLayout(groupBox);
 
 	g_checkbox = new QCheckBox(
-		QObject::tr("Auto-snapshot instance state before every launch"),
+		i18n("Auto-snapshot instance state before every launch"),
 		groupBox);
 	g_checkbox->setObjectName(QStringLiteral("gitAutoSnapshotCheck"));
 	g_checkbox->setToolTip(
-		QObject::tr("Commit any pending changes to the instance's Git history "
+		i18n("Commit any pending changes to the instance's Git history "
 					"right before the JVM starts. The history lives in the "
 					"instance's .history/ directory."));
 	gl->addWidget(g_checkbox);
 
 	if (!g_gitAvailable) {
-		auto* warn = new QLabel(QObject::tr(
-			"<i>git is not installed — version history disabled.</i>"));
+		auto* warn = new QLabel(i18n("<i>git is not installed — version history disabled.</i>"));
 		warn->setStyleSheet(QStringLiteral("color: #cc6666;"));
 		gl->addWidget(warn);
 		g_checkbox->setEnabled(false);
@@ -225,17 +225,17 @@ static void injectGroupIntoInstanceSettingsPage(QWidget* page,
 		return;
 
 	auto* groupBox = new QGroupBox(
-		QObject::tr("Override global Git Versioning settings"), page);
+		i18n("Override global Git Versioning settings"), page);
 	groupBox->setObjectName(QStringLiteral("gitVersioningInstanceGroupBox"));
 	groupBox->setCheckable(true);
 	auto* gl = new QVBoxLayout(groupBox);
 
 	auto* autoSnap = new QCheckBox(
-		QObject::tr("Auto-snapshot instance state before every launch"),
+		i18n("Auto-snapshot instance state before every launch"),
 		groupBox);
 	autoSnap->setObjectName(QStringLiteral("gitInstanceAutoSnapshotCheck"));
 	autoSnap->setToolTip(
-		QObject::tr("Commit any pending changes to this instance's Git "
+		i18n("Commit any pending changes to this instance's Git "
 					"history right before the JVM starts. The history lives "
 					"in the instance's .history/ directory."));
 	autoSnap->setEnabled(g_gitAvailable);
@@ -243,7 +243,7 @@ static void injectGroupIntoInstanceSettingsPage(QWidget* page,
 
 	if (!g_gitAvailable) {
 		auto* warn = new QLabel(
-			QObject::tr("git is not installed — version history disabled."),
+			i18n("git is not installed — version history disabled."),
 			groupBox);
 		warn->setStyleSheet(QStringLiteral("color: #cc6666;"));
 		gl->addWidget(warn);

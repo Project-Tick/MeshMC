@@ -12,6 +12,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
+find_package(KF6 REQUIRED COMPONENTS I18n)
 
 # Optional: libqrencode for QR code generation. Without it the dialog simply
 # leaves the QR code out (see MESHMC_HAS_QRENCODE below).
@@ -59,6 +60,7 @@ target_link_libraries(meshmc-crashreporter
         Qt6::Core
         Qt6::Widgets
         Qt6::Network
+        KF6::I18n
 )
 
 if(APPLE)

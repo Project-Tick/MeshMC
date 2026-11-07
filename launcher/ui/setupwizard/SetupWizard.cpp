@@ -28,6 +28,7 @@
 
 #include <QAbstractButton>
 #include <BuildConfig.h>
+#include <KLocalizedString>
 
 SetupWizard::SetupWizard(QWidget* parent) : QWizard(parent)
 {
@@ -45,11 +46,11 @@ SetupWizard::SetupWizard(QWidget* parent) : QWizard(parent)
 
 void SetupWizard::retranslate()
 {
-	setButtonText(QWizard::NextButton, tr("&Next >"));
-	setButtonText(QWizard::BackButton, tr("< &Back"));
-	setButtonText(QWizard::FinishButton, tr("&Finish"));
-	setButtonText(QWizard::CustomButton1, tr("&Refresh"));
-	setWindowTitle(tr("MeshMC Quick Setup"));
+	setButtonText(QWizard::NextButton, i18n("&Next >"));
+	setButtonText(QWizard::BackButton, i18n("< &Back"));
+	setButtonText(QWizard::FinishButton, i18n("&Finish"));
+	setButtonText(QWizard::CustomButton1, i18n("&Refresh"));
+	setWindowTitle(i18n("MeshMC Quick Setup"));
 }
 
 BaseWizardPage* SetupWizard::getBasePage(int id)

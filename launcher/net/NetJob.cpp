@@ -23,6 +23,7 @@
 
 #include <QDebug>
 #include <QLocale>
+#include <KLocalizedString>
 
 TaskStepProgressList NetJob::getStepProgress() const
 {
@@ -59,9 +60,7 @@ void NetJob::emitPartStep(int index, TaskStepState state)
 	QLocale locale;
 	QString details;
 	if (slot.total_progress > 0) {
-		details = tr("%1 of %2")
-					  .arg(locale.formattedDataSize(slot.current_progress),
-						   locale.formattedDataSize(slot.total_progress));
+		details = i18n("%1 of %2", locale.formattedDataSize(slot.current_progress), locale.formattedDataSize(slot.total_progress));
 	} else if (slot.current_progress > 0) {
 		details = locale.formattedDataSize(slot.current_progress);
 	}
@@ -80,10 +79,10 @@ void NetJob::updateStatus()
 	const QString all = QString::number(downloads.size());
 
 	if (objectName().isEmpty()) {
-		setStatus(tr("%1 out of %2 files done").arg(done, all));
+		setStatus(i18n("%1 out of %2 files done", done, all));
 		return;
 	}
-	setStatus(tr("%1: %2 out of %3 files done").arg(objectName(), done, all));
+	setStatus(i18n("%1: %2 out of %3 files done", objectName(), done, all));
 }
 
 void NetJob::partSucceeded(int index)
@@ -195,9 +194,7 @@ void NetJob::startMoreParts()
 			} else if (m_aborted) {
 				emitAborted();
 			} else {
-				emitFailed(tr("Job '%1' failed to process:\n%2")
-							   .arg(objectName())
-							   .arg(getFailedFiles().join("\n")));
+				emitFailed(i18n("Job '%1' failed to process:\n%2", objectName(), getFailedFiles().join("\n")));
 			}
 		}
 		return;

@@ -25,6 +25,7 @@
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 #include "tasks/Task.h"
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -42,7 +43,7 @@ class ImportPage : public QWidget, public BasePage
 	virtual ~ImportPage();
 	virtual QString displayName() const override
 	{
-		return tr("Import from zip");
+		return i18n("Import from zip");
 	}
 	virtual QIcon icon() const override
 	{

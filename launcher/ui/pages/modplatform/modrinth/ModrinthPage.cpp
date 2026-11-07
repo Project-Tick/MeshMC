@@ -28,6 +28,7 @@
 #include "InstanceImportTask.h"
 #include "ModrinthModel.h"
 #include "modplatform/modrinth/ModrinthApi.h"
+#include <KLocalizedString>
 
 ModrinthPage::ModrinthPage(NewInstanceDialog* dialog, QWidget* parent)
 	: QWidget(parent), ui(new Ui::ModrinthPage), dialog(dialog)
@@ -118,7 +119,7 @@ void ModrinthPage::onSelectionChanged(QModelIndex first, QModelIndex second)
 	}
 
 	if (!current.author.isEmpty()) {
-		text += "<br>" + tr(" by ") + current.author;
+		text += "<br>" + i18n(" by ") + current.author;
 	}
 	text += "<br><br>";
 

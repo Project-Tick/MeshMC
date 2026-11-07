@@ -30,6 +30,8 @@
 #include <windows.h>
 #endif
 
+#include <KLocalizedString>
+
 LoggedProcess::LoggedProcess(QObject* parent) : QProcess(parent)
 {
 	// QProcess has a strange interface... let's map a lot of those into a few.
@@ -116,22 +118,22 @@ void LoggedProcess::on_exit(int exit_code, QProcess::ExitStatus status)
 	if (!m_is_aborting) {
 		if (status == QProcess::NormalExit) {
 			//: Message displayed on instance exit
-			emit log({tr("Process exited with code %1.").arg(exit_code)},
+			emit log({i18n("Process exited with code %1.", exit_code)},
 					 MessageLevel::MeshMC);
 			changeState(LoggedProcess::Finished);
 		} else {
 			//: Message displayed on instance crashed
 			if (exit_code == -1)
-				emit log({tr("Process crashed.")}, MessageLevel::MeshMC);
+				emit log({i18n("Process crashed.")}, MessageLevel::MeshMC);
 			else
 				emit log(
-					{tr("Process crashed with exitcode %1.").arg(exit_code)},
+					{i18n("Process crashed with exitcode %1.", exit_code)},
 					MessageLevel::MeshMC);
 			changeState(LoggedProcess::Crashed);
 		}
 	} else {
 		//: Message displayed after the instance exits due to kill request
-		emit log({tr("Process was killed by user.")}, MessageLevel::Error);
+		emit log({i18n("Process was killed by user.")}, MessageLevel::Error);
 		changeState(LoggedProcess::Aborted);
 	}
 }
@@ -140,7 +142,7 @@ void LoggedProcess::on_error(QProcess::ProcessError error)
 {
 	switch (error) {
 		case QProcess::FailedToStart: {
-			emit log({tr("The process failed to start.")}, MessageLevel::Fatal);
+			emit log({i18n("The process failed to start.")}, MessageLevel::Fatal);
 			changeState(LoggedProcess::FailedToStart);
 			break;
 		}

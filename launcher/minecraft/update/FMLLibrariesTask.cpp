@@ -26,6 +26,7 @@
 
 #include "BuildConfig.h"
 #include "Application.h"
+#include <KLocalizedString>
 
 FMLLibrariesTask::FMLLibrariesTask(MinecraftInstance* inst)
 {
@@ -53,7 +54,7 @@ void FMLLibrariesTask::executeTask()
 	auto& libList = fmlLibsMapping[version];
 
 	// determine if we need some libs for FML or forge
-	setStatus(tr("Checking for FML libraries..."));
+	setStatus(i18n("Checking for FML libraries..."));
 	if (!components->getComponent("net.minecraftforge")) {
 		emitSucceeded();
 		return;
@@ -74,7 +75,7 @@ void FMLLibrariesTask::executeTask()
 	}
 
 	// download missing libs to our place
-	setStatus(tr("Downloading FML libraries..."));
+	setStatus(i18n("Downloading FML libraries..."));
 	auto dljob = new NetJob("FML libraries", APPLICATION->network());
 	auto metacache = APPLICATION->metacache();
 	for (auto& lib : fmlLibsToProcess) {
@@ -102,7 +103,7 @@ void FMLLibrariesTask::fmllibsFinished()
 {
 	downloadJob.reset();
 	if (!fmlLibsToProcess.isEmpty()) {
-		setStatus(tr("Copying FML libraries into the instance..."));
+		setStatus(i18n("Copying FML libraries into the instance..."));
 		MinecraftInstance* inst = (MinecraftInstance*)m_inst;
 		auto metacache = APPLICATION->metacache();
 		int index = 0;
@@ -111,14 +112,12 @@ void FMLLibrariesTask::fmllibsFinished()
 			auto entry = metacache->resolveEntry("fmllibs", lib.filename);
 			auto path = FS::PathCombine(inst->libDir(), lib.filename);
 			if (!FS::ensureFilePathExists(path)) {
-				emitFailed(tr(
-					"Failed creating FML library folder inside the instance."));
+				emitFailed(i18n("Failed creating FML library folder inside the instance."));
 				return;
 			}
 			if (!QFile::copy(entry->getFullPath(),
 							 FS::PathCombine(inst->libDir(), lib.filename))) {
-				emitFailed(tr("Failed copying Forge/FML library: %1.")
-							   .arg(lib.filename));
+				emitFailed(i18n("Failed copying Forge/FML library: %1.", lib.filename));
 				return;
 			}
 			index++;
@@ -131,9 +130,8 @@ void FMLLibrariesTask::fmllibsFailed(QString reason)
 {
 	QStringList failed = downloadJob->getFailedFiles();
 	QString failed_all = failed.join("\n");
-	emitFailed(tr("Failed to download the following "
-				  "files:\n%1\n\nReason:%2\nPlease try again.")
-				   .arg(failed_all, reason));
+	emitFailed(i18n("Failed to download the following "
+				  "files:\n%1\n\nReason:%2\nPlease try again.", failed_all, reason));
 }
 
 bool FMLLibrariesTask::abort()

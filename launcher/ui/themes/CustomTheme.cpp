@@ -23,6 +23,7 @@
 
 #include <QDir>
 #include <QObject>
+#include <KLazyLocalizedString>
 #include <FileSystem.h>
 #include <Json.h>
 
@@ -130,15 +131,19 @@ bool readManifest(const QString& path, ManifestData& out)
 		// settings page. Missing fields are skipped rather than left blank.
 		QStringList tooltipLines;
 		const auto addLine = [&root, &tooltipLines](const QString& key,
-													const QString& format) {
+													const KLazyLocalizedString& format) {
 			const QString value = Json::ensureString(root, key, QString());
 			if (!value.isEmpty()) {
-				tooltipLines.append(format.arg(value));
+				tooltipLines.append(format.subs(value).toString());
 			}
 		};
-		addLine(QStringLiteral("description"), QStringLiteral("%1"));
-		addLine(QStringLiteral("author"), QObject::tr("By %1"));
-		addLine(QStringLiteral("license"), QObject::tr("License: %1"));
+		const QString description =
+			Json::ensureString(root, QStringLiteral("description"), QString());
+		if (!description.isEmpty()) {
+			tooltipLines.append(description);
+		}
+		addLine(QStringLiteral("author"), kli18n("By %1"));
+		addLine(QStringLiteral("license"), kli18n("License: %1"));
 		out.tooltip = tooltipLines.join(QLatin1Char('\n'));
 	} catch (const Exception& e) {
 		qWarning() << "Couldn't load theme manifest" << path << ":"

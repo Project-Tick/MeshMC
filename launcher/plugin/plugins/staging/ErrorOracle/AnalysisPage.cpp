@@ -7,6 +7,7 @@
 
 #include <QSplitter>
 #include <QTextEdit>
+#include <KLocalizedString>
 
 namespace
 {
@@ -46,7 +47,7 @@ void AnalysisPage::buildUi()
 
 	m_tree = new QTreeWidget(splitter);
 	m_tree->setHeaderLabels(
-		{tr("Severity"), tr("Title"), tr("Line"), tr("Score")});
+		{i18n("Severity"), i18n("Title"), i18n("Line"), i18n("Score")});
 	m_tree->setRootIsDecorated(false);
 	m_tree->setAlternatingRowColors(true);
 	connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
@@ -63,27 +64,27 @@ void AnalysisPage::buildUi()
 
 	auto* btnRow = new QHBoxLayout();
 
-	auto* reanalyse = new QPushButton(tr("Re-analyse"), this);
+	auto* reanalyse = new QPushButton(i18n("Re-analyse"), this);
 	connect(reanalyse, &QPushButton::clicked, this, &AnalysisPage::onReanalyse);
 	btnRow->addWidget(reanalyse);
 
 	btnRow->addStretch();
 
-	m_helpedBtn = new QPushButton(tr("✓ This fixed it"), this);
+	m_helpedBtn = new QPushButton(i18n("✓ This fixed it"), this);
 	m_helpedBtn->setEnabled(false);
 	connect(m_helpedBtn, &QPushButton::clicked, this, &AnalysisPage::onHelped);
 	btnRow->addWidget(m_helpedBtn);
 
-	m_didntBtn = new QPushButton(tr("✗ Didn't help"), this);
+	m_didntBtn = new QPushButton(i18n("✗ Didn't help"), this);
 	m_didntBtn->setEnabled(false);
 	connect(m_didntBtn, &QPushButton::clicked, this,
 			&AnalysisPage::onDidNotHelp);
 	btnRow->addWidget(m_didntBtn);
 
-	m_promoteBtn = new QPushButton(tr("Promote unknown error → rule…"), this);
+	m_promoteBtn = new QPushButton(i18n("Promote unknown error → rule…"), this);
 	m_promoteBtn->setEnabled(false);
 	m_promoteBtn->setToolTip(
-		tr("If no rule matched but the same crash signature has appeared "
+		i18n("If no rule matched but the same crash signature has appeared "
 		   "more than once, you can teach ErrorOracle about it by writing "
 		   "a custom title + advice."));
 	connect(m_promoteBtn, &QPushButton::clicked, this,
@@ -148,19 +149,15 @@ void AnalysisPage::runAnalysis()
 
 	// Summary text
 	QString src = bundle.sources.isEmpty()
-					  ? tr("(no logs found)")
+					  ? i18n("(no logs found)")
 					  : bundle.sources.join(QStringLiteral(", "));
 	m_summaryLabel->setText(
-		tr("Analysed: <b>%1</b>. %2 rule match(es). Crash signature: "
-		   "<code>%3</code>")
-			.arg(src.toHtmlEscaped())
-			.arg(m_matches.size())
-			.arg(m_currentFingerprint.isEmpty() ? tr("(no stack trace)")
-												: m_currentFingerprint));
+		i18n("Analysed: <b>%1</b>. %2 rule match(es). Crash signature: "
+		   "<code>%3</code>", src.toHtmlEscaped(), m_matches.size(), m_currentFingerprint.isEmpty() ? i18n("(no stack trace)") : m_currentFingerprint));
 
 	if (m_matches.isEmpty()) {
 		m_adviceView->setMarkdown(
-			tr("### No matching rules\n\n"
+			i18n("### No matching rules\n\n"
 			   "Either the instance ran cleanly or the crash isn't in "
 			   "ErrorOracle's rule pack yet. "
 			   "If the same signature shows up more than once you can "
@@ -207,9 +204,8 @@ void AnalysisPage::onHelped()
 		return;
 	m_learning->recordHelped(m.ruleId, m_instanceId);
 	m_learning->save();
-	m_summaryLabel->setText(tr("Recorded: rule <b>%1</b> helped on this "
-							   "instance.")
-								.arg(m.ruleTitle));
+	m_summaryLabel->setText(i18n("Recorded: rule <b>%1</b> helped on this "
+							   "instance.", m.ruleTitle));
 }
 
 void AnalysisPage::onDidNotHelp()
@@ -220,7 +216,7 @@ void AnalysisPage::onDidNotHelp()
 	m_learning->recordDidNotHelp(m.ruleId, m_instanceId);
 	m_learning->save();
 	m_summaryLabel->setText(
-		tr("Recorded: rule <b>%1</b> did not help.").arg(m.ruleTitle));
+		i18n("Recorded: rule <b>%1</b> did not help.", m.ruleTitle));
 }
 
 void AnalysisPage::onPromoteNovel()
@@ -229,30 +225,29 @@ void AnalysisPage::onPromoteNovel()
 		return;
 
 	QDialog dlg(this);
-	dlg.setWindowTitle(tr("Promote crash signature to a user rule"));
+	dlg.setWindowTitle(i18n("Promote crash signature to a user rule"));
 	auto* v = new QVBoxLayout(&dlg);
 	v->addWidget(
-		new QLabel(tr("Signature: <code>%1</code>").arg(m_currentFingerprint)));
-	v->addWidget(new QLabel(tr("Sample: <code>%1</code>")
-								.arg(m_currentSampleLine.toHtmlEscaped())));
+		new QLabel(i18n("Signature: <code>%1</code>", m_currentFingerprint)));
+	v->addWidget(new QLabel(i18n("Sample: <code>%1</code>", m_currentSampleLine.toHtmlEscaped())));
 
 	auto* titleEdit = new QLineEdit(&dlg);
-	titleEdit->setPlaceholderText(tr("Short title (one sentence)"));
+	titleEdit->setPlaceholderText(i18n("Short title (one sentence)"));
 	v->addWidget(titleEdit);
 
 	auto* patternEdit = new QLineEdit(&dlg);
 	patternEdit->setPlaceholderText(
-		tr("Regex pattern (leave blank to derive from the sample line)"));
+		i18n("Regex pattern (leave blank to derive from the sample line)"));
 	v->addWidget(patternEdit);
 
 	auto* adviceEdit = new QTextEdit(&dlg);
-	adviceEdit->setPlaceholderText(tr("Remediation advice in Markdown"));
+	adviceEdit->setPlaceholderText(i18n("Remediation advice in Markdown"));
 	v->addWidget(adviceEdit);
 
 	auto* btnBox = new QHBoxLayout();
 	btnBox->addStretch();
-	auto* okBtn = new QPushButton(tr("Save"), &dlg);
-	auto* cancelBtn = new QPushButton(tr("Cancel"), &dlg);
+	auto* okBtn = new QPushButton(i18n("Save"), &dlg);
+	auto* cancelBtn = new QPushButton(i18n("Cancel"), &dlg);
 	btnBox->addWidget(okBtn);
 	btnBox->addWidget(cancelBtn);
 	v->addLayout(btnBox);
@@ -288,8 +283,8 @@ void AnalysisPage::onPromoteNovel()
 	QString fileName = "promoted-" + m_currentFingerprint + ".json";
 	QFile out(QDir(userRulesDir).filePath(fileName));
 	if (!out.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-		QMessageBox::warning(this, tr("ErrorOracle"),
-							 tr("Could not write user rule file."));
+		QMessageBox::warning(this, i18n("ErrorOracle"),
+							 i18n("Could not write user rule file."));
 		return;
 	}
 	QJsonObject root;
@@ -316,6 +311,6 @@ void AnalysisPage::onPromoteNovel()
 	m_learning->save();
 
 	QMessageBox::information(
-		this, tr("ErrorOracle"),
-		tr("Saved user rule. Click <b>Re-analyse</b> to load it."));
+		this, i18n("ErrorOracle"),
+		i18n("Saved user rule. Click <b>Re-analyse</b> to load it."));
 }

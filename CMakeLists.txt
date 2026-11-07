@@ -152,6 +152,9 @@ find_package(Qt6 6.4.0 REQUIRED COMPONENTS Core
     OpenGLWidgets
 )
 
+find_package(KF6 REQUIRED COMPONENTS I18n
+)
+
 if(UNIX)
     find_package(PkgConfig)
     if(PkgConfig_FOUND)

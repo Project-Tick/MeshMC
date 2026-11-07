@@ -32,6 +32,7 @@
 #include "net/Download.h"
 #include "net/ChecksumValidator.h"
 #include "MMCZip.h"
+#include <KLocalizedString>
 
 JavaDownloadTask::JavaDownloadTask(const JavaDownload::RuntimeEntry& runtime,
 								   const QString& targetDir, QObject* parent)
@@ -50,7 +51,7 @@ void JavaDownloadTask::executeTask()
 
 void JavaDownloadTask::downloadArchive()
 {
-	setStatus(tr("Downloading %1...").arg(m_runtime.name));
+	setStatus(i18n("Downloading %1...", m_runtime.name));
 
 	// Determine archive extension and path
 	QUrl url(m_runtime.url);
@@ -60,11 +61,11 @@ void JavaDownloadTask::downloadArchive()
 	// Create target directory
 	if (!FS::ensureFolderPathExists(m_targetDir)) {
 		emitFailed(
-			tr("Failed to create target directory: %1").arg(m_targetDir));
+			i18n("Failed to create target directory: %1", m_targetDir));
 		return;
 	}
 
-	m_downloadJob = new NetJob(tr("Java download"), APPLICATION->network());
+	m_downloadJob = new NetJob(i18n("Java download"), APPLICATION->network());
 
 	auto dl = Net::Download::makeFile(m_runtime.url, m_archivePath);
 
@@ -103,12 +104,12 @@ void JavaDownloadTask::downloadFailed(QString reason)
 	// Clean up partial download
 	if (!m_archivePath.isEmpty() && !QFile::remove(m_archivePath))
 		qWarning() << "Failed to remove partial download:" << m_archivePath;
-	emitFailed(tr("Failed to download Java: %1").arg(reason));
+	emitFailed(i18n("Failed to download Java: %1", reason));
 }
 
 void JavaDownloadTask::extractArchive()
 {
-	setStatus(tr("Extracting %1...").arg(m_runtime.name));
+	setStatus(i18n("Extracting %1...", m_runtime.name));
 
 	bool success = false;
 
@@ -132,7 +133,7 @@ void JavaDownloadTask::extractArchive()
 	} else {
 		if (!QFile::remove(m_archivePath))
 			qWarning() << "Failed to remove archive:" << m_archivePath;
-		emitFailed(tr("Unsupported archive format: %1").arg(m_archivePath));
+		emitFailed(i18n("Unsupported archive format: %1", m_archivePath));
 		return;
 	}
 
@@ -141,7 +142,7 @@ void JavaDownloadTask::extractArchive()
 		qWarning() << "Failed to remove archive:" << m_archivePath;
 
 	if (!success) {
-		emitFailed(tr("Failed to extract Java archive."));
+		emitFailed(i18n("Failed to extract Java archive."));
 		return;
 	}
 
@@ -163,7 +164,7 @@ void JavaDownloadTask::extractArchive()
 	// Find the java binary
 	m_installedJavaPath = findJavaBinary(m_targetDir);
 	if (m_installedJavaPath.isEmpty()) {
-		emitFailed(tr("Could not find java binary in extracted archive."));
+		emitFailed(i18n("Could not find java binary in extracted archive."));
 		return;
 	}
 
@@ -179,16 +180,16 @@ void JavaDownloadTask::extractArchive()
 
 void JavaDownloadTask::downloadManifest()
 {
-	setStatus(tr("Downloading manifest for %1...").arg(m_runtime.name));
+	setStatus(i18n("Downloading manifest for %1...", m_runtime.name));
 
 	if (!FS::ensureFolderPathExists(m_targetDir)) {
 		emitFailed(
-			tr("Failed to create target directory: %1").arg(m_targetDir));
+			i18n("Failed to create target directory: %1", m_targetDir));
 		return;
 	}
 
 	m_downloadJob =
-		new NetJob(tr("Java manifest download"), APPLICATION->network());
+		new NetJob(i18n("Java manifest download"), APPLICATION->network());
 	auto dl =
 		Net::Download::makeByteArray(QUrl(m_runtime.url), &m_manifestData);
 
@@ -217,13 +218,13 @@ void JavaDownloadTask::manifestDownloaded()
 		doc = Json::requireDocument(m_manifestData);
 	} catch (const Exception& e) {
 		m_manifestData.clear();
-		emitFailed(tr("Failed to parse Java manifest: %1").arg(e.cause()));
+		emitFailed(i18n("Failed to parse Java manifest: %1", e.cause()));
 		return;
 	}
 	m_manifestData.clear();
 
 	if (!doc.isObject()) {
-		emitFailed(tr("Failed to parse Java manifest."));
+		emitFailed(i18n("Failed to parse Java manifest."));
 		return;
 	}
 
@@ -240,9 +241,9 @@ void JavaDownloadTask::manifestDownloaded()
 	}
 
 	// Queue file downloads
-	setStatus(tr("Downloading %1 files...").arg(m_runtime.name));
+	setStatus(i18n("Downloading %1 files...", m_runtime.name));
 	m_downloadJob =
-		new NetJob(tr("Java runtime files"), APPLICATION->network());
+		new NetJob(i18n("Java runtime files"), APPLICATION->network());
 
 	for (auto it = files.begin(); it != files.end(); ++it) {
 		auto entry = it.value().toObject();
@@ -308,7 +309,7 @@ void JavaDownloadTask::manifestFilesDownloaded()
 	// Find java binary
 	m_installedJavaPath = findJavaBinary(m_targetDir);
 	if (m_installedJavaPath.isEmpty()) {
-		emitFailed(tr("Could not find java binary in downloaded runtime."));
+		emitFailed(i18n("Could not find java binary in downloaded runtime."));
 		return;
 	}
 

@@ -37,6 +37,7 @@
 
 #include <QApplication>
 #include <QProcess>
+#include <KLocalizedString>
 
 // FIXME: possibly move elsewhere
 enum InstSortMode {
@@ -91,12 +92,12 @@ bool MeshMCPage::confirmInstanceDirPath(const QString& rawDir,
 	if (FS::checkProblemticPathJava(QDir(cookedDir))) {
 		QMessageBox warning;
 		warning.setText(
-			tr("You're trying to specify an instance folder which\'s path "
+			i18n("You're trying to specify an instance folder which\'s path "
 			   "contains at least one \'!\'. "
 			   "Java is known to cause problems if that is the case, your "
 			   "instances (probably) won't start!"));
 		warning.setInformativeText(
-			tr("Do you really want to use this path? "
+			i18n("Do you really want to use this path? "
 			   "Selecting \"No\" will close this and not alter your "
 			   "instance path."));
 		warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -116,13 +117,13 @@ bool MeshMCPage::confirmInstanceDirPath(const QString& rawDir,
 	if (DesktopServices::isFlatpak() && rawDir.startsWith("/run/user")) {
 		QMessageBox warning;
 		warning.setText(
-			tr("You're trying to specify an instance folder "
+			i18n("You're trying to specify an instance folder "
 			   "which was granted temporarily via Flatpak.\n"
 			   "This is known to cause problems. "
 			   "After a restart the launcher might break, "
 			   "because it will no longer have access to that directory.\n\n"
 			   "Granting MeshMC access to it via Flatseal is recommended."));
-		warning.setInformativeText(tr("Do you want to proceed anyway?"));
+		warning.setInformativeText(i18n("Do you want to proceed anyway?"));
 		warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		return warning.exec() == QMessageBox::Yes;
 	}
@@ -133,7 +134,7 @@ bool MeshMCPage::confirmInstanceDirPath(const QString& rawDir,
 void MeshMCPage::on_instDirBrowseBtn_clicked()
 {
 	QString rawDir = QFileDialog::getExistingDirectory(
-		this, tr("Instance Folder"), ui->instDirTextBox->text());
+		this, i18n("Instance Folder"), ui->instDirTextBox->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!rawDir.isEmpty() && QDir(rawDir).exists()) {
@@ -156,7 +157,7 @@ QStringList MeshMCPage::additionalInstanceDirs() const
 void MeshMCPage::on_addInstDirBtn_clicked()
 {
 	QString rawDir = QFileDialog::getExistingDirectory(
-		this, tr("Additional Instance Folder"));
+		this, i18n("Additional Instance Folder"));
 	if (rawDir.isEmpty() || !QDir(rawDir).exists()) {
 		return;
 	}
@@ -183,15 +184,15 @@ void MeshMCPage::on_addInstDirBtn_clicked()
 	 */
 	if (cookedDir == FS::NormalizePath(ui->instDirTextBox->text())) {
 		QMessageBox::warning(
-			this, tr("Duplicate directory"),
-			tr("This is already your primary instance directory."));
+			this, i18n("Duplicate directory"),
+			i18n("This is already your primary instance directory."));
 		return;
 	}
 	if (!ui->additionalInstDirsList
 			 ->findItems(cookedDir, Qt::MatchFixedString)
 			 .isEmpty()) {
-		QMessageBox::warning(this, tr("Duplicate directory"),
-							 tr("This directory has already been added."));
+		QMessageBox::warning(this, i18n("Duplicate directory"),
+							 i18n("This directory has already been added."));
 		return;
 	}
 
@@ -214,7 +215,7 @@ void MeshMCPage::on_removeInstDirBtn_clicked()
 void MeshMCPage::on_iconsDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
-		this, tr("Icons Folder"), ui->iconsDirTextBox->text());
+		this, i18n("Icons Folder"), ui->iconsDirTextBox->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
@@ -225,7 +226,7 @@ void MeshMCPage::on_iconsDirBrowseBtn_clicked()
 void MeshMCPage::on_skinsDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
-		this, tr("Skins Folder"), ui->skinsDirTextBox->text());
+		this, i18n("Skins Folder"), ui->skinsDirTextBox->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
@@ -236,7 +237,7 @@ void MeshMCPage::on_skinsDirBrowseBtn_clicked()
 void MeshMCPage::on_javaDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
-		this, tr("Java Folder"), ui->javaDirTextBox->text());
+		this, i18n("Java Folder"), ui->javaDirTextBox->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
@@ -247,7 +248,7 @@ void MeshMCPage::on_javaDirBrowseBtn_clicked()
 void MeshMCPage::on_modsDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
-		this, tr("Mods Folder"), ui->modsDirTextBox->text());
+		this, i18n("Mods Folder"), ui->modsDirTextBox->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
@@ -258,8 +259,8 @@ void MeshMCPage::on_modsDirBrowseBtn_clicked()
 void MeshMCPage::on_migrateDataFolderMacBtn_clicked()
 {
 	QMessageBox::information(
-		this, tr("Automatic macOS Migration"),
-		tr("MeshMC now stores macOS data under your Library/Application Support "
+		this, i18n("Automatic macOS Migration"),
+		i18n("MeshMC now stores macOS data under your Library/Application Support "
 		   "folder automatically."));
 }
 
@@ -403,7 +404,7 @@ void MeshMCPage::refreshFontPreview()
 		// append a paragraph/line
 		auto workCursor = ui->fontPreview->textCursor();
 		workCursor.movePosition(QTextCursor::End);
-		workCursor.insertText(tr("[Something/ERROR] A spooky error!"), format);
+		workCursor.insertText(i18n("[Something/ERROR] A spooky error!"), format);
 		workCursor.insertBlock();
 	}
 	{
@@ -412,7 +413,7 @@ void MeshMCPage::refreshFontPreview()
 		// append a paragraph/line
 		auto workCursor = ui->fontPreview->textCursor();
 		workCursor.movePosition(QTextCursor::End);
-		workCursor.insertText(tr("[Test/INFO] A harmless message..."), format);
+		workCursor.insertText(i18n("[Test/INFO] A harmless message..."), format);
 		workCursor.insertBlock();
 	}
 	{
@@ -421,7 +422,7 @@ void MeshMCPage::refreshFontPreview()
 		// append a paragraph/line
 		auto workCursor = ui->fontPreview->textCursor();
 		workCursor.movePosition(QTextCursor::End);
-		workCursor.insertText(tr("[Something/WARN] A not so spooky warning."),
+		workCursor.insertText(i18n("[Something/WARN] A not so spooky warning."),
 							  format);
 		workCursor.insertBlock();
 	}

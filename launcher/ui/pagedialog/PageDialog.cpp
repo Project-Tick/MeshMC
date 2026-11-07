@@ -30,6 +30,7 @@
 
 #include "ui/widgets/IconLabel.h"
 #include "ui/widgets/PageContainer.h"
+#include <KLocalizedString>
 
 PageDialog::PageDialog(BasePageProvider* pageProvider, QString defaultId,
 					   QWidget* parent)
@@ -47,8 +48,8 @@ PageDialog::PageDialog(BasePageProvider* pageProvider, QString defaultId,
 
 	QDialogButtonBox* buttons =
 		new QDialogButtonBox(QDialogButtonBox::Help | QDialogButtonBox::Close);
-	buttons->button(QDialogButtonBox::Close)->setText(tr("Close"));
-	buttons->button(QDialogButtonBox::Help)->setText(tr("Help"));
+	buttons->button(QDialogButtonBox::Close)->setText(i18n("Close"));
+	buttons->button(QDialogButtonBox::Help)->setText(i18n("Help"));
 	buttons->button(QDialogButtonBox::Close)->setDefault(true);
 	buttons->setContentsMargins(6, 0, 6, 0);
 	m_container->addButtons(buttons);

@@ -26,6 +26,7 @@
 
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
+#include <KLocalizedString>
 
 EntitlementsStep::EntitlementsStep(AccountData* data) : AuthStep(data) {}
 
@@ -33,7 +34,7 @@ EntitlementsStep::~EntitlementsStep() noexcept = default;
 
 QString EntitlementsStep::describe()
 {
-	return tr("Determining game ownership.");
+	return i18n("Determining game ownership.");
 }
 
 void EntitlementsStep::perform()
@@ -76,5 +77,5 @@ void EntitlementsStep::onRequestDone(QNetworkReply::NetworkError,
 	// TODO: validate JWTs?
 	Parsers::parseMinecraftEntitlements(data, m_data->minecraftEntitlement);
 
-	emit finished(AccountTaskState::STATE_WORKING, tr("Got entitlements"));
+	emit finished(AccountTaskState::STATE_WORKING, i18n("Got entitlements"));
 }

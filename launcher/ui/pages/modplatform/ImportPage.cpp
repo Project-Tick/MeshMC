@@ -26,6 +26,7 @@
 #include "ui/dialogs/NewInstanceDialog.h"
 
 #include "InstanceImportTask.h"
+#include <KLocalizedString>
 
 class UrlValidator : public QValidator
 {
@@ -122,11 +123,11 @@ void ImportPage::on_modpackBtn_clicked()
 	// dialects (CurseForge zip, Modrinth .mrpack, MultiMC zip,
 	// Technic .zip). Expose all of them in the file dialog so the
 	// user can pick a .mrpack without renaming it first.
-	const QString filter = tr("Modpack archives (*.zip *.mrpack);;"
+	const QString filter = i18n("Modpack archives (*.zip *.mrpack);;"
 							  "Modrinth packs (*.mrpack);;"
 							  "Zip archives (*.zip);;"
 							  "All files (*)");
-	const QUrl url = QFileDialog::getOpenFileUrl(this, tr("Choose modpack"),
+	const QUrl url = QFileDialog::getOpenFileUrl(this, i18n("Choose modpack"),
 												 modpackUrl(), filter);
 	if (url.isValid()) {
 		if (url.isLocalFile()) {

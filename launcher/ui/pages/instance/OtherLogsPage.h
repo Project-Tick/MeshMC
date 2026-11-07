@@ -25,6 +25,7 @@
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 #include <pathmatcher/IPathMatcher.h>
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -48,7 +49,7 @@ class OtherLogsPage : public QWidget, public BasePage
 	}
 	QString displayName() const override
 	{
-		return tr("Other logs");
+		return i18n("Other logs");
 	}
 	QIcon icon() const override
 	{

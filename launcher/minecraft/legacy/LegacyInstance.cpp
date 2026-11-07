@@ -29,6 +29,7 @@
 #include "minecraft/WorldList.h"
 #include <MMCZip.h>
 #include <FileSystem.h>
+#include <KLocalizedString>
 
 LegacyInstance::LegacyInstance(SettingsObjectPtr globalSettings,
 							   SettingsObjectPtr settings,
@@ -215,12 +216,12 @@ std::shared_ptr<WorldList> LegacyInstance::worldList() const
 
 QString LegacyInstance::typeName() const
 {
-	return tr("Legacy");
+	return i18n("Legacy");
 }
 
 QString LegacyInstance::getStatusbarDescription()
 {
-	return tr("Instance from previous versions.");
+	return i18n("Instance from previous versions.");
 }
 
 QStringList

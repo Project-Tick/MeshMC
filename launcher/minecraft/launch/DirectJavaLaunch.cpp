@@ -24,6 +24,7 @@
 #include <FileSystem.h>
 #include <Commandline.h>
 #include <QStandardPaths>
+#include <KLocalizedString>
 
 DirectJavaLaunch::DirectJavaLaunch(LaunchTask* parent) : LaunchStep(parent)
 {
@@ -77,11 +78,10 @@ void DirectJavaLaunch::executeTask()
 		auto realWrapperCommand =
 			QStandardPaths::findExecutable(wrapperCommand);
 		if (realWrapperCommand.isEmpty()) {
-			const char* reason =
-				QT_TR_NOOP("The wrapper command \"%1\" couldn't be found.");
-			emit logLine(QString(reason).arg(wrapperCommand),
-						 MessageLevel::Fatal);
-			emitFailed(tr(reason).arg(wrapperCommand));
+			const QString reason =
+				i18n("The wrapper command \"%1\" couldn't be found.");
+			emit logLine(reason, MessageLevel::Fatal);
+			emitFailed(reason);
 			return;
 		}
 		emit logLine("Wrapper command is:\n" + wrapperCommandStr + "\n\n",
@@ -98,15 +98,15 @@ void DirectJavaLaunch::on_state(LoggedProcess::State state)
 	switch (state) {
 		case LoggedProcess::FailedToStart: {
 			//: Error message displayed if instance can't start
-			const char* reason = QT_TR_NOOP("Could not launch minecraft!");
+			const QString reason = i18n("Could not launch minecraft!");
 			emit logLine(reason, MessageLevel::Fatal);
-			emitFailed(tr(reason));
+			emitFailed(reason);
 			return;
 		}
 		case LoggedProcess::Aborted:
 		case LoggedProcess::Crashed: {
 			m_parent->setPid(-1);
-			emitFailed(tr("Game crashed."));
+			emitFailed(i18n("Game crashed."));
 			return;
 		}
 		case LoggedProcess::Finished: {
@@ -114,7 +114,7 @@ void DirectJavaLaunch::on_state(LoggedProcess::State state)
 			// if the exit code wasn't 0, report this as a crash
 			auto exitCode = m_process.exitCode();
 			if (exitCode != 0) {
-				emitFailed(tr("Game crashed."));
+				emitFailed(i18n("Game crashed."));
 				return;
 			}
 			// FIXME: make this work again

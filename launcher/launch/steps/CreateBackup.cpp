@@ -21,6 +21,7 @@
 
 #include "BaseInstance.h"
 #include "launch/LaunchTask.h"
+#include <KLocalizedString>
 
 void CreateBackup::executeTask()
 {
@@ -30,7 +31,7 @@ void CreateBackup::executeTask()
 		return;
 	}
 
-	emit logLine(tr("Creating a pre-launch backup of the instance...") +
+	emit logLine(i18n("Creating a pre-launch backup of the instance...") +
 					 QStringLiteral("\n"),
 				 MessageLevel::MeshMC);
 
@@ -57,8 +58,7 @@ void CreateBackup::proceed()
 void CreateBackup::backupFinished()
 {
 	if (m_backupTask->wasSuccessful()) {
-		emit logLine(tr("Pre-launch backup created: %1")
-						 .arg(m_backupTask->result().fileName) +
+		emit logLine(i18n("Pre-launch backup created: %1", m_backupTask->result().fileName) +
 						 QStringLiteral("\n"),
 					 MessageLevel::MeshMC);
 	} else {
@@ -66,8 +66,7 @@ void CreateBackup::backupFinished()
 		// could not be written would be the worse failure of the two,
 		// and it is what the plugin this replaces did as well: warn and
 		// carry on.
-		emit logLine(tr("Pre-launch backup failed: %1")
-						 .arg(m_backupTask->failReason()) +
+		emit logLine(i18n("Pre-launch backup failed: %1", m_backupTask->failReason()) +
 						 QStringLiteral("\n"),
 					 MessageLevel::Warning);
 	}

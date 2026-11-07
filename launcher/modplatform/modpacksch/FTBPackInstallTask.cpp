@@ -32,6 +32,7 @@
 #include "Application.h"
 
 #include <QDateTime>
+#include <KLocalizedString>
 
 namespace ModpacksCH
 {
@@ -72,7 +73,7 @@ namespace ModpacksCH
 
 		if (!found) {
 			emitFailed(
-				tr("Failed to find pack version %1").arg(m_version_name));
+				i18n("Failed to find pack version %1", m_version_name));
 			return;
 		}
 
@@ -111,7 +112,7 @@ namespace ModpacksCH
 		try {
 			ModpacksCH::loadVersion(version, obj);
 		} catch (const JSONValidationError& e) {
-			emitFailed(tr("Could not understand pack manifest:\n") + e.cause());
+			emitFailed(i18n("Could not understand pack manifest:\n") + e.cause());
 			jobPtr.reset();
 			return;
 		}
@@ -128,9 +129,9 @@ namespace ModpacksCH
 
 	void PackInstallTask::downloadPack()
 	{
-		setStatus(tr("Downloading mods..."));
+		setStatus(i18n("Downloading mods..."));
 
-		jobPtr = new NetJob(tr("Mod download"), APPLICATION->network());
+		jobPtr = new NetJob(i18n("Mod download"), APPLICATION->network());
 		for (auto file : m_version.files) {
 			if (file.serverOnly)
 				continue;
@@ -191,7 +192,7 @@ namespace ModpacksCH
 
 	void PackInstallTask::install()
 	{
-		setStatus(tr("Copying modpack files"));
+		setStatus(i18n("Copying modpack files"));
 
 		for (auto iter = filesToCopy.begin(); iter != filesToCopy.end();
 			 iter++) {
@@ -200,12 +201,12 @@ namespace ModpacksCH
 			FS::copy fileCopyOperation(from, to);
 			if (!fileCopyOperation()) {
 				qWarning() << "Failed to copy" << from << "to" << to;
-				emitFailed(tr("Failed to copy files"));
+				emitFailed(i18n("Failed to copy files"));
 				return;
 			}
 		}
 
-		setStatus(tr("Installing modpack"));
+		setStatus(i18n("Installing modpack"));
 
 		auto instanceConfigPath =
 			FS::PathCombine(m_stagingPath, "instance.cfg");

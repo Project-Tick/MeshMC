@@ -23,6 +23,7 @@
 
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
+#include <KLocalizedString>
 
 GetSkinStep::GetSkinStep(AccountData* data) : AuthStep(data) {}
 
@@ -30,7 +31,7 @@ GetSkinStep::~GetSkinStep() noexcept = default;
 
 QString GetSkinStep::describe()
 {
-	return tr("Getting skin.");
+	return i18n("Getting skin.");
 }
 
 void GetSkinStep::perform()
@@ -59,5 +60,5 @@ void GetSkinStep::onRequestDone(QNetworkReply::NetworkError error,
 	if (error == QNetworkReply::NoError) {
 		m_data->minecraftProfile.skin.data = data;
 	}
-	emit finished(AccountTaskState::STATE_SUCCEEDED, tr("Got skin"));
+	emit finished(AccountTaskState::STATE_SUCCEEDED, i18n("Got skin"));
 }

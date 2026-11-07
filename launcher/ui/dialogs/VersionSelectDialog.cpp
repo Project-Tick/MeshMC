@@ -36,6 +36,7 @@
 #include "tasks/Task.h"
 #include "Application.h"
 #include "VersionProxyModel.h"
+#include <KLocalizedString>
 
 VersionSelectDialog::VersionSelectDialog(BaseVersionList* vlist, QString title,
 										 QWidget* parent, bool cancelable)
@@ -86,9 +87,9 @@ VersionSelectDialog::VersionSelectDialog(BaseVersionList* vlist, QString title,
 void VersionSelectDialog::retranslate()
 {
 	// FIXME: overrides custom title given in constructor!
-	setWindowTitle(tr("Choose Version"));
-	m_refreshButton->setToolTip(tr("Reloads the version list."));
-	m_refreshButton->setText(tr("&Refresh"));
+	setWindowTitle(i18n("Choose Version"));
+	m_refreshButton->setToolTip(i18n("Reloads the version list."));
+	m_refreshButton->setText(i18n("&Refresh"));
 }
 
 void VersionSelectDialog::setCurrentVersion(const QString& version)

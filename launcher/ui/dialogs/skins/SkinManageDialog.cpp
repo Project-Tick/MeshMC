@@ -64,6 +64,7 @@
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/instanceview/InstanceDelegate.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -151,8 +152,8 @@ SkinManageDialog::SkinManageDialog(QWidget* parent,
 	m_ui->skinList->setCurrentIndex(
 		m_library.index(m_library.indexOfAccountSkin()));
 
-	m_ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
-	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
+	m_ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(i18n("Cancel"));
+	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setText(i18n("OK"));
 
 	/* Added last so the layout's stretch factors apply to a preview that is
 	 * already sized, and so nothing above can call into a half-built
@@ -238,7 +239,7 @@ void SkinManageDialog::loadCapes()
 
 	/* Row 0, and the only entry that is not a cape. Its data is a null
 	 * QVariant, which is what CapeChange reads as "take the cape off". */
-	m_ui->capeCombo->addItem(tr("No Cape"), QVariant());
+	m_ui->capeCombo->addItem(i18n("No Cape"), QVariant());
 	if (profile.currentCape.isEmpty()) {
 		m_ui->capeCombo->setCurrentIndex(0);
 	}
@@ -247,7 +248,7 @@ void SkinManageDialog::loadCapes()
 		FS::PathCombine(m_library.directory(), QLatin1String(kCapeCacheDirName));
 	FS::ensureFolderPathExists(capeCacheDir);
 
-	NetJob::Ptr job(new NetJob(tr("Download capes"), APPLICATION->network()));
+	NetJob::Ptr job(new NetJob(i18n("Download capes"), APPLICATION->network()));
 	bool needsDownload = false;
 
 	for (const Cape& cape : profile.capes) {
@@ -454,7 +455,7 @@ void SkinManageDialog::on_importFileButton_clicked()
 		QMimeDatabase().mimeTypeForName(QStringLiteral("image/png"))
 			.filterString();
 	const QString chosen = QFileDialog::getOpenFileName(
-		this, tr("Select Skin Texture"), QString(), filter);
+		this, i18n("Select Skin Texture"), QString(), filter);
 	if (chosen.isNull()) {
 		return;
 	}
@@ -464,7 +465,7 @@ void SkinManageDialog::on_importFileButton_clicked()
 	const QString problem = m_library.importFile(chosen);
 	if (!problem.isEmpty()) {
 		CustomMessageBox::selectable(this,
-									 tr("Selected file is not a valid skin"),
+									 i18n("Selected file is not a valid skin"),
 									 problem, QMessageBox::Critical)
 			->show();
 	}
@@ -474,7 +475,7 @@ void SkinManageDialog::on_importUrlButton_clicked()
 {
 	const QUrl url(m_ui->sourceEdit->text());
 	if (!url.isValid()) {
-		CustomMessageBox::selectable(this, tr("Invalid url"), tr("Invalid url"),
+		CustomMessageBox::selectable(this, i18n("Invalid url"), i18n("Invalid url"),
 									 QMessageBox::Critical)
 			->show();
 		return;
@@ -483,7 +484,7 @@ void SkinManageDialog::on_importUrlButton_clicked()
 	const QString path =
 		FS::PathCombine(m_library.directory(), url.fileName());
 
-	NetJob::Ptr job(new NetJob(tr("Download skin"), APPLICATION->network()));
+	NetJob::Ptr job(new NetJob(i18n("Download skin"), APPLICATION->network()));
 	job->addNetAction(Net::Download::makeFile(url, path));
 	ProgressDialog progress(this);
 	progress.execWithTask(job.get());
@@ -492,11 +493,10 @@ void SkinManageDialog::on_importUrlButton_clicked()
 	 * code: a server can answer 200 with an HTML error page. */
 	if (!SkinEntry(path).isUsable()) {
 		CustomMessageBox::selectable(
-			this, tr("URL is not a valid skin"),
+			this, i18n("URL is not a valid skin"),
 			QFileInfo::exists(path)
-				? tr("Skin images must be 64x64 or 64x32 pixel PNG files.")
-				: tr("Unable to download the skin: '%1'.")
-					  .arg(m_ui->sourceEdit->text()),
+				? i18n("Skin images must be 64x64 or 64x32 pixel PNG files.")
+				: i18n("Unable to download the skin: '%1'.", m_ui->sourceEdit->text()),
 			QMessageBox::Critical)
 			->show();
 		QFile::remove(path);
@@ -535,12 +535,11 @@ void SkinManageDialog::on_importUserButton_clicked()
 		 * reference would be left pointing at dead stack. */
 		QString failure = import->failReason();
 		if (failure.isEmpty()) {
-			failure = tr("the skin is invalid");
+			failure = i18n("the skin is invalid");
 		}
 		CustomMessageBox::selectable(
-			this, tr("Username not found"),
-			tr("Unable to find the skin for '%1'\n because: %2.")
-				.arg(username, failure),
+			this, i18n("Username not found"),
+			i18n("Unable to find the skin for '%1'\n because: %2.", username, failure),
 			QMessageBox::Critical)
 			->show();
 		QFile::remove(path);
@@ -575,8 +574,8 @@ void SkinManageDialog::accept()
 	const QString path = skin->path();
 	QFile file(path);
 	if (!QFile::exists(path) || !file.open(QIODevice::ReadOnly)) {
-		CustomMessageBox::selectable(this, tr("Skin Upload"),
-									 tr("Skin file does not exist!"),
+		CustomMessageBox::selectable(this, i18n("Skin Upload"),
+									 i18n("Skin file does not exist!"),
 									 QMessageBox::Warning)
 			->exec();
 		reject();
@@ -589,7 +588,7 @@ void SkinManageDialog::accept()
 	 * only make sense once the upload went through, and a refresh that
 	 * overlaps the upload can report the old skin back. */
 	shared_qobject_ptr<SequentialTask> job(
-		new SequentialTask(nullptr, tr("Change skin")));
+		new SequentialTask(nullptr, i18n("Change skin")));
 
 	job->addTask(Task::Ptr(new SkinUpload(
 		nullptr, m_account->accessToken(), texture,
@@ -608,8 +607,8 @@ void SkinManageDialog::accept()
 
 	ProgressDialog progress(this);
 	if (progress.execWithTask(job.get()) != QDialog::Accepted) {
-		CustomMessageBox::selectable(this, tr("Skin Upload"),
-									 tr("Failed to upload skin!"),
+		CustomMessageBox::selectable(this, i18n("Skin Upload"),
+									 i18n("Failed to upload skin!"),
 									 QMessageBox::Warning)
 			->exec();
 		reject();
@@ -626,15 +625,15 @@ void SkinManageDialog::accept()
 void SkinManageDialog::on_resetSkinButton_clicked()
 {
 	shared_qobject_ptr<SequentialTask> job(
-		new SequentialTask(nullptr, tr("Reset skin")));
+		new SequentialTask(nullptr, i18n("Reset skin")));
 	job->addTask(
 		Task::Ptr(new SkinDelete(nullptr, m_account->accessToken())));
 	job->addTask(m_account->refresh());
 
 	ProgressDialog progress(this);
 	if (progress.execWithTask(job.get()) != QDialog::Accepted) {
-		CustomMessageBox::selectable(this, tr("Skin Delete"),
-									 tr("Failed to delete current skin!"),
+		CustomMessageBox::selectable(this, i18n("Skin Delete"),
+									 i18n("Failed to delete current skin!"),
 									 QMessageBox::Warning)
 			->exec();
 		reject();
@@ -645,7 +644,7 @@ void SkinManageDialog::on_resetSkinButton_clicked()
 
 void SkinManageDialog::showContextMenu(const QPoint& position)
 {
-	QMenu menu(tr("Context menu"), this);
+	QMenu menu(i18n("Context menu"), this);
 	menu.addAction(m_ui->actionRenameSkin);
 	menu.addAction(m_ui->actionDeleteSkin);
 	menu.exec(m_ui->skinList->mapToGlobal(position));
@@ -688,8 +687,8 @@ void SkinManageDialog::on_actionDeleteSkin_triggered()
 	 * to say what is currently worn, and the file is the only copy. */
 	if (m_library.indexOfName(m_selectedName) ==
 		m_library.indexOfAccountSkin()) {
-		CustomMessageBox::selectable(this, tr("Delete error"),
-									 tr("Can not delete skin that is in use."),
+		CustomMessageBox::selectable(this, i18n("Delete error"),
+									 i18n("Can not delete skin that is in use."),
 									 QMessageBox::Warning)
 			->exec();
 		return;
@@ -703,10 +702,9 @@ void SkinManageDialog::on_actionDeleteSkin_triggered()
 	const QString name = skin->name();
 
 	const int answer =
-		CustomMessageBox::selectable(this, tr("Confirm Deletion"),
-									 tr("You are about to delete \"%1\".\n"
-										"Are you sure?")
-										 .arg(name),
+		CustomMessageBox::selectable(this, i18n("Confirm Deletion"),
+									 i18n("You are about to delete \"%1\".\n"
+										"Are you sure?", name),
 									 QMessageBox::Warning,
 									 QMessageBox::Yes | QMessageBox::No,
 									 QMessageBox::No)

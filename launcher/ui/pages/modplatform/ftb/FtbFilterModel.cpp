@@ -24,6 +24,7 @@
 
 #include "modplatform/modpacksch/FTBPackManifest.h"
 #include <MMCStrings.h>
+#include <KLocalizedString>
 
 namespace Ftb
 {
@@ -31,9 +32,9 @@ namespace Ftb
 	FilterModel::FilterModel(QObject* parent) : QSortFilterProxyModel(parent)
 	{
 		currentSorting = Sorting::ByPlays;
-		sortings.insert(tr("Sort by plays"), Sorting::ByPlays);
-		sortings.insert(tr("Sort by installs"), Sorting::ByInstalls);
-		sortings.insert(tr("Sort by name"), Sorting::ByName);
+		sortings.insert(i18n("Sort by plays"), Sorting::ByPlays);
+		sortings.insert(i18n("Sort by installs"), Sorting::ByInstalls);
+		sortings.insert(i18n("Sort by name"), Sorting::ByName);
 	}
 
 	const QMap<QString, FilterModel::Sorting>

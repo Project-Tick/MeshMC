@@ -35,6 +35,7 @@
 #include "POTranslator.h"
 
 #include "Application.h"
+#include <KLocalizedString>
 
 const static QLatin1String defaultLangCode("en_US");
 
@@ -335,9 +336,7 @@ QVariant TranslationsModel::data(const QModelIndex& index, int role) const
 			}
 		}
 		case Qt::ToolTipRole: {
-			return tr("%1:\n%2 translated\n%3 fuzzy\n%4 total")
-				.arg(lang.key, QString::number(lang.translated),
-					 QString::number(lang.fuzzy), QString::number(lang.total));
+			return i18n("%1:\n%2 translated\n%3 fuzzy\n%4 total", lang.key, QString::number(lang.translated), QString::number(lang.fuzzy), QString::number(lang.total));
 		}
 		case Qt::UserRole:
 			return lang.key;
@@ -353,19 +352,19 @@ QVariant TranslationsModel::headerData(int section, Qt::Orientation orientation,
 	if (role == Qt::DisplayRole) {
 		switch (column) {
 			case Column::Language: {
-				return tr("Language");
+				return i18n("Language");
 			}
 			case Column::Completeness: {
-				return tr("Completeness");
+				return i18n("Completeness");
 			}
 		}
 	} else if (role == Qt::ToolTipRole) {
 		switch (column) {
 			case Column::Language: {
-				return tr("The native language name.");
+				return i18n("The native language name.");
 			}
 			case Column::Completeness: {
-				return tr("Completeness is the percentage of fully translated "
+				return i18n("Completeness is the percentage of fully translated "
 						  "strings, not counting automatically guessed ones.");
 			}
 		}

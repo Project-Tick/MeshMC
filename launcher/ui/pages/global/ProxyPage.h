@@ -25,6 +25,7 @@
 
 #include "ui/pages/BasePage.h"
 #include <Application.h>
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -41,7 +42,7 @@ class ProxyPage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return tr("Proxy");
+		return i18n("Proxy");
 	}
 	QIcon icon() const override
 	{

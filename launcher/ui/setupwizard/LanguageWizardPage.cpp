@@ -24,6 +24,7 @@
 #include "ui/widgets/LanguageSelectionWidget.h"
 #include <QVBoxLayout>
 #include <BuildConfig.h>
+#include <KLocalizedString>
 
 LanguageWizardPage::LanguageWizardPage(QWidget* parent) : BaseWizardPage(parent)
 {
@@ -59,8 +60,8 @@ bool LanguageWizardPage::validatePage()
 
 void LanguageWizardPage::retranslate()
 {
-	setTitle(tr("Language"));
+	setTitle(i18n("Language"));
 	setSubTitle(
-		tr("Select the language to use in MeshMC"));
+		i18n("Select the language to use in MeshMC"));
 	mainWidget->retranslate();
 }

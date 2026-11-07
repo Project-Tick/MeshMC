@@ -61,6 +61,7 @@ target_link_libraries(MeshMC_sdk INTERFACE
     Qt6::Widgets
     Qt6::Gui
     Qt6::Network
+    KF6::I18n
 )
 
 # ---------------------------------------------------------------------------

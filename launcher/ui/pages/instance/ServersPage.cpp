@@ -32,6 +32,7 @@
 #include <QFileSystemWatcher>
 #include <QTimer>
 #include <QMenu>
+#include <KLocalizedString>
 
 static const int COLUMN_COUNT = 2; // 3 , TBD: latency and other nice things.
 
@@ -42,7 +43,7 @@ struct Server {
 	// Methods
 	Server()
 	{
-		m_name = QObject::tr("Minecraft Server");
+		m_name = i18n("Minecraft Server");
 	}
 	Server(const QString& name, const QString& address)
 	{
@@ -279,11 +280,11 @@ class ServersModel : public QAbstractListModel
 		if (role == Qt::DisplayRole) {
 			switch (section) {
 				case 0:
-					return tr("Name");
+					return i18n("Name");
 				case 1:
-					return tr("Address");
+					return i18n("Address");
 				case 2:
-					return tr("Latency");
+					return i18n("Latency");
 			}
 		}
 
@@ -581,7 +582,7 @@ ServersPage::~ServersPage()
 
 void ServersPage::ShowContextMenu(const QPoint& pos)
 {
-	auto menu = ui->toolBar->createContextMenu(this, tr("Context menu"));
+	auto menu = ui->toolBar->createContextMenu(this, i18n("Context menu"));
 	menu->exec(ui->serversView->mapToGlobal(pos));
 	delete menu;
 }

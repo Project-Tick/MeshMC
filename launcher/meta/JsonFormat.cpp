@@ -27,6 +27,7 @@
 #include "Index.h"
 #include "Version.h"
 #include "VersionList.h"
+#include <KLocalizedString>
 
 using namespace Json;
 
@@ -147,7 +148,7 @@ namespace Meta
 				ptr->merge(parseIndexInternal(obj));
 				break;
 			case MetadataVersion::Invalid:
-				throw ParseException(QObject::tr("Unknown format version!"));
+				throw ParseException(i18n("Unknown format version!"));
 		}
 	}
 
@@ -159,7 +160,7 @@ namespace Meta
 				ptr->merge(parseVersionListInternal(obj));
 				break;
 			case MetadataVersion::Invalid:
-				throw ParseException(QObject::tr("Unknown format version!"));
+				throw ParseException(i18n("Unknown format version!"));
 		}
 	}
 
@@ -171,7 +172,7 @@ namespace Meta
 				ptr->merge(parseVersionInternal(obj));
 				break;
 			case MetadataVersion::Invalid:
-				throw ParseException(QObject::tr("Unknown format version!"));
+				throw ParseException(i18n("Unknown format version!"));
 		}
 	}
 

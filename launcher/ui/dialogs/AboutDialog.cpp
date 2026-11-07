@@ -28,6 +28,7 @@
 
 #include "HoeDown.h"
 #include "MMCStrings.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -44,8 +45,8 @@ namespace
 		dataFile.close();
 
 		return fileContent.arg(
-			QObject::tr("MeshMC Developers"),
-			QObject::tr("MultiMC Developers"));
+			i18n("MeshMC Developers"),
+			i18n("MultiMC Developers"));
 	}
 
 	QString getLicenseHtml()
@@ -70,7 +71,7 @@ AboutDialog::AboutDialog(QWidget* parent)
 {
 	ui->setupUi(this);
 
-	setWindowTitle(tr("About MeshMC"));
+	setWindowTitle(i18n("About MeshMC"));
 
 	QString chtml = getCreditsHtml();
 	ui->creditsText->setHtml(Strings::htmlListPatch(chtml));
@@ -86,44 +87,42 @@ AboutDialog::AboutDialog(QWidget* parent)
 	ui->versionLabel->setText(BuildConfig.printableVersionString());
 
 	if (!BuildConfig.BUILD_PLATFORM.isEmpty())
-		ui->platformLabel->setText(tr("Platform") + ": " +
+		ui->platformLabel->setText(i18n("Platform") + ": " +
 								   BuildConfig.BUILD_PLATFORM);
 	else
 		ui->platformLabel->setVisible(false);
 
 	if (!BuildConfig.GIT_COMMIT.isEmpty() &&
 		BuildConfig.GIT_COMMIT != "GITDIR-NOTFOUND") {
-		ui->commitLabel->setText(tr("Commit: %1").arg(BuildConfig.GIT_COMMIT));
+		ui->commitLabel->setText(i18n("Commit: %1", BuildConfig.GIT_COMMIT));
 	} else
 		ui->commitLabel->setVisible(false);
 
 	if (!BuildConfig.BUILD_DATE.isEmpty())
 		ui->buildDateLabel->setText(
-			tr("Build date: %1").arg(BuildConfig.BUILD_DATE));
+			i18n("Build date: %1", BuildConfig.BUILD_DATE));
 	else
 		ui->buildDateLabel->setVisible(false);
 
 	if (!BuildConfig.VERSION_CHANNEL.isEmpty())
-		ui->versionchannelLabel->setText(tr("Version Channel") + ": " +
+		ui->versionchannelLabel->setText(i18n("Version Channel") + ": " +
 								  BuildConfig.VERSION_CHANNEL);
 	else
 		ui->versionchannelLabel->setVisible(false);
 
 	if (!BuildConfig.UPDATE_CHANNEL.isEmpty())
-		ui->updatechannelLabel->setText(tr("Update Channel") + ": " +
+		ui->updatechannelLabel->setText(i18n("Update Channel") + ": " +
 								  BuildConfig.UPDATE_CHANNEL);
 	else
 		ui->updatechannelLabel->setVisible(false);
 
 	
-    ui->redistributionText->setHtml(tr(
-"<p>We keep <b>MeshMC</b> open source because we believe it's important to be able to see the source code of a project like this, and we do this using the Apache license.</p>\n"
+    ui->redistributionText->setHtml(i18n("<p>We keep <b>MeshMC</b> open source because we believe it's important to be able to see the source code of a project like this, and we do this using the Apache license.</p>\n"
 "<p>One reason we use the Apache license is that we don't want people using the name <b>MeshMC</b> when they fork the project. "
 "This means people should examine the source code and remove all references to <b>MeshMC</b>, including the project icon and window titles (the title should not contain the phrase <b>MeshMC-fork</b>). "
 "The Apache license covers reasonable use of the name; mentioning the project's origins in the About dialog and license is acceptable. However, it must be explicitly stated that the project is a fork, "
 "which does not mean you have our approval.</p>\n<p>However, we give you the freedom to distribute this project as you wish, in any non-exclusive way, without changing its functionality, on a voluntary "
-"basis to package managers, without expecting any financial gain. Take the project and distribute it wherever people can reach it. But abide by our restrictions."
-    ));
+"basis to package managers, without expecting any financial gain. Take the project and distribute it wherever people can reach it. But abide by our restrictions."));
 
 	QString urlText(
 		"<html><head/><body><p><a href=\"%1\">%1</a></p></body></html>");
