@@ -1,0 +1,492 @@
+name: Setup KDE Frameworks 6
+description: >-
+  Build and cache KDE Frameworks 6 from the official release tarballs against an
+  already installed Qt 6 (e.g. from aqtinstall). With no inputs it builds every
+  framework the runner's platform supports; with `frameworks` it analyses the
+  dependency tree and builds only what is needed. Tier by tier, each tier cached.
+
+inputs:
+  version:
+    description: >-
+      KDE Frameworks release to build, e.g. 6.31.0, or `latest`.
+    required: false
+    default: 6.31.0
+  frameworks:
+    description: >-
+      Frameworks to build (comma/space/newline separated). Names are accepted as
+      `kio`, `KIO`, `KF6KIO` or `KF6::KIO`. Their dependencies are resolved and
+      added automatically, using the dependency data KDE ships in each release
+      (`.kde-ci.yml`) for the runner's platform. Empty or `all` builds every
+      framework available on this platform.
+    required: false
+    default: ""
+  exclude:
+    description: >-
+      Frameworks to leave out. In `all` mode, anything that depends on an excluded
+      framework is dropped too; with an explicit `frameworks` list it is an error
+      if a required framework is excluded.
+    required: false
+    default: ""
+  qt-prefix:
+    description: >-
+      Qt 6 installation (the directory containing lib/cmake/Qt6). Defaults to
+      $QT_ROOT_DIR / $Qt6_DIR, which jurplel/install-qt-action sets.
+    required: false
+    default: ""
+  qt-host-path:
+    description: Host Qt for cross builds (passed as QT_HOST_PATH), e.g. Windows on ARM.
+    required: false
+    default: ""
+  install-prefix:
+    description: Where KDE Frameworks is installed. Defaults to `<runner temp>/kf6`.
+    required: false
+    default: ""
+  build-type:
+    description: CMake build type for the frameworks.
+    required: false
+    default: Release
+  linkage:
+    description: "`shared` or `static`."
+    required: false
+    default: shared
+  generator:
+    description: CMake generator. The frameworks are single-config builds, so use Ninja.
+    required: false
+    default: Ninja
+  osx-architectures:
+    description: >-
+      CMAKE_OSX_ARCHITECTURES, e.g. `x86_64;arm64` for a universal build. Empty
+      uses the compiler's default (or $CMAKE_OSX_ARCHITECTURES). Note that
+      Homebrew libraries are single-architecture, which a universal link of
+      frameworks needing them (ki18n -> libintl) cannot use.
+    required: false
+    default: ""
+  cmake-args:
+    description: >-
+      Extra CMake arguments for every framework, one or more per line (shell
+      quoting; use forward slashes in paths). They come after the defaults so
+      they can override them.
+    required: false
+    default: ""
+  framework-cmake-args:
+    description: >-
+      Extra CMake arguments for single frameworks, one `<framework>: <args>` per
+      line, e.g. `kio: -DKIO_FOO=ON`.
+    required: false
+    default: ""
+  system-deps:
+    description: >-
+      Install the system packages the selected frameworks need (apt / brew /
+      choco, chosen from the dependency analysis). Set to false if your
+      environment already provides them.
+    required: false
+    default: "true"
+  extra-system-packages:
+    description: Additional packages (native package names) to install along with the system dependencies.
+    required: false
+    default: ""
+  cache:
+    description: >-
+      Cache each tier separately (key covers KF version, Qt version, OS/arch,
+      build options and everything built up to that tier).
+    required: false
+    default: "true"
+  cache-key-suffix:
+    description: Extra text mixed into the cache keys, to force a rebuild.
+    required: false
+    default: ""
+  keep-going:
+    description: >-
+      Do not stop at the first framework that fails: build everything that does
+      not depend on it, then fail at the end with a full report. Useful while
+      bringing up a new platform.
+    required: false
+    default: "false"
+  ignore-failures:
+    description: Report failed frameworks as a warning instead of failing the action.
+    required: false
+    default: "false"
+  export-env:
+    description: >-
+      Export CMAKE_PREFIX_PATH, PATH, QT_PLUGIN_PATH, QML_IMPORT_PATH,
+      XDG_DATA_DIRS and KF6_PREFIX for the following steps.
+    required: false
+    default: "true"
+  jobs:
+    description: Parallel build jobs. 0 means the number of CPUs.
+    required: false
+    default: "0"
+  base-url:
+    description: Mirror/base URL of the release archive.
+    required: false
+    default: https://download.kde.org/stable/frameworks
+  work-dir:
+    description: Scratch directory for downloads, sources, builds and logs.
+    required: false
+    default: ${{ runner.temp }}/setup-kf6
+  verbose:
+    description: Stream the full configure/build output into the job log instead of only writing it to the log files.
+    required: false
+    default: "false"
+  upload-logs:
+    description: Upload the per-framework build logs as an artifact when the action fails.
+    required: false
+    default: "true"
+
+outputs:
+  prefix:
+    description: Installation prefix of KDE Frameworks.
+    value: ${{ steps.finish.outputs.prefix }}
+  frameworks:
+    description: Comma separated list of the frameworks that were built (selection plus dependencies).
+    value: ${{ steps.plan.outputs.frameworks }}
+  cache-hit:
+    description: "`true` if every tier was restored from cache."
+    value: ${{ steps.finish.outputs.cache-hit }}
+  failed:
+    description: Comma separated list of frameworks that failed or were skipped (only with keep-going/ignore-failures).
+    value: ${{ steps.finish.outputs.failed }}
+  kf-version:
+    description: The KDE Frameworks version that was built.
+    value: ${{ steps.plan.outputs.kf-version }}
+
+runs:
+  using: composite
+
+  steps:
+    - uses: actions/setup-python@v7
+      with:
+        python-version: '3.15' 
+
+    - name: Locate Python
+      shell: bash
+      run: |
+        PY="$(command -v python3 || command -v python)"
+        if [ -z "$PY" ]; then
+          echo "::error::setup-kf6 needs Python 3 on PATH"
+          exit 1
+        fi
+        echo "KF6_PYTHON=$PY" >> "$GITHUB_ENV"
+        echo "KF6_SCRIPT=${{ github.action_path }}/kf6.py" >> "$GITHUB_ENV"
+
+    - name: Install system dependencies (Linux)
+      if: ${{ runner.os == 'linux' }}
+      shell: bash
+      run: |
+        sudo apt-get -y update
+        sudo apt-get -y install \
+          build-essential ninja-build pkg-config scdoc libxcb-cursor-dev libxcb-randr0-dev \
+          libxcb-shape0-dev libxcb-xfixes0-dev libxcb-xkb-dev libxcb-icccm4-dev \
+          libxcb-keysyms1-dev libxcb-image0-dev libxcb-render-util0-dev \
+          libxcb-xinerama0-dev  libxcb-sync-dev libtomlplusplus-dev libvulkan-dev \
+          libgpg-error-dev libassuan-dev libksba-dev \
+          libnpth0-dev libbotan-3-dev autoconf automake libtool gettext \
+          autoconf-archive cmake gperf zlib1g-dev libbz2-dev liblzma-dev \
+          libxml2-dev libx11-dev libxcb1-dev libxkbcommon-dev \
+          libxkbcommon-x11-dev plasma-wayland-protocols libxcb-res0-dev \
+          libwayland-dev wayland-protocols libwayland-egl1 libx11-dev \
+          libxfixes-dev docbook docbook-xml docbook-xsl docbook-utils \
+          xsltproc libxml2-utils libaspell-dev libxslt1-dev
+
+    - name: Install system dependencies (macOS)
+      if: ${{ runner.os == 'macos' }}
+      shell: bash
+      run: |
+        brew update
+        brew install cmake ninja temurin@17 autoconf pkg-config \
+        autoconf-archive automake libtool gettext libxml2 zlib \
+        bzip2 xz gperf cmark docbook docbook-xsl cpanminus bison \
+        libical qrencode libdmtx zxing-cpp zstd libxslt
+
+        cpanm URI
+
+        echo "$(brew --prefix bison)/bin" >> "$GITHUB_PATH"
+
+    - name: Install system dependencies (Windows)
+      if: ${{ runner.os == 'windows' }}
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+
+        choco install pkgconfiglite -y --allow-empty-checksums
+
+        $vcpkgRoot = $env:VCPKG_INSTALLATION_ROOT
+        if (-not $vcpkgRoot) {
+          $vcpkgRoot = $env:VCPKG_ROOT
+        }
+        if (-not $vcpkgRoot) {
+          throw "VCPKG_INSTALLATION_ROOT/VCPKG_ROOT is not set on this runner."
+        }
+
+        $triplet = if ($env:RUNNER_ARCH -eq "ARM64") {
+          "arm64-windows"
+        } else {
+          "x64-windows"
+        }
+
+        & "$vcpkgRoot\vcpkg.exe" install --classic `
+          gettext-libintl gperf zlib bzip2 liblzma libxml2 iso-codes cmark libarchive libqrencode libxslt zstd `
+          libical libdmtx nu-book-zxing-cpp `
+          "--triplet=$triplet"
+
+        if ($LASTEXITCODE -ne 0) {
+          throw "vcpkg dependency installation failed."
+        }
+
+        $tripletRoot = Join-Path $vcpkgRoot "installed\$triplet"
+        $toolsRoot = Join-Path $tripletRoot "tools"
+
+        $pathEntries = [System.Collections.Generic.HashSet[string]]::new(
+          [System.StringComparer]::OrdinalIgnoreCase
+        )
+
+        # Executables installed directly in the triplet's bin directory.
+        $binPath = Join-Path $tripletRoot "bin"
+        if (Test-Path $binPath) {
+          [void]$pathEntries.Add($binPath)
+        }
+
+        # vcpkg commonly installs build tools in tools\<port>\.
+        if (Test-Path $toolsRoot) {
+          Get-ChildItem -Path $toolsRoot -Directory -Recurse |
+            ForEach-Object {
+              $directory = $_.FullName
+
+              if (
+                Get-ChildItem -LiteralPath $directory -File `
+                  -ErrorAction SilentlyContinue |
+                  Where-Object {
+                    $_.Extension -in @(".exe", ".cmd", ".bat", ".com")
+                  } |
+                  Select-Object -First 1
+              ) {
+                [void]$pathEntries.Add($directory)
+              }
+            }
+
+          # Also include the tools root itself.
+          [void]$pathEntries.Add($toolsRoot)
+        }
+
+        foreach ($entry in $pathEntries) {
+          Add-Content -Path $env:GITHUB_PATH -Value $entry
+          Write-Host "Added to PATH: $entry"
+        }
+
+        # PATH is not enough: CMake does not look for libraries/headers next to the tools on
+        # PATH, so zlib, libintl, libical, ... in this tree were reported as "Could NOT find".
+        # CMAKE_PREFIX_PATH makes find_package/find_library/find_path look into it.
+        # (The SnoreToast step below extends it and exports the final value.)
+        Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_TRIPLET_ROOT=$tripletRoot"
+        Add-Content -Path $env:GITHUB_ENV -Value "CMAKE_PREFIX_PATH=$tripletRoot"
+        # Some KDE Frameworks find libraries (zstd) only through pkg-config.
+        Add-Content -Path $env:GITHUB_ENV -Value "PKG_CONFIG_PATH=$(Join-Path $tripletRoot 'lib\pkgconfig')"
+
+        # Verify that the next GitHub Actions step can find gperf.
+        $gperfCandidates = @(
+          (Join-Path $toolsRoot "gperf\gperf.exe"),
+          (Join-Path $binPath "gperf.exe")
+        )
+
+        $gperf = Get-Command gperf -ErrorAction SilentlyContinue
+        if (-not $gperf) {
+          foreach ($candidate in $gperfCandidates) {
+            if (Test-Path $candidate) {
+              $gperf = Get-Item $candidate
+              break
+            }
+          }
+        }
+
+        if ($gperf) {
+          Write-Host "Found gperf: $($gperf.Source)"
+        } else {
+          Write-Warning "gperf.exe was not found in the expected vcpkg locations."
+          Get-ChildItem -Path $toolsRoot -Filter "gperf.exe" `
+            -File -Recurse -ErrorAction SilentlyContinue |
+            ForEach-Object { Write-Host "Found candidate: $($_.FullName)" }
+        }
+
+    - name: Build SnoreToast (Windows)
+      if: ${{ runner.os == 'windows' }}
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+
+        $depsRoot = Join-Path $env:RUNNER_TEMP "deps"
+        $src = Join-Path $env:RUNNER_TEMP "snoretoast-src"
+        $bld = Join-Path $env:RUNNER_TEMP "snoretoast-build"
+
+        git clone --depth 1 --branch v0.9.1 https://github.com/KDE/snoretoast.git $src
+        if ($LASTEXITCODE -ne 0) { throw "cloning snoretoast failed" }
+
+        # BUILD_STATIC_RUNTIME=OFF: the frameworks use the dynamic CRT (/MD); a static (/MT)
+        # library linked into KNotifications would mix the two.
+        cmake -S $src -B $bld -G Ninja -DCMAKE_BUILD_TYPE=Release `
+          "-DCMAKE_INSTALL_PREFIX=$depsRoot" -DBUILD_STATIC_RUNTIME=OFF
+        if ($LASTEXITCODE -ne 0) { throw "configuring snoretoast failed" }
+        cmake --build $bld
+        if ($LASTEXITCODE -ne 0) { throw "building snoretoast failed" }
+        cmake --install $bld
+        if ($LASTEXITCODE -ne 0) { throw "installing snoretoast failed" }
+
+        # Final CMAKE_PREFIX_PATH for the following steps: vcpkg tree + these tools.
+        Add-Content -Path $env:GITHUB_ENV -Value "CMAKE_PREFIX_PATH=$env:VCPKG_TRIPLET_ROOT;$depsRoot"
+
+    - name: Install DocBook (Windows)
+      if: ${{ runner.os == 'windows' }}
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $tmp = $env:RUNNER_TEMP
+
+        Invoke-WebRequest -Uri "https://www.oasis-open.org/docbook/xml/4.5/docbook-xml-4.5.zip" -OutFile "$tmp\docbook-xml-4.5.zip"
+        Expand-Archive -Path "$tmp\docbook-xml-4.5.zip" -DestinationPath "C:\dbk45" -Force
+
+        Invoke-WebRequest -Uri "https://github.com/docbook/xslt10-stylesheets/releases/download/snapshot%2F2020-06-03/docbook-xsl-snapshot.zip" -OutFile "$tmp\docbook-xsl-snapshot.zip"
+        Expand-Archive -Path "$tmp\docbook-xsl-snapshot.zip" -DestinationPath "C:\dbksl" -Force
+
+        # The stylesheets' root is the directory that contains lib\lib.xsl.
+        $libXsl = Get-ChildItem -Path "C:\dbksl" -Recurse -Filter "lib.xsl" |
+          Where-Object { $_.Directory.Name -eq "lib" } | Select-Object -First 1
+        if (-not $libXsl) { throw "lib\lib.xsl not found in the DocBook XSL archive" }
+        $xslDir = $libXsl.Directory.Parent.FullName
+        if (-not (Test-Path "C:\dbk45\docbookx.dtd")) { throw "docbookx.dtd not found in C:\dbk45" }
+
+        Add-Content -Path $env:GITHUB_ENV -Value "XML_CATALOG_FILES=C:\dbk45\catalog.xml"
+        Add-Content -Path $env:GITHUB_ENV -Value "DocBookXML4_ROOT=C:\dbk45"
+        $kdocArgs = "-DDocBookXML4_DTD_DIR=C:/dbk45 -DDocBookXSL_DIR=$($xslDir -replace '\\','/')"
+        Add-Content -Path $env:GITHUB_ENV -Value "KF6_KDOCTOOLS_ARGS=$kdocArgs"
+        Write-Host "kdoctools arguments: $kdocArgs"
+
+    - name: Plan KDE Frameworks build
+      id: plan
+      shell: bash
+      env:
+        KF6_INPUTS: ${{ toJSON(inputs) }}
+      run: '"$KF6_PYTHON" "$KF6_SCRIPT" plan'
+
+    - name: Install system dependencies
+      if: ${{ inputs.system-deps == 'true' }}
+      shell: bash
+      env:
+        KF6_INPUTS: ${{ toJSON(inputs) }}
+      run: '"$KF6_PYTHON" "$KF6_SCRIPT" sysdeps'
+
+    # ---------------------------------------------------------------- Tier 1
+    - name: Restore KDE Frameworks tier 1
+      if: ${{ inputs.cache == 'true' && steps.plan.outputs.count-1 != '0' }}
+      uses: actions/cache/restore@v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.work-dir }}/delta/tier1
+        key: ${{ steps.plan.outputs.key-1 }}
+        # Fall back to any earlier cache of this tier (finished or partial); kf6.py then only
+        # trusts the frameworks that were built exactly like they would be now.
+        restore-keys: ${{ steps.plan.outputs.restore-1 }}
+
+    - name: Build KDE Frameworks tier 1
+      id: tier1
+      if: ${{ steps.plan.outputs.count-1 != '0' }}
+      shell: bash
+      env:
+        KF6_INPUTS: ${{ toJSON(inputs) }}
+      run: '"$KF6_PYTHON" "$KF6_SCRIPT" build 1'
+
+    - name: Save KDE Frameworks tier 1
+      if: ${{ !cancelled() && steps.tier1.outputs.save == 'true' }}
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.work-dir }}/delta/tier1
+        key: ${{ steps.tier1.outputs.save-key }}
+
+    # ---------------------------------------------------------------- Tier 2
+    - name: Restore KDE Frameworks tier 2
+      if: ${{ inputs.cache == 'true' && steps.plan.outputs.count-2 != '0' }}
+      uses: actions/cache/restore@v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.work-dir }}/delta/tier2
+        key: ${{ steps.plan.outputs.key-2 }}
+        restore-keys: ${{ steps.plan.outputs.restore-2 }}
+
+    - name: Build KDE Frameworks tier 2
+      id: tier2
+      if: ${{ steps.plan.outputs.count-2 != '0' }}
+      shell: bash
+      env:
+        KF6_INPUTS: ${{ toJSON(inputs) }}
+      run: '"$KF6_PYTHON" "$KF6_SCRIPT" build 2'
+
+    - name: Save KDE Frameworks tier 2
+      if: ${{ !cancelled() && steps.tier2.outputs.save == 'true' }}
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.work-dir }}/delta/tier2
+        key: ${{ steps.tier2.outputs.save-key }}
+
+    # ---------------------------------------------------------------- Tier 3
+    - name: Restore KDE Frameworks tier 3
+      if: ${{ inputs.cache == 'true' && steps.plan.outputs.count-3 != '0' }}
+      uses: actions/cache/restore@v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.work-dir }}/delta/tier3
+        key: ${{ steps.plan.outputs.key-3 }}
+        restore-keys: ${{ steps.plan.outputs.restore-3 }}
+
+    - name: Build KDE Frameworks tier 3
+      id: tier3
+      if: ${{ steps.plan.outputs.count-3 != '0' }}
+      shell: bash
+      env:
+        KF6_INPUTS: ${{ toJSON(inputs) }}
+      run: '"$KF6_PYTHON" "$KF6_SCRIPT" build 3'
+
+    - name: Save KDE Frameworks tier 3
+      if: ${{ !cancelled() && steps.tier3.outputs.save == 'true' }}
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.work-dir }}/delta/tier3
+        key: ${{ steps.tier3.outputs.save-key }}
+
+    # ---------------------------------------------------------------- Tier 4
+    # KDE declares a single framework (frameworkintegration) in tier 4.
+    - name: Restore KDE Frameworks tier 4
+      if: ${{ inputs.cache == 'true' && steps.plan.outputs.count-4 != '0' }}
+      uses: actions/cache/restore@v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.work-dir }}/delta/tier4
+        key: ${{ steps.plan.outputs.key-4 }}
+        restore-keys: ${{ steps.plan.outputs.restore-4 }}
+
+    - name: Build KDE Frameworks tier 4
+      id: tier4
+      if: ${{ steps.plan.outputs.count-4 != '0' }}
+      shell: bash
+      env:
+        KF6_INPUTS: ${{ toJSON(inputs) }}
+      run: '"$KF6_PYTHON" "$KF6_SCRIPT" build 4'
+
+    - name: Save KDE Frameworks tier 4
+      if: ${{ !cancelled() && steps.tier4.outputs.save == 'true' }}
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.work-dir }}/delta/tier4
+        key: ${{ steps.tier4.outputs.save-key }}
+
+    # ---------------------------------------------------------------- Finish
+    - name: Finish KDE Frameworks setup
+      id: finish
+      if: ${{ !cancelled() && steps.plan.outcome == 'success' }}
+      shell: bash
+      env:
+        KF6_INPUTS: ${{ toJSON(inputs) }}
+      run: '"$KF6_PYTHON" "$KF6_SCRIPT" finish'
+
+    - name: Upload KDE Frameworks build logs
+      if: ${{ failure() && inputs.upload-logs == 'true' && steps.plan.outcome == 'success' }}
+      uses: actions/upload-artifact@v7
+      continue-on-error: true
+      with:
+        name: kf6-logs-${{ steps.plan.outputs.key-base }}
+        path: ${{ steps.plan.outputs.work-dir }}/logs
+        overwrite: true
+        if-no-files-found: ignore
