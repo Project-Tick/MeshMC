@@ -17,5 +17,5 @@ add_library(BuildConfig STATIC
 )
 
 # QString is part of BuildConfig.h, so Qt::Core is a public dependency.
-target_link_libraries(BuildConfig PUBLIC Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(BuildConfig PUBLIC Qt6::Core)
 target_include_directories(BuildConfig PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")

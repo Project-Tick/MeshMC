@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(MeshMC_QT_VERSION_MAJOR "6" CACHE STRING "Major Qt version to build against (5 or 6)")
 set(QT_VERSION_MAJOR "${MeshMC_QT_VERSION_MAJOR}")
 
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Gui)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 find_package(MeshMC_SDK REQUIRED)
 
 add_library(MyPlugin MODULE

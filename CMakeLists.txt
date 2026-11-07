@@ -125,12 +125,9 @@ endif()
 # major version the whole build uses.
 set(MeshMC_QT_VERSION_MAJOR "6" CACHE STRING "Major Qt version to build against (5 or 6)")
 set_property(CACHE MeshMC_QT_VERSION_MAJOR PROPERTY STRINGS "5" "6")
-
-if(NOT MeshMC_QT_VERSION_MAJOR STREQUAL "5" AND NOT MeshMC_QT_VERSION_MAJOR STREQUAL "6")
-    message(FATAL_ERROR "MeshMC_QT_VERSION_MAJOR must be either 5 or 6. Got: ${MeshMC_QT_VERSION_MAJOR}")
+if(MeshMC_QT_VERSION_MAJOR EQUAL "5")
+    message(FATAL_ERROR "Qt 6 or newer is required.")
 endif()
-
-set(QT_VERSION_MAJOR "${MeshMC_QT_VERSION_MAJOR}")
 
 # OpenSSL libraries to copy into the package (Windows). Qt loads OpenSSL at
 # runtime instead of linking it, so nothing in the normal deployment chain
@@ -144,8 +141,7 @@ set(QT_VERSION_MAJOR "${MeshMC_QT_VERSION_MAJOR}")
 set(MeshMC_BUNDLE_OPENSSL_LIBS "" CACHE STRING
     "Semicolon-separated list of OpenSSL runtime libraries to ship inside the package")
 
-set(MeshMC_QT_COMPONENTS
-    Core
+find_package(Qt6 6.4.0 REQUIRED COMPONENTS Core
     Widgets
     Concurrent
     Network
@@ -153,31 +149,8 @@ set(MeshMC_QT_COMPONENTS
     Test
     Xml
     OpenGL
+    OpenGLWidgets
 )
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    # Qt 6 split QOpenGLWidget out of QtWidgets into its own module.
-    list(APPEND MeshMC_QT_COMPONENTS OpenGLWidgets)
-    set(MeshMC_QT_MINIMUM_VERSION "6.4.0")
-else()
-    # 5.15 is the final Qt 5 LTS and the oldest release we support: it provides
-    # QtNetworkAuth, versionless CMake commands and the string/container APIs
-    # the codebase already relies on.
-    set(MeshMC_QT_MINIMUM_VERSION "5.15.0")
-endif()
-
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${MeshMC_QT_COMPONENTS})
-
-if(DEFINED Qt${QT_VERSION_MAJOR}Core_VERSION)
-    set(_projt_qt_version "${Qt${QT_VERSION_MAJOR}Core_VERSION}")
-elseif(DEFINED Qt${QT_VERSION_MAJOR}_VERSION)
-    set(_projt_qt_version "${Qt${QT_VERSION_MAJOR}_VERSION}")
-endif()
-if(DEFINED _projt_qt_version AND _projt_qt_version VERSION_LESS "${MeshMC_QT_MINIMUM_VERSION}")
-    message(FATAL_ERROR "Qt ${MeshMC_QT_MINIMUM_VERSION} or newer is required. Detected: ${_projt_qt_version}")
-endif()
-message(STATUS "Building against Qt ${_projt_qt_version} (major version ${QT_VERSION_MAJOR})")
-unset(_projt_qt_version)
 
 if(UNIX)
     find_package(PkgConfig)
@@ -613,10 +586,6 @@ if(MeshMC_PLUGINS)
 
     # In-tree .mmco plugins (after launcher so MeshMC_logic target is available)
     add_subdirectory(launcher/plugin/plugins)
-endif()
-
-if(APPLE AND QT_VERSION_MAJOR EQUAL 5)
-    include("${CMAKE_SOURCE_DIR}/cmake/FixQt5MacBundle.cmake")
 endif()
 
 feature_summary(

@@ -1,4 +1,4 @@
-find_package(Qt${QT_VERSION_MAJOR}Test REQUIRED)
+find_package(Qt6Test REQUIRED)
 include(ECMAddTests)
 
 set(TEST_RESOURCE_PATH ${CMAKE_CURRENT_LIST_DIR})
@@ -23,7 +23,7 @@ function(add_unit_test name)
 
     ecm_add_test(${_test_sources}
         TEST_NAME ${name}_test
-        LINK_LIBRARIES Qt${QT_VERSION_MAJOR}::Test ${OPT_LIBS}
+        LINK_LIBRARIES Qt6::Test ${OPT_LIBS}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
