@@ -18,7 +18,7 @@ runs:
       run: |
         brew update
         brew install ninja temurin@17 autoconf pkg-config \
-        autoconf-archive automake libtool
+        autoconf-archive automake libtool mono
 
     - name: Setup vcpkg cache
       shell: bash
