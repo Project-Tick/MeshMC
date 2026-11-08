@@ -63,6 +63,7 @@
 #include <KAboutApplicationDialog>
 #include <KAboutData>
 #include <KBugReport>
+#include <KFormat>
 #include <KHelpMenu>
 
 #include <BaseInstance.h>
@@ -117,7 +118,6 @@
 #include "InstanceImportTask.h"
 #include "InstanceCopyTask.h"
 
-#include "MMCTime.h"
 #include <KLocalizedString>
 
 namespace
@@ -2161,6 +2161,8 @@ void MainWindow::updateStatusCenter()
 	int timePlayed = APPLICATION->instances()->getTotalPlayTime();
 	if (timePlayed > 0) {
 		m_statusCenter->setText(
-			i18n("Total playtime: %1", Time::prettifyDuration(timePlayed)));
+			i18n("Total playtime: %1",
+				 KFormat().formatDuration(static_cast<quint64>(timePlayed) * 1000,
+										  KFormat::AbbreviatedDuration)));
 	}
 }

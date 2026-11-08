@@ -31,7 +31,7 @@
 #include "pathmatcher/MultiMatcher.h"
 #include "FileSystem.h"
 #include "java/JavaVersion.h"
-#include "MMCTime.h"
+#include <KFormat>
 
 #include "launch/LaunchTask.h"
 #include "launch/steps/LookupServerAddress.h"
@@ -99,6 +99,16 @@ class OrSetting : public Setting
 	std::shared_ptr<Setting> m_a;
 	std::shared_ptr<Setting> m_b;
 };
+
+namespace
+{
+	// A time played, given in seconds, as "1 hr 2 min".
+	QString playTime(qint64 seconds)
+	{
+		return KFormat().formatDuration(static_cast<quint64>(seconds) * 1000,
+										KFormat::AbbreviatedDuration);
+	}
+} // namespace
 
 MinecraftInstance::MinecraftInstance(SettingsObjectPtr globalSettings,
 									 SettingsObjectPtr settings,
@@ -955,12 +965,12 @@ QString MinecraftInstance::getStatusbarDescription()
 	if (m_settings->get("ShowGameTime").toBool()) {
 		if (lastTimePlayed() > 0) {
 			description.append(
-				i18n(", last played for %1", Time::prettifyDuration(lastTimePlayed())));
+				i18n(", last played for %1", playTime(lastTimePlayed())));
 		}
 
 		if (totalTimePlayed() > 0) {
 			description.append(
-				i18n(", total played for %1", Time::prettifyDuration(totalTimePlayed())));
+				i18n(", total played for %1", playTime(totalTimePlayed())));
 		}
 	}
 	if (hasCrashed()) {

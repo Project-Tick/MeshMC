@@ -306,10 +306,6 @@ target_sources(MeshMC_logic PRIVATE
     # A Recursive file system watcher
     RecursiveFileSystemWatcher.h
     RecursiveFileSystemWatcher.cpp
-
-    # Time
-    MMCTime.h
-    MMCTime.cpp
 )
 
 add_subdirectory(pathmatcher)
