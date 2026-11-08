@@ -147,11 +147,11 @@ jobs:
 
       - name: Run build
         run: |
-          cmake --build --preset "$CMAKE_PRESET" --config "$BUILD_TYPE"
+          cmake --build --preset "$CMAKE_PRESET" --config "$BUILD_TYPE" --verbose
 
       - name: Run tests
         run: |
-          ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE" --output-on-failure
+          ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE" --output-on-failure --verbose --timeout 120
 
       ##
       # PACKAGE

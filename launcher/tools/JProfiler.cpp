@@ -18,19 +18,21 @@
  */
 
 #include "JProfiler.h"
+#include "settings/GlobalSettings.h"
+#include "Application.h"
 
 #include <QDir>
 
 #include "settings/SettingsObject.h"
 #include "launch/LaunchTask.h"
 #include "BaseInstance.h"
+#include <KLocalizedString>
 
 class JProfiler : public BaseProfiler
 {
 	Q_OBJECT
   public:
-	JProfiler(SettingsObjectPtr settings, InstancePtr instance,
-			  QObject* parent = 0);
+	JProfiler(InstancePtr instance, QObject* parent = 0);
 
   private slots:
 	void profilerStarted();
@@ -43,21 +45,20 @@ class JProfiler : public BaseProfiler
 	int listeningPort = 0;
 };
 
-JProfiler::JProfiler(SettingsObjectPtr settings, InstancePtr instance,
-					 QObject* parent)
-	: BaseProfiler(settings, instance, parent)
+JProfiler::JProfiler(InstancePtr instance, QObject* parent)
+	: BaseProfiler(instance, parent)
 {
 }
 
 void JProfiler::profilerStarted()
 {
-	emit readyToLaunch(tr("Listening on port: %1").arg(listeningPort));
+	emit readyToLaunch(i18n("Listening on port: %1", listeningPort));
 }
 
 void JProfiler::profilerFinished(int exit, QProcess::ExitStatus status)
 {
 	if (status == QProcess::CrashExit) {
-		emit abortLaunch(tr("Profiler aborted"));
+		emit abortLaunch(i18n("Profiler aborted"));
 	}
 	if (m_profilerProcess) {
 		m_profilerProcess->deleteLater();
@@ -67,11 +68,11 @@ void JProfiler::profilerFinished(int exit, QProcess::ExitStatus status)
 
 void JProfiler::beginProfilingImpl(shared_qobject_ptr<LaunchTask> process)
 {
-	listeningPort = globalSettings->get("JProfilerPort").toInt();
+	listeningPort = APPLICATION->globalSettings()->jProfilerPort();
 	QProcess* profiler = new QProcess(this);
 	QStringList profilerArgs = {"-d", QString::number(process->pid()), "--gui",
 								"-p", QString::number(listeningPort)};
-	auto basePath = globalSettings->get("JProfilerPath").toString();
+	auto basePath = APPLICATION->globalSettings()->jProfilerPath();
 
 #ifdef Q_OS_WIN
 	QString profilerProgram =
@@ -90,39 +91,32 @@ void JProfiler::beginProfilingImpl(shared_qobject_ptr<LaunchTask> process)
 	profiler->start();
 }
 
-void JProfilerFactory::registerSettings(SettingsObjectPtr settings)
-{
-	settings->registerSetting("JProfilerPath");
-	settings->registerSetting("JProfilerPort", 42042);
-	globalSettings = settings;
-}
-
 BaseExternalTool* JProfilerFactory::createTool(InstancePtr instance,
 											   QObject* parent)
 {
-	return new JProfiler(globalSettings, instance, parent);
+	return new JProfiler(instance, parent);
 }
 
 bool JProfilerFactory::check(QString* error)
 {
-	return check(globalSettings->get("JProfilerPath").toString(), error);
+	return check(APPLICATION->globalSettings()->jProfilerPath(), error);
 }
 
 bool JProfilerFactory::check(const QString& path, QString* error)
 {
 	if (path.isEmpty()) {
-		*error = QObject::tr("Empty path");
+		*error = i18n("Empty path");
 		return false;
 	}
 	QDir dir(path);
 	if (!dir.exists()) {
-		*error = QObject::tr("Path does not exist");
+		*error = i18n("Path does not exist");
 		return false;
 	}
 	if (!dir.exists("bin") ||
 		!(dir.exists("bin/jprofiler") || dir.exists("bin/jprofiler.exe")) ||
 		!dir.exists("bin/agent.jar")) {
-		*error = QObject::tr("Invalid JProfiler install");
+		*error = i18n("Invalid JProfiler install");
 		return false;
 	}
 	return true;

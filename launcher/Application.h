@@ -45,6 +45,7 @@ class GenericPageProvider;
 class QFile;
 class HttpMetaCache;
 class SettingsObject;
+class GlobalSettings;
 class InstanceList;
 class AccountList;
 class IconList;
@@ -52,7 +53,6 @@ class QNetworkAccessManager;
 class JavaInstallList;
 class BaseProfilerFactory;
 class BaseDetachedToolFactory;
-class TranslationsModel;
 class ITheme;
 class ThemeManager;
 class MCEditTool;
@@ -109,6 +109,17 @@ class Application : public QApplication
 		return m_settings;
 	}
 
+	/*!
+	 * The global settings with typed accessors (globalSettings()->proxyPort()
+	 * for settings()->get("ProxyPort").toInt()). They are the same values:
+	 * see GlobalSettings.kcfg for what there is, and typedGlobalSettings().
+	 * Not null once initSettings() has run.
+	 */
+	GlobalSettings* globalSettings() const
+	{
+		return m_typedSettings;
+	}
+
 	qint64 timeSinceStart() const
 	{
 		return startTime.msecsTo(QDateTime::currentDateTime());
@@ -135,8 +146,6 @@ class Application : public QApplication
 	QString updaterBinaryName();
 
 	void triggerUpdateCheck();
-
-	std::shared_ptr<TranslationsModel> translations();
 
 	std::shared_ptr<JavaInstallList> javalist();
 
@@ -280,10 +289,10 @@ class Application : public QApplication
 	shared_qobject_ptr<Meta::Index> m_metadataIndex;
 
 	std::shared_ptr<SettingsObject> m_settings;
+	GlobalSettings* m_typedSettings = nullptr;
 	std::shared_ptr<InstanceList> m_instances;
 	std::shared_ptr<IconList> m_icons;
 	std::shared_ptr<JavaInstallList> m_javalist;
-	std::shared_ptr<TranslationsModel> m_translations;
 	std::shared_ptr<GenericPageProvider> m_globalSettingsProvider;
 	std::unique_ptr<ThemeManager> m_themeManager;
 	std::unique_ptr<MCEditTool> m_mcedit;

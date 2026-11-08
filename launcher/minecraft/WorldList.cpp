@@ -26,6 +26,7 @@
 #include <QString>
 #include <QFileSystemWatcher>
 #include <QDebug>
+#include <KLocalizedString>
 
 WorldList::WorldList(const QString& dir) : QAbstractListModel(), m_dir(dir)
 {
@@ -235,13 +236,13 @@ QVariant WorldList::headerData(int section, Qt::Orientation orientation,
 		case Qt::DisplayRole:
 			switch (section) {
 				case NameColumn:
-					return tr("Name");
+					return i18n("Name");
 				case GameModeColumn:
-					return tr("Game Mode");
+					return i18n("Game Mode");
 				case LastPlayedColumn:
-					return tr("Last Played");
+					return i18n("Last Played");
 				case DayCountColumn:
-					return tr("Day Count");
+					return i18n("Day Count");
 				default:
 					return QVariant();
 			}
@@ -249,13 +250,13 @@ QVariant WorldList::headerData(int section, Qt::Orientation orientation,
 		case Qt::ToolTipRole:
 			switch (section) {
 				case NameColumn:
-					return tr("The name of the world.");
+					return i18n("The name of the world.");
 				case GameModeColumn:
-					return tr("Game mode of the world.");
+					return i18n("Game mode of the world.");
 				case LastPlayedColumn:
-					return tr("Date and time the world was last played.");
+					return i18n("Date and time the world was last played.");
 				case DayCountColumn:
-					return tr("The in-game day the world is on.");
+					return i18n("The in-game day the world is on.");
 				default:
 					return QVariant();
 			}

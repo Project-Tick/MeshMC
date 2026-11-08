@@ -1,5 +1,7 @@
 target_sources(MeshMC_logic PRIVATE
     # GUI - widgets
+    ChoiceBinding.cpp
+    ChoiceBinding.h
     Common.cpp
     Common.h
     CustomCommands.cpp
@@ -7,6 +9,8 @@ target_sources(MeshMC_logic PRIVATE
     CustomCommands.ui
     DropLabel.cpp
     DropLabel.h
+    OverrideGroup.cpp
+    OverrideGroup.h
     ErrorFrame.cpp
     ErrorFrame.h
     ErrorFrame.ui
@@ -18,8 +22,6 @@ target_sources(MeshMC_logic PRIVATE
     JavaSettingsWidget.h
     LabeledToolButton.cpp
     LabeledToolButton.h
-    LanguageSelectionWidget.cpp
-    LanguageSelectionWidget.h
     LineSeparator.cpp
     LineSeparator.h
     LogView.cpp

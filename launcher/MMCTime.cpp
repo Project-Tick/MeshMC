@@ -22,6 +22,7 @@
 #include <MMCTime.h>
 
 #include <QObject>
+#include <KLocalizedString>
 
 QString Time::prettifyDuration(int64_t duration)
 {
@@ -32,10 +33,10 @@ QString Time::prettifyDuration(int64_t duration)
 	int hours = (int)(duration % 24);
 	int days = (int)(duration / 24);
 	if ((hours == 0) && (days == 0)) {
-		return QObject::tr("%1m %2s").arg(minutes).arg(seconds);
+		return i18n("%1m %2s", minutes, seconds);
 	}
 	if (days == 0) {
-		return QObject::tr("%1h %2m").arg(hours).arg(minutes);
+		return i18n("%1h %2m", hours, minutes);
 	}
-	return QObject::tr("%1d %2h %3m").arg(days).arg(hours).arg(minutes);
+	return i18n("%1d %2h %3m", days, hours, minutes);
 }

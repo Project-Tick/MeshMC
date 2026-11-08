@@ -30,10 +30,12 @@
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/flame/FlameContentModel.h"
 #include "modplatform/modrinth/ModrinthContentModel.h"
+#include "settings/GlobalSettings.h"
 #include "settings/SettingsObject.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/pages/modplatform/ContentProviderPage.h"
 #include "ui/widgets/PageContainer.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -115,12 +117,11 @@ DownloadContentDialog::DownloadContentDialog(
 	detectInstanceProfile();
 
 	auto* okButton = m_buttons.button(QDialogButtonBox::Ok);
-	okButton->setText(tr("Review and confirm"));
+	okButton->setText(i18n("Review and confirm"));
 	okButton->setToolTip(
-		tr("Close this window and review the %1 you picked before anything "
-		   "is downloaded. Shortcut: Ctrl+Return")
-			.arg(contentsNoun()));
-	okButton->setShortcut(tr("Ctrl+Return"));
+		i18n("Close this window and review the %1 you picked before anything "
+		   "is downloaded. Shortcut: Ctrl+Return", contentsNoun()));
+	okButton->setShortcut(i18n("Ctrl+Return"));
 	okButton->setDefault(true);
 	okButton->setAutoDefault(true);
 	okButton->setEnabled(false);
@@ -142,8 +143,7 @@ DownloadContentDialog::DownloadContentDialog(
 	connect(helpButton, &QPushButton::clicked, m_container,
 			&PageContainer::help);
 
-	const QString saved =
-		APPLICATION->settings()->get(geometrySaveKey()).toString();
+	const QString saved = savedGeometry();
 	if (!saved.isEmpty()) {
 		restoreGeometry(QByteArray::fromBase64(saved.toUtf8()));
 	}
@@ -234,8 +234,7 @@ QList<BasePage*> DownloadContentDialog::getPages()
 
 QString DownloadContentDialog::dialogTitle()
 {
-	return tr("Download %1")
-		.arg(ModPlatform::contentTypeDisplayName(m_contentType));
+	return i18n("Download %1", ModPlatform::contentTypeDisplayName(m_contentType));
 }
 
 QString DownloadContentDialog::contentNoun() const
@@ -284,7 +283,7 @@ bool DownloadContentDialog::openForVersionChange(const QString& platform,
 	}
 
 	m_container->selectPage(platform);
-	setWindowTitle(tr("Change %1 version").arg(name));
+	setWindowTitle(i18n("Change %1 version", name));
 	/* No provider to choose any more, and the dialog's own buttons are
 	 * replaced by the page's Reinstall/Cancel pair. */
 	m_container->hidePageList();
@@ -395,25 +394,41 @@ void DownloadContentDialog::onPageChanged(BasePage* previous,
 	selectedPage->setSearchTerm(previousPage->searchTerm());
 }
 
-QString DownloadContentDialog::geometrySaveKey() const
+QString DownloadContentDialog::savedGeometry() const
 {
+	auto* settings = APPLICATION->globalSettings();
 	switch (m_contentType) {
 		case ModPlatform::ContentType::Mod:
-			return QStringLiteral("ModDownloadGeometry");
+			return settings->modDownloadGeometry();
 		case ModPlatform::ContentType::ResourcePack:
-			return QStringLiteral("RPDownloadGeometry");
+			return settings->rPDownloadGeometry();
 		case ModPlatform::ContentType::ShaderPack:
-			return QStringLiteral("ShaderDownloadGeometry");
+			return settings->shaderDownloadGeometry();
 		case ModPlatform::ContentType::DataPack:
-			return QStringLiteral("DataPackDownloadGeometry");
+			return settings->dataPackDownloadGeometry();
 	}
-	return QStringLiteral("ModDownloadGeometry");
+	return settings->modDownloadGeometry();
 }
 
 void DownloadContentDialog::saveGeometryState()
 {
-	APPLICATION->settings()->set(
-		geometrySaveKey(), QString::fromUtf8(saveGeometry().toBase64()));
+	auto* settings = APPLICATION->globalSettings();
+	const QString geometry = QString::fromLatin1(saveGeometry().toBase64());
+	switch (m_contentType) {
+		case ModPlatform::ContentType::Mod:
+			settings->setModDownloadGeometry(geometry);
+			break;
+		case ModPlatform::ContentType::ResourcePack:
+			settings->setRPDownloadGeometry(geometry);
+			break;
+		case ModPlatform::ContentType::ShaderPack:
+			settings->setShaderDownloadGeometry(geometry);
+			break;
+		case ModPlatform::ContentType::DataPack:
+			settings->setDataPackDownloadGeometry(geometry);
+			break;
+	}
+	settings->save();
 }
 
 void DownloadContentDialog::accept()
@@ -427,11 +442,9 @@ void DownloadContentDialog::reject()
 	if (!m_queue.isEmpty()) {
 		const auto reply =
 			CustomMessageBox::selectable(
-				this, tr("Confirmation Needed"),
-				tr("You have %1 selected %2.\n"
-				   "Are you sure you want to close this dialog?")
-					.arg(m_queue.size())
-					.arg(contentsNoun()),
+				this, i18n("Confirmation Needed"),
+				i18n("You have %1 selected %2.\n"
+				   "Are you sure you want to close this dialog?", m_queue.size(), contentsNoun()),
 				QMessageBox::Question, QMessageBox::Yes | QMessageBox::No,
 				QMessageBox::No)
 				->exec();

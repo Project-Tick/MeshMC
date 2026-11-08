@@ -19,6 +19,7 @@
  */
 
 #include "InstanceProxyModel.h"
+#include "settings/GlobalSettings.h"
 
 #include "InstanceView.h"
 #include "Application.h"
@@ -73,7 +74,7 @@ bool InstanceProxyModel::subSortLessThan(const QModelIndex& left,
 		static_cast<BaseInstance*>(left.internalPointer());
 	BaseInstance* pdataRight =
 		static_cast<BaseInstance*>(right.internalPointer());
-	QString sortMode = APPLICATION->settings()->get("InstSortMode").toString();
+	QString sortMode = APPLICATION->globalSettings()->instSortMode();
 	if (sortMode == "LastLaunch") {
 		return pdataLeft->lastLaunch() > pdataRight->lastLaunch();
 	} else {

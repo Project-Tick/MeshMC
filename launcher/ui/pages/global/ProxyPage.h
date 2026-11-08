@@ -25,6 +25,9 @@
 
 #include "ui/pages/BasePage.h"
 #include <Application.h>
+#include <KLocalizedString>
+
+class ChoiceBinding;
 
 namespace Ui
 {
@@ -41,7 +44,7 @@ class ProxyPage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return tr("Proxy");
+		return i18n("Proxy");
 	}
 	QIcon icon() const override
 	{
@@ -60,11 +63,8 @@ class ProxyPage : public QWidget, public BasePage
   private:
 	void updateCheckboxStuff();
 	void applySettings();
-	void loadSettings();
-
-  private slots:
-	void proxyChanged(int);
 
   private:
 	Ui::ProxyPage* ui;
+	ChoiceBinding* m_proxyType;
 };

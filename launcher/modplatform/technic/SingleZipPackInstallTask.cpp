@@ -27,6 +27,7 @@
 #include "FileSystem.h"
 
 #include "Application.h"
+#include <KLocalizedString>
 
 Technic::SingleZipPackInstallTask::SingleZipPackInstallTask(
 	const QUrl& sourceUrl, const QString& minecraftVersion)
@@ -45,13 +46,13 @@ bool Technic::SingleZipPackInstallTask::abort()
 
 void Technic::SingleZipPackInstallTask::executeTask()
 {
-	setStatus(tr("Downloading modpack:\n%1").arg(m_sourceUrl.toString()));
+	setStatus(i18n("Downloading modpack:\n%1", m_sourceUrl.toString()));
 
 	const QString path = m_sourceUrl.host() + '/' + m_sourceUrl.path();
 	auto entry = APPLICATION->metacache()->resolveEntry("general", path);
 	entry->setStale(true);
 	m_archiveEntry = entry;
-	m_filesNetJob = new NetJob(tr("Modpack download"), APPLICATION->network());
+	m_filesNetJob = new NetJob(i18n("Modpack download"), APPLICATION->network());
 	m_filesNetJob->addNetAction(Net::Download::makeCached(m_sourceUrl, entry));
 	m_archivePath = entry->getFullPath();
 	auto job = m_filesNetJob.get();
@@ -70,7 +71,7 @@ void Technic::SingleZipPackInstallTask::downloadSucceeded()
 {
 	m_abortable = false;
 
-	setStatus(tr("Extracting modpack"));
+	setStatus(i18n("Extracting modpack"));
 
 	/* Create the destination before extracting into it.
 	 *
@@ -82,8 +83,7 @@ void Technic::SingleZipPackInstallTask::downloadSucceeded()
 	 * odd one out. */
 	const QString extractPath = FS::PathCombine(m_stagingPath, ".minecraft");
 	if (!FS::ensureFolderPathExists(extractPath)) {
-		emitFailed(tr("Could not create the instance's minecraft folder:\n%1")
-					   .arg(extractPath));
+		emitFailed(i18n("Could not create the instance's minecraft folder:\n%1", extractPath));
 		return;
 	}
 
@@ -142,7 +142,7 @@ void Technic::SingleZipPackInstallTask::extractFinished()
 			APPLICATION->metacache()->evictEntry(m_archiveEntry);
 			m_archiveEntry.reset();
 		}
-		emitFailed(tr("Failed to extract modpack. The downloaded archive is "
+		emitFailed(i18n("Failed to extract modpack. The downloaded archive is "
 					  "damaged; it has been discarded, so trying again will "
 					  "download it afresh."));
 		return;
@@ -169,7 +169,7 @@ void Technic::SingleZipPackInstallTask::extractFinished()
 		if (origPermissions != permissions) {
 			if (!QFile::setPermissions(filepath, permissions)) {
 				logWarning(
-					tr("Could not fix permissions for %1").arg(filepath));
+					i18n("Could not fix permissions for %1", filepath));
 			} else {
 				qDebug() << "Fixed" << filepath;
 			}
@@ -188,5 +188,5 @@ void Technic::SingleZipPackInstallTask::extractFinished()
 
 void Technic::SingleZipPackInstallTask::extractAborted()
 {
-	emitFailed(tr("Instance import has been aborted."));
+	emitFailed(i18n("Instance import has been aborted."));
 }

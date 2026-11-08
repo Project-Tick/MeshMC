@@ -25,6 +25,7 @@
 
 #include "ui/pages/BasePage.h"
 #include <Application.h>
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -48,7 +49,7 @@ class ServersPage : public QMainWindow, public BasePage
 
 	virtual QString displayName() const override
 	{
-		return tr("Servers");
+		return i18n("Servers");
 	}
 	virtual QIcon icon() const override
 	{

@@ -27,6 +27,7 @@
 #include "VersionProxyModel.h"
 
 #include "ui/dialogs/CustomMessageBox.h"
+#include <KLocalizedString>
 
 VersionSelectWidget::VersionSelectWidget(QWidget* parent) : QWidget(parent)
 {
@@ -150,8 +151,8 @@ void VersionSelectWidget::onTaskSucceeded()
 
 void VersionSelectWidget::onTaskFailed(const QString& reason)
 {
-	CustomMessageBox::selectable(this, tr("Error"),
-								 tr("List update failed:\n%1").arg(reason),
+	CustomMessageBox::selectable(this, i18n("Error"),
+								 i18n("List update failed:\n%1", reason),
 								 QMessageBox::Warning)
 		->show();
 	onTaskSucceeded();

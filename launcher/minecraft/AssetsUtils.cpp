@@ -35,6 +35,7 @@
 #include "BuildConfig.h"
 
 #include "Application.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -312,7 +313,7 @@ QString AssetObject::getRelPath()
 
 NetJob::Ptr AssetsIndex::getDownloadJob()
 {
-	auto job = new NetJob(QObject::tr("Assets for %1").arg(id),
+	auto job = new NetJob(i18n("Assets for %1", id),
 						  APPLICATION->network());
 	for (auto& object : objects.values()) {
 		auto dl = object.getDownloadAction();

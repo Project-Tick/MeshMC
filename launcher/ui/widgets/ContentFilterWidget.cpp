@@ -33,6 +33,7 @@
 #include "meta/VersionList.h"
 #include "tasks/Task.h"
 #include "ui/widgets/CheckComboBox.h"
+#include <KLocalizedString>
 
 ContentFilterWidget::ContentFilterWidget(QWidget* parent) : QWidget(parent)
 {
@@ -73,25 +74,25 @@ QCheckBox* ContentFilterWidget::addChannelBox(QGroupBox* group,
 
 void ContentFilterWidget::buildVersionGroup(bool extended)
 {
-	auto* group = new QGroupBox(tr("Versions"), this);
+	auto* group = new QGroupBox(i18n("Versions"), this);
 	auto* groupLayout = new QVBoxLayout(group);
 	group->setLayout(groupLayout);
 
 	/* Above the box, as in the reference launcher - it decides what the
 	 * box below has to offer, so reading it first makes sense. */
-	m_showAllVersionsBox = new QCheckBox(tr("Show all versions"), group);
+	m_showAllVersionsBox = new QCheckBox(i18n("Show all versions"), group);
 	m_showAllVersionsBox->setToolTip(
-		tr("Also offer snapshots and other pre-release versions."));
+		i18n("Also offer snapshots and other pre-release versions."));
 	groupLayout->addWidget(m_showAllVersionsBox);
 	connect(m_showAllVersionsBox, &QCheckBox::toggled, this,
 			&ContentFilterWidget::applyMcVersions);
 
 	if (extended) {
 		m_mcVersionsBox = new CheckComboBox(group);
-		m_mcVersionsBox->setDefaultText(tr("All Versions"));
+		m_mcVersionsBox->setDefaultText(i18n("All Versions"));
 		m_mcVersionsBox->setSeparator(QStringLiteral(", "));
 		m_mcVersionsBox->setToolTip(
-			tr("Tick every Minecraft version the search should cover. "
+			i18n("Tick every Minecraft version the search should cover. "
 			   "With none ticked, every version is searched."));
 		groupLayout->addWidget(m_mcVersionsBox);
 
@@ -111,7 +112,7 @@ void ContentFilterWidget::buildVersionGroup(bool extended)
 		 * The reference launcher draws the same line. */
 		m_mcVersionBox = new QComboBox(group);
 		m_mcVersionBox->setToolTip(
-			tr("Which Minecraft version to search for. \"All Versions\" "
+			i18n("Which Minecraft version to search for. \"All Versions\" "
 			   "is how a project that has not been updated yet is found."));
 		groupLayout->addWidget(m_mcVersionBox);
 
@@ -217,7 +218,7 @@ void ContentFilterWidget::applyMcVersions()
 		const bool blocked = m_mcVersionBox->blockSignals(true);
 		m_mcVersionBox->clear();
 		/* An empty value stands for "no version filter". */
-		m_mcVersionBox->addItem(tr("All Versions"), QString());
+		m_mcVersionBox->addItem(i18n("All Versions"), QString());
 		for (const QString& version : versions) {
 			m_mcVersionBox->addItem(version, version);
 		}
@@ -249,33 +250,33 @@ void ContentFilterWidget::setup(ModPlatform::ContentType contentType,
 
 	/* Empty for now - the provider is asked for its list separately, and
 	 * setCategories() fills this in when the answer arrives. */
-	m_categoryGroup = new QGroupBox(tr("Categories"), this);
+	m_categoryGroup = new QGroupBox(i18n("Categories"), this);
 	m_categoryGroup->setLayout(new QVBoxLayout(m_categoryGroup));
 	m_categoryGroup->hide();
 	layout->addWidget(m_categoryGroup);
 
 	/* Only mods are loader-specific; a resource pack works everywhere. */
 	if (ModPlatform::contentTypeUsesLoader(contentType)) {
-		auto* group = new QGroupBox(tr("Loaders"), this);
+		auto* group = new QGroupBox(i18n("Loaders"), this);
 		auto* groupLayout = new QVBoxLayout(group);
 		group->setLayout(groupLayout);
 
 		const QList<QPair<QString, QString>> common = {
-			{tr("NeoForge"), QStringLiteral("neoforge")},
-			{tr("Forge"), QStringLiteral("forge")},
-			{tr("Fabric"), QStringLiteral("fabric")},
-			{tr("Quilt"), QStringLiteral("quilt")},
+			{i18n("NeoForge"), QStringLiteral("neoforge")},
+			{i18n("Forge"), QStringLiteral("forge")},
+			{i18n("Fabric"), QStringLiteral("fabric")},
+			{i18n("Quilt"), QStringLiteral("quilt")},
 		};
 		/* Behind "Show More", as in the reference launcher. CurseForge
 		 * has no id for any of these, so ticking one narrows the search
 		 * on Modrinth and is dropped on CurseForge. */
 		const QList<QPair<QString, QString>> uncommon = {
-			{tr("LiteLoader"), QStringLiteral("liteloader")},
-			{tr("Babric"), QStringLiteral("babric")},
-			{tr("BTA (Babric)"), QStringLiteral("bta-babric")},
-			{tr("Legacy Fabric"), QStringLiteral("legacy-fabric")},
-			{tr("Ornithe"), QStringLiteral("ornithe")},
-			{tr("Rift"), QStringLiteral("rift")},
+			{i18n("LiteLoader"), QStringLiteral("liteloader")},
+			{i18n("Babric"), QStringLiteral("babric")},
+			{i18n("BTA (Babric)"), QStringLiteral("bta-babric")},
+			{i18n("Legacy Fabric"), QStringLiteral("legacy-fabric")},
+			{i18n("Ornithe"), QStringLiteral("ornithe")},
+			{i18n("Rift"), QStringLiteral("rift")},
 		};
 
 		auto addLoaderBox = [this](QWidget* parent, QVBoxLayout* into,
@@ -306,7 +307,7 @@ void ContentFilterWidget::setup(ModPlatform::ContentType contentType,
 			addLoaderBox(extra, extraLayout, loader, instanceLoader);
 		}
 
-		auto* showMore = new QPushButton(tr("Show More"), group);
+		auto* showMore = new QPushButton(i18n("Show More"), group);
 		groupLayout->addWidget(showMore);
 		groupLayout->addWidget(extra);
 
@@ -327,12 +328,12 @@ void ContentFilterWidget::setup(ModPlatform::ContentType contentType,
 	/* Only Modrinth records which side a project runs on, so the group
 	 * would be an inert control anywhere else. */
 	if (extended && ModPlatform::contentTypeUsesLoader(contentType)) {
-		auto* group = new QGroupBox(tr("Environments"), this);
+		auto* group = new QGroupBox(i18n("Environments"), this);
 		auto* groupLayout = new QVBoxLayout(group);
 		group->setLayout(groupLayout);
 
-		m_clientSideBox = new QCheckBox(tr("Client"), group);
-		m_serverSideBox = new QCheckBox(tr("Server"), group);
+		m_clientSideBox = new QCheckBox(i18n("Client"), group);
+		m_serverSideBox = new QCheckBox(i18n("Server"), group);
 		groupLayout->addWidget(m_clientSideBox);
 		groupLayout->addWidget(m_serverSideBox);
 
@@ -346,9 +347,9 @@ void ContentFilterWidget::setup(ModPlatform::ContentType contentType,
 		layout->addWidget(group);
 	}
 
-	m_hideInstalledBox = new QCheckBox(tr("Hide installed items"), this);
+	m_hideInstalledBox = new QCheckBox(i18n("Hide installed items"), this);
 	m_hideInstalledBox->setToolTip(
-		tr("Leave out results that are already in this instance."));
+		i18n("Leave out results that are already in this instance."));
 	connect(m_hideInstalledBox, &QCheckBox::toggled, this, [this] {
 		rebuildFilter();
 		emit viewFilterChanged();
@@ -356,9 +357,9 @@ void ContentFilterWidget::setup(ModPlatform::ContentType contentType,
 	layout->addWidget(m_hideInstalledBox);
 
 	if (extended) {
-		m_openSourceBox = new QCheckBox(tr("Open source only"), this);
+		m_openSourceBox = new QCheckBox(i18n("Open source only"), this);
 		m_openSourceBox->setToolTip(
-			tr("Only show projects published under a licence the provider "
+			i18n("Only show projects published under a licence the provider "
 			   "recognises as open source."));
 		connect(m_openSourceBox, &QCheckBox::toggled, this, [this] {
 			rebuildFilter();
@@ -368,18 +369,18 @@ void ContentFilterWidget::setup(ModPlatform::ContentType contentType,
 	}
 
 	{
-		auto* group = new QGroupBox(tr("Release type"), this);
+		auto* group = new QGroupBox(i18n("Release type"), this);
 		auto* groupLayout = new QVBoxLayout(group);
 		group->setLayout(groupLayout);
 
-		addChannelBox(group, tr("Release"), QStringLiteral("release"));
-		addChannelBox(group, tr("Beta"), QStringLiteral("beta"));
-		addChannelBox(group, tr("Alpha"), QStringLiteral("alpha"));
+		addChannelBox(group, i18n("Release"), QStringLiteral("release"));
+		addChannelBox(group, i18n("Beta"), QStringLiteral("beta"));
+		addChannelBox(group, i18n("Alpha"), QStringLiteral("alpha"));
 		/* The empty channel stands for a version whose type the provider
 		 * did not state. CurseForge leaves it out often enough that
 		 * unticking this hides a good part of its catalogue, which is
 		 * exactly what the box is for. */
-		addChannelBox(group, tr("Unknown"), QString());
+		addChannelBox(group, i18n("Unknown"), QString());
 
 		layout->addWidget(group);
 	}

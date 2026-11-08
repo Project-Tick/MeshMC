@@ -19,6 +19,7 @@
  */
 
 #include "WorldListPage.h"
+#include "settings/GlobalSettings.h"
 #include "ui_WorldListPage.h"
 #include "minecraft/WorldList.h"
 
@@ -48,6 +49,7 @@
 #include "DesktopServices.h"
 
 #include "Application.h"
+#include <KLocalizedString>
 
 class WorldListProxyModel : public QSortFilterProxyModel
 {
@@ -127,7 +129,7 @@ WorldListPage::~WorldListPage()
 
 void WorldListPage::ShowContextMenu(const QPoint& pos)
 {
-	auto menu = ui->toolBar->createContextMenu(this, tr("Context menu"));
+	auto menu = ui->toolBar->createContextMenu(this, i18n("Context menu"));
 	menu->exec(ui->worldTreeView->mapToGlobal(pos));
 	delete menu;
 }
@@ -175,8 +177,8 @@ void WorldListPage::on_actionRemove_triggered()
 		return;
 
 	auto result = QMessageBox::question(
-		this, tr("Are you sure?"),
-		tr("This will remove the selected world permenantly.\n"
+		this, i18n("Are you sure?"),
+		i18n("This will remove the selected world permenantly.\n"
 		   "The world will be gone forever (A LONG TIME).\n"
 		   "\n"
 		   "Do you want to continue?"));
@@ -224,14 +226,14 @@ void WorldListPage::on_actionDatapacks_triggered()
 	 * now it gets the same list/add/remove/download page the other
 	 * content folders have, hosted in its own modal dialog. */
 	auto* dialog = new QDialog(this);
-	dialog->setWindowTitle(tr("Data packs for %1").arg(worldName));
+	dialog->setWindowTitle(i18n("Data packs for %1", worldName));
 	dialog->setWindowModality(Qt::WindowModal);
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->resize(
 		static_cast<int>(std::max(0.5 * window()->width(), 400.0)),
 		static_cast<int>(std::max(0.75 * window()->height(), 400.0)));
 	dialog->restoreGeometry(QByteArray::fromBase64(
-		APPLICATION->settings()->get("DataPackManagerGeometry").toByteArray()));
+		APPLICATION->globalSettings()->dataPackManagerGeometry().toUtf8()));
 
 	m_datapackModel.reset(new DataPackFolderModel(folder));
 
@@ -263,8 +265,9 @@ void WorldListPage::on_actionDatapacks_triggered()
 	layout->addWidget(buttonBox);
 
 	connect(dialog, &QDialog::finished, this, [this, dialog] {
-		APPLICATION->settings()->set("DataPackManagerGeometry",
-									 dialog->saveGeometry().toBase64());
+		APPLICATION->globalSettings()->setDataPackManagerGeometry(
+			QString::fromLatin1(dialog->saveGeometry().toBase64()));
+		APPLICATION->globalSettings()->save();
 		// The dialog only borrowed the model; drop it so the folder is
 		// no longer watched once the manager is gone.
 		m_datapackModel.reset();
@@ -341,8 +344,8 @@ void WorldListPage::on_actionMCEdit_triggered()
 #endif
 	} else {
 		QMessageBox::warning(
-			this->parentWidget(), tr("No MCEdit found or set up!"),
-			tr("You do not have MCEdit set up or it was moved.\nYou can set it "
+			this->parentWidget(), i18n("No MCEdit found or set up!"),
+			i18n("You do not have MCEdit set up or it was moved.\nYou can set it "
 			   "up in the global settings."));
 	}
 }
@@ -350,8 +353,8 @@ void WorldListPage::on_actionMCEdit_triggered()
 void WorldListPage::mceditError()
 {
 	QMessageBox::warning(
-		this->parentWidget(), tr("MCEdit failed to start!"),
-		tr("MCEdit failed to start.\nIt may be necessary to reinstall it."));
+		this->parentWidget(), i18n("MCEdit failed to start!"),
+		i18n("MCEdit failed to start.\nIt may be necessary to reinstall it."));
 }
 
 void WorldListPage::mceditState(LoggedProcess::State state)
@@ -395,8 +398,8 @@ void WorldListPage::worldChanged(const QModelIndex& current,
 void WorldListPage::on_actionAdd_triggered()
 {
 	auto list = GuiUtil::BrowseForFiles(displayName(),
-										tr("Select a Minecraft world zip"),
-										tr("Minecraft World Zip File (*.zip)"),
+										i18n("Select a Minecraft world zip"),
+										i18n("Minecraft World Zip File (*.zip)"),
 										QString(), this->parentWidget());
 	if (!list.empty()) {
 		m_worlds->stopWatching();
@@ -416,8 +419,8 @@ bool WorldListPage::worldSafetyNagQuestion()
 {
 	if (!isWorldSafe(getSelectedWorld())) {
 		auto result = QMessageBox::question(
-			this, tr("Copy World"),
-			tr("Changing a world while Minecraft is running is potentially "
+			this, i18n("Copy World"),
+			i18n("Changing a world while Minecraft is running is potentially "
 			   "unsafe.\nDo you wish to proceed?"));
 		if (result == QMessageBox::No) {
 			return false;
@@ -439,8 +442,8 @@ void WorldListPage::on_actionCopy_triggered()
 	auto worldVariant = m_worlds->data(index, WorldList::ObjectRole);
 	auto world = (World*)worldVariant.value<void*>();
 	bool ok = false;
-	QString name = QInputDialog::getText(this, tr("World name"),
-										 tr("Enter a new name for the copy."),
+	QString name = QInputDialog::getText(this, i18n("World name"),
+										 i18n("Enter a new name for the copy."),
 										 QLineEdit::Normal, world->name(), &ok);
 
 	if (ok && name.length() > 0) {
@@ -462,8 +465,8 @@ void WorldListPage::on_actionRename_triggered()
 	auto world = (World*)worldVariant.value<void*>();
 
 	bool ok = false;
-	QString name = QInputDialog::getText(this, tr("World name"),
-										 tr("Enter a new world name."),
+	QString name = QInputDialog::getText(this, i18n("World name"),
+										 i18n("Enter a new world name."),
 										 QLineEdit::Normal, world->name(), &ok);
 
 	if (ok && name.length() > 0) {

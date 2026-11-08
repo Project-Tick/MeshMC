@@ -29,6 +29,7 @@
 #include "java/JavaUtils.h"
 #include "MMCStrings.h"
 #include "minecraft/VersionFilterData.h"
+#include <KLocalizedString>
 
 JavaInstallList::JavaInstallList(QObject* parent) : BaseVersionList(parent) {}
 
@@ -141,7 +142,7 @@ JavaListLoadTask::~JavaListLoadTask() {}
 
 void JavaListLoadTask::executeTask()
 {
-	setStatus(tr("Detecting Java installations..."));
+	setStatus(i18n("Detecting Java installations..."));
 
 	JavaUtils ju;
 	QList<QString> candidate_paths = ju.FindJavaPaths();

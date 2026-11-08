@@ -27,7 +27,7 @@
 
 #include "MMCZip.h"
 
-#include "settings/INIFile.h"
+#include "settings/PropertiesFile.h"
 #include "FileSystem.h"
 
 namespace
@@ -241,14 +241,12 @@ namespace
 		details->name = "Minecraft Forge";
 		details->mod_id = "Forge";
 		details->homeurl = "http://www.minecraftforge.net/forum/";
-		INIFile ini;
-		if (!ini.loadFile(contents))
-			return details;
+		PropertiesFile props(contents);
 
-		QString major = ini.get("forge.major.number", "0").toString();
-		QString minor = ini.get("forge.minor.number", "0").toString();
-		QString revision = ini.get("forge.revision.number", "0").toString();
-		QString build = ini.get("forge.build.number", "0").toString();
+		QString major = props.get("forge.major.number", "0");
+		QString minor = props.get("forge.minor.number", "0");
+		QString revision = props.get("forge.revision.number", "0");
+		QString build = props.get("forge.build.number", "0");
 
 		details->version = major + "." + minor + "." + revision + "." + build;
 		return details;

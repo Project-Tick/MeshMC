@@ -1,9 +1,23 @@
-find_package(Qt${QT_VERSION_MAJOR}Test REQUIRED)
+find_package(Qt6Test REQUIRED)
+include(ECMAddTests)
 
 set(TEST_RESOURCE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
 message(${TEST_RESOURCE_PATH})
 
+# Environment every test runs with.
+#
+# QT_FORCE_STDERR_LOGGING: on Windows, Qt (and QTest's own PASS/FAIL/QDEBUG/QWARN
+# output) only writes to stderr/stdout when a console window is attached
+# (GetConsoleWindow()). Under CTest/CI the output goes through pipes, so everything
+# silently went to OutputDebugString and nothing showed up in the log. This makes
+# qDebug()/qWarning()/qCDebug() and QTest's output reach the pipe. Harmless elsewhere.
+set(MeshMC_TEST_ENVIRONMENT "QT_FORCE_STDERR_LOGGING=1")
+
+# Thin wrapper around ecm_add_test(): the executable and the test are both called
+# <name>_test. ECM creates them (console application, QT_FORCE_ASSERTS, buildtests
+# target, QT_PLUGIN_PATH for the test); this adds what is specific to MeshMC:
+# the optional test data and the shared test headers.
 function(add_unit_test name)
     set(options "")
     set(oneValueArgs DATA)
@@ -11,11 +25,17 @@ function(add_unit_test name)
 
     cmake_parse_arguments(OPT "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
+    set(_test_sources ${OPT_SOURCES})
     if(WIN32)
-        add_executable(${name}_test ${OPT_SOURCES} ${TEST_RESOURCE_PATH}/UnitTest/test.rc)
-    else()
-        add_executable(${name}_test ${OPT_SOURCES})
+        list(APPEND _test_sources ${TEST_RESOURCE_PATH}/UnitTest/test.rc)
     endif()
+
+    ecm_add_test(${_test_sources}
+        TEST_NAME ${name}_test
+        LINK_LIBRARIES Qt6::Test ${OPT_LIBS}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        ENVIRONMENT ${MeshMC_TEST_ENVIRONMENT}
+    )
 
     if(NOT "${OPT_DATA}" STREQUAL "")
         set(TEST_DATA_PATH "${CMAKE_CURRENT_BINARY_DIR}/data")
@@ -41,13 +61,9 @@ function(add_unit_test name)
         endif()
     endif()
 
-    target_link_libraries(${name}_test Qt${QT_VERSION_MAJOR}::Test ${OPT_LIBS})
-
     if(MSVC)
         target_link_options(${name}_test PRIVATE "/MANIFEST:NO")
     endif()
 
     target_include_directories(${name}_test PRIVATE "${TEST_RESOURCE_PATH}/UnitTest/")
-
-    add_test(NAME ${name} COMMAND ${name}_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endfunction()

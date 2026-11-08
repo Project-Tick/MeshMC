@@ -42,13 +42,14 @@
 #include "Application.h"
 
 #include "BuildConfig.h"
+#include <KLocalizedString>
 
 AccountListPage::AccountListPage(QWidget* parent)
 	: QMainWindow(parent), ui(new Ui::AccountListPage)
 {
 	ui->setupUi(this);
 	ui->listView->setEmptyString(
-		tr("Welcome!\n"
+		i18n("Welcome!\n"
 		   "If you're new here, you can click the \"Add Microsoft\" button to "
 		   "add your Microsoft account."));
 	ui->listView->setEmptyMode(VersionListView::String);
@@ -93,7 +94,7 @@ AccountListPage::~AccountListPage()
 
 void AccountListPage::ShowContextMenu(const QPoint& pos)
 {
-	auto menu = ui->toolBar->createContextMenu(this, tr("Context menu"));
+	auto menu = ui->toolBar->createContextMenu(this, i18n("Context menu"));
 	menu->exec(ui->listView->mapToGlobal(pos));
 	delete menu;
 }
@@ -122,8 +123,8 @@ void AccountListPage::on_actionAddMicrosoft_triggered()
 {
 	if (BuildConfig.BUILD_PLATFORM == "osx64") {
 		CustomMessageBox::selectable(
-			this, tr("Microsoft Accounts not available"),
-			tr("Microsoft accounts are only usable on macOS 10.13 or newer, "
+			this, i18n("Microsoft Accounts not available"),
+			i18n("Microsoft accounts are only usable on macOS 10.13 or newer, "
 			   "with fully updated MeshMC.\n\n"
 			   "Please update both your operating system and MeshMC."),
 			QMessageBox::Warning)
@@ -131,7 +132,7 @@ void AccountListPage::on_actionAddMicrosoft_triggered()
 		return;
 	}
 	MinecraftAccountPtr account = MSALoginDialog::newAccount(
-		this, tr("Log in with your Microsoft account to add it."));
+		this, i18n("Log in with your Microsoft account to add it."));
 
 	if (account) {
 		m_accounts->addAccount(account);
@@ -153,8 +154,8 @@ void AccountListPage::on_actionAddOffline_triggered()
 	}
 	if (!hasMSA) {
 		CustomMessageBox::selectable(
-			this, tr("Microsoft Account Required"),
-			tr("Adding an offline account requires at least one Microsoft "
+			this, i18n("Microsoft Account Required"),
+			i18n("Adding an offline account requires at least one Microsoft "
 			   "account to be logged in. Please add a Microsoft account "
 			   "first."),
 			QMessageBox::Warning)
@@ -169,12 +170,12 @@ void AccountListPage::on_actionAddOffline_triggered()
 	 * page on every collision. Whitespace-only and duplicate names
 	 * keep them in the dialog; Cancel exits.
 	 */
-	QString suggestion = tr("User");
+	QString suggestion = i18n("User");
 	while (true) {
 		bool ok = false;
 		QString username = QInputDialog::getText(
-			this, tr("Add Offline Account"),
-			tr("Enter a username for the offline account:"), QLineEdit::Normal,
+			this, i18n("Add Offline Account"),
+			i18n("Enter a username for the offline account:"), QLineEdit::Normal,
 			suggestion, &ok);
 		if (!ok)
 			return;
@@ -182,8 +183,8 @@ void AccountListPage::on_actionAddOffline_triggered()
 		const QString trimmed = username.trimmed();
 		if (trimmed.isEmpty()) {
 			CustomMessageBox::selectable(
-				this, tr("Invalid username"),
-				tr("The username cannot be empty or whitespace-only."),
+				this, i18n("Invalid username"),
+				i18n("The username cannot be empty or whitespace-only."),
 				QMessageBox::Warning)
 				->exec();
 			suggestion = username;
@@ -192,11 +193,10 @@ void AccountListPage::on_actionAddOffline_triggered()
 
 		if (m_accounts->findOfflineAccountByUsername(trimmed) != -1) {
 			CustomMessageBox::selectable(
-				this, tr("Duplicate offline account"),
-				tr("An offline account named \"%1\" already exists. "
+				this, i18n("Duplicate offline account"),
+				i18n("An offline account named \"%1\" already exists. "
 				   "Offline account names must be unique — please pick "
-				   "a different one.")
-					.arg(trimmed),
+				   "a different one.", trimmed),
 				QMessageBox::Warning)
 				->exec();
 			suggestion = trimmed;
@@ -299,8 +299,8 @@ void AccountListPage::on_actionUploadSkin_triggered()
 		 * cannot do anything useful without one. */
 		if (!account || !account->isMSA()) {
 			CustomMessageBox::selectable(
-				this, tr("Offline account"),
-				tr("Skins can only be managed for Microsoft accounts."),
+				this, i18n("Offline account"),
+				i18n("Skins can only be managed for Microsoft accounts."),
 				QMessageBox::Warning)
 				->exec();
 			return;
@@ -323,10 +323,9 @@ void AccountListPage::on_actionDeleteSkin_triggered()
 
 	/* Confirm before permanently deleting the skin. */
 	auto reply = QMessageBox::question(
-		this, tr("Delete Skin"),
-		tr("Are you sure you want to delete the skin for account \"%1\"?\n"
-		   "This action cannot be undone.")
-			.arg(account->profileName()),
+		this, i18n("Delete Skin"),
+		i18n("Are you sure you want to delete the skin for account \"%1\"?\n"
+		   "This action cannot be undone.", account->profileName()),
 		QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 	if (reply != QMessageBox::Yes)
 		return;
@@ -335,8 +334,8 @@ void AccountListPage::on_actionDeleteSkin_triggered()
 	auto deleteSkinTask =
 		std::make_shared<SkinDelete>(this, account->accessToken());
 	if (prog.execWithTask((Task*)deleteSkinTask.get()) != QDialog::Accepted) {
-		CustomMessageBox::selectable(this, tr("Skin Delete"),
-									 tr("Failed to delete current skin!"),
+		CustomMessageBox::selectable(this, i18n("Skin Delete"),
+									 i18n("Failed to delete current skin!"),
 									 QMessageBox::Warning)
 			->exec();
 		return;

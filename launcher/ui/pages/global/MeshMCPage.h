@@ -27,7 +27,6 @@
 #include "ui/pages/BasePage.h"
 #include <Application.h>
 #include "ui/ColorCache.h"
-#include <translations/TranslationsModel.h>
 
 class QTextCharFormat;
 class SettingsObject;
@@ -62,6 +61,7 @@ class MeshMCPage : public QWidget, public BasePage
 		return "MeshMC-settings";
 	}
 	bool apply() override;
+	void openedImpl() override;
 
   private:
 	void applySettings();
@@ -117,5 +117,4 @@ class MeshMCPage : public QWidget, public BasePage
 
 	std::unique_ptr<LogColorCache> m_colors;
 
-	std::shared_ptr<TranslationsModel> m_languageModel;
 };

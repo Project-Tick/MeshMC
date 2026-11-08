@@ -126,6 +126,11 @@ class SettingsObject : public QObject
 	std::shared_ptr<Setting> getSetting(const QString& id) const;
 
 	/*!
+	 * \brief Gets every setting that is registered, in no particular order.
+	 */
+	QList<std::shared_ptr<Setting>> allSettings() const;
+
+	/*!
 	 * \brief Gets the value of the setting with the given ID.
 	 * \param id The ID of the setting to get.
 	 * \return The setting's value as a QVariant.

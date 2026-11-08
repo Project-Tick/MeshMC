@@ -23,6 +23,7 @@
 #include <QThreadPool>
 #include <QtConcurrentRun>
 #include <utility>
+#include <KLocalizedString>
 
 namespace
 {
@@ -58,7 +59,7 @@ PluginHookTask::PluginHookTask(QString module_name, void* module_handle,
 	  m_payload(payload), m_userData(user_data)
 {
 	setObjectName(m_moduleName);
-	setStatus(tr("Running %1...").arg(m_moduleName));
+	setStatus(i18n("Running %1...", m_moduleName));
 	// Nothing has told us how long this takes, and most callbacks never
 	// will. Sweep until the plugin says otherwise.
 	setProgress(0, 0);
@@ -86,8 +87,7 @@ PluginHookTask* PluginHookTask::currentOnThisThread()
 void PluginHookTask::executeTask()
 {
 	if (!m_callback) {
-		emitFailed(tr("%1 registered a hook without a callback.")
-					   .arg(m_moduleName));
+		emitFailed(i18n("%1 registered a hook without a callback.", m_moduleName));
 		return;
 	}
 
@@ -130,7 +130,7 @@ void PluginHookTask::callbackFinished()
 		// Non-zero is the ABI's veto, not a crash. Failing the task is
 		// what stops the rest of the sequence, which is exactly what an
 		// inline callback returning non-zero does to the hook chain.
-		emitFailed(tr("%1 called off the operation.").arg(m_moduleName));
+		emitFailed(i18n("%1 called off the operation.", m_moduleName));
 		return;
 	}
 

@@ -11,7 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
+find_package(KF6 REQUIRED COMPONENTS I18n)
 
 # Optional: libqrencode for QR code generation. Without it the dialog simply
 # leaves the QR code out (see MESHMC_HAS_QRENCODE below).
@@ -56,10 +57,15 @@ add_executable(meshmc-crashreporter ${CRASHREPORTER_WIN32_FLAG}
 
 target_link_libraries(meshmc-crashreporter
     PRIVATE
-        Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Network
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Network
+        KF6::I18n
 )
+
+# Catalogs are shared with the launcher, see the top-level CMakeLists.
+target_compile_definitions(meshmc-crashreporter PRIVATE
+    MESHMC_LOCALE_RELATIVE_DIR="${MeshMC_LOCALE_RELATIVE_DIR}")
 
 if(APPLE)
     set_target_properties(meshmc-crashreporter PROPERTIES

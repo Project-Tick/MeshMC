@@ -26,6 +26,7 @@
 
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
+#include <KLocalizedString>
 
 XboxProfileStep::XboxProfileStep(AccountData* data) : AuthStep(data) {}
 
@@ -33,7 +34,7 @@ XboxProfileStep::~XboxProfileStep() noexcept = default;
 
 QString XboxProfileStep::describe()
 {
-	return tr("Fetching Xbox profile.");
+	return i18n("Fetching Xbox profile.");
 }
 
 void XboxProfileStep::rehydrate()
@@ -84,7 +85,7 @@ void XboxProfileStep::onRequestDone(QNetworkReply::NetworkError error,
 		qCDebug(minecraftauthLog) << data;
 #endif
 		finished(AccountTaskState::STATE_FAILED_SOFT,
-				 tr("Failed to retrieve the Xbox profile."));
+				 i18n("Failed to retrieve the Xbox profile."));
 		return;
 	}
 
@@ -92,5 +93,5 @@ void XboxProfileStep::onRequestDone(QNetworkReply::NetworkError error,
 	qCDebug(minecraftauthLog) << "XBox profile: " << data;
 #endif
 
-	emit finished(AccountTaskState::STATE_WORKING, tr("Got Xbox profile"));
+	emit finished(AccountTaskState::STATE_WORKING, i18n("Got Xbox profile"));
 }

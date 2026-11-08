@@ -42,7 +42,7 @@ if(NBT_USE_ZLIB)
     add_definitions("-DNBT_HAVE_ZLIB")
 endif()
 
-add_library(${NBT_NAME} ${NBT_SOURCES})
+add_library(${NBT_NAME} SHARED ${NBT_SOURCES})
 target_include_directories(${NBT_NAME} PUBLIC include ${CMAKE_CURRENT_BINARY_DIR})
 
 # Install it

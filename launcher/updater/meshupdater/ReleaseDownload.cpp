@@ -29,6 +29,7 @@
 #include <QNetworkRequest>
 
 #include "BuildConfig.h"
+#include <KLocalizedString>
 
 ReleaseDownload::ReleaseDownload(QNetworkAccessManager* network,
 								 const QUrl& url, const QString& path,
@@ -45,17 +46,15 @@ ReleaseDownload::~ReleaseDownload()
 
 void ReleaseDownload::executeTask()
 {
-	setStatus(tr("Downloading %1").arg(m_url.fileName()));
+	setStatus(i18n("Downloading %1", m_url.fileName()));
 
 	if (!m_network) {
-		failWith(tr("No network access is configured."));
+		failWith(i18n("No network access is configured."));
 		return;
 	}
 
 	if (!QDir().mkpath(QFileInfo(m_partPath).absolutePath())) {
-		failWith(tr("Could not create %1.")
-					 .arg(QDir::toNativeSeparators(
-						 QFileInfo(m_partPath).absolutePath())));
+		failWith(i18n("Could not create %1.", QDir::toNativeSeparators( QFileInfo(m_partPath).absolutePath())));
 		return;
 	}
 
@@ -66,9 +65,7 @@ void ReleaseDownload::executeTask()
 
 	m_file = new QFile(m_partPath, this);
 	if (!m_file->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-		failWith(tr("Could not write %1: %2")
-					 .arg(QDir::toNativeSeparators(m_partPath),
-						  m_file->errorString()));
+		failWith(i18n("Could not write %1: %2", QDir::toNativeSeparators(m_partPath), m_file->errorString()));
 		return;
 	}
 
@@ -107,8 +104,7 @@ void ReleaseDownload::onReadyRead()
 		// archive that unpacks into a broken installation.
 		const QString reason = m_file->errorString();
 		m_reply->abort();
-		failWith(tr("Could not write %1: %2")
-					 .arg(QDir::toNativeSeparators(m_partPath), reason));
+		failWith(i18n("Could not write %1: %2", QDir::toNativeSeparators(m_partPath), reason));
 	}
 }
 
@@ -118,9 +114,7 @@ void ReleaseDownload::onDownloadProgress(qint64 received, qint64 total)
 	setProgress(received, total);
 
 	if (total > 0) {
-		setDetails(tr("%1 of %2")
-					   .arg(QLocale().formattedDataSize(received),
-							QLocale().formattedDataSize(total)));
+		setDetails(i18n("%1 of %2", QLocale().formattedDataSize(received), QLocale().formattedDataSize(total)));
 	} else {
 		setDetails(QLocale().formattedDataSize(received));
 	}
@@ -132,7 +126,7 @@ void ReleaseDownload::onFinished()
 		return;
 
 	if (!m_reply) {
-		failWith(tr("The download ended unexpectedly."));
+		failWith(i18n("The download ended unexpectedly."));
 		return;
 	}
 
@@ -145,9 +139,7 @@ void ReleaseDownload::onFinished()
 	onReadyRead();
 
 	if (!m_file || !m_file->flush()) {
-		failWith(tr("Could not write %1: %2")
-					 .arg(QDir::toNativeSeparators(m_partPath),
-						  m_file ? m_file->errorString() : QString()));
+		failWith(i18n("Could not write %1: %2", QDir::toNativeSeparators(m_partPath), m_file ? m_file->errorString() : QString()));
 		return;
 	}
 
@@ -157,9 +149,7 @@ void ReleaseDownload::onFinished()
 	if (m_expectedSize > 0 && downloadedSize != m_expectedSize) {
 		// The listing said how big this file is; a mismatch means we did not
 		// get the file, whatever the status code claimed.
-		failWith(tr("The download is %1, but %2 was expected.")
-					 .arg(QLocale().formattedDataSize(downloadedSize),
-						  QLocale().formattedDataSize(m_expectedSize)));
+		failWith(i18n("The download is %1, but %2 was expected.", QLocale().formattedDataSize(downloadedSize), QLocale().formattedDataSize(m_expectedSize)));
 		return;
 	}
 
@@ -167,8 +157,7 @@ void ReleaseDownload::onFinished()
 	// can never be picked up as a complete artifact.
 	QFile::remove(m_path);
 	if (!QFile::rename(m_partPath, m_path)) {
-		failWith(tr("Could not move the download into place at %1.")
-					 .arg(QDir::toNativeSeparators(m_path)));
+		failWith(i18n("Could not move the download into place at %1.", QDir::toNativeSeparators(m_path)));
 		return;
 	}
 

@@ -30,7 +30,7 @@
 
 #include <algorithm>
 
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "settings/Setting.h"
 #include "settings/OverrideSetting.h"
 

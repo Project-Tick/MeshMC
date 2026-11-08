@@ -57,10 +57,11 @@ target_include_directories(MeshMC_sdk INTERFACE
 )
 
 target_link_libraries(MeshMC_sdk INTERFACE
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Gui
-    Qt${QT_VERSION_MAJOR}::Network
+    Qt6::Core
+    Qt6::Widgets
+    Qt6::Gui
+    Qt6::Network
+    KF6::I18n
 )
 
 # ---------------------------------------------------------------------------
@@ -141,7 +142,6 @@ set(SDK_MISC_HEADERS
     ${CMAKE_SOURCE_DIR}/launcher/icons/IconList.h
     ${CMAKE_SOURCE_DIR}/launcher/java/JavaVersion.h
     ${CMAKE_SOURCE_DIR}/launcher/pathmatcher/IPathMatcher.h
-    ${CMAKE_SOURCE_DIR}/launcher/settings/INIFile.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/SettingsObject.h
     ${CMAKE_SOURCE_DIR}/launcher/tasks/Task.h
     ${CMAKE_SOURCE_DIR}/launcher/ui/pages/BasePage.h
@@ -267,8 +267,7 @@ install(FILES
 
 # settings/
 install(FILES
-    ${CMAKE_SOURCE_DIR}/launcher/settings/INIFile.h
-    ${CMAKE_SOURCE_DIR}/launcher/settings/INISettingsObject.h
+    ${CMAKE_SOURCE_DIR}/launcher/settings/KConfigSettingsObject.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/OverrideSetting.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/PassthroughSetting.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/Setting.h

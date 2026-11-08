@@ -25,13 +25,16 @@
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QProgressDialog>
-#include <QSettings>
+
+#include <KConfig>
+#include <KConfigGroup>
 
 #include <algorithm>
 #include <climits>
 
 #include "BuildConfig.h"
 #include "ui/dialogs/UpdateAvailableDialog.h"
+#include <KLocalizedString>
 
 namespace
 {
@@ -44,6 +47,10 @@ namespace
 	constexpr auto kKeyUpdateInterval = "update_interval";
 	constexpr auto kKeyLastCheck = "last_check";
 	constexpr auto kGroupSkip = "skip";
+	// The group the keys above are in. QSettings, which wrote this file before
+	// it was KConfig's, puts everything that is not in a group of its own under
+	// [General], so the existing files keep working.
+	constexpr auto kGroupGeneral = "General";
 
 	//! Once a day, when the config says nothing.
 	constexpr int kDefaultIntervalSeconds = 86400;
@@ -130,24 +137,28 @@ MeshMCExternalUpdater::MeshMCExternalUpdater(QWidget* parent,
 											 bool autoCheckDefault)
 	: m_appDir(appDir), m_dataDir(dataDir), m_parent(parent)
 {
-	m_settings = std::make_unique<QSettings>(
+	m_settings = std::make_unique<KConfig>(
 		m_dataDir.absoluteFilePath(QLatin1String(kConfigFileName)),
-		QSettings::IniFormat);
+		KConfig::SimpleConfig);
+	KConfigGroup general =
+		m_settings->group(QString::fromLatin1(kGroupGeneral));
 
-	m_allowBeta = m_settings->value(kKeyAllowBeta, false).toBool();
+	m_allowBeta = general.readEntry(kKeyAllowBeta, false);
 
 	// First run against this config: adopt whatever the launcher's own
 	// setting used to say, then record it so this only happens once.
-	if (!m_settings->contains(kKeyAutoCheck)) {
+	if (!general.hasKey(kKeyAutoCheck)) {
 		m_autoCheck = autoCheckDefault;
-		m_settings->setValue(kKeyAutoCheck, m_autoCheck);
+		general.writeEntry(kKeyAutoCheck, m_autoCheck);
 	} else {
-		m_autoCheck = m_settings->value(kKeyAutoCheck).toBool();
+		m_autoCheck = general.readEntry(kKeyAutoCheck, false);
 	}
 
 	bool intervalOk = false;
 	m_updateInterval =
-		m_settings->value(kKeyUpdateInterval, kDefaultIntervalSeconds)
+		general
+			.readEntry(kKeyUpdateInterval,
+					   QString::number(kDefaultIntervalSeconds))
 			.toInt(&intervalOk);
 	if (!intervalOk) {
 		// A hand-edited config with garbage in it must not disable updates
@@ -157,9 +168,9 @@ MeshMCExternalUpdater::MeshMCExternalUpdater(QWidget* parent,
 		m_updateInterval = kDefaultIntervalSeconds;
 	}
 
-	if (const QVariant stored = m_settings->value(kKeyLastCheck);
-		stored.isValid() && !stored.isNull()) {
-		m_lastCheck = QDateTime::fromString(stored.toString(), Qt::ISODate);
+	if (general.hasKey(kKeyLastCheck)) {
+		m_lastCheck = QDateTime::fromString(
+			general.readEntry(kKeyLastCheck, QString()), Qt::ISODate);
 	}
 
 	// Single-shot: every path out of a check re-arms the timer itself, so a
@@ -220,9 +231,9 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 	// The check blocks, so the progress dialog exists to prove the launcher
 	// has not simply frozen. An automatic check gets none: nobody asked, and
 	// a window stealing focus during startup is worse than no feedback.
-	QProgressDialog progress(tr("Checking for updates..."), QString(), 0, 0,
+	QProgressDialog progress(i18n("Checking for updates..."), QString(), 0, 0,
 							 m_parent);
-	progress.setWindowTitle(tr("Checking for updates..."));
+	progress.setWindowTitle(i18n("Checking for updates..."));
 	progress.setMinimumDuration(0);
 	progress.setCancelButton(nullptr);
 	progress.adjustSize();
@@ -254,9 +265,8 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 				   << proc.errorString();
 		progress.cancel();
 		showMessage(m_parent, QMessageBox::Information,
-					tr("Update Check Failed"),
-					tr("Failed to start after 5 seconds\nReason: %1.")
-						.arg(proc.errorString()));
+					i18n("Update Check Failed"),
+					i18n("Failed to start after 5 seconds\nReason: %1.", proc.errorString()));
 		noteCheckCompleted();
 		return;
 	}
@@ -271,9 +281,8 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 				   << proc.errorString();
 		progress.cancel();
 		showMessage(m_parent, QMessageBox::Information,
-					tr("Update Check Failed"),
-					tr("Updater failed to close 60 seconds\nReason: %1.")
-						.arg(proc.errorString()),
+					i18n("Update Check Failed"),
+					i18n("Updater failed to close 60 seconds\nReason: %1.", proc.errorString()),
 					QString::fromUtf8(output));
 		noteCheckCompleted();
 		return;
@@ -291,8 +300,8 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 			qDebug() << "Updater: no update available.";
 			if (triggeredByUser) {
 				showMessage(m_parent, QMessageBox::Information,
-							tr("No Update Available"),
-							tr("You are running the latest version."));
+							i18n("No Update Available"),
+							i18n("You are running the latest version."));
 			}
 			break;
 
@@ -300,8 +309,8 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 			qWarning() << "Updater: the check reported an error:"
 					   << qPrintable(QString::fromUtf8(stdError));
 			showMessage(m_parent, QMessageBox::Warning,
-						tr("Update Check Error"),
-						tr("There was an error running the update check."),
+						i18n("Update Check Error"),
+						i18n("There was an error running the update check."),
 						QString::fromUtf8(stdError));
 			break;
 
@@ -327,11 +336,9 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 				qWarning() << "Updater: the check reported an update but no "
 							  "version tag.";
 				showMessage(m_parent, QMessageBox::Warning,
-							tr("Update Check Error"),
-							tr("There was an error running the update check."),
-							tr("StdOut: %1\nStdErr: %2")
-								.arg(QString::fromUtf8(stdOutput),
-									 QString::fromUtf8(stdError)));
+							i18n("Update Check Error"),
+							i18n("There was an error running the update check."),
+							i18n("StdOut: %1\nStdErr: %2", QString::fromUtf8(stdOutput), QString::fromUtf8(stdError)));
 				break;
 			}
 
@@ -344,13 +351,10 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 			qWarning() << "Updater: the check exited with an unknown code"
 					   << exitCode;
 			showMessage(
-				m_parent, QMessageBox::Information, tr("Unknown Update Error"),
-				tr("The updater exited with an unknown condition.\nExit Code: "
-				   "%1")
-					.arg(QString::number(exitCode)),
-				tr("StdOut: %1\nStdErr: %2")
-					.arg(QString::fromUtf8(stdOutput),
-						 QString::fromUtf8(stdError)));
+				m_parent, QMessageBox::Information, i18n("Unknown Update Error"),
+				i18n("The updater exited with an unknown condition.\nExit Code: "
+				   "%1", QString::number(exitCode)),
+				i18n("StdOut: %1\nStdErr: %2", QString::fromUtf8(stdOutput), QString::fromUtf8(stdError)));
 	}
 
 	noteCheckCompleted();
@@ -359,7 +363,8 @@ void MeshMCExternalUpdater::checkForUpdates(bool triggeredByUser)
 void MeshMCExternalUpdater::noteCheckCompleted()
 {
 	m_lastCheck = QDateTime::currentDateTime();
-	m_settings->setValue(kKeyLastCheck, m_lastCheck.toString(Qt::ISODate));
+	m_settings->group(QString::fromLatin1(kGroupGeneral))
+		.writeEntry(kKeyLastCheck, m_lastCheck.toString(Qt::ISODate));
 	m_settings->sync();
 
 	m_checking = false;
@@ -372,9 +377,8 @@ void MeshMCExternalUpdater::offerUpdate(const QString& versionName,
 										const QString& releaseNotes,
 										bool triggeredByUser)
 {
-	m_settings->beginGroup(kGroupSkip);
-	const bool skipped = m_settings->value(versionTag, false).toBool();
-	m_settings->endGroup();
+	KConfigGroup skip = m_settings->group(QString::fromLatin1(kGroupSkip));
+	const bool skipped = skip.readEntry(versionTag, false);
 
 	// A skip only silences the automatic checks. Asking explicitly overrides
 	// it -- otherwise "Check for Updates" would answer nothing at all and
@@ -389,18 +393,16 @@ void MeshMCExternalUpdater::offerUpdate(const QString& versionName,
 								 versionName, releaseNotes, m_parent);
 	const int result = dialog.exec();
 
-	m_settings->beginGroup(kGroupSkip);
 	switch (result) {
 		case UpdateAvailableDialog::Skip:
 			qDebug() << "Updater: remembering" << versionTag << "as skipped.";
-			m_settings->setValue(versionTag, true);
+			skip.writeEntry(versionTag, true);
 			break;
 
 		case UpdateAvailableDialog::Install:
 			// Forget any earlier skip: the user just chose to install this
 			// very version.
-			m_settings->remove(versionTag);
-			m_settings->endGroup();
+			skip.deleteEntry(versionTag);
 			m_settings->sync();
 			performUpdate(versionTag);
 			return;
@@ -408,10 +410,9 @@ void MeshMCExternalUpdater::offerUpdate(const QString& versionName,
 		default:
 			// "Remind Me Later", or the window was simply closed.
 			qDebug() << "Updater: leaving" << versionTag << "for later.";
-			m_settings->remove(versionTag);
+			skip.deleteEntry(versionTag);
 			break;
 	}
-	m_settings->endGroup();
 	m_settings->sync();
 }
 
@@ -437,9 +438,8 @@ void MeshMCExternalUpdater::performUpdate(const QString& versionTag)
 	if (!proc.startDetached()) {
 		qCritical() << "Updater: failed to start the updater:" << proc.error()
 					<< proc.errorString();
-		showMessage(m_parent, QMessageBox::Warning, tr("Update Failed"),
-					tr("Could not start the updater.\nReason: %1.")
-						.arg(proc.errorString()));
+		showMessage(m_parent, QMessageBox::Warning, i18n("Update Failed"),
+					i18n("Could not start the updater.\nReason: %1.", proc.errorString()));
 		return;
 	}
 
@@ -467,7 +467,8 @@ bool MeshMCExternalUpdater::getBetaAllowed()
 void MeshMCExternalUpdater::setAutomaticallyChecksForUpdates(bool check)
 {
 	m_autoCheck = check;
-	m_settings->setValue(kKeyAutoCheck, check);
+	m_settings->group(QString::fromLatin1(kGroupGeneral))
+		.writeEntry(kKeyAutoCheck, check);
 	m_settings->sync();
 	resetAutoCheckTimer();
 }
@@ -475,7 +476,10 @@ void MeshMCExternalUpdater::setAutomaticallyChecksForUpdates(bool check)
 void MeshMCExternalUpdater::setUpdateCheckInterval(double seconds)
 {
 	m_updateInterval = seconds;
-	m_settings->setValue(kKeyUpdateInterval, seconds);
+	// Written as text with all its digits: QString::number()'s default
+	// would turn 1234567 into "1.23457e+06", which the reader above rejects.
+	m_settings->group(QString::fromLatin1(kGroupGeneral))
+		.writeEntry(kKeyUpdateInterval, QString::number(seconds, 'g', 17));
 	m_settings->sync();
 	resetAutoCheckTimer();
 }
@@ -483,7 +487,8 @@ void MeshMCExternalUpdater::setUpdateCheckInterval(double seconds)
 void MeshMCExternalUpdater::setBetaAllowed(bool allowed)
 {
 	m_allowBeta = allowed;
-	m_settings->setValue(kKeyAllowBeta, allowed);
+	m_settings->group(QString::fromLatin1(kGroupGeneral))
+		.writeEntry(kKeyAllowBeta, allowed);
 	m_settings->sync();
 }
 

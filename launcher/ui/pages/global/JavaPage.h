@@ -26,6 +26,7 @@
 #include "JavaCommon.h"
 #include <Application.h>
 #include <QObjectPtr.h>
+#include <KLocalizedString>
 
 class SettingsObject;
 
@@ -44,7 +45,7 @@ class JavaPage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return tr("Java");
+		return i18n("Java");
 	}
 	QIcon icon() const override
 	{
@@ -62,7 +63,6 @@ class JavaPage : public QWidget, public BasePage
 
   private:
 	void applySettings();
-	void loadSettings();
 	void refreshInstalledJavas();
 
   private slots:

@@ -21,6 +21,7 @@
 
 #include "ModFolderPage.h"
 #include "ui_ModFolderPage.h"
+#include <KLocalizedString>
 
 class ShaderPackPage : public ModFolderPage
 {
@@ -28,7 +29,7 @@ class ShaderPackPage : public ModFolderPage
   public:
 	explicit ShaderPackPage(MinecraftInstance* instance, QWidget* parent = 0)
 		: ModFolderPage(instance, instance->shaderPackList(), "shaderpacks",
-						"shaderpacks", tr("Shader packs"), "Resource-packs",
+						"shaderpacks", i18n("Shader packs"), "Resource-packs",
 						parent)
 	{
 		ui->actionView_configs->setVisible(false);

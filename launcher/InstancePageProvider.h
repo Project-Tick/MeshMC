@@ -43,6 +43,7 @@
 #include "Application.h"
 #include "plugin/PluginManager.h"
 #include "plugin/PluginHooks.h"
+#include <KLocalizedString>
 
 class InstancePageProvider : public QObject, public BasePageProvider
 {
@@ -72,12 +73,12 @@ class InstancePageProvider : public QObject, public BasePageProvider
 			}
 			auto modsPage = new ModFolderPage(
 				onesix.get(), onesix->loaderModList(), "mods", "loadermods",
-				tr("Loader mods"), "Loader-mods");
+				i18n("Loader mods"), "Loader-mods");
 			modsPage->setFilter("%1 (*.zip *.jar *.litemod)");
 			values.append(modsPage);
 			values.append(new CoreModFolderPage(
 				onesix.get(), onesix->coreModList(), "coremods", "coremods",
-				tr("Core mods"), "Core-mods"));
+				i18n("Core mods"), "Core-mods"));
 			values.append(new ResourcePackPage(onesix.get()));
 			values.append(new TexturePackPage(onesix.get()));
 			values.append(new ShaderPackPage(onesix.get()));
@@ -133,7 +134,7 @@ class InstancePageProvider : public QObject, public BasePageProvider
 
 	virtual QString dialogTitle() override
 	{
-		return tr("Edit Instance (%1)").arg(inst->name());
+		return i18n("Edit Instance (%1)", inst->name());
 	}
 
   protected:

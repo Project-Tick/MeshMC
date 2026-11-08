@@ -29,6 +29,7 @@
 #include "settings/SettingsObject.h"
 #include "tools/BaseProfiler.h"
 #include "Application.h"
+#include "ui/widgets/ChoiceBinding.h"
 
 PasteEEPage::PasteEEPage(QWidget* parent)
 	: QWidget(parent), ui(new Ui::PasteEEPage)
@@ -37,7 +38,13 @@ PasteEEPage::PasteEEPage(QWidget* parent)
 	ui->tabWidget->tabBar()->hide();
 	connect(ui->customAPIkeyEdit, &QLineEdit::textEdited, this,
 			&PasteEEPage::textEdited);
-	loadSettings();
+
+	// The key is the shared one, or one of the user's own: a choice of radio
+	// buttons, a text in the settings. The settings dialog binds it, like the
+	// widgets named kcfg_<ID>.
+	auto* key = new ChoiceBinding("PasteEEAPIKey", this);
+	key->addChoice(ui->meshmcButton, "meshmc");
+	key->addTextChoice(ui->customButton, ui->customAPIkeyEdit);
 }
 
 PasteEEPage::~PasteEEPage()
@@ -45,34 +52,9 @@ PasteEEPage::~PasteEEPage()
 	delete ui;
 }
 
-void PasteEEPage::loadSettings()
-{
-	auto s = APPLICATION->settings();
-	QString keyToUse = s->get("PasteEEAPIKey").toString();
-	if (keyToUse == "meshmc") {
-		ui->meshmcButton->setChecked(true);
-	} else {
-		ui->customButton->setChecked(true);
-		ui->customAPIkeyEdit->setText(keyToUse);
-	}
-}
-
-void PasteEEPage::applySettings()
-{
-	auto s = APPLICATION->settings();
-
-	QString pasteKeyToUse;
-	if (ui->customButton->isChecked())
-		pasteKeyToUse = ui->customAPIkeyEdit->text();
-	else {
-		pasteKeyToUse = "meshmc";
-	}
-	s->set("PasteEEAPIKey", pasteKeyToUse);
-}
-
 bool PasteEEPage::apply()
 {
-	applySettings();
+	// Nothing is left to do: the settings dialog has saved the key.
 	return true;
 }
 

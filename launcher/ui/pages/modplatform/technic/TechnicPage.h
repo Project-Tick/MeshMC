@@ -26,6 +26,7 @@
 #include <Application.h>
 #include "tasks/Task.h"
 #include "TechnicData.h"
+#include <KLocalizedString>
 
 namespace Ui
 {
@@ -48,7 +49,7 @@ class TechnicPage : public QWidget, public BasePage
 	virtual ~TechnicPage();
 	virtual QString displayName() const override
 	{
-		return tr("Technic");
+		return i18n("Technic");
 	}
 	virtual QIcon icon() const override
 	{

@@ -18,6 +18,7 @@
  */
 
 #include "JavaWizardPage.h"
+#include "settings/GlobalSettings.h"
 #include "Application.h"
 
 #include <QVBoxLayout>
@@ -41,6 +42,7 @@
 #include "ui/widgets/VersionSelectWidget.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/widgets/JavaSettingsWidget.h"
+#include <KLocalizedString>
 
 JavaWizardPage::JavaWizardPage(QWidget* parent) : BaseWizardPage(parent)
 {
@@ -88,7 +90,7 @@ void JavaWizardPage::initializePage()
 
 	// Set vendor combo to current setting
 	auto currentVendor =
-		APPLICATION->settings()->get("JavaAutoDownloadVendor").toString();
+		APPLICATION->globalSettings()->javaAutoDownloadVendor();
 	int idx = m_vendorComboBox->findData(currentVendor);
 	if (idx >= 0) {
 		m_vendorComboBox->setCurrentIndex(idx);
@@ -102,11 +104,12 @@ bool JavaWizardPage::wantsRefreshButton()
 
 bool JavaWizardPage::validatePage()
 {
-	auto settings = APPLICATION->settings();
+	auto settings = APPLICATION->globalSettings();
 
 	// Save selected vendor
-	settings->set("JavaAutoDownloadVendor",
-				  m_vendorComboBox->currentData().toString());
+	settings->setJavaAutoDownloadVendor(
+		m_vendorComboBox->currentData().toString());
+	settings->save();
 
 	auto result = m_java_widget->validate();
 	switch (result) {
@@ -115,18 +118,20 @@ bool JavaWizardPage::validatePage()
 			return false;
 		}
 		case JavaSettingsWidget::ValidationStatus::AllOK: {
-			settings->set("JavaPath", m_java_widget->javaPath());
+			settings->setJavaPath(m_java_widget->javaPath());
+			settings->save();
 		}
 		case JavaSettingsWidget::ValidationStatus::JavaBad: {
 			// Memory
-			auto s = APPLICATION->settings();
-			s->set("MinMemAlloc", m_java_widget->minHeapSize());
-			s->set("MaxMemAlloc", m_java_widget->maxHeapSize());
+			settings->setMinMemAlloc(m_java_widget->minHeapSize());
+			settings->setMaxMemAlloc(m_java_widget->maxHeapSize());
 			if (m_java_widget->permGenEnabled()) {
-				s->set("PermGen", m_java_widget->permGenSize());
+				settings->setPermGen(m_java_widget->permGenSize());
 			} else {
-				s->reset("PermGen");
+				// Back to the default: the key is removed from the file.
+				settings->permGenItem()->setDefault();
 			}
+			settings->save();
 			return true;
 		}
 	}
@@ -134,12 +139,11 @@ bool JavaWizardPage::validatePage()
 
 void JavaWizardPage::retranslate()
 {
-	setTitle(tr("Java"));
-	setSubTitle(tr(
-		"You do not have a working Java set up yet or it went missing.\n"
+	setTitle(i18n("Java"));
+	setSubTitle(i18n("You do not have a working Java set up yet or it went missing.\n"
 		"Please select one of the following or browse for a java executable.\n"
 		"You can also choose which vendor to use for automatic Java "
 		"downloads."));
-	m_vendorLabel->setText(tr("Auto-download Java from:"));
+	m_vendorLabel->setText(i18n("Auto-download Java from:"));
 	m_java_widget->retranslate();
 }

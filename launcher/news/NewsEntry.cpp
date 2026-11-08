@@ -22,13 +22,14 @@
 
 #include <QDomNodeList>
 #include <QVariant>
+#include <KLocalizedString>
 
 NewsEntry::NewsEntry(QObject* parent) : QObject(parent)
 {
-	this->title = tr("Untitled");
-	this->content = tr("No content.");
+	this->title = i18n("Untitled");
+	this->content = i18n("No content.");
 	this->link = "";
-	this->author = tr("Unknown Author");
+	this->author = i18n("Unknown Author");
 	this->pubDate = QDateTime::currentDateTime();
 }
 
@@ -63,10 +64,10 @@ bool NewsEntry::fromXmlElement(const QDomElement& element, NewsEntry* entry,
 							   QString* errorMsg)
 {
 	(void)errorMsg;
-	QString title = childValue(element, "title", tr("Untitled"));
-	QString content = childValue(element, "description", tr("No content."));
+	QString title = childValue(element, "title", i18n("Untitled"));
+	QString content = childValue(element, "description", i18n("No content."));
 	QString link = childValue(element, "link");
-	QString author = childValue(element, "dc:creator", tr("Unknown Author"));
+	QString author = childValue(element, "dc:creator", i18n("Unknown Author"));
 	QString pubDateStr = childValue(element, "pubDate");
 
 	// FIXME: For now, we're just ignoring timezones. We assume that all time

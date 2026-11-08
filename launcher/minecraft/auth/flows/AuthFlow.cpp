@@ -27,6 +27,7 @@
 #include "katabasis/Globals.h"
 
 #include <Application.h>
+#include <KLocalizedString>
 
 AuthFlow::AuthFlow(AccountData* data, QObject* parent)
 	: AccountTask(data, parent)
@@ -37,7 +38,7 @@ void AuthFlow::succeed()
 {
 	m_data->validity_ = Katabasis::Validity::Certain;
 	changeState(AccountTaskState::STATE_SUCCEEDED,
-				tr("Finished all authentication steps"));
+				i18n("Finished all authentication steps"));
 }
 
 void AuthFlow::executeTask()
@@ -45,7 +46,7 @@ void AuthFlow::executeTask()
 	if (m_currentStep) {
 		return;
 	}
-	changeState(AccountTaskState::STATE_WORKING, tr("Initializing"));
+	changeState(AccountTaskState::STATE_WORKING, i18n("Initializing"));
 	nextStep();
 }
 
@@ -75,7 +76,7 @@ QString AuthFlow::getStateMessage() const
 			if (m_currentStep) {
 				return m_currentStep->describe();
 			} else {
-				return tr("Working...");
+				return i18n("Working...");
 			}
 		}
 		default: {

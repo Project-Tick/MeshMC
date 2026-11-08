@@ -1,0 +1,7 @@
+# kconfig_compiler: GlobalSettings.kcfg -> the class GlobalSettings.
+File=GlobalSettings.kcfg
+ClassName=GlobalSettings
+Mutators=true
+ItemAccessors=true
+DefaultValueGetters=true
+IncludeFiles=settings/GlobalSettingsDefaults.h

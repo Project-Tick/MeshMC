@@ -18,6 +18,8 @@
  */
 
 #include "MCEditTool.h"
+#include "settings/GlobalSettings.h"
+#include "Application.h"
 
 #include <QDir>
 #include <QProcess>
@@ -26,38 +28,35 @@
 #include "settings/SettingsObject.h"
 #include "BaseInstance.h"
 #include "minecraft/MinecraftInstance.h"
-
-MCEditTool::MCEditTool(SettingsObjectPtr settings)
-{
-	settings->registerSetting("MCEditPath");
-	m_settings = settings;
-}
+#include <KLocalizedString>
 
 void MCEditTool::setPath(QString& path)
 {
-	m_settings->set("MCEditPath", path);
+	// MCEditPath is declared in settings/GlobalSettings.kcfg
+	APPLICATION->globalSettings()->setMCEditPath(path);
+	APPLICATION->globalSettings()->save();
 }
 
 QString MCEditTool::path() const
 {
-	return m_settings->get("MCEditPath").toString();
+	return APPLICATION->globalSettings()->mCEditPath();
 }
 
 bool MCEditTool::check(const QString& toolPath, QString& error)
 {
 	if (toolPath.isEmpty()) {
-		error = QObject::tr("Path is empty");
+		error = i18n("Path is empty");
 		return false;
 	}
 	const QDir dir(toolPath);
 	if (!dir.exists()) {
-		error = QObject::tr("Path does not exist");
+		error = i18n("Path does not exist");
 		return false;
 	}
 	if (!dir.exists("mcedit.sh") && !dir.exists("mcedit.py") &&
 		!dir.exists("mcedit.exe") && !dir.exists("Contents") &&
 		!dir.exists("mcedit2.exe")) {
-		error = QObject::tr("Path does not seem to be a MCEdit path");
+		error = i18n("Path does not seem to be a MCEdit path");
 		return false;
 	}
 	return true;

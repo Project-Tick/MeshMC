@@ -21,6 +21,7 @@
 
 #include "ModFolderPage.h"
 #include "ui_ModFolderPage.h"
+#include <KLocalizedString>
 
 class ResourcePackPage : public ModFolderPage
 {
@@ -28,7 +29,7 @@ class ResourcePackPage : public ModFolderPage
   public:
 	explicit ResourcePackPage(MinecraftInstance* instance, QWidget* parent = 0)
 		: ModFolderPage(instance, instance->resourcePackList(), "resourcepacks",
-						"resourcepacks", tr("Resource packs"), "Resource-packs",
+						"resourcepacks", i18n("Resource packs"), "Resource-packs",
 						parent)
 	{
 		ui->actionView_configs->setVisible(false);

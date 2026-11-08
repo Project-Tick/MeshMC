@@ -28,7 +28,9 @@
 
 #include "updater/ExternalUpdater.h"
 
+#include "settings/GlobalSettings.h"
 #include "settings/SettingsObject.h"
+#include "ui/widgets/ChoiceBinding.h"
 #include <FileSystem.h>
 #include "InstanceList.h"
 #include "DesktopServices.h"
@@ -37,14 +39,7 @@
 
 #include <QApplication>
 #include <QProcess>
-
-// FIXME: possibly move elsewhere
-enum InstSortMode {
-	// Sort alphabetically by name.
-	Sort_Name,
-	// Sort by which instance was launched most recently.
-	Sort_LastLaunch
-};
+#include <KLocalizedString>
 
 MeshMCPage::MeshMCPage(QWidget* parent)
 	: QWidget(parent), ui(new Ui::MeshMCPage)
@@ -56,18 +51,20 @@ MeshMCPage::MeshMCPage(QWidget* parent)
 		ui->fontPreview->palette().color(ui->fontPreview->backgroundRole());
 	m_colors.reset(new LogColorCache(origForeground, origBackground));
 
-	ui->sortingModeGroup->setId(ui->sortByNameBtn, Sort_Name);
-	ui->sortingModeGroup->setId(ui->sortLastLaunchedBtn, Sort_LastLaunch);
+	// The sorting is a choice of radio buttons, a text in the settings. The
+	// settings dialog binds it, like the widgets named kcfg_<ID>.
+	auto* sortMode = new ChoiceBinding("InstSortMode", this);
+	sortMode->addChoice(ui->sortByNameBtn, "Name");
+	sortMode->addChoice(ui->sortLastLaunchedBtn, "LastLaunch");
 
 	defaultFormat = new QTextCharFormat(ui->fontPreview->currentCharFormat());
 
-	m_languageModel = APPLICATION->translations();
 	loadSettings();
 
 	ui->updateSettingsBox->setHidden(!APPLICATION->updater());
-	connect(ui->fontSizeBox, qOverload<int>(&QSpinBox::valueChanged), this,
+	connect(ui->kcfg_ConsoleFontSize, qOverload<int>(&QSpinBox::valueChanged), this,
 			&MeshMCPage::refreshFontPreview);
-	connect(ui->consoleFont, &QFontComboBox::currentFontChanged, this,
+	connect(ui->kcfg_ConsoleFont, &QFontComboBox::currentFontChanged, this,
 			&MeshMCPage::refreshFontPreview);
 
 	ui->migrateDataFolderMacBtn->setVisible(false);
@@ -91,12 +88,12 @@ bool MeshMCPage::confirmInstanceDirPath(const QString& rawDir,
 	if (FS::checkProblemticPathJava(QDir(cookedDir))) {
 		QMessageBox warning;
 		warning.setText(
-			tr("You're trying to specify an instance folder which\'s path "
+			i18n("You're trying to specify an instance folder which\'s path "
 			   "contains at least one \'!\'. "
 			   "Java is known to cause problems if that is the case, your "
 			   "instances (probably) won't start!"));
 		warning.setInformativeText(
-			tr("Do you really want to use this path? "
+			i18n("Do you really want to use this path? "
 			   "Selecting \"No\" will close this and not alter your "
 			   "instance path."));
 		warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -116,13 +113,13 @@ bool MeshMCPage::confirmInstanceDirPath(const QString& rawDir,
 	if (DesktopServices::isFlatpak() && rawDir.startsWith("/run/user")) {
 		QMessageBox warning;
 		warning.setText(
-			tr("You're trying to specify an instance folder "
+			i18n("You're trying to specify an instance folder "
 			   "which was granted temporarily via Flatpak.\n"
 			   "This is known to cause problems. "
 			   "After a restart the launcher might break, "
 			   "because it will no longer have access to that directory.\n\n"
 			   "Granting MeshMC access to it via Flatseal is recommended."));
-		warning.setInformativeText(tr("Do you want to proceed anyway?"));
+		warning.setInformativeText(i18n("Do you want to proceed anyway?"));
 		warning.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		return warning.exec() == QMessageBox::Yes;
 	}
@@ -133,13 +130,13 @@ bool MeshMCPage::confirmInstanceDirPath(const QString& rawDir,
 void MeshMCPage::on_instDirBrowseBtn_clicked()
 {
 	QString rawDir = QFileDialog::getExistingDirectory(
-		this, tr("Instance Folder"), ui->instDirTextBox->text());
+		this, i18n("Instance Folder"), ui->kcfg_InstanceDir->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!rawDir.isEmpty() && QDir(rawDir).exists()) {
 		QString cookedDir = FS::NormalizePath(rawDir);
 		if (confirmInstanceDirPath(rawDir, cookedDir)) {
-			ui->instDirTextBox->setText(cookedDir);
+			ui->kcfg_InstanceDir->setText(cookedDir);
 		}
 	}
 }
@@ -156,7 +153,7 @@ QStringList MeshMCPage::additionalInstanceDirs() const
 void MeshMCPage::on_addInstDirBtn_clicked()
 {
 	QString rawDir = QFileDialog::getExistingDirectory(
-		this, tr("Additional Instance Folder"));
+		this, i18n("Additional Instance Folder"));
 	if (rawDir.isEmpty() || !QDir(rawDir).exists()) {
 		return;
 	}
@@ -181,17 +178,17 @@ void MeshMCPage::on_addInstDirBtn_clicked()
 	 * InstanceList would collapse them anyway - better to say so here,
 	 * where there is somebody to tell.
 	 */
-	if (cookedDir == FS::NormalizePath(ui->instDirTextBox->text())) {
+	if (cookedDir == FS::NormalizePath(ui->kcfg_InstanceDir->text())) {
 		QMessageBox::warning(
-			this, tr("Duplicate directory"),
-			tr("This is already your primary instance directory."));
+			this, i18n("Duplicate directory"),
+			i18n("This is already your primary instance directory."));
 		return;
 	}
 	if (!ui->additionalInstDirsList
 			 ->findItems(cookedDir, Qt::MatchFixedString)
 			 .isEmpty()) {
-		QMessageBox::warning(this, tr("Duplicate directory"),
-							 tr("This directory has already been added."));
+		QMessageBox::warning(this, i18n("Duplicate directory"),
+							 i18n("This directory has already been added."));
 		return;
 	}
 
@@ -214,52 +211,52 @@ void MeshMCPage::on_removeInstDirBtn_clicked()
 void MeshMCPage::on_iconsDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
-		this, tr("Icons Folder"), ui->iconsDirTextBox->text());
+		this, i18n("Icons Folder"), ui->kcfg_IconsDir->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
 		QString cooked_dir = FS::NormalizePath(raw_dir);
-		ui->iconsDirTextBox->setText(cooked_dir);
+		ui->kcfg_IconsDir->setText(cooked_dir);
 	}
 }
 void MeshMCPage::on_skinsDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
-		this, tr("Skins Folder"), ui->skinsDirTextBox->text());
+		this, i18n("Skins Folder"), ui->kcfg_SkinsDir->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
 		QString cooked_dir = FS::NormalizePath(raw_dir);
-		ui->skinsDirTextBox->setText(cooked_dir);
+		ui->kcfg_SkinsDir->setText(cooked_dir);
 	}
 }
 void MeshMCPage::on_javaDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
-		this, tr("Java Folder"), ui->javaDirTextBox->text());
+		this, i18n("Java Folder"), ui->kcfg_JavaDir->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
 		QString cooked_dir = FS::NormalizePath(raw_dir);
-		ui->javaDirTextBox->setText(cooked_dir);
+		ui->kcfg_JavaDir->setText(cooked_dir);
 	}
 }
 void MeshMCPage::on_modsDirBrowseBtn_clicked()
 {
 	QString raw_dir = QFileDialog::getExistingDirectory(
-		this, tr("Mods Folder"), ui->modsDirTextBox->text());
+		this, i18n("Mods Folder"), ui->kcfg_CentralModsDir->text());
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (!raw_dir.isEmpty() && QDir(raw_dir).exists()) {
 		QString cooked_dir = FS::NormalizePath(raw_dir);
-		ui->modsDirTextBox->setText(cooked_dir);
+		ui->kcfg_CentralModsDir->setText(cooked_dir);
 	}
 }
 void MeshMCPage::on_migrateDataFolderMacBtn_clicked()
 {
 	QMessageBox::information(
-		this, tr("Automatic macOS Migration"),
-		tr("MeshMC now stores macOS data under your Library/Application Support "
+		this, i18n("Automatic macOS Migration"),
+		i18n("MeshMC now stores macOS data under your Library/Application Support "
 		   "folder automatically."));
 }
 
@@ -268,12 +265,24 @@ void MeshMCPage::refreshUpdateChannelList()
 	// No-op: the new updater does not use named channels.
 }
 
+void MeshMCPage::openedImpl()
+{
+	// The widgets are bound to the settings by the dialog after the page has
+	// been built, so the preview is drawn from what they show now.
+	refreshFontPreview();
+}
+
+// Everything on this page that is a plain value in a widget named
+// kcfg_<Setting> (the console, the folders, the backup and the game files) is
+// bound to its setting by the settings dialog. What is left cannot be: the
+// values that are not a setting of their own, or that are stored differently
+// from how they are shown.
 void MeshMCPage::applySettings()
 {
-	auto s = APPLICATION->settings();
+	auto* s = APPLICATION->globalSettings();
 
 	if (ui->resetNotificationsBtn->isChecked()) {
-		s->set("ShownNotifications", QString());
+		s->setShownNotifications(QString());
 	}
 
 	if (auto* updater = APPLICATION->updater()) {
@@ -283,58 +292,26 @@ void MeshMCPage::applySettings()
 										3600);
 	}
 
-	// Instance backups
-	s->set("BackupBeforeLaunch", ui->backupBeforeLaunchCheck->isChecked());
+	/* The modpack prompt is stored inverted - the setting says what to
+	 * *skip* - so that a launcher nobody has configured asks, which is the
+	 * useful default and the behaviour that existed before it was optional. */
+	s->setSkipModpackUpdatePrompt(!ui->modpackUpdatePromptCheck->isChecked());
 
-	/* Instance creation. The modpack prompt is stored inverted - the
-	 * setting says what to *skip* - so that a launcher nobody has
-	 * configured asks, which is the useful default and the behaviour
-	 * that existed before it was optional. */
-	s->set("SkipModpackUpdatePrompt",
-		   !ui->modpackUpdatePromptCheck->isChecked());
-	s->set("DownloadGameFilesDuringInstanceCreation",
-		   ui->downloadGameFilesCheck->isChecked());
+	/* Encoded, not handed over as a list: every value is stored as a string,
+	 * and a multi-element QStringList stringifies to nothing at all.
+	 * InstanceList owns that detail. */
+	s->setAdditionalInstanceDirs(
+		InstanceList::encodeInstanceDirList(additionalInstanceDirs())
+			.toString());
 
-	// Console settings
-	s->set("ShowConsole", ui->showConsoleCheck->isChecked());
-	s->set("AutoCloseConsole", ui->autoCloseConsoleCheck->isChecked());
-	s->set("ShowConsoleOnError", ui->showConsoleErrorCheck->isChecked());
-	QString consoleFontFamily = ui->consoleFont->currentFont().family();
-	s->set("ConsoleFont", consoleFontFamily);
-	s->set("ConsoleFontSize", ui->fontSizeBox->value());
-	s->set("ConsoleMaxLines", ui->lineLimitSpinBox->value());
-	s->set("ConsoleOverflowStop",
-		   ui->checkStopLogging->checkState() != Qt::Unchecked);
-
-	// Folders
-	// TODO: Offer to move instances to new instance folder.
-	s->set("InstanceDir", ui->instDirTextBox->text());
-	/* Encoded, not handed over as a list: the INI backend stringifies
-	 * every value it writes, and a multi-element QStringList stringifies
-	 * to nothing at all. InstanceList owns that detail. */
-	s->set("AdditionalInstanceDirs",
-		   InstanceList::encodeInstanceDirList(additionalInstanceDirs()));
-	s->set("CentralModsDir", ui->modsDirTextBox->text());
-	s->set("IconsDir", ui->iconsDirTextBox->text());
-	s->set("SkinsDir", ui->skinsDirTextBox->text());
-	s->set("JavaDir", ui->javaDirTextBox->text());
-
-	auto sortMode = (InstSortMode)ui->sortingModeGroup->checkedId();
-	switch (sortMode) {
-		case Sort_LastLaunch:
-			s->set("InstSortMode", "LastLaunch");
-			break;
-		case Sort_Name:
-		default:
-			s->set("InstSortMode", "Name");
-			break;
-	}
+	s->save();
 }
+
 void MeshMCPage::loadSettings()
 {
-	auto s = APPLICATION->settings();
-	// Updates. See applySettings() for why these do not come from the
-	// launcher's settings.
+	auto* s = APPLICATION->globalSettings();
+	// Updates. They do not come from the launcher's settings: the updater
+	// keeps its own.
 	if (auto* updater = APPLICATION->updater()) {
 		ui->autoUpdateCheckBox->setChecked(
 			updater->getAutomaticallyChecksForUpdates());
@@ -342,59 +319,18 @@ void MeshMCPage::loadSettings()
 			static_cast<int>(updater->getUpdateCheckInterval() / 3600));
 	}
 
-	// Instance backups
-	ui->backupBeforeLaunchCheck->setChecked(
-		s->get("BackupBeforeLaunch").toBool());
-
-	// Instance creation
 	ui->modpackUpdatePromptCheck->setChecked(
-		!s->get("SkipModpackUpdatePrompt").toBool());
-	ui->downloadGameFilesCheck->setChecked(
-		s->get("DownloadGameFilesDuringInstanceCreation").toBool());
+		!s->skipModpackUpdatePrompt());
 
-	// Console settings
-	ui->showConsoleCheck->setChecked(s->get("ShowConsole").toBool());
-	ui->autoCloseConsoleCheck->setChecked(s->get("AutoCloseConsole").toBool());
-	ui->showConsoleErrorCheck->setChecked(
-		s->get("ShowConsoleOnError").toBool());
-	QString fontFamily = APPLICATION->settings()->get("ConsoleFont").toString();
-	QFont consoleFont(fontFamily);
-	ui->consoleFont->setCurrentFont(consoleFont);
-
-	bool conversionOk = true;
-	int fontSize =
-		APPLICATION->settings()->get("ConsoleFontSize").toInt(&conversionOk);
-	if (!conversionOk) {
-		fontSize = 11;
-	}
-	ui->fontSizeBox->setValue(fontSize);
-	refreshFontPreview();
-	ui->lineLimitSpinBox->setValue(s->get("ConsoleMaxLines").toInt());
-	ui->checkStopLogging->setChecked(s->get("ConsoleOverflowStop").toBool());
-
-	// Folders
-	ui->instDirTextBox->setText(s->get("InstanceDir").toString());
 	ui->additionalInstDirsList->clear();
 	ui->additionalInstDirsList->addItems(InstanceList::decodeInstanceDirList(
-		s->get("AdditionalInstanceDirs")));
-	ui->modsDirTextBox->setText(s->get("CentralModsDir").toString());
-	ui->iconsDirTextBox->setText(s->get("IconsDir").toString());
-	ui->skinsDirTextBox->setText(s->get("SkinsDir").toString());
-	ui->javaDirTextBox->setText(s->get("JavaDir").toString());
-
-	QString sortMode = s->get("InstSortMode").toString();
-
-	if (sortMode == "LastLaunch") {
-		ui->sortLastLaunchedBtn->setChecked(true);
-	} else {
-		ui->sortByNameBtn->setChecked(true);
-	}
+		s->additionalInstanceDirs()));
 }
 
 void MeshMCPage::refreshFontPreview()
 {
-	int fontSize = ui->fontSizeBox->value();
-	QString fontFamily = ui->consoleFont->currentFont().family();
+	int fontSize = ui->kcfg_ConsoleFontSize->value();
+	QString fontFamily = ui->kcfg_ConsoleFont->currentFont().family();
 	ui->fontPreview->clear();
 	defaultFormat->setFont(QFont(fontFamily, fontSize));
 	{
@@ -403,7 +339,7 @@ void MeshMCPage::refreshFontPreview()
 		// append a paragraph/line
 		auto workCursor = ui->fontPreview->textCursor();
 		workCursor.movePosition(QTextCursor::End);
-		workCursor.insertText(tr("[Something/ERROR] A spooky error!"), format);
+		workCursor.insertText(i18n("[Something/ERROR] A spooky error!"), format);
 		workCursor.insertBlock();
 	}
 	{
@@ -412,7 +348,7 @@ void MeshMCPage::refreshFontPreview()
 		// append a paragraph/line
 		auto workCursor = ui->fontPreview->textCursor();
 		workCursor.movePosition(QTextCursor::End);
-		workCursor.insertText(tr("[Test/INFO] A harmless message..."), format);
+		workCursor.insertText(i18n("[Test/INFO] A harmless message..."), format);
 		workCursor.insertBlock();
 	}
 	{
@@ -421,7 +357,7 @@ void MeshMCPage::refreshFontPreview()
 		// append a paragraph/line
 		auto workCursor = ui->fontPreview->textCursor();
 		workCursor.movePosition(QTextCursor::End);
-		workCursor.insertText(tr("[Something/WARN] A not so spooky warning."),
+		workCursor.insertText(i18n("[Something/WARN] A not so spooky warning."),
 							  format);
 		workCursor.insertBlock();
 	}

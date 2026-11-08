@@ -24,18 +24,25 @@
 #include <QTabBar>
 
 #include "settings/SettingsObject.h"
-#include "Application.h"
+#include "ui/widgets/ChoiceBinding.h"
 #include "Application.h"
 
 ProxyPage::ProxyPage(QWidget* parent) : QWidget(parent), ui(new Ui::ProxyPage)
 {
 	ui->setupUi(this);
 	ui->tabWidget->tabBar()->hide();
-	loadSettings();
-	updateCheckboxStuff();
 
-	connect(ui->proxyGroup, &QButtonGroup::idClicked, this,
-			&ProxyPage::proxyChanged);
+	// The proxy type is a choice of radio buttons, a text in the settings.
+	// The settings dialog binds it, like the widgets named kcfg_<ID>.
+	m_proxyType = new ChoiceBinding("ProxyType", this);
+	m_proxyType->addChoice(ui->proxyDefaultBtn, "Default");
+	m_proxyType->addChoice(ui->proxyNoneBtn, "None");
+	m_proxyType->addChoice(ui->proxySOCKS5Btn, "SOCKS5");
+	m_proxyType->addChoice(ui->proxyHTTPBtn, "HTTP");
+	// Also when the dialog loads the setting, or resets it to its default
+	connect(m_proxyType, &ChoiceBinding::choiceChanged, this,
+			&ProxyPage::updateCheckboxStuff);
+	updateCheckboxStuff();
 }
 
 ProxyPage::~ProxyPage()
@@ -57,52 +64,18 @@ void ProxyPage::updateCheckboxStuff()
 								 !ui->proxyDefaultBtn->isChecked());
 }
 
-void ProxyPage::proxyChanged(int)
-{
-	updateCheckboxStuff();
-}
-
 void ProxyPage::applySettings()
 {
-	auto s = APPLICATION->settings();
-
-	// Proxy
-	QString proxyType = "None";
-	if (ui->proxyDefaultBtn->isChecked())
-		proxyType = "Default";
-	else if (ui->proxyNoneBtn->isChecked())
+	// The type, the address, the port and the credentials are bound to their
+	// settings by the settings dialog, which has saved them when this is
+	// called; what is left is to put them to use.
+	QString proxyType = m_proxyType->choice();
+	if (proxyType.isEmpty()) {
 		proxyType = "None";
-	else if (ui->proxySOCKS5Btn->isChecked())
-		proxyType = "SOCKS5";
-	else if (ui->proxyHTTPBtn->isChecked())
-		proxyType = "HTTP";
-
-	s->set("ProxyType", proxyType);
-	s->set("ProxyAddr", ui->proxyAddrEdit->text());
-	s->set("ProxyPort", ui->proxyPortEdit->value());
-	s->set("ProxyUser", ui->proxyUserEdit->text());
-	s->set("ProxyPass", ui->proxyPassEdit->text());
+	}
 
 	APPLICATION->updateProxySettings(
-		proxyType, ui->proxyAddrEdit->text(), ui->proxyPortEdit->value(),
-		ui->proxyUserEdit->text(), ui->proxyPassEdit->text());
+		proxyType, ui->kcfg_ProxyAddr->text(), ui->kcfg_ProxyPort->value(),
+		ui->kcfg_ProxyUser->text(), ui->kcfg_ProxyPass->text());
 }
-void ProxyPage::loadSettings()
-{
-	auto s = APPLICATION->settings();
-	// Proxy
-	QString proxyType = s->get("ProxyType").toString();
-	if (proxyType == "Default")
-		ui->proxyDefaultBtn->setChecked(true);
-	else if (proxyType == "None")
-		ui->proxyNoneBtn->setChecked(true);
-	else if (proxyType == "SOCKS5")
-		ui->proxySOCKS5Btn->setChecked(true);
-	else if (proxyType == "HTTP")
-		ui->proxyHTTPBtn->setChecked(true);
 
-	ui->proxyAddrEdit->setText(s->get("ProxyAddr").toString());
-	ui->proxyPortEdit->setValue(s->get("ProxyPort").value<uint16_t>());
-	ui->proxyUserEdit->setText(s->get("ProxyUser").toString());
-	ui->proxyPassEdit->setText(s->get("ProxyPass").toString());
-}

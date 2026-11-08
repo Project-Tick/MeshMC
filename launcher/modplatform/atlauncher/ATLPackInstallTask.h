@@ -26,7 +26,7 @@
 
 #include "InstanceTask.h"
 #include "net/NetJob.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 #include "meta/Version.h"
