@@ -408,6 +408,7 @@ target_link_libraries(MeshMC_logic
     KF6::GuiAddons
     KF6::CoreAddons
     KF6::XmlGui
+    KF6::Crash
     LibArchive::LibArchive
     cmark::cmark
     rainbow

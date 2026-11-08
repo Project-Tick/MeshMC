@@ -167,6 +167,7 @@ find_package(KF6 6.23 REQUIRED COMPONENTS I18n
     GuiAddons
     CoreAddons
     XmlGui
+    Crash
 )
 
 if(UNIX)
@@ -543,8 +544,8 @@ endif()
 
 # Where the installed .mo catalogs are, relative to the directory the
 # executables live in (../share/locale on Linux, ../Resources/locale in the
-# macOS bundle, share/locale on Windows). The launcher, the crash reporter and
-# the updater all sit in BINARY_DEST_DIR and hand this to
+# macOS bundle, share/locale on Windows). The launcher and the
+# updater both sit in BINARY_DEST_DIR and hand this to
 # KLocalizedString::addDomainLocaleDir().
 file(RELATIVE_PATH MeshMC_LOCALE_RELATIVE_DIR
     "/${BINARY_DEST_DIR}" "/${MeshMC_LOCALE_DEST_DIR}")
@@ -603,7 +604,6 @@ install(FILES "${NEWLAUNCH_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "NewLaunc
 
 add_subdirectory(buildconfig)
 
-add_subdirectory(launcher/crashreporter)
 
 # NOTE: this must always be last to appease the CMake deity of quirky install command evaluation order.
 add_subdirectory(launcher)
