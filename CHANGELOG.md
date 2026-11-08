@@ -22,6 +22,7 @@
 * KColorUtils migration has been completed.
 * KColorScheme migration has been completed.
 * KIconThemes migration has been completed.
+* The MeshMC News section is now displayed via KF6 Syndication.
 
 ## Removed
 

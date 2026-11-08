@@ -415,6 +415,7 @@ target_link_libraries(MeshMC_logic
     KF6::ColorScheme
     KF6::IconThemes
     KF6::BreezeIcons
+    KF6::Syndication
     LibArchive::LibArchive
     cmark::cmark
     LocalPeer::LocalPeer
