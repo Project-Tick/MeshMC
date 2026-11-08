@@ -123,7 +123,7 @@ add_unit_test(SettingsBinding
     SOURCES settings/SettingsBinding_test.cpp
     LIBS MeshMC_logic
     )
-# Widgets, but no display needed. APPEND: see IconTheme_test below.
+# Widgets, but no display needed. APPEND: see ThemedIcons_test below.
 set_property(TEST SettingsBinding_test APPEND PROPERTY ENVIRONMENT
     "QT_QPA_PLATFORM=offscreen"
     )
@@ -344,21 +344,24 @@ add_subdirectory(resources)
 add_subdirectory(ui)
 
 # Declared after MeshMC_logic because it links against it.
-add_unit_test(CustomTheme
-    SOURCES ui/themes/CustomTheme_test.cpp
+add_unit_test(ColorSchemes
+    SOURCES ui/themes/ColorSchemes_test.cpp
+    LIBS MeshMC_logic
+    )
+set_property(TEST ColorSchemes_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    )
+
+add_unit_test(ThemedIcons
+    SOURCES ui/themes/ThemedIcons_test.cpp
     LIBS MeshMC_logic
     )
 
-add_unit_test(IconTheme
-    SOURCES ui/themes/IconTheme_test.cpp
-    LIBS MeshMC_logic
-    )
-
-target_compile_definitions(IconTheme_test PRIVATE
+target_compile_definitions(ThemedIcons_test PRIVATE
     MESHMC_MAINWINDOW_UI_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/MainWindow.ui")
 
 # APPEND: replacing ENVIRONMENT here would drop the variables add_unit_test() set.
-set_property(TEST IconTheme_test APPEND PROPERTY ENVIRONMENT
+set_property(TEST ThemedIcons_test APPEND PROPERTY ENVIRONMENT
     "QT_QPA_PLATFORM=offscreen"
     "QT_QPA_PLATFORMTHEME="
     )
@@ -409,6 +412,9 @@ target_link_libraries(MeshMC_logic
     KF6::CoreAddons
     KF6::XmlGui
     KF6::Crash
+    KF6::ColorScheme
+    KF6::IconThemes
+    KF6::BreezeIcons
     LibArchive::LibArchive
     cmark::cmark
     LocalPeer::LocalPeer

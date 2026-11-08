@@ -1,29 +1,15 @@
 target_sources(MeshMC_logic PRIVATE
-    # GUI - themes
-    FusionTheme.cpp
-    FusionTheme.h
-    BrightTheme.cpp
-    BrightTheme.h
-    GreenDarkTheme.cpp
-    GreenDarkTheme.h
-    GreenLightTheme.cpp
-    GreenLightTheme.h
-    CustomTheme.cpp
-    CustomTheme.h
-    DarkTheme.cpp
-    DarkTheme.h
-    ITheme.cpp
-    ITheme.h
-    SystemTheme.cpp
-    SystemTheme.h
-    ThemeManager.cpp
-    ThemeManager.h
-    CatPack.cpp
-    CatPack.h
+    # GUI - appearance: colour schemes, widget style and icons, from KDE Frameworks
+    AppearanceManager.cpp
+    AppearanceManager.h
+    ColorSchemes.cpp
+    ColorSchemes.h
+    ThemedIcons.cpp
+    ThemedIcons.h
 )
 
 if (APPLE)
     target_sources(MeshMC_logic PRIVATE
-        ThemeManager.mm
+        AppearanceManager.mm
     )
 endif()

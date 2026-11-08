@@ -168,6 +168,9 @@ find_package(KF6 6.23 REQUIRED COMPONENTS I18n
     CoreAddons
     XmlGui
     Crash
+    ColorScheme
+    IconThemes
+    BreezeIcons
 )
 
 if(UNIX)

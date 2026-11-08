@@ -99,7 +99,6 @@
    <addaction name="actionCheckUpdate"/>
    <addaction name="separator"/>
    <addaction name="actionPatreon"/>
-   <addaction name="actionCAT"/>
    <addaction name="actionAccountsButton"/>
   </widget>
   <widget class="QToolBar" name="newsToolBar">
@@ -198,7 +197,6 @@
     <property name="toolTipsVisible">
      <bool>true</bool>
     </property>
-    <addaction name="actionCAT"/>
     <addaction name="actionLockToolbars"/>
     <addaction name="separator"/>
     <addaction name="actionMenuBarInsteadOfToolBar"/>
@@ -217,10 +215,9 @@
     <addaction name="actionViewSkinsFolder"/>
     <addaction name="actionViewJavaFolder"/>
     <addaction name="separator"/>
-    <addaction name="actionViewIconThemeFolder"/>
-    <addaction name="actionViewWidgetThemeFolder"/>
-    <addaction name="actionViewCatPackFolder"/>
     <addaction name="actionViewIconsFolder"/>
+    <addaction name="actionViewIconThemeFolder"/>
+    <addaction name="actionViewColorSchemeFolder"/>
     <addaction name="separator"/>
     <addaction name="actionViewLogsFolder"/>
    </widget>
@@ -356,38 +353,24 @@
     <string notr="true">viewfolder</string>
    </property>
    <property name="text">
-    <string>Icon Theme</string>
+    <string>Icon Themes</string>
    </property>
    <property name="toolTip">
-    <string>Open the icon theme folder in a file browser.</string>
+    <string>Open the folder for your own icon themes in a file browser.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
-  <action name="actionViewWidgetThemeFolder">
+  <action name="actionViewColorSchemeFolder">
    <property name="meshmcIcon" stdset="0">
     <string notr="true">viewfolder</string>
    </property>
    <property name="text">
-    <string>Widget Themes</string>
+    <string>Color Schemes</string>
    </property>
    <property name="toolTip">
-    <string>Open the widget themes folder in a file browser.</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
-  <action name="actionViewCatPackFolder">
-   <property name="meshmcIcon" stdset="0">
-    <string notr="true">viewfolder</string>
-   </property>
-   <property name="text">
-    <string>Cat Packs</string>
-   </property>
-   <property name="toolTip">
-    <string>Open the cat packs folder in a file browser.</string>
+    <string>Open the folder for your own color schemes in a file browser.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -461,26 +444,6 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::TextHeuristicRole</enum>
-   </property>
-  </action>
-  <action name="actionCAT">
-   <property name="meshmcIcon" stdset="0">
-    <string notr="true">cat</string>
-   </property>
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Meow</string>
-   </property>
-   <property name="toolTip">
-    <string>It's a fluffy kitty :3</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-   <property name="priority">
-    <enum>QAction::Priority::LowPriority</enum>
    </property>
   </action>
   <action name="actionManageAccounts">

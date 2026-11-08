@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/color-schemes">
+        <file>MeshMCGreenDark.colors</file>
+        <file>MeshMCGreenLight.colors</file>
+    </qresource>
+</RCC>

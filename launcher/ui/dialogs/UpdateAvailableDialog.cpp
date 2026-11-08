@@ -23,6 +23,7 @@
 #include <QIcon>
 #include <QPushButton>
 
+#include "Application.h"
 #include "BuildConfig.h"
 #include "HoeDown.h"
 #include "MMCStrings.h"
@@ -40,7 +41,7 @@ UpdateAvailableDialog::UpdateAvailableDialog(const QString& currentVersion,
 	ui->versionAvailableLabel->setText(
 		i18n("Version %1 is now available - you have %2 . Would you like to "
 		   "download it now?", availableVersion, currentVersion));
-	ui->icon->setPixmap(QIcon::fromTheme("checkupdate").pixmap(64));
+	ui->icon->setPixmap(APPLICATION->getThemedIcon("checkupdate").pixmap(64));
 
 	HoeDown markdown;
 	ui->releaseNotes->setHtml(

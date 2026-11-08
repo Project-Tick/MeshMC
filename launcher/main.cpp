@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 		case Application::StartingUp:
 		case Application::Initialized: {
 			Q_INIT_RESOURCE(multimc);
-			Q_INIT_RESOURCE(backgrounds);
+			Q_INIT_RESOURCE(colorschemes);
 			Q_INIT_RESOURCE(documents);
 			Q_INIT_RESOURCE(meshmc);
 			Q_INIT_RESOURCE(shaders);
@@ -159,12 +159,6 @@ int main(int argc, char* argv[])
 			Q_INIT_RESOURCE(pe_light);
 			Q_INIT_RESOURCE(pe_blue);
 			Q_INIT_RESOURCE(pe_colored);
-			Q_INIT_RESOURCE(breeze_dark);
-			Q_INIT_RESOURCE(breeze_light);
-			Q_INIT_RESOURCE(OSX);
-			Q_INIT_RESOURCE(iOS);
-			Q_INIT_RESOURCE(flat);
-			Q_INIT_RESOURCE(flat_white);
 
 			int ret = app.exec();
 

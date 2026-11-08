@@ -41,8 +41,8 @@
 #include "ui/pages/global/CustomCommandsPage.h"
 #include "ui/pages/global/AppearancePage.h"
 
-#include "ui/themes/ITheme.h"
-#include "ui/themes/ThemeManager.h"
+#include "ui/themes/AppearanceManager.h"
+#include "ui/themes/ThemedIcons.h"
 
 #include "ui/setupwizard/SetupWizard.h"
 #include "ui/setupwizard/JavaWizardPage.h"
@@ -1025,21 +1025,17 @@ void Application::initSubsystems()
 		qDebug() << "<> Instance icons intialized.";
 	}
 
-	// Icon themes
+	// Icons, colour scheme and widget style. The bundled icon theme is in the
+	// resources, which is where QIcon is to look for it.
 	{
-		// TODO: icon themes and instance icons do not mesh well together.
-		// Rearrange and fix discrepancies! set icon theme search path!
 		auto searchPaths = QIcon::themeSearchPaths();
 		searchPaths.prepend(QStringLiteral(":/icons"));
-		searchPaths.append("iconthemes");
 		QIcon::setThemeSearchPaths(searchPaths);
-		qDebug() << "<> Icon themes initialized.";
-	}
 
-	// Initialize widget themes
-	{
-		m_themeManager = std::make_unique<ThemeManager>();
-		qDebug() << "<> Widget themes initialized.";
+		m_appearance = std::make_unique<AppearanceManager>(
+			dynamic_cast<KConfigSettingsObject*>(m_settings.get()),
+			m_typedSettings);
+		qDebug() << "<> Appearance initialized.";
 	}
 
 	// initialize and load all instances
@@ -1154,10 +1150,6 @@ void Application::initSubsystems()
 		}
 	});
 
-	{
-		m_themeManager->applyCurrentlySelectedTheme(true);
-		qDebug() << "<> Theme applied.";
-	}
 }
 
 bool Application::createSetupWizard()
@@ -1468,24 +1460,9 @@ std::shared_ptr<JavaInstallList> Application::javalist()
 	return m_javalist;
 }
 
-std::vector<ITheme*> Application::getValidApplicationThemes()
+AppearanceManager* Application::appearance() const
 {
-	return m_themeManager->allThemes();
-}
-
-void Application::setApplicationTheme(const QString& name, bool initial)
-{
-	m_themeManager->setApplicationTheme(name, initial);
-}
-
-void Application::setIconTheme(const QString& name)
-{
-	m_themeManager->setIconTheme(name);
-}
-
-ThemeManager* Application::themeManager() const
-{
-	return m_themeManager.get();
+	return m_appearance.get();
 }
 
 QIcon Application::getThemedIcon(const QString& name)
@@ -1493,7 +1470,7 @@ QIcon Application::getThemedIcon(const QString& name)
 	if (name == "logo") {
 		return QIcon(":/org.projecttick.MeshMC.svg");
 	}
-	return QIcon::fromTheme(name);
+	return ThemedIcons::icon(name);
 }
 
 bool Application::openJsonEditor(const QString& filename)
