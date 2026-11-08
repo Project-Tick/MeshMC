@@ -34,6 +34,8 @@
 #include <QMap>
 #include <QString>
 
+#include <KLocalizedString>
+
 #include "CrashReportDialog.h"
 
 static QString readLogFile(const QString& logDir, const QString& baseName)
@@ -146,6 +148,13 @@ int main(int argc, char* argv[])
 	QApplication app(argc, argv);
 	app.setApplicationName("meshmc-crashreporter");
 	app.setApplicationVersion("1.0");
+
+	// Same catalog as the launcher; follows the system locale, since the
+	// launcher's language setting is not passed on to this process.
+	KLocalizedString::setApplicationDomain("meshmc");
+	KLocalizedString::addDomainLocaleDir(
+		"meshmc", QDir::cleanPath(QCoreApplication::applicationDirPath() +
+								  QStringLiteral("/" MESHMC_LOCALE_RELATIVE_DIR)));
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription("MeshMC Crash Reporter");

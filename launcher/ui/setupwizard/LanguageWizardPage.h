@@ -31,10 +31,6 @@ class LanguageWizardPage : public BaseWizardPage
 
 	virtual ~LanguageWizardPage();
 
-	bool wantsRefreshButton() override;
-
-	void refresh() override;
-
 	bool validatePage() override;
 
   protected:

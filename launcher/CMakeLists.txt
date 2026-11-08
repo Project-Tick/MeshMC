@@ -124,6 +124,17 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+# Strings of the .ui files go through KI18n like every other string: with
+# `-tr tr2i18n` uic emits tr2i18n("text", "comment") instead of
+# QCoreApplication::translate(), so they are looked up in the "meshmc" gettext
+# catalog. The default would only find them in a QTranslator, and there is no
+# QTranslator for the application any more. Must be set before the first target
+# is created (AUTOUIC_OPTIONS is initialised from it); qt6_wrap_ui below takes
+# the same options. update.sh / extract-ui-strings.py extract exactly the
+# strings these options compile in.
+set(MeshMC_UIC_I18N_OPTIONS -tr tr2i18n --include klocalizedstring.h)
+set(CMAKE_AUTOUIC_OPTIONS ${MeshMC_UIC_I18N_OPTIONS})
+
 # Add executable
 add_library(MeshMC_logic STATIC)
 
@@ -326,6 +337,13 @@ endif()
 # Cost, knowingly accepted: __FILE__ is baked into the binary for each
 # translation unit that logs, so the binary grows and carries build paths.
 target_compile_definitions(MeshMC_logic PUBLIC QT_MESSAGELOGCONTEXT)
+
+# Where the installed .mo catalogs are, relative to the directory of the
+# executable; computed in the top-level CMakeLists. Used by
+# TranslationsModel::bundledCatalogDir().
+target_compile_definitions(MeshMC_logic PRIVATE
+    MESHMC_LOCALE_RELATIVE_DIR="${MeshMC_LOCALE_RELATIVE_DIR}")
+
 target_link_libraries(MeshMC_logic
     Qt6::Core
     Qt6::Xml
@@ -485,7 +503,8 @@ if(NOT APPLE)
     )
 
     # Never the versionless wrapper, for the same reason as MESHMC_UI above.
-    qt6_wrap_ui(MESHUPDATER_UI ${MESHUPDATER_UI_FILES})
+    qt6_wrap_ui(MESHUPDATER_UI ${MESHUPDATER_UI_FILES}
+        OPTIONS ${MeshMC_UIC_I18N_OPTIONS})
 
     set(MESHUPDATER_SOURCES
         updater/meshupdater/MeshUpdaterApp.h
@@ -534,6 +553,8 @@ if(NOT APPLE)
     add_library(meshmc_updater_logic STATIC ${MESHUPDATER_SOURCES} ${MESHUPDATER_UI})
     target_include_directories(meshmc_updater_logic PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
     target_compile_definitions(meshmc_updater_logic PUBLIC QT_MESSAGELOGCONTEXT)
+    target_compile_definitions(meshmc_updater_logic PRIVATE
+        MESHMC_LOCALE_RELATIVE_DIR="${MeshMC_LOCALE_RELATIVE_DIR}")
     target_link_libraries(meshmc_updater_logic
         Qt6::Core
         Qt6::Gui

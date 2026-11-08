@@ -22,6 +22,7 @@
 
 #include <QStandardPaths>
 #include <QTimer>
+#include <KLazyLocalizedString>
 #include <KLocalizedString>
 
 #include "launch/LaunchTask.h"
@@ -127,11 +128,14 @@ void MeshMCPartLaunch::executeTask()
 		auto realWrapperCommand =
 			QStandardPaths::findExecutable(wrapperCommand);
 		if (realWrapperCommand.isEmpty()) {
-			const char* reason =
-				QT_TR_NOOP("The wrapper command \"%1\" couldn't be found.");
-			emit logLine(QString(reason).arg(wrapperCommand),
+			// The log stays in English, it ends up in bug reports; only the
+			// failure reason shown to the user is translated.
+			const KLazyLocalizedString reason =
+				kli18n("The wrapper command \"%1\" couldn't be found.");
+			emit logLine(QString::fromUtf8(reason.untranslatedText())
+							 .arg(wrapperCommand),
 						 MessageLevel::Fatal);
-			emitFailed(tr(reason).arg(wrapperCommand));
+			emitFailed(reason.subs(wrapperCommand).toString());
 			return;
 		}
 		emit logLine("Wrapper command is:\n" + wrapperCommandStr + "\n\n",
@@ -147,10 +151,13 @@ void MeshMCPartLaunch::on_state(LoggedProcess::State state)
 {
 	switch (state) {
 		case LoggedProcess::FailedToStart: {
-			//: Error message displayed if instace can't start
-			const char* reason = QT_TR_NOOP("Could not launch minecraft!");
-			emit logLine(reason, MessageLevel::Fatal);
-			emitFailed(tr(reason));
+			// i18n: Error message displayed if instance can't start
+			const KLazyLocalizedString reason =
+				kli18n("Could not launch minecraft!");
+			// The log stays in English, only the failure reason is translated.
+			emit logLine(QString::fromUtf8(reason.untranslatedText()),
+						 MessageLevel::Fatal);
+			emitFailed(reason.toString());
 			return;
 		}
 		case LoggedProcess::Aborted:

@@ -1202,7 +1202,7 @@ void Application::initSubsystems()
 
 	// load translations
 	{
-		m_translations.reset(new TranslationsModel("translations"));
+		m_translations.reset(new TranslationsModel());
 		auto bcp47Name = m_settings->get("Language").toString();
 		m_translations->selectLanguage(bcp47Name);
 		qDebug() << "Your language is" << bcp47Name;
@@ -1352,16 +1352,11 @@ void Application::initSubsystems()
 		m_metacache->addBase("ContentImages",
 							 QDir("cache/ContentImages").absolutePath());
 		m_metacache->addBase("root", QDir::currentPath());
-		m_metacache->addBase("translations",
-							 QDir("translations").absolutePath());
 		m_metacache->addBase("icons", QDir("cache/icons").absolutePath());
 		m_metacache->addBase("meta", QDir("meta").absolutePath());
 		m_metacache->Load();
 		qDebug() << "<> Cache initialized.";
 	}
-
-	// now we have network, download translation updates
-	m_translations->downloadIndex();
 
 	// FIXME: what to do with these?
 	m_profilers.insert("jprofiler", std::make_shared<JProfilerFactory>());

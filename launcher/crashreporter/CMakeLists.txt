@@ -63,6 +63,10 @@ target_link_libraries(meshmc-crashreporter
         KF6::I18n
 )
 
+# Catalogs are shared with the launcher, see the top-level CMakeLists.
+target_compile_definitions(meshmc-crashreporter PRIVATE
+    MESHMC_LOCALE_RELATIVE_DIR="${MeshMC_LOCALE_RELATIVE_DIR}")
+
 if(APPLE)
     set_target_properties(meshmc-crashreporter PROPERTIES
         INSTALL_RPATH "@executable_path/../Frameworks"

@@ -78,7 +78,7 @@ void BackupPage::refreshList()
 	}
 
 	const int count = m_entries.size();
-	ui->statusLabel->setText(tr("%1 backup", "%1 backups", count));
+	ui->statusLabel->setText(i18np("%1 backup", "%1 backups", count));
 	updateButtons();
 }
 

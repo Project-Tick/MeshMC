@@ -84,5 +84,4 @@ void LanguageSelectionWidget::languageRowChanged(const QModelIndex& current,
 	auto translations = APPLICATION->translations();
 	QString key = translations->data(current, Qt::UserRole).toString();
 	translations->selectLanguage(key);
-	translations->updateLanguage(key);
 }

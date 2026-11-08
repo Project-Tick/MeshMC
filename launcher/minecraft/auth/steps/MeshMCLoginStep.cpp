@@ -94,5 +94,5 @@ void MeshMCLoginStep::onRequestDone(QNetworkReply::NetworkError error,
 			i18n("Failed to parse the Minecraft access token response."));
 		return;
 	}
-	emit finished(AccountTaskState::STATE_WORKING, i18n(""));
+	emit finished(AccountTaskState::STATE_WORKING, QString());
 }

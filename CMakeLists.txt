@@ -414,6 +414,7 @@ if(UNIX AND APPLE)
     set(PLUGIN_DEST_DIR "MeshMC.app/Contents/MacOS")
     set(RESOURCES_DEST_DIR "MeshMC.app/Contents/Resources")
     set(JARS_DEST_DIR "MeshMC.app/Contents/Resources/jars")
+    set(MeshMC_LOCALE_DEST_DIR "MeshMC.app/Contents/Resources/locale")
     set(BUNDLE_DEST_DIR ".")
     set(MMCO_MODULES_DEST_DIR
         "MeshMC.app/Contents/Resources/mmcmodules")
@@ -489,6 +490,7 @@ elseif(UNIX)
     set(BINARY_DEST_DIR "${KDE_INSTALL_BINDIR}")
     set(LIBRARY_DEST_DIR "${KDE_INSTALL_LIBDIR}")
     set(JARS_DEST_DIR "share/MeshMC")
+    set(MeshMC_LOCALE_DEST_DIR "share/locale")
     set(MMCO_MODULES_DEST_DIR "share/MeshMC/mmcmodules")
     set(MMCO_PLUGIN_DATA_DEST_DIR "${MMCO_MODULES_DEST_DIR}")
     set(PRIVATE_LIBRARY_DEST_DIR "${KDE_INSTALL_LIBDIR}/meshmc")
@@ -521,6 +523,7 @@ elseif(WIN32)
     set(FRAMEWORK_DEST_DIR ".")
     set(RESOURCES_DEST_DIR ".")
     set(JARS_DEST_DIR "jars")
+    set(MeshMC_LOCALE_DEST_DIR "share/locale")
     # Windows keeps the flat layout it has always used: .mmco files
     # next to meshmc.exe under <install>/mmcmodules. Variable exists
     # so plugin CMakeLists files can refer to it uniformly.
@@ -533,6 +536,14 @@ elseif(WIN32)
 else()
     message(FATAL_ERROR "Platform not supported")
 endif()
+
+# Where the installed .mo catalogs are, relative to the directory the
+# executables live in (../share/locale on Linux, ../Resources/locale in the
+# macOS bundle, share/locale on Windows). The launcher, the crash reporter and
+# the updater all sit in BINARY_DEST_DIR and hand this to
+# KLocalizedString::addDomainLocaleDir().
+file(RELATIVE_PATH MeshMC_LOCALE_RELATIVE_DIR
+    "/${BINARY_DEST_DIR}" "/${MeshMC_LOCALE_DEST_DIR}")
 
 ################################ Included Libs ################################
 
@@ -607,4 +618,11 @@ feature_summary(
     FATAL_ON_MISSING_REQUIRED_PACKAGES
 )
 
+# Compiles po/<lang>/meshmc.po into <lang>/LC_MESSAGES/meshmc.mo and installs
+# them. The destination is MeshMC_LOCALE_DEST_DIR (set per platform above)
+# because main.cpp looks for the catalogs relative to the executable, see
+# MESHMC_LOCALE_RELATIVE_DIR in launcher/CMakeLists.txt; KI18n's own default
+# (<prefix>/share/locale via XDG_DATA_DIRS) does not exist in a bundle or a
+# portable install.
+set(KDE_INSTALL_LOCALEDIR "${MeshMC_LOCALE_DEST_DIR}")
 ki18n_install(po)

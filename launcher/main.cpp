@@ -136,9 +136,9 @@ int main(int argc, char* argv[])
 	}
 #endif
 
-	Application app(argc, argv);
-
 	KLocalizedString::setApplicationDomain("meshmc");
+
+	Application app(argc, argv);
 
 	KAboutData aboutData(
 		QStringLiteral("MeshMC"),

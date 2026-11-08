@@ -25,6 +25,7 @@
 #include "MMCZip.h"
 #include "FileSystem.h"
 #include <QDir>
+#include <KLazyLocalizedString>
 
 #ifdef major
 #undef major
@@ -100,15 +101,19 @@ void ExtractNatives::executeTask()
 		QString error;
 		if (!unzipNatives(source, outputPath, jniHackEnabled, nativeOpenAL,
 						  nativeGLFW, &error)) {
-			const char* reason = QT_TR_NOOP(
+			// The log stays in English, it ends up in bug reports; only the
+			// failure reason shown to the user is translated.
+			const KLazyLocalizedString reason = kli18n(
 				"Couldn't extract native jar '%1' to destination '%2': %3");
-			emit logLine(QString(reason).arg(source, outputPath, error),
+			emit logLine(QString::fromUtf8(reason.untranslatedText())
+							 .arg(source, outputPath, error),
 						 MessageLevel::Fatal);
 			// Must not fall through: continuing the loop and reaching
 			// emitSucceeded() below made this task report both failed and
 			// succeeded, so a launch with zero usable natives looked fine to
 			// everything downstream.
-			emitFailed(tr(reason).arg(source, outputPath, error));
+			emitFailed(
+				reason.subs(source).subs(outputPath).subs(error).toString());
 			return;
 		}
 	}

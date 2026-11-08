@@ -39,17 +39,6 @@ LanguageWizardPage::LanguageWizardPage(QWidget* parent) : BaseWizardPage(parent)
 
 LanguageWizardPage::~LanguageWizardPage() {}
 
-bool LanguageWizardPage::wantsRefreshButton()
-{
-	return true;
-}
-
-void LanguageWizardPage::refresh()
-{
-	auto translations = APPLICATION->translations();
-	translations->downloadIndex();
-}
-
 bool LanguageWizardPage::validatePage()
 {
 	auto settings = APPLICATION->settings();

@@ -25,11 +25,21 @@
 
 struct Language;
 
+/*!
+ * The languages MeshMC is translated into, and the selection of the one in
+ * use.
+ *
+ * The translations are the po/<language>/meshmc.po files of the repository,
+ * compiled to .mo catalogs and installed together with the program (see
+ * ki18n_install() in the top-level CMakeLists). Nothing is downloaded: a
+ * language is listed if its catalog is installed, and the application's
+ * strings are looked up by KI18n.
+ */
 class TranslationsModel : public QAbstractListModel
 {
 	Q_OBJECT
   public:
-	explicit TranslationsModel(QString path, QObject* parent = 0);
+	explicit TranslationsModel(QObject* parent = nullptr);
 	virtual ~TranslationsModel();
 
 	QVariant data(const QModelIndex& index,
@@ -40,29 +50,23 @@ class TranslationsModel : public QAbstractListModel
 	int columnCount(const QModelIndex& parent) const override;
 
 	bool selectLanguage(QString key);
-	void updateLanguage(QString key);
 	QModelIndex selectedIndex();
 	QString selectedLanguage();
 
-	void downloadIndex();
+	/*!
+	 * Directory with the catalogs that were installed together with the
+	 * program: <dir>/<language>/LC_MESSAGES/meshmc.mo.
+	 */
+	static QString bundledCatalogDir();
 
   private:
 	Language* findLanguage(const QString& key);
-	void reloadLocalFiles();
-	void downloadTranslation(QString key);
-	void downloadNext();
+	void loadLanguages();
 
 	// hide copy constructor
 	TranslationsModel(const TranslationsModel&) = delete;
 	// hide assign op
 	TranslationsModel& operator=(const TranslationsModel&) = delete;
-
-  private slots:
-	void indexReceived();
-	void indexFailed(QString reason);
-	void dlFailed(QString reason);
-	void dlGood();
-	void translationDirChanged(const QString& path);
 
   private: /* data */
 	struct Private;

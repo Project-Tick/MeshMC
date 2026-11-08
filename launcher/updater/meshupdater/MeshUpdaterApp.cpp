@@ -22,6 +22,7 @@
 #include <QCommandLineParser>
 #include <QDateTime>
 #include <QDebug>
+#include <QDir>
 #include <QDirIterator>
 #include <QElapsedTimer>
 #include <QFileInfo>
@@ -417,6 +418,14 @@ MeshUpdaterApp::MeshUpdaterApp(int& argc, char** argv) : QApplication(argc, argv
 	setApplicationName("MeshMC" + QStringLiteral("Updater"));
 	setApplicationVersion(BuildConfig.printableVersionString() +
 						  QLatin1Char('\n') + BuildConfig.GIT_COMMIT);
+
+	// Same catalog as the launcher. Without the domain every i18n() below
+	// returns the English text. The updater cannot ask the launcher which
+	// language is selected, so it follows the system locale.
+	KLocalizedString::setApplicationDomain("meshmc");
+	KLocalizedString::addDomainLocaleDir(
+		"meshmc", QDir::cleanPath(applicationDirPath() +
+								  QStringLiteral("/" MESHMC_LOCALE_RELATIVE_DIR)));
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription(
