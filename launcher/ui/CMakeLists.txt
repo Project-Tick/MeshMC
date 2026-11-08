@@ -11,6 +11,8 @@ target_sources(MeshMC_logic PRIVATE
     MacMenuBar.cpp
     InstanceWindow.h
     InstanceWindow.cpp
+    WindowState.h
+    WindowState.cpp
 )
 
 add_subdirectory(setupwizard)

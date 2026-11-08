@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <QMainWindow>
+#include <KMainWindow>
 #include <QSystemTrayIcon>
 
 #include "LaunchController.h"
@@ -32,7 +32,7 @@
 
 class QPushButton;
 class PageContainer;
-class InstanceWindow : public QMainWindow, public BasePageContainer
+class InstanceWindow : public KMainWindow, public BasePageContainer
 {
 	Q_OBJECT
 

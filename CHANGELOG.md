@@ -24,6 +24,7 @@
 * KIconThemes migration has been completed.
 * The MeshMC News section is now displayed via KF6 Syndication.
 * KFormat migration has been completed.
+* KMainWindow migration has been completed.
 
 ## Removed
 

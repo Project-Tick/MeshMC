@@ -58,9 +58,9 @@ class GlobalSettingsSetupTest : public QObject
 	void test_EverySettingIsThere()
 	{
 		Fixture f;
-		// 77 now: a setting that is added brings this up, one that is lost
+		// 73 now: a setting that is added brings this up, one that is lost
 		// would make a caller's get() return nothing.
-		QVERIFY(f.settings.allSettings().size() >= 77);
+		QVERIFY(f.settings.allSettings().size() >= 73);
 		for (const char* id :
 			 {"InstanceDir", "JavaPath", "ProxyType", "MinMemAlloc",
 			  "InstSortMode", "CurseForgeAPIKey", "PasteEEAPIKey",
@@ -163,18 +163,18 @@ class GlobalSettingsSetupTest : public QObject
 		auto* typed = typedGlobalSettings(&f.settings);
 		int changed = 0;
 		QVariant seen;
-		connect(f.settings.getSetting("MainWindowGeometry").get(),
+		connect(f.settings.getSetting("NewInstanceGeometry").get(),
 				&Setting::SettingChanged, this,
 				[&](const Setting&, const QVariant& value) {
 					++changed;
 					seen = value;
 				});
-		typed->setMainWindowGeometry(QStringLiteral("AAEC"));
+		typed->setNewInstanceGeometry(QStringLiteral("AAEC"));
 		typed->setSelectedInstance(QStringLiteral("abc"));
 		typed->save();
 		QCOMPARE(changed, 1);
 		QCOMPARE(seen.toString(), QString("AAEC"));
-		QCOMPARE(f.settings.get("MainWindowGeometry").toString(),
+		QCOMPARE(f.settings.get("NewInstanceGeometry").toString(),
 				 QString("AAEC"));
 		QCOMPARE(f.settings.get("SelectedInstance").toString(),
 				 QString("abc"));

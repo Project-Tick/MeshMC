@@ -128,6 +128,23 @@ set_property(TEST SettingsBinding_test APPEND PROPERTY ENVIRONMENT
     "QT_QPA_PLATFORM=offscreen"
     )
 
+add_unit_test(WindowState
+    SOURCES ui/WindowState_test.cpp
+    LIBS MeshMC_logic
+    )
+set_property(TEST WindowState_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    )
+
+add_unit_test(NewsFeed
+    SOURCES news/NewsFeed_test.cpp
+    LIBS MeshMC_logic
+    )
+# QTEST_MAIN makes a QApplication, which wants a display; none is needed.
+set_property(TEST NewsFeed_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    )
+
 add_unit_test(Translations
     SOURCES translations/Translations_test.cpp
     LIBS MeshMC_logic
