@@ -411,7 +411,6 @@ target_link_libraries(MeshMC_logic
     KF6::Crash
     LibArchive::LibArchive
     cmark::cmark
-    rainbow
     LocalPeer::LocalPeer
 )
 
@@ -816,7 +815,7 @@ if(WIN32 OR (UNIX AND APPLE))
     # environment variable) so RUNTIME_DEPENDENCY_SET can locate third-party
     # DLLs that live in a dependency prefix.
     #
-    # nbt++/rainbow are NOT handled here: they are our own targets in
+    # nbt++ are NOT handled here: they are our own targets in
     # this build tree, and the top-level CMakeLists.txt installs them directly
     # to the right place. Everything else under libraries/ links statically.
     set(_prefix_path_bins "")
