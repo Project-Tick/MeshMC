@@ -30,6 +30,7 @@
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "modplatform/flame/FlameContentModel.h"
 #include "modplatform/modrinth/ModrinthContentModel.h"
+#include "settings/GlobalSettings.h"
 #include "settings/SettingsObject.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include "ui/pages/modplatform/ContentProviderPage.h"
@@ -142,8 +143,7 @@ DownloadContentDialog::DownloadContentDialog(
 	connect(helpButton, &QPushButton::clicked, m_container,
 			&PageContainer::help);
 
-	const QString saved =
-		APPLICATION->settings()->get(geometrySaveKey()).toString();
+	const QString saved = savedGeometry();
 	if (!saved.isEmpty()) {
 		restoreGeometry(QByteArray::fromBase64(saved.toUtf8()));
 	}
@@ -394,25 +394,41 @@ void DownloadContentDialog::onPageChanged(BasePage* previous,
 	selectedPage->setSearchTerm(previousPage->searchTerm());
 }
 
-QString DownloadContentDialog::geometrySaveKey() const
+QString DownloadContentDialog::savedGeometry() const
 {
+	auto* settings = APPLICATION->globalSettings();
 	switch (m_contentType) {
 		case ModPlatform::ContentType::Mod:
-			return QStringLiteral("ModDownloadGeometry");
+			return settings->modDownloadGeometry();
 		case ModPlatform::ContentType::ResourcePack:
-			return QStringLiteral("RPDownloadGeometry");
+			return settings->rPDownloadGeometry();
 		case ModPlatform::ContentType::ShaderPack:
-			return QStringLiteral("ShaderDownloadGeometry");
+			return settings->shaderDownloadGeometry();
 		case ModPlatform::ContentType::DataPack:
-			return QStringLiteral("DataPackDownloadGeometry");
+			return settings->dataPackDownloadGeometry();
 	}
-	return QStringLiteral("ModDownloadGeometry");
+	return settings->modDownloadGeometry();
 }
 
 void DownloadContentDialog::saveGeometryState()
 {
-	APPLICATION->settings()->set(
-		geometrySaveKey(), QString::fromUtf8(saveGeometry().toBase64()));
+	auto* settings = APPLICATION->globalSettings();
+	const QString geometry = QString::fromLatin1(saveGeometry().toBase64());
+	switch (m_contentType) {
+		case ModPlatform::ContentType::Mod:
+			settings->setModDownloadGeometry(geometry);
+			break;
+		case ModPlatform::ContentType::ResourcePack:
+			settings->setRPDownloadGeometry(geometry);
+			break;
+		case ModPlatform::ContentType::ShaderPack:
+			settings->setShaderDownloadGeometry(geometry);
+			break;
+		case ModPlatform::ContentType::DataPack:
+			settings->setDataPackDownloadGeometry(geometry);
+			break;
+	}
+	settings->save();
 }
 
 void DownloadContentDialog::accept()

@@ -26,7 +26,7 @@
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 #include "net/ChecksumValidator.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 
 #include "BuildConfig.h"
 #include "Application.h"
@@ -211,7 +211,7 @@ namespace ModpacksCH
 		auto instanceConfigPath =
 			FS::PathCombine(m_stagingPath, "instance.cfg");
 		auto instanceSettings =
-			std::make_shared<INISettingsObject>(instanceConfigPath);
+			std::make_shared<KConfigSettingsObject>(instanceConfigPath);
 		instanceSettings->suspendSave();
 		instanceSettings->registerSetting("InstanceType", "Legacy");
 		instanceSettings->set("InstanceType", "OneSix");

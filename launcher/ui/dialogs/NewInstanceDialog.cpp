@@ -19,6 +19,7 @@
  */
 
 #include "Application.h"
+#include "settings/GlobalSettings.h"
 #include "NewInstanceDialog.h"
 #include "ui_NewInstanceDialog.h"
 
@@ -82,7 +83,7 @@ NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 	 * having been removed from the settings since.
 	 */
 	const QString lastUsedDir =
-		APPLICATION->settings()->get("LastUsedInstDirForNewInstance").toString();
+		APPLICATION->globalSettings()->lastUsedInstDirForNewInstance();
 	const int lastUsedIdx = ui->instDirBox->findData(lastUsedDir);
 	ui->instDirBox->setCurrentIndex(lastUsedIdx >= 0 ? lastUsedIdx : 0);
 
@@ -130,20 +131,22 @@ NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 	updateDialogState();
 
 	restoreGeometry(QByteArray::fromBase64(
-		APPLICATION->settings()->get("NewInstanceGeometry").toByteArray()));
+		APPLICATION->globalSettings()->newInstanceGeometry().toUtf8()));
 }
 
 void NewInstanceDialog::reject()
 {
-	APPLICATION->settings()->set("NewInstanceGeometry",
-								 saveGeometry().toBase64());
+	APPLICATION->globalSettings()->setNewInstanceGeometry(
+		QString::fromLatin1(saveGeometry().toBase64()));
+	APPLICATION->globalSettings()->save();
 	QDialog::reject();
 }
 
 void NewInstanceDialog::accept()
 {
-	APPLICATION->settings()->set("NewInstanceGeometry",
-								 saveGeometry().toBase64());
+	APPLICATION->globalSettings()->setNewInstanceGeometry(
+		QString::fromLatin1(saveGeometry().toBase64()));
+	APPLICATION->globalSettings()->save();
 	importIconNow();
 	QDialog::accept();
 }
@@ -219,7 +222,7 @@ void NewInstanceDialog::refreshInstDirBox()
 	 * nothing they asked. The resolved path is still what gets selected -
 	 * it is carried in the item's data. */
 	const QString rawPrimary =
-		APPLICATION->settings()->get("InstanceDir").toString();
+		APPLICATION->globalSettings()->instanceDir();
 
 	const QStringList dirs = APPLICATION->instances()->instanceDirs();
 	for (int i = 0; i < dirs.size(); i++) {
@@ -307,6 +310,7 @@ void NewInstanceDialog::importIconNow()
 		InstIconKey = importIconName;
 		importIcon = false;
 	}
-	APPLICATION->settings()->set("NewInstanceGeometry",
-								 saveGeometry().toBase64());
+	APPLICATION->globalSettings()->setNewInstanceGeometry(
+		QString::fromLatin1(saveGeometry().toBase64()));
+	APPLICATION->globalSettings()->save();
 }

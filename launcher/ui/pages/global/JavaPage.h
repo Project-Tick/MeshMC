@@ -63,7 +63,6 @@ class JavaPage : public QWidget, public BasePage
 
   private:
 	void applySettings();
-	void loadSettings();
 	void refreshInstalledJavas();
 
   private slots:

@@ -38,6 +38,7 @@
 #include "ui/widgets/VersionSelectWidget.h"
 
 #include "Application.h"
+#include "settings/GlobalSettings.h"
 #include "BuildConfig.h"
 #include <KLocalizedString>
 
@@ -148,11 +149,11 @@ void JavaSettingsWidget::initialize()
 {
 	m_versionWidget->initialize(APPLICATION->javalist().get());
 	m_versionWidget->setResizeOn(2);
-	auto s = APPLICATION->settings();
+	auto s = APPLICATION->globalSettings();
 	// Memory
-	observedMinMemory = s->get("MinMemAlloc").toInt();
-	observedMaxMemory = s->get("MaxMemAlloc").toInt();
-	observedPermGenMemory = s->get("PermGen").toInt();
+	observedMinMemory = s->minMemAlloc();
+	observedMaxMemory = s->maxMemAlloc();
+	observedPermGenMemory = s->permGen();
 	m_minMemSpinBox->setValue(observedMinMemory);
 	m_maxMemSpinBox->setValue(observedMaxMemory);
 	m_permGenSpinBox->setValue(observedPermGenMemory);

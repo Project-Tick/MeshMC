@@ -18,6 +18,7 @@
  */
 
 #include "GuiUtil.h"
+#include "settings/GlobalSettings.h"
 
 #include <QClipboard>
 #include <QStandardPaths>
@@ -38,7 +39,7 @@ QString GuiUtil::uploadPaste(const QString& text, QWidget* parentWidget)
 {
 	ProgressDialog dialog(parentWidget);
 	auto APIKeySetting =
-		APPLICATION->settings()->get("PasteEEAPIKey").toString();
+		APPLICATION->globalSettings()->pasteEEAPIKey();
 	if (APIKeySetting == "meshmc") {
 		APIKeySetting = BuildConfig.PASTE_EE_KEY;
 	}

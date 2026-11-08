@@ -215,12 +215,13 @@ class InstanceList : public QAbstractListModel
 	/* The "AdditionalInstanceDirs" setting, decoded and encoded.
 	 *
 	 * It is stored as a JSON array inside a single string rather than as a
-	 * QStringList, because INIFile writes every value out through
-	 * QVariant::toString() - and that yields an *empty string* for a list
-	 * holding anything other than exactly one element. Stored as a list,
+	 * QStringList, because KConfigSettingsObject writes every value out
+	 * through QVariant::toString() - and that yields an *empty string* for a
+	 * list holding anything other than exactly one element. Stored as a list,
 	 * the setting would come back empty on the next launch and the user's
 	 * extra folders would quietly disappear. Prism can store a list
-	 * directly because it keeps settings in QSettings; we cannot.
+	 * directly because it keeps settings in QSettings; MeshMC's settings
+	 * layer keeps every value a string.
 	 *
 	 * JSON rather than a joined string because these are filesystem paths,
 	 * and any separator worth picking is a character that some path is

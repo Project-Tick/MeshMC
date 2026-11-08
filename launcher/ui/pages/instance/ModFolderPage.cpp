@@ -19,6 +19,7 @@
  */
 
 #include "ModFolderPage.h"
+#include "settings/GlobalSettings.h"
 #include "ui_ModFolderPage.h"
 
 #include <QMessageBox>
@@ -428,7 +429,7 @@ void ModFolderPage::on_actionAdd_triggered()
 		i18nc("Select whatever type of files the page contains. "
 						"Example: 'Loader Mods'", "Select %1", m_displayName),
 		m_fileSelectionFilter.arg(m_displayName),
-		APPLICATION->settings()->get("CentralModsDir").toString(),
+		APPLICATION->globalSettings()->centralModsDir(),
 		this->parentWidget());
 	if (!list.empty()) {
 		for (auto filename : list) {

@@ -28,7 +28,6 @@ class JVisualVMFactory : public BaseProfilerFactory
 	{
 		return "JVisualVM";
 	}
-	void registerSettings(SettingsObjectPtr settings) override;
 	BaseExternalTool* createTool(InstancePtr instance,
 								 QObject* parent = 0) override;
 	bool check(QString* error) override;

@@ -18,6 +18,7 @@
  */
 
 #include "Application.h"
+#include "settings/GlobalSettings.h"
 #include "BuildConfig.h"
 #include "FileSystem.h"
 
@@ -62,7 +63,7 @@ static void launchCrashReporter()
 
 	QString apiKey = "public";
 	if (APPLICATION && APPLICATION->settings()) {
-		QString key = APPLICATION->settings()->get("PasteEEAPIKey").toString();
+		QString key = APPLICATION->globalSettings()->pasteEEAPIKey();
 		if (key != "meshmc" && !key.isEmpty()) {
 			apiKey = key;
 		} else {
@@ -135,6 +136,8 @@ int main(int argc, char* argv[])
 		}
 	}
 #endif
+
+	QCoreApplication::setApplicationName(QStringLiteral("MeshMC"));
 
 	KLocalizedString::setApplicationDomain("meshmc");
 

@@ -37,13 +37,14 @@
 #include <QProcessEnvironment>
 #include <QProgressDialog>
 #include <QRegularExpression>
-#include <QSettings>
 #include <QStandardPaths>
 #include <QSysInfo>
 #include <QTextStream>
 #include <QThread>
 #include <QTimer>
 
+#include <KConfig>
+#include <KConfigGroup>
 #include <KLocalizedString>
 
 #include <mutex>
@@ -734,15 +735,15 @@ bool MeshUpdaterApp::startLogging()
 	const QString rulesPath =
 		QDir(m_dataPath).absoluteFilePath(QStringLiteral("qtlogging.ini"));
 	if (QFileInfo::exists(rulesPath)) {
-		QSettings rules(rulesPath, QSettings::IniFormat);
-		rules.beginGroup(QStringLiteral("Rules"));
+		KConfig rules(rulesPath, KConfig::SimpleConfig);
+		const KConfigGroup rulesGroup =
+			rules.group(QStringLiteral("Rules"));
 		QStringList filters;
-		const QStringList keys = rules.childKeys();
+		const QStringList keys = rulesGroup.keyList();
 		for (const QString& key : keys) {
 			filters.append(QStringLiteral("%1=%2").arg(
-				key, rules.value(key).toString()));
+				key, rulesGroup.readEntry(key, QString())));
 		}
-		rules.endGroup();
 		if (!filters.isEmpty())
 			QLoggingCategory::setFilterRules(filters.join(QLatin1Char('\n')));
 	}

@@ -18,6 +18,7 @@
  */
 
 #include "LaunchController.h"
+#include "settings/GlobalSettings.h"
 #include "minecraft/auth/AccountList.h"
 #include "Application.h"
 #include "plugin/PluginManager.h"
@@ -468,7 +469,7 @@ void LaunchController::launchInstance()
 	// prependStep() calls stack in reverse, so this ends up between the
 	// version banner and the "Launched instance in ..." line — before
 	// any step that could touch the instance directory.
-	if (APPLICATION->settings()->get("BackupBeforeLaunch").toBool()) {
+	if (APPLICATION->globalSettings()->backupBeforeLaunch()) {
 		m_launcher->prependStep(new CreateBackup(m_launcher.get()));
 	}
 

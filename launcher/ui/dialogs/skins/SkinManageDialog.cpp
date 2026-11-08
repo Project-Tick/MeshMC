@@ -18,6 +18,7 @@
  */
 
 #include "SkinManageDialog.h"
+#include "settings/GlobalSettings.h"
 #include "ui_SkinManageDialog.h"
 
 #include <QAction>
@@ -121,7 +122,7 @@ namespace
 SkinManageDialog::SkinManageDialog(QWidget* parent,
 								   MinecraftAccountPtr account)
 	: QDialog(parent), m_account(account), m_ui(new Ui::SkinManageDialog),
-	  m_library(this, APPLICATION->settings()->get("SkinsDir").toString(),
+	  m_library(this, APPLICATION->globalSettings()->skinsDir(),
 				account)
 {
 	m_ui->setupUi(this);

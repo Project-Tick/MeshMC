@@ -19,13 +19,14 @@
  */
 
 #include "InstanceImportTask.h"
+#include "settings/GlobalSettings.h"
 #include "BaseInstance.h"
 #include "FileSystem.h"
 #include "Application.h"
 #include "InstanceList.h"
 #include "MMCZip.h"
 #include "NullInstance.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "icons/IconUtils.h"
 #include <QRegularExpression>
 #include <QtConcurrentRun>
@@ -710,7 +711,7 @@ void InstanceImportTask::configureFlameInstance(Flame::Manifest& pack)
 	}
 
 	QString configPath = FS::PathCombine(m_stagingPath, "instance.cfg");
-	auto instanceSettings = std::make_shared<INISettingsObject>(configPath);
+	auto instanceSettings = std::make_shared<KConfigSettingsObject>(configPath);
 	instanceSettings->registerSetting("InstanceType", "Legacy");
 	instanceSettings->set("InstanceType", "OneSix");
 	MinecraftInstance instance(m_globalSettings, instanceSettings,
@@ -1142,7 +1143,7 @@ void InstanceImportTask::processModrinth()
 
 	// Create instance config
 	QString configPath = FS::PathCombine(m_stagingPath, "instance.cfg");
-	auto instanceSettings = std::make_shared<INISettingsObject>(configPath);
+	auto instanceSettings = std::make_shared<KConfigSettingsObject>(configPath);
 	instanceSettings->registerSetting("InstanceType", "Legacy");
 	instanceSettings->set("InstanceType", "OneSix");
 	MinecraftInstance instance(m_globalSettings, instanceSettings,
@@ -1437,7 +1438,7 @@ void InstanceImportTask::processTechnic()
 	 * object never registers are preserved, because the settings object
 	 * saves the copy of the file it loaded. */
 	QString configPath = FS::PathCombine(m_stagingPath, "instance.cfg");
-	auto instanceSettings = std::make_shared<INISettingsObject>(configPath);
+	auto instanceSettings = std::make_shared<KConfigSettingsObject>(configPath);
 	NullInstance instance(m_globalSettings, instanceSettings, m_stagingPath);
 	writePackSourceToInstance(instance, m_packHint);
 
@@ -1447,7 +1448,7 @@ void InstanceImportTask::processTechnic()
 void InstanceImportTask::processMeshMC()
 {
 	QString configPath = FS::PathCombine(m_stagingPath, "instance.cfg");
-	auto instanceSettings = std::make_shared<INISettingsObject>(configPath);
+	auto instanceSettings = std::make_shared<KConfigSettingsObject>(configPath);
 	instanceSettings->registerSetting("InstanceType", "Legacy");
 
 	NullInstance instance(m_globalSettings, instanceSettings, m_stagingPath);
@@ -1609,7 +1610,7 @@ MinecraftInstance* InstanceImportTask::openStagedInstance()
 	 * before opening the second is what keeps that from happening - and
 	 * it also means the pack profile it built has been flushed to disk,
 	 * which is what we are about to read. */
-	auto settings = std::make_shared<INISettingsObject>(configPath);
+	auto settings = std::make_shared<KConfigSettingsObject>(configPath);
 	settings->registerSetting("InstanceType", "Legacy");
 	m_gameFilesInstance = std::make_shared<MinecraftInstance>(
 		m_globalSettings, settings, m_stagingPath);
@@ -1642,7 +1643,7 @@ bool InstanceImportTask::resolveUpdateTargetFromCatalogue()
 		/* Not a catalogue install, so there is no id to match on. */
 		return true;
 	}
-	if (APPLICATION->settings()->get("SkipModpackUpdatePrompt").toBool()) {
+	if (APPLICATION->globalSettings()->skipModpackUpdatePrompt()) {
 		/* Turned off, so installing means installing: a second instance,
 		 * without the question. Checked before looking anything up so
 		 * that the answer costs nothing when nobody wants it. */

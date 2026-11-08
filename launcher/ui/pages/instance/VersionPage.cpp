@@ -19,6 +19,7 @@
  */
 
 #include "Application.h"
+#include "settings/GlobalSettings.h"
 
 #include <QMessageBox>
 #include <QLabel>
@@ -304,7 +305,7 @@ void VersionPage::on_actionAdd_to_Minecraft_jar_triggered()
 {
 	auto list = GuiUtil::BrowseForFiles(
 		"jarmod", i18n("Select jar mods"), i18n("Minecraft.jar mods (*.zip *.jar)"),
-		APPLICATION->settings()->get("CentralModsDir").toString(),
+		APPLICATION->globalSettings()->centralModsDir(),
 		this->parentWidget());
 	if (!list.empty()) {
 		m_profile->installJarMods(list);
@@ -316,7 +317,7 @@ void VersionPage::on_actionReplace_Minecraft_jar_triggered()
 {
 	auto jarPath = GuiUtil::BrowseForFile(
 		"jar", i18n("Select jar"), i18n("Minecraft.jar replacement (*.jar)"),
-		APPLICATION->settings()->get("CentralModsDir").toString(),
+		APPLICATION->globalSettings()->centralModsDir(),
 		this->parentWidget());
 	if (!jarPath.isEmpty()) {
 		m_profile->installCustomJar(jarPath);

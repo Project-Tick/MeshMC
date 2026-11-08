@@ -85,6 +85,11 @@ std::shared_ptr<Setting> SettingsObject::registerSetting(QStringList synonyms,
 	return setting;
 }
 
+QList<std::shared_ptr<Setting>> SettingsObject::allSettings() const
+{
+	return m_settings.values();
+}
+
 std::shared_ptr<Setting> SettingsObject::getSetting(const QString& id) const
 {
 	// Make sure there is a setting with the given ID.

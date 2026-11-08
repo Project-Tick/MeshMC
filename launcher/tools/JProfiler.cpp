@@ -18,6 +18,8 @@
  */
 
 #include "JProfiler.h"
+#include "settings/GlobalSettings.h"
+#include "Application.h"
 
 #include <QDir>
 
@@ -30,8 +32,7 @@ class JProfiler : public BaseProfiler
 {
 	Q_OBJECT
   public:
-	JProfiler(SettingsObjectPtr settings, InstancePtr instance,
-			  QObject* parent = 0);
+	JProfiler(InstancePtr instance, QObject* parent = 0);
 
   private slots:
 	void profilerStarted();
@@ -44,9 +45,8 @@ class JProfiler : public BaseProfiler
 	int listeningPort = 0;
 };
 
-JProfiler::JProfiler(SettingsObjectPtr settings, InstancePtr instance,
-					 QObject* parent)
-	: BaseProfiler(settings, instance, parent)
+JProfiler::JProfiler(InstancePtr instance, QObject* parent)
+	: BaseProfiler(instance, parent)
 {
 }
 
@@ -68,11 +68,11 @@ void JProfiler::profilerFinished(int exit, QProcess::ExitStatus status)
 
 void JProfiler::beginProfilingImpl(shared_qobject_ptr<LaunchTask> process)
 {
-	listeningPort = globalSettings->get("JProfilerPort").toInt();
+	listeningPort = APPLICATION->globalSettings()->jProfilerPort();
 	QProcess* profiler = new QProcess(this);
 	QStringList profilerArgs = {"-d", QString::number(process->pid()), "--gui",
 								"-p", QString::number(listeningPort)};
-	auto basePath = globalSettings->get("JProfilerPath").toString();
+	auto basePath = APPLICATION->globalSettings()->jProfilerPath();
 
 #ifdef Q_OS_WIN
 	QString profilerProgram =
@@ -91,22 +91,15 @@ void JProfiler::beginProfilingImpl(shared_qobject_ptr<LaunchTask> process)
 	profiler->start();
 }
 
-void JProfilerFactory::registerSettings(SettingsObjectPtr settings)
-{
-	settings->registerSetting("JProfilerPath");
-	settings->registerSetting("JProfilerPort", 42042);
-	globalSettings = settings;
-}
-
 BaseExternalTool* JProfilerFactory::createTool(InstancePtr instance,
 											   QObject* parent)
 {
-	return new JProfiler(globalSettings, instance, parent);
+	return new JProfiler(instance, parent);
 }
 
 bool JProfilerFactory::check(QString* error)
 {
-	return check(globalSettings->get("JProfilerPath").toString(), error);
+	return check(APPLICATION->globalSettings()->jProfilerPath(), error);
 }
 
 bool JProfilerFactory::check(const QString& path, QString* error)

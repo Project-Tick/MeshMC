@@ -39,9 +39,9 @@ void CustomCommands::initialize(bool checkable, bool checked,
 	if (checkable) {
 		ui->customCommandsGroupBox->setChecked(checked);
 	}
-	ui->preLaunchCmdTextBox->setText(prelaunch);
-	ui->wrapperCmdTextBox->setText(wrapper);
-	ui->postExitCmdTextBox->setText(postexit);
+	ui->kcfg_PreLaunchCommand->setText(prelaunch);
+	ui->kcfg_WrapperCommand->setText(wrapper);
+	ui->kcfg_PostExitCommand->setText(postexit);
 }
 
 bool CustomCommands::checked() const
@@ -51,17 +51,39 @@ bool CustomCommands::checked() const
 	return ui->customCommandsGroupBox->isChecked();
 }
 
+void CustomCommands::setChecked(bool checked)
+{
+	if (ui->customCommandsGroupBox->isCheckable()) {
+		ui->customCommandsGroupBox->setChecked(checked);
+	}
+}
+
+void CustomCommands::setPrelaunchCommand(const QString& command)
+{
+	ui->kcfg_PreLaunchCommand->setText(command);
+}
+
+void CustomCommands::setWrapperCommand(const QString& command)
+{
+	ui->kcfg_WrapperCommand->setText(command);
+}
+
+void CustomCommands::setPostexitCommand(const QString& command)
+{
+	ui->kcfg_PostExitCommand->setText(command);
+}
+
 QString CustomCommands::prelaunchCommand() const
 {
-	return ui->preLaunchCmdTextBox->text();
+	return ui->kcfg_PreLaunchCommand->text();
 }
 
 QString CustomCommands::wrapperCommand() const
 {
-	return ui->wrapperCmdTextBox->text();
+	return ui->kcfg_WrapperCommand->text();
 }
 
 QString CustomCommands::postexitCommand() const
 {
-	return ui->postExitCmdTextBox->text();
+	return ui->kcfg_PostExitCommand->text();
 }

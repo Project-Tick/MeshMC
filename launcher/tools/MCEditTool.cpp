@@ -18,6 +18,8 @@
  */
 
 #include "MCEditTool.h"
+#include "settings/GlobalSettings.h"
+#include "Application.h"
 
 #include <QDir>
 #include <QProcess>
@@ -28,20 +30,16 @@
 #include "minecraft/MinecraftInstance.h"
 #include <KLocalizedString>
 
-MCEditTool::MCEditTool(SettingsObjectPtr settings)
-{
-	settings->registerSetting("MCEditPath");
-	m_settings = settings;
-}
-
 void MCEditTool::setPath(QString& path)
 {
-	m_settings->set("MCEditPath", path);
+	// MCEditPath is declared in settings/GlobalSettings.kcfg
+	APPLICATION->globalSettings()->setMCEditPath(path);
+	APPLICATION->globalSettings()->save();
 }
 
 QString MCEditTool::path() const
 {
-	return m_settings->get("MCEditPath").toString();
+	return APPLICATION->globalSettings()->mCEditPath();
 }
 
 bool MCEditTool::check(const QString& toolPath, QString& error)

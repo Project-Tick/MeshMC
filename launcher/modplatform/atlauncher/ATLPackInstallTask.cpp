@@ -33,7 +33,7 @@
 #include "Json.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "meta/Index.h"
 #include "meta/Version.h"
 #include "meta/VersionList.h"
@@ -784,7 +784,7 @@ namespace ATLauncher
 		auto instanceConfigPath =
 			FS::PathCombine(m_stagingPath, "instance.cfg");
 		auto instanceSettings =
-			std::make_shared<INISettingsObject>(instanceConfigPath);
+			std::make_shared<KConfigSettingsObject>(instanceConfigPath);
 		instanceSettings->suspendSave();
 		instanceSettings->registerSetting("InstanceType", "Legacy");
 		instanceSettings->set("InstanceType", "OneSix");

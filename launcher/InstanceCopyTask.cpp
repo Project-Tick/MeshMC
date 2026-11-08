@@ -18,7 +18,7 @@
  */
 
 #include "InstanceCopyTask.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "FileSystem.h"
 #include "NullInstance.h"
 #include "pathmatcher/RegexpMatcher.h"
@@ -62,7 +62,7 @@ void InstanceCopyTask::copyFinished()
 		return;
 	}
 	// FIXME: shouldn't this be able to report errors?
-	auto instanceSettings = std::make_shared<INISettingsObject>(
+	auto instanceSettings = std::make_shared<KConfigSettingsObject>(
 		FS::PathCombine(m_stagingPath, "instance.cfg"));
 	instanceSettings->registerSetting("InstanceType", "Legacy");
 

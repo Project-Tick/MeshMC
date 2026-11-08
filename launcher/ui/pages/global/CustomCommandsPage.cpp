@@ -36,29 +36,10 @@ CustomCommandsPage::CustomCommandsPage(QWidget* parent) : QWidget(parent)
 	tabWidget->addTab(commands, "Foo");
 	tabWidget->tabBar()->hide();
 	verticalLayout->addWidget(tabWidget);
-	loadSettings();
+	// Not a group the user switches on or off. The three commands are the
+	// widgets named kcfg_<ID> in CustomCommands, which the settings dialog
+	// binds to the settings; nothing else to load or apply.
+	commands->initialize(false, true, QString(), QString(), QString());
 }
 
 CustomCommandsPage::~CustomCommandsPage() {}
-
-bool CustomCommandsPage::apply()
-{
-	applySettings();
-	return true;
-}
-
-void CustomCommandsPage::applySettings()
-{
-	auto s = APPLICATION->settings();
-	s->set("PreLaunchCommand", commands->prelaunchCommand());
-	s->set("WrapperCommand", commands->wrapperCommand());
-	s->set("PostExitCommand", commands->postexitCommand());
-}
-
-void CustomCommandsPage::loadSettings()
-{
-	auto s = APPLICATION->settings();
-	commands->initialize(false, true, s->get("PreLaunchCommand").toString(),
-						 s->get("WrapperCommand").toString(),
-						 s->get("PostExitCommand").toString());
-}

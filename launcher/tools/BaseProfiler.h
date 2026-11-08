@@ -31,8 +31,7 @@ class BaseProfiler : public BaseExternalTool
 {
 	Q_OBJECT
   public:
-	explicit BaseProfiler(SettingsObjectPtr settings, InstancePtr instance,
-						  QObject* parent = 0);
+	explicit BaseProfiler(InstancePtr instance, QObject* parent = 0);
 
   public slots:
 	void beginProfiling(shared_qobject_ptr<LaunchTask> process);

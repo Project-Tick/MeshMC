@@ -159,7 +159,11 @@ find_package(Qt6 6.4.0 REQUIRED COMPONENTS Core
     OpenGLWidgets
 )
 
-find_package(KF6 REQUIRED COMPONENTS I18n
+# 6.23: KConfig can read from a QIODevice, which PropertiesFile uses to parse
+# the files inside Forge's jars without writing them to disk first.
+find_package(KF6 6.23 REQUIRED COMPONENTS I18n
+    Config
+    ConfigWidgets
     GuiAddons
     CoreAddons
     XmlGui

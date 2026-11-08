@@ -31,6 +31,7 @@
 #include <QVariant>
 
 #include "Application.h"
+#include "settings/GlobalSettings.h"
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
 #include <KLazyLocalizedString>
@@ -128,6 +129,7 @@ namespace
 		"actionPlugins",
 		kDivider,
 		"actionCheckUpdate",
+		"actionSwitchLanguage",
 		"actionAbout",
 		nullptr,
 	};
@@ -198,10 +200,10 @@ namespace
 	/// Read the toggle, defaulting to on while settings are still coming up.
 	bool settingEnabled()
 	{
-		if (!APPLICATION || !APPLICATION->settings()) {
+		if (!APPLICATION || !APPLICATION->globalSettings()) {
 			return true;
 		}
-		return APPLICATION->settings()->get(MacMenuBar::settingKey()).toBool();
+		return APPLICATION->globalSettings()->macNativeMenuBar();
 	}
 } // namespace
 

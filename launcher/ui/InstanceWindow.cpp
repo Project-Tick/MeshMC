@@ -19,6 +19,7 @@
  */
 
 #include "InstanceWindow.h"
+#include "settings/GlobalSettings.h"
 #include "Application.h"
 
 #include <QScrollBar>
@@ -116,10 +117,10 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
 	// restore window state
 	{
 		auto base64State =
-			APPLICATION->settings()->get("ConsoleWindowState").toByteArray();
+			APPLICATION->globalSettings()->consoleWindowState().toUtf8();
 		restoreState(QByteArray::fromBase64(base64State));
 		auto base64Geometry =
-			APPLICATION->settings()->get("ConsoleWindowGeometry").toByteArray();
+			APPLICATION->globalSettings()->consoleWindowGeometry().toUtf8();
 		restoreGeometry(QByteArray::fromBase64(base64Geometry));
 	}
 
@@ -209,9 +210,11 @@ void InstanceWindow::closeEvent(QCloseEvent* event)
 		return;
 	}
 
-	APPLICATION->settings()->set("ConsoleWindowState", saveState().toBase64());
-	APPLICATION->settings()->set("ConsoleWindowGeometry",
-								 saveGeometry().toBase64());
+	APPLICATION->globalSettings()->setConsoleWindowState(
+		QString::fromLatin1(saveState().toBase64()));
+	APPLICATION->globalSettings()->setConsoleWindowGeometry(
+		QString::fromLatin1(saveGeometry().toBase64()));
+	APPLICATION->globalSettings()->save();
 	emit isClosing();
 	event->accept();
 }

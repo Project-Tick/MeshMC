@@ -108,14 +108,14 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QLineEdit" name="proxyAddrEdit">
+           <widget class="QLineEdit" name="kcfg_ProxyAddr">
             <property name="placeholderText">
              <string notr="true">127.0.0.1</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="proxyPortEdit">
+           <widget class="QSpinBox" name="kcfg_ProxyPort">
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -140,7 +140,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <item row="0" column="1">
-           <widget class="QLineEdit" name="proxyUserEdit"/>
+           <widget class="QLineEdit" name="kcfg_ProxyUser"/>
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="proxyUsernameLabel">
@@ -157,7 +157,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="proxyPassEdit">
+           <widget class="QLineEdit" name="kcfg_ProxyPass">
             <property name="echoMode">
              <enum>QLineEdit::Password</enum>
             </property>

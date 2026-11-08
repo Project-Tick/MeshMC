@@ -142,7 +142,6 @@ set(SDK_MISC_HEADERS
     ${CMAKE_SOURCE_DIR}/launcher/icons/IconList.h
     ${CMAKE_SOURCE_DIR}/launcher/java/JavaVersion.h
     ${CMAKE_SOURCE_DIR}/launcher/pathmatcher/IPathMatcher.h
-    ${CMAKE_SOURCE_DIR}/launcher/settings/INIFile.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/SettingsObject.h
     ${CMAKE_SOURCE_DIR}/launcher/tasks/Task.h
     ${CMAKE_SOURCE_DIR}/launcher/ui/pages/BasePage.h
@@ -268,8 +267,7 @@ install(FILES
 
 # settings/
 install(FILES
-    ${CMAKE_SOURCE_DIR}/launcher/settings/INIFile.h
-    ${CMAKE_SOURCE_DIR}/launcher/settings/INISettingsObject.h
+    ${CMAKE_SOURCE_DIR}/launcher/settings/KConfigSettingsObject.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/OverrideSetting.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/PassthroughSetting.h
     ${CMAKE_SOURCE_DIR}/launcher/settings/Setting.h

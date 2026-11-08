@@ -62,7 +62,6 @@ class ExternalToolsPage : public QWidget, public BasePage
 	virtual bool apply() override;
 
   private:
-	void loadSettings();
 	void applySettings();
 
   private:

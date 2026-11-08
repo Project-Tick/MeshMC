@@ -18,6 +18,7 @@
  */
 
 #include "MeshMCLogsDialog.h"
+#include "settings/GlobalSettings.h"
 #include "ui_MeshMCLogsDialog.h"
 
 #include <QClipboard>
@@ -163,13 +164,8 @@ void MeshMCLogsDialog::loadSelectedLog()
 
 	QString content = QString::fromUtf8(file.readAll());
 
-	QString fontFamily = APPLICATION->settings()->get("ConsoleFont").toString();
-	bool conversionOk = false;
-	int fontSize =
-		APPLICATION->settings()->get("ConsoleFontSize").toInt(&conversionOk);
-	if (!conversionOk) {
-		fontSize = 11;
-	}
+	QString fontFamily = APPLICATION->globalSettings()->consoleFont();
+	int fontSize = APPLICATION->globalSettings()->consoleFontSize();
 	QTextDocument* doc = ui->textBrowser->document();
 	doc->setDefaultFont(QFont(fontFamily, fontSize));
 	ui->textBrowser->setPlainText(content);

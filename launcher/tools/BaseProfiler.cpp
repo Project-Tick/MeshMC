@@ -23,9 +23,8 @@
 #include <QProcess>
 #include <KLocalizedString>
 
-BaseProfiler::BaseProfiler(SettingsObjectPtr settings, InstancePtr instance,
-						   QObject* parent)
-	: BaseExternalTool(settings, instance, parent)
+BaseProfiler::BaseProfiler(InstancePtr instance, QObject* parent)
+	: BaseExternalTool(instance, parent)
 {
 }
 

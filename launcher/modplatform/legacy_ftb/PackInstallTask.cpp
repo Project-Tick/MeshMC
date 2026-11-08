@@ -24,7 +24,7 @@
 #include "MMCZip.h"
 #include "BaseInstance.h"
 #include "FileSystem.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 #include "minecraft/GradleSpecifier.h"
@@ -152,7 +152,7 @@ namespace LegacyFTB
 		QString instanceConfigPath =
 			FS::PathCombine(m_stagingPath, "instance.cfg");
 		auto instanceSettings =
-			std::make_shared<INISettingsObject>(instanceConfigPath);
+			std::make_shared<KConfigSettingsObject>(instanceConfigPath);
 		instanceSettings->suspendSave();
 		instanceSettings->registerSetting("InstanceType", "Legacy");
 		instanceSettings->set("InstanceType", "OneSix");

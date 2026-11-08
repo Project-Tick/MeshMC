@@ -18,6 +18,8 @@
  */
 
 #include "JVisualVM.h"
+#include "settings/GlobalSettings.h"
+#include "Application.h"
 
 #include <QDir>
 #include <QStandardPaths>
@@ -31,8 +33,7 @@ class JVisualVM : public BaseProfiler
 {
 	Q_OBJECT
   public:
-	JVisualVM(SettingsObjectPtr settings, InstancePtr instance,
-			  QObject* parent = 0);
+	JVisualVM(InstancePtr instance, QObject* parent = 0);
 
   private slots:
 	void profilerStarted();
@@ -42,9 +43,8 @@ class JVisualVM : public BaseProfiler
 	void beginProfilingImpl(shared_qobject_ptr<LaunchTask> process);
 };
 
-JVisualVM::JVisualVM(SettingsObjectPtr settings, InstancePtr instance,
-					 QObject* parent)
-	: BaseProfiler(settings, instance, parent)
+JVisualVM::JVisualVM(InstancePtr instance, QObject* parent)
+	: BaseProfiler(instance, parent)
 {
 }
 
@@ -68,7 +68,7 @@ void JVisualVM::beginProfilingImpl(shared_qobject_ptr<LaunchTask> process)
 {
 	QProcess* profiler = new QProcess(this);
 	QStringList profilerArgs = {"--openpid", QString::number(process->pid())};
-	auto programPath = globalSettings->get("JVisualVMPath").toString();
+	auto programPath = APPLICATION->globalSettings()->jVisualVMPath();
 
 	profiler->setArguments(profilerArgs);
 	profiler->setProgram(programPath);
@@ -80,25 +80,15 @@ void JVisualVM::beginProfilingImpl(shared_qobject_ptr<LaunchTask> process)
 	m_profilerProcess = profiler;
 }
 
-void JVisualVMFactory::registerSettings(SettingsObjectPtr settings)
-{
-	QString defaultValue = QStandardPaths::findExecutable("jvisualvm");
-	if (defaultValue.isNull()) {
-		defaultValue = QStandardPaths::findExecutable("visualvm");
-	}
-	settings->registerSetting("JVisualVMPath", defaultValue);
-	globalSettings = settings;
-}
-
 BaseExternalTool* JVisualVMFactory::createTool(InstancePtr instance,
 											   QObject* parent)
 {
-	return new JVisualVM(globalSettings, instance, parent);
+	return new JVisualVM(instance, parent);
 }
 
 bool JVisualVMFactory::check(QString* error)
 {
-	return check(globalSettings->get("JVisualVMPath").toString(), error);
+	return check(APPLICATION->globalSettings()->jVisualVMPath(), error);
 }
 
 bool JVisualVMFactory::check(const QString& path, QString* error)

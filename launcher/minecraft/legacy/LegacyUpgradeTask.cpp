@@ -18,7 +18,7 @@
  */
 
 #include "LegacyUpgradeTask.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "FileSystem.h"
 #include "NullInstance.h"
 #include "pathmatcher/RegexpMatcher.h"
@@ -76,7 +76,7 @@ void LegacyUpgradeTask::copyFinished()
 	}
 	auto legacyInst = std::dynamic_pointer_cast<LegacyInstance>(m_origInstance);
 
-	auto instanceSettings = std::make_shared<INISettingsObject>(
+	auto instanceSettings = std::make_shared<KConfigSettingsObject>(
 		FS::PathCombine(m_stagingPath, "instance.cfg"));
 	instanceSettings->registerSetting("InstanceType", "Legacy");
 	instanceSettings->set("InstanceType", "OneSix");

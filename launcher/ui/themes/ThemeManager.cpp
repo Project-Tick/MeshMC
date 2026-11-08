@@ -18,6 +18,7 @@
  */
 
 #include "ThemeManager.h"
+#include "settings/GlobalSettings.h"
 
 #include "SystemTheme.h"
 #include "DarkTheme.h"
@@ -35,10 +36,11 @@
 #include <QIcon>
 #include <QImageReader>
 #include <QSet>
-#include <QSettings>
 #include <QStyle>
 #include <QStyleFactory>
 #include <QSysInfo>
+#include <KConfig>
+#include <KConfigGroup>
 #include <KLocalizedString>
 
 #ifndef Q_OS_MACOS
@@ -193,21 +195,22 @@ void ThemeManager::setIconTheme(const QString& name)
 
 void ThemeManager::applyCurrentlySelectedTheme(bool initial)
 {
-	auto settings = APPLICATION->settings();
+	auto settings = APPLICATION->globalSettings();
 
 	// Apply widget theme first (sets palette)
-	auto applicationTheme = settings->get("ApplicationTheme").toString();
+	auto applicationTheme = settings->applicationTheme();
 	if (applicationTheme.isEmpty()) {
 		applicationTheme = "system";
 	}
 	setApplicationTheme(applicationTheme, initial);
 
 	// Auto-resolve icon variant based on the now-active palette brightness
-	auto iconTheme = settings->get("IconTheme").toString();
+	auto iconTheme = settings->iconTheme();
 	if (!iconTheme.isEmpty()) {
 		auto resolved = bestIconThemeForPalette(iconTheme);
 		if (resolved != iconTheme) {
-			settings->set("IconTheme", resolved);
+			settings->setIconTheme(resolved);
+			settings->save();
 		}
 		setIconTheme(resolved);
 	}
@@ -357,14 +360,13 @@ bool readIconThemeIndex(const QDir& dir, IconThemeEntry& out)
 		return false;
 	}
 
-	QSettings index(indexPath, QSettings::IniFormat);
-	index.beginGroup(QStringLiteral("Icon Theme"));
-	const QString name = index.value(QStringLiteral("Name")).toString();
+	KConfig index(indexPath, KConfig::SimpleConfig);
+	const KConfigGroup group = index.group(QStringLiteral("Icon Theme"));
+	const QString name = group.readEntry(QStringLiteral("Name"), QString());
 	const QString family =
-		index.value(QStringLiteral("X-MeshMC-Family")).toString();
+		group.readEntry(QStringLiteral("X-MeshMC-Family"), QString());
 	const QString variant =
-		index.value(QStringLiteral("X-MeshMC-Variant")).toString();
-	index.endGroup();
+		group.readEntry(QStringLiteral("X-MeshMC-Variant"), QString());
 
 	if (name.isEmpty()) {
 		qWarning() << "Icon theme at" << dir.path()
@@ -523,7 +525,7 @@ void ThemeManager::addCatPack(std::unique_ptr<CatPack> catPack)
 QString ThemeManager::getCatPack(const QString& catName)
 {
 	QString id = catName.isEmpty()
-					 ? APPLICATION->settings()->get("BackgroundCat").toString()
+					 ? APPLICATION->globalSettings()->backgroundCat()
 					 : catName;
 
 	auto it = m_catPacks.find(id);

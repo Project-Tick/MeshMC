@@ -46,7 +46,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="1" column="1">
-           <widget class="QSpinBox" name="maxMemSpinBox">
+           <widget class="QSpinBox" name="kcfg_MaxMemAlloc">
             <property name="toolTip">
              <string>The maximum amount of memory Minecraft is allowed to use.</string>
             </property>
@@ -82,7 +82,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QSpinBox" name="minMemSpinBox">
+           <widget class="QSpinBox" name="kcfg_MinMemAlloc">
             <property name="toolTip">
              <string>The amount of memory Minecraft is started with.</string>
             </property>
@@ -111,7 +111,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QSpinBox" name="permGenSpinBox">
+           <widget class="QSpinBox" name="kcfg_PermGen">
             <property name="toolTip">
              <string>The amount of memory available to store loaded Java classes.</string>
             </property>
@@ -157,7 +157,7 @@
           <item row="0" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QLineEdit" name="javaPathTextBox"/>
+             <widget class="QLineEdit" name="kcfg_JavaPath"/>
             </item>
             <item>
              <widget class="QPushButton" name="javaBrowseBtn">
@@ -181,7 +181,7 @@
            </layout>
           </item>
           <item row="2" column="1" colspan="2">
-           <widget class="QLineEdit" name="jvmArgsTextBox"/>
+           <widget class="QLineEdit" name="kcfg_JvmArgs"/>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelJVMArgs">
@@ -197,7 +197,7 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QCheckBox" name="javaAutoDownloadCheck">
+           <widget class="QCheckBox" name="kcfg_JavaAutoDownload">
             <property name="text">
              <string>Auto-download Java</string>
             </property>
@@ -354,12 +354,12 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>minMemSpinBox</tabstop>
-  <tabstop>maxMemSpinBox</tabstop>
-  <tabstop>permGenSpinBox</tabstop>
+  <tabstop>kcfg_MinMemAlloc</tabstop>
+  <tabstop>kcfg_MaxMemAlloc</tabstop>
+  <tabstop>kcfg_PermGen</tabstop>
   <tabstop>javaBrowseBtn</tabstop>
-  <tabstop>javaPathTextBox</tabstop>
-  <tabstop>jvmArgsTextBox</tabstop>
+  <tabstop>kcfg_JavaPath</tabstop>
+  <tabstop>kcfg_JvmArgs</tabstop>
   <tabstop>javaDetectBtn</tabstop>
   <tabstop>javaTestBtn</tabstop>
   <tabstop>tabWidget</tabstop>

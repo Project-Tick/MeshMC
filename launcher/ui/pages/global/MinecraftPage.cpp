@@ -33,7 +33,11 @@ MinecraftPage::MinecraftPage(QWidget* parent)
 {
 	ui->setupUi(this);
 	ui->tabWidget->tabBar()->hide();
-	loadSettings();
+	// The widgets named kcfg_<ID> are bound to the global settings by the
+	// settings dialog (KConfigDialogManager); it sets them, and so also when
+	// the dialog shows the defaults.
+	connect(ui->kcfg_LaunchMaximized, &QCheckBox::toggled, this,
+			&MinecraftPage::updateCheckboxStuff);
 	updateCheckboxStuff();
 }
 
@@ -42,56 +46,8 @@ MinecraftPage::~MinecraftPage()
 	delete ui;
 }
 
-bool MinecraftPage::apply()
-{
-	applySettings();
-	return true;
-}
-
 void MinecraftPage::updateCheckboxStuff()
 {
-	ui->windowWidthSpinBox->setEnabled(!ui->maximizedCheckBox->isChecked());
-	ui->windowHeightSpinBox->setEnabled(!ui->maximizedCheckBox->isChecked());
-}
-
-void MinecraftPage::on_maximizedCheckBox_clicked(bool checked)
-{
-	Q_UNUSED(checked);
-	updateCheckboxStuff();
-}
-
-void MinecraftPage::applySettings()
-{
-	auto s = APPLICATION->settings();
-
-	// Window Size
-	s->set("LaunchMaximized", ui->maximizedCheckBox->isChecked());
-	s->set("MinecraftWinWidth", ui->windowWidthSpinBox->value());
-	s->set("MinecraftWinHeight", ui->windowHeightSpinBox->value());
-
-	// Native library workarounds
-	s->set("UseNativeOpenAL", ui->useNativeOpenALCheck->isChecked());
-	s->set("UseNativeGLFW", ui->useNativeGLFWCheck->isChecked());
-
-	// Game time
-	s->set("ShowGameTime", ui->showGameTime->isChecked());
-	s->set("ShowGlobalGameTime", ui->showGlobalGameTime->isChecked());
-	s->set("RecordGameTime", ui->recordGameTime->isChecked());
-}
-
-void MinecraftPage::loadSettings()
-{
-	auto s = APPLICATION->settings();
-
-	// Window Size
-	ui->maximizedCheckBox->setChecked(s->get("LaunchMaximized").toBool());
-	ui->windowWidthSpinBox->setValue(s->get("MinecraftWinWidth").toInt());
-	ui->windowHeightSpinBox->setValue(s->get("MinecraftWinHeight").toInt());
-
-	ui->useNativeOpenALCheck->setChecked(s->get("UseNativeOpenAL").toBool());
-	ui->useNativeGLFWCheck->setChecked(s->get("UseNativeGLFW").toBool());
-
-	ui->showGameTime->setChecked(s->get("ShowGameTime").toBool());
-	ui->showGlobalGameTime->setChecked(s->get("ShowGlobalGameTime").toBool());
-	ui->recordGameTime->setChecked(s->get("RecordGameTime").toBool());
+	ui->kcfg_MinecraftWinWidth->setEnabled(!ui->kcfg_LaunchMaximized->isChecked());
+	ui->kcfg_MinecraftWinHeight->setEnabled(!ui->kcfg_LaunchMaximized->isChecked());
 }

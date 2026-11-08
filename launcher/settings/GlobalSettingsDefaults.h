@@ -21,21 +21,27 @@
 #pragma once
 
 #include <QString>
-#include <QVariant>
-#include <QIODevice>
 
-// Sectionless INI parser (for instance config files)
-class INIFile : public QMap<QString, QVariant>
+/*!
+ * The defaults of the global settings that are not a constant: they depend on
+ * the machine or on how the program was built. GlobalSettings.kcfg names them
+ * where an entry has no fixed default.
+ */
+namespace GlobalSettingsDefaults
 {
-  public:
-	explicit INIFile();
+	//! The channel the program was built from (the git branch).
+	QString updateChannel();
 
-	bool loadFile(QByteArray file);
-	bool loadFile(QString fileName);
-	bool saveFile(QString fileName);
+	//! A monospace font that exists on this system.
+	QString consoleFont();
 
-	QVariant get(QString key, QVariant def) const;
-	void set(QString key, QVariant val);
-	static QString unescape(QString orig);
-	static QString escape(QString orig);
-};
+	//! The size the console font starts at.
+	int consoleFontSize();
+
+	//! JVisualVM, where it is installed (empty if it is not found).
+	QString jvisualvmPath();
+
+	//! Memory, in MiB, by how much memory the machine has.
+	int minMemAlloc();
+	int maxMemAlloc();
+} // namespace GlobalSettingsDefaults

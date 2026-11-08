@@ -20,28 +20,21 @@
 
 #pragma once
 
-#include <QWidget>
+class GlobalSettings;
+class KConfigSettingsObject;
 
-class QVBoxLayout;
-class QTreeView;
-class QLabel;
+/*!
+ * Registers the global settings with the settings object: every entry of
+ * GlobalSettings.kcfg, with the default the compiled GlobalSettings class
+ * has for it, under the name it has in the file and the older names it had
+ * before, and makes that class the skeleton of the settings object.
+ */
+void registerGlobalSettings(KConfigSettingsObject* settings);
 
-class LanguageSelectionWidget : public QWidget
-{
-	Q_OBJECT
-  public:
-	explicit LanguageSelectionWidget(QWidget* parent = 0);
-	virtual ~LanguageSelectionWidget() {};
-
-	QString getSelectedLanguageKey() const;
-	void retranslate();
-
-  protected slots:
-	void languageRowChanged(const QModelIndex& current,
-							const QModelIndex& previous);
-
-  private:
-	QVBoxLayout* verticalLayout = nullptr;
-	QTreeView* languageView = nullptr;
-	QLabel* helpUsLabel = nullptr;
-};
+/*!
+ * The typed accessors of the global settings: settings->proxyPort() instead
+ * of settings->get("ProxyPort").toInt(). The same values the settings object
+ * has: a set() is seen here, and a setter followed by save() is seen by a get().
+ * Only valid after registerGlobalSettings().
+ */
+GlobalSettings* typedGlobalSettings(KConfigSettingsObject* settings);

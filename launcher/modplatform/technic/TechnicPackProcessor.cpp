@@ -25,7 +25,8 @@
 #include <minecraft/MinecraftInstance.h>
 #include <minecraft/PackProfile.h>
 #include <MMCZip.h>
-#include <settings/INISettingsObject.h>
+#include <settings/KConfigSettingsObject.h>
+#include <settings/PropertiesFile.h>
 
 #include <memory>
 #include <KLocalizedString>
@@ -39,7 +40,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 {
 	QString minecraftPath = FS::PathCombine(stagingPath, ".minecraft");
 	QString configPath = FS::PathCombine(stagingPath, "instance.cfg");
-	auto instanceSettings = std::make_shared<INISettingsObject>(configPath);
+	auto instanceSettings = std::make_shared<KConfigSettingsObject>(configPath);
 	instanceSettings->registerSetting("InstanceType", "Legacy");
 	instanceSettings->set("InstanceType", "OneSix");
 	MinecraftInstance instance(globalSettings, instanceSettings, stagingPath);
@@ -68,10 +69,9 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 						i18n("Unable to open \"fmlversion.properties\"!"));
 					return;
 				}
-				INIFile iniFile;
-				iniFile.loadFile(fmlVersionData);
+				PropertiesFile props(fmlVersionData);
 				// If not present, this evaluates to a null string
-				fmlMinecraftVersion = iniFile["fmlbuild.mcversion"].toString();
+				fmlMinecraftVersion = props.get("fmlbuild.mcversion");
 			}
 			data = MMCZip::readFileFromZip(modpackJar, "version.json");
 			if (data.isEmpty()) {
@@ -99,13 +99,12 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 						i18n("Unable to open \"forgeversion.properties\""));
 					return;
 				}
-				INIFile iniFile;
-				iniFile.loadFile(forgeVersionData);
+				PropertiesFile props(forgeVersionData);
 				QString major, minor, revision, build;
-				major = iniFile["forge.major.number"].toString();
-				minor = iniFile["forge.minor.number"].toString();
-				revision = iniFile["forge.revision.number"].toString();
-				build = iniFile["forge.build.number"].toString();
+				major = props.get("forge.major.number");
+				minor = props.get("forge.minor.number");
+				revision = props.get("forge.revision.number");
+				build = props.get("forge.build.number");
 
 				if (major.isEmpty() || minor.isEmpty() || revision.isEmpty() ||
 					build.isEmpty()) {

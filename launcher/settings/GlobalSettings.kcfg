@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The settings of meshmc.cfg: what each is, and what it is when the file does
+  not say. This is where a setting is declared; kconfig_compiler turns it into
+  the class GlobalSettings (see GlobalSettings.kcfgc), and
+  GlobalSettingsSetup.cpp registers every entry with the SettingsObject, which
+  is what the rest of the program, and the plugins, look the settings up in.
+
+  The settings are at the top level of the file, outside of any [section]:
+  that is the group "<default>" of a KConfig.
+
+  An older name of a setting (what an earlier version called it) is not
+  expressible here; those are in the table of GlobalSettingsSetup.cpp.
+-->
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile arg="true"/>
+  <group name="&lt;default&gt;">
+    <!-- Updates -->
+    <entry name="UpdateChannel" type="String">
+      <default code="true">GlobalSettingsDefaults::updateChannel()</default>
+    </entry>
+    <entry name="AutoUpdate" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- Theming -->
+    <entry name="IconTheme" type="String">
+      <default>pe_colored</default>
+    </entry>
+    <entry name="ApplicationTheme" type="String">
+      <default>system</default>
+    </entry>
+    <!-- Screen-top menu bar. Only macOS has one; elsewhere the setting is carried but never acted on. The second key is what this shipped as originally, kept so existing configs still read. -->
+    <entry name="MacNativeMenuBar" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- Notifications -->
+    <entry name="ShownNotifications" type="String">
+      <default></default>
+    </entry>
+    <!-- Remembered state -->
+    <entry name="LastUsedGroupForNewInstance" type="String">
+      <default></default>
+    </entry>
+    <!-- resolve the font so the default actually matches -->
+    <entry name="ConsoleFont" type="String">
+      <default code="true">GlobalSettingsDefaults::consoleFont()</default>
+    </entry>
+    <entry name="ConsoleFontSize" type="Int">
+      <default code="true">GlobalSettingsDefaults::consoleFontSize()</default>
+    </entry>
+    <entry name="ConsoleMaxLines" type="Int">
+      <default>100000</default>
+    </entry>
+    <entry name="ConsoleOverflowStop" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- Folders -->
+    <entry name="InstanceDir" type="String">
+      <default>instances</default>
+    </entry>
+    <!-- Extra instance folders, searched after the primary one. Instances found in these are listed and launched exactly like the ones in "InstanceDir"; the primary folder keeps its special roles - it is the default destination for new instances, and it holds the group file. Empty by default, so a launcher nobody has configured behaves exactly as it did when there was only one folder. Held as a JSON array in a single string, not as a QStringList: KConfigSettingsObject saves every value through QVariant::toString(), which is empty for a multi-element list, so a list would not survive being written and read back. Use InstanceList::decodeInstanceDirList() and encodeInstanceDirList() at the boundary rather than touching the raw value. -->
+    <entry name="AdditionalInstanceDirs" type="String">
+      <default></default>
+    </entry>
+    <!-- Which folder the new-instance dialog opens on. A single path, so it needs no encoding; empty until the user has created something, which the dialog reads as "the primary folder". -->
+    <entry name="LastUsedInstDirForNewInstance" type="String">
+      <default></default>
+    </entry>
+    <entry name="CentralModsDir" type="String">
+      <default>mods</default>
+    </entry>
+    <entry name="IconsDir" type="String">
+      <default>icons</default>
+    </entry>
+    <entry name="SkinsDir" type="String">
+      <default>skins</default>
+    </entry>
+    <entry name="JavaDir" type="String">
+      <default>java</default>
+    </entry>
+    <!-- Whether installing a modpack that is already installed offers to update that instance instead of creating a second one. Phrased as "skip" so that false - the default, and what every existing config reads as - means the question gets asked. Anyone who deliberately keeps several copies of a pack around is the one person for whom the question is only ever noise, and this is how they turn it off. -->
+    <entry name="SkipModpackUpdatePrompt" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Whether creating or updating an instance also fetches the game's own files - version metadata, libraries, assets - instead of leaving all of it to the first launch. On by default: the download happens either way, and doing it while the user is already waiting for an install to finish is time they have agreed to spend. The alternative is that the first launch of a freshly installed pack is the slow one, which is the worst moment for it. -->
+    <entry name="DownloadGameFilesDuringInstanceCreation" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- Editors -->
+    <entry name="JsonEditor" type="String">
+      <default></default>
+    </entry>
+    <!-- Language -->
+    <entry name="Language" type="String">
+      <default></default>
+    </entry>
+    <!-- Console -->
+    <entry name="ShowConsole" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="AutoCloseConsole" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="ShowConsoleOnError" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="LogPrePostOutput" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- Window Size -->
+    <entry name="LaunchMaximized" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="MinecraftWinWidth" type="Int">
+      <default>854</default>
+    </entry>
+    <entry name="MinecraftWinHeight" type="Int">
+      <default>480</default>
+    </entry>
+    <!-- Proxy Settings -->
+    <entry name="ProxyType" type="String">
+      <default>None</default>
+    </entry>
+    <entry name="ProxyAddr" type="String">
+      <default>127.0.0.1</default>
+    </entry>
+    <entry name="ProxyPort" type="Int">
+      <default>8080</default>
+    </entry>
+    <entry name="ProxyUser" type="String">
+      <default></default>
+    </entry>
+    <entry name="ProxyPass" type="String">
+      <default></default>
+    </entry>
+    <!-- Memory — compute reasonable defaults based on system RAM -->
+    <!-- 32+ GB -->
+    <!-- 16-32 GB -->
+    <!-- 8-16 GB -->
+    <!-- 4-8 GB -->
+    <!-- &lt;4 GB: keep 512/1024 defaults -->
+    <entry name="MinMemAlloc" type="Int">
+      <default code="true">GlobalSettingsDefaults::minMemAlloc()</default>
+    </entry>
+    <entry name="MaxMemAlloc" type="Int">
+      <default code="true">GlobalSettingsDefaults::maxMemAlloc()</default>
+    </entry>
+    <entry name="PermGen" type="Int">
+      <default>128</default>
+    </entry>
+    <!-- CurseForge API key — baked in at compile time via BuildConfig. -->
+    <!-- Exposed as a read-only app setting so .mmco plugins can read it -->
+    <!-- through the MMCOContext::app_setting_get channel (ABI 3). Plugins -->
+    <!-- cannot link BuildConfig directly: the SDK is Qt-only and the -->
+    <!-- BuildConfig symbol is not part of the plugin ABI. -->
+    <entry name="CurseForgeAPIKey" type="String">
+      <default></default>
+    </entry>
+    <!-- Java Settings -->
+    <entry name="JavaPath" type="String">
+      <default></default>
+    </entry>
+    <entry name="JavaTimestamp" type="LongLong">
+      <default>0</default>
+    </entry>
+    <entry name="JavaArchitecture" type="String">
+      <default></default>
+    </entry>
+    <entry name="JavaVersion" type="String">
+      <default></default>
+    </entry>
+    <entry name="JavaVendor" type="String">
+      <default></default>
+    </entry>
+    <entry name="LastHostname" type="String">
+      <default></default>
+    </entry>
+    <entry name="JvmArgs" type="String">
+      <default></default>
+    </entry>
+    <!-- Java auto-download -->
+    <entry name="JavaAutoDownload" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="JavaAutoDownloadVendor" type="String">
+      <default>net.minecraft.java</default>
+    </entry>
+    <!-- Native library workarounds -->
+    <entry name="UseNativeOpenAL" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="UseNativeGLFW" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Game time -->
+    <entry name="ShowGameTime" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="ShowGlobalGameTime" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="RecordGameTime" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- Minecraft launch method -->
+    <entry name="MCLaunchMethod" type="String">
+      <default>MeshMCPart</default>
+    </entry>
+    <!-- Wrapper command for launch -->
+    <entry name="WrapperCommand" type="String">
+      <default></default>
+    </entry>
+    <!-- Custom Commands -->
+    <entry name="PreLaunchCommand" type="String">
+      <default></default>
+    </entry>
+    <entry name="PostExitCommand" type="String">
+      <default></default>
+    </entry>
+    <!-- Instance backups. -->
+    <!-- The legacy synonym is the key the out-of-tree BackupSystem .mmco -->
+    <!-- plugin registered through app_setting_register() — same config -->
+    <!-- file, so anyone who had pre-launch snapshots switched on keeps -->
+    <!-- them after the plugin graduated into core. The old key is dropped -->
+    <!-- from meshmc.cfg the first time the setting is written. -->
+    <entry name="BackupBeforeLaunch" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- The cat -->
+    <entry name="TheCat" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="BackgroundCat" type="String">
+      <default>kitteh</default>
+    </entry>
+    <entry name="CatOpacity" type="Int">
+      <default>100</default>
+    </entry>
+    <entry name="InstSortMode" type="String">
+      <default>Name</default>
+    </entry>
+    <entry name="SelectedInstance" type="String">
+      <default></default>
+    </entry>
+    <!-- Toolbar customization -->
+    <entry name="ToolbarsLocked" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Whether the main window keeps its menu bar and gives up the main toolbar. Off means the toolbar stays and tapping Alt shows the menu bar for a moment. No effect on macOS, where the menu bar is native and always present. -->
+    <entry name="MenuBarInsteadOfToolBar" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Window state and geometry -->
+    <entry name="MainWindowState" type="String">
+      <default></default>
+    </entry>
+    <entry name="MainWindowGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="ConsoleWindowState" type="String">
+      <default></default>
+    </entry>
+    <entry name="ConsoleWindowGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="SettingsGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="PagedGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="NewInstanceGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="DataPackManagerGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="ModDownloadGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="RPDownloadGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="ShaderDownloadGeometry" type="String">
+      <default></default>
+    </entry>
+    <entry name="DataPackDownloadGeometry" type="String">
+      <default></default>
+    </entry>
+    <!-- paste.ee API key -->
+    <entry name="PasteEEAPIKey" type="String">
+      <default>meshmc</default>
+    </entry>
+    <!-- External tools. The tools themselves (tools/JProfiler.cpp and so on)
+         read these; they are declared here, and not by the tool, so that the
+         settings dialog has an item for each of them. -->
+    <entry name="JProfilerPath" type="String">
+      <default></default>
+    </entry>
+    <entry name="JProfilerPort" type="Int">
+      <default>42042</default>
+    </entry>
+    <entry name="JVisualVMPath" type="String">
+      <default code="true">GlobalSettingsDefaults::jvisualvmPath()</default>
+    </entry>
+    <entry name="MCEditPath" type="String">
+      <default></default>
+    </entry>
+  </group>
+</kcfg>

@@ -18,6 +18,7 @@
  */
 
 #include "ManagedPackPage.h"
+#include "settings/GlobalSettings.h"
 #include "ui_ManagedPackPage.h"
 
 #include <QAbstractItemView>
@@ -119,7 +120,7 @@ bool ManagedPackPage::isSupported(const BaseInstance* instance)
 	}
 
 	if (provider == Provider::CurseForge &&
-		APPLICATION->settings()->get("CurseForgeAPIKey").toString().isEmpty()) {
+		APPLICATION->globalSettings()->curseForgeAPIKey().isEmpty()) {
 		/* Every request this page makes to CurseForge needs that key,
 		 * and a build without one cannot list a single version. Showing
 		 * the tab anyway would offer a feature that can only fail, so it

@@ -19,6 +19,7 @@
  */
 
 #include "ui_MainWindow.h"
+#include "settings/GlobalSettings.h"
 
 #include "Application.h"
 #include "BuildConfig.h"
@@ -59,6 +60,7 @@
 
 #include <KAboutApplicationDialog>
 #include <KAboutData>
+#include <KHelpMenu>
 
 #include <BaseInstance.h>
 #include <InstanceList.h>
@@ -241,6 +243,18 @@ void MainWindow::createMainToolbar()
 			ui->mainToolBar->widgetForAction(ui->actionFoldersButton))) {
 		button->setPopupMode(QToolButton::InstantPopup);
 		button->setFocusPolicy(Qt::NoFocus);
+	}
+
+	{
+		auto* kdeHelp = new KHelpMenu(this, KAboutData::applicationData());
+		if (QAction* language = kdeHelp->action(KHelpMenu::menuSwitchLanguage)) {
+			language->setObjectName(QStringLiteral("actionSwitchLanguage"));
+			language->setParent(this);
+			// its text starts with "Configure", which macOS would take for
+			// the preferences
+			language->setMenuRole(QAction::NoRole);
+			ui->helpMenu->insertAction(ui->actionAbout, language);
+		}
 	}
 
 	ui->actionReportBug->setVisible(!BuildConfig.BUG_TRACKER_URL.isEmpty());
@@ -491,7 +505,7 @@ MainWindow::MainWindow(QWidget* parent)
 	}
 	// The cat background
 	{
-		bool cat_enable = APPLICATION->settings()->get("TheCat").toBool();
+		bool cat_enable = APPLICATION->globalSettings()->theCat();
 		ui->actionCAT->setChecked(cat_enable);
 		// NOTE: calling the operator like that is an ugly hack to appease
 		// ancient gcc...
@@ -563,7 +577,7 @@ MainWindow::MainWindow(QWidget* parent)
 		// Set before connecting, so restoring the setting is not mistaken
 		// for the user asking for the swap.
 		ui->actionMenuBarInsteadOfToolBar->setChecked(
-			APPLICATION->settings()->get("MenuBarInsteadOfToolBar").toBool());
+			APPLICATION->globalSettings()->menuBarInsteadOfToolBar());
 		connect(ui->actionMenuBarInsteadOfToolBar,
 				&QAction::toggled, this,
 				&MainWindow::setMenuBarInsteadOfToolBar);
@@ -631,7 +645,7 @@ MainWindow::MainWindow(QWidget* parent)
 	// toolbars into is persisted separately by saveState()/restoreState().
 	{
 		bool toolbarsLocked =
-			APPLICATION->settings()->get("ToolbarsLocked").toBool();
+			APPLICATION->globalSettings()->toolbarsLocked();
 		ui->actionLockToolbars->setChecked(toolbarsLocked);
 		connect(ui->actionLockToolbars, &QAction::toggled, this,
 				&MainWindow::lockToolbars);
@@ -639,7 +653,7 @@ MainWindow::MainWindow(QWidget* parent)
 	}
 
 	setSelectedInstanceById(
-		APPLICATION->settings()->get("SelectedInstance").toString());
+		APPLICATION->globalSettings()->selectedInstance());
 
 	// removing this looks stupid
 	view->setFocus();
@@ -720,12 +734,14 @@ void MainWindow::lockToolbars(bool state)
 	ui->mainToolBar->setMovable(!state);
 	ui->instanceToolBar->setMovable(!state);
 	ui->newsToolBar->setMovable(!state);
-	APPLICATION->settings()->set("ToolbarsLocked", state);
+	APPLICATION->globalSettings()->setToolbarsLocked(state);
+	APPLICATION->globalSettings()->save();
 }
 
 void MainWindow::setMenuBarInsteadOfToolBar(bool state)
 {
-	APPLICATION->settings()->set("MenuBarInsteadOfToolBar", state);
+	APPLICATION->globalSettings()->setMenuBarInsteadOfToolBar(state);
+	APPLICATION->globalSettings()->save();
 	updateMenuBarVisibility();
 }
 
@@ -753,7 +769,7 @@ void MainWindow::updateMenuBarVisibility()
 		return;
 	}
 	const bool instead =
-		APPLICATION->settings()->get("MenuBarInsteadOfToolBar").toBool();
+		APPLICATION->globalSettings()->menuBarInsteadOfToolBar();
 	ui->menuBar->setVisible(instead);
 	ui->mainToolBar->setVisible(!instead);
 }
@@ -767,7 +783,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
 	 * key is left to the base class then -- and to the mnemonics it
 	 * carries. */
 	if (ui->menuBar && event->key() == Qt::Key_Alt &&
-		!APPLICATION->settings()->get("MenuBarInsteadOfToolBar").toBool()) {
+		!APPLICATION->globalSettings()->menuBarInsteadOfToolBar()) {
 		ui->menuBar->setVisible(!ui->menuBar->isVisible());
 		return;
 	}
@@ -1225,7 +1241,7 @@ void MainWindow::notificationsChanged()
 	QList<NotificationChecker::NotificationEntry> entries =
 		m_notificationChecker->notificationEntries();
 	QList<int> shownNotifications = stringToIntList(
-		APPLICATION->settings()->get("ShownNotifications").toString());
+		APPLICATION->globalSettings()->shownNotifications());
 	for (auto it = entries.begin(); it != entries.end(); ++it) {
 		NotificationChecker::NotificationEntry entry = *it;
 		if (!shownNotifications.contains(entry.id)) {
@@ -1235,14 +1251,16 @@ void MainWindow::notificationsChanged()
 			}
 		}
 	}
-	APPLICATION->settings()->set("ShownNotifications",
-								 intListToString(shownNotifications));
+	APPLICATION->globalSettings()->setShownNotifications(
+		intListToString(shownNotifications));
+	APPLICATION->globalSettings()->save();
 }
 
 void MainWindow::onCatToggled(bool state)
 {
 	setCatBackground(state);
-	APPLICATION->settings()->set("TheCat", state);
+	APPLICATION->globalSettings()->setTheCat(state);
+	APPLICATION->globalSettings()->save();
 }
 
 void MainWindow::setCatBackground(bool enabled)
@@ -1358,23 +1376,23 @@ void MainWindow::addInstance(QString url)
 	} while (0);
 
 	if (groupName.isEmpty()) {
-		groupName = APPLICATION->settings()
-						->get("LastUsedGroupForNewInstance")
-						.toString();
+		groupName = APPLICATION->globalSettings()->lastUsedGroupForNewInstance();
 	}
 
 	NewInstanceDialog newInstDlg(groupName, url, this);
 	if (!newInstDlg.exec())
 		return;
 
-	APPLICATION->settings()->set("LastUsedGroupForNewInstance",
-								 newInstDlg.instGroup());
+	APPLICATION->globalSettings()->setLastUsedGroupForNewInstance(
+		newInstDlg.instGroup());
+	APPLICATION->globalSettings()->save();
 	/* Remembered alongside the group, and for the same reason: somebody
 	 * installing several packs onto a second disk should not have to
 	 * re-pick the folder each time. Recorded only once the dialog was
 	 * accepted, so browsing and cancelling moves nothing. */
-	APPLICATION->settings()->set("LastUsedInstDirForNewInstance",
-								 newInstDlg.instDir());
+	APPLICATION->globalSettings()->setLastUsedInstDirForNewInstance(
+		newInstDlg.instDir());
+	APPLICATION->globalSettings()->save();
 
 	InstanceTask* creationTask = newInstDlg.extractTask();
 	if (creationTask) {
@@ -1524,12 +1542,12 @@ void MainWindow::refreshInstances()
 void MainWindow::on_actionViewCentralModsFolder_triggered()
 {
 	DesktopServices::openDirectory(
-		APPLICATION->settings()->get("CentralModsDir").toString(), true);
+		APPLICATION->globalSettings()->centralModsDir(), true);
 }
 
 void MainWindow::on_actionViewSkinsFolder_triggered()
 {
-	DesktopServices::openDirectory(APPLICATION->settings()->get("SkinsDir").toString(), true);
+	DesktopServices::openDirectory(APPLICATION->globalSettings()->skinsDir(), true);
 }
 
 void MainWindow::on_actionViewIconThemeFolder_triggered()
@@ -1773,7 +1791,8 @@ void MainWindow::on_actionDeleteInstance_triggered()
 	 * that follows would get here eventually, but until it does the
 	 * sidebar is still armed with commands for something that no longer
 	 * exists. */
-	APPLICATION->settings()->set("SelectedInstance", QString());
+	APPLICATION->globalSettings()->setSelectedInstance(QString());
+	APPLICATION->globalSettings()->save();
 	selectionBad();
 }
 
@@ -1916,9 +1935,11 @@ void MainWindow::on_actionViewSelectedModsFolder_triggered()
 void MainWindow::closeEvent(QCloseEvent* event)
 {
 	// Save the window state and geometry.
-	APPLICATION->settings()->set("MainWindowState", saveState().toBase64());
-	APPLICATION->settings()->set("MainWindowGeometry",
-								 saveGeometry().toBase64());
+	APPLICATION->globalSettings()->setMainWindowState(
+		QString::fromLatin1(saveState().toBase64()));
+	APPLICATION->globalSettings()->setMainWindowGeometry(
+		QString::fromLatin1(saveGeometry().toBase64()));
+	APPLICATION->globalSettings()->save();
 	event->accept();
 	emit isClosing();
 }
@@ -1989,7 +2010,8 @@ void MainWindow::instanceChanged(const QModelIndex& current,
 								 const QModelIndex& previous)
 {
 	if (!current.isValid()) {
-		APPLICATION->settings()->set("SelectedInstance", QString());
+		APPLICATION->globalSettings()->setSelectedInstance(QString());
+		APPLICATION->globalSettings()->save();
 		selectionBad();
 		return;
 	}
@@ -2050,11 +2072,13 @@ void MainWindow::instanceChanged(const QModelIndex& current,
 
 		updateToolsMenu();
 
-		APPLICATION->settings()->set("SelectedInstance",
-									 m_selectedInstance->id());
+		APPLICATION->globalSettings()->setSelectedInstance(
+			m_selectedInstance->id());
+		APPLICATION->globalSettings()->save();
 	} else {
 		ui->instanceToolBar->setEnabled(false);
-		APPLICATION->settings()->set("SelectedInstance", QString());
+		APPLICATION->globalSettings()->setSelectedInstance(QString());
+		APPLICATION->globalSettings()->save();
 		selectionBad();
 		return;
 	}
@@ -2103,7 +2127,7 @@ void MainWindow::selectionBad()
 
 	// ...and then see if we can enable the previously selected instance
 	setSelectedInstanceById(
-		APPLICATION->settings()->get("SelectedInstance").toString());
+		APPLICATION->globalSettings()->selectedInstance());
 }
 
 void MainWindow::checkInstancePathForProblems()
@@ -2166,7 +2190,7 @@ void MainWindow::checkInstancePathForProblems()
 void MainWindow::updateStatusCenter()
 {
 	m_statusCenter->setVisible(
-		APPLICATION->settings()->get("ShowGlobalGameTime").toBool());
+		APPLICATION->globalSettings()->showGlobalGameTime());
 
 	int timePlayed = APPLICATION->instances()->getTotalPlayTime();
 	if (timePlayed > 0) {

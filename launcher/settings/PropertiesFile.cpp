@@ -2,7 +2,6 @@
  * SPDX-FileContributor: Project Tick
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2013-2021 MultiMC Contributors
  * Copyright (C) 2026 Project Tick
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,23 +17,32 @@
  * limitations under the License.
  */
 
-#pragma once
+#include "PropertiesFile.h"
 
-#include <QDialog>
-#include "ui/pages/BasePageProvider.h"
+#include <QBuffer>
 
-class PageContainer;
-class PageDialog : public QDialog
+#include <KConfig>
+#include <KConfigGroup>
+
+PropertiesFile::PropertiesFile(const QByteArray& data)
 {
-	Q_OBJECT
-  public:
-	explicit PageDialog(BasePageProvider* pageProvider,
-						QString defaultId = QString(), QWidget* parent = 0);
-	virtual ~PageDialog() {}
+	auto buffer = std::make_shared<QBuffer>();
+	buffer->setData(data);
+	buffer->open(QIODevice::ReadOnly);
+	// The configuration reads from the buffer when it is constructed, nothing
+	// is written back.
+	m_config = std::make_unique<KConfig>(buffer, KConfig::SimpleConfig);
+}
 
-  private slots:
-	virtual void closeEvent(QCloseEvent* event);
+PropertiesFile::~PropertiesFile() {}
 
-  private:
-	PageContainer* m_container;
-};
+bool PropertiesFile::contains(const QString& key) const
+{
+	return m_config->group(QString()).hasKey(key);
+}
+
+QString PropertiesFile::get(const QString& key,
+							const QString& defaultValue) const
+{
+	return m_config->group(QString()).readEntry(key, defaultValue);
+}

@@ -19,10 +19,8 @@
 
 #include "SetupWizard.h"
 
-#include "LanguageWizardPage.h"
 #include "JavaWizardPage.h"
 
-#include "translations/TranslationsModel.h"
 #include <Application.h>
 #include <FileSystem.h>
 

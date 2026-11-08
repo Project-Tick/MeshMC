@@ -19,6 +19,7 @@
  */
 
 #include "WorldListPage.h"
+#include "settings/GlobalSettings.h"
 #include "ui_WorldListPage.h"
 #include "minecraft/WorldList.h"
 
@@ -232,7 +233,7 @@ void WorldListPage::on_actionDatapacks_triggered()
 		static_cast<int>(std::max(0.5 * window()->width(), 400.0)),
 		static_cast<int>(std::max(0.75 * window()->height(), 400.0)));
 	dialog->restoreGeometry(QByteArray::fromBase64(
-		APPLICATION->settings()->get("DataPackManagerGeometry").toByteArray()));
+		APPLICATION->globalSettings()->dataPackManagerGeometry().toUtf8()));
 
 	m_datapackModel.reset(new DataPackFolderModel(folder));
 
@@ -264,8 +265,9 @@ void WorldListPage::on_actionDatapacks_triggered()
 	layout->addWidget(buttonBox);
 
 	connect(dialog, &QDialog::finished, this, [this, dialog] {
-		APPLICATION->settings()->set("DataPackManagerGeometry",
-									 dialog->saveGeometry().toBase64());
+		APPLICATION->globalSettings()->setDataPackManagerGeometry(
+			QString::fromLatin1(dialog->saveGeometry().toBase64()));
+		APPLICATION->globalSettings()->save();
 		// The dialog only borrowed the model; drop it so the folder is
 		// no longer watched once the manager is gone.
 		m_datapackModel.reset();

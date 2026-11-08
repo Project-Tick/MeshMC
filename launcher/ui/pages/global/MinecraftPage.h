@@ -59,15 +59,8 @@ class MinecraftPage : public QWidget, public BasePage
 	{
 		return "Minecraft-settings";
 	}
-	bool apply() override;
-
   private:
 	void updateCheckboxStuff();
-	void applySettings();
-	void loadSettings();
-
-  private slots:
-	void on_maximizedCheckBox_clicked(bool checked);
 
   private:
 	Ui::MinecraftPage* ui;

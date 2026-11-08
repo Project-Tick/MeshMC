@@ -128,12 +128,12 @@
              <string>I&amp;nstances:</string>
             </property>
             <property name="buddy">
-             <cstring>instDirTextBox</cstring>
+             <cstring>kcfg_InstanceDir</cstring>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="instDirTextBox"/>
+           <widget class="QLineEdit" name="kcfg_InstanceDir"/>
           </item>
           <item row="0" column="2">
            <widget class="QToolButton" name="instDirBrowseBtn">
@@ -148,12 +148,12 @@
              <string>&amp;Mods:</string>
             </property>
             <property name="buddy">
-             <cstring>modsDirTextBox</cstring>
+             <cstring>kcfg_CentralModsDir</cstring>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="modsDirTextBox"/>
+           <widget class="QLineEdit" name="kcfg_CentralModsDir"/>
           </item>
           <item row="1" column="2">
            <widget class="QToolButton" name="modsDirBrowseBtn">
@@ -163,7 +163,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="iconsDirTextBox"/>
+           <widget class="QLineEdit" name="kcfg_IconsDir"/>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelIconsDir">
@@ -171,7 +171,7 @@
              <string>&amp;Icons:</string>
             </property>
             <property name="buddy">
-             <cstring>iconsDirTextBox</cstring>
+             <cstring>kcfg_IconsDir</cstring>
             </property>
            </widget>
           </item>
@@ -183,7 +183,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="skinsDirTextBox"/>
+           <widget class="QLineEdit" name="kcfg_SkinsDir"/>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="labelSkinsDir">
@@ -191,7 +191,7 @@
              <string>&amp;Skins:</string>
             </property>
             <property name="buddy">
-             <cstring>skinsDirTextBox</cstring>
+             <cstring>kcfg_SkinsDir</cstring>
             </property>
            </widget>
           </item>
@@ -203,7 +203,7 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLineEdit" name="javaDirTextBox"/>
+           <widget class="QLineEdit" name="kcfg_JavaDir"/>
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="labelJavaDir">
@@ -211,7 +211,7 @@
              <string>&amp;Java:</string>
             </property>
             <property name="buddy">
-             <cstring>javaDirTextBox</cstring>
+             <cstring>kcfg_JavaDir</cstring>
             </property>
            </widget>
           </item>
@@ -276,7 +276,7 @@
          </property>
          <layout class="QVBoxLayout" name="backupFeaturesLayout">
           <item>
-           <widget class="QCheckBox" name="backupBeforeLaunchCheck">
+           <widget class="QCheckBox" name="kcfg_BackupBeforeLaunch">
             <property name="toolTip">
              <string>Creates a snapshot of each instance before launching. Backups are saved in the instance's .backups folder with the label &quot;pre-launch&quot;.</string>
             </property>
@@ -305,7 +305,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="downloadGameFilesCheck">
+           <widget class="QCheckBox" name="kcfg_DownloadGameFilesDuringInstanceCreation">
             <property name="toolTip">
              <string>Download the game's libraries and assets while the instance is being created, instead of waiting until the first time it is launched.</string>
             </property>
@@ -415,21 +415,21 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QCheckBox" name="showConsoleCheck">
+           <widget class="QCheckBox" name="kcfg_ShowConsole">
             <property name="text">
              <string>Show console while the game is running?</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="autoCloseConsoleCheck">
+           <widget class="QCheckBox" name="kcfg_AutoCloseConsole">
             <property name="text">
              <string>Automatically close console when the game quits?</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="showConsoleErrorCheck">
+           <widget class="QCheckBox" name="kcfg_ShowConsoleOnError">
             <property name="text">
              <string>Show console when the game crashes?</string>
             </property>
@@ -445,14 +445,14 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="1" column="0">
-           <widget class="QCheckBox" name="checkStopLogging">
+           <widget class="QCheckBox" name="kcfg_ConsoleOverflowStop">
             <property name="text">
              <string>Stop logging when log overflows</string>
             </property>
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QSpinBox" name="lineLimitSpinBox">
+           <widget class="QSpinBox" name="kcfg_ConsoleMaxLines">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -511,7 +511,7 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QFontComboBox" name="consoleFont">
+           <widget class="QFontComboBox" name="kcfg_ConsoleFont">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -521,7 +521,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QSpinBox" name="fontSizeBox">
+           <widget class="QSpinBox" name="kcfg_ConsoleFontSize">
             <property name="minimum">
              <number>5</number>
             </property>
@@ -546,22 +546,22 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>autoUpdateCheckBox</tabstop>
   <tabstop>updateIntervalSpinBox</tabstop>
-  <tabstop>instDirTextBox</tabstop>
+  <tabstop>kcfg_InstanceDir</tabstop>
   <tabstop>instDirBrowseBtn</tabstop>
-  <tabstop>modsDirTextBox</tabstop>
+  <tabstop>kcfg_CentralModsDir</tabstop>
   <tabstop>modsDirBrowseBtn</tabstop>
-  <tabstop>iconsDirTextBox</tabstop>
+  <tabstop>kcfg_IconsDir</tabstop>
   <tabstop>iconsDirBrowseBtn</tabstop>
   <tabstop>resetNotificationsBtn</tabstop>
   <tabstop>sortLastLaunchedBtn</tabstop>
   <tabstop>sortByNameBtn</tabstop>
-  <tabstop>showConsoleCheck</tabstop>
-  <tabstop>autoCloseConsoleCheck</tabstop>
-  <tabstop>showConsoleErrorCheck</tabstop>
-  <tabstop>lineLimitSpinBox</tabstop>
-  <tabstop>checkStopLogging</tabstop>
-  <tabstop>consoleFont</tabstop>
-  <tabstop>fontSizeBox</tabstop>
+  <tabstop>kcfg_ShowConsole</tabstop>
+  <tabstop>kcfg_AutoCloseConsole</tabstop>
+  <tabstop>kcfg_ShowConsoleOnError</tabstop>
+  <tabstop>kcfg_ConsoleMaxLines</tabstop>
+  <tabstop>kcfg_ConsoleOverflowStop</tabstop>
+  <tabstop>kcfg_ConsoleFont</tabstop>
+  <tabstop>kcfg_ConsoleFontSize</tabstop>
   <tabstop>fontPreview</tabstop>
  </tabstops>
  <resources/>

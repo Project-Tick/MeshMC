@@ -52,10 +52,7 @@ class CustomCommandsPage : public QWidget, public BasePage
 	{
 		return "Custom-commands";
 	}
-	bool apply() override;
 
   private:
-	void applySettings();
-	void loadSettings();
 	CustomCommands* commands;
 };

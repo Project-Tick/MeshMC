@@ -93,9 +93,48 @@ add_unit_test(World
     LIBS MeshMC_logic
     )
 
-add_unit_test(INIFile
-    SOURCES settings/INIFile_test.cpp
+add_unit_test(KConfigSettingsObject
+    SOURCES settings/KConfigSettingsObject_test.cpp
     LIBS MeshMC_logic
+    )
+
+add_unit_test(GlobalSettingsSetup
+    SOURCES settings/GlobalSettingsSetup_test.cpp
+    LIBS MeshMC_logic
+    )
+set_property(TEST GlobalSettingsSetup_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    )
+
+add_unit_test(OverrideGroup
+    SOURCES ui/widgets/OverrideGroup_test.cpp
+    LIBS MeshMC_logic
+    )
+set_property(TEST OverrideGroup_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    )
+
+add_unit_test(PropertiesFile
+    SOURCES settings/PropertiesFile_test.cpp
+    LIBS MeshMC_logic
+    )
+
+add_unit_test(SettingsBinding
+    SOURCES settings/SettingsBinding_test.cpp
+    LIBS MeshMC_logic
+    )
+# Widgets, but no display needed. APPEND: see IconTheme_test below.
+set_property(TEST SettingsBinding_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    )
+
+add_unit_test(Translations
+    SOURCES translations/Translations_test.cpp
+    LIBS MeshMC_logic
+    )
+# QTEST_MAIN makes a QApplication, which wants a display; none is needed.
+set_property(TEST Translations_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
     )
 
 add_unit_test(JavaVersion
@@ -285,6 +324,15 @@ add_subdirectory(mojang)
 add_subdirectory(screenshots)
 add_subdirectory(tasks)
 add_subdirectory(settings)
+
+# settings/GlobalSettings.kcfg -> settings/GlobalSettings.h and .cpp in the
+# build directory: the class that declares the global settings (see
+# GlobalSettings.kcfgc). USE_RELATIVE_PATH keeps them under settings/, which is
+# how they are included ("settings/GlobalSettings.h"). Called here, where
+# MeshMC_logic is defined, and not in settings/CMakeLists.txt, whose build
+# directory is not on the include path.
+kconfig_add_kcfg_files(MeshMC_logic USE_RELATIVE_PATH
+    settings/GlobalSettings.kcfgc)
 add_subdirectory(java)
 add_subdirectory(translations)
 add_subdirectory(tools)
@@ -340,7 +388,7 @@ target_compile_definitions(MeshMC_logic PUBLIC QT_MESSAGELOGCONTEXT)
 
 # Where the installed .mo catalogs are, relative to the directory of the
 # executable; computed in the top-level CMakeLists. Used by
-# TranslationsModel::bundledCatalogDir().
+# Translations::bundledCatalogDir().
 target_compile_definitions(MeshMC_logic PRIVATE
     MESHMC_LOCALE_RELATIVE_DIR="${MeshMC_LOCALE_RELATIVE_DIR}")
 
@@ -354,6 +402,9 @@ target_link_libraries(MeshMC_logic
     Qt6::Widgets
     Qt6::OpenGL
     KF6::I18n
+    KF6::ConfigCore
+    KF6::ConfigGui
+    KF6::ConfigWidgets
     KF6::GuiAddons
     KF6::CoreAddons
     KF6::XmlGui
@@ -561,6 +612,7 @@ if(NOT APPLE)
         Qt6::Widgets
         Qt6::Network
         KF6::I18n
+        KF6::ConfigCore
         LibArchive::LibArchive
         cmark::cmark
         BuildConfig

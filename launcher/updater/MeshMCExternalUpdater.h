@@ -29,7 +29,7 @@
 
 #include <memory>
 
-class QSettings;
+class KConfig;
 class QWidget;
 
 class MeshMCExternalUpdater : public ExternalUpdater
@@ -111,7 +111,7 @@ class MeshMCExternalUpdater : public ExternalUpdater
 	QDir m_dataDir;
 	QWidget* m_parent = nullptr;
 
-	std::unique_ptr<QSettings> m_settings;
+	std::unique_ptr<KConfig> m_settings;
 	QTimer m_updateTimer;
 	QDateTime m_lastCheck;
 

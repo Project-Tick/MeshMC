@@ -19,6 +19,7 @@
  */
 
 #include "OtherLogsPage.h"
+#include "settings/GlobalSettings.h"
 #include "ui_OtherLogsPage.h"
 
 #include <QMessageBox>
@@ -130,14 +131,8 @@ void OtherLogsPage::on_btnReload_clicked()
 	} else {
 		auto setPlainText = [&](const QString& text) {
 			QString fontFamily =
-				APPLICATION->settings()->get("ConsoleFont").toString();
-			bool conversionOk = false;
-			int fontSize = APPLICATION->settings()
-							   ->get("ConsoleFontSize")
-							   .toInt(&conversionOk);
-			if (!conversionOk) {
-				fontSize = 11;
-			}
+				APPLICATION->globalSettings()->consoleFont();
+			int fontSize = APPLICATION->globalSettings()->consoleFontSize();
 			QTextDocument* doc = ui->text->document();
 			doc->setDefaultFont(QFont(fontFamily, fontSize));
 			ui->text->setPlainText(text);

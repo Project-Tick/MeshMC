@@ -18,7 +18,7 @@
  */
 
 #include "InstanceCreationTask.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "FileSystem.h"
 
 // FIXME: remove this
@@ -42,7 +42,7 @@ void InstanceCreationTask::executeTask()
 	 * no longer part of what the scope owns. */
 	std::shared_ptr<MinecraftInstance> instance;
 	{
-		auto instanceSettings = std::make_shared<INISettingsObject>(
+		auto instanceSettings = std::make_shared<KConfigSettingsObject>(
 			FS::PathCombine(m_stagingPath, "instance.cfg"));
 		instanceSettings->suspendSave();
 		instanceSettings->registerSetting("InstanceType", "Legacy");

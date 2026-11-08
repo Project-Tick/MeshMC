@@ -39,7 +39,7 @@
 #include "InstanceList.h"
 #include "BaseInstance.h"
 #include "InstanceTask.h"
-#include "settings/INISettingsObject.h"
+#include "settings/KConfigSettingsObject.h"
 #include "minecraft/legacy/LegacyInstance.h"
 #include "NullInstance.h"
 #include "minecraft/MinecraftInstance.h"
@@ -848,7 +848,7 @@ InstancePtr InstanceList::loadInstance(const InstanceId& id)
 	}
 
 	auto instanceRoot = FS::PathCombine(rootDirOf(id), id);
-	auto instanceSettings = std::make_shared<INISettingsObject>(
+	auto instanceSettings = std::make_shared<KConfigSettingsObject>(
 		FS::PathCombine(instanceRoot, "instance.cfg"));
 	InstancePtr inst;
 
@@ -1409,16 +1409,15 @@ bool InstanceList::commitStagedInstance(const QString& path,
 			 *
 			 * loadList() deliberately keeps the existing object for an
 			 * id it already knows, so nothing else is going to notice
-			 * that instance.cfg changed under it. Two things then go
-			 * wrong, and the second is the dangerous one:
+			 * that instance.cfg changed under it, so everything still
+			 * shows the pre-update values and the pack page reports the
+			 * version we just replaced.
 			 *
-			 *  - everything still shows the pre-update values, so the
-			 *    pack page reports the version we just replaced;
-			 *  - INISettingsObject rewrites the whole file on any set(),
-			 *    so the first unrelated write - launching the instance
-			 *    is enough, it touches lastLaunchTime - flushes the
-			 *    stale in-memory copy back to disk and silently undoes
-			 *    part of the update.
+			 * (KConfig merges a write into the file as it is on disk, so
+			 * an unrelated write - launching the instance touches
+			 * lastLaunchTime - does not undo the update. The old INI
+			 * code rewrote the whole file from its stale copy, which
+			 * did; see KConfigSettingsObject_test.)
 			 */
 			if (auto existing = getInstanceById(instID)) {
 				if (!existing->settings()->reload()) {
