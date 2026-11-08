@@ -1,22 +1,22 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: projtlauncher\n"
+"Report-Msgid-Bugs-To: https://github.com/Project-Tick/MeshMC/issues\n"
+"PO-Revision-Date: 2026-11-08 19:11\n"
+"Last-Translator: \n"
+"Language-Team: Ukrainian\n"
+"Language: uk_UA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 "
-"&& n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 "
-"&& n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: projtlauncher\n"
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: uk\n"
-"X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
-"X-Crowdin-File-ID: 95\n"
-"Project-Id-Version: projtlauncher\n"
-"Language-Team: Ukrainian\n"
-"Language: uk_UA\n"
-"PO-Revision-Date: 2026-10-28 22:15\n"
+"X-Crowdin-File: /[Project-Tick.MeshMC] develop/po/meshmc.pot\n"
+"X-Crowdin-File-ID: 99\n"
 
-#: launcher/Application.cpp:1174 launcher/ui/MainWindow.ui:429
+#: launcher/Application.cpp:1172 launcher/ui/MainWindow.ui:429
 #: launcher/ui/dialogs/ExportListDialog.cpp:95
 #: launcher/ui/pages/global/JavaPage.ui:39
 #: launcher/ui/pages/instance/InstanceSettingsPage.h:48
@@ -24,67 +24,58 @@ msgstr ""
 msgid "Settings"
 msgstr "Налаштування"
 
-#: launcher/Application.cpp:1929
+#: launcher/Application.cpp:1912
 #, kde-format
 msgid "Update In Progress"
 msgstr ""
 
-#: launcher/Application.cpp:1930
+#: launcher/Application.cpp:1913
 #, kde-format
-msgid ""
-"This installation has an update lock file at: %1\n"
-"\n"
+msgid "This installation has an update lock file at: %1\n\n"
 "Timestamp: %2\n"
 "Updating from version %3 to %4\n"
 "Target install path: %5\n"
-"Data path: %6\n"
-"\n"
-"This usually means an update attempt failed. Please make sure your "
-"installation still works before continuing.\n"
+"Data path: %6\n\n"
+"This usually means an update attempt failed. Please make sure your installation still works before continuing.\n"
 "The updater log at:\n"
 "%7\n"
-"has the details of the last attempt.\n"
-"\n"
+"has the details of the last attempt.\n\n"
 "To delete this lock and continue, choose \"Ignore\"."
 msgstr ""
 
-#: launcher/Application.cpp:1963
+#: launcher/Application.cpp:1946
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:901
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1360
-#: launcher/updater/MeshMCExternalUpdater.cpp:434
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:528
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1395
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1412
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1436
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1460
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1485
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2069
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2198
+#: launcher/updater/MeshMCExternalUpdater.cpp:441
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:529
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1396
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1413
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1437
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1461
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1486
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2070
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2199
 #, kde-format
 msgid "Update Failed"
 msgstr "Оновлення не вдалося"
 
-#: launcher/Application.cpp:1964
+#: launcher/Application.cpp:1947
 #, kde-format
-msgid ""
-"An update attempt failed.\n"
-"\n"
+msgid "An update attempt failed.\n\n"
 "Please make sure your installation still works before continuing.\n"
 "The updater log at:\n"
 "%1\n"
 "has the details of the last attempt."
 msgstr ""
 
-#: launcher/Application.cpp:1991
+#: launcher/Application.cpp:1974
 #, kde-format
 msgid "Update Succeeded"
 msgstr ""
 
-#: launcher/Application.cpp:1992
+#: launcher/Application.cpp:1975
 #, kde-format
-msgid ""
-"The update succeeded.\n"
-"\n"
+msgid "The update succeeded.\n\n"
 "You are now running %1.\n"
 "The updater log at:\n"
 "%2\n"
@@ -117,11 +108,9 @@ msgstr "Створення збірки на основі версії %1"
 #: launcher/InstanceImportTask.cpp:74
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:49
 #, kde-format
-msgid ""
-"Downloading modpack:\n"
+msgid "Downloading modpack:\n"
 "%1"
-msgstr ""
-"Завантаження мод-паку:\n"
+msgstr "Завантаження мод-паку:\n"
 "%1"
 
 #: launcher/InstanceImportTask.cpp:82
@@ -137,8 +126,7 @@ msgstr "Перегляд архіву modpack"
 
 #: launcher/InstanceImportTask.cpp:221
 #, kde-format
-msgid ""
-"Modpack archive is missing or empty:\n"
+msgid "Modpack archive is missing or empty:\n"
 "%1"
 msgstr ""
 
@@ -158,12 +146,8 @@ msgstr "Розпакування мод-паку"
 #: launcher/InstanceImportTask.cpp:318
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:145
 #, kde-format
-msgid ""
-"Failed to extract modpack. The downloaded archive is damaged; it has been "
-"discarded, so trying again will download it afresh."
-msgstr ""
-"Не вдалося витягти модпак. Завантажений архів пошкоджений; він був "
-"відхилений, тому спроба знову завантажить його знову."
+msgid "Failed to extract modpack. The downloaded archive is damaged; it has been discarded, so trying again will download it afresh."
+msgstr "Не вдалося витягти модпак. Завантажений архів пошкоджений; він був відхилений, тому спроба знову завантажить його знову."
 
 #: launcher/InstanceImportTask.cpp:323
 #, kde-format
@@ -197,12 +181,8 @@ msgstr "Не вдалося перейменувати теку перевизн
 
 #: launcher/InstanceImportTask.cpp:620
 #, kde-format
-msgid ""
-"The specified overrides folder (%1) is missing. Maybe the modpack was "
-"already used before?"
-msgstr ""
-"Вказана папка з заміщенням (%1) відсутня. Можливо, modpack вже "
-"використовувався раніше?"
+msgid "The specified overrides folder (%1) is missing. Maybe the modpack was already used before?"
+msgstr "Вказана папка з заміщенням (%1) відсутня. Можливо, modpack вже використовувався раніше?"
 
 #: launcher/InstanceImportTask.cpp:644
 #, kde-format
@@ -216,10 +196,8 @@ msgstr ""
 
 #: launcher/InstanceImportTask.cpp:722
 #, kde-format
-msgid ""
-"Mysterious trailing dots removed from Minecraft version while importing pack."
-msgstr ""
-"Під час імпортування пакету, таємничі крапки вилучені з версії Minecraft."
+msgid "Mysterious trailing dots removed from Minecraft version while importing pack."
+msgstr "Під час імпортування пакету, таємничі крапки вилучені з версії Minecraft."
 
 #: launcher/InstanceImportTask.cpp:736
 #, kde-format
@@ -228,8 +206,7 @@ msgstr "Не вдалося відобразити рекомендовану в
 
 #: launcher/InstanceImportTask.cpp:822 launcher/InstanceImportTask.cpp:1137
 #, kde-format
-msgid ""
-"Installation cancelled: the modpack's untrusted content was not accepted."
+msgid "Installation cancelled: the modpack's untrusted content was not accepted."
 msgstr "Встановлення скасовано: не надійний вміст модпака був прийнятий."
 
 #: launcher/InstanceImportTask.cpp:828
@@ -251,16 +228,12 @@ msgstr "Ця 'Папка' може знадобитися вилучення: %1
 
 #: launcher/InstanceImportTask.cpp:899
 #, kde-format
-msgid ""
-"Skipping mod %1 (project %2) - no download URL and no filename available"
-msgstr ""
-"Пропуск моду %1 (проект %2) - немає URL-адреси для завантаження і немає "
-"доступного файлу"
+msgid "Skipping mod %1 (project %2) - no download URL and no filename available"
+msgstr "Пропуск моду %1 (проект %2) - немає URL-адреси для завантаження і немає доступного файлу"
 
 #: launcher/InstanceImportTask.cpp:945
 #, kde-format
-msgid ""
-"Nesting modpacks in modpacks is not implemented, nothing was downloaded: %1"
+msgid "Nesting modpacks in modpacks is not implemented, nothing was downloaded: %1"
 msgstr ""
 
 #: launcher/InstanceImportTask.cpp:953
@@ -275,11 +248,8 @@ msgstr "Заборонені моди"
 
 #: launcher/InstanceImportTask.cpp:974
 #, kde-format
-msgid ""
-"The following mods have restricted downloads and are not available through "
-"the API.\n"
-"Click the Download button next to each mod to open its download page in your "
-"browser.\n"
+msgid "The following mods have restricted downloads and are not available through the API.\n"
+"Click the Download button next to each mod to open its download page in your browser.\n"
 "Once all files appear in your Downloads folder, click Continue."
 msgstr ""
 
@@ -291,9 +261,7 @@ msgstr "Не вдалося скопіювати %1 з папки заванта
 #: launcher/InstanceImportTask.cpp:1000
 #, kde-format
 msgid "User cancelled restricted mod downloads - %1 mod(s) will be missing"
-msgstr ""
-"Користувач скасував обмеження за кількістю модів - завантаження %1 модів "
-"буде відсутнє"
+msgstr "Користувач скасував обмеження за кількістю модів - завантаження %1 модів буде відсутнє"
 
 #: launcher/InstanceImportTask.cpp:1009 launcher/InstanceImportTask.cpp:1344
 #, kde-format
@@ -339,16 +307,9 @@ msgstr "Цей пакет модів вже встановлено"
 
 #: launcher/InstanceImportTask.cpp:1666
 #, kde-format
-msgid ""
-"The instance \"%1\" was installed from this modpack%2.\n"
-"\n"
-"Updating it replaces the pack's own files and keeps everything that is "
-"yours: worlds, screenshots, play time and the instance's settings. Creating "
-"a separate instance leaves it untouched.\n"
-"\n"
-"Back up anything you cannot afford to lose before updating. An update "
-"replaces the pack's configuration files, and a pack that changes or removes "
-"mods can leave worlds made with the older version unusable."
+msgid "The instance \"%1\" was installed from this modpack%2.\n\n"
+"Updating it replaces the pack's own files and keeps everything that is yours: worlds, screenshots, play time and the instance's settings. Creating a separate instance leaves it untouched.\n\n"
+"Back up anything you cannot afford to lose before updating. An update replaces the pack's configuration files, and a pack that changes or removes mods can leave worlds made with the older version unusable."
 msgstr ""
 
 #: launcher/InstanceImportTask.cpp:1680
@@ -368,12 +329,8 @@ msgstr "Видалити існуючі збережені файли"
 
 #: launcher/InstanceImportTask.cpp:1797
 #, kde-format
-msgid ""
-"The installed version of this modpack came with save files that the new "
-"version no longer includes.\n"
-"\n"
-"Would you like to remove them as part of this update? Keeping them is safe - "
-"they simply stay where they are, along with any progress made in them."
+msgid "The installed version of this modpack came with save files that the new version no longer includes.\n\n"
+"Would you like to remove them as part of this update? Keeping them is safe - they simply stay where they are, along with any progress made in them."
 msgstr ""
 
 #: launcher/InstanceImportTask.cpp:1806
@@ -393,17 +350,9 @@ msgstr "Немає файлу списку для встановленої ве�
 
 #: launcher/InstanceImportTask.cpp:1865
 #, kde-format
-msgid ""
-"The launcher has no record of which files the installed version of this "
-"modpack put into this instance, so it cannot remove the ones the new version "
-"no longer ships.\n"
-"\n"
-"The update will work, but anything the new version dropped stays behind - "
-"usually as an older copy of a mod sitting next to the one that replaced it.\n"
-"\n"
-"Instances installed before the launcher started keeping that record have no "
-"list. This update writes one, so the update after it will be able to clean "
-"up."
+msgid "The launcher has no record of which files the installed version of this modpack put into this instance, so it cannot remove the ones the new version no longer ships.\n\n"
+"The update will work, but anything the new version dropped stays behind - usually as an older copy of a mod sitting next to the one that replaced it.\n\n"
+"Instances installed before the launcher started keeping that record have no list. This update writes one, so the update after it will be able to clean up."
 msgstr ""
 
 #: launcher/InstanceList.cpp:268
@@ -413,12 +362,10 @@ msgstr "Збірка %1"
 
 #: launcher/InstanceList.cpp:1258
 #, kde-format
-msgid ""
-"Failed to commit instance, even after multiple retries. It is being blocked "
-"by something."
+msgid "Failed to commit instance, even after multiple retries. It is being blocked by something."
 msgstr "Не вдалося створити збірку навіть після декількох спроб. Щось заважає."
 
-#: launcher/InstanceList.cpp:1458
+#: launcher/InstanceList.cpp:1457
 #, kde-format
 msgid "Could not remove a file the updated pack no longer includes: %1"
 msgstr "Не вдалося видалити файл, оновлений пакет більше не включений: %1"
@@ -445,13 +392,9 @@ msgstr "Пропустити"
 
 #: launcher/InstanceTask.cpp:102
 #, kde-format
-msgid ""
-"The instance was installed, but its game files could not be downloaded yet: "
-"%1\n"
+msgid "The instance was installed, but its game files could not be downloaded yet: %1\n"
 "They will be downloaded when you launch it."
-msgstr ""
-"Екземпляр було встановлено, але його ігрові файли ще не можуть бути "
-"завантажені: %1\n"
+msgstr "Екземпляр було встановлено, але його ігрові файли ще не можуть бути завантажені: %1\n"
 "Вони будуть завантажені під час запуску."
 
 #: launcher/InstanceTask.cpp:117
@@ -461,18 +404,11 @@ msgstr "Завантаження файлів гри..."
 
 #: launcher/JavaCommon.cpp:33
 #, kde-format
-msgid ""
-"You tried to manually set a JVM memory option (using \"-XX:PermSize\", \"-XX-"
-"MaxHeapSize\", \"-XX:InitialHeapSize\",  \"-Xmx\" or \"-Xms\").\n"
-"There are dedicated boxes for these in the settings (Java tab, in the Memory "
-"group at the top).\n"
+msgid "You tried to manually set a JVM memory option (using \"-XX:PermSize\", \"-XX-MaxHeapSize\", \"-XX:InitialHeapSize\",  \"-Xmx\" or \"-Xms\").\n"
+"There are dedicated boxes for these in the settings (Java tab, in the Memory group at the top).\n"
 "This message will be displayed until you remove them from the JVM arguments."
-msgstr ""
-"Ви намагалися вручну встановити JVM параметри пам'яті (використовуючи \"-"
-"XX:PermSize\", \"-XX-MaxHeapSize\", \"-XX:InitialHeapSize\", \"-Xmx\" or \"-"
-"Xms\").\n"
-"У верхній частині сторінки існують виділені поля для них (Java вкладка, у "
-"групі пам'яті вгорі).\n"
+msgstr "Ви намагалися вручну встановити JVM параметри пам'яті (використовуючи \"-XX:PermSize\", \"-XX-MaxHeapSize\", \"-XX:InitialHeapSize\", \"-Xmx\" or \"-Xms\").\n"
+"У верхній частині сторінки існують виділені поля для них (Java вкладка, у групі пам'яті вгорі).\n"
 "Це повідомлення буде показано, поки ви не видалите його з аргументів JVM."
 
 #: launcher/JavaCommon.cpp:41
@@ -482,13 +418,8 @@ msgstr "Попередження про JVM аргументи"
 
 #: launcher/JavaCommon.cpp:53
 #, kde-format
-msgid ""
-"Java test succeeded!<br />Platform reported: %1<br />Java version reported: "
-"%2<br />Java vendor reported: %3<br />"
-msgstr ""
-"Тестування Java завершено успішно!<br />Повідомлено про платформу: %1<br /"
-">Повідомлено про версію Java: %2<br />Повідомлено про постачальника Java: "
-"%3<br />"
+msgid "Java test succeeded!<br />Platform reported: %1<br />Java version reported: %2<br />Java vendor reported: %3<br />"
+msgstr "Тестування Java завершено успішно!<br />Повідомлено про платформу: %1<br />Повідомлено про версію Java: %2<br />Повідомлено про постачальника Java: %3<br />"
 
 #: launcher/JavaCommon.cpp:60
 #, kde-format
@@ -502,8 +433,7 @@ msgstr "Перевірка Java пройшла успішно"
 
 #: launcher/JavaCommon.cpp:72
 #, kde-format
-msgid ""
-"The specified java binary didn't work with the arguments you provided:<br />"
+msgid "The specified java binary didn't work with the arguments you provided:<br />"
 msgstr "Зазначений двійковий файл java не працює з наданими аргументами:<br />"
 
 #: launcher/JavaCommon.cpp:75 launcher/JavaCommon.cpp:86
@@ -514,13 +444,8 @@ msgstr "Помилка тесту Java"
 
 #: launcher/JavaCommon.cpp:83
 #, kde-format
-msgid ""
-"The specified java binary didn't work.<br />You should use the auto-detect "
-"feature, or set the path to the java executable.<br />"
-msgstr ""
-"Вказаний двійковий файл Java не працює. <br /> Вам слід скористатися "
-"функцією автоматичного виявлення або встановити шлях до виконуваного файлу "
-"Java. <br />"
+msgid "The specified java binary didn't work.<br />You should use the auto-detect feature, or set the path to the java executable.<br />"
+msgstr "Вказаний двійковий файл Java не працює. <br /> Вам слід скористатися функцією автоматичного виявлення або встановити шлях до виконуваного файлу Java. <br />"
 
 #: launcher/LaunchController.cpp:55
 #, kde-format
@@ -541,13 +466,8 @@ msgstr "Немає облікового запису"
 
 #: launcher/LaunchController.cpp:94
 #, kde-format
-msgid ""
-"In order to play Minecraft, you must have at least one Microsoft account "
-"logged in.Would you like to open the account manager to add an account now?"
-msgstr ""
-"Щоб грати в Minecraft, необхідно мати як мінімум один обліковий запис "
-"Microsoft. Ви можете відкрити менеджер аккаунту щоб додати обліковий запис "
-"зараз?"
+msgid "In order to play Minecraft, you must have at least one Microsoft account logged in.Would you like to open the account manager to add an account now?"
+msgstr "Щоб грати в Minecraft, необхідно мати як мінімум один обліковий запис Microsoft. Ви можете відкрити менеджер аккаунту щоб додати обліковий запис зараз?"
 
 #: launcher/LaunchController.cpp:108
 #, kde-format
@@ -556,13 +476,7 @@ msgstr "Немає облікового запису — демонстраці�
 
 #: launcher/LaunchController.cpp:111
 #, kde-format
-msgid ""
-"<b>No Microsoft account is linked.</b><br><br>Without a Microsoft account "
-"you cannot play the full version of Minecraft.<br><br><b>Demo Mode</b> lets "
-"you try Minecraft with the following limitations:<br>&nbsp;&bull;&nbsp;Only "
-"a small area of the world is accessible<br>&nbsp;&bull;&nbsp;Progress is not "
-"saved after the demo ends<br>&nbsp;&bull;&nbsp;Multiplayer is not "
-"available<br><br>Would you like to launch Minecraft in Demo Mode?"
+msgid "<b>No Microsoft account is linked.</b><br><br>Without a Microsoft account you cannot play the full version of Minecraft.<br><br><b>Demo Mode</b> lets you try Minecraft with the following limitations:<br>&nbsp;&bull;&nbsp;Only a small area of the world is accessible<br>&nbsp;&bull;&nbsp;Progress is not saved after the demo ends<br>&nbsp;&bull;&nbsp;Multiplayer is not available<br><br>Would you like to launch Minecraft in Demo Mode?"
 msgstr ""
 
 #: launcher/LaunchController.cpp:123 launcher/LaunchController.cpp:321
@@ -605,12 +519,8 @@ msgstr "Не вибрано акаунту для запуску."
 
 #: launcher/LaunchController.cpp:209
 #, kde-format
-msgid ""
-"Your account is currently not logged in. Please enter your password to log "
-"in again. <br /> <br /> This could be caused by a password change."
-msgstr ""
-"Наразі ваш обліковий запис не ввійшов. Будь ласка, введіть свій пароль, щоб "
-"увійти знову. <br /> <br /> Це може бути викликано зміною пароля."
+msgid "Your account is currently not logged in. Please enter your password to log in again. <br /> <br /> This could be caused by a password change."
+msgstr "Наразі ваш обліковий запис не ввійшов. Будь ласка, введіть свій пароль, щоб увійти знову. <br /> <br /> Це може бути викликано зміною пароля."
 
 #: launcher/LaunchController.cpp:276
 #, kde-format
@@ -634,15 +544,11 @@ msgstr "Зіграти в пробну версію?"
 
 #: launcher/LaunchController.cpp:316
 #, kde-format
-msgid ""
-"This account does not own Minecraft.\n"
-"You need to purchase the game first to play it.\n"
-"\n"
+msgid "This account does not own Minecraft.\n"
+"You need to purchase the game first to play it.\n\n"
 "Do you want to play the demo?"
-msgstr ""
-"На цьому обліковому записі не придбаний Minecraft.\n"
-"Ви повинні придбати Minecraft для того, щоб грати.\n"
-"\n"
+msgstr "На цьому обліковому записі не придбаний Minecraft.\n"
+"Ви повинні придбати Minecraft для того, щоб грати.\n\n"
 "Хочете зіграти пробну версію Minecraft?"
 
 #: launcher/LaunchController.cpp:332
@@ -658,9 +564,7 @@ msgstr "Грати офлайн"
 #: launcher/LaunchController.cpp:364
 #, kde-format
 msgid "The account has expired and needs to be logged into manually again."
-msgstr ""
-"Термін дії облікового запису минув і повинен бути зареєстрований вручну "
-"знову."
+msgstr "Термін дії облікового запису минув і повинен бути зареєстрований вручну знову."
 
 #: launcher/LaunchController.cpp:367
 #, kde-format
@@ -669,12 +573,8 @@ msgstr "Помилка оновлення облікового запису"
 
 #: launcher/LaunchController.cpp:375
 #, kde-format
-msgid ""
-"The account no longer exists on the servers. It may have been migrated, in "
-"which case please add the new account you migrated this one to."
-msgstr ""
-"Обліковий запис більше не існує на серверах. Можливо, він був перенесений, у "
-"такому випадку додайте новий обліковий запис на який ви перенесли поточний."
+msgid "The account no longer exists on the servers. It may have been migrated, in which case please add the new account you migrated this one to."
+msgstr "Обліковий запис більше не існує на серверах. Можливо, він був перенесений, у такому випадку додайте новий обліковий запис на який ви перенесли поточний."
 
 #: launcher/LaunchController.cpp:378
 #, kde-format
@@ -709,15 +609,9 @@ msgstr "Не вдалося запустити профайлер: %1"
 
 #: launcher/LaunchController.cpp:552
 #, kde-format
-msgid ""
-"The game launch is delayed until you press the button. This is the right "
-"time to setup the profiler, as the profiler server is running now.\n"
-"\n"
+msgid "The game launch is delayed until you press the button. This is the right time to setup the profiler, as the profiler server is running now.\n\n"
 "%1"
-msgstr ""
-"Запуск гри призупинено до тих пір, поки ви не натиснете кнопку. Це добрий "
-"час, щоб налаштувати профайлер, оскільки сервер профайлеру зараз працює.\n"
-"\n"
+msgstr "Запуск гри призупинено до тих пір, поки ви не натиснете кнопку. Це добрий час, щоб налаштувати профайлер, оскільки сервер профайлеру зараз працює.\n\n"
 "%1"
 
 #: launcher/LaunchController.cpp:556
@@ -726,7 +620,7 @@ msgid "Waiting."
 msgstr "Чекаємо."
 
 #: launcher/LaunchController.cpp:558 launcher/ui/InstanceWindow.cpp:161
-#: launcher/ui/InstanceWindow.cpp:167 launcher/ui/MainWindow.cpp:940
+#: launcher/ui/InstanceWindow.cpp:167 launcher/ui/MainWindow.cpp:958
 #: launcher/ui/MainWindow.ui:586
 #, kde-format
 msgid "Launch"
@@ -737,20 +631,20 @@ msgstr "Запуск"
 msgid "Couldn't start the profiler: %1"
 msgstr "Не вдалося запустити профайлер: %1"
 
-#: launcher/LaunchController.cpp:567 launcher/ui/MainWindow.cpp:1271
-#: launcher/ui/MainWindow.cpp:1324 launcher/ui/MainWindow.cpp:1334
+#: launcher/LaunchController.cpp:567 launcher/ui/MainWindow.cpp:1289
+#: launcher/ui/MainWindow.cpp:1342 launcher/ui/MainWindow.cpp:1352
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:155
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:178
 #: launcher/ui/dialogs/ExportPackDialog.cpp:325
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:151
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:213
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:256
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:100
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:115
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:136
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:151
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:86
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:101
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:122
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:137
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:163
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:177
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:191
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:46
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:871
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:128
@@ -767,8 +661,8 @@ msgstr "Не вдалося запустити профайлер: %1"
 msgid "Error"
 msgstr "Помилка"
 
-#: launcher/LaunchController.cpp:608 launcher/ui/MainWindow.cpp:1284
-#: launcher/ui/MainWindow.cpp:1329
+#: launcher/LaunchController.cpp:608 launcher/ui/MainWindow.cpp:1302
+#: launcher/ui/MainWindow.cpp:1347
 #: launcher/ui/dialogs/ExportInstanceDialog.cpp:184
 #: launcher/ui/dialogs/ExportPackDialog.cpp:331
 #: launcher/ui/pages/instance/LegacyUpgradePage.cpp:51
@@ -789,12 +683,8 @@ msgstr "Вже зупинка"
 
 #: launcher/LaunchController.cpp:626
 #, kde-format
-msgid ""
-"MeshMC is already shutting this instance down. Give it a few seconds - if "
-"the game does not react, it gets killed automatically."
-msgstr ""
-"MeshMC вже закриває цей екземпляр. Дайте йому кілька секунд - якщо гра не "
-"реагує, то вона буде зупинена автоматично."
+msgid "MeshMC is already shutting this instance down. Give it a few seconds - if the game does not react, it gets killed automatically."
+msgstr "MeshMC вже закриває цей екземпляр. Дайте йому кілька секунд - якщо гра не реагує, то вона буде зупинена автоматично."
 
 #: launcher/LaunchController.cpp:633
 #, kde-format
@@ -803,12 +693,8 @@ msgstr "Не вдалося завершити Minecraft"
 
 #: launcher/LaunchController.cpp:634
 #, kde-format
-msgid ""
-"This instance is at a point in the launch process that can't be interrupted. "
-"Please try again in a moment."
-msgstr ""
-"Цей екземпляр знаходиться в точці запуску процесу, який не може бути "
-"перерваний. Будь ласка, спробуйте знову за мить."
+msgid "This instance is at a point in the launch process that can't be interrupted. Please try again in a moment."
+msgstr "Цей екземпляр знаходиться в точці запуску процесу, який не може бути перерваний. Будь ласка, спробуйте знову за мить."
 
 #: launcher/LaunchController.cpp:642
 #, kde-format
@@ -817,12 +703,8 @@ msgstr "Зупинити Minecraft?"
 
 #: launcher/LaunchController.cpp:643
 #, kde-format
-msgid ""
-"This can cause the instance to get corrupted and should only be used if "
-"Minecraft is frozen for some reason"
-msgstr ""
-"Це може привести до зіпсуття збірки і повинно використовуватись лише якщо "
-"Minecraft завис по якійсь причині"
+msgid "This can cause the instance to get corrupted and should only be used if Minecraft is frozen for some reason"
+msgstr "Це може привести до зіпсуття збірки і повинно використовуватись лише якщо Minecraft завис по якійсь причині"
 
 #: launcher/LoggedProcess.cpp:121
 #, kde-format
@@ -1040,9 +922,7 @@ msgstr "Екземпляр не має каталогу для резервно�
 #: launcher/backup/BackupTask.cpp:99
 #, kde-format
 msgid "Could not create the backup. See the launcher log for details."
-msgstr ""
-"Не вдалося створити резервну копію. Перегляньте журнал запуску для отримання "
-"додаткової інформації."
+msgstr "Не вдалося створити резервну копію. Перегляньте журнал запуску для отримання додаткової інформації."
 
 #: launcher/crashreporter/CrashReportDialog.cpp:40
 #, kde-format
@@ -1051,16 +931,13 @@ msgstr "Звіт про збої в MeshMC"
 
 #: launcher/crashreporter/CrashReportDialog.cpp:48
 #, kde-format
-msgid ""
-"<h2 style='color: #cc0000;'>MeshMC has failed</h2><p>An unexpected error "
-"occurred and MeshMC had to close.</p><p>Your logs have been uploaded to "
-"paste.ee for troubleshooting.</p>"
+msgid "<h2 style='color: #cc0000;'>MeshMC has failed</h2><p>An unexpected error occurred and MeshMC had to close.</p><p>Your logs have been uploaded to paste.ee for troubleshooting.</p>"
 msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:57
 #, kde-format
 msgid "QR Codes"
-msgstr "QR Codes"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:65
 #, kde-format
@@ -1104,7 +981,6 @@ msgstr "Відкрити у браузері"
 #: launcher/ui/dialogs/NotificationDialog.cpp:52
 #: launcher/ui/dialogs/NotificationDialog.ui:75
 #: launcher/ui/dialogs/PluginsDialog.ui:78
-#: launcher/ui/pagedialog/PageDialog.cpp:51
 #, kde-format
 msgid "Close"
 msgstr "Закрити"
@@ -1192,11 +1068,8 @@ msgstr "Не вдалося знайти двійковий файл java у з�
 
 #: launcher/launch/LaunchTask.cpp:202
 #, kde-format
-msgid ""
-"MeshMC stopped watching the game log because the log length surpassed %1 "
-"lines.\n"
-"You may have to fix your mods because the game is still logging to files and "
-"likely wasting harddrive space at an alarming rate!"
+msgid "MeshMC stopped watching the game log because the log length surpassed %1 lines.\n"
+"You may have to fix your mods because the game is still logging to files and likely wasting harddrive space at an alarming rate!"
 msgstr ""
 
 #: launcher/launch/steps/CreateBackup.cpp:34
@@ -1221,21 +1094,13 @@ msgstr "Запуск команди після запуску: %1"
 
 #: launcher/launch/steps/PostLaunchCommand.cpp:47
 #, kde-format
-msgid ""
-"Post-Launch command failed with code %1.\n"
-"\n"
-msgstr ""
-"Помилка команди після-запуску з кодом %1.\n"
-"\n"
+msgid "Post-Launch command failed with code %1.\n\n"
+msgstr "Помилка команди після-запуску з кодом %1.\n\n"
 
 #: launcher/launch/steps/PostLaunchCommand.cpp:64
 #, kde-format
-msgid ""
-"Post-Launch command ran successfully.\n"
-"\n"
-msgstr ""
-"Команда після-запуску успішно виконана.\n"
-"\n"
+msgid "Post-Launch command ran successfully.\n\n"
+msgstr "Команда після-запуску успішно виконана.\n\n"
 
 #: launcher/launch/steps/PreLaunchCommand.cpp:39
 #, kde-format
@@ -1244,21 +1109,13 @@ msgstr "Запуск команди попереднього запуску: %1"
 
 #: launcher/launch/steps/PreLaunchCommand.cpp:47
 #, kde-format
-msgid ""
-"Pre-Launch command failed with code %1.\n"
-"\n"
-msgstr ""
-"Попередня команда запуску не вдалася з кодом %1.\n"
-"\n"
+msgid "Pre-Launch command failed with code %1.\n\n"
+msgstr "Попередня команда запуску не вдалася з кодом %1.\n\n"
 
 #: launcher/launch/steps/PreLaunchCommand.cpp:64
 #, kde-format
-msgid ""
-"Pre-Launch command ran successfully.\n"
-"\n"
-msgstr ""
-"Команда попереднього запуску успішно виконана.\n"
-"\n"
+msgid "Pre-Launch command ran successfully.\n\n"
+msgstr "Команда попереднього запуску успішно виконана.\n\n"
 
 #: launcher/launch/steps/Update.cpp:28
 #, kde-format
@@ -1267,12 +1124,8 @@ msgstr "Завдання скасовано."
 
 #: launcher/launch/steps/Update.cpp:58
 #, kde-format
-msgid ""
-"Instance update failed because: %1\n"
-"\n"
-msgstr ""
-"Не вдалося оновити збірку, тому що: %1\n"
-"\n"
+msgid "Instance update failed because: %1\n\n"
+msgstr "Не вдалося оновити збірку, тому що: %1\n\n"
 
 #: launcher/main.cpp:145
 #, kde-format
@@ -1283,16 +1136,13 @@ msgstr ""
 #: launcher/main.cpp:147
 #, kde-format
 msgctxt "@info"
-msgid ""
-"A custom launcher that makes managing Minecraft easier by allowing you to "
-"have multiple instances of Minecraft at once."
+msgid "A custom launcher that makes managing Minecraft easier by allowing you to have multiple instances of Minecraft at once."
 msgstr ""
 
 #: launcher/main.cpp:149
 #, kde-format
 msgctxt "@info:credit"
-msgid ""
-"Copyright 2013–2021 MultiMC Contributors\n"
+msgid "Copyright 2013–2021 MultiMC Contributors\n"
 "Copyright © 2025-%1 Project Tick"
 msgstr ""
 
@@ -1404,17 +1254,13 @@ msgstr "Збірка має конфліктні залежності."
 #: launcher/minecraft/ComponentUpdateTask.cpp:535
 #, kde-format
 msgid "Instance has unresolved dependencies while loading/checking for launch."
-msgstr ""
-"Збірка має невирішені залежності під час завантаження/перевірки запуску."
+msgstr "Збірка має невирішені залежності під час завантаження/перевірки запуску."
 
 #: launcher/minecraft/ComponentUpdateTask.cpp:665
 #, kde-format
-msgid ""
-"Component metadata update task failed while downloading from remote server:\n"
+msgid "Component metadata update task failed while downloading from remote server:\n"
 "%1"
-msgstr ""
-"Помилка задачі оновлення метаданих компоненту під час завантаження з "
-"віддаленого серверу:\n"
+msgstr "Помилка задачі оновлення метаданих компоненту під час завантаження з віддаленого серверу:\n"
 "%1"
 
 #: launcher/minecraft/MinecraftInstance.cpp:866
@@ -1445,7 +1291,7 @@ msgstr "пошкоджено"
 #: launcher/minecraft/MinecraftInstance.cpp:954
 #, kde-format
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:958
 #, kde-format
@@ -1469,9 +1315,7 @@ msgstr "в processArguments задано невідоме значення '%1"
 
 #: launcher/minecraft/MojangVersionFormat.cpp:194
 #, kde-format
-msgid ""
-"The 'minimumMeshMCVersion' value of this version (%1) is higher than "
-"supported by MeshMC (%2). It might not work properly!"
+msgid "The 'minimumMeshMCVersion' value of this version (%1) is higher than supported by MeshMC (%2). It might not work properly!"
 msgstr ""
 
 #: launcher/minecraft/MojangVersionFormat.cpp:309
@@ -1481,21 +1325,13 @@ msgstr "Ім'я бібліотеки %1 пошкоджене і не може б
 
 #: launcher/minecraft/OneSixVersionFormat.cpp:169
 #, kde-format
-msgid ""
-"Version file has both '+libraries' and 'libraries'. This is no longer "
-"supported."
-msgstr ""
-"Файл версії має одночасно '+libraries' і 'libraries'. Це більше не "
-"підтримується."
+msgid "Version file has both '+libraries' and 'libraries'. This is no longer supported."
+msgstr "Файл версії має одночасно '+libraries' і 'libraries'. Це більше не підтримується."
 
 #: launcher/minecraft/OneSixVersionFormat.cpp:204
 #, kde-format
-msgid ""
-"URL for the main jar could not be determined - Mojang removed the server "
-"that we used as fallback."
-msgstr ""
-"URL для основних jar не вдалося визначити - Mojang видалив сервер, який ми "
-"використовували як резервний."
+msgid "URL for the main jar could not be determined - Mojang removed the server that we used as fallback."
+msgstr "URL для основних jar не вдалося визначити - Mojang видалив сервер, який ми використовували як резервний."
 
 #: launcher/minecraft/OneSixVersionFormat.cpp:233
 #, kde-format
@@ -1560,21 +1396,13 @@ msgstr "Не вдалося записати значок ярлика на %1."
 
 #: launcher/minecraft/ShortcutUtils.cpp:108
 #, kde-format
-msgid ""
-"MeshMC is running from the folder it was extracted into, so it cannot create "
-"a shortcut. Move it to your Applications folder first."
-msgstr ""
-"MeshMC працює з папки, на яку вона була видобута, тому вона не може створити "
-"ярлик. Спочатку перемістіть її до папки програм."
+msgid "MeshMC is running from the folder it was extracted into, so it cannot create a shortcut. Move it to your Applications folder first."
+msgstr "MeshMC працює з папки, на яку вона була видобута, тому вона не може створити ярлик. Спочатку перемістіть її до папки програм."
 
 #: launcher/minecraft/ShortcutUtils.cpp:126
 #, kde-format
-msgid ""
-"MeshMC looks like an AppImage, but $APPIMAGE is not set, so the path to "
-"write into the shortcut is unknown."
-msgstr ""
-"MeshMC виглядає як AppImage, але $APPIMAGE не встановлено, тому шлях запису "
-"до запису на ярлик невідомий."
+msgid "MeshMC looks like an AppImage, but $APPIMAGE is not set, so the path to write into the shortcut is unknown."
+msgstr "MeshMC виглядає як AppImage, але $APPIMAGE не встановлено, тому шлях запису до запису на ярлик невідомий."
 
 #: launcher/minecraft/ShortcutUtils.cpp:170
 #, kde-format
@@ -1820,7 +1648,7 @@ msgstr "Помилка аутентифікації. Обліковий запи
 #: launcher/minecraft/auth/AccountTask.cpp:58
 #, kde-format
 msgid "..."
-msgstr "..."
+msgstr ""
 
 #: launcher/minecraft/auth/AccountTask.cpp:106
 #, kde-format
@@ -1875,8 +1703,7 @@ msgstr "Вхід через обліковий запис Microsoft."
 #: launcher/minecraft/auth/steps/MSAStep.cpp:98
 #, kde-format
 msgid "Failed to start local HTTP server for OAuth2 callback."
-msgstr ""
-"Не вдалося запустити локальний сервер HTTP для вихідного виклику OAuth2."
+msgstr "Не вдалося запустити локальний сервер HTTP для вихідного виклику OAuth2."
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:142
 #, kde-format
@@ -1956,14 +1783,11 @@ msgstr ""
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:104
 #, kde-format
 msgid "Could not parse authorization response for access to %1 services."
-msgstr ""
-"Не вдалося проаналізувати відповідь авторизації для доступу до служб %1."
+msgstr "Не вдалося проаналізувати відповідь авторизації для доступу до служб %1."
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:111
 #, kde-format
-msgid ""
-"Server has changed %1 authorization user hash in the reply. Something is "
-"wrong."
+msgid "Server has changed %1 authorization user hash in the reply. Something is wrong."
 msgstr "Сервер змінив хеш користувача авторизації %1 в відповіді. Щось не так."
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:119
@@ -1983,12 +1807,8 @@ msgstr "Елемент XErr відсутній у %1 відповіді на п�
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:150
 #, kde-format
-msgid ""
-"This Microsoft account does not have an XBox Live profile. Buy the game on "
-"%1 first."
-msgstr ""
-"Цей обліковий запис Microsoft не має профілю XBox Live. Купить спочатку гру "
-"на %1."
+msgid "This Microsoft account does not have an XBox Live profile. Buy the game on %1 first."
+msgstr "Цей обліковий запис Microsoft не має профілю XBox Live. Купить спочатку гру на %1."
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:157
 #, kde-format
@@ -1997,24 +1817,16 @@ msgstr "XBox Live недоступний у вашій країні. Ви заб
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:164
 #, kde-format
-msgid ""
-"This Microsoft account is underaged and is not linked to a family.\n"
-"\n"
+msgid "This Microsoft account is underaged and is not linked to a family.\n\n"
 "Please set up your account according to %1."
-msgstr ""
-"Цей обліковий запис Microsoft замолодий і не пов'язаний зі сімейством.\n"
-"\n"
+msgstr "Цей обліковий запис Microsoft замолодий і не пов'язаний зі сімейством.\n\n"
 "Налаштуйте свій обліковий запис згідно з %1."
 
 #: launcher/minecraft/auth/steps/XboxAuthorizationStep.cpp:171
 #, kde-format
-msgid ""
-"XSTS authentication ended with unrecognized error(s):\n"
-"\n"
+msgid "XSTS authentication ended with unrecognized error(s):\n\n"
 "%1"
-msgstr ""
-"Автентифікація XSTS закінчилася з нерозпізнаними помилками:\n"
-"\n"
+msgstr "Автентифікація XSTS закінчилася з нерозпізнаними помилками:\n\n"
 "%1"
 
 #: launcher/minecraft/auth/steps/XboxProfileStep.cpp:37
@@ -2135,11 +1947,8 @@ msgstr "Java шлях встановлено на: %1"
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:182
 #, kde-format
-msgid ""
-"Java %1 is required but not installed. Automatic Java download is disabled."
-msgstr ""
-"Java %1 необхідна, але не встановлена. Автоматичне завантаження Java "
-"відключено."
+msgid "Java %1 is required but not installed. Automatic Java download is disabled."
+msgstr "Java %1 необхідна, але не встановлена. Автоматичне завантаження Java відключено."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:188
 #, kde-format
@@ -2149,8 +1958,7 @@ msgstr "Не встановлено Java %1 . Завантаження відс�
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:193
 #, kde-format
 msgid "Java %1 is required but not installed. Please install it manually."
-msgstr ""
-"Java %1 обов'язково, але не встановлено. Будь ласка, встановіть його вручну."
+msgstr "Java %1 обов'язково, але не встановлено. Будь ласка, встановіть його вручну."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:209
 #, kde-format
@@ -2175,19 +1983,13 @@ msgstr "Не вдалося обробити список версій Java з m
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:257
 #, kde-format
-msgid ""
-"Java %1 is not available for download from the selected vendor. Please "
-"install it manually or try a different vendor in settings."
-msgstr ""
-"Java %1 не доступна для завантаження від обраного виконавця. Будь ласка, "
-"встановіть його вручну або спробуйте інший постачальник в налаштуваннях."
+msgid "Java %1 is not available for download from the selected vendor. Please install it manually or try a different vendor in settings."
+msgstr "Java %1 не доступна для завантаження від обраного виконавця. Будь ласка, встановіть його вручну або спробуйте інший постачальник в налаштуваннях."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:265
 #, kde-format
 msgid "Failed to fetch Java version list: %1. Please install Java %2 manually."
-msgstr ""
-"Не вдалося отримати список версій Java: %1. Будь ласка, встановіть Java %2 "
-"вручну."
+msgstr "Не вдалося отримати список версій Java: %1. Будь ласка, встановіть Java %2 вручну."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:282
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:245
@@ -2212,12 +2014,8 @@ msgstr "Завантаження %1 (%2)..."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:315
 #, kde-format
-msgid ""
-"No Java %1 download available for your platform (%2). Please install it "
-"manually."
-msgstr ""
-"Немає доступних для вашої платформи Java %1 (%2). Будь ласка, встановіть "
-"його вручну."
+msgid "No Java %1 download available for your platform (%2). Please install it manually."
+msgstr "Немає доступних для вашої платформи Java %1 (%2). Будь ласка, встановіть його вручну."
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:320
 #, kde-format
@@ -2509,20 +2307,16 @@ msgstr "Отримання файлів ресурсів із Mojang..."
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:121
 #, kde-format
-msgid ""
-"Failed to download the assets index:\n"
+msgid "Failed to download the assets index:\n"
 "%1"
-msgstr ""
-"Не вдалося завантажити індекс ресурсів:\n"
+msgstr "Не вдалося завантажити індекс ресурсів:\n"
 "%1"
 
 #: launcher/minecraft/update/AssetUpdateTask.cpp:126
 #, kde-format
-msgid ""
-"Failed to download assets:\n"
+msgid "Failed to download assets:\n"
 "%1"
-msgstr ""
-"Не вдалося завантажити ресурс:\n"
+msgstr "Не вдалося завантажити ресурс:\n"
 "%1"
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:57
@@ -2552,16 +2346,12 @@ msgstr "Не вдалося скопіювати бібліотеку Forge/FML:
 
 #: launcher/minecraft/update/FMLLibrariesTask.cpp:133
 #, kde-format
-msgid ""
-"Failed to download the following files:\n"
-"%1\n"
-"\n"
+msgid "Failed to download the following files:\n"
+"%1\n\n"
 "Reason:%2\n"
 "Please try again."
-msgstr ""
-"Не вдалося завантажити наступні файли:\n"
-"%1\n"
-"\n"
+msgstr "Не вдалося завантажити наступні файли:\n"
+"%1\n\n"
 "Причина: %2\n"
 "Будь ласка, спробуйте знову."
 
@@ -2587,27 +2377,20 @@ msgstr "В метаданих вказаний нульовий jar, відмі�
 
 #: launcher/minecraft/update/LibrariesTask.cpp:84
 #, kde-format
-msgid ""
-"Some artifacts marked as 'local' are missing their files:\n"
-"%1\n"
-"\n"
-"You need to either add the files, or removed the packages that require "
-"them.\n"
+msgid "Some artifacts marked as 'local' are missing their files:\n"
+"%1\n\n"
+"You need to either add the files, or removed the packages that require them.\n"
 "You'll have to correct this problem manually."
-msgstr ""
-"Деяким артефактам, відміченим як 'local', бракує файлів: %1\n"
-"\n"
+msgstr "Деяким артефактам, відміченим як 'local', бракує файлів: %1\n\n"
 "Вам потрібно або додати ці файли, або видалити пакети, які їх потребують.\n"
 "Вам доведеться вручну виправити цю помилку."
 
 #: launcher/minecraft/update/LibrariesTask.cpp:111
 #, kde-format
-msgid ""
-"Game update failed: it was impossible to fetch the required libraries.\n"
+msgid "Game update failed: it was impossible to fetch the required libraries.\n"
 "Reason:\n"
 "%1"
-msgstr ""
-"Не вдалося оновити гру: Не було можливості отримати необхідні бібліотеки.\n"
+msgstr "Не вдалося оновити гру: Не було можливості отримати необхідні бібліотеки.\n"
 "Причина:\n"
 "%1"
 
@@ -2878,8 +2661,7 @@ msgstr "Пошук файлів на моадрі..."
 
 #: launcher/modplatform/technic/SingleZipPackInstallTask.cpp:86
 #, kde-format
-msgid ""
-"Could not create the instance's minecraft folder:\n"
+msgid "Could not create the instance's minecraft folder:\n"
 "%1"
 msgstr ""
 
@@ -2891,11 +2673,9 @@ msgstr "Імпорт збірки було скасовано."
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:51
 #, kde-format
-msgid ""
-"Finding recommended version:\n"
+msgid "Finding recommended version:\n"
 "%1"
-msgstr ""
-"Пошук рекомендованої версії:\n"
+msgstr "Пошук рекомендованої версії:\n"
 "%1"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:52
@@ -2905,8 +2685,7 @@ msgstr "Пошук рекомендованої версії"
 
 #: launcher/modplatform/technic/SolderPackInstallTask.cpp:77
 #, kde-format
-msgid ""
-"Resolving modpack files:\n"
+msgid "Resolving modpack files:\n"
 "%1"
 msgstr ""
 
@@ -2930,51 +2709,45 @@ msgstr "Завантаження мод-паку"
 msgid "Failed to extract modpack"
 msgstr "Не вдалося розпакувати мод-пак"
 
-#: launcher/modplatform/technic/TechnicPackProcessor.cpp:68
+#: launcher/modplatform/technic/TechnicPackProcessor.cpp:69
 #, kde-format
 msgid "Unable to open \"fmlversion.properties\"!"
 msgstr "Не вдалося відкрити \"fmlversion.properties\"!"
 
 #: launcher/modplatform/technic/TechnicPackProcessor.cpp:78
-#: launcher/modplatform/technic/TechnicPackProcessor.cpp:128
+#: launcher/modplatform/technic/TechnicPackProcessor.cpp:127
 #, kde-format
 msgid "Unable to open \"version.json\"!"
 msgstr "Не вдалося відкрити \"version.json\"!"
 
 #: launcher/modplatform/technic/TechnicPackProcessor.cpp:83
 #, kde-format
-msgid ""
-"Could not find \"version.json\" inside \"bin/modpack.jar\", but minecraft "
-"version is unknown"
-msgstr ""
-"Не вдалося знайти \"version.json\" всередині \"bin/modpack.jar\", але "
-"minecraft версія невідома"
+msgid "Could not find \"version.json\" inside \"bin/modpack.jar\", but minecraft version is unknown"
+msgstr "Не вдалося знайти \"version.json\" всередині \"bin/modpack.jar\", але minecraft версія невідома"
 
 #: launcher/modplatform/technic/TechnicPackProcessor.cpp:99
 #, kde-format
 msgid "Unable to open \"forgeversion.properties\""
 msgstr "Не вдалося відкрити \"forgeversion.properties\""
 
-#: launcher/modplatform/technic/TechnicPackProcessor.cpp:112
+#: launcher/modplatform/technic/TechnicPackProcessor.cpp:111
 #, kde-format
 msgid "Invalid \"forgeversion.properties\"!"
 msgstr "Невірний \"forgeversion.properties\"!"
 
-#: launcher/modplatform/technic/TechnicPackProcessor.cpp:135
+#: launcher/modplatform/technic/TechnicPackProcessor.cpp:134
 #, kde-format
 msgid "Unable to find a \"version.json\"!"
 msgstr "Не вдалося знайти \"version.json\"!"
 
-#: launcher/modplatform/technic/TechnicPackProcessor.cpp:146
+#: launcher/modplatform/technic/TechnicPackProcessor.cpp:145
 #, kde-format
-msgid ""
-"Could not understand \"version.json\":\n"
+msgid "Could not understand \"version.json\":\n"
 "inheritsFrom is missing"
-msgstr ""
-"Не вдалося розпізнати \"version.json\":\n"
+msgstr "Не вдалося розпізнати \"version.json\":\n"
 "inheritsFrom відсутній"
 
-#: launcher/modplatform/technic/TechnicPackProcessor.cpp:194
+#: launcher/modplatform/technic/TechnicPackProcessor.cpp:193
 #, kde-format
 msgid "Could not understand \"version.json\":\n"
 msgstr "Не вдалося зрозуміти \"version.json\":\n"
@@ -2997,11 +2770,9 @@ msgstr ""
 
 #: launcher/net/NetJob.cpp:197
 #, kde-format
-msgid ""
-"Job '%1' failed to process:\n"
+msgid "Job '%1' failed to process:\n"
 "%2"
-msgstr ""
-"Завдання '%1' не вдалося опрацювати:\n"
+msgstr "Завдання '%1' не вдалося опрацювати:\n"
 "%2"
 
 #: launcher/net/PasteUpload.cpp:140
@@ -3011,16 +2782,12 @@ msgstr "Завантаження до paste.ee"
 
 #: launcher/net/PasteUpload.cpp:168
 #, kde-format
-msgid ""
-"paste.ee returned an error. Please consult the logs for more information"
-msgstr ""
-"paste.ee повернув помилку. Будь ласка, зверніться до журналів для отримання "
-"додаткової інформації"
+msgid "paste.ee returned an error. Please consult the logs for more information"
+msgstr "paste.ee повернув помилку. Будь ласка, зверніться до журналів для отримання додаткової інформації"
 
 #: launcher/news/NewsChecker.cpp:188
 #, kde-format
-msgid ""
-"Failed to load news RSS feed:\n"
+msgid "Failed to load news RSS feed:\n"
 "%1"
 msgstr "Не вдалося завантажити RSS-стрічку новин:%1"
 
@@ -3062,7 +2829,7 @@ msgstr ""
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:15
 #, kde-format
 msgid "%1 KiB"
-msgstr "%1 KiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:18
 #, kde-format
@@ -3072,7 +2839,7 @@ msgstr ""
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:20
 #, kde-format
 msgid "%1 GiB"
-msgstr "%1 GiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 #, kde-format
@@ -3092,12 +2859,12 @@ msgstr "Коли"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:68
 #, kde-format
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:68
 #, kde-format
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:68
 #, kde-format
@@ -3131,12 +2898,8 @@ msgstr "Скинути останній коміт"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:99
 #, kde-format
-msgid ""
-"Hard-reset HEAD by one commit. The dropped commit is unreachable but "
-"reachable again via the reflog for ~30 days."
-msgstr ""
-"Жорстко скинути HEAD від одного коміту. Впущений коміт є недосяжним, але "
-"знову можна через залозу протягом ~30 днів."
+msgid "Hard-reset HEAD by one commit. The dropped commit is unreachable but reachable again via the reflog for ~30 days."
+msgstr "Жорстко скинути HEAD від одного коміту. Впущений коміт є недосяжним, але знову можна через залозу протягом ~30 днів."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:108
 #: launcher/ui/pages/global/AccountListPage.ui:111
@@ -3149,20 +2912,13 @@ msgstr "Оновити"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:120
 #, kde-format
-msgid ""
-"<b>git</b> is not installed on your system. Install Git and reopen this page."
-msgstr ""
-"<b>git</b> не встановлений на вашій системі. Встановіть Git і повторно "
-"відкрийте цю сторінку."
+msgid "<b>git</b> is not installed on your system. Install Git and reopen this page."
+msgstr "<b>git</b> не встановлений на вашій системі. Встановіть Git і повторно відкрийте цю сторінку."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:131
 #, kde-format
-msgid ""
-"No version history yet. Snapshot now to start tracking changes to this "
-"instance."
-msgstr ""
-"Ще немає історії версій. Знімок зараз, щоб почати відстеження змін до цього "
-"екземпляру."
+msgid "No version history yet. Snapshot now to start tracking changes to this instance."
+msgstr "Ще немає історії версій. Знімок зараз, щоб почати відстеження змін до цього екземпляру."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:135
 #, kde-format
@@ -3182,22 +2938,18 @@ msgstr "Чисте робоче дерево"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:141
 #, kde-format
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:193
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:207
 #, kde-format
 msgid "Snapshot"
-msgstr "Snapshot"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:194
 #, kde-format
-msgid ""
-"Describe the changes you're snapshotting (leave blank for an auto-generated "
-"message):"
-msgstr ""
-"Опишіть зміни, які ви знімаєте (залиште поле пустим, щоб автоматично "
-"згенероване повідомлення):"
+msgid "Describe the changes you're snapshotting (leave blank for an auto-generated message):"
+msgstr "Опишіть зміни, які ви знімаєте (залиште поле пустим, щоб автоматично згенероване повідомлення):"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:197
 #, kde-format
@@ -3221,11 +2973,8 @@ msgstr "Відновити?"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:219
 #, kde-format
-msgid ""
-"Restore the instance to commit %1 (%2)?\n"
-"\n"
-"An auto-snapshot of the current state is taken first, so this can be undone "
-"by restoring the previous snapshot."
+msgid "Restore the instance to commit %1 (%2)?\n\n"
+"An auto-snapshot of the current state is taken first, so this can be undone by restoring the previous snapshot."
 msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:226
@@ -3255,12 +3004,8 @@ msgstr "Скинути останній коміт?"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:251
 #, kde-format
-msgid ""
-"This hard-resets HEAD by one commit. The working tree is reset to the parent "
-"commit too. Continue?"
-msgstr ""
-"Це Жорстко скидає HEAD одним комітом. Робоче дерево також скидається на "
-"батьківський коміт. Продовжити?"
+msgid "This hard-resets HEAD by one commit. The working tree is reset to the parent commit too. Continue?"
+msgstr "Це Жорстко скидає HEAD одним комітом. Робоче дерево також скидається на батьківський коміт. Продовжити?"
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:256
 #, kde-format
@@ -3275,7 +3020,7 @@ msgstr "Історія версій"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:129
 #, kde-format
 msgid "Git Versioning"
-msgstr "Git Versioning"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:134
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:234
@@ -3285,12 +3030,8 @@ msgstr "Автоматичний режим знімка перед кожним
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:138
 #, kde-format
-msgid ""
-"Commit any pending changes to the instance's Git history right before the "
-"JVM starts. The history lives in the instance's .history/ directory."
-msgstr ""
-"Робити будь які очікуючі зміни в історії Git звідси перед початком JVM. "
-"Історія живе в каталозі .history/інстансу."
+msgid "Commit any pending changes to the instance's Git history right before the JVM starts. The history lives in the instance's .history/ directory."
+msgstr "Робити будь які очікуючі зміни в історії Git звідси перед початком JVM. Історія живе в каталозі .history/інстансу."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:144
 #, kde-format
@@ -3304,12 +3045,8 @@ msgstr "Перевизначити глобальні параметри вер�
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:238
 #, kde-format
-msgid ""
-"Commit any pending changes to this instance's Git history right before the "
-"JVM starts. The history lives in the instance's .history/ directory."
-msgstr ""
-"Робити будь-які очікуючі зміни в git-історії цього екземпляру прямо перед "
-"початком JVM. Історія живе в каталозі .history/інстансу."
+msgid "Commit any pending changes to this instance's Git history right before the JVM starts. The history lives in the instance's .history/ directory."
+msgstr "Робити будь-які очікуючі зміни в git-історії цього екземпляру прямо перед початком JVM. Історія живе в каталозі .history/інстансу."
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:246
 #, kde-format
@@ -3318,8 +3055,7 @@ msgstr "git не встановлено - історію версій вимкн
 
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:80
 #, kde-format
-msgid ""
-"MangoHud is not mounted inside this Flatpak sandbox.\n"
+msgid "MangoHud is not mounted inside this Flatpak sandbox.\n"
 "Install the org.freedesktop.Platform.VulkanLayer.MangoHud branch\n"
 "that matches the base runtime and restart MeshMC. A mismatched\n"
 "branch will not appear under /usr/lib/extensions/vulkan."
@@ -3327,31 +3063,25 @@ msgstr ""
 
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:86
 #, kde-format
-msgid ""
-"MangoHud is not installed or not found on PATH.\n"
+msgid "MangoHud is not installed or not found on PATH.\n"
 "Install it (package: mangohud) and reopen this dialog."
-msgstr ""
-"MangoHud не встановлено або не знайдено на PATH.\n"
+msgstr "MangoHud не встановлено або не знайдено на PATH.\n"
 "Встановити його (пакет: mangohud) і повторно відкрити цей діалог."
 
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:93
 #, kde-format
-msgid ""
-"GameMode is not available inside this Flatpak sandbox.\n"
+msgid "GameMode is not available inside this Flatpak sandbox.\n"
 "Bundle the GameMode client tools in the Flatpak and allow access to\n"
 "com.feralinteractive.GameMode on the session bus."
-msgstr ""
-"GameMode недоступний у цій пісочниці Flatpak\n"
+msgstr "GameMode недоступний у цій пісочниці Flatpak\n"
 "Набір інструментів клієнта GameMode на Flatpak і дозволити доступ до\n"
 "com.feralinteractive.GameMode на занятті сесії."
 
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:99
 #, kde-format
-msgid ""
-"gamemoderun is not installed or not found on PATH.\n"
+msgid "gamemoderun is not installed or not found on PATH.\n"
 "Install GameMode and restart MeshMC to enable this option."
-msgstr ""
-"gamemoderun не встановлений або не знайдено на PATH.\n"
+msgstr "gamemoderun не встановлений або не знайдено на PATH.\n"
 "Встановіть GameMode і перезапустіть MeshMC, щоб увімкнути цю опцію."
 
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:108
@@ -3361,23 +3091,15 @@ msgstr "Віджет GameMode - гра активується при запус�
 
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:112
 #, kde-format
-msgid ""
-"GameMode daemon: not reachable from sandbox — add session bus access to\n"
-"com.feralinteractive.GameMode and ensure the host gamemoded service is "
-"running"
-msgstr ""
-"daemon GameMode не може бути доступний з пісочниці - додайте доступ на сеанс "
-"до мережі\n"
+msgid "GameMode daemon: not reachable from sandbox — add session bus access to\n"
+"com.feralinteractive.GameMode and ensure the host gamemoded service is running"
+msgstr "daemon GameMode не може бути доступний з пісочниці - додайте доступ на сеанс до мережі\n"
 "com.feralinteractive.GameMode і переконайтеся в ігровому режимі хоста"
 
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:118
 #, kde-format
-msgid ""
-"GameMode daemon: not responding — run \"systemctl --user enable --now "
-"gamemoded\" or check gamemode install"
-msgstr ""
-"Графік GameMode не відповідає: запустити \"systemctl - увімкнути режим --now "
-"gamemoded\" або перевірити інсталяцію gamemode"
+msgid "GameMode daemon: not responding — run \"systemctl --user enable --now gamemoded\" or check gamemode install"
+msgstr "Графік GameMode не відповідає: запустити \"systemctl - увімкнути режим --now gamemoded\" або перевірити інсталяцію gamemode"
 
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:233
 #, kde-format
@@ -3393,11 +3115,9 @@ msgstr "Увімкнути накладання MangoHud (FPS / GPU / ЦП)"
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:245
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:387
 #, kde-format
-msgid ""
-"Injects the MangoHud overlay into Minecraft via the mangohud wrapper.\n"
+msgid "Injects the MangoHud overlay into Minecraft via the mangohud wrapper.\n"
 "Displays real-time FPS, frame timing, GPU and CPU metrics.\n"
-"Works with both OpenGL and Vulkan (LWJGL2 / LWJGL3).\n"
-"\n"
+"Works with both OpenGL and Vulkan (LWJGL2 / LWJGL3).\n\n"
 "Found: %1"
 msgstr ""
 
@@ -3410,8 +3130,7 @@ msgstr "Увімкнути GameMode (оптимізація продуктивн
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:261
 #: launcher/plugin/plugins/LinuxPerf/LinuxPerfPlugin.cpp:403
 #, kde-format
-msgid ""
-"Launches Minecraft via gamemoderun so that Feral Interactive's\n"
+msgid "Launches Minecraft via gamemoderun so that Feral Interactive's\n"
 "GameMode daemon can apply CPU governor and scheduler optimisations\n"
 "for the duration of the game session.\n"
 "Requires GameMode to be installed (package: gamemode)."
@@ -3434,8 +3153,7 @@ msgstr "Використовувати дискретний GPU (NVIDIA Prime Re
 
 #: launcher/plugin/plugins/NVIDIAPrime/NVIDIAPrimePlugin.cpp:88
 #, kde-format
-msgid ""
-"Forces Minecraft to use the NVIDIA discrete GPU on Optimus laptops.\n"
+msgid "Forces Minecraft to use the NVIDIA discrete GPU on Optimus laptops.\n"
 "Uses prime-run on Flatpak, or sets environment variables directly otherwise."
 msgstr ""
 
@@ -3446,24 +3164,13 @@ msgstr ""
 
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.cpp:96
 #, kde-format
-msgid ""
-"<h3>Wiki not available</h3><p>The MeshMC wiki is downloaded automatically "
-"using <b>git</b>, but no <code>git</code> program was found on your system, "
-"so the wiki cannot be fetched.</p><p>Install Git and restart MeshMC to "
-"download the wiki.</p>"
+msgid "<h3>Wiki not available</h3><p>The MeshMC wiki is downloaded automatically using <b>git</b>, but no <code>git</code> program was found on your system, so the wiki cannot be fetched.</p><p>Install Git and restart MeshMC to download the wiki.</p>"
 msgstr ""
 
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.cpp:103
 #, kde-format
-msgid ""
-"<h3>Downloading the MeshMC wiki…</h3><p>The wiki is fetched in the "
-"background the first time you are online and will appear here automatically "
-"once the download finishes. If you are offline, MeshMC retries on every "
-"launch.</p>"
-msgstr ""
-"<h3>Завантаження Wiki з MeshMC…</h3><p>Wiki отримується у фоновому режимі, "
-"коли ви знаходитеся в мережі і з'явиться тут автоматично після завершення "
-"завантаження. Якщо ви офлайн, MeshMC повторних спроб при кожному запуску.</p>"
+msgid "<h3>Downloading the MeshMC wiki…</h3><p>The wiki is fetched in the background the first time you are online and will appear here automatically once the download finishes. If you are offline, MeshMC retries on every launch.</p>"
+msgstr "<h3>Завантаження Wiki з MeshMC…</h3><p>Wiki отримується у фоновому режимі, коли ви знаходитеся в мережі і з'явиться тут автоматично після завершення завантаження. Якщо ви офлайн, MeshMC повторних спроб при кожному запуску.</p>"
 
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.cpp:129
 #, kde-format
@@ -3473,7 +3180,7 @@ msgstr ""
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.h:41
 #, kde-format
 msgid "Offline Wiki"
-msgstr "Offline Wiki"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:304
 #, kde-format
@@ -3487,10 +3194,7 @@ msgstr "Показати піктограму в панелі завдань Mes
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:312
 #, kde-format
-msgid ""
-"When on, MeshMC keeps a persistent tray icon with quick-launch shortcuts and "
-"an optional minimise-to-tray close handler.\n"
-"\n"
+msgid "When on, MeshMC keeps a persistent tray icon with quick-launch shortcuts and an optional minimise-to-tray close handler.\n\n"
 "Toggle takes effect after restarting MeshMC."
 msgstr ""
 
@@ -3571,18 +3275,6 @@ msgstr "Порожній шлях"
 msgid "Path does not seem to be a MCEdit path"
 msgstr "Шлях, здається, не є шляхом MCEdit"
 
-#: launcher/translations/TranslationsModel.cpp:186
-#: launcher/ui/pages/global/LanguagePage.h:41
-#: launcher/ui/setupwizard/LanguageWizardPage.cpp:52
-#, kde-format
-msgid "Language"
-msgstr "Мова"
-
-#: launcher/translations/TranslationsModel.cpp:188
-#, kde-format
-msgid "The native language name."
-msgstr "Назва рідної мови."
-
 #: launcher/ui/GuiUtil.cpp:50 launcher/ui/GuiUtil.cpp:59
 #, kde-format
 msgid "Upload failed"
@@ -3602,12 +3294,8 @@ msgstr "Вивантаження закінчено"
 
 #: launcher/ui/GuiUtil.cpp:68
 #, kde-format
-msgid ""
-"The <a href=\"%1\">link to the uploaded log</a> has been placed in your "
-"clipboard."
-msgstr ""
-"<a href=\"%1\">посилання на завантажений журнал</a> було додано в буфер "
-"обміну."
+msgid "The <a href=\"%1\">link to the uploaded log</a> has been placed in your clipboard."
+msgstr "<a href=\"%1\">посилання на завантажений журнал</a> було додано в буфер обміну."
 
 #: launcher/ui/InstanceWindow.cpp:46
 #, kde-format
@@ -3615,12 +3303,11 @@ msgid "Console window for "
 msgstr "Вікно консолі для "
 
 #: launcher/ui/InstanceWindow.cpp:86 launcher/ui/MainWindow.ui:975
-#: launcher/ui/pagedialog/PageDialog.cpp:52
 #, kde-format
 msgid "Help"
 msgstr "Допомога"
 
-#: launcher/ui/InstanceWindow.cpp:102 launcher/ui/MainWindow.cpp:945
+#: launcher/ui/InstanceWindow.cpp:102 launcher/ui/MainWindow.cpp:963
 #: launcher/ui/MainWindow.ui:617
 #, kde-format
 msgid "Launch Offline"
@@ -3641,309 +3328,268 @@ msgstr "Зупинити дану збірку"
 msgid "Launch the instance"
 msgstr "Запустити вибрану збірку"
 
-#: launcher/ui/MacMenuBar.cpp:137
+#: launcher/ui/MacMenuBar.cpp:138
 msgctxt "@title:menu"
 msgid "&File"
 msgstr "&Файл"
 
-#: launcher/ui/MacMenuBar.cpp:138
+#: launcher/ui/MacMenuBar.cpp:139
 msgctxt "@title:menu"
 msgid "&Instance"
 msgstr "&Екземпляр"
 
-#: launcher/ui/MacMenuBar.cpp:139
+#: launcher/ui/MacMenuBar.cpp:140
 msgctxt "@title:menu"
 msgid "F&olders"
 msgstr "П&апки"
 
-#: launcher/ui/MacMenuBar.cpp:140
+#: launcher/ui/MacMenuBar.cpp:141
 msgctxt "@title:menu"
 msgid "&View"
 msgstr "&Вигляд"
 
-#: launcher/ui/MacMenuBar.cpp:144
+#: launcher/ui/MacMenuBar.cpp:145
 msgctxt "@title:menu"
 msgid "&Help"
 msgstr "&Допомога"
 
-#: launcher/ui/MainWindow.cpp:123
+#: launcher/ui/MainWindow.cpp:124
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:110
 #: launcher/ui/dialogs/ProfileSelectDialog.cpp:56
 #, kde-format
 msgid "%1 (in use)"
 msgstr "%1 (використовується)"
 
-#: launcher/ui/MainWindow.cpp:534 launcher/ui/MainWindow.cpp:704
+#: launcher/ui/MainWindow.cpp:552 launcher/ui/MainWindow.cpp:722
 #, kde-format
 msgid "No instance selected"
 msgstr "Не обрана збірка"
 
-#: launcher/ui/MainWindow.cpp:535
+#: launcher/ui/MainWindow.cpp:553
 #, kde-format
 msgid "Total playtime: 0s"
 msgstr "Загальна тривалість гри: 0 с"
 
-#: launcher/ui/MainWindow.cpp:682
+#: launcher/ui/MainWindow.cpp:700
 #, kde-format
 msgctxt "MeshMC - Version X"
 msgid "MeshMC - Version %1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:684
+#: launcher/ui/MainWindow.cpp:702
 #, kde-format
 msgctxt "on platform, as in operating system"
 msgid " on %1"
 msgstr " на %1"
 
-#: launcher/ui/MainWindow.cpp:698 launcher/ui/MainWindow.cpp:1151
+#: launcher/ui/MainWindow.cpp:716 launcher/ui/MainWindow.cpp:1169
 #: launcher/ui/MainWindow.ui:986
 #, kde-format
 msgid "Profiles"
-msgstr "Profiles"
+msgstr ""
 
-#: launcher/ui/MainWindow.cpp:815
+#: launcher/ui/MainWindow.cpp:833
 #, kde-format
 msgid "Create instance"
 msgstr "Створити збірку"
 
-#: launcher/ui/MainWindow.cpp:831
+#: launcher/ui/MainWindow.cpp:849
 #, kde-format
 msgid "Delete group '%1'"
 msgstr "Видалити групу '%1'"
 
-#: launcher/ui/MainWindow.cpp:864
+#: launcher/ui/MainWindow.cpp:882
 #, kde-format
 msgid "Undo Deletion of \"%1\""
 msgstr "Скасувати видалення \"%1\""
 
-#: launcher/ui/MainWindow.cpp:867 launcher/ui/MainWindow.ui:278
+#: launcher/ui/MainWindow.cpp:885 launcher/ui/MainWindow.ui:278
 #, kde-format
-msgid ""
-"Bring the instance you last sent to the trash back, along with its shortcuts."
-msgstr ""
-"Принесіть екземпляр, який ви востаннє відправили у смітник разом з його "
-"ярликами."
+msgid "Bring the instance you last sent to the trash back, along with its shortcuts."
+msgstr "Принесіть екземпляр, який ви востаннє відправили у смітник разом з його ярликами."
 
-#: launcher/ui/MainWindow.cpp:953
+#: launcher/ui/MainWindow.cpp:971
 #, kde-format
 msgid "Launch &Demo"
 msgstr "Запустити &Демо-версію"
 
-#: launcher/ui/MainWindow.cpp:961
+#: launcher/ui/MainWindow.cpp:979
 #, kde-format
 msgid "This Minecraft version has no demo mode. It was added in 1.3.1."
 msgstr "Ця версія Minecraft не має демо режиму. Його додано в 1.3.1."
 
-#: launcher/ui/MainWindow.cpp:968
+#: launcher/ui/MainWindow.cpp:986
 #, kde-format
 msgid "Profilers"
 msgstr "Профайлери"
 
-#: launcher/ui/MainWindow.cpp:975
+#: launcher/ui/MainWindow.cpp:993
 #, kde-format
 msgid "No Profiler"
 msgstr "Профайлер відсутній"
 
-#: launcher/ui/MainWindow.cpp:994
+#: launcher/ui/MainWindow.cpp:1012
 #, kde-format
 msgid "Profiler not setup correctly. Go into settings, \"External Tools\"."
-msgstr ""
-"Профайлер не налаштовано правильно. Перейдіть в налаштування, \"Зовнішні "
-"інструменти\"."
+msgstr "Профайлер не налаштовано правильно. Перейдіть в налаштування, \"Зовнішні інструменти\"."
 
-#: launcher/ui/MainWindow.cpp:1012
+#: launcher/ui/MainWindow.cpp:1030
 #, kde-format
 msgid "Launch &As"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1049
+#: launcher/ui/MainWindow.cpp:1067
 #, kde-format
 msgid "No accounts added!"
 msgstr "Облікових записів не додано!"
 
-#: launcher/ui/MainWindow.cpp:1079
+#: launcher/ui/MainWindow.cpp:1097
 #, kde-format
 msgid "No Default Account"
 msgstr "Немає облікового запису за замовчуванням"
 
-#: launcher/ui/MainWindow.cpp:1192 launcher/ui/dialogs/NewsViewerDialog.cpp:162
+#: launcher/ui/MainWindow.cpp:1210 launcher/ui/dialogs/NewsViewerDialog.cpp:162
 #, kde-format
 msgid "Loading news..."
 msgstr "Завантаження новин..."
 
-#: launcher/ui/MainWindow.cpp:1200 launcher/ui/dialogs/NewsViewerDialog.cpp:156
+#: launcher/ui/MainWindow.cpp:1218 launcher/ui/dialogs/NewsViewerDialog.cpp:156
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:163
 #, kde-format
 msgid "No news available."
 msgstr "Немає доступних новин."
 
-#: launcher/ui/MainWindow.cpp:1279
+#: launcher/ui/MainWindow.cpp:1297
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:878
 #, kde-format
 msgid "Warnings"
 msgstr "Попередження"
 
-#: launcher/ui/MainWindow.cpp:1335
+#: launcher/ui/MainWindow.cpp:1353
 #: launcher/ui/pages/instance/VersionPage.cpp:418
 #, kde-format
-msgid ""
-"MeshMC cannot download Minecraft or update instances unless you have at "
-"least one account added.\n"
+msgid "MeshMC cannot download Minecraft or update instances unless you have at least one account added.\n"
 "Please add your Mojang or Minecraft account."
-msgstr ""
-"MeshMC не може завантажити Minecraft або оновити екземпляри, якщо ви не "
-"маєте принаймні одного облікового запису.\n"
+msgstr "MeshMC не може завантажити Minecraft або оновити екземпляри, якщо ви не маєте принаймні одного облікового запису.\n"
 "Будь ласка, додайте свій обліковий запис Mojang або Minecraft."
 
-#: launcher/ui/MainWindow.cpp:1472
+#: launcher/ui/MainWindow.cpp:1490
 #, kde-format
 msgid "Group name"
 msgstr "Назва групи"
 
-#: launcher/ui/MainWindow.cpp:1473
+#: launcher/ui/MainWindow.cpp:1491
 #, kde-format
 msgid "Enter a new group name."
 msgstr "Введіть назву нової групи."
 
-#: launcher/ui/MainWindow.cpp:1495
+#: launcher/ui/MainWindow.cpp:1513
 #, kde-format
 msgid "Delete group"
 msgstr "Видалити групу"
 
-#: launcher/ui/MainWindow.cpp:1496
+#: launcher/ui/MainWindow.cpp:1514
 #, kde-format
 msgid "Are you sure you want to delete the group %1"
 msgstr "Ви впевнені, що бажаєте видалити групу %1"
 
-#: launcher/ui/MainWindow.cpp:1714
+#: launcher/ui/MainWindow.cpp:1732
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:775
 #, kde-format
 msgid "Instance is running"
 msgstr "Працює інстанс"
 
-#: launcher/ui/MainWindow.cpp:1715
+#: launcher/ui/MainWindow.cpp:1733
 #, kde-format
-msgid ""
-"\"%1\" is running. Stop it first -- deleting an instance while the game has "
-"its files open would leave both in a mess."
-msgstr ""
-"\"%1\" працює. Зупиніть його спочатку -- видаляйте екземпляр, поки гра має "
-"свої файли відкриті в безладі."
+msgid "\"%1\" is running. Stop it first -- deleting an instance while the game has its files open would leave both in a mess."
+msgstr "\"%1\" працює. Зупиніть його спочатку -- видаляйте екземпляр, поки гра має свої файли відкриті в безладі."
 
-#: launcher/ui/MainWindow.cpp:1730
+#: launcher/ui/MainWindow.cpp:1748
 #, kde-format
-msgid ""
-"\n"
-"\n"
+msgid "\n\n"
 "One shortcut to it will go the same way."
-msgid_plural ""
-"\n"
-"\n"
+msgid_plural "\n\n"
 "%1 shortcuts to it will go the same way."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
-#: launcher/ui/MainWindow.cpp:1741
+#: launcher/ui/MainWindow.cpp:1759
 #, kde-format
-msgid ""
-"It will be moved to the trash. To bring it back, right-click the instance "
-"list and pick Restore."
-msgstr ""
-"Його буде переміщено в кошик. Щоб повернути його, клацніть правою кнопкою "
-"миші список екземплярів та вибрати Restore."
+msgid "It will be moved to the trash. To bring it back, right-click the instance list and pick Restore."
+msgstr "Його буде переміщено в кошик. Щоб повернути його, клацніть правою кнопкою миші список екземплярів та вибрати Restore."
 
-#: launcher/ui/MainWindow.cpp:1743
+#: launcher/ui/MainWindow.cpp:1761
 #, kde-format
 msgid "There is no usable trash on this system, so this is permanent."
 msgstr "Не буде корисного сміття в цій системі, тому це буде постійним."
 
-#: launcher/ui/MainWindow.cpp:1751
+#: launcher/ui/MainWindow.cpp:1769
 #, kde-format
 msgid "Delete instance?"
 msgstr "Видалити екземпляр?"
 
-#: launcher/ui/MainWindow.cpp:1752
+#: launcher/ui/MainWindow.cpp:1770
 #, kde-format
-msgid ""
-"About to delete: %1\n"
-"%2%3\n"
-"\n"
+msgid "About to delete: %1\n"
+"%2%3\n\n"
 "Are you sure?"
-msgstr ""
-"Буде вилучено: %1\n"
-"%2%3\n"
-"\n"
+msgstr "Буде вилучено: %1\n"
+"%2%3\n\n"
 "Ви впевнені?"
 
-#: launcher/ui/MainWindow.cpp:1788
+#: launcher/ui/MainWindow.cpp:1806
 #, kde-format
 msgid "Restore Instance"
 msgstr "Відновити екземпляр"
 
-#: launcher/ui/MainWindow.cpp:1789
+#: launcher/ui/MainWindow.cpp:1807
 #, kde-format
-msgid ""
-"Not everything could be put back. Check your trash to recover the rest by "
-"hand."
-msgstr ""
-"Не все може бути повернуте. Перевірте смітник, щоб відновити решту вручну."
+msgid "Not everything could be put back. Check your trash to recover the rest by hand."
+msgstr "Не все може бути повернуте. Перевірте смітник, щоб відновити решту вручну."
 
-#: launcher/ui/MainWindow.cpp:1847
+#: launcher/ui/MainWindow.cpp:1865
 #, kde-format
 msgid "Cannot export"
 msgstr "Не можу експортувати"
 
-#: launcher/ui/MainWindow.cpp:1848
+#: launcher/ui/MainWindow.cpp:1866
 #, kde-format
-msgid ""
-"CurseForge modpacks cannot be made from a snapshot version of Minecraft."
+msgid "CurseForge modpacks cannot be made from a snapshot version of Minecraft."
 msgstr "modpacks CurseForge не можна робити зі знімком версії Minecraft."
 
-#: launcher/ui/MainWindow.cpp:2100
+#: launcher/ui/MainWindow.cpp:2118
 #, kde-format
 msgid "Rename Instance"
 msgstr "Перейменувати екземпляр"
 
-#: launcher/ui/MainWindow.cpp:2122
+#: launcher/ui/MainWindow.cpp:2140
 #, kde-format
-msgid ""
-"This is a problem: <br/> - MeshMC will likely be deleted without warning by "
-"the operating system <br/> - close MeshMC now and extract it to a real "
-"location, not a temporary folder"
-msgstr ""
-"Це проблема: <br/> - MeshMC, швидше за все, буде видалено без попередження "
-"операційної системи <br/> - закрийте MeshMC зараз і витягти його в реальне "
-"місце, не тимчасова папка"
+msgid "This is a problem: <br/> - MeshMC will likely be deleted without warning by the operating system <br/> - close MeshMC now and extract it to a real location, not a temporary folder"
+msgstr "Це проблема: <br/> - MeshMC, швидше за все, буде видалено без попередження операційної системи <br/> - закрийте MeshMC зараз і витягти його в реальне місце, не тимчасова папка"
 
-#: launcher/ui/MainWindow.cpp:2134
+#: launcher/ui/MainWindow.cpp:2152
 #, kde-format
-msgid ""
-"Your instance folder '%1' contains '!' and this is known to cause Java "
-"problems!"
+msgid "Your instance folder '%1' contains '!' and this is known to cause Java problems!"
 msgstr "Твоя папка '%1' містить '!' і це може викликати проблеми Java!"
 
-#: launcher/ui/MainWindow.cpp:2137
+#: launcher/ui/MainWindow.cpp:2155
 #, kde-format
-msgid ""
-"You have now two options: <br/> - change the instance folder in the settings "
-"<br/> - move this installation of MeshMC to a different folder"
+msgid "You have now two options: <br/> - change the instance folder in the settings <br/> - move this installation of MeshMC to a different folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2148
+#: launcher/ui/MainWindow.cpp:2166
 #, kde-format
-msgid ""
-"Your instance folder '%1' contains 'Rar$' - that means you haven't extracted "
-"MeshMC archive!"
-msgstr ""
-"Ваша папка '%1' містить 'Rar$' - це означає, що ви не витягнули файл MeshMC "
-"архів!"
+msgid "Your instance folder '%1' contains 'Rar$' - that means you haven't extracted MeshMC archive!"
+msgstr "Ваша папка '%1' містить 'Rar$' - це означає, що ви не витягнули файл MeshMC архів!"
 
-#: launcher/ui/MainWindow.cpp:2157
+#: launcher/ui/MainWindow.cpp:2175
 #, kde-format
 msgid "Your instance folder '%1' is in a temporary folder: '%2'!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2174
+#: launcher/ui/MainWindow.cpp:2192
 #, kde-format
 msgid "Total playtime: %1"
 msgstr "Загальна тривалість гри: %1"
@@ -4061,12 +3707,8 @@ msgstr "Ява"
 
 #: launcher/ui/MainWindow.ui:348
 #, kde-format
-msgid ""
-"Open the Java folder in a file browser. Only available if the built-in Java "
-"downloader is used."
-msgstr ""
-"Відкрийте папку Java у файловій браузері. Доступно тільки в тому випадку, "
-"якщо використовується вбудований Java downloader."
+msgid "Open the Java folder in a file browser. Only available if the built-in Java downloader is used."
+msgstr "Відкрийте папку Java у файловій браузері. Доступно тільки в тому випадку, якщо використовується вбудований Java downloader."
 
 #: launcher/ui/MainWindow.ui:359
 #, kde-format
@@ -4201,12 +3843,8 @@ msgstr "Панель меню замість панелі інструменті
 
 #: launcher/ui/MainWindow.ui:550
 #, kde-format
-msgid ""
-"Keep this menu bar and hide the main toolbar. Without it, tap Alt to show "
-"the menu bar for a moment."
-msgstr ""
-"Залиште цю панель меню і сховайте основну панель інструментів. Без неї "
-"натисніть Alt, щоб показати рядок меню протягом хвилини."
+msgid "Keep this menu bar and hide the main toolbar. Without it, tap Alt to show the menu bar for a moment."
+msgstr "Залиште цю панель меню і сховайте основну панель інструментів. Без неї натисніть Alt, щоб показати рядок меню протягом хвилини."
 
 #: launcher/ui/MainWindow.ui:558
 #, kde-format
@@ -4330,7 +3968,7 @@ msgstr "Тека Minecraft"
 msgid "Open the selected instance's minecraft folder in a file browser."
 msgstr "Відкрити теку обраної збірки в файловому менеджері."
 
-#: launcher/ui/MainWindow.ui:743 launcher/ui/pages/global/MeshMCPage.cpp:251
+#: launcher/ui/MainWindow.ui:743 launcher/ui/pages/global/MeshMCPage.cpp:250
 #, kde-format
 msgid "Mods Folder"
 msgstr "Папка модифікацій"
@@ -4350,7 +3988,7 @@ msgstr "Тека конфігурацій"
 msgid "Open the instance's config folder."
 msgstr "Відкрити теку конфігурації для збірки."
 
-#: launcher/ui/MainWindow.ui:771 launcher/ui/pages/global/MeshMCPage.cpp:137
+#: launcher/ui/MainWindow.ui:771 launcher/ui/pages/global/MeshMCPage.cpp:136
 #, kde-format
 msgid "Instance Folder"
 msgstr "Тека збірки"
@@ -4378,7 +4016,7 @@ msgstr "Експортувати вибраний екземпляр у підт
 #: launcher/ui/MainWindow.ui:802
 #, kde-format
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 #, kde-format
@@ -4388,7 +4026,7 @@ msgstr "Накопичення (mrpack)"
 #: launcher/ui/MainWindow.ui:824
 #, kde-format
 msgid "CurseForge (zip)"
-msgstr "CurseForge (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:835 launcher/ui/dialogs/MeshMCLogsDialog.cpp:206
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:66
@@ -4417,11 +4055,8 @@ msgstr "Копіювати обрану збірку."
 
 #: launcher/ui/MainWindow.ui:866
 #, kde-format
-msgid ""
-"Create a shortcut in a folder of your choosing that launches the selected "
-"instance."
-msgstr ""
-"Створіть ярлик у папці вашого вибору, який запускає вибраний екземпляр."
+msgid "Create a shortcut in a folder of your choosing that launches the selected instance."
+msgstr "Створіть ярлик у папці вашого вибору, який запускає вибраний екземпляр."
 
 #: launcher/ui/MainWindow.ui:877
 #, kde-format
@@ -4501,7 +4136,7 @@ msgstr "Отримати допомогу з %1 або Minecraft."
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 #, kde-format
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:62
 #, kde-format
@@ -4650,21 +4285,13 @@ msgstr "Адреса сервера"
 
 #: launcher/ui/dialogs/CreateShortcutDialog.ui:180
 #, kde-format
-msgid ""
-"Note: shortcuts are deleted along with the instance, but only while they are "
-"still where they were written."
-msgstr ""
-"Примітка: ярлики видаляються разом з прикладом, але лише тоді, коли вони все "
-"ще були записані."
+msgid "Note: shortcuts are deleted along with the instance, but only while they are still where they were written."
+msgstr "Примітка: ярлики видаляються разом з прикладом, але лише тоді, коли вони все ще були записані."
 
 #: launcher/ui/dialogs/CreateShortcutDialog.ui:190
 #, kde-format
-msgid ""
-"Move one somewhere else afterwards and MeshMC will forget it, so you would "
-"have to delete that one yourself."
-msgstr ""
-"Перемістіть ще одну точку після цього і МешМС забуде її, тому вам доведеться "
-"видалити її самостійно."
+msgid "Move one somewhere else afterwards and MeshMC will forget it, so you would have to delete that one yourself."
+msgstr "Перемістіть ще одну точку після цього і МешМС забуде її, тому вам доведеться видалити її самостійно."
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:119
 #, kde-format
@@ -4673,12 +4300,8 @@ msgstr "Переглянути та підтвердити"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:121
 #, kde-format
-msgid ""
-"Close this window and review the %1 you picked before anything is "
-"downloaded. Shortcut: Ctrl+Return"
-msgstr ""
-"Закрийте це вікно та перегляньте вибрані вами %1 , перш ніж будь-що буде "
-"завантажено. Ярлик: Ctrl+return"
+msgid "Close this window and review the %1 you picked before anything is downloaded. Shortcut: Ctrl+Return"
+msgstr "Закрийте це вікно та перегляньте вибрані вами %1 , перш ніж будь-що буде завантажено. Ярлик: Ctrl+return"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:123
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:340
@@ -4704,8 +4327,7 @@ msgstr "Необхідне підтвердження"
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:430
 #, kde-format
-msgid ""
-"You have %1 selected %2.\n"
+msgid "You have %1 selected %2.\n"
 "Are you sure you want to close this dialog?"
 msgstr ""
 
@@ -4716,21 +4338,13 @@ msgstr "не знайдено"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:137
 #, kde-format
-msgid ""
-"No compatible version of this dependency could be found on either provider. "
-"The %1 that needs it may not work."
-msgstr ""
-"Для провайдера не була знайдена сумісна версія цієї залежності. %1 , яка її "
-"потребує, може не працювати."
+msgid "No compatible version of this dependency could be found on either provider. The %1 that needs it may not work."
+msgstr "Для провайдера не була знайдена сумісна версія цієї залежності. %1 , яка її потребує, може не працювати."
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:157
 #, kde-format
-msgid ""
-"Unticked because a version of this is already installed. Tick it to replace "
-"that version."
-msgstr ""
-"Відмінено тому, що версія цієї вже встановлена. Поставте галочку, щоб "
-"замінити цю версію."
+msgid "Unticked because a version of this is already installed. Tick it to replace that version."
+msgstr "Відмінено тому, що версія цієї вже встановлена. Поставте галочку, щоб замінити цю версію."
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:166
 #, kde-format
@@ -4759,12 +4373,8 @@ msgstr "Тип версії: %1"
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:200
 #, kde-format
-msgid ""
-"The author has blocked third-party downloads for this file. It will be "
-"fetched through the website instead, which does not always work."
-msgstr ""
-"Автор заблокував сторонні завантаження для цього файлу. Він буде отриманий "
-"через сам веб-сайт, який не завжди працює."
+msgid "The author has blocked third-party downloads for this file. It will be fetched through the website instead, which does not always work."
+msgstr "Автор заблокував сторонні завантаження для цього файлу. Він буде отриманий через сам веб-сайт, який не завжди працює."
 
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:241
 #, kde-format
@@ -4790,9 +4400,9 @@ msgstr "Буде завантажено лише %1 з галочкою!"
 #: launcher/ui/dialogs/ExportPackDialog.cpp:178
 #: launcher/ui/dialogs/PluginsDialog.cpp:46
 #: launcher/ui/dialogs/skins/SkinManageDialog.cpp:156
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:118
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:154
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:194
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:104
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:140
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:180
 #: launcher/updater/meshupdater/UpdaterDialogs.cpp:81
 #: launcher/updater/meshupdater/UpdaterDialogs.cpp:155
 #, kde-format
@@ -4845,7 +4455,7 @@ msgstr "Вікі формату HTML"
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 #, kde-format
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 #, kde-format
@@ -4855,7 +4465,7 @@ msgstr "Відкритий текст"
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 #, kde-format
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 #, kde-format
@@ -4874,8 +4484,7 @@ msgstr "Шаблон"
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:118
 #, kde-format
-msgid ""
-"This text supports the following placeholders:\n"
+msgid "This text supports the following placeholders:\n"
 "{name}     - Mod name\n"
 "{mod_id}   - Mod ID\n"
 "{url}      - Mod URL\n"
@@ -4913,12 +4522,8 @@ msgstr "Результат"
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:171
 #, kde-format
-msgid ""
-"This depends on the mods' metadata. To ensure it is available, run an update "
-"on the instance. Installing the updates isn't necessary."
-msgstr ""
-"Це залежить від метаданних модів. Для забезпечення доступності, запустіть "
-"оновлення екземпляра. Встановлення оновлень необов'язкове."
+msgid "This depends on the mods' metadata. To ensure it is available, run an update on the instance. Installing the updates isn't necessary."
+msgstr "Це залежить від метаданних модів. Для забезпечення доступності, запустіть оновлення екземпляра. Встановлення оновлень необов'язкове."
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:180
 #: launcher/ui/pages/instance/WorldListPage.ui:107
@@ -4973,7 +4578,7 @@ msgstr "&Версія:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 #, kde-format
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 #, kde-format
@@ -5045,8 +4650,7 @@ msgstr "Вибір іконки"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:46
 #, kde-format
-msgid ""
-"%1 does not run on Minecraft %2. The earliest version it supports is %3."
+msgid "%1 does not run on Minecraft %2. The earliest version it supports is %3."
 msgstr "%1 не запущено в Minecraft %2. Найраніша версія працює на %3."
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:51
@@ -5066,11 +4670,7 @@ msgstr "Завантажувач двох модів"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:164
 #, kde-format
-msgid ""
-"%1 is already installed and switched on here. It and %2 hook into the same "
-"parts of the game, and an instance carrying both will usually fail to "
-"start.\n"
-"\n"
+msgid "%1 is already installed and switched on here. It and %2 hook into the same parts of the game, and an instance carrying both will usually fail to start.\n\n"
 "What should happen to %1?"
 msgstr ""
 
@@ -5096,7 +4696,7 @@ msgstr "Фільтрувати збірки"
 
 #: launcher/ui/dialogs/InstallLoaderDialog.cpp:257
 #: launcher/ui/dialogs/VersionSelectDialog.cpp:92
-#: launcher/ui/setupwizard/SetupWizard.cpp:52
+#: launcher/ui/setupwizard/SetupWizard.cpp:50
 #, kde-format
 msgid "&Refresh"
 msgstr "&Оновити"
@@ -5150,15 +4750,12 @@ msgstr "Завантаження збірки для %1..."
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:176
 #, kde-format
-msgid ""
-"Ready to download: %1\n"
+msgid "Ready to download: %1\n"
 "Version: %2\n"
 "Platform: %3\n"
 "Checksum: %4"
-msgstr ""
-"Готовий до завантаження: версія %1\n"
-": %2\n"
-"\n"
+msgstr "Готовий до завантаження: версія %1\n"
+": %2\n\n"
 " Платформа: %3\n"
 "контрольна сума: %4"
 
@@ -5229,10 +4826,8 @@ msgstr "Вже встановлено"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:319
 #, kde-format
-msgid ""
-"This Java version appears to be already installed at:\n"
-"%1\n"
-"\n"
+msgid "This Java version appears to be already installed at:\n"
+"%1\n\n"
 "Do you want to reinstall it?"
 msgstr ""
 
@@ -5248,13 +4843,9 @@ msgstr "Завантаження завершено"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:358
 #, kde-format
-msgid ""
-"Java has been downloaded and installed successfully.\n"
-"\n"
+msgid "Java has been downloaded and installed successfully.\n\n"
 "Java binary: %1"
-msgstr ""
-"Java було завантажено та встановлено успішно.\n"
-"\n"
+msgstr "Java було завантажено та встановлено успішно.\n\n"
 "Java binary: %1"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:367
@@ -5270,11 +4861,9 @@ msgstr "Не вдалося завантажити"
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:375
 #, kde-format
-msgid ""
-"Failed to download Java:\n"
+msgid "Failed to download Java:\n"
 "%1"
-msgstr ""
-"Не вдалося завантажити Java:\n"
+msgstr "Не вдалося завантажити Java:\n"
 "%1"
 
 #: launcher/ui/dialogs/MSALoginDialog.cpp:45
@@ -5289,9 +4878,7 @@ msgstr "сюди"
 
 #: launcher/ui/dialogs/MSALoginDialog.cpp:76
 #, kde-format
-msgid ""
-"<p>A browser window will open for Microsoft login.</p><p>If it doesn't open "
-"automatically, click %1.</p>"
+msgid "<p>A browser window will open for Microsoft login.</p><p>If it doesn't open automatically, click %1.</p>"
 msgstr ""
 
 #: launcher/ui/dialogs/MSALoginDialog.ui:20
@@ -5308,12 +4895,8 @@ msgstr "Неможливо відкрити %1 для читання: %2"
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:159
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:146
 #, kde-format
-msgid ""
-"The file (%1) is too big. You may want to open it in a viewer optimized for "
-"large files."
-msgstr ""
-"Файл (%1) занадто великий. Ви можете відкрити його у переглядачі "
-"оптимізованим для великих файлів."
+msgid "The file (%1) is too big. You may want to open it in a viewer optimized for large files."
+msgstr "Файл (%1) занадто великий. Ви можете відкрити його у переглядачі оптимізованим для великих файлів."
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:207
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:192
@@ -5335,19 +4918,16 @@ msgstr "Прибрати"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:237
 #, kde-format
-msgid ""
-"Do you really want to delete all log files?\n"
+msgid "Do you really want to delete all log files?\n"
 "%1"
 msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.cpp:257
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:241
 #, kde-format
-msgid ""
-"Couldn't delete some files:\n"
+msgid "Couldn't delete some files:\n"
 "%1"
-msgstr ""
-"Не вдалося видалити деякі файли:\n"
+msgstr "Не вдалося видалити деякі файли:\n"
 "%1"
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
@@ -5426,10 +5006,8 @@ msgstr "Всі модифікації в актуальному стані."
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:50
 #, kde-format
-msgid ""
-"%1 mod(s) have newer compatible versions. Tick the ones you want to update."
-msgstr ""
-"%1 mod(s) має новішу сумісну версію. Відзначте ті, які ви хочете оновити."
+msgid "%1 mod(s) have newer compatible versions. Tick the ones you want to update."
+msgstr "%1 mod(s) має новішу сумісну версію. Відзначте ті, які ви хочете оновити."
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 #, kde-format
@@ -5439,7 +5017,7 @@ msgstr "Поточна версія"
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 #, kde-format
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 #, kde-format
@@ -5453,8 +5031,7 @@ msgstr "Джерело"
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:74
 #, kde-format
-msgid ""
-"%1 → %2\n"
+msgid "%1 → %2\n"
 "File: %3 → %4"
 msgstr ""
 
@@ -5476,7 +5053,7 @@ msgstr "Додати порожній компонент"
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 #, kde-format
 msgid "uid"
-msgstr "uid"
+msgstr ""
 
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:164
 #: launcher/ui/dialogs/NewInstanceDialog.ui:17
@@ -5654,8 +5231,7 @@ msgstr "Плагіни MMCO"
 #: launcher/ui/dialogs/PluginsDialog.ui:29
 #, kde-format
 msgid "Enabling or disabling a plugin takes effect after restarting MeshMC."
-msgstr ""
-"Увімкнення або вимкнення плагіна набуває чинності після перезапуску MeshMC."
+msgstr "Увімкнення або вимкнення плагіна набуває чинності після перезапуску MeshMC."
 
 #: launcher/ui/dialogs/PluginsDialog.ui:58
 #, kde-format
@@ -5734,10 +5310,7 @@ msgstr "Виберіть ім'я Minecraft"
 
 #: launcher/ui/dialogs/ProfileSetupDialog.ui:26
 #, kde-format
-msgid ""
-"You just need to take one more step to be able to play Minecraft on this "
-"account.\n"
-"\n"
+msgid "You just need to take one more step to be able to play Minecraft on this account.\n\n"
 "Choose your name carefully:"
 msgstr ""
 
@@ -5758,18 +5331,12 @@ msgstr "Легко тут!"
 
 #: launcher/ui/dialogs/UntrustedModsDialog.ui:20
 #, kde-format
-msgid ""
-"<html><head/><body><p>This modpack installs code that is not hosted on "
-"Modrinth or CurseForge - either downloaded from another host, or carried "
-"inside the pack itself:</p></body></html>"
+msgid "<html><head/><body><p>This modpack installs code that is not hosted on Modrinth or CurseForge - either downloaded from another host, or carried inside the pack itself:</p></body></html>"
 msgstr ""
 
 #: launcher/ui/dialogs/UntrustedModsDialog.ui:33
 #, kde-format
-msgid ""
-"<html><head/><body><p><b>Malicious mods are often distributed through links "
-"sent on platforms such as Discord.</b></p><p>We strongly recommend only "
-"importing modpacks from trusted sources.</p></body></html>"
+msgid "<html><head/><body><p><b>Malicious mods are often distributed through links sent on platforms such as Discord.</b></p><p>We strongly recommend only importing modpacks from trusted sources.</p></body></html>"
 msgstr ""
 
 #: launcher/ui/dialogs/UntrustedModsDialog.ui:43
@@ -5785,9 +5352,7 @@ msgstr ""
 #: launcher/ui/dialogs/UpdateAvailableDialog.cpp:41
 #: launcher/ui/dialogs/UpdateAvailableDialog.ui:80
 #, kde-format
-msgid ""
-"Version %1 is now available - you have %2 . Would you like to download it "
-"now?"
+msgid "Version %1 is now available - you have %2 . Would you like to download it now?"
 msgstr ""
 
 #: launcher/ui/dialogs/UpdateAvailableDialog.ui:14
@@ -5882,8 +5447,7 @@ msgstr ""
 
 #: launcher/ui/dialogs/skins/SkinManageDialog.cpp:542
 #, kde-format
-msgid ""
-"Unable to find the skin for '%1'\n"
+msgid "Unable to find the skin for '%1'\n"
 " because: %2."
 msgstr ""
 
@@ -5954,8 +5518,7 @@ msgstr ""
 
 #: launcher/ui/dialogs/skins/SkinManageDialog.cpp:706
 #, kde-format
-msgid ""
-"You are about to delete \"%1\".\n"
+msgid "You are about to delete \"%1\".\n"
 "Are you sure?"
 msgstr ""
 
@@ -6036,14 +5599,10 @@ msgstr ""
 
 #: launcher/ui/pages/global/AccountListPage.cpp:52
 #, kde-format
-msgid ""
-"Welcome!\n"
-"If you're new here, you can click the \"Add Microsoft\" button to add your "
-"Microsoft account."
-msgstr ""
-"Ласкаво просимо!\n"
-"Якщо ви тут новачки, ви можете натиснути кнопку \"Додати Microsoft\", щоб "
-"додати свій обліковий запис Microsoft."
+msgid "Welcome!\n"
+"If you're new here, you can click the \"Add Microsoft\" button to add your Microsoft account."
+msgstr "Ласкаво просимо!\n"
+"Якщо ви тут новачки, ви можете натиснути кнопку \"Додати Microsoft\", щоб додати свій обліковий запис Microsoft."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:126
 #, kde-format
@@ -6052,15 +5611,9 @@ msgstr "Облікові записи Microsoft не доступні"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:127
 #, kde-format
-msgid ""
-"Microsoft accounts are only usable on macOS 10.13 or newer, with fully "
-"updated MeshMC.\n"
-"\n"
+msgid "Microsoft accounts are only usable on macOS 10.13 or newer, with fully updated MeshMC.\n\n"
 "Please update both your operating system and MeshMC."
-msgstr ""
-"Облікові записи Microsoft використовуються лише на macOS 10.13 або новіше, "
-"оновивши MeshMC.\n"
-"\n"
+msgstr "Облікові записи Microsoft використовуються лише на macOS 10.13 або новіше, оновивши MeshMC.\n\n"
 "Будь ласка, поновіть як вашу операційну систему, так і MeshMC."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:135
@@ -6075,12 +5628,8 @@ msgstr "Вимагається обліковий запис Microsoft"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:158
 #, kde-format
-msgid ""
-"Adding an offline account requires at least one Microsoft account to be "
-"logged in. Please add a Microsoft account first."
-msgstr ""
-"Для додавання автономного облікового запису потрібно принаймні один "
-"обліковий запис Microsoft. Будь ласка, додайте обліковий запис Microsoft."
+msgid "Adding an offline account requires at least one Microsoft account to be logged in. Please add a Microsoft account first."
+msgstr "Для додавання автономного облікового запису потрібно принаймні один обліковий запис Microsoft. Будь ласка, додайте обліковий запис Microsoft."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:177
 #, kde-format
@@ -6109,12 +5658,8 @@ msgstr "Дублювання облікового запису в автоном
 
 #: launcher/ui/pages/global/AccountListPage.cpp:197
 #, kde-format
-msgid ""
-"An offline account named \"%1\" already exists. Offline account names must "
-"be unique — please pick a different one."
-msgstr ""
-"Оффлайн акаунт з ім'ям \"%1\" вже існує. Імена автономних облікових записів "
-"мають бути унікальними - будь ласка, виберіть інший."
+msgid "An offline account named \"%1\" already exists. Offline account names must be unique — please pick a different one."
+msgstr "Оффлайн акаунт з ім'ям \"%1\" вже існує. Імена автономних облікових записів мають бути унікальними - будь ласка, виберіть інший."
 
 #: launcher/ui/pages/global/AccountListPage.cpp:302
 #, kde-format
@@ -6134,8 +5679,7 @@ msgstr "Видалити тему"
 
 #: launcher/ui/pages/global/AccountListPage.cpp:327
 #, kde-format
-msgid ""
-"Are you sure you want to delete the skin for account \"%1\"?\n"
+msgid "Are you sure you want to delete the skin for account \"%1\"?\n"
 "This action cannot be undone."
 msgstr ""
 
@@ -6245,82 +5789,76 @@ msgstr "Прев'ю"
 msgid "Custom Commands"
 msgstr "Користувацькі команди"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:93
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:79
 #, kde-format
 msgid "JProfiler Folder"
 msgstr "Тека JProfiler"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:101
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:116
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:87
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:102
 #, kde-format
-msgid ""
-"Error while checking JProfiler install:\n"
+msgid "Error while checking JProfiler install:\n"
 "%1"
-msgstr ""
-"Помилка під час перевірки встановлення JProfile:\n"
+msgstr "Помилка під час перевірки встановлення JProfile:\n"
 "%1"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:119
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:105
 #, kde-format
 msgid "JProfiler setup seems to be OK"
 msgstr "Налаштування JProfile здається виконано успішно"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:128
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:114
 #, kde-format
 msgid "JVisualVM Executable"
 msgstr "Виконуваний файл JVisualVM"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:137
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:152
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:123
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:138
 #, kde-format
-msgid ""
-"Error while checking JVisualVM install:\n"
+msgid "Error while checking JVisualVM install:\n"
 "%1"
-msgstr ""
-"Помилка під час перевірки встановлення JVisualVM:\n"
+msgstr "Помилка під час перевірки встановлення JVisualVM:\n"
 "%1"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:155
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:141
 #, kde-format
 msgid "JVisualVM setup seems to be OK"
 msgstr "Налаштування JVisualVM здається виконано успішно"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:165
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:151
 #, kde-format
 msgid "MCEdit Application"
 msgstr "Застосунок MCEdit"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:168
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:154
 #, kde-format
 msgid "MCEdit Folder"
 msgstr "Тека MCEdit"
 
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:164
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:178
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:192
 #, kde-format
-msgid ""
-"Error while checking MCEdit install:\n"
+msgid "Error while checking MCEdit install:\n"
 "%1"
-msgstr ""
-"Помилка під час перевірки встановлення MCEdit:\n"
+msgstr "Помилка під час перевірки встановлення MCEdit:\n"
 "%1"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:195
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:181
 #, kde-format
 msgid "MCEdit setup seems to be OK"
 msgstr "Налаштування MCEdit здається виконано успішно"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:202
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:188
 #, kde-format
 msgid "JSON Editor"
 msgstr "Редактор JSON"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:225
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:211
 #, kde-format
 msgid "Invalid"
 msgstr "Недійсний"
 
-#: launcher/ui/pages/global/ExternalToolsPage.cpp:226
+#: launcher/ui/pages/global/ExternalToolsPage.cpp:212
 #, kde-format
 msgid "The file chosen does not seem to be an executable"
 msgstr "Вибраний файл не є виконуваним"
@@ -6340,37 +5878,34 @@ msgstr "Перевірити"
 #: launcher/ui/pages/global/ExternalToolsPage.ui:150
 #, kde-format
 msgid "External Editors (leave empty for system default)"
-msgstr ""
-"Зовнішній редактор (залиште пустим, щоб використовувати системний редактор)"
+msgstr "Зовнішній редактор (залиште пустим, щоб використовувати системний редактор)"
 
 #: launcher/ui/pages/global/ExternalToolsPage.ui:159
 #, kde-format
 msgid "Text Editor:"
 msgstr "Текстовий редактор:"
 
-#: launcher/ui/pages/global/JavaPage.cpp:146
+#: launcher/ui/pages/global/JavaPage.cpp:129
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:342
 #, kde-format
 msgid "Select a Java version"
 msgstr "Виберіть версію Java"
 
-#: launcher/ui/pages/global/JavaPage.cpp:160
+#: launcher/ui/pages/global/JavaPage.cpp:143
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:362
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:278
 #, kde-format
 msgid "Find Java executable"
 msgstr "Пошук виконуваного файлу Java"
 
-#: launcher/ui/pages/global/JavaPage.cpp:226
+#: launcher/ui/pages/global/JavaPage.cpp:209
 #, kde-format
 msgid "Remove Java Installation"
 msgstr "Видалити налаштування Java"
 
-#: launcher/ui/pages/global/JavaPage.cpp:227
+#: launcher/ui/pages/global/JavaPage.cpp:210
 #, kde-format
-msgid ""
-"Are you sure you want to remove this Java installation?\n"
-"\n"
+msgid "Are you sure you want to remove this Java installation?\n\n"
 "%1"
 msgstr ""
 
@@ -6477,101 +6012,85 @@ msgstr "Завантажити Java..."
 msgid "Use Selected"
 msgstr "Використати обране"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:95
+#: launcher/ui/pages/global/MeshMCPage.cpp:94
 #, kde-format
-msgid ""
-"You're trying to specify an instance folder which's path contains at least "
-"one '!'. Java is known to cause problems if that is the case, your instances "
-"(probably) won't start!"
-msgstr ""
-"Ви намагаєтеся вказати шлях до теки, яка міститься принаймні одну!'. Java "
-"може викликати проблеми, якщо це так, ваші екземпляри (ймовірно) не "
-"розпочатися!"
+msgid "You're trying to specify an instance folder which's path contains at least one '!'. Java is known to cause problems if that is the case, your instances (probably) won't start!"
+msgstr "Ви намагаєтеся вказати шлях до теки, яка міститься принаймні одну!'. Java може викликати проблеми, якщо це так, ваші екземпляри (ймовірно) не розпочатися!"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:100
+#: launcher/ui/pages/global/MeshMCPage.cpp:99
 #, kde-format
-msgid ""
-"Do you really want to use this path? Selecting \"No\" will close this and "
-"not alter your instance path."
-msgstr ""
-"Ви дійсно хочете використовувати цей шлях? При виборі \"Ні\" закриється і не "
-"змінить шлях вашого екземпляра."
+msgid "Do you really want to use this path? Selecting \"No\" will close this and not alter your instance path."
+msgstr "Ви дійсно хочете використовувати цей шлях? При виборі \"Ні\" закриється і не змінить шлях вашого екземпляра."
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:120
+#: launcher/ui/pages/global/MeshMCPage.cpp:119
 #, kde-format
-msgid ""
-"You're trying to specify an instance folder which was granted temporarily "
-"via Flatpak.\n"
-"This is known to cause problems. After a restart the launcher might break, "
-"because it will no longer have access to that directory.\n"
-"\n"
+msgid "You're trying to specify an instance folder which was granted temporarily via Flatpak.\n"
+"This is known to cause problems. After a restart the launcher might break, because it will no longer have access to that directory.\n\n"
 "Granting MeshMC access to it via Flatseal is recommended."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:126
+#: launcher/ui/pages/global/MeshMCPage.cpp:125
 #, kde-format
 msgid "Do you want to proceed anyway?"
 msgstr "Усе одно хочете продовжити?"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:160
+#: launcher/ui/pages/global/MeshMCPage.cpp:159
 #, kde-format
 msgid "Additional Instance Folder"
 msgstr "Додаткова папка екземпляра"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:187
-#: launcher/ui/pages/global/MeshMCPage.cpp:194
+#: launcher/ui/pages/global/MeshMCPage.cpp:186
+#: launcher/ui/pages/global/MeshMCPage.cpp:193
 #, kde-format
 msgid "Duplicate directory"
-msgstr "Duplicate directory"
+msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:188
+#: launcher/ui/pages/global/MeshMCPage.cpp:187
 #, kde-format
 msgid "This is already your primary instance directory."
 msgstr "Це вже є основним каталогом екземплярів."
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:195
+#: launcher/ui/pages/global/MeshMCPage.cpp:194
 #, kde-format
 msgid "This directory has already been added."
 msgstr "Цей каталог вже додано."
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:218
+#: launcher/ui/pages/global/MeshMCPage.cpp:217
 #, kde-format
 msgid "Icons Folder"
 msgstr "Папка іконок"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:229
+#: launcher/ui/pages/global/MeshMCPage.cpp:228
 #, kde-format
 msgid "Skins Folder"
 msgstr "Тека з темами"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:240
+#: launcher/ui/pages/global/MeshMCPage.cpp:239
 #, kde-format
 msgid "Java Folder"
 msgstr "Папка Java"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:262
+#: launcher/ui/pages/global/MeshMCPage.cpp:261
 #, kde-format
 msgid "Automatic macOS Migration"
 msgstr "Автоматична міграція macOS"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:263
+#: launcher/ui/pages/global/MeshMCPage.cpp:262
 #, kde-format
-msgid ""
-"MeshMC now stores macOS data under your Library/Application Support folder "
-"automatically."
+msgid "MeshMC now stores macOS data under your Library/Application Support folder automatically."
 msgstr ""
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:407
+#: launcher/ui/pages/global/MeshMCPage.cpp:360
 #, kde-format
 msgid "[Something/ERROR] A spooky error!"
 msgstr "[Що-небудь/ПОМИЛКА] Помилка!"
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:416
+#: launcher/ui/pages/global/MeshMCPage.cpp:369
 #, kde-format
 msgid "[Test/INFO] A harmless message..."
 msgstr "[Тест/ВФА] Небезпечне повідомлення..."
 
-#: launcher/ui/pages/global/MeshMCPage.cpp:425
+#: launcher/ui/pages/global/MeshMCPage.cpp:378
 #, kde-format
 msgid "[Something/WARN] A not so spooky warning."
 msgstr "[Що-небудь/УВАГА] Не так моторошне попередження."
@@ -6634,7 +6153,7 @@ msgstr "&скіни:"
 #: launcher/ui/pages/global/MeshMCPage.ui:211
 #, kde-format
 msgid "&Java:"
-msgstr "&Java:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:228
 #, kde-format
@@ -6660,12 +6179,8 @@ msgstr "Резервна копія"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:281
 #, kde-format
-msgid ""
-"Creates a snapshot of each instance before launching. Backups are saved in "
-"the instance's .backups folder with the label \"pre-launch\"."
-msgstr ""
-"Створити знімок кожного екземпляра перед запуском. Резервні копії "
-"зберігаються в теці .backups із міткою \"pre-launch\"."
+msgid "Creates a snapshot of each instance before launching. Backups are saved in the instance's .backups folder with the label \"pre-launch\"."
+msgstr "Створити знімок кожного екземпляра перед запуском. Резервні копії зберігаються в теці .backups із міткою \"pre-launch\"."
 
 #: launcher/ui/pages/global/MeshMCPage.ui:284
 #, kde-format
@@ -6679,27 +6194,18 @@ msgstr "Створення інстансу"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:300
 #, kde-format
-msgid ""
-"When installing a modpack that is already installed, offer to update that "
-"instance instead of creating a second copy of it."
-msgstr ""
-"Під час встановлення modpack який вже встановлений, пропонувати оновити цей "
-"екземпляр замість створення другої копії."
+msgid "When installing a modpack that is already installed, offer to update that instance instead of creating a second copy of it."
+msgstr "Під час встановлення modpack який вже встановлений, пропонувати оновити цей екземпляр замість створення другої копії."
 
 #: launcher/ui/pages/global/MeshMCPage.ui:303
 #, kde-format
 msgid "&Suggest updating an existing instance during modpack installation"
-msgstr ""
-"&Пропонувати оновлення існуючого екземпляра під час встановлення modpack"
+msgstr "&Пропонувати оновлення існуючого екземпляра під час встановлення modpack"
 
 #: launcher/ui/pages/global/MeshMCPage.ui:310
 #, kde-format
-msgid ""
-"Download the game's libraries and assets while the instance is being "
-"created, instead of waiting until the first time it is launched."
-msgstr ""
-"Завантажте бібліотеки і активи гри, у той час як екземпляр створюється, а не "
-"чекають, поки не буде запущений."
+msgid "Download the game's libraries and assets while the instance is being created, instead of waiting until the first time it is launched."
+msgstr "Завантажте бібліотеки і активи гри, у той час як екземпляр створюється, а не чекають, поки не буде запущений."
 
 #: launcher/ui/pages/global/MeshMCPage.ui:313
 #, kde-format
@@ -6869,11 +6375,7 @@ msgstr "Вставте ваш ключ API тут!"
 
 #: launcher/ui/pages/global/PasteEEPage.ui:82
 #, kde-format
-msgid ""
-"<html><head/><body><p><a href=\"https://paste.ee\">paste.ee</a> is used by "
-"MeshMC for log uploads. If you have a <a href=\"https://paste.ee\">paste.ee</"
-"a> account, you can add your API key here and have your uploaded logs paired "
-"with your account.</p></body></html>"
+msgid "<html><head/><body><p><a href=\"https://paste.ee\">paste.ee</a> is used by MeshMC for log uploads. If you have a <a href=\"https://paste.ee\">paste.ee</a> account, you can add your API key here and have your uploaded logs paired with your account.</p></body></html>"
 msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.h:45
@@ -6884,15 +6386,12 @@ msgstr "Проксі"
 #: launcher/ui/pages/global/ProxyPage.ui:42
 #, kde-format
 msgid "This only applies to MeshMC. Minecraft does not accept proxy settings."
-msgstr ""
-"Цей параметр застосовується тільки до MeshMC. Minecraft не приймає параметри "
-"проксі-сервера."
+msgstr "Цей параметр застосовується тільки до MeshMC. Minecraft не приймає параметри проксі-сервера."
 
 #: launcher/ui/pages/global/ProxyPage.ui:61
 #, kde-format
 msgid "Uses your system's default proxy settings."
-msgstr ""
-"Використовувати стандартні налаштування проксі-сервера для вашої системи."
+msgstr "Використовувати стандартні налаштування проксі-сервера для вашої системи."
 
 #: launcher/ui/pages/global/ProxyPage.ui:64
 #, kde-format
@@ -6907,12 +6406,12 @@ msgstr "&Немає"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 #, kde-format
 msgid "SOC&KS5"
-msgstr "SOC&KS5"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 #, kde-format
 msgid "H&TTP"
-msgstr "H&TTP"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:107
 #, kde-format
@@ -6936,12 +6435,8 @@ msgstr "Пароль:"
 
 #: launcher/ui/pages/global/ProxyPage.ui:169
 #, kde-format
-msgid ""
-"Note: Proxy username and password are stored in plain text inside MeshMC's "
-"configuration file!"
-msgstr ""
-"Примітка: Ім'я користувача і пароль зберігаються у вигляді простого тексту "
-"всередині файлу конфігурації MeshMC!"
+msgid "Note: Proxy username and password are stored in plain text inside MeshMC's configuration file!"
+msgstr "Примітка: Ім'я користувача і пароль зберігаються у вигляді простого тексту всередині файлу конфігурації MeshMC!"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:81
 #, kde-format
@@ -6949,6 +6444,8 @@ msgid "%1 backup"
 msgid_plural "%1 backups"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:116
 #, kde-format
@@ -6967,11 +6464,9 @@ msgstr "Резервна копія створена"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:132
 #, kde-format
-msgid ""
-"Backup created successfully:\n"
+msgid "Backup created successfully:\n"
 "%1"
-msgstr ""
-"Резервне копіювання успішно створено:\n"
+msgstr "Резервне копіювання успішно створено:\n"
 "%1"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:134
@@ -6981,11 +6476,9 @@ msgstr "Збій резервного копіювання"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:135
 #, kde-format
-msgid ""
-"Failed to create backup:\n"
+msgid "Failed to create backup:\n"
 "%1"
-msgstr ""
-"Не вдалося створити резервну копію:\n"
+msgstr "Не вдалося створити резервну копію:\n"
 "%1"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:151
@@ -6995,10 +6488,8 @@ msgstr "Працює інстанс"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:152
 #, kde-format
-msgid ""
-"This instance is currently running. Close the game before restoring a backup."
-msgstr ""
-"Цей екземпляр запущений. Закрийте гру, перш ніж відновити резервну копію."
+msgid "This instance is currently running. Close the game before restoring a backup."
+msgstr "Цей екземпляр запущений. Закрийте гру, перш ніж відновити резервну копію."
 
 #: launcher/ui/pages/instance/BackupPage.cpp:158
 #, kde-format
@@ -7007,11 +6498,8 @@ msgstr "Відновити резервну копію"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:159
 #, kde-format
-msgid ""
-"This will replace the current instance contents with the backup:\n"
-"\n"
-"%1\n"
-"\n"
+msgid "This will replace the current instance contents with the backup:\n\n"
+"%1\n\n"
 "This action cannot be undone. Continue?"
 msgstr ""
 
@@ -7023,7 +6511,7 @@ msgstr "Відновлення із резервної копії..."
 #: launcher/ui/pages/instance/BackupPage.cpp:172
 #, kde-format
 msgid "Restore Complete"
-msgstr "Restore Complete"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:173
 #, kde-format
@@ -7058,11 +6546,9 @@ msgstr "Експорт завершено"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:197
 #, kde-format
-msgid ""
-"Backup exported to:\n"
+msgid "Backup exported to:\n"
 "%1"
-msgstr ""
-"Резервування експортовано до:\n"
+msgstr "Резервування експортовано до:\n"
 "%1"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:199
@@ -7113,11 +6599,8 @@ msgstr "Видалити резервну копію"
 
 #: launcher/ui/pages/instance/BackupPage.cpp:240
 #, kde-format
-msgid ""
-"Delete the selected backup?\n"
-"\n"
-"%1\n"
-"\n"
+msgid "Delete the selected backup?\n\n"
+"%1\n\n"
 "This cannot be undone."
 msgstr ""
 
@@ -7200,9 +6683,7 @@ msgstr "Налаштування пам'яті"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:196
 #, kde-format
 msgid "Note: Permgen is set automatically by Java 8 and later"
-msgstr ""
-"Примітка: Permgen встановлюється автоматично для Java 8 і для більш пізніх "
-"версій"
+msgstr "Примітка: Permgen встановлюється автоматично для Java 8 і для більш пізніх версій"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:209
 #, kde-format
@@ -7296,17 +6777,8 @@ msgstr "Глобальна папка пакетів даних"
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:525
 #, kde-format
-msgid ""
-"Manage one data pack folder shared by every world. Minecraft only reads data "
-"packs from each world's own folder, so this needs a loader such as Paxi or "
-"OpenLoader to have any effect. Use the Worlds page to manage a single "
-"world's data packs."
-msgstr ""
-"Керуйте однією папкою пакетів даних спільним у всіх світі. Minecraft "
-"дозволяє переглядати лише пакети даних з кожної власної теки світу, для "
-"цього потрібен завантажувач, такий як Paxi або OpenLoader, щоб мати власний "
-"ефект. Використовуйте сторінку \"Світи\" для управління одним світовим "
-"пакетом даних."
+msgid "Manage one data pack folder shared by every world. Minecraft only reads data packs from each world's own folder, so this needs a loader such as Paxi or OpenLoader to have any effect. Use the Worlds page to manage a single world's data packs."
+msgstr "Керуйте однією папкою пакетів даних спільним у всіх світі. Minecraft дозволяє переглядати лише пакети даних з кожної власної теки світу, для цього потрібен завантажувач, такий як Paxi або OpenLoader, щоб мати власний ефект. Використовуйте сторінку \"Світи\" для управління одним світовим пакетом даних."
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:545
 #, kde-format
@@ -7330,28 +6802,8 @@ msgstr "Оновити"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:29
 #, kde-format
-msgid ""
-"<html><body><h1>Upgrade is required</h1><p>MeshMC now supports old Minecraft "
-"versions and all the required features in the new (OneSix) instance format. "
-"As a consequence, the old (Legacy) format has been entirely disabled and old "
-"instances need to be upgraded.</p><p>The upgrade will create a new instance "
-"with the same contents as the current one, in the new format. The original "
-"instance will remain untouched, in case anything goes wrong in the process.</"
-"p><p>Please report any issues on our <a href=\"https://github.com/Project-"
-"Tick/MeshMC/issues\">GitHub page</a>.</p><p>There is also a <a "
-"href=\"https://discord.gg/PMxPTqwEwj\">discord channel for testing here</a>."
-"</p></body></html>"
-msgstr ""
-"<html><body><h1>Upgrade є необхідним</h1><p>MeshMC тепер підтримує старі "
-"версії Minecraft, і всі необхідні функції в новому форматі (OneSix). Як "
-"наслідок, старий (Спадковий) формат був повністю відключений, а старі "
-"випадки потрібно оновити.</p><p>Оновлення створить новий екземпляр з таким "
-"самим вмістом, як поточний, у новому форматі. Оригінальний екземпляр "
-"залишиться недоторканим, у випадку, якщо щось не так в процесі.</p><p>Будь "
-"ласка, повідомте про будь-які проблеми на нашій сторінці <a href=\"https://"
-"github.com/Project-Tick/MeshMC/issues\">GitHub</a>.</p><p>Також є <a "
-"href=\"https://discord.gg/PMxPTqwEwj\">discord канал для тестування</a>.</"
-"p></body></html>"
+msgid "<html><body><h1>Upgrade is required</h1><p>MeshMC now supports old Minecraft versions and all the required features in the new (OneSix) instance format. As a consequence, the old (Legacy) format has been entirely disabled and old instances need to be upgraded.</p><p>The upgrade will create a new instance with the same contents as the current one, in the new format. The original instance will remain untouched, in case anything goes wrong in the process.</p><p>Please report any issues on our <a href=\"https://github.com/Project-Tick/MeshMC/issues\">GitHub page</a>.</p><p>There is also a <a href=\"https://discord.gg/PMxPTqwEwj\">discord channel for testing here</a>.</p></body></html>"
+msgstr "<html><body><h1>Upgrade є необхідним</h1><p>MeshMC тепер підтримує старі версії Minecraft, і всі необхідні функції в новому форматі (OneSix). Як наслідок, старий (Спадковий) формат був повністю відключений, а старі випадки потрібно оновити.</p><p>Оновлення створить новий екземпляр з таким самим вмістом, як поточний, у новому форматі. Оригінальний екземпляр залишиться недоторканим, у випадку, якщо щось не так в процесі.</p><p>Будь ласка, повідомте про будь-які проблеми на нашій сторінці <a href=\"https://github.com/Project-Tick/MeshMC/issues\">GitHub</a>.</p><p>Також є <a href=\"https://discord.gg/PMxPTqwEwj\">discord канал для тестування</a>.</p></body></html>"
 
 #: launcher/ui/pages/instance/LegacyUpgradePage.ui:39
 #, kde-format
@@ -7377,8 +6829,7 @@ msgstr "Переносити рядки"
 #: launcher/ui/pages/instance/OtherLogsPage.ui:87
 #, kde-format
 msgid "Upload the log to paste.ee - it will stay online for a month"
-msgstr ""
-"Завантажити журнал на paste.ee - він буде зберігатися протягом одного місяця"
+msgstr "Завантажити журнал на paste.ee - він буде зберігатися протягом одного місяця"
 
 #: launcher/ui/pages/instance/LogPage.ui:113
 #: launcher/ui/pages/instance/OtherLogsPage.ui:77
@@ -7420,11 +6871,9 @@ msgstr "Оновити пакет"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:329
 #, kde-format
-msgid ""
-"This is a local modpack.\n"
+msgid "This is a local modpack.\n"
 "This can be updated either using a file in %1 format or an URL.\n"
-"Do not use a different format than the one mentioned as it may break the "
-"instance.\n"
+"Do not use a different format than the one mentioned as it may break the instance.\n"
 "Make sure you also trust the URL.\n"
 msgstr ""
 
@@ -7470,12 +6919,8 @@ msgstr "Немає URL"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:682
 #, kde-format
-msgid ""
-"Enter the URL of the modpack to update from, or use \"Update From File\" "
-"instead."
-msgstr ""
-"Введіть URL модпака для оновлення з нього або використовуйте натомість "
-"\"Оновити з файлу\"."
+msgid "Enter the URL of the modpack to update from, or use \"Update From File\" instead."
+msgstr "Введіть URL модпака для оновлення з нього або використовуйте натомість \"Оновити з файлу\"."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:693
 #, kde-format
@@ -7490,7 +6935,7 @@ msgstr "\"%1\" не є припустимим http або https URL."
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:742
 #, kde-format
 msgid "Modpack"
-msgstr "Modpack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:747
 #, kde-format
@@ -7499,12 +6944,8 @@ msgstr "Виберіть файл оновлення"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:776
 #, kde-format
-msgid ""
-"This instance is currently running. Close the game before updating the "
-"modpack - an update replaces the files the game has open."
-msgstr ""
-"Цей екземпляр запущений. Закрийте гру, перш ніж оновити modpack - оновлення "
-"замінює файли, які має гра відкрита."
+msgid "This instance is currently running. Close the game before updating the modpack - an update replaces the files the game has open."
+msgstr "Цей екземпляр запущений. Закрийте гру, перш ніж оновити modpack - оновлення замінює файли, які має гра відкрита."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:836
 #, kde-format
@@ -7513,22 +6954,15 @@ msgstr "Змінити ім'я екземпляра"
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:837
 #, kde-format
-msgid ""
-"The instance's name includes the version being replaced. Would you like to "
-"update it?\n"
-"\n"
+msgid "The instance's name includes the version being replaced. Would you like to update it?\n\n"
 "Old name: %1\n"
 "New name: %2"
 msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:902
 #, kde-format
-msgid ""
-"The instance failed to update to pack version %1. Please check launcher logs "
-"for more information."
-msgstr ""
-"Екземпляр не вдалося оновити пакет версії %1. Будь ласка, перевірте логи "
-"лаунчера для отримання додаткової інформації."
+msgid "The instance failed to update to pack version %1. Please check launcher logs for more information."
+msgstr "Екземпляр не вдалося оновити пакет версії %1. Будь ласка, перевірте логи лаунчера для отримання додаткової інформації."
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:932
 #, kde-format
@@ -7592,8 +7026,7 @@ msgstr "Перевірити наявність оновлень"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:429
 #, kde-format
-msgctxt ""
-"Select whatever type of files the page contains. Example: 'Loader Mods'"
+msgctxt "Select whatever type of files the page contains. Example: 'Loader Mods'"
 msgid "Select %1"
 msgstr "Обрати %1"
 
@@ -7602,34 +7035,22 @@ msgstr "Обрати %1"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 #, kde-format
 msgid "No Mod Loader"
-msgstr "No Mod Loader"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 #, kde-format
-msgid ""
-"This instance's component list could not be read, so it is not possible to "
-"tell which mod loader it uses."
-msgstr ""
-"Список компонентів цього екземпляра не може бути прочитаний, тому неможливо "
-"вказати, який саме мод він використовує."
+msgid "This instance's component list could not be read, so it is not possible to tell which mod loader it uses."
+msgstr "Список компонентів цього екземпляра не може бути прочитаний, тому неможливо вказати, який саме мод він використовує."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:555
 #, kde-format
-msgid ""
-"Mods need a loader to run, and this instance has none. Would you like to "
-"install one now?"
-msgstr ""
-"Модам потрібен завантажувач для запуску, і цьому екземпляру немає. Бажаєте "
-"встановити його зараз?"
+msgid "Mods need a loader to run, and this instance has none. Would you like to install one now?"
+msgstr "Модам потрібен завантажувач для запуску, і цьому екземпляру немає. Бажаєте встановити його зараз?"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:584
 #, kde-format
-msgid ""
-"This instance still has no loader that CurseForge or Modrinth can be "
-"searched by, so there is nothing to browse."
-msgstr ""
-"Цей екземпляр ще не має завантажувача, який неможливо обшукати, тому немає "
-"нічого для перегляду."
+msgid "This instance still has no loader that CurseForge or Modrinth can be searched by, so there is nothing to browse."
+msgstr "Цей екземпляр ще не має завантажувача, який неможливо обшукати, тому немає нічого для перегляду."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:773
 #: launcher/ui/pages/instance/ModFolderPage.cpp:794
@@ -7639,13 +7060,8 @@ msgstr "Неможливо змінити версію"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:774
 #, kde-format
-msgid ""
-"There is no record of where '%1' came from, so its other versions cannot be "
-"listed. Download it through this page once and the version can be changed "
-"from then on."
-msgstr ""
-"З \"%1\" не надходить, тому його інші версії не можуть бути перераховані. "
-"Завантажте її один раз і версію можна змінити з того."
+msgid "There is no record of where '%1' came from, so its other versions cannot be listed. Download it through this page once and the version can be changed from then on."
+msgstr "З \"%1\" не надходить, тому його інші версії не можуть бути перераховані. Завантажте її один раз і версію можна змінити з того."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:795
 #, kde-format
@@ -7659,9 +7075,7 @@ msgstr "Нічого робити"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:900
 #, kde-format
-msgid ""
-"Every selected mod (and its dependencies) is already installed at the "
-"requested version."
+msgid "Every selected mod (and its dependencies) is already installed at the requested version."
 msgstr "Вибраний мод (та його залежності) вже встановлено у потрібну версію."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:929
@@ -7676,18 +7090,10 @@ msgstr "Обмежені завантаження"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:967
 #, kde-format
-msgid ""
-"The authors of these files have blocked downloads outside the CurseForge "
-"website, and fetching them through it did not work.\n"
-"Click Download next to each one to open its page in your browser. Once the "
-"files are in your Downloads folder, click Continue and they will be moved "
-"into place."
-msgstr ""
-"Автори цих файлів заблокували завантаження поза сайтом CurseForge, і взяли "
-"їх через це не працюють.\n"
-"Натисніть кнопку Завантажити поруч з кожною з них, щоб відкрити її сторінку "
-"у вашому браузері. Як тільки файли в папці Завантаження, натисніть кнопку "
-"\"Продовжити\" і вони будуть переміщені на місце."
+msgid "The authors of these files have blocked downloads outside the CurseForge website, and fetching them through it did not work.\n"
+"Click Download next to each one to open its page in your browser. Once the files are in your Downloads folder, click Continue and they will be moved into place."
+msgstr "Автори цих файлів заблокували завантаження поза сайтом CurseForge, і взяли їх через це не працюють.\n"
+"Натисніть кнопку Завантажити поруч з кожною з них, щоб відкрити її сторінку у вашому браузері. Як тільки файли в папці Завантаження, натисніть кнопку \"Продовжити\" і вони будуть переміщені на місце."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1089
 #, kde-format
@@ -7709,14 +7115,8 @@ msgstr "Перевірити залежності"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1127
 #, kde-format
-msgid ""
-"None of the installed mods has a recorded origin, so there is nothing to "
-"look up. Download mods through this page and their dependencies can be "
-"checked from then on."
-msgstr ""
-"Жоден з встановлених модів не містить записаного джерела, тому немає нічого, "
-"що можна подивитися вгору. Завантажуйте моди через цю сторінку, а їхні "
-"залежності можуть бути відмічені далі ."
+msgid "None of the installed mods has a recorded origin, so there is nothing to look up. Download mods through this page and their dependencies can be checked from then on."
+msgstr "Жоден з встановлених модів не містить записаного джерела, тому немає нічого, що можна подивитися вгору. Завантажуйте моди через цю сторінку, а їхні залежності можуть бути відмічені далі ."
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1148
 #, kde-format
@@ -7730,11 +7130,9 @@ msgstr "Підтвердіть видалення"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1180
 #, kde-format
-msgid ""
-"You are about to remove the metadata for %1 files.\n"
+msgid "You are about to remove the metadata for %1 files.\n"
 "Are you sure?"
-msgstr ""
-"Ви збираєтеся видалити метадані для %1 файлів.\n"
+msgstr "Ви збираєтеся видалити метадані для %1 файлів.\n"
 "Ви впевнені?"
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:1322
@@ -7849,12 +7247,8 @@ msgstr "Змінити версію моду."
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:176
 #, kde-format
-msgid ""
-"Check that the dependencies of the installed mods are present, and offer to "
-"install the ones that are missing."
-msgstr ""
-"Перевірте, чи присутні залежності встановлених модів та пропозиції для "
-"встановлення відсутніх."
+msgid "Check that the dependencies of the installed mods are present, and offer to install the ones that are missing."
+msgstr "Перевірте, чи присутні залежності встановлених модів та пропозиції для встановлення відсутніх."
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:184
 #, kde-format
@@ -7863,11 +7257,8 @@ msgstr "Скинути метадані оновлення"
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:187
 #, kde-format
-msgid ""
-"Forget where the selected files came from. They stay where they are, but are "
-"no longer tracked for updates."
-msgstr ""
-"Забудьте про те, звідки були обрані файли. Вони не стежать за оновленнями."
+msgid "Forget where the selected files came from. They stay where they are, but are no longer tracked for updates."
+msgstr "Забудьте про те, звідки були обрані файли. Вони не стежать за оновленнями."
 
 #: launcher/ui/pages/instance/ModFolderPage.ui:195
 #, kde-format
@@ -7906,11 +7297,9 @@ msgstr "Ви дійсно хочете видалити всі файли жур
 
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:215
 #, kde-format
-msgid ""
-"Do you really want to delete these files?\n"
+msgid "Do you really want to delete these files?\n"
 "%1"
-msgstr ""
-"Ви дійсно хочете видалити ці файли?\n"
+msgstr "Ви дійсно хочете видалити ці файли?\n"
 "%1"
 
 #: launcher/ui/pages/instance/OtherLogsPage.cpp:237
@@ -7942,21 +7331,13 @@ msgstr "Невідома помилка"
 
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:370
 #, kde-format
-msgid ""
-"The <a href=\"%1\">link  to the uploaded screenshot</a> has been placed in "
-"your clipboard."
-msgstr ""
-"Посилання <a href=\"%1\">на завантажений скріншот</a> було додано в ваш "
-"буфер обміну."
+msgid "The <a href=\"%1\">link  to the uploaded screenshot</a> has been placed in your clipboard."
+msgstr "Посилання <a href=\"%1\">на завантажений скріншот</a> було додано в ваш буфер обміну."
 
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:405
 #, kde-format
-msgid ""
-"The <a href=\"%1\">link  to the uploaded album</a> has been placed in your "
-"clipboard."
-msgstr ""
-"Посилання <a href=\"%1\">на завантажений альбом</a> було додано в буфер "
-"обміну."
+msgid "The <a href=\"%1\">link  to the uploaded album</a> has been placed in your clipboard."
+msgstr "Посилання <a href=\"%1\">на завантажений альбом</a> було додано в буфер обміну."
 
 #: launcher/ui/pages/instance/ScreenshotsPage.cpp:416
 #: launcher/ui/pages/instance/WorldListPage.cpp:179
@@ -8104,8 +7485,7 @@ msgstr "На даний момент немає версій intermediary mappin
 #: launcher/ui/pages/instance/VersionPage.cpp:382
 #, kde-format
 msgid "Couldn't load or download the intermediary mappings version lists!"
-msgstr ""
-"Не вдалося завантажити або скачати список версій intermediary mappings!"
+msgstr "Не вдалося завантажити або скачати список версій intermediary mappings!"
 
 #: launcher/ui/pages/instance/VersionPage.cpp:512
 #, kde-format
@@ -8180,9 +7560,7 @@ msgstr "Відновити вибраний пакунок за замовчув
 #: launcher/ui/pages/instance/VersionPage.ui:182
 #, kde-format
 msgid "Install a mod loader - Forge, NeoForge, Fabric, Quilt or LiteLoader."
-msgstr ""
-"Встановити завантажувач модів - Forge — NeoForge, Fabric, Quilt або "
-"LiteLoader."
+msgstr "Встановити завантажувач модів - Forge — NeoForge, Fabric, Quilt або LiteLoader."
 
 #: launcher/ui/pages/instance/VersionPage.ui:187
 #, kde-format
@@ -8256,15 +7634,11 @@ msgstr "Відкрити теку локальних бібліотек збір
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:180
 #, kde-format
-msgid ""
-"This will remove the selected world permenantly.\n"
-"The world will be gone forever (A LONG TIME).\n"
-"\n"
+msgid "This will remove the selected world permenantly.\n"
+"The world will be gone forever (A LONG TIME).\n\n"
 "Do you want to continue?"
-msgstr ""
-"Це призведе до видалення вибраного світу.\n"
-"Світ буде знищений назавжди (Надовго).\n"
-"\n"
+msgstr "Це призведе до видалення вибраного світу.\n"
+"Світ буде знищений назавжди (Надовго).\n\n"
 "Ви хочете продовжити?"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:228
@@ -8279,11 +7653,9 @@ msgstr "MCEdit не знайдено або не встановлено!"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:346
 #, kde-format
-msgid ""
-"You do not have MCEdit set up or it was moved.\n"
+msgid "You do not have MCEdit set up or it was moved.\n"
 "You can set it up in the global settings."
-msgstr ""
-"Ви не маєте встановленого MCEdit або його було переміщено.\n"
+msgstr "Ви не маєте встановленого MCEdit або його було переміщено.\n"
 "Ви можете налаштувати його в глобальних налаштуваннях."
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:354
@@ -8293,11 +7665,9 @@ msgstr "Не вдалося запустити MCEdit!"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:355
 #, kde-format
-msgid ""
-"MCEdit failed to start.\n"
+msgid "MCEdit failed to start.\n"
 "It may be necessary to reinstall it."
-msgstr ""
-"Не вдалося запустити MCEdit\n"
+msgstr "Не вдалося запустити MCEdit\n"
 "Можливо, треба буде перевстановити його."
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:399
@@ -8317,11 +7687,9 @@ msgstr "Копіювати світ"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:421
 #, kde-format
-msgid ""
-"Changing a world while Minecraft is running is potentially unsafe.\n"
+msgid "Changing a world while Minecraft is running is potentially unsafe.\n"
 "Do you wish to proceed?"
-msgstr ""
-"Зміна світу, в той час, як Minecraft працює, потенційно небезпечно.\n"
+msgstr "Зміна світу, в той час, як Minecraft працює, потенційно небезпечно.\n"
 "Бажаєте продовжити?"
 
 #: launcher/ui/pages/instance/WorldListPage.cpp:443
@@ -8348,7 +7716,7 @@ msgstr "Світи"
 #: launcher/ui/pages/instance/WorldListPage.ui:117
 #, kde-format
 msgid "MCEdit"
-msgstr "MCEdit"
+msgstr ""
 
 #: launcher/ui/pages/instance/WorldListPage.ui:122
 #, kde-format
@@ -8363,9 +7731,7 @@ msgstr "Скинути іконки"
 #: launcher/ui/pages/instance/WorldListPage.ui:140
 #, kde-format
 msgid "Remove world icon to make the game re-generate it on next load."
-msgstr ""
-"Видалення значка світу, щоб гра знову згенерувала її при наступному "
-"завантаженні."
+msgstr "Видалення значка світу, щоб гра знову згенерувала її при наступному завантаженні."
 
 #: launcher/ui/pages/instance/WorldListPage.ui:145
 #, kde-format
@@ -8436,22 +7802,15 @@ msgstr "Немає доступних версій"
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:692
 #, kde-format
-msgid ""
-"No versions of '%1' are available for this instance.\n"
-"The author may have blocked third-party launchers, or there may be no build "
-"for this Minecraft version."
-msgstr ""
-"Для цього немає доступних версій%1'.\n"
-"Автор, можливо, заблокував сторонні лаунчери або для цієї версії Minecraft, "
-"можливо, не було ніякої збірки."
+msgid "No versions of '%1' are available for this instance.\n"
+"The author may have blocked third-party launchers, or there may be no build for this Minecraft version."
+msgstr "Для цього немає доступних версій%1'.\n"
+"Автор, можливо, заблокував сторонні лаунчери або для цієї версії Minecraft, можливо, не було ніякої збірки."
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:723
 #, kde-format
-msgid ""
-"Every version of '%1' is on a release channel that the filter is currently "
-"hiding."
-msgstr ""
-"Кожна версія '%1' знаходиться на випуску каналу, який зараз приховує фільтр."
+msgid "Every version of '%1' is on a release channel that the filter is currently hiding."
+msgstr "Кожна версія '%1' знаходиться на випуску каналу, який зараз приховує фільтр."
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.ui:19
 #, kde-format
@@ -8475,12 +7834,8 @@ msgstr "Вибрати для завантаження"
 
 #: launcher/ui/pages/modplatform/ImportPage.cpp:126
 #, kde-format
-msgid ""
-"Modpack archives (*.zip *.mrpack);;Modrinth packs (*.mrpack);;Zip archives "
-"(*.zip);;All files (*)"
-msgstr ""
-"Архів модулів (*.zip *.mrpack);Напій пакети Modrinth (*.mrpack);Zip-архіви "
-"(*.zip);Всі файли (*)"
+msgid "Modpack archives (*.zip *.mrpack);;Modrinth packs (*.mrpack);;Zip archives (*.zip);;All files (*)"
+msgstr "Архів модулів (*.zip *.mrpack);Напій пакети Modrinth (*.mrpack);Zip-архіви (*.zip);Всі файли (*)"
 
 #: launcher/ui/pages/modplatform/ImportPage.cpp:130
 #, kde-format
@@ -8603,12 +7958,8 @@ msgstr "Кнайпер"
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.ui:42
 #, kde-format
-msgid ""
-"Warning: This is still a work in progress. If you run into issues with the "
-"imported modpack, it may be a bug."
-msgstr ""
-"Попередження: це ще триває. Якщо у вас виникнуть проблеми з імпортованим "
-"модулем, це може бути помилкою."
+msgid "Warning: This is still a work in progress. If you run into issues with the imported modpack, it may be a bug."
+msgstr "Попередження: це ще триває. Якщо у вас виникнуть проблеми з імпортованим модулем, це може бути помилкою."
 
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.ui:74
 #: launcher/ui/pages/modplatform/flame/FlamePage.ui:74
@@ -8651,7 +8002,7 @@ msgstr "Сортувати за інсталяціями"
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:49
 #, kde-format
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/legacy_ftb/ListModel.cpp:106
 #, kde-format
@@ -8675,11 +8026,9 @@ msgstr "Приватні збірки FTB"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:232
 #, kde-format
-msgid ""
-"Failed to download pack information for code %1.\n"
+msgid "Failed to download pack information for code %1.\n"
 "Should it be removed now?"
-msgstr ""
-"Не вдалося завантажити інформацію мод-паку для коду %1.\n"
+msgstr "Не вдалося завантажити інформацію мод-паку для коду %1.\n"
 "Видалити його зараз?"
 
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.cpp:355
@@ -8744,43 +8093,34 @@ msgstr "Техніка"
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:139
 #, kde-format
-msgid ""
-"You do not have a working Java set up yet or it went missing.\n"
+msgid "You do not have a working Java set up yet or it went missing.\n"
 "Please select one of the following or browse for a java executable.\n"
 "You can also choose which vendor to use for automatic Java downloads."
-msgstr ""
-"У вас ще немає працюючих налаштувань Java або вона відсутня.\n"
-"Будь ласка виберіть один з наступних або перегляньте файл для виконання "
-"Java.\n"
-"Ви також можете вибрати, який постачальник використовувати для автоматичних "
-"завантажень Java."
+msgstr "У вас ще немає працюючих налаштувань Java або вона відсутня.\n"
+"Будь ласка виберіть один з наступних або перегляньте файл для виконання Java.\n"
+"Ви також можете вибрати, який постачальник використовувати для автоматичних завантажень Java."
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:143
 #, kde-format
 msgid "Auto-download Java from:"
 msgstr "Автоматичне завантаження Java з:"
 
-#: launcher/ui/setupwizard/LanguageWizardPage.cpp:54
-#, kde-format
-msgid "Select the language to use in MeshMC"
-msgstr ""
-
-#: launcher/ui/setupwizard/SetupWizard.cpp:49
+#: launcher/ui/setupwizard/SetupWizard.cpp:47
 #, kde-format
 msgid "&Next >"
 msgstr "&Далі >"
 
-#: launcher/ui/setupwizard/SetupWizard.cpp:50
+#: launcher/ui/setupwizard/SetupWizard.cpp:48
 #, kde-format
 msgid "< &Back"
 msgstr "< &Назад"
 
-#: launcher/ui/setupwizard/SetupWizard.cpp:51
+#: launcher/ui/setupwizard/SetupWizard.cpp:49
 #, kde-format
 msgid "&Finish"
 msgstr "&Готово"
 
-#: launcher/ui/setupwizard/SetupWizard.cpp:53
+#: launcher/ui/setupwizard/SetupWizard.cpp:51
 #, kde-format
 msgid "MeshMC Quick Setup"
 msgstr ""
@@ -8834,7 +8174,7 @@ msgstr "Світла тема з зеленими акцентами"
 #: launcher/ui/themes/SystemTheme.cpp:71
 #, kde-format
 msgid "Windows Vista"
-msgstr "Windows Vista"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:73
 #, kde-format
@@ -8844,7 +8184,7 @@ msgstr "Windows 9х"
 #: launcher/ui/themes/SystemTheme.cpp:75
 #, kde-format
 msgid "Windows 11"
-msgstr "Windows 11"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:77
 #, kde-format
@@ -8974,21 +8314,13 @@ msgstr "Всі версії"
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:95
 #, kde-format
-msgid ""
-"Tick every Minecraft version the search should cover. With none ticked, "
-"every version is searched."
-msgstr ""
-"Відзначте кожну версію Minecraft, яку має покривати пошук. Якщо нічого не "
-"відмічено, кожна версія перевіряється."
+msgid "Tick every Minecraft version the search should cover. With none ticked, every version is searched."
+msgstr "Відзначте кожну версію Minecraft, яку має покривати пошук. Якщо нічого не відмічено, кожна версія перевіряється."
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:115
 #, kde-format
-msgid ""
-"Which Minecraft version to search for. \"All Versions\" is how a project "
-"that has not been updated yet is found."
-msgstr ""
-"Яку версію Minecraft для пошуку «Всі версії» — це те, як проект ще не було "
-"оновлено на даний момент."
+msgid "Which Minecraft version to search for. \"All Versions\" is how a project that has not been updated yet is found."
+msgstr "Яку версію Minecraft для пошуку «Всі версії» — це те, як проект ще не було оновлено на даний момент."
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:253
 #, kde-format
@@ -9003,7 +8335,7 @@ msgstr "Завантажувачі"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:265
 #, kde-format
 msgid "NeoForge"
-msgstr "NeoForge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:266
 #, kde-format
@@ -9023,7 +8355,7 @@ msgstr "Кільта"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 #, kde-format
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:275
 #, kde-format
@@ -9033,7 +8365,7 @@ msgstr "Бабрик"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:276
 #, kde-format
 msgid "BTA (Babric)"
-msgstr "BTA (Babric)"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 #, kde-format
@@ -9043,7 +8375,7 @@ msgstr "Застаріла тканина"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 #, kde-format
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:279
 #, kde-format
@@ -9087,12 +8419,8 @@ msgstr "Тільки відкритим вихідним кодом"
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:362
 #, kde-format
-msgid ""
-"Only show projects published under a licence the provider recognises as open "
-"source."
-msgstr ""
-"Відображати тільки проекти, опубліковані під ліцензією, видається "
-"постачальником як відкритий вихідний код."
+msgid "Only show projects published under a licence the provider recognises as open source."
+msgstr "Відображати тільки проекти, опубліковані під ліцензією, видається постачальником як відкритий вихідний код."
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:372
 #, kde-format
@@ -9141,17 +8469,7 @@ msgstr "Команда обгортки:"
 
 #: launcher/ui/widgets/CustomCommands.ui:77
 #, kde-format
-msgid ""
-"<html><head/><body><p>Pre-launch command runs before the instance launches "
-"and post-exit command runs after it exits.</p><p>Both will be run in "
-"MeshMC's working folder with extra environment variables:</"
-"p><ul><li>$INST_NAME - Name of the instance</li><li>$INST_ID - ID of the "
-"instance (its folder name)</li><li>$INST_DIR - absolute path of the "
-"instance</li><li>$INST_MC_DIR - absolute path of minecraft</"
-"li><li>$INST_JAVA - java binary used for launch</li><li>$INST_JAVA_ARGS - "
-"command-line parameters used for launch</li></ul><p>Wrapper command allows "
-"launching using an extra wrapper program (like 'optirun' on Linux)</p></"
-"body></html>"
+msgid "<html><head/><body><p>Pre-launch command runs before the instance launches and post-exit command runs after it exits.</p><p>Both will be run in MeshMC's working folder with extra environment variables:</p><ul><li>$INST_NAME - Name of the instance</li><li>$INST_ID - ID of the instance (its folder name)</li><li>$INST_DIR - absolute path of the instance</li><li>$INST_MC_DIR - absolute path of minecraft</li><li>$INST_JAVA - java binary used for launch</li><li>$INST_JAVA_ARGS - command-line parameters used for launch</li></ul><p>Wrapper command allows launching using an extra wrapper program (like 'optirun' on Linux)</p></body></html>"
 msgstr ""
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:176
@@ -9161,11 +8479,9 @@ msgstr "Не вибрано версії Java"
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:177
 #, kde-format
-msgid ""
-"You didn't select a Java version or selected something that doesn't work.\n"
+msgid "You didn't select a Java version or selected something that doesn't work.\n"
 "MeshMC will not be able to start Minecraft.\n"
-"Do you wish to proceed without any Java?\n"
-"\n"
+"Do you wish to proceed without any Java?\n\n"
 "You can change the Java version in the settings later.\n"
 msgstr ""
 
@@ -9186,19 +8502,8 @@ msgstr "Зазначений файл java повернув неочікуван
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:321
 #, kde-format
-msgid ""
-"Java test succeeded!<br />Platform reported: %1<br />Java version reported: "
-"%2<br />"
-msgstr ""
-"Тестування Java завершено успішно!<br />Повідомлено про платформу: %1<br /"
-">Повідомлено про версію Java: %2 <br />"
-
-#: launcher/ui/widgets/LanguageSelectionWidget.cpp:73
-#, kde-format
-msgid ""
-"Don't see your language or the quality is poor?<br/><a href=\"https://"
-"crowdin.com/project/projtlauncher\">Help us with translations!</a>"
-msgstr ""
+msgid "Java test succeeded!<br />Platform reported: %1<br />Java version reported: %2<br />"
+msgstr "Тестування Java завершено успішно!<br />Повідомлено про платформу: %1<br />Повідомлено про версію Java: %2 <br />"
 
 #: launcher/ui/widgets/ProjectItemDelegate.cpp:170
 #, kde-format
@@ -9212,754 +8517,692 @@ msgstr "Наразі немає доступних оновлень."
 
 #: launcher/ui/widgets/VersionSelectWidget.cpp:155
 #, kde-format
-msgid ""
-"List update failed:\n"
+msgid "List update failed:\n"
 "%1"
-msgstr ""
-"Помилка оновлення списку:\n"
+msgstr "Помилка оновлення списку:\n"
 "%1"
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:224
-#: launcher/updater/MeshMCExternalUpdater.cpp:226
+#: launcher/updater/MeshMCExternalUpdater.cpp:234
+#: launcher/updater/MeshMCExternalUpdater.cpp:236
 #, kde-format
 msgid "Checking for updates..."
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:258
-#: launcher/updater/MeshMCExternalUpdater.cpp:274
+#: launcher/updater/MeshMCExternalUpdater.cpp:268
+#: launcher/updater/MeshMCExternalUpdater.cpp:284
 #, kde-format
 msgid "Update Check Failed"
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:259
+#: launcher/updater/MeshMCExternalUpdater.cpp:269
 #, kde-format
-msgid ""
-"Failed to start after 5 seconds\n"
+msgid "Failed to start after 5 seconds\n"
 "Reason: %1."
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:275
+#: launcher/updater/MeshMCExternalUpdater.cpp:285
 #, kde-format
-msgid ""
-"Updater failed to close 60 seconds\n"
+msgid "Updater failed to close 60 seconds\n"
 "Reason: %1."
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:293
+#: launcher/updater/MeshMCExternalUpdater.cpp:303
 #, kde-format
 msgid "No Update Available"
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:294
+#: launcher/updater/MeshMCExternalUpdater.cpp:304
 #, kde-format
 msgid "You are running the latest version."
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:302
-#: launcher/updater/MeshMCExternalUpdater.cpp:329
+#: launcher/updater/MeshMCExternalUpdater.cpp:312
+#: launcher/updater/MeshMCExternalUpdater.cpp:339
 #, kde-format
 msgid "Update Check Error"
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:303
-#: launcher/updater/MeshMCExternalUpdater.cpp:330
+#: launcher/updater/MeshMCExternalUpdater.cpp:313
+#: launcher/updater/MeshMCExternalUpdater.cpp:340
 #, kde-format
 msgid "There was an error running the update check."
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:331
-#: launcher/updater/MeshMCExternalUpdater.cpp:347
+#: launcher/updater/MeshMCExternalUpdater.cpp:341
+#: launcher/updater/MeshMCExternalUpdater.cpp:357
 #, kde-format
-msgid ""
-"StdOut: %1\n"
+msgid "StdOut: %1\n"
 "StdErr: %2"
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:344
+#: launcher/updater/MeshMCExternalUpdater.cpp:354
 #, kde-format
 msgid "Unknown Update Error"
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:345
+#: launcher/updater/MeshMCExternalUpdater.cpp:355
 #, kde-format
-msgid ""
-"The updater exited with an unknown condition.\n"
+msgid "The updater exited with an unknown condition.\n"
 "Exit Code: %1"
 msgstr ""
 
-#: launcher/updater/MeshMCExternalUpdater.cpp:435
+#: launcher/updater/MeshMCExternalUpdater.cpp:442
 #, kde-format
-msgid ""
-"Could not start the updater.\n"
+msgid "Could not start the updater.\n"
 "Reason: %1."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:432
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:433
 #, kde-format
 msgid "Installs MeshMC updates."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:435
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:436
 #, kde-format
 msgid "Use a custom path as application root (use '.' for current directory)."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:437
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:438
 #, kde-format
 msgid "directory"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:439
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:440
 #, kde-format
-msgid ""
-"Treat this as the installed launcher version instead of asking the launcher."
+msgid "Treat this as the installed launcher version instead of asking the launcher."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:441
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:442
 #, kde-format
 msgid "installed version"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:443
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:444
 #, kde-format
 msgid "Install a specific version."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:443
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:444
 #, kde-format
 msgid "version name"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:445
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:446
 #, kde-format
 msgid "Update from the specified repository."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:445
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:446
 #, kde-format
 msgid "github repo url"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:447
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:448
 #, kde-format
-msgid ""
-"Install the release already unpacked in this directory. Used by the updater "
-"itself for the second pass of an install."
+msgid "Install the release already unpacked in this directory. Used by the updater itself for the second pass of an install."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:449
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:450
 #, kde-format
 msgid "unpacked release directory"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:451
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:452
 #, kde-format
 msgid "Print a token and exit, to prove this binary can run."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:453
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:454
 #, kde-format
-msgid ""
-"Only check whether an update is needed. Exit status 100 if it is, 0 if it is "
-"not, non-zero on error."
+msgid "Only check whether an update is needed. Exit status 100 if it is, 0 if it is not, non-zero on error."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:456
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:457
 #, kde-format
 msgid "Allow updating to pre-releases."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:458
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:459
 #, kde-format
 msgid "Update even when one is not needed."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:460
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:461
 #, kde-format
 msgid "List the available releases."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:461
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:462
 #, kde-format
 msgid "Log debug output to the console."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:463
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:464
 #, kde-format
 msgid "Select the version to install with a GUI."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:465
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:466
 #, kde-format
 msgid "Allow downgrading to an earlier version."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:493
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:494
 #, kde-format
 msgid "command line"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:493
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:494
 #, kde-format
 msgid "default"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:529
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:530
 #, kde-format
 msgid "The update marker at %1 does not say where to install to."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:551
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:552
 #, kde-format
 msgid "macOS Is Not Supported"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:552
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:553
 #, kde-format
-msgid ""
-"The updater does not support installations on macOS. Updates are handled by "
-"the launcher itself."
+msgid "The updater does not support installations on macOS. Updates are handled by the launcher itself."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:567
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:578
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:568
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:579
 #, kde-format
 msgid "Unsupported Installation"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:568
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:569
 #, kde-format
-msgid ""
-"This looks like an AppImage, but the APPIMAGE environment variable is "
-"missing, so there is no file to update."
+msgid "This looks like an AppImage, but the APPIMAGE environment variable is missing, so there is no file to update."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:579
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:580
 #, kde-format
-msgid ""
-"The updater cannot find the main executable at:\n"
+msgid "The updater cannot find the main executable at:\n"
 "%1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:684
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:715
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:685
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:716
 #, kde-format
 msgid "The launcher data folder is not writable!"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:685
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:686
 #, kde-format
-msgid ""
-"The updater could not create its log directory at:\n"
-"%1\n"
-"\n"
-"Make sure you have write permissions to the data folder.\n"
-"\n"
+msgid "The updater could not create its log directory at:\n"
+"%1\n\n"
+"Make sure you have write permissions to the data folder.\n\n"
 "The updater cannot continue until this is fixed."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:716
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:717
 #, kde-format
-msgid ""
-"The updater could not create a log file - %1.\n"
-"\n"
+msgid "The updater could not create a log file - %1.\n\n"
 "Make sure you have write permissions to the data folder.\n"
-"(%2)\n"
-"\n"
+"(%2)\n\n"
 "The updater cannot continue until this is fixed."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:784
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:785
 #, kde-format
 msgid "Cannot list releases: %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:817
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:818
 #, kde-format
 msgid "Could not fetch %1: %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:825
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:826
 #, kde-format
 msgid "Could not read the release list from %1: %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1005
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1006
 #, kde-format
 msgid " (pre-releases excluded)"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1005
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1006
 #, kde-format
 msgid "The repository has no published releases%1."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1044
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1045
 #, kde-format
 msgid "Updating Flatpak Is Not Supported"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1045
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1046
 #, kde-format
-msgid ""
-"This is the Flatpak build of MeshMC, which is updated through Flatpak "
-"itself.\n"
-"\n"
+msgid "This is the Flatpak build of MeshMC, which is updated through Flatpak itself.\n\n"
 "Run this to update:\n"
-"flatpak update org.projecttick.MeshMC\n"
-"\n"
+"flatpak update org.projecttick.MeshMC\n\n"
 "Checking for updates works, but installing them here does not."
-msgstr ""
-
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1084
-#, kde-format
-msgid "No Release for That Version"
 msgstr ""
 
 #: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1085
 #, kde-format
+msgid "No Release for That Version"
+msgstr ""
+
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1086
+#, kde-format
 msgid "There is no GitHub release for version %1."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1092
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1093
 #, kde-format
 msgid "No version was selected."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1161
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1162
 #, kde-format
 msgid "No Valid Release Assets"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1162
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1163
 #, kde-format
 msgid "Release %1 has no files for this installation: %2, portable: %3."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1163
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1164
 #, kde-format
 msgid "no"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1163
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1164
 #, kde-format
 msgid "unknown build"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1163
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1164
 #, kde-format
 msgid "yes"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1178
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1179
 #, kde-format
 msgid "No file was selected."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1186
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1187
 #, kde-format
 msgid "Failed to Download"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1187
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1188
 #, kde-format
 msgid "The update file could not be downloaded."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1249
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1250
 #, kde-format
 msgid "An update is already in progress."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1251
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1252
 #, kde-format
-msgid ""
-"This installation has an update lock file at: %1\n"
-"\n"
+msgid "This installation has an update lock file at: %1\n\n"
 "Timestamp: %2\n"
 "Updating from version %3 to %4\n"
 "Target install path: %5\n"
-"Data path: %6\n"
-"\n"
-"This usually means a previous update attempt failed. Please make sure your "
-"installation still works before continuing.\n"
+"Data path: %6\n\n"
+"This usually means a previous update attempt failed. Please make sure your installation still works before continuing.\n"
 "The updater log at:\n"
 "%7\n"
-"has the details of the last attempt.\n"
-"\n"
+"has the details of the last attempt.\n\n"
 "To ignore this lock and update anyway, choose \"Ignore\"."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1275
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1276
 #, kde-format
-msgid ""
-"The update was aborted: an update lock from an earlier attempt is present at "
-"%1."
+msgid "The update was aborted: an update lock from an earlier attempt is present at %1."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1289
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1290
 #, kde-format
 msgid "Updating from %1 to %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1303
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1304
 #, kde-format
 msgid "Updating the installation at %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1328
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1329
 #, kde-format
 msgid "Running the installer at %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1339
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1340
 #, kde-format
 msgid "The installer was started."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1340
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1341
 #, kde-format
 msgid "The installer could not be started: %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1367
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1368
 #, kde-format
 msgid "Failed to unpack %1: %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1368
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1369
 #, kde-format
 msgid "Failed to Extract Archive"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1369
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1370
 #, kde-format
-msgid ""
-"Could not unpack %1 into %2:\n"
+msgid "Could not unpack %1 into %2:\n"
 "%3"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1373
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1374
 #, kde-format
 msgid "Unpacked %1 files and %2 links (%3) into %4"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1393
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1394
 #, kde-format
 msgid "The unpacked release has no launcher at %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1396
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1397
 #, kde-format
-msgid ""
-"The downloaded release does not contain MeshMC at:\n"
-"%1\n"
-"\n"
+msgid "The downloaded release does not contain MeshMC at:\n"
+"%1\n\n"
 "Your installation has not been changed.\n"
 "The updater log has the details:\n"
 "%2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1410
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1411
 #, kde-format
 msgid "No usable second pass was found for this release."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1413
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1414
 #, kde-format
-msgid ""
-"The update cannot be installed, because no program that is able to install "
-"it could be started.\n"
-"\n"
-"Your installation has not been changed. You can install this release by "
-"downloading it yourself.\n"
-"\n"
+msgid "The update cannot be installed, because no program that is able to install it could be started.\n\n"
+"Your installation has not been changed. You can install this release by downloading it yourself.\n\n"
 "The updater log has what was tried and why each attempt failed:\n"
 "%1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1427
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1428
 #, kde-format
 msgid "Backing up the current installation"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1435
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1436
 #, kde-format
 msgid "Could not write the update marker at %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1437
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1438
 #, kde-format
-msgid ""
-"Could not write the update marker at:\n"
+msgid "Could not write the update marker at:\n"
 "%1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1455
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1456
 #, kde-format
 msgid "Starting the second pass: %1 %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1459
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1460
 #, kde-format
 msgid "Could not start %1: %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1461
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1462
 #, kde-format
-msgid ""
-"Could not start the second pass of the update:\n"
-"%1\n"
-"\n"
-"%2\n"
-"\n"
+msgid "Could not start the second pass of the update:\n"
+"%1\n\n"
+"%2\n\n"
 "Your installation has not been changed."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1481
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1482
 #, kde-format
-msgid ""
-"The second pass (pid %1) did not take the update over within %2 seconds and "
-"is %3."
+msgid "The second pass (pid %1) did not take the update over within %2 seconds and is %3."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1482
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1483
 #, kde-format
 msgid "no longer running"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1482
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1483
 #, kde-format
 msgid "still running"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1487
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1488
 #, kde-format
-msgid ""
-"The second pass of the update was started but never reported that it had "
-"taken over, and it is still running.\n"
-"\n"
-"Check that MeshMC still starts before using it. The previous installation "
-"was backed up, and the updater log has the details:\n"
+msgid "The second pass of the update was started but never reported that it had taken over, and it is still running.\n\n"
+"Check that MeshMC still starts before using it. The previous installation was backed up, and the updater log has the details:\n"
 "%1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1495
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1496
 #, kde-format
-msgid ""
-"The second pass of the update stopped before it began installing.\n"
-"\n"
+msgid "The second pass of the update stopped before it began installing.\n\n"
 "Your installation has not been changed. The updater log has the details:\n"
 "%1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1507
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1508
 #, kde-format
 msgid "Handed the update over to the second pass (pid %1)."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1543
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1544
 #, kde-format
 msgid "Could not copy %1 to %2: %3"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1553
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1554
 #, kde-format
 msgid "Could not make %1 executable."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1563
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1564
 #, kde-format
 msgid "There is no file at %1."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1574
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1575
 #, kde-format
 msgid "%1 could not be started: %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1582
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1583
 #, kde-format
 msgid "%1 did not answer the self test within %2 seconds."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1593
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1594
 #, kde-format
 msgid "%1 failed the self test (exit code %2): %3"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1597
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1598
 #, kde-format
 msgid "%1 passed the self test: %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1606
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1607
 #, kde-format
 msgid "Looking for a program to install the update with."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1617
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1618
 #, kde-format
 msgid "Trying the release's own updater at %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1625
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1626
 #, kde-format
-msgid ""
-"%1 does not know --finish-update, so it is from before the current updater; "
-"not running it."
+msgid "%1 does not know --finish-update, so it is from before the current updater; not running it."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1653
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1663
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1654
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1664
 #, kde-format
 msgid "Trying this updater inside the release, as %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1679
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1680
 #, kde-format
 msgid "Trying this updater on its own, as %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1693
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1694
 #, kde-format
 msgid "Waiting for the second pass (pid %1) to take the update over."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1745
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1746
 #, kde-format
 msgid "Could not create the backup directory %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1757
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1758
 #, kde-format
 msgid "Backing up the installation at %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1765
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1766
 #, kde-format
-msgid ""
-"Backing up:\n"
+msgid "Backing up:\n"
 "  %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1786
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1794
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1787
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1795
 #, kde-format
 msgid "Could not back up %1: %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1813
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1984
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1814
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1985
 #, kde-format
 msgid "Not present, ignoring: %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1823
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1824
 #, kde-format
 msgid "Backed the installation up to %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1850
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1851
 #, kde-format
 msgid "Took the update lock over (pid %1)."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1855
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1856
 #, kde-format
 msgid "Could not take the update lock at %1 over."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1878
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1879
 #, kde-format
 msgid "Removed the second pass's copy at %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1880
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1881
 #, kde-format
 msgid "Could not remove %1; it may end up installed."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1887
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1888
 #, kde-format
 msgid "Completing the update: installing %1 into %2, from %3"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1906
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1907
 #, kde-format
-msgid ""
-"The first pass (pid %1) is still running after %2 seconds; installing anyway."
+msgid "The first pass (pid %1) is still running after %2 seconds; installing anyway."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1909
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1910
 #, kde-format
 msgid "The first pass (pid %1) has exited."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1928
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1929
 #, kde-format
-msgid ""
-"Installing the following into %1:\n"
+msgid "Installing the following into %1:\n"
 "  %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1931
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1932
 #, kde-format
 msgid "Installing from %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1954
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1964
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1955
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:1965
 #, kde-format
 msgid "Failed to install %1: %2"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2000
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2001
 #, kde-format
 msgid "There were errors installing the update."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2001
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2002
 #, kde-format
 msgid "The update succeeded."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2018
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2019
 #, kde-format
 msgid "Could not restart the launcher: %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2052
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2053
 #, kde-format
 msgid "AppImageUpdate Not Found"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2053
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2054
 #, kde-format
-msgid ""
-"This AppImage is updated with AppImageUpdate, which could not be found.\n"
-"\n"
+msgid "This AppImage is updated with AppImageUpdate, which could not be found.\n\n"
 "Install AppImageUpdate, or download the new version manually."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2070
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2071
 #, kde-format
-msgid ""
-"Could not start AppImageUpdate:\n"
+msgid "Could not start AppImageUpdate:\n"
 "%1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2151
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2152
 #, kde-format
 msgid "The installation was not modified; dropped the update lock."
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2170
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2171
 #, kde-format
 msgid "Removing the old backup at %1"
 msgstr ""
 
-#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2172
+#: launcher/updater/meshupdater/MeshUpdaterApp.cpp:2173
 #, kde-format
 msgid "Could not fully remove %1"
 msgstr ""
@@ -10014,9 +9257,7 @@ msgstr ""
 
 #: launcher/updater/meshupdater/UpdaterDialogs.cpp:70
 #, kde-format
-msgid ""
-"Select a version to install.\n"
-"\n"
+msgid "Select a version to install.\n\n"
 "Currently installed version: %1"
 msgstr ""
 
@@ -10024,3 +9265,4 @@ msgstr ""
 #, kde-format
 msgid "Select a version to install."
 msgstr ""
+
