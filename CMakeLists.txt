@@ -167,6 +167,10 @@ find_package(KF6 6.23 REQUIRED COMPONENTS I18n
     GuiAddons
     CoreAddons
     XmlGui
+    Crash
+    ColorScheme
+    IconThemes
+    BreezeIcons
 )
 
 if(UNIX)
@@ -543,8 +547,8 @@ endif()
 
 # Where the installed .mo catalogs are, relative to the directory the
 # executables live in (../share/locale on Linux, ../Resources/locale in the
-# macOS bundle, share/locale on Windows). The launcher, the crash reporter and
-# the updater all sit in BINARY_DEST_DIR and hand this to
+# macOS bundle, share/locale on Windows). The launcher and the
+# updater both sit in BINARY_DEST_DIR and hand this to
 # KLocalizedString::addDomainLocaleDir().
 file(RELATIVE_PATH MeshMC_LOCALE_RELATIVE_DIR
     "/${BINARY_DEST_DIR}" "/${MeshMC_LOCALE_DEST_DIR}")
@@ -553,16 +557,6 @@ file(RELATIVE_PATH MeshMC_LOCALE_RELATIVE_DIR
 
 include(ExternalProject)
 set_directory_properties(PROPERTIES EP_BASE External)
-
-# Everything under libraries/ is built as part of this build tree, statically,
-# unless the library hardcodes SHARED (rainbow) or opts out itself
-# (nbt++, via NBT_BUILD_SHARED). This matches what the old pre-built
-# dependency prefix shipped, so linkage does not change — only where the
-# objects come from.
-#
-# Cache entry rather than a plain variable: subprojects under libraries/ read
-# this through option(), and a cache entry is the one form that wins there
-# whichever CMP0077 mode their cmake_minimum_required happens to select.
 
 ############################### internal libraries ############################
 option(NBT_BUILD_SHARED "Build NBT shared library" ON)
@@ -574,12 +568,11 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/libnbtplusplus libnbtplusplus)
 add_subdirectory(libraries/launcher) # java based launcher part for Minecraft
 add_subdirectory(libraries/javacheck) # java compatibility checker
 add_subdirectory(libraries/xz-embedded) # xz compression
-add_subdirectory(libraries/rainbow) # Qt extension for colors
 add_subdirectory(libraries/localpeer) # fork of a library from Qt solutions
 add_subdirectory(libraries/classparser) # Java class file parser
 add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too much
 
-set_target_properties(nbt++ rainbow PROPERTIES
+set_target_properties(nbt++ PROPERTIES
     VERSION   "${MeshMC_RELEASE_VERSION_NAME}"
     SOVERSION "${MeshMC_SOVERSION}")
 
@@ -587,7 +580,7 @@ if(NOT DEFINED PRIVATE_LIBRARY_DEST_DIR)
     set(PRIVATE_LIBRARY_DEST_DIR "${LIBRARY_DEST_DIR}")
 endif()
 
-install(TARGETS nbt++ rainbow
+install(TARGETS nbt++
     RUNTIME DESTINATION "${BINARY_DEST_DIR}"
     LIBRARY DESTINATION "${PRIVATE_LIBRARY_DEST_DIR}")
 
@@ -603,7 +596,6 @@ install(FILES "${NEWLAUNCH_JAR}" DESTINATION "${JARS_DEST_DIR}" RENAME "NewLaunc
 
 add_subdirectory(buildconfig)
 
-add_subdirectory(launcher/crashreporter)
 
 # NOTE: this must always be last to appease the CMake deity of quirky install command evaluation order.
 add_subdirectory(launcher)

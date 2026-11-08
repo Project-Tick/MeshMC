@@ -2111,7 +2111,6 @@ QStringList MeshUpdaterApp::installedFileList(const QDir& root) const
 		QStringLiteral("jars"),
 		launcherBinaryName(),
 		QStringLiteral("meshmc-updater.exe"),
-		QStringLiteral("meshmc-crashreporter.exe"),
 		QStringLiteral("qtlogging.ini"),
 		QStringLiteral("qt.conf"),
 		QStringLiteral("imageformats"),

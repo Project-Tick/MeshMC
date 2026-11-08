@@ -24,12 +24,12 @@
  */
 QColor ColorCache::blend(QColor color)
 {
-	if (Rainbow::luma(m_front) > Rainbow::luma(m_back)) {
+	if (KColorUtils::luma(m_front) > KColorUtils::luma(m_back)) {
 		// for dark color schemes, produce a fitting color first
-		color = Rainbow::tint(m_front, color, 0.5);
+		color = KColorUtils::tint(m_front, color, 0.5);
 	}
 	// adapt contrast
-	return Rainbow::mix(m_front, color, m_bias);
+	return KColorUtils::mix(m_front, color, m_bias);
 }
 
 /**
@@ -38,7 +38,7 @@ QColor ColorCache::blend(QColor color)
 QColor ColorCache::blendBackground(QColor color)
 {
 	// adapt contrast
-	return Rainbow::mix(m_back, color, m_bias);
+	return KColorUtils::mix(m_back, color, m_bias);
 }
 
 void ColorCache::recolorAll()

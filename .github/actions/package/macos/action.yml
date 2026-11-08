@@ -102,7 +102,7 @@ runs:
             sign_nested "$lib"
           done
 
-        for binary in meshmc-updater meshmc-crashreporter; do
+        for binary in meshmc-updater; do
           path="MeshMC.app/Contents/MacOS/$binary"
           if [ ! -f "$path" ]; then
             echo "::notice::$path not present, nothing to sign."

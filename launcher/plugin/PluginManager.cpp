@@ -2275,7 +2275,7 @@ namespace
 			// icon name. Resource paths come from ui_plugin_icon().
 			if (m_iconName.startsWith(QLatin1Char(':')))
 				return QIcon(m_iconName);
-			return QIcon::fromTheme(m_iconName);
+			return APPLICATION->getThemedIcon(m_iconName);
 		}
 		bool shouldDisplay() const override
 		{
@@ -2388,7 +2388,7 @@ void* PluginManager::api_ui_button_create(void* mh, void* parent,
 		const QString iname = QString::fromUtf8(iconName);
 		btn->setIcon(iname.startsWith(QLatin1Char(':'))
 						 ? QIcon(iname)
-						 : QIcon::fromTheme(iname));
+						 : APPLICATION->getThemedIcon(iname));
 	}
 	if (parent)
 		btn->setParent(static_cast<QWidget*>(parent));
@@ -2845,7 +2845,7 @@ namespace
 		if (!name || !*name)
 			return QIcon();
 		QString s = QString::fromUtf8(name);
-		QIcon themed = QIcon::fromTheme(s);
+		QIcon themed = APPLICATION->getThemedIcon(s);
 		if (!themed.isNull())
 			return themed;
 		return QIcon(s);

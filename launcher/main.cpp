@@ -20,15 +20,13 @@
 #include "Application.h"
 #include "settings/GlobalSettings.h"
 #include "BuildConfig.h"
-#include "FileSystem.h"
 
-#include <QDir>
-#include <QProcess>
 #include <QProcessEnvironment>
 #include <KLocalizedString>
 #include <KAboutData>
+#include <KCrash>
+#include <QFile>
 
-#include <csignal>
 #include <cstdlib>
 #ifndef Q_OS_WIN
 #include <unistd.h>
@@ -43,52 +41,13 @@
 #include <chrono>
 #endif
 
-static void launchCrashReporter()
+// Called by KCrash from its signal handler, before DrKonqi is started. There
+// is no crash dialog of our own: the log file is what a crash leaves behind.
+static void flushLogOnCrash(int)
 {
-	// Locate the crash reporter binary next to the running executable.
-	QString crashReporterName = "meshmc-crashreporter";
-#ifdef Q_OS_WIN
-	crashReporterName += ".exe";
-#endif
-	QString crashReporterPath =
-		FS::PathCombine(QApplication::applicationDirPath(), crashReporterName);
-
-	if (!QFile::exists(crashReporterPath)) {
-		return;
-	}
-
-	QStringList args;
-	args << "--logdir" << QDir::currentPath();
-	args << "--name" << "MeshMC";
-
-	QString apiKey = "public";
-	if (APPLICATION && APPLICATION->settings()) {
-		QString key = APPLICATION->globalSettings()->pasteEEAPIKey();
-		if (key != "meshmc" && !key.isEmpty()) {
-			apiKey = key;
-		} else {
-			apiKey = BuildConfig.PASTE_EE_KEY;
-		}
-	}
-	args << "--apikey" << apiKey;
-
-	// Flush the log file before launching the crash reporter
 	if (APPLICATION && APPLICATION->logFile) {
 		APPLICATION->logFile->flush();
 	}
-
-	QProcess::startDetached(crashReporterPath, args);
-}
-
-static void crashSignalHandler(int sig)
-{
-	// Re-set default handler to avoid infinite loops
-	signal(sig, SIG_DFL);
-
-	launchCrashReporter();
-
-	// Re-raise the signal so the default handler produces a core dump etc.
-	raise(sig);
 }
 
 int main(int argc, char* argv[])
@@ -175,22 +134,23 @@ int main(int argc, char* argv[])
 
 	aboutData.setProgramLogo(APPLICATION->getThemedIcon("logo"));
 
-	aboutData.setBugAddress("https://github.com/Project-Tick/MeshMC/issues");
+	aboutData.setBugAddress(BuildConfig.BUG_TRACKER_URL.toUtf8());
 
 	KAboutData::setApplicationData(aboutData);
 
-	// Install crash signal handlers to launch meshmc-crashreporter
-	signal(SIGSEGV, crashSignalHandler);
-	signal(SIGABRT, crashSignalHandler);
-#ifndef Q_OS_WIN
-	signal(SIGBUS, crashSignalHandler);
-#endif
+	// Crash handling is KCrash's: it catches the fatal signals, flushes the
+	// log, and starts DrKonqi where that is installed (a KDE desktop). Where
+	// it is not, the process just ends the way it would have. Must come after
+	// the KAboutData is set, which DrKonqi reports from.
+	KCrash::initialize();
+	KCrash::setDrKonqiEnabled(true);
+	KCrash::setEmergencySaveFunction(flushLogOnCrash);
 
 	switch (app.status()) {
 		case Application::StartingUp:
 		case Application::Initialized: {
 			Q_INIT_RESOURCE(multimc);
-			Q_INIT_RESOURCE(backgrounds);
+			Q_INIT_RESOURCE(colorschemes);
 			Q_INIT_RESOURCE(documents);
 			Q_INIT_RESOURCE(meshmc);
 			Q_INIT_RESOURCE(shaders);
@@ -199,12 +159,6 @@ int main(int argc, char* argv[])
 			Q_INIT_RESOURCE(pe_light);
 			Q_INIT_RESOURCE(pe_blue);
 			Q_INIT_RESOURCE(pe_colored);
-			Q_INIT_RESOURCE(breeze_dark);
-			Q_INIT_RESOURCE(breeze_light);
-			Q_INIT_RESOURCE(OSX);
-			Q_INIT_RESOURCE(iOS);
-			Q_INIT_RESOURCE(flat);
-			Q_INIT_RESOURCE(flat_white);
 
 			int ret = app.exec();
 

@@ -25,13 +25,11 @@
       <default>true</default>
     </entry>
     <!-- Theming -->
-    <entry name="IconTheme" type="String">
-      <default>pe_colored</default>
-    </entry>
-    <entry name="ApplicationTheme" type="String">
-      <default>system</default>
-    </entry>
     <!-- Screen-top menu bar. Only macOS has one; elsewhere the setting is carried but never acted on. The second key is what this shipped as originally, kept so existing configs still read. -->
+    <entry name="IconTheme" type="String">
+      <default>breeze</default>
+    </entry>
+
     <entry name="MacNativeMenuBar" type="Bool">
       <default>true</default>
     </entry>
@@ -229,15 +227,6 @@
       <default>false</default>
     </entry>
     <!-- The cat -->
-    <entry name="TheCat" type="Bool">
-      <default>false</default>
-    </entry>
-    <entry name="BackgroundCat" type="String">
-      <default>kitteh</default>
-    </entry>
-    <entry name="CatOpacity" type="Int">
-      <default>100</default>
-    </entry>
     <entry name="InstSortMode" type="String">
       <default>Name</default>
     </entry>

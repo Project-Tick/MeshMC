@@ -55,19 +55,10 @@ class AppearancePage : public QWidget, public BasePage
 	}
 	bool apply() override;
 
-  private slots:
-	void applyWidgetTheme(int index);
-	void applyIconTheme(int index);
-	void applyCatTheme(int index);
-	void openThemesFolder();
-	void openIconThemesFolder();
-	void reloadThemes();
-
   private:
-	void applySettings();
-	void loadSettings();
+	void loadIconThemes();
+	void importColorSchemes();
 	void updateIconPreview();
-	void updateCatPreview();
 
 	Ui::AppearancePage* ui;
 };
