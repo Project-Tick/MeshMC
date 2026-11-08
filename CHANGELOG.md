@@ -1,18 +1,33 @@
 # MeshMC 12.0.0 (DRAFT)
 
+## Highlights
+
+
+
 ## Added
 
 * Added Installation step of KDE Frameworks 6 to CI.
-* KF6 Setup script has been added.
+* Added a development setup script for KDE Frameworks 6.
+* The KBugReport screen has been added.
 
 ## Changed
 
+* KDE Extra CMake Modules has started to be used more extensively.
 * The complexity in the build system has been reduced.
+* MeshMC version information is no longer displayed in the title.
+* Removed custom about page and switched to KAboutData.
+* A general migration to KI18n was carried out.
+* KConfig Core migration has been completed.
+* KCrash migration has been completed.
+* KColorUtils migration has been completed.
+* KColorScheme migration has been completed.
+* KIconThemes migration has been completed.
 
 ## Removed
 
 * Removed support of Universal macOS Build.
-* Removed Qt5 build matrix to CI.
+* Dropped Qt5 Support.
+* The CatPack feature has been removed.
 
 ## Previous versions
 
