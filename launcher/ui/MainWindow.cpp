@@ -60,6 +60,7 @@
 
 #include <KAboutApplicationDialog>
 #include <KAboutData>
+#include <KBugReport>
 #include <KHelpMenu>
 
 #include <BaseInstance.h>
@@ -1660,7 +1661,10 @@ void MainWindow::on_actionManageAccounts_triggered()
 
 void MainWindow::on_actionReportBug_triggered()
 {
-	DesktopServices::openUrl(QUrl(BuildConfig.BUG_TRACKER_URL));
+	// Shows the application, its version and the system, and sends the user
+	// to the tracker the KAboutData names (BuildConfig.BUG_TRACKER_URL).
+	KBugReport dialog(KAboutData::applicationData(), this);
+	dialog.exec();
 }
 
 void MainWindow::on_actionPatreon_triggered()
