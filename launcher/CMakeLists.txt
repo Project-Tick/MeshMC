@@ -408,6 +408,15 @@ target_compile_definitions(MeshMC_logic PUBLIC QT_MESSAGELOGCONTEXT)
 target_compile_definitions(MeshMC_logic PRIVATE
     MESHMC_LOCALE_RELATIVE_DIR="${MeshMC_LOCALE_RELATIVE_DIR}")
 
+# The catalogs of KDE Frameworks that are installed with meshmc.mo, which the
+# top-level CMakeLists decides, as comma separated lists. See
+# Translations::registerFrameworkCatalogs().
+string(REPLACE ";" "," _kf_gettext_domains "${MeshMC_KF_GETTEXT_DOMAINS}")
+string(REPLACE ";" "," _kf_qt_domains "${MeshMC_KF_QT_DOMAINS}")
+target_compile_definitions(MeshMC_logic PRIVATE
+    MESHMC_KF_GETTEXT_DOMAINS="${_kf_gettext_domains}"
+    MESHMC_KF_QT_DOMAINS="${_kf_qt_domains}")
+
 target_link_libraries(MeshMC_logic
     Qt6::Core
     Qt6::Xml

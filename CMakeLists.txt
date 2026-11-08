@@ -554,6 +554,43 @@ endif()
 file(RELATIVE_PATH MeshMC_LOCALE_RELATIVE_DIR
     "/${BINARY_DEST_DIR}" "/${MeshMC_LOCALE_DEST_DIR}")
 
+# KDE Frameworks translate their own strings (the buttons and menus of KXmlGui,
+# the names in KColorScheme, the durations of KFormat) in catalogs of their own.
+# These are the ones of the frameworks MeshMC links, in two kinds: gettext
+# (<domain>.mo, found by KI18n through the domain) and Qt's (<domain>.qm, loaded
+# by a QTranslator). They are installed next to meshmc.mo, below, and
+# Translations::registerFrameworkCatalogs() uses the same lists: it gets them as
+# comma separated definitions of MeshMC_logic.
+# A framework that is linked and is not here is a framework that speaks
+# English; the first place to look is the .mo and _qt.qm files in
+# <KF prefix>/share/locale/de/LC_MESSAGES.
+set(MeshMC_KF_GETTEXT_DOMAINS
+    kcolorscheme6
+    kconfigwidgets6
+    ki18n6
+    kiconthemes6
+    kxmlgui6
+)
+set(MeshMC_KF_QT_DOMAINS
+    karchive6_qt
+    kcodecs6_qt
+    kconfig6_qt
+    kcoreaddons6_qt
+    kitemviews6_qt
+    kwidgetsaddons6_qt
+)
+
+# On Linux the frameworks come with the system, and with their translations,
+# and a distribution's package should not ship a second copy.
+if(WIN32 OR APPLE)
+    set(_meshmc_bundle_kf_translations ON)
+else()
+    set(_meshmc_bundle_kf_translations OFF)
+endif()
+option(MeshMC_BUNDLE_KF_TRANSLATIONS
+    "Install the translations of KDE Frameworks with MeshMC's own"
+    ${_meshmc_bundle_kf_translations})
+
 ################################ Included Libs ################################
 
 include(ExternalProject)
@@ -623,3 +660,48 @@ feature_summary(
 # portable install.
 set(KDE_INSTALL_LOCALEDIR "${MeshMC_LOCALE_DEST_DIR}")
 ki18n_install(po)
+
+# The translations of KDE Frameworks, for the languages MeshMC has (one folder
+# of po/ each), next to meshmc.mo. KF does not know "zh" as MeshMC does: its
+# folder for Chinese as written in China is zh_CN.
+if(MeshMC_BUNDLE_KF_TRANSLATIONS)
+    find_path(MeshMC_KF_LOCALE_DIR
+        NAMES de/LC_MESSAGES/kxmlgui6.mo
+        PATH_SUFFIXES share/locale
+        DOC "Where KDE Frameworks installed its translations")
+    if(NOT MeshMC_KF_LOCALE_DIR)
+        message(WARNING
+            "The translations of KDE Frameworks were not found (looked for "
+            "share/locale/de/LC_MESSAGES/kxmlgui6.mo in CMAKE_PREFIX_PATH), so "
+            "they are not installed and the frameworks speak English. Set "
+            "MeshMC_KF_LOCALE_DIR, or MeshMC_BUNDLE_KF_TRANSLATIONS to OFF.")
+    else()
+        message(STATUS "Translations of KDE Frameworks: ${MeshMC_KF_LOCALE_DIR}")
+        file(GLOB _meshmc_po_entries LIST_DIRECTORIES true
+            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/po"
+            "${CMAKE_CURRENT_SOURCE_DIR}/po/*")
+        foreach(_lang IN LISTS _meshmc_po_entries)
+            if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po/${_lang}")
+                continue()
+            endif()
+            set(_kf_lang "${_lang}")
+            if(_lang STREQUAL "zh")
+                set(_kf_lang "zh_CN")
+            endif()
+            foreach(_domain IN LISTS MeshMC_KF_GETTEXT_DOMAINS)
+                set(_catalog "${MeshMC_KF_LOCALE_DIR}/${_kf_lang}/LC_MESSAGES/${_domain}.mo")
+                if(EXISTS "${_catalog}")
+                    install(FILES "${_catalog}"
+                        DESTINATION "${MeshMC_LOCALE_DEST_DIR}/${_kf_lang}/LC_MESSAGES")
+                endif()
+            endforeach()
+            foreach(_domain IN LISTS MeshMC_KF_QT_DOMAINS)
+                set(_catalog "${MeshMC_KF_LOCALE_DIR}/${_kf_lang}/LC_MESSAGES/${_domain}.qm")
+                if(EXISTS "${_catalog}")
+                    install(FILES "${_catalog}"
+                        DESTINATION "${MeshMC_LOCALE_DEST_DIR}/${_kf_lang}/LC_MESSAGES")
+                endif()
+            endforeach()
+        endforeach()
+    endif()
+endif()

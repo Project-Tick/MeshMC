@@ -21,6 +21,7 @@
 #pragma once
 
 #include <QString>
+#include <QStringList>
 
 class SettingsObject;
 
@@ -73,4 +74,36 @@ namespace Translations
 
 	/// The file the language dialog writes to.
 	QString overridesFilePath();
+
+	/*!
+	 * KDE Frameworks translate their own strings (the buttons and menus of
+	 * KXmlGui, "Default" in the colour schemes, the durations of KFormat) in
+	 * catalogs of their own, which are installed next to meshmc.mo (see the
+	 * top-level CMakeLists, which decides what; this is the same list). A
+	 * framework either uses gettext, a ".mo" file KI18n finds by its domain,
+	 * or Qt's own, a "_qt.qm" file that a QTranslator has to load.
+	 */
+	QStringList frameworkGettextDomains();
+	QStringList frameworkQtDomains();
+
+	/*!
+	 * The "_qt.qm" files of \p domains that there are in \p dir for \p
+	 * languages (the languages in the order of the user's preference):
+	 * <dir>/<language>/LC_MESSAGES/<domain>.qm, in the order they are to be
+	 * installed. That is the reverse: the translator that was installed last
+	 * is asked first, and has to be the one of the language the user prefers.
+	 */
+	QStringList frameworkQtCatalogs(const QString& dir,
+									const QStringList& languages,
+									const QStringList& domains);
+
+	/*!
+	 * Tells KI18n where the gettext catalogs of the frameworks are, and
+	 * installs the Qt ones for \p languages. Nothing is loaded for a catalog
+	 * that is not there: a framework then speaks English.
+	 *
+	 * \return how many Qt catalogs were installed.
+	 */
+	int registerFrameworkCatalogs(const QString& dir,
+								  const QStringList& languages);
 } // namespace Translations

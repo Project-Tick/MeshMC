@@ -21,6 +21,7 @@
 #include <QTest>
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QSettings>
@@ -158,6 +159,44 @@ class TranslationsTest : public QObject
 		overrides.beginGroup(QStringLiteral("Language"));
 		QCOMPARE(overrides.value(QStringLiteral("dolphin")).toByteArray(),
 				 QByteArray("sv"));
+	}
+
+	void test_FrameworkQtCatalogsAreInTheOrderOfPreference()
+	{
+		QTemporaryDir dir;
+		for (const char* path :
+			 {"de/LC_MESSAGES/a_qt.qm", "de/LC_MESSAGES/b_qt.qm",
+			  "tr/LC_MESSAGES/a_qt.qm", "fr/LC_MESSAGES/a_qt.qm"}) {
+			const QString full = dir.filePath(QString::fromLatin1(path));
+			QVERIFY(QDir().mkpath(QFileInfo(full).absolutePath()));
+			QFile file(full);
+			QVERIFY(file.open(QIODevice::WriteOnly));
+		}
+
+		// German is preferred to Turkish; there is no Spanish; French is not
+		// asked for. The one that is preferred is installed last.
+		const QStringList found = Translations::frameworkQtCatalogs(
+			dir.path(), {"de", "es", "tr", "de"},
+			{"a_qt", "b_qt", "c_qt"});
+		QCOMPARE(found,
+				 (QStringList{dir.filePath("tr/LC_MESSAGES/a_qt.qm"),
+							  dir.filePath("de/LC_MESSAGES/b_qt.qm"),
+							  dir.filePath("de/LC_MESSAGES/a_qt.qm")}));
+	}
+
+	void test_NothingIsRegisteredWhereThereIsNothing()
+	{
+		QTemporaryDir dir;
+		QCOMPARE(Translations::registerFrameworkCatalogs(dir.path(), {"de"}),
+				 0);
+	}
+
+	void test_TheFrameworkDomainsComeFromTheBuild()
+	{
+		// the top-level CMakeLists decides them and installs the catalogs
+		QVERIFY(Translations::frameworkGettextDomains().contains("kxmlgui6"));
+		QVERIFY(
+			Translations::frameworkQtDomains().contains("kcoreaddons6_qt"));
 	}
 };
 
