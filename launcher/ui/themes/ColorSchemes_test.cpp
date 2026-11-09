@@ -136,6 +136,29 @@ class ColorSchemesTest : public QObject
 		}
 	}
 
+	void test_ANativeStyleIsReplacedByFusionForASchemeOfItsOwn()
+	{
+		// a scheme of the user's on a native style: Fusion
+		QCOMPARE(ColorSchemes::styleFor("macos", "macos", true, false),
+				 QString("Fusion"));
+		QCOMPARE(ColorSchemes::styleFor("windows11", "windows11", true, false),
+				 QString("Fusion"));
+		// a style that follows the palette is left alone
+		QVERIFY(ColorSchemes::styleFor("Fusion", "macos", true, false)
+					.isEmpty());
+		// the system's scheme: nothing to do, unless the style was replaced
+		QVERIFY(ColorSchemes::styleFor("macos", "macos", false, false)
+					.isEmpty());
+		QCOMPARE(ColorSchemes::styleFor("Fusion", "macos", false, true),
+				 QString("macos"));
+		// and it is not put back twice, or over a style that was chosen
+		QVERIFY(ColorSchemes::styleFor("macos", "macos", false, true)
+					.isEmpty());
+		QVERIFY(ColorSchemes::styleFor("Fusion", "", false, true).isEmpty());
+		QVERIFY(ColorSchemes::isNativeStyle("macOS"));
+		QVERIFY(!ColorSchemes::isNativeStyle("Fusion"));
+	}
+
 	void test_ASchemeOfTheUsersIsImported()
 	{
 		QTemporaryDir source;

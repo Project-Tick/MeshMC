@@ -27,6 +27,7 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
+#include <QStringList>
 #include <QSaveFile>
 #include <QStandardPaths>
 
@@ -79,6 +80,27 @@ namespace ColorSchemes
 			++written;
 		}
 		return written;
+	}
+
+	bool isNativeStyle(const QString& style)
+	{
+		static const QStringList native{
+			QStringLiteral("macos"), QStringLiteral("macintosh"),
+			QStringLiteral("windowsvista"), QStringLiteral("windows11")};
+		return native.contains(style, Qt::CaseInsensitive);
+	}
+
+	QString styleFor(const QString& current, const QString& systemStyle,
+					 bool customScheme, bool overridden)
+	{
+		if (customScheme && isNativeStyle(current)) {
+			return QStringLiteral("Fusion");
+		}
+		if (!customScheme && overridden && !systemStyle.isEmpty() &&
+			current.compare(systemStyle, Qt::CaseInsensitive) != 0) {
+			return systemStyle;
+		}
+		return QString();
 	}
 
 	bool importScheme(const QString& file, const QString& directory,

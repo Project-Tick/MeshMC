@@ -110,12 +110,15 @@ namespace ThemedIcons
 			   QStringLiteral("/icons");
 	}
 
-	QList<Theme> themes()
+	void reload()
 	{
 		// KIconTheme remembers what it found, which is not up to date for a
 		// theme that was put in the folder a moment ago.
 		KIconTheme::reconfigure();
+	}
 
+	QList<Theme> themes()
+	{
 		QList<Theme> found;
 		for (const QString& id : KIconTheme::list()) {
 			// hicolor is the freedesktop fallback, not a look to choose
@@ -138,18 +141,35 @@ namespace ThemedIcons
 
 	QString setTheme(const QString& id)
 	{
-		QString target = QStringLiteral("breeze");
-		for (const Theme& theme : themes()) {
-			if (theme.id == id) {
-				target = id;
-				break;
+		auto isThere = [&id] {
+			for (const Theme& theme : themes()) {
+				if (theme.id == id) {
+					return true;
+				}
 			}
+			return false;
+		};
+		// A theme put in the folder a moment ago is not known yet.
+		if (!isThere()) {
+			reload();
 		}
+		const QString target =
+			isThere() ? id : QStringLiteral("breeze");
 		if (target != id) {
 			qDebug() << "There is no icon theme" << id << "; using Breeze";
 		}
 
-		if (QIcon::themeName() != target) {
+		// What the theme in use does not have comes from the fallback: the
+		// bundled theme (it has the icons of instances, which no other theme
+		// has). The bundled theme itself cannot be its own fallback: it has
+		// none of Breeze's icons, and they came out empty.
+		const QString fallback = target == QLatin1String("multimc")
+									 ? QStringLiteral("breeze")
+									 : QStringLiteral("multimc");
+		const bool changed = QIcon::themeName() != target ||
+							 QIcon::fallbackThemeName() != fallback;
+		if (changed) {
+			QIcon::setFallbackThemeName(fallback);
 			QIcon::setThemeName(target);
 			KIconTheme::reconfigure();
 			KIconLoader::global()->newIconLoader();
@@ -176,7 +196,11 @@ namespace ThemedIcons
 	QIcon icon(const QString& name)
 	{
 		const QString alias = aliases().value(name);
-		if (!alias.isEmpty() && KIconLoader::global()->hasIcon(alias)) {
+		// No hasIcon() check: while the icon loader is being made again it
+		// can say no for an icon that is there a moment later, and the
+		// fallback has no icon for what only Breeze has (accounts, notes...),
+		// which is an empty icon for good. The engine looks when it draws.
+		if (!alias.isEmpty()) {
 			return breeze(alias);
 		}
 		// The bundled theme, or what Breeze has under that name.
