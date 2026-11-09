@@ -242,18 +242,6 @@
       <default>false</default>
     </entry>
     <!-- Window state and geometry -->
-    <entry name="MainWindowState" type="String">
-      <default></default>
-    </entry>
-    <entry name="MainWindowGeometry" type="String">
-      <default></default>
-    </entry>
-    <entry name="ConsoleWindowState" type="String">
-      <default></default>
-    </entry>
-    <entry name="ConsoleWindowGeometry" type="String">
-      <default></default>
-    </entry>
     <entry name="SettingsGeometry" type="String">
       <default></default>
     </entry>

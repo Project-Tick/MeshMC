@@ -19,10 +19,10 @@
  */
 
 #include "NewsChecker.h"
+#include "NewsFeed.h"
 #include "Logging.h"
 
 #include <QByteArray>
-#include <QDomDocument>
 
 #include <QDebug>
 
@@ -130,44 +130,21 @@ void NewsChecker::rssDownloadFinished(int feedIndex)
 	feed.job.reset();
 	feed.entries.clear();
 
-	QDomDocument doc;
-	{
-		// Stuff to store error info in.
-		QString errorMsg = "Unknown error.";
-		int errorLine = -1;
-		int errorCol = -1;
-
-		// Parse the XML.
-		if (!doc.setContent(feed.data, false, &errorMsg, &errorLine,
-							&errorCol)) {
-			QString fullErrorMsg =
-				QString("Error parsing RSS feed XML. %1 at %2:%3.")
-					.arg(errorMsg)
-					.arg(errorLine)
-					.arg(errorCol);
-			feed.data.clear();
-			rssDownloadFailed(feedIndex, fullErrorMsg);
-			return;
-		}
+	QList<NewsEntryPtr> parsed;
+	QString errorMsg;
+	if (!News::parseFeed(feed.data, feed.url, feedIndex, &parsed, &errorMsg)) {
 		feed.data.clear();
+		rssDownloadFailed(
+			feedIndex,
+			QStringLiteral("Error reading the feed. %1.").arg(errorMsg));
+		return;
 	}
+	feed.data.clear();
 
-	// If the parsing succeeded, read it.
-	QDomNodeList items = doc.elementsByTagName("item");
-	for (int i = 0; i < items.length(); i++) {
-		QDomElement element = items.at(i).toElement();
-		NewsEntryPtr entry;
-		entry.reset(new NewsEntry());
-		QString errorMsg = "An unknown error occurred.";
-		if (NewsEntry::fromXmlElement(element, entry.get(), &errorMsg)) {
-			entry->feedIndex = feedIndex;
-			qCDebug(newsLog) << "Loaded news entry" << entry->title;
-			feed.entries.append(entry);
-		} else {
-			qCWarning(newsLog) << "Failed to load news entry at index" << i << ":"
-					   << errorMsg;
-		}
+	for (const auto& entry : parsed) {
+		qCDebug(newsLog) << "Loaded news entry" << entry->title;
 	}
+	feed.entries = parsed;
 
 	feedSettled();
 }

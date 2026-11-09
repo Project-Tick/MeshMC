@@ -128,6 +128,23 @@ set_property(TEST SettingsBinding_test APPEND PROPERTY ENVIRONMENT
     "QT_QPA_PLATFORM=offscreen"
     )
 
+add_unit_test(WindowState
+    SOURCES ui/WindowState_test.cpp
+    LIBS MeshMC_logic
+    )
+set_property(TEST WindowState_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    )
+
+add_unit_test(NewsFeed
+    SOURCES news/NewsFeed_test.cpp
+    LIBS MeshMC_logic
+    )
+# QTEST_MAIN makes a QApplication, which wants a display; none is needed.
+set_property(TEST NewsFeed_test APPEND PROPERTY ENVIRONMENT
+    "QT_QPA_PLATFORM=offscreen"
+    )
+
 add_unit_test(Translations
     SOURCES translations/Translations_test.cpp
     LIBS MeshMC_logic
@@ -306,10 +323,6 @@ target_sources(MeshMC_logic PRIVATE
     # A Recursive file system watcher
     RecursiveFileSystemWatcher.h
     RecursiveFileSystemWatcher.cpp
-
-    # Time
-    MMCTime.h
-    MMCTime.cpp
 )
 
 add_subdirectory(pathmatcher)
@@ -395,6 +408,15 @@ target_compile_definitions(MeshMC_logic PUBLIC QT_MESSAGELOGCONTEXT)
 target_compile_definitions(MeshMC_logic PRIVATE
     MESHMC_LOCALE_RELATIVE_DIR="${MeshMC_LOCALE_RELATIVE_DIR}")
 
+# The catalogs of KDE Frameworks that are installed with meshmc.mo, which the
+# top-level CMakeLists decides, as comma separated lists. See
+# Translations::registerFrameworkCatalogs().
+string(REPLACE ";" "," _kf_gettext_domains "${MeshMC_KF_GETTEXT_DOMAINS}")
+string(REPLACE ";" "," _kf_qt_domains "${MeshMC_KF_QT_DOMAINS}")
+target_compile_definitions(MeshMC_logic PRIVATE
+    MESHMC_KF_GETTEXT_DOMAINS="${_kf_gettext_domains}"
+    MESHMC_KF_QT_DOMAINS="${_kf_qt_domains}")
+
 target_link_libraries(MeshMC_logic
     Qt6::Core
     Qt6::Xml
@@ -415,6 +437,7 @@ target_link_libraries(MeshMC_logic
     KF6::ColorScheme
     KF6::IconThemes
     KF6::BreezeIcons
+    KF6::Syndication
     LibArchive::LibArchive
     cmark::cmark
     LocalPeer::LocalPeer

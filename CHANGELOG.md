@@ -22,6 +22,10 @@
 * KColorUtils migration has been completed.
 * KColorScheme migration has been completed.
 * KIconThemes migration has been completed.
+* The MeshMC News section is now displayed via KF6 Syndication.
+* KFormat migration has been completed.
+* KMainWindow migration has been completed.
+* Support for KF6 translations has been added to the Windows and macOS installations.
 
 ## Removed
 

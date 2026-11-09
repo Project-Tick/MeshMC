@@ -22,7 +22,7 @@
 #include "Download.h"
 
 #include <QDebug>
-#include <QLocale>
+#include <KFormat>
 #include <KLocalizedString>
 
 TaskStepProgressList NetJob::getStepProgress() const
@@ -57,12 +57,16 @@ void NetJob::emitPartStep(int index, TaskStepState state)
 		}
 	}
 
-	QLocale locale;
+	const KFormat format;
+	const auto size = [&format](qint64 bytes) {
+		return format.formatByteSize(bytes, 1, KFormat::IECBinaryDialect);
+	};
 	QString details;
 	if (slot.total_progress > 0) {
-		details = i18n("%1 of %2", locale.formattedDataSize(slot.current_progress), locale.formattedDataSize(slot.total_progress));
+		details = i18n("%1 of %2", size(slot.current_progress),
+					   size(slot.total_progress));
 	} else if (slot.current_progress > 0) {
-		details = locale.formattedDataSize(slot.current_progress);
+		details = size(slot.current_progress);
 	}
 
 	slot.step->state = state;

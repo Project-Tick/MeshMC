@@ -5,4 +5,6 @@ target_sources(MeshMC_logic PRIVATE
     NewsChecker.cpp
     NewsEntry.h
     NewsEntry.cpp
+    NewsFeed.h
+    NewsFeed.cpp
 )

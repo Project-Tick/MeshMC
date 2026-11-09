@@ -22,7 +22,7 @@
 
 #include <memory>
 
-#include <QMainWindow>
+#include <KMainWindow>
 #include <QPointer>
 #include <QProcess>
 #include <QTimer>
@@ -52,7 +52,7 @@ class InstanceView;
 class KonamiCode;
 class InstanceTask;
 
-class MainWindow : public QMainWindow
+class MainWindow : public KMainWindow
 {
 	Q_OBJECT
 
@@ -260,7 +260,7 @@ class MainWindow : public QMainWindow
 	/*!
 	 * Toggles whether the toolbars can be dragged between dock areas.
 	 * Persisted via the "ToolbarsLocked" setting; the resulting layout itself
-	 * is persisted by QMainWindow::saveState() in closeEvent().
+	 * is persisted by KMainWindow, with the rest of the window state, in closeEvent().
 	 */
 	void lockToolbars(bool state);
 

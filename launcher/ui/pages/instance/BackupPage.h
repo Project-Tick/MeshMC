@@ -72,7 +72,6 @@ class BackupPage : public QWidget, public BasePage
 	void refreshList();
 	void updateButtons();
 	BackupEntry selectedEntry() const;
-	static QString humanFileSize(qint64 bytes);
 
 	Ui::BackupPage* ui;
 	BaseInstance* m_inst;

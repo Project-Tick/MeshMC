@@ -20,8 +20,6 @@
 
 #include "NewsEntry.h"
 
-#include <QDomNodeList>
-#include <QVariant>
 #include <KLocalizedString>
 
 NewsEntry::NewsEntry(QObject* parent) : QObject(parent)
@@ -43,42 +41,4 @@ NewsEntry::NewsEntry(const QString& title, const QString& content,
 	this->link = link;
 	this->author = author;
 	this->pubDate = pubDate;
-}
-
-/*!
- * Gets the text content of the given child element as a QVariant.
- */
-inline QString childValue(const QDomElement& element, const QString& childName,
-						  QString defaultVal = "")
-{
-	QDomNodeList nodes = element.elementsByTagName(childName);
-	if (nodes.count() > 0) {
-		QDomElement childElement = nodes.at(0).toElement();
-		return childElement.text();
-	} else {
-		return defaultVal;
-	}
-}
-
-bool NewsEntry::fromXmlElement(const QDomElement& element, NewsEntry* entry,
-							   QString* errorMsg)
-{
-	(void)errorMsg;
-	QString title = childValue(element, "title", i18n("Untitled"));
-	QString content = childValue(element, "description", i18n("No content."));
-	QString link = childValue(element, "link");
-	QString author = childValue(element, "dc:creator", i18n("Unknown Author"));
-	QString pubDateStr = childValue(element, "pubDate");
-
-	// FIXME: For now, we're just ignoring timezones. We assume that all time
-	// zones in the RSS feed are the same.
-	QString dateFormat("ddd, dd MMM yyyy hh:mm:ss");
-	QDateTime pubDate = QDateTime::fromString(pubDateStr, dateFormat);
-
-	entry->title = title;
-	entry->content = content;
-	entry->link = link;
-	entry->author = author;
-	entry->pubDate = pubDate;
-	return true;
 }

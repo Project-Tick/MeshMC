@@ -31,6 +31,8 @@
 #include <QStandardPaths>
 #include <QTranslator>
 
+#include <algorithm>
+
 #include <KLocalizedString>
 
 #include "settings/SettingsObject.h"
@@ -45,6 +47,72 @@ QString Translations::bundledCatalogDir()
 {
 	return QDir::cleanPath(QCoreApplication::applicationDirPath() +
 						   QStringLiteral("/" MESHMC_LOCALE_RELATIVE_DIR));
+}
+
+namespace
+{
+	// The domains are decided in the top-level CMakeLists, which also
+	// installs the catalogs: comma separated.
+#ifndef MESHMC_KF_GETTEXT_DOMAINS
+#define MESHMC_KF_GETTEXT_DOMAINS ""
+#endif
+#ifndef MESHMC_KF_QT_DOMAINS
+#define MESHMC_KF_QT_DOMAINS ""
+#endif
+} // namespace
+
+QStringList Translations::frameworkGettextDomains()
+{
+	return QString::fromLatin1(MESHMC_KF_GETTEXT_DOMAINS)
+		.split(QLatin1Char(','), Qt::SkipEmptyParts);
+}
+
+QStringList Translations::frameworkQtDomains()
+{
+	return QString::fromLatin1(MESHMC_KF_QT_DOMAINS)
+		.split(QLatin1Char(','), Qt::SkipEmptyParts);
+}
+
+QStringList Translations::frameworkQtCatalogs(const QString& dir,
+											  const QStringList& languages,
+											  const QStringList& domains)
+{
+	QStringList found;
+	// Most preferred first...
+	for (const QString& language : languages) {
+		for (const QString& domain : domains) {
+			const QString path = QStringLiteral("%1/%2/LC_MESSAGES/%3.qm")
+									 .arg(dir, language, domain);
+			if (QFileInfo::exists(path) && !found.contains(path)) {
+				found.append(path);
+			}
+		}
+	}
+	// ...and installed last.
+	std::reverse(found.begin(), found.end());
+	return found;
+}
+
+int Translations::registerFrameworkCatalogs(const QString& dir,
+											const QStringList& languages)
+{
+	for (const QString& domain : frameworkGettextDomains()) {
+		KLocalizedString::addDomainLocaleDir(domain.toLatin1(), dir);
+	}
+
+	int installed = 0;
+	for (const QString& path :
+		 frameworkQtCatalogs(dir, languages, frameworkQtDomains())) {
+		auto* translator = new QTranslator(QCoreApplication::instance());
+		if (translator->load(path) &&
+			QCoreApplication::installTranslator(translator)) {
+			++installed;
+		} else {
+			qWarning() << "Could not load the translation" << path;
+			delete translator;
+		}
+	}
+	return installed;
 }
 
 QString Translations::overridesFilePath()
@@ -131,6 +199,12 @@ void Translations::initialize(SettingsObject* settings)
 	QEvent languageChange(QEvent::LanguageChange);
 	QCoreApplication::sendEvent(QCoreApplication::instance(),
 								&languageChange);
+
+	// The catalogs of KDE Frameworks, which are in the same directory.
+	const int frameworks =
+		registerFrameworkCatalogs(bundledCatalogDir(), KLocalizedString::languages());
+	qDebug() << "Installed" << frameworks
+			 << "translations of KDE Frameworks that are Qt's own.";
 
 	// The language the application is shown in: the first of the list that
 	// there is a catalog for. English, the language of the source strings,

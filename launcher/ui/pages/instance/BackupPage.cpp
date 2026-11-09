@@ -30,6 +30,7 @@
 
 #include "backup/BackupTask.h"
 #include "ui/dialogs/ProgressDialog.h"
+#include <KFormat>
 #include <KLocalizedString>
 
 BackupPage::BackupPage(BaseInstance* inst, QWidget* parent)
@@ -73,7 +74,8 @@ void BackupPage::refreshList()
 		item->setText(0, entry.name.isEmpty() ? entry.fileName : entry.name);
 		item->setText(1, entry.timestamp.toString(
 							 QStringLiteral("yyyy-MM-dd HH:mm:ss")));
-		item->setText(2, humanFileSize(entry.sizeBytes));
+		item->setText(2, KFormat().formatByteSize(
+								entry.sizeBytes, 1, KFormat::IECBinaryDialect));
 		item->setData(0, Qt::UserRole, entry.fullPath);
 	}
 
@@ -245,18 +247,4 @@ void BackupPage::on_btnDelete_clicked()
 
 	m_manager->deleteBackup(entry);
 	refreshList();
-}
-
-/* static */
-QString BackupPage::humanFileSize(qint64 bytes)
-{
-	if (bytes < 1024)
-		return QStringLiteral("%1 B").arg(bytes);
-	if (bytes < 1024 * 1024)
-		return QStringLiteral("%1 KiB").arg(bytes / 1024.0, 0, 'f', 1);
-	if (bytes < 1024LL * 1024 * 1024)
-		return QStringLiteral("%1 MiB").arg(bytes / (1024.0 * 1024.0), 0, 'f',
-										   1);
-	return QStringLiteral("%1 GiB").arg(bytes / (1024.0 * 1024.0 * 1024.0), 0,
-										'f', 2);
 }
