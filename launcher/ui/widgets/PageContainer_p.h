@@ -73,6 +73,16 @@ class PageModel : public QAbstractListModel
 		return QVariant();
 	}
 
+	/// The icons of the pages are asked for again (the icon theme or the
+	/// palette changed).
+	void refreshIcons()
+	{
+		if (!m_pages.isEmpty()) {
+			emit dataChanged(index(0), index(m_pages.size() - 1),
+							 {Qt::DecorationRole});
+		}
+	}
+
 	void setPages(const QList<BasePage*>& pages)
 	{
 		beginResetModel();

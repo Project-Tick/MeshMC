@@ -69,10 +69,17 @@ namespace ThemedIcons
 
 	/*!
 	 * The icon themes there are, Breeze first: the ones KIconTheme finds, which
-	 * are the user's, the system's and Breeze. Looked up each time, so a
-	 * theme that was added a moment ago is there.
+	 * are the user's, the system's and Breeze. KIconTheme remembers what it
+	 * found: call reload() first for a theme that was added a moment ago.
 	 */
 	QList<Theme> themes();
+
+	/*!
+	 * Makes KIconTheme look for icon themes again. Not done by themes(),
+	 * since that resets the state of the icon loader, which is not wanted
+	 * every time a list is filled.
+	 */
+	void reload();
 
 	/*!
 	 * Makes \p id the icon theme, or Breeze if there is no such theme.
@@ -89,7 +96,8 @@ namespace ThemedIcons
 
 	/*!
 	 * The icon for \p name: Breeze's, drawn by KIconEngine, if it is one of
-	 * the aliases, otherwise the icon of that name in the icon theme (the
+	 * the aliases (always: the engine finds the icon when it draws, not when
+	 * it is made), otherwise the icon of that name in the icon theme (the
 	 * bundled one, or Breeze's through QIcon). Null when there is none.
 	 */
 	QIcon icon(const QString& name);

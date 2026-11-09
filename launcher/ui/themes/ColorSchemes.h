@@ -58,6 +58,26 @@ namespace ColorSchemes
 	QString idForLegacyTheme(const QString& theme);
 
 	/*!
+	 * Whether \p style is the platform's own widget style. It paints with the
+	 * colours of the system and ignores the palette of the application in
+	 * places, so a colour scheme that is not the system's shows half of the
+	 * way on it: dark panels with light buttons.
+	 */
+	bool isNativeStyle(const QString& style);
+
+	/*!
+	 * The widget style that makes a colour scheme show completely, or an
+	 * empty string if \p current is fine as it is.
+	 *
+	 * With a scheme of its own (\p customScheme) a native style is replaced
+	 * by Fusion, which follows the palette. With the system's scheme again,
+	 * the style that was replaced (\p overridden) is put back, which is
+	 * \p systemStyle.
+	 */
+	QString styleFor(const QString& current, const QString& systemStyle,
+					 bool customScheme, bool overridden);
+
+	/*!
 	 * Adds a scheme of the user's to \p directory: copies \p file there, if it
 	 * is a KDE colour scheme (a ".colors" file with colours in it). One of the
 	 * same name is replaced. KColorSchemeManager lists the schemes there are

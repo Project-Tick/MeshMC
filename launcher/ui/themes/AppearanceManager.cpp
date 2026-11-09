@@ -27,6 +27,10 @@
 #include <QDebug>
 #include <QEvent>
 #include <QPalette>
+#include <QPixmapCache>
+#include <QStyle>
+#include <QTimer>
+#include <QWidget>
 
 #include <KColorSchemeManager>
 #include <KStyleManager>
@@ -53,6 +57,10 @@ void AppearanceManager::stopSettingNewWindowColorsOnMac() {}
 
 void AppearanceManager::initialize(KConfigSettingsObject* legacySettings)
 {
+	// The style of the system, which a colour scheme may take the place of
+	// (see paletteChanged()).
+	m_systemStyle = QApplication::style()->objectName();
+
 	// The widget style the user chose, if KDE's platform theme is not doing
 	// that already.
 	KStyleManager::initStyle();
@@ -95,7 +103,10 @@ void AppearanceManager::setIconTheme(const QString& id)
 	const QString applied = ThemedIcons::setTheme(id);
 	m_settings->setIconTheme(applied);
 	m_settings->save();
-	emit iconsChanged();
+	// Left to the next turn of the event loop: the icon loader has just been
+	// made again, and what asks it for icons should not do so in the middle
+	// of the change (in a slot of the combo box that chose the theme).
+	QTimer::singleShot(0, this, [this] { refreshLooks(); });
 }
 
 bool AppearanceManager::eventFilter(QObject* watched, QEvent* event)
@@ -108,8 +119,40 @@ bool AppearanceManager::eventFilter(QObject* watched, QEvent* event)
 
 void AppearanceManager::paletteChanged()
 {
+	if (m_applyingStyle) {
+		return;
+	}
+
+	// A native style (macOS, Windows) paints its own colours, so a colour
+	// scheme of the user's shows half of the way on it. Fusion follows the
+	// palette; the system's style comes back with the system's scheme.
+	const bool custom =
+		!KColorSchemeManager::instance()->activeSchemeId().isEmpty();
+	const QString style = ColorSchemes::styleFor(
+		qApp->style()->objectName(), m_systemStyle, custom, m_styleOverridden);
+	if (!style.isEmpty()) {
+		m_applyingStyle = true;
+		const QPalette keep = qApp->palette();
+		QApplication::setStyle(style);
+		QApplication::setPalette(keep);
+		m_applyingStyle = false;
+		m_styleOverridden = custom;
+	}
+
 	const QPalette palette = qApp->palette();
 	ThemedIcons::setPalette(palette);
 	setTitlebarColorOfAllWindowsOnMac(palette.window().color());
+	refreshLooks();
+}
+
+void AppearanceManager::refreshLooks()
+{
+	// Icons are drawn when they are needed, from the palette and the icon
+	// theme as they are then; what has to happen is that what is on the screen
+	// is drawn again, and that nothing is reused from before.
+	QPixmapCache::clear();
+	for (QWidget* widget : QApplication::allWidgets()) {
+		widget->update();
+	}
 	emit iconsChanged();
 }

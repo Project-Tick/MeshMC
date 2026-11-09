@@ -2,6 +2,32 @@
 <RCC version="1.0">
     <qresource prefix="/icons/pe_colored">
         <file>index.theme</file>
+        <!-- KDE names used by ThemedIcons::aliases(); retain the original names below. -->
+        <file alias="scalable/help-about.svg">scalable/about.svg</file>
+        <file alias="scalable/user-identity.svg">scalable/accounts.svg</file>
+        <file alias="scalable/preferences-desktop-theme.svg">scalable/appearance.svg</file>
+        <file alias="scalable/tools-report-bug.svg">scalable/bug.svg</file>
+        <file alias="scalable/system-software-update.svg">scalable/checkupdate.svg</file>
+        <file alias="scalable/edit-copy.svg">scalable/copy.svg</file>
+        <file alias="scalable/utilities-terminal.svg">scalable/custom-commands.svg</file>
+        <file alias="scalable/edit-delete.svg">scalable/delete.svg</file>
+        <file alias="scalable/document-export.svg">scalable/export.svg</file>
+        <file alias="scalable/applications-development.svg">scalable/externaltools.svg</file>
+        <file alias="scalable/help-contents.svg">scalable/help.svg</file>
+        <file alias="scalable/configure.svg">scalable/instance-settings.svg</file>
+        <file alias="scalable/media-playback-start.svg">scalable/launch.svg</file>
+        <file alias="scalable/text-x-log.svg">scalable/log.svg</file>
+        <file alias="scalable/list-add.svg">scalable/new.svg</file>
+        <file alias="scalable/news-subscribe.svg">scalable/news.svg</file>
+        <file alias="scalable/view-pim-notes.svg">scalable/notes.svg</file>
+        <file alias="scalable/preferences-system-network-proxy.svg">scalable/proxy.svg</file>
+        <file alias="scalable/view-refresh.svg">scalable/refresh.svg</file>
+        <file alias="scalable/edit-rename.svg">scalable/rename.svg</file>
+        <file alias="scalable/camera-photo.svg">scalable/screenshots.svg</file>
+        <file alias="scalable/preferences-system.svg">scalable/settings.svg</file>
+        <file alias="scalable/insert-link.svg">scalable/shortcut.svg</file>
+        <file alias="scalable/folder-open.svg">scalable/viewfolder.svg</file>
+
         <file>scalable/about.svg</file>
         <file>scalable/accounts.svg</file>
         <file>scalable/bug.svg</file>
