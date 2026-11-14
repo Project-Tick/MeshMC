@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Report-Msgid-Bugs-To: https://github.com/Project-Tick/MeshMC/issues\n"
-"PO-Revision-Date: 2026-11-09 12:21\n"
+"PO-Revision-Date: 2026-11-14 10:04\n"
 "Last-Translator: \n"
 "Language-Team: German, Switzerland\n"
 "Language: de_CH\n"
@@ -3724,13 +3724,13 @@ msgstr "Anzeigen und Verwalten von MeshMC-Anwendungsprotokollen."
 
 #: launcher/ui/MainWindow.ui:440
 #, kde-format
-msgid "About %1"
-msgstr "Über %1"
+msgid "About MeshMC"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:443
 #, kde-format
-msgid "View information about %1."
-msgstr "Informationen über %1 anzeigen."
+msgid "View information about MeshMC."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:454
 #, kde-format
@@ -3769,8 +3769,8 @@ msgstr "Mehr Nachrichten..."
 
 #: launcher/ui/MainWindow.ui:499
 #, kde-format
-msgid "Open the development blog to read more news about %1."
-msgstr "Öffne den Entwicklerblog, um weitere Neuigkeiten über %1 zu erhalten."
+msgid "Open the development blog to read more news about MeshMC."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:510
 #, kde-format
@@ -3951,7 +3951,7 @@ msgstr "Exportieren Sie die ausgewählte Instanz in unterstützte Formate."
 
 #: launcher/ui/MainWindow.ui:765
 #, kde-format
-msgid "%1 (zip)"
+msgid "MeshMC (zip)"
 msgstr ""
 
 #: launcher/ui/MainWindow.ui:776
@@ -4001,8 +4001,8 @@ msgstr "Fehler melden"
 
 #: launcher/ui/MainWindow.ui:843
 #, kde-format
-msgid "Open the bug tracker to report a bug with %1."
-msgstr "Öffne den Bug-Tracker, um einen Fehler mit %1 zu melden."
+msgid "Open the bug tracker to report a bug with MeshMC."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:854
 #, kde-format
@@ -4011,8 +4011,8 @@ msgstr ""
 
 #: launcher/ui/MainWindow.ui:857
 #, kde-format
-msgid "Open %1 discord voice chat."
-msgstr "Öffne %1's Discord Chat."
+msgid "Open MeshMC discord voice chat."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:868
 #, kde-format
@@ -4021,8 +4021,8 @@ msgstr ""
 
 #: launcher/ui/MainWindow.ui:871
 #, kde-format
-msgid "Open %1 subreddit."
-msgstr "Öffne %1's Subreddit."
+msgid "Open MeshMC subreddit."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:882
 #, kde-format
@@ -4041,18 +4041,18 @@ msgstr "Aktualisieren"
 
 #: launcher/ui/MainWindow.ui:899
 #, kde-format
-msgid "Check for new updates for %1."
-msgstr "Nach Updates für %1 suchen."
+msgid "Check for new updates for MeshMC."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:910
 #, kde-format
-msgid "Support %1"
-msgstr "Unterstütze %1"
+msgid "Support MeshMC"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:913
 #, kde-format
-msgid "Open the %1 Patreon page."
-msgstr "Öffne die %1 Patreon Seite."
+msgid "Open the MeshMC Patreon page."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:924 launcher/ui/pages/global/MeshMCPage.ui:122
 #, kde-format
@@ -4066,8 +4066,8 @@ msgstr "Öffne einen der zwischen den Instanzen geteilten Ordner."
 
 #: launcher/ui/MainWindow.ui:941
 #, kde-format
-msgid "Get help with %1 or Minecraft."
-msgstr "Hilfe mit %1 oder Minecraft bekommen."
+msgid "Get help with MeshMC or Minecraft."
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 #, kde-format
@@ -5693,25 +5693,25 @@ msgstr "Konto-Tokens aktualisieren"
 msgid "Choose…"
 msgstr ""
 
-#: launcher/ui/pages/global/AppearancePage.cpp:131
-#: launcher/ui/pages/global/AppearancePage.cpp:150
-#: launcher/ui/pages/global/AppearancePage.cpp:156
+#: launcher/ui/pages/global/AppearancePage.cpp:133
+#: launcher/ui/pages/global/AppearancePage.cpp:152
+#: launcher/ui/pages/global/AppearancePage.cpp:158
 #, kde-format
 msgid "Import color schemes"
 msgstr ""
 
-#: launcher/ui/pages/global/AppearancePage.cpp:132
+#: launcher/ui/pages/global/AppearancePage.cpp:134
 #, kde-format
 msgid "KDE color schemes (*.colors)"
 msgstr ""
 
-#: launcher/ui/pages/global/AppearancePage.cpp:151
+#: launcher/ui/pages/global/AppearancePage.cpp:153
 #, kde-format
 msgid "Could not import:\n"
 "%1"
 msgstr ""
 
-#: launcher/ui/pages/global/AppearancePage.cpp:157
+#: launcher/ui/pages/global/AppearancePage.cpp:159
 #, kde-format
 msgid "One color scheme was added. It is listed the next time MeshMC starts."
 msgid_plural "%1 color schemes were added. They are listed the next time MeshMC starts."
