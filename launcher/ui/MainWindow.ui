@@ -437,10 +437,10 @@
     <string notr="true">about</string>
    </property>
    <property name="text">
-    <string>About %1</string>
+    <string>About MeshMC</string>
    </property>
    <property name="toolTip">
-    <string>View information about %1.</string>
+    <string>View information about MeshMC.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::TextHeuristicRole</enum>
@@ -496,7 +496,7 @@
     <string>More news...</string>
    </property>
    <property name="toolTip">
-    <string>Open the development blog to read more news about %1.</string>
+    <string>Open the development blog to read more news about MeshMC.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -762,7 +762,7 @@
     <string notr="true">launcher</string>
    </property>
    <property name="text">
-    <string>%1 (zip)</string>
+    <string>MeshMC (zip)</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -840,7 +840,7 @@
     <string>Report a Bug</string>
    </property>
    <property name="toolTip">
-    <string>Open the bug tracker to report a bug with %1.</string>
+    <string>Open the bug tracker to report a bug with MeshMC.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -854,7 +854,7 @@
     <string>Discord</string>
    </property>
    <property name="toolTip">
-    <string>Open %1 discord voice chat.</string>
+    <string>Open MeshMC discord voice chat.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -868,7 +868,7 @@
     <string>Reddit</string>
    </property>
    <property name="toolTip">
-    <string>Open %1 subreddit.</string>
+    <string>Open MeshMC subreddit.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -896,7 +896,7 @@
     <string>Update</string>
    </property>
    <property name="toolTip">
-    <string>Check for new updates for %1.</string>
+    <string>Check for new updates for MeshMC.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -907,10 +907,10 @@
     <string notr="true">patreon</string>
    </property>
    <property name="text">
-    <string>Support %1</string>
+    <string>Support MeshMC</string>
    </property>
    <property name="toolTip">
-    <string>Open the %1 Patreon page.</string>
+    <string>Open the MeshMC Patreon page.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -938,7 +938,7 @@
     <string>Help</string>
    </property>
    <property name="toolTip">
-    <string>Get help with %1 or Minecraft.</string>
+    <string>Get help with MeshMC or Minecraft.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
