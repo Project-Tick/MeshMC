@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: projtlauncher\n"
 "Report-Msgid-Bugs-To: https://github.com/Project-Tick/MeshMC/issues\n"
-"PO-Revision-Date: 2026-11-09 12:20\n"
+"PO-Revision-Date: 2026-11-14 10:03\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -3692,13 +3692,13 @@ msgstr ""
 
 #: launcher/ui/MainWindow.ui:440
 #, kde-format
-msgid "About %1"
-msgstr "%1 에 대하여"
+msgid "About MeshMC"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:443
 #, kde-format
-msgid "View information about %1."
-msgstr "%1에 관한 정보를 봅니다."
+msgid "View information about MeshMC."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:454
 #, kde-format
@@ -3737,8 +3737,8 @@ msgstr "더 많은 소식..."
 
 #: launcher/ui/MainWindow.ui:499
 #, kde-format
-msgid "Open the development blog to read more news about %1."
-msgstr "%1에 관한 더 많은 소식들을 보기 위해 개발 블로그를 엽니다."
+msgid "Open the development blog to read more news about MeshMC."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:510
 #, kde-format
@@ -3919,7 +3919,7 @@ msgstr ""
 
 #: launcher/ui/MainWindow.ui:765
 #, kde-format
-msgid "%1 (zip)"
+msgid "MeshMC (zip)"
 msgstr ""
 
 #: launcher/ui/MainWindow.ui:776
@@ -3969,8 +3969,8 @@ msgstr "버그 보고"
 
 #: launcher/ui/MainWindow.ui:843
 #, kde-format
-msgid "Open the bug tracker to report a bug with %1."
-msgstr "%1의 버그 보고를 위해 버그 트래커를 엽니다."
+msgid "Open the bug tracker to report a bug with MeshMC."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:854
 #, kde-format
@@ -3979,8 +3979,8 @@ msgstr "디스코드"
 
 #: launcher/ui/MainWindow.ui:857
 #, kde-format
-msgid "Open %1 discord voice chat."
-msgstr "%1 디스코드 음성 채팅을 엽니다."
+msgid "Open MeshMC discord voice chat."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:868
 #, kde-format
@@ -3989,8 +3989,8 @@ msgstr "레딧"
 
 #: launcher/ui/MainWindow.ui:871
 #, kde-format
-msgid "Open %1 subreddit."
-msgstr "%1 서브레딧을 엽니다."
+msgid "Open MeshMC subreddit."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:882
 #, kde-format
@@ -4009,18 +4009,18 @@ msgstr "지금 업데이트"
 
 #: launcher/ui/MainWindow.ui:899
 #, kde-format
-msgid "Check for new updates for %1."
-msgstr "새 %1 업데이트가 있는 지 확인합니다."
+msgid "Check for new updates for MeshMC."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:910
 #, kde-format
-msgid "Support %1"
-msgstr "%1 후원하기"
+msgid "Support MeshMC"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:913
 #, kde-format
-msgid "Open the %1 Patreon page."
-msgstr "%1 Patreon 페이지를 엽니다."
+msgid "Open the MeshMC Patreon page."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:924 launcher/ui/pages/global/MeshMCPage.ui:122
 #, kde-format
@@ -4034,8 +4034,8 @@ msgstr "인스턴스 간에 공유되는 폴더 중 하나를 엽니다."
 
 #: launcher/ui/MainWindow.ui:941
 #, kde-format
-msgid "Get help with %1 or Minecraft."
-msgstr "%1 또는 마인크래프트에 관한 도움을 받습니다."
+msgid "Get help with MeshMC or Minecraft."
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 #, kde-format
@@ -5641,25 +5641,25 @@ msgstr ""
 msgid "Choose…"
 msgstr ""
 
-#: launcher/ui/pages/global/AppearancePage.cpp:131
-#: launcher/ui/pages/global/AppearancePage.cpp:150
-#: launcher/ui/pages/global/AppearancePage.cpp:156
+#: launcher/ui/pages/global/AppearancePage.cpp:133
+#: launcher/ui/pages/global/AppearancePage.cpp:152
+#: launcher/ui/pages/global/AppearancePage.cpp:158
 #, kde-format
 msgid "Import color schemes"
 msgstr ""
 
-#: launcher/ui/pages/global/AppearancePage.cpp:132
+#: launcher/ui/pages/global/AppearancePage.cpp:134
 #, kde-format
 msgid "KDE color schemes (*.colors)"
 msgstr ""
 
-#: launcher/ui/pages/global/AppearancePage.cpp:151
+#: launcher/ui/pages/global/AppearancePage.cpp:153
 #, kde-format
 msgid "Could not import:\n"
 "%1"
 msgstr ""
 
-#: launcher/ui/pages/global/AppearancePage.cpp:157
+#: launcher/ui/pages/global/AppearancePage.cpp:159
 #, kde-format
 msgid "One color scheme was added. It is listed the next time MeshMC starts."
 msgid_plural "%1 color schemes were added. They are listed the next time MeshMC starts."
