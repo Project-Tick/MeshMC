@@ -20,8 +20,6 @@
 
 #include "InstanceWindow.h"
 #include "settings/GlobalSettings.h"
-#include "settings/KConfigSettingsObject.h"
-#include "ui/WindowState.h"
 #include "Application.h"
 
 #include <QScrollBar>
@@ -41,7 +39,7 @@
 #include <KLocalizedString>
 
 InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
-	: KMainWindow(parent), m_instance(instance)
+	: QMainWindow(parent), m_instance(instance)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 
@@ -116,12 +114,15 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent)
 		m_container->addButtons(horizontalLayout);
 	}
 
-	// restore window state; every console window has the one of the last
-	WindowState::setup(
-		this, QStringLiteral("ConsoleWindow"),
-		dynamic_cast<KConfigSettingsObject*>(APPLICATION->settings().get()),
-		QStringLiteral("ConsoleWindowGeometry"),
-		QStringLiteral("ConsoleWindowState"));
+	// restore window state
+	{
+		auto base64State =
+			APPLICATION->globalSettings()->consoleWindowState().toUtf8();
+		restoreState(QByteArray::fromBase64(base64State));
+		auto base64Geometry =
+			APPLICATION->globalSettings()->consoleWindowGeometry().toUtf8();
+		restoreGeometry(QByteArray::fromBase64(base64Geometry));
+	}
 
 	// set up instance and launch process recognition
 	{
@@ -209,9 +210,11 @@ void InstanceWindow::closeEvent(QCloseEvent* event)
 		return;
 	}
 
-	// What KMainWindow::closeEvent() saves, without it quitting the
-	// application with the last window: Application decides that.
-	saveAutoSaveSettings();
+	APPLICATION->globalSettings()->setConsoleWindowState(
+		QString::fromLatin1(saveState().toBase64()));
+	APPLICATION->globalSettings()->setConsoleWindowGeometry(
+		QString::fromLatin1(saveGeometry().toBase64()));
+	APPLICATION->globalSettings()->save();
 	emit isClosing();
 	event->accept();
 }

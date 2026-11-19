@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QDomElement>
 #include <QDateTime>
 
 #include <memory>
@@ -44,6 +45,14 @@ class NewsEntry : public QObject
 			  const QString& author, const QDateTime& pubDate,
 			  QObject* parent = 0);
 
+	/*!
+	 * Attempts to load information from the given XML element into the given
+	 * news entry pointer. If this fails, the function will return false and
+	 * store an error message in the errorMsg pointer.
+	 */
+	static bool fromXmlElement(const QDomElement& element, NewsEntry* entry,
+							   QString* errorMsg = 0);
+
 	//! The post title.
 	QString title;
 
@@ -62,9 +71,9 @@ class NewsEntry : public QObject
 	/*!
 	 * Which of NewsChecker's feeds this entry came from. 0 is the
 	 * launcher's own feed; anything higher is an extra feed configured
-	 * at build time via MeshMC_NEWS_EXTRA_FEEDS. Set by News::parseFeed()
-	 * from the index NewsChecker gives it — the XML says nothing about
-	 * where it was downloaded from.
+	 * at build time via MeshMC_NEWS_EXTRA_FEEDS. Set by NewsChecker
+	 * after parsing, not by fromXmlElement() — the XML says nothing
+	 * about where it was downloaded from.
 	 */
 	int feedIndex = 0;
 };

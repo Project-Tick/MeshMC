@@ -41,7 +41,6 @@
 #include "ui/pages/global/CustomCommandsPage.h"
 #include "ui/pages/global/AppearancePage.h"
 
-#include "ui/WindowState.h"
 #include "ui/themes/AppearanceManager.h"
 #include "ui/themes/ThemedIcons.h"
 
@@ -1877,11 +1876,10 @@ MainWindow* Application::showMainWindow(bool minimized)
 		m_mainWindow->activateWindow();
 	} else {
 		m_mainWindow = new MainWindow();
-		WindowState::setup(
-			m_mainWindow, QStringLiteral("MainWindow"),
-			dynamic_cast<KConfigSettingsObject*>(m_settings.get()),
-			QStringLiteral("MainWindowGeometry"),
-			QStringLiteral("MainWindowState"));
+		m_mainWindow->restoreState(QByteArray::fromBase64(
+			APPLICATION->globalSettings()->mainWindowState().toUtf8()));
+		m_mainWindow->restoreGeometry(QByteArray::fromBase64(
+			APPLICATION->globalSettings()->mainWindowGeometry().toUtf8()));
 		if (minimized) {
 			m_mainWindow->showMinimized();
 		} else {

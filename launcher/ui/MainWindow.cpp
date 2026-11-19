@@ -63,7 +63,6 @@
 #include <KAboutApplicationDialog>
 #include <KAboutData>
 #include <KBugReport>
-#include <KFormat>
 #include <KHelpMenu>
 
 #include <BaseInstance.h>
@@ -118,6 +117,7 @@
 #include "InstanceImportTask.h"
 #include "InstanceCopyTask.h"
 
+#include "MMCTime.h"
 #include <KLocalizedString>
 
 namespace
@@ -413,12 +413,8 @@ void MainWindow::setupUi()
 }
 
 MainWindow::MainWindow(QWidget* parent)
-	: KMainWindow(parent), ui(new Ui::MainWindow)
+	: QMainWindow(parent), ui(new Ui::MainWindow)
 {
-	// KMainWindow deletes itself when it is closed. This one is closed to be
-	// hidden, and Application keeps it for as long as the launcher runs.
-	setAttribute(Qt::WA_DeleteOnClose, false);
-
 	setupUi();
 
 	// OSX magic.
@@ -720,7 +716,7 @@ MainWindow::~MainWindow() {}
 
 QMenu* MainWindow::createPopupMenu()
 {
-	QMenu* filteredMenu = KMainWindow::createPopupMenu();
+	QMenu* filteredMenu = QMainWindow::createPopupMenu();
 	filteredMenu->removeAction(ui->mainToolBar->toggleViewAction());
 	filteredMenu->addAction(ui->actionLockToolbars);
 	return filteredMenu;
@@ -756,7 +752,7 @@ void MainWindow::showEvent(QShowEvent* event)
 	 * so the user cannot hide it by hand and this cannot be overruling
 	 * them. */
 	updateMenuBarVisibility();
-	KMainWindow::showEvent(event);
+	QMainWindow::showEvent(event);
 }
 
 void MainWindow::updateMenuBarVisibility()
@@ -784,7 +780,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent* event)
 		ui->menuBar->setVisible(!ui->menuBar->isVisible());
 		return;
 	}
-	KMainWindow::keyReleaseEvent(event);
+	QMainWindow::keyReleaseEvent(event);
 }
 #endif
 
@@ -1196,7 +1192,7 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* ev)
 			}
 		}
 	}
-	return KMainWindow::eventFilter(obj, ev);
+	return QMainWindow::eventFilter(obj, ev);
 }
 
 void MainWindow::updateNewsLabel()
@@ -1904,10 +1900,12 @@ void MainWindow::on_actionViewSelectedModsFolder_triggered()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-	// What KMainWindow::closeEvent() saves, without what else it does: it
-	// quits the application with its last window, and that is Application's
-	// to decide (see on_windowClose()).
-	saveAutoSaveSettings();
+	// Save the window state and geometry.
+	APPLICATION->globalSettings()->setMainWindowState(
+		QString::fromLatin1(saveState().toBase64()));
+	APPLICATION->globalSettings()->setMainWindowGeometry(
+		QString::fromLatin1(saveGeometry().toBase64()));
+	APPLICATION->globalSettings()->save();
 	event->accept();
 	emit isClosing();
 }
@@ -1917,7 +1915,7 @@ void MainWindow::changeEvent(QEvent* event)
 	if (event->type() == QEvent::LanguageChange) {
 		retranslateUi();
 	}
-	KMainWindow::changeEvent(event);
+	QMainWindow::changeEvent(event);
 }
 
 void MainWindow::instanceActivated(QModelIndex index)
@@ -2163,8 +2161,6 @@ void MainWindow::updateStatusCenter()
 	int timePlayed = APPLICATION->instances()->getTotalPlayTime();
 	if (timePlayed > 0) {
 		m_statusCenter->setText(
-			i18n("Total playtime: %1",
-				 KFormat().formatDuration(static_cast<quint64>(timePlayed) * 1000,
-										  KFormat::AbbreviatedDuration)));
+			i18n("Total playtime: %1", Time::prettifyDuration(timePlayed)));
 	}
 }
