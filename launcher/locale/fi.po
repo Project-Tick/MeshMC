@@ -9,11 +9,11 @@ msgstr ""
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: fi\n"
 "X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
-"X-Crowdin-File-ID: 95\n"
+"X-Crowdin-File-ID: 101\n"
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
-"PO-Revision-Date: 2026-10-28 22:14\n"
+"PO-Revision-Date: 2026-11-19 13:43\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -202,7 +202,7 @@ msgstr "Alusta"
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Commit: %1"
-msgstr "Commit: %1"
+msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.cpp:102
 #, qt-format
@@ -501,7 +501,7 @@ msgstr "Todennus epäonnistui. Tiliä ei ole enää olemassa."
 #: launcher/minecraft/auth/AccountTask.cpp:57
 msgctxt "AccountTask|"
 msgid "..."
-msgstr "..."
+msgstr ""
 
 #: launcher/minecraft/auth/AccountTask.cpp:105
 #, qt-format
@@ -864,7 +864,7 @@ msgstr "Ei voitu ladata versioluetteloja!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr "ATLauncher"
+msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
@@ -1003,7 +1003,7 @@ msgstr "Palautetaan varmuuskopiota..."
 #: launcher/ui/pages/instance/BackupPage.cpp:173
 msgctxt "BackupPage|"
 msgid "Restore Complete"
-msgstr "Restore Complete"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:174
 msgctxt "BackupPage|"
@@ -1128,7 +1128,7 @@ msgstr "Profiloija keskeytetty"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 msgctxt "BlockedModsDialog|"
@@ -1270,12 +1270,12 @@ msgstr "Lataajat"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:264
 msgctxt "ContentFilterWidget|"
 msgid "NeoForge"
-msgstr "NeoForge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:265
 msgctxt "ContentFilterWidget|"
 msgid "Forge"
-msgstr "Forge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:266
 msgctxt "ContentFilterWidget|"
@@ -1290,17 +1290,17 @@ msgstr "Tikattu"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:273
 msgctxt "ContentFilterWidget|"
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 msgctxt "ContentFilterWidget|"
 msgid "Babric"
-msgstr "Babric"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:275
 msgctxt "ContentFilterWidget|"
 msgid "BTA (Babric)"
-msgstr "BTA (Babric)"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:276
 msgctxt "ContentFilterWidget|"
@@ -1310,7 +1310,7 @@ msgstr "Vanha Kangas"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 msgctxt "ContentFilterWidget|"
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 msgctxt "ContentFilterWidget|"
@@ -1433,7 +1433,7 @@ msgstr "esittäjä %1"
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:592
 msgctxt "ContentProviderPage|"
 msgid " [installed]"
-msgstr " [installed]"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:599
 msgctxt "ContentProviderPage|"
@@ -1526,12 +1526,12 @@ msgstr "<h2 style='color: #cc0000;'>MeshMC on epäonnistunut</h2><p>Tapahtui odo
 #: launcher/crashreporter/CrashReportDialog.cpp:56
 msgctxt "CrashReportDialog|"
 msgid "QR Codes"
-msgstr "QR Codes"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:64
 msgctxt "CrashReportDialog|"
 msgid "[...truncated...]\n"
-msgstr "[...truncated...]\n"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:75
 #: launcher/crashreporter/CrashReportDialog.cpp:92
@@ -1694,7 +1694,7 @@ msgstr "%1 (käytössä)"
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:192
 #, qt-format
@@ -1760,7 +1760,7 @@ msgstr "Tietopaketin nimi on seuraava:"
 #: launcher/minecraft/mod/DataPackFolderModel.cpp:42
 msgctxt "DataPackFolderModel|"
 msgid "The version of the data pack."
-msgstr "The version of the data pack."
+msgstr ""
 
 #: launcher/minecraft/mod/DataPackFolderModel.cpp:44
 msgctxt "DataPackFolderModel|"
@@ -1989,27 +1989,27 @@ msgstr "Muoto"
 #: launcher/ui/dialogs/ExportListDialog.cpp:99
 msgctxt "ExportListDialog|"
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:100
 msgctxt "ExportListDialog|"
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 msgctxt "ExportListDialog|"
 msgid "Plaintext"
-msgstr "Plaintext"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 msgctxt "ExportListDialog|"
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 msgctxt "ExportListDialog|"
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 msgctxt "ExportListDialog|"
@@ -2119,7 +2119,7 @@ msgstr "&Versio:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
@@ -2144,7 +2144,7 @@ msgstr "&Suositeltu Muisti:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr " MiB"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
@@ -2475,7 +2475,7 @@ msgstr " mennessä "
 #: launcher/ui/pages/modplatform/flame/FlamePage.h:51
 msgctxt "FlamePage|"
 msgid "CurseForge"
-msgstr "CurseForge"
+msgstr ""
 
 #: launcher/minecraft/update/FoldersTask.cpp:34
 msgctxt "FoldersTask|"
@@ -2510,7 +2510,7 @@ msgstr "Etsi ja suodata ..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
@@ -2591,12 +2591,12 @@ msgstr "Tiedostot"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
@@ -2647,7 +2647,7 @@ msgstr "Ei vielä versiohistoriaa. Snapshot nyt aloittaaksesi muutosten seuranna
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "HEAD: <b>%1</b>"
-msgstr "HEAD: <b>%1</b>"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:136
 #, qt-format
@@ -2664,13 +2664,13 @@ msgstr "Puhdista työpuu"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr "Snapshot"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
@@ -3841,7 +3841,7 @@ msgstr "Oletko varma, että haluat poistaa tämän Java-asennuksen?\n\n"
 #: launcher/ui/pages/global/JavaPage.h:47
 msgctxt "JavaPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:175
 msgctxt "JavaSettingsWidget|"
@@ -3899,7 +3899,7 @@ msgstr "Selaa"
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:137
 msgctxt "JavaWizardPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:138
 msgctxt "JavaWizardPage|"
@@ -4718,7 +4718,7 @@ msgstr "Avaa ulkoasukansio tiedostoselaimeen. @ info: whatsthis"
 #: launcher/ui/MainWindow.ui:345
 msgctxt "MainWindow|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:348
 msgctxt "MainWindow|"
@@ -5036,7 +5036,7 @@ msgstr "Avaa valitun pelipaketin juurikansio tiedostoselaimessa."
 #: launcher/ui/MainWindow.ui:785
 msgctxt "MainWindow|"
 msgid "E&xport..."
-msgstr "E&xport..."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:788
 msgctxt "MainWindow|"
@@ -5052,17 +5052,17 @@ msgstr "Vie valittu instanssi tuettuihin muotoihin."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
-msgstr "Modrinth (mrpack)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr "CurseForge (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
@@ -5108,7 +5108,7 @@ msgstr "Avaa virheseuranta ilmoittaaksesi virheestä %1."
 #: launcher/ui/MainWindow.ui:891
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr "Discord"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:894
 #, qt-format
@@ -5119,7 +5119,7 @@ msgstr "Avaa %1 Discordin äänikanava."
 #: launcher/ui/MainWindow.ui:905
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr "Reddit"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:908
 #, qt-format
@@ -5185,7 +5185,7 @@ msgstr "Hanki apua Minecraftiin tai aiheeseen %1."
 #: launcher/ui/MainWindow.cpp:1150
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr "Profiles"
+msgstr ""
 
 #: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
 msgctxt "MainWindow|"
@@ -5494,7 +5494,7 @@ msgstr "Verkkosivusto: <a href=%1>%2</a>    ¶ Paketin ID: %3    ¶ Versiotunnus
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:323
 msgctxt "ManagedPackPage|"
 msgid "URL:"
-msgstr "URL:"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:324
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:547
@@ -5577,7 +5577,7 @@ msgstr "CurseForge paketti"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:745
 msgctxt "ManagedPackPage|"
 msgid "Modpack"
-msgstr "Modpack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:750
 msgctxt "ManagedPackPage|"
@@ -5756,7 +5756,7 @@ msgstr "MeshMc Lokit"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr "Reload"
+msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
@@ -6102,7 +6102,7 @@ msgstr "Lisää Pakettikansio"
 #: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
-msgstr "Duplicate directory"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
@@ -6906,7 +6906,7 @@ msgstr "viallinen"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -6983,7 +6983,7 @@ msgstr "Tallenna pelattu aika"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
@@ -7213,7 +7213,7 @@ msgstr "Valitse %1"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr "No Mod Loader"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
@@ -7391,7 +7391,7 @@ msgstr "%1 modissa on uudemmat yhteensopivat versiot. Valitse versiot, joita hal
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
@@ -7465,7 +7465,7 @@ msgstr "Tiedoston kopiointi epäonnistui"
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:208
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Installing modpack"
+msgstr ""
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
@@ -7551,7 +7551,7 @@ msgstr "Nimi"
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 msgctxt "NewComponentDialog|"
 msgid "uid"
-msgstr "uid"
+msgstr ""
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:17
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:163
@@ -8138,7 +8138,7 @@ msgstr "Ohita"
 #, qt-format
 msgctxt "ProjectItemDelegate|"
 msgid "%1 [installed]"
-msgstr "%1 [installed]"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:42
 msgctxt "ProxyPage|"
@@ -8168,12 +8168,12 @@ msgstr "&Ei mitään"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 msgctxt "ProxyPage|"
 msgid "SOC&KS5"
-msgstr "SOC&KS5"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 msgctxt "ProxyPage|"
 msgid "H&TTP"
-msgstr "H&TTP"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:107
 msgctxt "ProxyPage|"
@@ -8558,25 +8558,25 @@ msgstr "Järjestä uusimpien mukaan"
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 B"
-msgstr "%1 B"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:14
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 KiB"
-msgstr "%1 KiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:17
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 MiB"
-msgstr "%1 MiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:19
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 GiB"
-msgstr "%1 GiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.h:32
 msgctxt "QObject|"
@@ -8586,7 +8586,7 @@ msgstr "Version Historia"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Git Versioning"
-msgstr "Git Versioning"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:133
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:234
@@ -8735,7 +8735,7 @@ msgstr "Forces Minecraft to use the NVIDIA discrete GPU on Optimus kannettavat t
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.h:40
 msgctxt "QObject|"
 msgid "Offline Wiki"
-msgstr "Offline Wiki"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:303
 msgctxt "QObject|"
@@ -9017,17 +9017,17 @@ msgstr "Valoisa fuusiopohjainen teema vihreällä aksentilla"
 #: launcher/ui/themes/SystemTheme.cpp:70
 msgctxt "QObject|"
 msgid "Windows Vista"
-msgstr "Windows Vista"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:72
 msgctxt "QObject|"
 msgid "Windows 9x"
-msgstr "Windows 9x"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:74
 msgctxt "QObject|"
 msgid "Windows 11"
-msgstr "Windows 11"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:76
 msgctxt "QObject|"
@@ -9108,7 +9108,7 @@ msgstr "Tasainen (arkki)"
 #: launcher/ui/themes/ThemeManager.cpp:407
 msgctxt "QObject|"
 msgid "Breeze (Dark)"
-msgstr "Breeze (Dark)"
+msgstr ""
 
 #: launcher/ui/themes/ThemeManager.cpp:409
 msgctxt "QObject|"
@@ -9930,7 +9930,7 @@ msgstr " tehnyt "
 #: launcher/ui/pages/modplatform/technic/TechnicPage.h:51
 msgctxt "TechnicPage|"
 msgid "Technic"
-msgstr "Technic"
+msgstr ""
 
 #: launcher/minecraft/mod/TexturePackFolderModel.cpp:34
 msgctxt "TexturePackFolderModel|"
@@ -10110,7 +10110,7 @@ msgstr "Päivitä"
 #: launcher/ui/pages/modplatform/VanillaPage.h:45
 msgctxt "VanillaPage|"
 msgid "Vanilla"
-msgstr "Vanilla"
+msgstr ""
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:158
 #, qt-format
@@ -10512,7 +10512,7 @@ msgstr "Versio"
 #: launcher/VersionProxyModel.cpp:108
 msgctxt "VersionProxyModel|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:110
 msgctxt "VersionProxyModel|"
@@ -10707,7 +10707,7 @@ msgstr "Poista"
 #: launcher/ui/pages/instance/WorldListPage.ui:117
 msgctxt "WorldListPage|"
 msgid "MCEdit"
-msgstr "MCEdit"
+msgstr ""
 
 #: launcher/ui/pages/instance/WorldListPage.ui:122
 msgctxt "WorldListPage|"
