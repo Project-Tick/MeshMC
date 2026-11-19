@@ -53,7 +53,8 @@ class QNetworkAccessManager;
 class JavaInstallList;
 class BaseProfilerFactory;
 class BaseDetachedToolFactory;
-class AppearanceManager;
+class ITheme;
+class ThemeManager;
 class MCEditTool;
 class PluginManager;
 class BasePage;
@@ -126,8 +127,13 @@ class Application : public QApplication
 
 	QIcon getThemedIcon(const QString& name);
 
-	/*! The colour scheme, widget style and icons; see AppearanceManager. */
-	AppearanceManager* appearance() const;
+	void setIconTheme(const QString& name);
+
+	std::vector<ITheme*> getValidApplicationThemes();
+
+	void setApplicationTheme(const QString& name, bool initial);
+
+	ThemeManager* themeManager() const;
 
 	ExternalUpdater* updater()
 	{
@@ -288,7 +294,7 @@ class Application : public QApplication
 	std::shared_ptr<IconList> m_icons;
 	std::shared_ptr<JavaInstallList> m_javalist;
 	std::shared_ptr<GenericPageProvider> m_globalSettingsProvider;
-	std::unique_ptr<AppearanceManager> m_appearance;
+	std::unique_ptr<ThemeManager> m_themeManager;
 	std::unique_ptr<MCEditTool> m_mcedit;
 	QString m_jarsPath;
 	QSet<QString> m_features;

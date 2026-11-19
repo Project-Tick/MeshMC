@@ -21,21 +21,13 @@
 #include "ui_AppearancePage.h"
 
 #include "Application.h"
+#include "settings/GlobalSettings.h"
 #include "DesktopServices.h"
-#include "ui/themes/AppearanceManager.h"
-#include "ui/themes/ColorSchemes.h"
-#include "ui/themes/ThemedIcons.h"
+#include "ui/themes/ITheme.h"
+#include "ui/themes/ThemeManager.h"
+#include "ui/themes/CatPack.h"
 
-#include <QAction>
-#include <QDir>
-#include <QSignalBlocker>
-#include <QFileDialog>
-#include <QMenu>
-#include <QMessageBox>
-
-#include <KColorSchemeManager>
-#include <KColorSchemeModel>
-#include <KStyleManager>
+#include <QGraphicsOpacityEffect>
 
 static const QStringList previewIconNames = {
 	"new",	"centralmods", "viewfolder", "launch",
@@ -46,56 +38,49 @@ AppearancePage::AppearancePage(QWidget* parent)
 {
 	ui->setupUi(this);
 
-	// The colour schemes KDE Frameworks has, and the ones in the user's
-	// "color-schemes" folder. KColorSchemeManager applies the one that is
-	// chosen right away and remembers it, so there is nothing to save here.
-	auto* schemes = KColorSchemeManager::instance();
-	ui->colorSchemeComboBox->setModel(schemes->model());
-	ui->colorSchemeComboBox->setCurrentIndex(
-		schemes->indexForSchemeId(schemes->activeSchemeId()).row());
-	connect(ui->colorSchemeComboBox, &QComboBox::activated, this,
-			[schemes](int index) {
-				schemes->activateSchemeId(
-					schemes->model()
-						->index(index, 0)
-						.data(KColorSchemeModel::IdRole)
-						.toString());
-			});
+	ui->catPreview->setGraphicsEffect(new QGraphicsOpacityEffect(this));
 
-	connect(ui->colorSchemeFolderButton, &QPushButton::clicked, this, [] {
-		QDir().mkpath(ColorSchemes::userDirectory());
-		DesktopServices::openDirectory(ColorSchemes::userDirectory(), true);
-	});
-	connect(ui->colorSchemeImportButton, &QPushButton::clicked, this,
-			&AppearancePage::importColorSchemes);
+	connect(ui->widgetStyleComboBox,
+			QOverload<int>::of(qOverload<int>(&QComboBox::currentIndexChanged)), this,
+			&AppearancePage::applyWidgetTheme);
+	connect(ui->iconsComboBox,
+			QOverload<int>::of(qOverload<int>(&QComboBox::currentIndexChanged)), this,
+			&AppearancePage::applyIconTheme);
+	connect(ui->catPackComboBox,
+			QOverload<int>::of(qOverload<int>(&QComboBox::currentIndexChanged)), this,
+			&AppearancePage::applyCatTheme);
+	connect(ui->themesFolderButton, &QPushButton::clicked, this,
+			&AppearancePage::openThemesFolder);
+	connect(ui->iconsFolderButton, &QPushButton::clicked, this,
+			&AppearancePage::openIconThemesFolder);
+	connect(ui->reloadThemesButton, &QPushButton::clicked, this,
+			&AppearancePage::reloadThemes);
 
-	// The widget style: KStyleManager has the menu for it, which is not there
-	// on KDE's platform theme, where the style is the desktop's to choose.
-	QAction* style = KStyleManager::createConfigureAction(this);
-	if (style && style->isVisible() && style->menu()) {
-		ui->styleButton->setMenu(style->menu());
-		ui->styleButton->setText(i18n("Choose…"));
-	} else {
-		ui->styleLabel->hide();
-		ui->styleButton->hide();
-	}
+	loadSettings();
+}
 
-	// The icon theme: Breeze, and the ones in the user's icons folder.
-	connect(ui->iconsComboBox, &QComboBox::activated, this, [this](int index) {
-		APPLICATION->appearance()->setIconTheme(
-			ui->iconsComboBox->itemData(index).toString());
-	});
-	connect(ui->iconsFolderButton, &QPushButton::clicked, this, [] {
-		QDir().mkpath(ThemedIcons::userDirectory());
-		DesktopServices::openDirectory(ThemedIcons::userDirectory(), true);
-	});
-	connect(ui->iconsReloadButton, &QPushButton::clicked, this,
-			&AppearancePage::loadIconThemes);
-	loadIconThemes();
+void AppearancePage::openThemesFolder()
+{
+	auto folder = APPLICATION->themeManager()->getApplicationThemesFolder();
+	DesktopServices::openDirectory(folder.absolutePath(), true);
+}
 
-	updateIconPreview();
-	connect(APPLICATION->appearance(), &AppearanceManager::iconsChanged, this,
-			&AppearancePage::updateIconPreview);
+void AppearancePage::openIconThemesFolder()
+{
+	auto folder = APPLICATION->themeManager()->getIconThemesFolder();
+	DesktopServices::openDirectory(folder.absolutePath(), true);
+}
+
+void AppearancePage::reloadThemes()
+{
+	// NOTE: this invalidates every ITheme* handed out earlier, so the combo
+	// boxes must be repopulated before anything touches them again.
+	APPLICATION->themeManager()->refresh();
+	loadSettings();
+
+	// The active theme object was destroyed and rebuilt, so re-apply it to pick
+	// up edits made to the theme files on disk.
+	APPLICATION->themeManager()->applyCurrentlySelectedTheme();
 }
 
 AppearancePage::~AppearancePage()
@@ -105,61 +90,156 @@ AppearancePage::~AppearancePage()
 
 bool AppearancePage::apply()
 {
-	// Nothing to apply: a colour scheme and a style take effect, and are
-	// remembered, the moment they are chosen.
+	applySettings();
 	return true;
 }
 
-void AppearancePage::loadIconThemes()
+void AppearancePage::applyWidgetTheme(int index)
 {
-	QSignalBlocker blocker(ui->iconsComboBox);
-	ui->iconsComboBox->clear();
-	const QString current = ThemedIcons::theme();
-	int currentIndex = 0;
-	for (const auto& theme : ThemedIcons::themes()) {
-		if (theme.id == current) {
-			currentIndex = ui->iconsComboBox->count();
+	auto settings = APPLICATION->globalSettings();
+	auto originalTheme = settings->applicationTheme();
+	auto newTheme = ui->widgetStyleComboBox->itemData(index).toString();
+	if (originalTheme != newTheme) {
+		settings->setApplicationTheme(newTheme);
+		settings->save();
+		APPLICATION->themeManager()->applyCurrentlySelectedTheme();
+
+		// Sync icon combo to the auto-resolved icon theme
+		auto resolvedIcon = settings->iconTheme();
+		auto iconThemes = APPLICATION->themeManager()->iconThemes();
+		QString resolvedFamily;
+		for (const auto& entry : iconThemes) {
+			if (entry.id == resolvedIcon) {
+				resolvedFamily = entry.family;
+				break;
+			}
 		}
-		ui->iconsComboBox->addItem(theme.name, theme.id);
+		ui->iconsComboBox->blockSignals(true);
+		for (int i = 0; i < ui->iconsComboBox->count(); i++) {
+			if (ui->iconsComboBox->itemData(i).toString() == resolvedFamily) {
+				ui->iconsComboBox->setCurrentIndex(i);
+				break;
+			}
+		}
+		ui->iconsComboBox->blockSignals(false);
 	}
-	ui->iconsComboBox->setCurrentIndex(currentIndex);
+	updateIconPreview();
 }
 
-void AppearancePage::importColorSchemes()
+void AppearancePage::applyIconTheme(int index)
 {
-	const QStringList files = QFileDialog::getOpenFileNames(
-		this, i18n("Import color schemes"), QString(),
-		i18n("KDE color schemes (*.colors)"));
-	if (files.isEmpty()) {
+	auto settings = APPLICATION->globalSettings();
+	auto tm = APPLICATION->themeManager();
+	auto family = ui->iconsComboBox->itemData(index).toString();
+	auto resolved = tm->resolveIconTheme(family);
+	if (resolved.isEmpty())
 		return;
+	auto originalIconTheme = settings->iconTheme();
+	if (originalIconTheme != resolved) {
+		settings->setIconTheme(resolved);
+		settings->save();
+		tm->applyCurrentlySelectedTheme();
 	}
+	updateIconPreview();
+}
 
-	int added = 0;
-	QStringList failed;
-	for (const QString& file : files) {
-		QString error;
-		if (ColorSchemes::importScheme(file, ColorSchemes::userDirectory(),
-									   &error)) {
-			++added;
-		} else {
-			failed << QStringLiteral("%1: %2").arg(file, error);
+void AppearancePage::applySettings()
+{
+	// Theme and icon changes are already persisted live via
+	// applyWidgetTheme/applyIconTheme. This is intentionally minimal — settings
+	// are saved on combo change.
+}
+
+void AppearancePage::loadSettings()
+{
+	auto settings = APPLICATION->globalSettings();
+	auto tm = APPLICATION->themeManager();
+
+	// Block signals during population
+	ui->widgetStyleComboBox->blockSignals(true);
+	ui->iconsComboBox->blockSignals(true);
+	ui->catPackComboBox->blockSignals(true);
+
+	// --- Widget themes (flat list) ---
+	ui->widgetStyleComboBox->clear();
+	auto currentThemeId = settings->applicationTheme();
+	auto themes = tm->allThemes();
+	int themeIdx = 0;
+
+	for (size_t i = 0; i < themes.size(); i++) {
+		auto* theme = themes[i];
+		ui->widgetStyleComboBox->addItem(theme->name(), theme->id());
+		if (!theme->tooltip().isEmpty()) {
+			ui->widgetStyleComboBox->setItemData(
+				static_cast<int>(i), theme->tooltip(), Qt::ToolTipRole);
+		}
+		if (theme->id() == currentThemeId) {
+			themeIdx = static_cast<int>(i);
 		}
 	}
 
-	if (!failed.isEmpty()) {
-		QMessageBox::warning(this, i18n("Import color schemes"),
-							 i18n("Could not import:\n%1",
-								  failed.join(QLatin1Char('\n'))));
+	ui->widgetStyleComboBox->setCurrentIndex(themeIdx);
+
+	// --- Icon themes (one entry per family, auto-resolves dark/light) ---
+	ui->iconsComboBox->clear();
+	auto currentIconTheme = settings->iconTheme();
+	auto iconThemeList = tm->iconThemes();
+	int iconIdx = 0;
+
+	// Find the family of the currently active icon theme
+	QString currentFamily;
+	for (const auto& entry : iconThemeList) {
+		if (entry.id == currentIconTheme) {
+			currentFamily = entry.family;
+			break;
+		}
 	}
-	if (added > 0) {
-		QMessageBox::information(
-			this, i18n("Import color schemes"),
-			i18np("One color scheme was added. It is listed the next time "
-				  "MeshMC starts.",
-				  "%1 color schemes were added. They are listed the next "
-				  "time MeshMC starts.",
-				  added));
+
+	// Populate combo with one entry per family
+	QSet<QString> seenFamilies;
+	int comboIdx = 0;
+	for (const auto& entry : iconThemeList) {
+		if (seenFamilies.contains(entry.family))
+			continue;
+		seenFamilies.insert(entry.family);
+
+		QString displayName =
+			entry.variant.isEmpty() ? entry.name : entry.family;
+		ui->iconsComboBox->addItem(displayName, entry.family);
+
+		if (entry.family == currentFamily) {
+			iconIdx = comboIdx;
+		}
+		comboIdx++;
 	}
+
+	ui->iconsComboBox->setCurrentIndex(iconIdx);
+
+	// --- Cat Packs ---
+	ui->catPackComboBox->clear();
+	auto currentCat = settings->backgroundCat();
+	auto cats = tm->getValidCatPacks();
+	int catIdx = 0;
+
+	for (int i = 0; i < cats.size(); i++) {
+		auto* cat = cats[i];
+		QIcon catIcon(cat->path());
+		ui->catPackComboBox->addItem(catIcon, cat->name(), cat->id());
+		if (cat->id() == currentCat) {
+			catIdx = i;
+		}
+	}
+
+	ui->catPackComboBox->setCurrentIndex(catIdx);
+
+	// Unblock signals
+	ui->widgetStyleComboBox->blockSignals(false);
+	ui->iconsComboBox->blockSignals(false);
+	ui->catPackComboBox->blockSignals(false);
+
+	// Initial previews
+	updateIconPreview();
+	updateCatPreview();
 }
 
 void AppearancePage::updateIconPreview()
@@ -173,4 +253,27 @@ void AppearancePage::updateIconPreview()
 		previewButtons[i]->setIcon(
 			APPLICATION->getThemedIcon(previewIconNames[i]));
 	}
+}
+
+void AppearancePage::applyCatTheme(int index)
+{
+	auto settings = APPLICATION->globalSettings();
+	auto originalCat = settings->backgroundCat();
+	auto newCat = ui->catPackComboBox->itemData(index).toString();
+	if (originalCat != newCat) {
+		settings->setBackgroundCat(newCat);
+		settings->save();
+	}
+	updateCatPreview();
+}
+
+void AppearancePage::updateCatPreview()
+{
+	QIcon catPackIcon(APPLICATION->themeManager()->getCatPack());
+	ui->catPreview->setIcon(catPackIcon);
+
+	auto effect =
+		dynamic_cast<QGraphicsOpacityEffect*>(ui->catPreview->graphicsEffect());
+	if (effect)
+		effect->setOpacity(1.0);
 }

@@ -113,6 +113,8 @@ namespace
 	/* actionLockToolbars is otherwise reachable only through the toolbar
 	 * context menu, which is awkward to hit once the toolbars are locked. */
 	const char* const kViewEntries[] = {
+		"actionCAT",
+		kDivider,
 		"actionLockToolbars",
 		nullptr,
 	};

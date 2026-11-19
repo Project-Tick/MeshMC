@@ -58,12 +58,12 @@ class GlobalSettingsSetupTest : public QObject
 	void test_EverySettingIsThere()
 	{
 		Fixture f;
-		// 77 now: a setting that is added brings this up, one that is lost
-		// would make a caller's get() return nothing.
-		QVERIFY(f.settings.allSettings().size() >= 77);
+		// 81 when the .kcfg was written; a setting that is added brings this
+		// up, one that is lost would make a caller's get() return nothing.
+		QVERIFY(f.settings.allSettings().size() >= 81);
 		for (const char* id :
 			 {"InstanceDir", "JavaPath", "ProxyType", "MinMemAlloc",
-			  "InstSortMode", "CurseForgeAPIKey", "PasteEEAPIKey",
+			  "ApplicationTheme", "CurseForgeAPIKey", "PasteEEAPIKey",
 			  "MacNativeMenuBar", "PagedGeometry", "JProfilerPath",
 			  "JProfilerPort", "JVisualVMPath", "MCEditPath"}) {
 			QVERIFY2(f.settings.getSetting(id), id);

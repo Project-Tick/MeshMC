@@ -375,6 +375,7 @@ Section "MeshMC"
 
   File "meshmc.exe"
   File "meshmc-updater.exe"
+  File "meshmc-crashreporter.exe"
   File /r "mmcmodules"
   File "qt.conf"
   File "qtlogging.ini"
@@ -472,6 +473,7 @@ Section "Uninstall"
 
   Delete $INSTDIR\meshmc.exe
   Delete $INSTDIR\meshmc-updater.exe
+  Delete $INSTDIR\meshmc-crashreporter.exe
   Delete $INSTDIR\qt.conf
   Delete $INSTDIR\qtlogging.ini
   Delete $INSTDIR\*.dll

@@ -47,17 +47,17 @@
        <item>
         <layout class="QGridLayout" name="themeGridLayout">
          <item row="0" column="0">
-          <widget class="QLabel" name="colorSchemeLabel">
+          <widget class="QLabel" name="widgetStyleLabel">
            <property name="text">
-            <string>&amp;Color scheme:</string>
+            <string>&amp;Theme:</string>
            </property>
            <property name="buddy">
-            <cstring>colorSchemeComboBox</cstring>
+            <cstring>widgetStyleComboBox</cstring>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="colorSchemeComboBox">
+          <widget class="QComboBox" name="widgetStyleComboBox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -70,52 +70,16 @@
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="QPushButton" name="colorSchemeFolderButton">
+          <widget class="QPushButton" name="themesFolderButton">
            <property name="toolTip">
-            <string>Open the folder for your own color schemes (.colors files, as KDE uses them).</string>
+            <string>View the widget themes folder.</string>
            </property>
            <property name="text">
             <string>Open Folder</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="3">
-          <widget class="QPushButton" name="colorSchemeImportButton">
-           <property name="toolTip">
-            <string>Add a color scheme from a .colors file. It is listed the next time MeshMC starts.</string>
-           </property>
-           <property name="text">
-            <string>Import…</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="styleLabel">
-           <property name="text">
-            <string>Widget &amp;style:</string>
-           </property>
-           <property name="buddy">
-            <cstring>styleButton</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QToolButton" name="styleButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonStyle::ToolButtonTextOnly</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
           <widget class="QLabel" name="iconsLabel">
            <property name="text">
             <string>&amp;Icons:</string>
@@ -125,7 +89,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="1" column="1">
           <widget class="QComboBox" name="iconsComboBox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -133,8 +97,38 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="iconsFolderButton">
            <property name="toolTip">
-            <string>Your own icon themes are folders with an index.theme in the icons folder. Breeze icons are colored to match the color scheme only while the theme is Breeze.</string>
+            <string>View the icon themes folder.</string>
+           </property>
+           <property name="text">
+            <string>Open Folder</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="catPackLabel">
+           <property name="text">
+            <string>&amp;Cat:</string>
+           </property>
+           <property name="buddy">
+            <cstring>catPackComboBox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="catPackComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="focusPolicy">
             <enum>Qt::FocusPolicy::StrongFocus</enum>
@@ -142,22 +136,12 @@
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="QPushButton" name="iconsFolderButton">
+          <widget class="QPushButton" name="reloadThemesButton">
            <property name="toolTip">
-            <string>Open the folder for your own icon themes.</string>
+            <string>Rescan the themes, icon themes and cat packs on disk.</string>
            </property>
            <property name="text">
-            <string>Open Folder</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3">
-          <widget class="QPushButton" name="iconsReloadButton">
-           <property name="toolTip">
-            <string>Look for icon themes again.</string>
-           </property>
-           <property name="text">
-            <string>Reload</string>
+            <string>Reload All</string>
            </property>
           </widget>
          </item>
@@ -310,6 +294,25 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QPushButton" name="catPreview">
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::NoFocus</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>64</width>
+              <height>128</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -333,11 +336,9 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>colorSchemeComboBox</tabstop>
-  <tabstop>colorSchemeFolderButton</tabstop>
-  <tabstop>colorSchemeImportButton</tabstop>
-  <tabstop>styleButton</tabstop>
+  <tabstop>widgetStyleComboBox</tabstop>
   <tabstop>iconsComboBox</tabstop>
+  <tabstop>catPackComboBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

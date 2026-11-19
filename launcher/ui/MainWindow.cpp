@@ -29,9 +29,7 @@
 #include "MainWindow.h"
 #include "QtCompat.h"
 #include "ui/MacMenuBar.h"
-#include "ui/themes/AppearanceManager.h"
-#include "ui/themes/ColorSchemes.h"
-#include "ui/themes/ThemedIcons.h"
+#include "ui/themes/ThemeManager.h"
 
 #include <QtCore/QVariant>
 #include <QtCore/QUrl>
@@ -62,7 +60,6 @@
 
 #include <KAboutApplicationDialog>
 #include <KAboutData>
-#include <KBugReport>
 #include <KHelpMenu>
 
 #include <BaseInstance.h>
@@ -506,6 +503,16 @@ MainWindow::MainWindow(QWidget* parent)
 				&InstanceList::on_GroupStateChanged);
 		ui->horizontalLayout->addWidget(view);
 	}
+	// The cat background
+	{
+		bool cat_enable = APPLICATION->globalSettings()->theCat();
+		ui->actionCAT->setChecked(cat_enable);
+		// NOTE: calling the operator like that is an ugly hack to appease
+		// ancient gcc...
+		connect(ui->actionCAT, &QAction::toggled, this,
+				&MainWindow::onCatToggled);
+		setCatBackground(cat_enable);
+	}
 	// start instance when double-clicked
 	connect(view, &InstanceView::activated, this,
 			&MainWindow::instanceActivated);
@@ -535,7 +542,7 @@ MainWindow::MainWindow(QWidget* parent)
 	/* Picking an icon theme in the appearance page takes effect here, live.
 	 * Without this the icons are already correct as objects and still drawn
 	 * from the old theme, because nothing repaints */
-	connect(APPLICATION->appearance(), &AppearanceManager::iconsChanged,
+	connect(APPLICATION->themeManager(), &ThemeManager::iconThemeChanged,
 			this, &MainWindow::refreshThemedIcons);
 
 	m_statusLeft = new QLabel(i18n("No instance selected"), this);
@@ -1025,7 +1032,7 @@ void MainWindow::updateToolsMenu()
 			if (auto face = account->getFace(); !face.isNull()) {
 				action->setIcon(face);
 			} else {
-				action->setIcon(APPLICATION->getThemedIcon("noaccount"));
+				action->setIcon(QIcon::fromTheme("noaccount"));
 			}
 			connect(action, &QAction::triggered, this,
 						[this, account] {
@@ -1247,6 +1254,33 @@ void MainWindow::notificationsChanged()
 	APPLICATION->globalSettings()->setShownNotifications(
 		intListToString(shownNotifications));
 	APPLICATION->globalSettings()->save();
+}
+
+void MainWindow::onCatToggled(bool state)
+{
+	setCatBackground(state);
+	APPLICATION->globalSettings()->setTheCat(state);
+	APPLICATION->globalSettings()->save();
+}
+
+void MainWindow::setCatBackground(bool enabled)
+{
+	if (enabled) {
+		QString catPath = APPLICATION->themeManager()->getCatPack();
+		view->setStyleSheet(QString(R"(
+InstanceView
+{
+    background-image: url(%1);
+    background-attachment: fixed;
+    background-clip: padding;
+    background-position: top right;
+    background-repeat: none;
+    background-color:palette(base);
+})")
+								.arg(catPath));
+	} else {
+		view->setStyleSheet(QString());
+	}
 }
 
 void MainWindow::runModalTask(Task* task)
@@ -1518,14 +1552,17 @@ void MainWindow::on_actionViewSkinsFolder_triggered()
 
 void MainWindow::on_actionViewIconThemeFolder_triggered()
 {
-	QDir().mkpath(ThemedIcons::userDirectory());
-	DesktopServices::openDirectory(ThemedIcons::userDirectory(), true);
+	DesktopServices::openDirectory(APPLICATION->themeManager()->getIconThemesFolder().path(), true);
 }
 
-void MainWindow::on_actionViewColorSchemeFolder_triggered()
+void MainWindow::on_actionViewWidgetThemeFolder_triggered()
 {
-	QDir().mkpath(ColorSchemes::userDirectory());
-	DesktopServices::openDirectory(ColorSchemes::userDirectory(), true);
+	DesktopServices::openDirectory(APPLICATION->themeManager()->getApplicationThemesFolder().path(), true);
+}
+
+void MainWindow::on_actionViewCatPackFolder_triggered()
+{
+	DesktopServices::openDirectory(APPLICATION->themeManager()->getCatPacksFolder().path(), true);
 }
 
 void MainWindow::on_actionViewIconsFolder_triggered()
@@ -1623,10 +1660,7 @@ void MainWindow::on_actionManageAccounts_triggered()
 
 void MainWindow::on_actionReportBug_triggered()
 {
-	// Shows the application, its version and the system, and sends the user
-	// to the tracker the KAboutData names (BuildConfig.BUG_TRACKER_URL).
-	KBugReport dialog(KAboutData::applicationData(), this);
-	dialog.exec();
+	DesktopServices::openUrl(QUrl(BuildConfig.BUG_TRACKER_URL));
 }
 
 void MainWindow::on_actionPatreon_triggered()
