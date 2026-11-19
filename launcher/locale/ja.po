@@ -9,11 +9,11 @@ msgstr ""
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: ja\n"
 "X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
-"X-Crowdin-File-ID: 95\n"
+"X-Crowdin-File-ID: 101\n"
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
-"PO-Revision-Date: 2026-10-28 22:15\n"
+"PO-Revision-Date: 2026-11-19 13:44\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -632,7 +632,7 @@ msgstr "キャンセル"
 #: launcher/plugin/plugins/staging/ErrorOracle/AnalysisPage.cpp:319
 msgctxt "AnalysisPage|"
 msgid "ErrorOracle"
-msgstr "ErrorOracle"
+msgstr ""
 
 #: launcher/plugin/plugins/staging/ErrorOracle/AnalysisPage.cpp:292
 msgctxt "AnalysisPage|"
@@ -861,7 +861,7 @@ msgstr "版次情報一覧の読込・受信に失敗しました!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr "ATLauncher"
+msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
@@ -999,7 +999,7 @@ msgstr "バックアップを復元しています..."
 #: launcher/ui/pages/instance/BackupPage.cpp:173
 msgctxt "BackupPage|"
 msgid "Restore Complete"
-msgstr "Restore Complete"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:174
 msgctxt "BackupPage|"
@@ -1124,7 +1124,7 @@ msgstr "性能解析器が中止されました"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 msgctxt "BlockedModsDialog|"
@@ -1266,7 +1266,7 @@ msgstr "Loader"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:264
 msgctxt "ContentFilterWidget|"
 msgid "NeoForge"
-msgstr "NeoForge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:265
 msgctxt "ContentFilterWidget|"
@@ -1286,17 +1286,17 @@ msgstr "キルト（キルト）"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:273
 msgctxt "ContentFilterWidget|"
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 msgctxt "ContentFilterWidget|"
 msgid "Babric"
-msgstr "Babric"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:275
 msgctxt "ContentFilterWidget|"
 msgid "BTA (Babric)"
-msgstr "BTA (Babric)"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:276
 msgctxt "ContentFilterWidget|"
@@ -1306,7 +1306,7 @@ msgstr "レガシーファブリック"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 msgctxt "ContentFilterWidget|"
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 msgctxt "ContentFilterWidget|"
@@ -1366,7 +1366,7 @@ msgstr "リリース"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:376
 msgctxt "ContentFilterWidget|"
 msgid "Beta"
-msgstr "Beta"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:377
 msgctxt "ContentFilterWidget|"
@@ -1429,7 +1429,7 @@ msgstr "作成者： %1"
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:592
 msgctxt "ContentProviderPage|"
 msgid " [installed]"
-msgstr " [installed]"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:599
 msgctxt "ContentProviderPage|"
@@ -1521,12 +1521,12 @@ msgstr ""
 #: launcher/crashreporter/CrashReportDialog.cpp:56
 msgctxt "CrashReportDialog|"
 msgid "QR Codes"
-msgstr "QR Codes"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:64
 msgctxt "CrashReportDialog|"
 msgid "[...truncated...]\n"
-msgstr "[...truncated...]\n"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:75
 #: launcher/crashreporter/CrashReportDialog.cpp:92
@@ -1689,7 +1689,7 @@ msgstr "%1 (使用中)"
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:192
 #, qt-format
@@ -1911,7 +1911,7 @@ msgstr "キャンセル"
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:328
 msgctxt "DownloadSummaryDialog|"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: launcher/ui/dialogs/EditAccountDialog.ui:14
 msgctxt "EditAccountDialog|"
@@ -1983,12 +1983,12 @@ msgstr "書式"
 #: launcher/ui/dialogs/ExportListDialog.cpp:99
 msgctxt "ExportListDialog|"
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:100
 msgctxt "ExportListDialog|"
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 msgctxt "ExportListDialog|"
@@ -1998,12 +1998,12 @@ msgstr "プレーンテキスト"
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 msgctxt "ExportListDialog|"
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 msgctxt "ExportListDialog|"
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 msgctxt "ExportListDialog|"
@@ -2051,7 +2051,7 @@ msgstr "著者"
 #: launcher/ui/dialogs/ExportListDialog.cpp:137
 msgctxt "ExportListDialog|"
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:134
 #: launcher/ui/dialogs/ExportListDialog.cpp:138
@@ -2113,7 +2113,7 @@ msgstr "バージョン(&V):"
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
@@ -2138,7 +2138,7 @@ msgstr "推奨メモリ(&L)："
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr " MiB"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
@@ -2163,7 +2163,7 @@ msgstr "CurseForge パックのエクスポート"
 #: launcher/ui/dialogs/ExportPackDialog.cpp:177
 msgctxt "ExportPackDialog|"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:178
 msgctxt "ExportPackDialog|"
@@ -2180,7 +2180,7 @@ msgstr "%1 をエクスポート"
 #: launcher/ui/dialogs/ExportPackDialog.cpp:230
 msgctxt "ExportPackDialog|"
 msgid "Modrinth pack"
-msgstr "Modrinth pack"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:246
 msgctxt "ExportPackDialog|"
@@ -2469,7 +2469,7 @@ msgstr " 作成者: "
 #: launcher/ui/pages/modplatform/flame/FlamePage.h:51
 msgctxt "FlamePage|"
 msgid "CurseForge"
-msgstr "CurseForge"
+msgstr ""
 
 #: launcher/minecraft/update/FoldersTask.cpp:34
 msgctxt "FoldersTask|"
@@ -2504,7 +2504,7 @@ msgstr "検索してフィルター..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
@@ -2585,12 +2585,12 @@ msgstr "ファイル"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
@@ -2658,13 +2658,13 @@ msgstr "作業ツリーをきれいにする"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr "Snapshot"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
@@ -2784,7 +2784,7 @@ msgstr "本機にある文件，まだは文件直接受信可能の連結 (情�
 #: launcher/ui/pages/modplatform/ImportPage.cpp:125
 msgctxt "ImportPage|"
 msgid "Modpack archives (*.zip *.mrpack);;Modrinth packs (*.mrpack);;Zip archives (*.zip);;All files (*)"
-msgstr "Modpack archives (*.zip *.mrpack);;Modrinth packs (*.mrpack);;Zip archives (*.zip);;All files (*)"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ImportPage.cpp:129
 msgctxt "ImportPage|"
@@ -2876,8 +2876,7 @@ msgstr "modpack アーカイブの検査"
 msgctxt "InstanceImportTask|"
 msgid "Modpack archive is missing or empty:\n"
 "%1"
-msgstr "Modpack archive is missing or empty:\n"
-"%1"
+msgstr ""
 
 #: launcher/InstanceImportTask.cpp:225 launcher/InstanceImportTask.cpp:381
 msgctxt "InstanceImportTask|"
@@ -3041,7 +3040,7 @@ msgstr "ダウンロードURLがないファイルをスキップしています
 #: launcher/InstanceImportTask.cpp:1421
 msgctxt "InstanceImportTask|"
 msgid "The Technic pack could not be processed."
-msgstr "The Technic pack could not be processed."
+msgstr ""
 
 #: launcher/InstanceImportTask.cpp:1671
 #, qt-format
@@ -3310,7 +3309,7 @@ msgstr "フォルダ (.minecraftからの相対):"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:552
 msgctxt "InstanceSettingsPage|"
 msgid "datapacks"
-msgstr "datapacks"
+msgstr ""
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:341
 msgctxt "InstanceSettingsPage|"
@@ -3885,7 +3884,7 @@ msgstr "参照"
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:137
 msgctxt "JavaWizardPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:138
 msgctxt "JavaWizardPage|"
@@ -4679,7 +4678,7 @@ msgstr "文件閲覧器で構成実例の格納用文件集を開きます。"
 #: launcher/ui/MainWindow.ui:317
 msgctxt "MainWindow|"
 msgid "Central Mods"
-msgstr "Central Mods"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:320
 msgctxt "MainWindow|"
@@ -4699,7 +4698,7 @@ msgstr "ファイルブラウザでスキンフォルダを開きます。"
 #: launcher/ui/MainWindow.ui:345
 msgctxt "MainWindow|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:348
 msgctxt "MainWindow|"
@@ -5033,17 +5032,17 @@ msgstr "選択したインスタンスをサポートする形式にエクスポ
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
-msgstr "Modrinth (mrpack)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr "CurseForge (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
@@ -5166,7 +5165,7 @@ msgstr "%1 または Minecraft についての手伝情報を見る。"
 #: launcher/ui/MainWindow.cpp:1150
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr "Profiles"
+msgstr ""
 
 #: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
 msgctxt "MainWindow|"
@@ -5473,7 +5472,7 @@ msgstr "Website: <a href=%1>%2</a>    | Pack ID: %3    | Version ID: %4"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:323
 msgctxt "ManagedPackPage|"
 msgid "URL:"
-msgstr "URL:"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:324
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:547
@@ -5543,7 +5542,7 @@ msgstr "\"%1\" は有効な http または https URL ではありません。"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:739
 msgctxt "ManagedPackPage|"
 msgid "Modrinth pack"
-msgstr "Modrinth pack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:742
 msgctxt "ManagedPackPage|"
@@ -5553,7 +5552,7 @@ msgstr "CurseForge パック"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:745
 msgctxt "ManagedPackPage|"
 msgid "Modpack"
-msgstr "Modpack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:750
 msgctxt "ManagedPackPage|"
@@ -5730,7 +5729,7 @@ msgstr "MeshMC ログ"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr "Reload"
+msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
@@ -6076,7 +6075,7 @@ msgstr "追加インスタンスフォルダ"
 #: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
-msgstr "Duplicate directory"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
@@ -6854,22 +6853,22 @@ msgstr "名前"
 #: launcher/minecraft/MinecraftInstance.cpp:865
 msgctxt "MinecraftInstance|"
 msgid "<SESSION ID>"
-msgstr "<SESSION ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:867
 msgctxt "MinecraftInstance|"
 msgid "<ACCESS TOKEN>"
-msgstr "<ACCESS TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:869
 msgctxt "MinecraftInstance|"
 msgid "<CLIENT TOKEN>"
-msgstr "<CLIENT TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
 msgid "<PROFILE ID>"
-msgstr "<PROFILE ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:946
 msgctxt "MinecraftInstance|"
@@ -6880,7 +6879,7 @@ msgstr "破損"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -7187,7 +7186,7 @@ msgstr "%1 を選択"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr "No Mod Loader"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
@@ -7364,7 +7363,7 @@ msgstr "%1 modは新しい互換性のあるバージョンを持っています
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
@@ -7438,7 +7437,7 @@ msgstr "ファイルのコピーに失敗しました"
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:208
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Installing modpack"
+msgstr ""
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
@@ -8108,7 +8107,7 @@ msgstr "スキップ"
 #, qt-format
 msgctxt "ProjectItemDelegate|"
 msgid "%1 [installed]"
-msgstr "%1 [installed]"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:42
 msgctxt "ProxyPage|"
@@ -8138,7 +8137,7 @@ msgstr "なし"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 msgctxt "ProxyPage|"
 msgid "SOC&KS5"
-msgstr "SOC&KS5"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 msgctxt "ProxyPage|"
@@ -8526,25 +8525,25 @@ msgstr "最新でソート"
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 B"
-msgstr "%1 B"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:14
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 KiB"
-msgstr "%1 KiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:17
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 MiB"
-msgstr "%1 MiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:19
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 GiB"
-msgstr "%1 GiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.h:32
 msgctxt "QObject|"
@@ -8554,7 +8553,7 @@ msgstr "バージョン履歴"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Git Versioning"
-msgstr "Git Versioning"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:133
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:234
@@ -8570,7 +8569,7 @@ msgstr "JVM 起動直前にインスタンスの Git 履歴に保留中の変更
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:143
 msgctxt "QObject|"
 msgid "<i>git is not installed — version history disabled.</i>"
-msgstr "<i>git is not installed — version history disabled.</i>"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:228
 msgctxt "QObject|"
@@ -8697,7 +8696,7 @@ msgstr "OptimusラップトップでNVIDIAディスクリートGPUを使用す�
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.h:40
 msgctxt "QObject|"
 msgid "Offline Wiki"
-msgstr "Offline Wiki"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:303
 msgctxt "QObject|"
@@ -8818,7 +8817,7 @@ msgstr "削除する"
 #: launcher/ui/dialogs/PluginsDialog.cpp:45
 msgctxt "QObject|"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:47
 msgctxt "QObject|"
@@ -8978,17 +8977,17 @@ msgstr "鮮やかなフュージョンベースのテーマと緑のアクセン
 #: launcher/ui/themes/SystemTheme.cpp:70
 msgctxt "QObject|"
 msgid "Windows Vista"
-msgstr "Windows Vista"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:72
 msgctxt "QObject|"
 msgid "Windows 9x"
-msgstr "Windows 9x"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:74
 msgctxt "QObject|"
 msgid "Windows 11"
-msgstr "Windows 11"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:76
 msgctxt "QObject|"
@@ -9030,7 +9029,7 @@ msgstr "デフォルト"
 #: launcher/ui/themes/ThemeManager.cpp:394
 msgctxt "QObject|"
 msgid "Simple (Dark Icons)"
-msgstr "Simple (Dark Icons)"
+msgstr ""
 
 #: launcher/ui/themes/ThemeManager.cpp:395
 #: launcher/ui/themes/ThemeManager.cpp:396
@@ -9042,7 +9041,7 @@ msgstr "シンプル（ライトアイコン）"
 #: launcher/ui/themes/ThemeManager.cpp:398
 msgctxt "QObject|"
 msgid "Simple (Blue Icons)"
-msgstr "Simple (Blue Icons)"
+msgstr ""
 
 #: launcher/ui/themes/ThemeManager.cpp:399
 #: launcher/ui/themes/ThemeManager.cpp:400
@@ -9069,12 +9068,12 @@ msgstr "フラット（暗い）"
 #: launcher/ui/themes/ThemeManager.cpp:407
 msgctxt "QObject|"
 msgid "Breeze (Dark)"
-msgstr "Breeze (Dark)"
+msgstr ""
 
 #: launcher/ui/themes/ThemeManager.cpp:409
 msgctxt "QObject|"
 msgid "Breeze (Light)"
-msgstr "Breeze (Light)"
+msgstr ""
 
 #: launcher/ui/themes/ThemeManager.cpp:463
 msgctxt "QObject|"
@@ -10473,7 +10472,7 @@ msgstr "版次"
 #: launcher/VersionProxyModel.cpp:108
 msgctxt "VersionProxyModel|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:110
 msgctxt "VersionProxyModel|"
@@ -10668,7 +10667,7 @@ msgstr "削除"
 #: launcher/ui/pages/instance/WorldListPage.ui:117
 msgctxt "WorldListPage|"
 msgid "MCEdit"
-msgstr "MCEdit"
+msgstr ""
 
 #: launcher/ui/pages/instance/WorldListPage.ui:122
 msgctxt "WorldListPage|"

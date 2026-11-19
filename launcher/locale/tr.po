@@ -9,11 +9,11 @@ msgstr ""
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: tr\n"
 "X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
-"X-Crowdin-File-ID: 95\n"
+"X-Crowdin-File-ID: 101\n"
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2026-10-29 10:04\n"
+"PO-Revision-Date: 2026-11-19 13:44\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -141,7 +141,7 @@ msgstr "<html><head/><body><p>Tek seferde Minecraft'ın birden fazla profiline s
 #: launcher/ui/dialogs/AboutDialog.ui:173
 msgctxt "AboutDialog|"
 msgid "Platform:"
-msgstr "Platform:"
+msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.ui:189
 msgctxt "AboutDialog|"
@@ -196,7 +196,7 @@ msgstr "MeshMC Hakkında"
 #: launcher/ui/dialogs/AboutDialog.cpp:89
 msgctxt "AboutDialog|"
 msgid "Platform"
-msgstr "Platform"
+msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.cpp:96
 #, qt-format
@@ -501,7 +501,7 @@ msgstr "Kimlik doğrulama başarısız. Hesap artık yok."
 #: launcher/minecraft/auth/AccountTask.cpp:57
 msgctxt "AccountTask|"
 msgid "..."
-msgstr "..."
+msgstr ""
 
 #: launcher/minecraft/auth/AccountTask.cpp:105
 #, qt-format
@@ -635,7 +635,7 @@ msgstr "İptal et"
 #: launcher/plugin/plugins/staging/ErrorOracle/AnalysisPage.cpp:319
 msgctxt "AnalysisPage|"
 msgid "ErrorOracle"
-msgstr "ErrorOracle"
+msgstr ""
 
 #: launcher/plugin/plugins/staging/ErrorOracle/AnalysisPage.cpp:292
 msgctxt "AnalysisPage|"
@@ -880,7 +880,7 @@ msgstr "Sürüm listesi yüklenemedi veya indirilemedi!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr "ATLauncher"
+msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
@@ -1143,7 +1143,7 @@ msgstr "Profilleyici iptal edildi"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 msgctxt "BlockedModsDialog|"
@@ -1285,37 +1285,37 @@ msgstr "Yükleyiciler"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:264
 msgctxt "ContentFilterWidget|"
 msgid "NeoForge"
-msgstr "NeoForge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:265
 msgctxt "ContentFilterWidget|"
 msgid "Forge"
-msgstr "Forge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:266
 msgctxt "ContentFilterWidget|"
 msgid "Fabric"
-msgstr "Fabric"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:267
 msgctxt "ContentFilterWidget|"
 msgid "Quilt"
-msgstr "Quilt"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:273
 msgctxt "ContentFilterWidget|"
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 msgctxt "ContentFilterWidget|"
 msgid "Babric"
-msgstr "Babric"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:275
 msgctxt "ContentFilterWidget|"
 msgid "BTA (Babric)"
-msgstr "BTA (Babric)"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:276
 msgctxt "ContentFilterWidget|"
@@ -1325,12 +1325,12 @@ msgstr "Eski Fabric"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 msgctxt "ContentFilterWidget|"
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 msgctxt "ContentFilterWidget|"
 msgid "Rift"
-msgstr "Rift"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:309
 msgctxt "ContentFilterWidget|"
@@ -1385,12 +1385,12 @@ msgstr "Sürüm"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:376
 msgctxt "ContentFilterWidget|"
 msgid "Beta"
-msgstr "Beta"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:377
 msgctxt "ContentFilterWidget|"
 msgid "Alpha"
-msgstr "Alpha"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:382
 msgctxt "ContentFilterWidget|"
@@ -1426,7 +1426,7 @@ msgstr "Yeniden kur"
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:339
 msgctxt "ContentProviderPage|"
 msgid "Ctrl+Return"
-msgstr "Ctrl+Return"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:347
 msgctxt "ContentProviderPage|"
@@ -1710,7 +1710,7 @@ msgstr "%1 (kullanımda)"
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:192
 #, qt-format
@@ -1825,7 +1825,7 @@ msgstr "Bu pencereyi kapatın ve herhangi bir şey indirilmeden önce seçtiğin
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:123
 msgctxt "DownloadContentDialog|"
 msgid "Ctrl+Return"
-msgstr "Ctrl+Return"
+msgstr ""
 
 #: launcher/ui/dialogs/DownloadContentDialog.cpp:237
 #, qt-format
@@ -2000,17 +2000,17 @@ msgstr "Ayarlar"
 #: launcher/ui/dialogs/ExportListDialog.cpp:97
 msgctxt "ExportListDialog|"
 msgid "Format"
-msgstr "Format"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:99
 msgctxt "ExportListDialog|"
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:100
 msgctxt "ExportListDialog|"
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 msgctxt "ExportListDialog|"
@@ -2020,12 +2020,12 @@ msgstr "Düz metin"
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 msgctxt "ExportListDialog|"
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 msgctxt "ExportListDialog|"
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 msgctxt "ExportListDialog|"
@@ -2073,7 +2073,7 @@ msgstr "Yazarlar"
 #: launcher/ui/dialogs/ExportListDialog.cpp:137
 msgctxt "ExportListDialog|"
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:134
 #: launcher/ui/dialogs/ExportListDialog.cpp:138
@@ -2135,7 +2135,7 @@ msgstr "&Sürüm:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
@@ -2160,7 +2160,7 @@ msgstr "&Önerilen Bellek:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr " MiB"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
@@ -2491,7 +2491,7 @@ msgstr " tarafından "
 #: launcher/ui/pages/modplatform/flame/FlamePage.h:51
 msgctxt "FlamePage|"
 msgid "CurseForge"
-msgstr "CurseForge"
+msgstr ""
 
 #: launcher/minecraft/update/FoldersTask.cpp:34
 msgctxt "FoldersTask|"
@@ -2526,7 +2526,7 @@ msgstr "Ara ve filtrele ..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
@@ -2607,12 +2607,12 @@ msgstr "Dosyalar"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
@@ -2663,7 +2663,7 @@ msgstr "Henüz sürüm geçmişi yok. Bu profildeki değişiklikleri izlemeye ba
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "HEAD: <b>%1</b>"
-msgstr "HEAD: <b>%1</b>"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:136
 #, qt-format
@@ -2680,7 +2680,7 @@ msgstr "Temiz çalışma ağacı"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
@@ -3169,7 +3169,7 @@ msgstr "Gözat..."
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:84
 msgctxt "InstanceSettingsPage|"
 msgid "Test"
-msgstr "Test"
+msgstr ""
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:97
 msgctxt "InstanceSettingsPage|"
@@ -3857,7 +3857,7 @@ msgstr "Bu Java kurulumunu kaldırmak istediğinizden emin misiniz?\n\n"
 #: launcher/ui/pages/global/JavaPage.h:47
 msgctxt "JavaPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:175
 msgctxt "JavaSettingsWidget|"
@@ -3918,7 +3918,7 @@ msgstr "Gözat"
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:137
 msgctxt "JavaWizardPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:138
 msgctxt "JavaWizardPage|"
@@ -4736,7 +4736,7 @@ msgstr "Dosya gezgininde skins klasörünü açın."
 #: launcher/ui/MainWindow.ui:345
 msgctxt "MainWindow|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:348
 msgctxt "MainWindow|"
@@ -4929,7 +4929,7 @@ msgstr "Çalışan profili durdur."
 #: launcher/ui/MainWindow.ui:606
 msgctxt "MainWindow|"
 msgid "Ctrl+K"
-msgstr "Ctrl+K"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:617 launcher/ui/MainWindow.cpp:944
 msgctxt "MainWindow|"
@@ -5070,17 +5070,17 @@ msgstr "Seçili örneği desteklenen biçimlere dışa aktarın."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
-msgstr "Modrinth (mrpack)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr "CurseForge (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
@@ -5126,7 +5126,7 @@ msgstr "%1'ye sorun bildirmek için hata izleyiciyi aç."
 #: launcher/ui/MainWindow.ui:891
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr "Discord"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:894
 #, qt-format
@@ -5137,7 +5137,7 @@ msgstr "%1 discord sesli konuşmasını aç."
 #: launcher/ui/MainWindow.ui:905
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr "Reddit"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:908
 #, qt-format
@@ -5512,7 +5512,7 @@ msgstr "Web sitesi: <a href=%1>%2</a>    | Paket Kimliği: %3    | Sürüm Kimli
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:323
 msgctxt "ManagedPackPage|"
 msgid "URL:"
-msgstr "URL:"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:324
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:547
@@ -5720,8 +5720,7 @@ msgstr "Güncelleme denetimi çalıştırılırken bir hata oluştu."
 msgctxt "MeshMCExternalUpdater|"
 msgid "StdOut: %1\n"
 "StdErr: %2"
-msgstr "StdOut: %1\n"
-"StdErr: %2"
+msgstr ""
 
 #: launcher/updater/MeshMCExternalUpdater.cpp:347
 msgctxt "MeshMCExternalUpdater|"
@@ -5952,7 +5951,7 @@ msgstr "&Skinler:"
 #: launcher/ui/pages/global/MeshMCPage.ui:211
 msgctxt "MeshMCPage|"
 msgid "&Java:"
-msgstr "&Java:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:228
 msgctxt "MeshMCPage|"
@@ -6944,22 +6943,22 @@ msgstr "İsim"
 #: launcher/minecraft/MinecraftInstance.cpp:865
 msgctxt "MinecraftInstance|"
 msgid "<SESSION ID>"
-msgstr "<SESSION ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:867
 msgctxt "MinecraftInstance|"
 msgid "<ACCESS TOKEN>"
-msgstr "<ACCESS TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:869
 msgctxt "MinecraftInstance|"
 msgid "<CLIENT TOKEN>"
-msgstr "<CLIENT TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
 msgid "<PROFILE ID>"
-msgstr "<PROFILE ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:946
 msgctxt "MinecraftInstance|"
@@ -6970,7 +6969,7 @@ msgstr "bozuk"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -7047,7 +7046,7 @@ msgstr "Profillerde oynanan süreyi kaydet"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
@@ -7455,7 +7454,7 @@ msgstr "%1 modun daha yeni, uyumlu sürümleri mevcut. Güncellemek istediklerin
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
@@ -7574,7 +7573,7 @@ msgstr " tarafından "
 #: launcher/ui/pages/modplatform/modrinth/ModrinthPage.h:50
 msgctxt "ModrinthPage|"
 msgid "Modrinth"
-msgstr "Modrinth"
+msgstr ""
 
 #: launcher/net/NetJob.cpp:62
 #, qt-format
@@ -7615,7 +7614,7 @@ msgstr "İsim"
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 msgctxt "NewComponentDialog|"
 msgid "uid"
-msgstr "uid"
+msgstr ""
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:17
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:163
@@ -7702,7 +7701,7 @@ msgstr "Resmi"
 #, qt-format
 msgctxt "NewsViewerDialog|"
 msgid "Feed %1"
-msgstr "Feed %1"
+msgstr ""
 
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:155
 #: launcher/ui/dialogs/NewsViewerDialog.cpp:162

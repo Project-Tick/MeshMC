@@ -9,11 +9,11 @@ msgstr ""
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: ro\n"
 "X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
-"X-Crowdin-File-ID: 95\n"
+"X-Crowdin-File-ID: 101\n"
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
-"PO-Revision-Date: 2026-10-28 22:14\n"
+"PO-Revision-Date: 2026-11-19 13:43\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -202,7 +202,7 @@ msgstr "Platformă"
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Commit: %1"
-msgstr "Commit: %1"
+msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.cpp:102
 #, qt-format
@@ -237,12 +237,12 @@ msgstr "Nebifat"
 #: launcher/minecraft/auth/AccountList.cpp:338
 msgctxt "AccountList|Account status"
 msgid "Offline"
-msgstr "Offline"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:341
 msgctxt "AccountList|Account status"
 msgid "Online"
-msgstr "Online"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:344
 msgctxt "AccountList|Account status"
@@ -277,7 +277,7 @@ msgstr "Tip"
 #: launcher/minecraft/auth/AccountList.cpp:394
 msgctxt "AccountList|"
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:396
 msgctxt "AccountList|"
@@ -501,7 +501,7 @@ msgstr "Autentificare eșuată. Contul nu mai există."
 #: launcher/minecraft/auth/AccountTask.cpp:57
 msgctxt "AccountTask|"
 msgid "..."
-msgstr "..."
+msgstr ""
 
 #: launcher/minecraft/auth/AccountTask.cpp:105
 #, qt-format
@@ -864,7 +864,7 @@ msgstr "Nu s-a putut încărca sau descărca listele de versiuni!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr "ATLauncher"
+msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
@@ -1004,7 +1004,7 @@ msgstr "Restaurare backup..."
 #: launcher/ui/pages/instance/BackupPage.cpp:173
 msgctxt "BackupPage|"
 msgid "Restore Complete"
-msgstr "Restore Complete"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:174
 msgctxt "BackupPage|"
@@ -1129,7 +1129,7 @@ msgstr "Profiler anulat"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 msgctxt "BlockedModsDialog|"
@@ -1291,17 +1291,17 @@ msgstr "Cilindru"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:273
 msgctxt "ContentFilterWidget|"
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 msgctxt "ContentFilterWidget|"
 msgid "Babric"
-msgstr "Babric"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:275
 msgctxt "ContentFilterWidget|"
 msgid "BTA (Babric)"
-msgstr "BTA (Babric)"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:276
 msgctxt "ContentFilterWidget|"
@@ -1311,7 +1311,7 @@ msgstr "Țesătură moștenită"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 msgctxt "ContentFilterWidget|"
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 msgctxt "ContentFilterWidget|"
@@ -1331,12 +1331,12 @@ msgstr "Medii"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:334
 msgctxt "ContentFilterWidget|"
 msgid "Client"
-msgstr "Client"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:335
 msgctxt "ContentFilterWidget|"
 msgid "Server"
-msgstr "Server"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:349
 msgctxt "ContentFilterWidget|"
@@ -1371,7 +1371,7 @@ msgstr "Eliberează"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:376
 msgctxt "ContentFilterWidget|"
 msgid "Beta"
-msgstr "Beta"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:377
 msgctxt "ContentFilterWidget|"
@@ -1434,7 +1434,7 @@ msgstr "de %1"
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:592
 msgctxt "ContentProviderPage|"
 msgid " [installed]"
-msgstr " [installed]"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:599
 msgctxt "ContentProviderPage|"
@@ -1527,12 +1527,12 @@ msgstr "<h2 style='color: #cc0000;'>MeshMC a eșuat</h2><p>A apărut o eroare ne
 #: launcher/crashreporter/CrashReportDialog.cpp:56
 msgctxt "CrashReportDialog|"
 msgid "QR Codes"
-msgstr "QR Codes"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:64
 msgctxt "CrashReportDialog|"
 msgid "[...truncated...]\n"
-msgstr "[...truncated...]\n"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:75
 #: launcher/crashreporter/CrashReportDialog.cpp:92
@@ -1695,7 +1695,7 @@ msgstr "%1 (în uz)"
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:192
 #, qt-format
@@ -1716,7 +1716,7 @@ msgstr "lume"
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:221
 msgctxt "CreateShortcutDialog|"
 msgid "server"
-msgstr "server"
+msgstr ""
 
 #: launcher/ui/widgets/CustomCommands.ui:32
 msgctxt "CustomCommands|"
@@ -1985,17 +1985,17 @@ msgstr "Setări"
 #: launcher/ui/dialogs/ExportListDialog.cpp:97
 msgctxt "ExportListDialog|"
 msgid "Format"
-msgstr "Format"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:99
 msgctxt "ExportListDialog|"
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:100
 msgctxt "ExportListDialog|"
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 msgctxt "ExportListDialog|"
@@ -2005,12 +2005,12 @@ msgstr "Urmatorul text"
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 msgctxt "ExportListDialog|"
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 msgctxt "ExportListDialog|"
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 msgctxt "ExportListDialog|"
@@ -2058,7 +2058,7 @@ msgstr "Autori"
 #: launcher/ui/dialogs/ExportListDialog.cpp:137
 msgctxt "ExportListDialog|"
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:134
 #: launcher/ui/dialogs/ExportListDialog.cpp:138
@@ -2120,7 +2120,7 @@ msgstr "&Versiune:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
@@ -2476,7 +2476,7 @@ msgstr " de "
 #: launcher/ui/pages/modplatform/flame/FlamePage.h:51
 msgctxt "FlamePage|"
 msgid "CurseForge"
-msgstr "CurseForge"
+msgstr ""
 
 #: launcher/minecraft/update/FoldersTask.cpp:34
 msgctxt "FoldersTask|"
@@ -2511,7 +2511,7 @@ msgstr "Căutare și filtrare..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
@@ -2546,7 +2546,7 @@ msgstr "Aventură"
 #: launcher/minecraft/World.cpp:70
 msgctxt "GameType|"
 msgid "Spectator"
-msgstr "Spectator"
+msgstr ""
 
 #: launcher/minecraft/World.cpp:75
 #, qt-format
@@ -2592,12 +2592,12 @@ msgstr "Fișiere"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
@@ -2665,13 +2665,13 @@ msgstr "Curăță arborele de lucru"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr "Snapshot"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
@@ -3842,7 +3842,7 @@ msgstr "Sigur doriți să eliminați această instalare Java?\n\n"
 #: launcher/ui/pages/global/JavaPage.h:47
 msgctxt "JavaPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:175
 msgctxt "JavaSettingsWidget|"
@@ -3900,7 +3900,7 @@ msgstr "Răsfoiește"
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:137
 msgctxt "JavaWizardPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:138
 msgctxt "JavaWizardPage|"
@@ -4305,7 +4305,7 @@ msgstr "Esti sigur ca vrei sa stergi modpackul %1?"
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.h:59
 msgctxt "LegacyFTB::Page|"
 msgid "FTB Legacy"
-msgstr "FTB Legacy"
+msgstr ""
 
 #: launcher/minecraft/legacy/LegacyInstance.cpp:218
 msgctxt "LegacyInstance|"
@@ -4718,7 +4718,7 @@ msgstr "Deschide dosarul skin-urilor într-un browser de fișiere."
 #: launcher/ui/MainWindow.ui:345
 msgctxt "MainWindow|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:348
 msgctxt "MainWindow|"
@@ -5052,17 +5052,17 @@ msgstr "Exportă instanța selectată în formate acceptate."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
-msgstr "Modrinth (mrpack)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr "CurseForge (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
@@ -5108,7 +5108,7 @@ msgstr "Deschide tracker-ul de erori pentru a raporta o eroare cu %1."
 #: launcher/ui/MainWindow.ui:891
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr "Discord"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:894
 #, qt-format
@@ -5119,7 +5119,7 @@ msgstr "Deschide %1 chat-ul vocal de pe Discord."
 #: launcher/ui/MainWindow.ui:905
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr "Reddit"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:908
 #, qt-format
@@ -5185,7 +5185,7 @@ msgstr "Obține ajutor cu %1 sau cu Minecraft."
 #: launcher/ui/MainWindow.cpp:1150
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr "Profiles"
+msgstr ""
 
 #: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
 msgctxt "MainWindow|"
@@ -5496,7 +5496,7 @@ msgstr "Site web: <a href=%1>%2</a>    <unk> ID Pachet: %3    <unk> Versiune ID:
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:323
 msgctxt "ManagedPackPage|"
 msgid "URL:"
-msgstr "URL:"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:324
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:547
@@ -5526,7 +5526,7 @@ msgstr "Se preiau schimbările..."
 #, qt-format
 msgctxt "ManagedPackPage|"
 msgid "%1 (Current)"
-msgstr "%1 (Current)"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:553
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:669
@@ -5579,7 +5579,7 @@ msgstr "Pachet CurseForge"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:745
 msgctxt "ManagedPackPage|"
 msgid "Modpack"
-msgstr "Modpack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:750
 msgctxt "ManagedPackPage|"
@@ -5758,7 +5758,7 @@ msgstr "Eșuări de MeshMC"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr "Reload"
+msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
@@ -5931,7 +5931,7 @@ msgstr "&Interfețe:"
 #: launcher/ui/pages/global/MeshMCPage.ui:211
 msgctxt "MeshMCPage|"
 msgid "&Java:"
-msgstr "&Java:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:228
 msgctxt "MeshMCPage|"
@@ -6104,7 +6104,7 @@ msgstr "Dosar Adițional Instanță"
 #: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
-msgstr "Duplicate directory"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
@@ -6897,7 +6897,7 @@ msgstr "<TOKENUL CLIENTULUI>"
 #: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
 msgid "<PROFILE ID>"
-msgstr "<PROFILE ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:946
 msgctxt "MinecraftInstance|"
@@ -6908,7 +6908,7 @@ msgstr "stricat"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -6985,7 +6985,7 @@ msgstr "Înregistrează timpul jucat pe instanțe"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
@@ -7215,7 +7215,7 @@ msgstr "Selectează %1"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr "No Mod Loader"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
@@ -7393,7 +7393,7 @@ msgstr "%1 mod(s) are versiuni compatibile. Bifați pe cele pe care doriți să 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
@@ -7467,7 +7467,7 @@ msgstr "Copierea fișierelor a eșuat"
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:208
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Installing modpack"
+msgstr ""
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
@@ -7553,7 +7553,7 @@ msgstr "Nume"
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 msgctxt "NewComponentDialog|"
 msgid "uid"
-msgstr "uid"
+msgstr ""
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:17
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:163
@@ -7933,7 +7933,7 @@ msgstr "Semnătura"
 #: launcher/ui/dialogs/PluginsDialog.ui:111
 msgctxt "PluginsDialog|"
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:211
 msgctxt "PluginsDialog|"
@@ -8140,7 +8140,7 @@ msgstr "Omiteți"
 #, qt-format
 msgctxt "ProjectItemDelegate|"
 msgid "%1 [installed]"
-msgstr "%1 [installed]"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:42
 msgctxt "ProxyPage|"
@@ -8170,12 +8170,12 @@ msgstr "&Niciunul"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 msgctxt "ProxyPage|"
 msgid "SOC&KS5"
-msgstr "SOC&KS5"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 msgctxt "ProxyPage|"
 msgid "H&TTP"
-msgstr "H&TTP"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:107
 msgctxt "ProxyPage|"
@@ -8205,7 +8205,7 @@ msgstr "Notă: Numele de utilizator și parola proxy sunt stocate în text simpl
 #: launcher/ui/pages/global/ProxyPage.h:44
 msgctxt "ProxyPage|"
 msgid "Proxy"
-msgstr "Proxy"
+msgstr ""
 
 #: launcher/InstanceImportTask.cpp:1806
 msgctxt "QObject|"
@@ -8280,19 +8280,19 @@ msgstr "Fișierul binar java specificat nu a funcționat.<br />Ar trebui să fol
 #, qt-format
 msgctxt "QObject|"
 msgid "%1m %2s"
-msgstr "%1m %2s"
+msgstr ""
 
 #: launcher/MMCTime.cpp:38
 #, qt-format
 msgctxt "QObject|"
 msgid "%1h %2m"
-msgstr "%1h %2m"
+msgstr ""
 
 #: launcher/MMCTime.cpp:40
 #, qt-format
 msgctxt "QObject|"
 msgid "%1d %2h %3m"
-msgstr "%1d %2h %3m"
+msgstr ""
 
 #: launcher/backup/BackupManager.cpp:108
 msgctxt "QObject|"
@@ -8560,13 +8560,13 @@ msgstr "Sortează după cele mai noi"
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 B"
-msgstr "%1 B"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:14
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 KiB"
-msgstr "%1 KiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:17
 #, qt-format
@@ -8578,7 +8578,7 @@ msgstr "%1 Mio"
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 GiB"
-msgstr "%1 GiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.h:32
 msgctxt "QObject|"
@@ -8588,7 +8588,7 @@ msgstr "Istoricul versiunilor"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Git Versioning"
-msgstr "Git Versioning"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:133
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:234
@@ -8740,7 +8740,7 @@ msgstr "Forțează Minecraft să folosească NVIDIA discret GPU pe Optimus lapto
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.h:40
 msgctxt "QObject|"
 msgid "Offline Wiki"
-msgstr "Offline Wiki"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:303
 msgctxt "QObject|"
@@ -9022,17 +9022,17 @@ msgstr "O temă strălucitoare bazată pe fuziune cu accente verzi"
 #: launcher/ui/themes/SystemTheme.cpp:70
 msgctxt "QObject|"
 msgid "Windows Vista"
-msgstr "Windows Vista"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:72
 msgctxt "QObject|"
 msgid "Windows 9x"
-msgstr "Windows 9x"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:74
 msgctxt "QObject|"
 msgid "Windows 11"
-msgstr "Windows 11"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:76
 msgctxt "QObject|"
@@ -10095,12 +10095,12 @@ msgstr "Capturi Vechi"
 #: launcher/ui/pages/modplatform/VanillaPage.ui:84
 msgctxt "VanillaPage|"
 msgid "Betas"
-msgstr "Betas"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:94
 msgctxt "VanillaPage|"
 msgid "Alphas"
-msgstr "Alphas"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:104
 msgctxt "VanillaPage|"
@@ -10115,7 +10115,7 @@ msgstr "Reîncarcă"
 #: launcher/ui/pages/modplatform/VanillaPage.h:45
 msgctxt "VanillaPage|"
 msgid "Vanilla"
-msgstr "Vanilla"
+msgstr ""
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:158
 #, qt-format
@@ -10517,7 +10517,7 @@ msgstr "Versiune"
 #: launcher/VersionProxyModel.cpp:108
 msgctxt "VersionProxyModel|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:110
 msgctxt "VersionProxyModel|"
@@ -10712,7 +10712,7 @@ msgstr "Eliminaţi"
 #: launcher/ui/pages/instance/WorldListPage.ui:117
 msgctxt "WorldListPage|"
 msgid "MCEdit"
-msgstr "MCEdit"
+msgstr ""
 
 #: launcher/ui/pages/instance/WorldListPage.ui:122
 msgctxt "WorldListPage|"

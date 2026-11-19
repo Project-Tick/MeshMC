@@ -9,11 +9,11 @@ msgstr ""
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: cs\n"
 "X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
-"X-Crowdin-File-ID: 95\n"
+"X-Crowdin-File-ID: 101\n"
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
-"PO-Revision-Date: 2026-10-28 22:14\n"
+"PO-Revision-Date: 2026-11-19 13:43\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -202,7 +202,7 @@ msgstr "Platforma"
 #, qt-format
 msgctxt "AboutDialog|"
 msgid "Commit: %1"
-msgstr "Commit: %1"
+msgstr ""
 
 #: launcher/ui/dialogs/AboutDialog.cpp:102
 #, qt-format
@@ -237,12 +237,12 @@ msgstr "Nezaškrtnuto"
 #: launcher/minecraft/auth/AccountList.cpp:338
 msgctxt "AccountList|Account status"
 msgid "Offline"
-msgstr "Offline"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:341
 msgctxt "AccountList|Account status"
 msgid "Online"
-msgstr "Online"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:344
 msgctxt "AccountList|Account status"
@@ -501,7 +501,7 @@ msgstr "Ověření se nezdařilo. Tento účet již neexistuje."
 #: launcher/minecraft/auth/AccountTask.cpp:57
 msgctxt "AccountTask|"
 msgid "..."
-msgstr "..."
+msgstr ""
 
 #: launcher/minecraft/auth/AccountTask.cpp:105
 #, qt-format
@@ -864,7 +864,7 @@ msgstr "Nelze načíst nebo stáhnout seznamy verzí!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr "ATLauncher"
+msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
@@ -1005,7 +1005,7 @@ msgstr "Obnovení zálohy..."
 #: launcher/ui/pages/instance/BackupPage.cpp:173
 msgctxt "BackupPage|"
 msgid "Restore Complete"
-msgstr "Restore Complete"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:174
 msgctxt "BackupPage|"
@@ -1130,7 +1130,7 @@ msgstr "Profiler přerušen"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 msgctxt "BlockedModsDialog|"
@@ -1272,12 +1272,12 @@ msgstr "Stroje a přístroje na zpracování sena a píce"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:264
 msgctxt "ContentFilterWidget|"
 msgid "NeoForge"
-msgstr "NeoForge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:265
 msgctxt "ContentFilterWidget|"
 msgid "Forge"
-msgstr "Forge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:266
 msgctxt "ContentFilterWidget|"
@@ -1292,7 +1292,7 @@ msgstr "Křepelka"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:273
 msgctxt "ContentFilterWidget|"
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 msgctxt "ContentFilterWidget|"
@@ -1312,7 +1312,7 @@ msgstr "Stará tkanina"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 msgctxt "ContentFilterWidget|"
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 msgctxt "ContentFilterWidget|"
@@ -1337,7 +1337,7 @@ msgstr "Zákazník"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:335
 msgctxt "ContentFilterWidget|"
 msgid "Server"
-msgstr "Server"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:349
 msgctxt "ContentFilterWidget|"
@@ -1372,7 +1372,7 @@ msgstr "Vydání"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:376
 msgctxt "ContentFilterWidget|"
 msgid "Beta"
-msgstr "Beta"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:377
 msgctxt "ContentFilterWidget|"
@@ -1435,7 +1435,7 @@ msgstr "od %1"
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:592
 msgctxt "ContentProviderPage|"
 msgid " [installed]"
-msgstr " [installed]"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:599
 msgctxt "ContentProviderPage|"
@@ -1528,12 +1528,12 @@ msgstr "<h2 style='color: #cc0000;'>MeshMC selhalo</h2><p>Došlo k neočekávan�
 #: launcher/crashreporter/CrashReportDialog.cpp:56
 msgctxt "CrashReportDialog|"
 msgid "QR Codes"
-msgstr "QR Codes"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:64
 msgctxt "CrashReportDialog|"
 msgid "[...truncated...]\n"
-msgstr "[...truncated...]\n"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:75
 #: launcher/crashreporter/CrashReportDialog.cpp:92
@@ -1696,18 +1696,18 @@ msgstr "%1 (používáno)"
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:192
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - Server %2"
-msgstr "%1 - Server %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:210
 msgctxt "CreateShortcutDialog|"
 msgid "instance"
-msgstr "instance"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:216
 msgctxt "CreateShortcutDialog|"
@@ -1717,7 +1717,7 @@ msgstr "svět"
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:221
 msgctxt "CreateShortcutDialog|"
 msgid "server"
-msgstr "server"
+msgstr ""
 
 #: launcher/ui/widgets/CustomCommands.ui:32
 msgctxt "CustomCommands|"
@@ -1919,7 +1919,7 @@ msgstr "Zrušit"
 #: launcher/ui/dialogs/DownloadSummaryDialog.cpp:328
 msgctxt "DownloadSummaryDialog|"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: launcher/ui/dialogs/EditAccountDialog.ui:14
 msgctxt "EditAccountDialog|"
@@ -1991,12 +1991,12 @@ msgstr "Formát"
 #: launcher/ui/dialogs/ExportListDialog.cpp:99
 msgctxt "ExportListDialog|"
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:100
 msgctxt "ExportListDialog|"
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 msgctxt "ExportListDialog|"
@@ -2006,12 +2006,12 @@ msgstr "Prostý text"
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 msgctxt "ExportListDialog|"
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 msgctxt "ExportListDialog|"
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 msgctxt "ExportListDialog|"
@@ -2059,7 +2059,7 @@ msgstr "Autoři"
 #: launcher/ui/dialogs/ExportListDialog.cpp:137
 msgctxt "ExportListDialog|"
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:134
 #: launcher/ui/dialogs/ExportListDialog.cpp:138
@@ -2121,7 +2121,7 @@ msgstr "Verze:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
@@ -2146,7 +2146,7 @@ msgstr "&Doporučená paměť:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr " MiB"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
@@ -2171,7 +2171,7 @@ msgstr "Exportovat CurseForge balíček"
 #: launcher/ui/dialogs/ExportPackDialog.cpp:177
 msgctxt "ExportPackDialog|"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.cpp:178
 msgctxt "ExportPackDialog|"
@@ -2291,7 +2291,7 @@ msgstr "Chyba při kontrolování instalace JProfiler:↵\n"
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:193
 msgctxt "ExternalToolsPage|"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: launcher/ui/pages/global/ExternalToolsPage.cpp:118
 msgctxt "ExternalToolsPage|"
@@ -2477,7 +2477,7 @@ msgstr " od "
 #: launcher/ui/pages/modplatform/flame/FlamePage.h:51
 msgctxt "FlamePage|"
 msgid "CurseForge"
-msgstr "CurseForge"
+msgstr ""
 
 #: launcher/minecraft/update/FoldersTask.cpp:34
 msgctxt "FoldersTask|"
@@ -2512,7 +2512,7 @@ msgstr "Hledat a filtrovat ..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
@@ -2593,12 +2593,12 @@ msgstr "Soubory"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
@@ -2666,13 +2666,13 @@ msgstr "Čistý pracovní strom"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr "Snapshot"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
@@ -3103,7 +3103,7 @@ msgstr "Spouštěč nemá žádný záznam o tom, které soubory nainstalovaná 
 #, qt-format
 msgctxt "InstanceList|"
 msgid "%1 Instance"
-msgstr "%1 Instance"
+msgstr ""
 
 #: launcher/InstanceList.cpp:1457
 #, qt-format
@@ -4305,7 +4305,7 @@ msgstr "Opravdu chcete smazat %1?"
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.h:59
 msgctxt "LegacyFTB::Page|"
 msgid "FTB Legacy"
-msgstr "FTB Legacy"
+msgstr ""
 
 #: launcher/minecraft/legacy/LegacyInstance.cpp:218
 msgctxt "LegacyInstance|"
@@ -4559,7 +4559,7 @@ msgstr "Nepodařilo se spustit místní HTTP server pro volání OAuth2."
 #: launcher/minecraft/auth/steps/MSAStep.cpp:141
 msgctxt "MSAStep|"
 msgid "Got MSA token."
-msgstr "Got MSA token."
+msgstr ""
 
 #: launcher/minecraft/auth/steps/MSAStep.cpp:152
 msgctxt "MSAStep|"
@@ -4589,7 +4589,7 @@ msgstr "&Soubor"
 #: launcher/ui/MacMenuBar.cpp:137
 msgctxt "MacMenuBar|"
 msgid "&Instance"
-msgstr "&Instance"
+msgstr ""
 
 #: launcher/ui/MacMenuBar.cpp:138
 msgctxt "MacMenuBar|"
@@ -4634,7 +4634,7 @@ msgstr "&Upravit"
 #: launcher/ui/MainWindow.ui:178
 msgctxt "MainWindow|"
 msgid "&Instance"
-msgstr "&Instance"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:196
 msgctxt "MainWindow|"
@@ -5053,7 +5053,7 @@ msgstr "Exportovat vybranou instanci do podporovaných formátů."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
@@ -5063,7 +5063,7 @@ msgstr "Modrý (mrpack)"
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
 msgid "CurseForge (zip)"
-msgstr "CurseForge (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:835
 msgctxt "MainWindow|"
@@ -5109,7 +5109,7 @@ msgstr "Otevřít bug tracker pro nahlášení chyby s %1."
 #: launcher/ui/MainWindow.ui:891
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr "Discord"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:894
 #, qt-format
@@ -5120,7 +5120,7 @@ msgstr "Otevřít hlasový kanál Discordu %1."
 #: launcher/ui/MainWindow.ui:905
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr "Reddit"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:908
 #, qt-format
@@ -5186,7 +5186,7 @@ msgstr "Získat pomoc s %1 nebo s Minecraftem."
 #: launcher/ui/MainWindow.cpp:1150
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr "Profiles"
+msgstr ""
 
 #: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
 msgctxt "MainWindow|"
@@ -5499,7 +5499,7 @@ msgstr "Webové stránky: <a href=%1>%2</a>    | ID balíčku: %3    | ID verze:
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:323
 msgctxt "ManagedPackPage|"
 msgid "URL:"
-msgstr "URL:"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:324
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:547
@@ -5582,7 +5582,7 @@ msgstr "Balíček CurseForge"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:745
 msgctxt "ManagedPackPage|"
 msgid "Modpack"
-msgstr "Modpack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:750
 msgctxt "ManagedPackPage|"
@@ -5761,7 +5761,7 @@ msgstr "Protokoly MeshMC"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr "Reload"
+msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
@@ -5934,7 +5934,7 @@ msgstr "&Skiny:"
 #: launcher/ui/pages/global/MeshMCPage.ui:211
 msgctxt "MeshMCPage|"
 msgid "&Java:"
-msgstr "&Java:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:228
 msgctxt "MeshMCPage|"
@@ -6107,7 +6107,7 @@ msgstr "Další složka instance"
 #: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
-msgstr "Duplicate directory"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
@@ -6885,22 +6885,22 @@ msgstr "Název"
 #: launcher/minecraft/MinecraftInstance.cpp:865
 msgctxt "MinecraftInstance|"
 msgid "<SESSION ID>"
-msgstr "<SESSION ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:867
 msgctxt "MinecraftInstance|"
 msgid "<ACCESS TOKEN>"
-msgstr "<ACCESS TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:869
 msgctxt "MinecraftInstance|"
 msgid "<CLIENT TOKEN>"
-msgstr "<CLIENT TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
 msgid "<PROFILE ID>"
-msgstr "<PROFILE ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:946
 msgctxt "MinecraftInstance|"
@@ -6911,7 +6911,7 @@ msgstr "rozbitý"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -6988,7 +6988,7 @@ msgstr "Záznam času stráveného hraním instancí"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
@@ -7218,7 +7218,7 @@ msgstr "Vybrat %1"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr "No Mod Loader"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
@@ -7396,7 +7396,7 @@ msgstr "Režim %1 má novější kompatibilní verze. Zaškrtněte ty, které ch
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
@@ -7470,7 +7470,7 @@ msgstr "Kopírování souborů se nezdařilo"
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:208
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Installing modpack"
+msgstr ""
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
@@ -7556,7 +7556,7 @@ msgstr "Název"
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 msgctxt "NewComponentDialog|"
 msgid "uid"
-msgstr "uid"
+msgstr ""
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:17
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:163
@@ -8143,7 +8143,7 @@ msgstr "Přeskočit"
 #, qt-format
 msgctxt "ProjectItemDelegate|"
 msgid "%1 [installed]"
-msgstr "%1 [installed]"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:42
 msgctxt "ProxyPage|"
@@ -8173,12 +8173,12 @@ msgstr "&Žádný"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 msgctxt "ProxyPage|"
 msgid "SOC&KS5"
-msgstr "SOC&KS5"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 msgctxt "ProxyPage|"
 msgid "H&TTP"
-msgstr "H&TTP"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:107
 msgctxt "ProxyPage|"
@@ -8563,25 +8563,25 @@ msgstr "Seřadit podle nejnovějších"
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 B"
-msgstr "%1 B"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:14
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 KiB"
-msgstr "%1 KiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:17
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 MiB"
-msgstr "%1 MiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:19
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 GiB"
-msgstr "%1 GiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.h:32
 msgctxt "QObject|"
@@ -8591,7 +8591,7 @@ msgstr "Historie verzí"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Git Versioning"
-msgstr "Git Versioning"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:133
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:234
@@ -8740,7 +8740,7 @@ msgstr "Nutí Minecraft používat oddělenou GPU NVIDIA na Optimus laptops.\n"
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.h:40
 msgctxt "QObject|"
 msgid "Offline Wiki"
-msgstr "Offline Wiki"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:303
 msgctxt "QObject|"
@@ -8862,7 +8862,7 @@ msgstr "Odstranit"
 #: launcher/ui/dialogs/PluginsDialog.cpp:45
 msgctxt "QObject|"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:47
 msgctxt "QObject|"
@@ -9022,12 +9022,12 @@ msgstr "Světlé téma založené na fusionu s zelenými odstíny"
 #: launcher/ui/themes/SystemTheme.cpp:70
 msgctxt "QObject|"
 msgid "Windows Vista"
-msgstr "Windows Vista"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:72
 msgctxt "QObject|"
 msgid "Windows 9x"
-msgstr "Windows 9x"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:74
 msgctxt "QObject|"
@@ -10114,7 +10114,7 @@ msgstr "Obnovit"
 #: launcher/ui/pages/modplatform/VanillaPage.h:45
 msgctxt "VanillaPage|"
 msgid "Vanilla"
-msgstr "Vanilla"
+msgstr ""
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:158
 #, qt-format
@@ -10516,7 +10516,7 @@ msgstr "Verze"
 #: launcher/VersionProxyModel.cpp:108
 msgctxt "VersionProxyModel|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:110
 msgctxt "VersionProxyModel|"
@@ -10711,7 +10711,7 @@ msgstr "Smazat"
 #: launcher/ui/pages/instance/WorldListPage.ui:117
 msgctxt "WorldListPage|"
 msgid "MCEdit"
-msgstr "MCEdit"
+msgstr ""
 
 #: launcher/ui/pages/instance/WorldListPage.ui:122
 msgctxt "WorldListPage|"
