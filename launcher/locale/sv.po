@@ -9,11 +9,11 @@ msgstr ""
 "X-Crowdin-Project-ID: 863014\n"
 "X-Crowdin-Language: sv-SE\n"
 "X-Crowdin-File: /[Project-Tick.MeshMC] develop/launcher/locale/template.pot\n"
-"X-Crowdin-File-ID: 95\n"
+"X-Crowdin-File-ID: 101\n"
 "Project-Id-Version: projtlauncher\n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
-"PO-Revision-Date: 2026-10-28 22:15\n"
+"PO-Revision-Date: 2026-11-19 13:44\n"
 
 #: launcher/modplatform/atlauncher/ATLPackInstallTask.cpp:112
 msgctxt "ATLauncher::PackInstallTask|"
@@ -237,12 +237,12 @@ msgstr "Avmarkerad"
 #: launcher/minecraft/auth/AccountList.cpp:338
 msgctxt "AccountList|Account status"
 msgid "Offline"
-msgstr "Offline"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:341
 msgctxt "AccountList|Account status"
 msgid "Online"
-msgstr "Online"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:344
 msgctxt "AccountList|Account status"
@@ -277,7 +277,7 @@ msgstr "Typ"
 #: launcher/minecraft/auth/AccountList.cpp:394
 msgctxt "AccountList|"
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: launcher/minecraft/auth/AccountList.cpp:396
 msgctxt "AccountList|"
@@ -862,7 +862,7 @@ msgstr "Kunde inte ladda eller ladda ner versionslistorna!"
 #: launcher/ui/pages/modplatform/atlauncher/AtlPage.h:51
 msgctxt "AtlPage|"
 msgid "ATLauncher"
-msgstr "ATLauncher"
+msgstr ""
 
 #: launcher/minecraft/auth/flows/AuthFlow.cpp:40
 msgctxt "AuthFlow|"
@@ -1001,7 +1001,7 @@ msgstr "Återställer säkerhetskopian..."
 #: launcher/ui/pages/instance/BackupPage.cpp:173
 msgctxt "BackupPage|"
 msgid "Restore Complete"
-msgstr "Restore Complete"
+msgstr ""
 
 #: launcher/ui/pages/instance/BackupPage.cpp:174
 msgctxt "BackupPage|"
@@ -1126,12 +1126,12 @@ msgstr "Prestationsverktyg avbrytet"
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:60
 msgctxt "BlockedModsDialog|"
 msgid "<b>Mod</b>"
-msgstr "<b>Mod</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:61
 msgctxt "BlockedModsDialog|"
 msgid "<b>Status</b>"
-msgstr "<b>Status</b>"
+msgstr ""
 
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:71
 #: launcher/ui/dialogs/BlockedModsDialog.cpp:156
@@ -1268,7 +1268,7 @@ msgstr "Laddare"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:264
 msgctxt "ContentFilterWidget|"
 msgid "NeoForge"
-msgstr "NeoForge"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:265
 msgctxt "ContentFilterWidget|"
@@ -1288,17 +1288,17 @@ msgstr "Kvilt"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:273
 msgctxt "ContentFilterWidget|"
 msgid "LiteLoader"
-msgstr "LiteLoader"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:274
 msgctxt "ContentFilterWidget|"
 msgid "Babric"
-msgstr "Babric"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:275
 msgctxt "ContentFilterWidget|"
 msgid "BTA (Babric)"
-msgstr "BTA (Babric)"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:276
 msgctxt "ContentFilterWidget|"
@@ -1308,12 +1308,12 @@ msgstr "Äldre tyg"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:277
 msgctxt "ContentFilterWidget|"
 msgid "Ornithe"
-msgstr "Ornithe"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:278
 msgctxt "ContentFilterWidget|"
 msgid "Rift"
-msgstr "Rift"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:309
 msgctxt "ContentFilterWidget|"
@@ -1333,7 +1333,7 @@ msgstr "Klient"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:335
 msgctxt "ContentFilterWidget|"
 msgid "Server"
-msgstr "Server"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:349
 msgctxt "ContentFilterWidget|"
@@ -1368,7 +1368,7 @@ msgstr "Släpp"
 #: launcher/ui/widgets/ContentFilterWidget.cpp:376
 msgctxt "ContentFilterWidget|"
 msgid "Beta"
-msgstr "Beta"
+msgstr ""
 
 #: launcher/ui/widgets/ContentFilterWidget.cpp:377
 msgctxt "ContentFilterWidget|"
@@ -1431,7 +1431,7 @@ msgstr "av %1"
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:592
 msgctxt "ContentProviderPage|"
 msgid " [installed]"
-msgstr " [installed]"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/ContentProviderPage.cpp:599
 msgctxt "ContentProviderPage|"
@@ -1524,12 +1524,12 @@ msgstr "<h2 style='color: #cc0000;'>MeshMC har misslyckats</h2><p>Ett oväntat f
 #: launcher/crashreporter/CrashReportDialog.cpp:56
 msgctxt "CrashReportDialog|"
 msgid "QR Codes"
-msgstr "QR Codes"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:64
 msgctxt "CrashReportDialog|"
 msgid "[...truncated...]\n"
-msgstr "[...truncated...]\n"
+msgstr ""
 
 #: launcher/crashreporter/CrashReportDialog.cpp:75
 #: launcher/crashreporter/CrashReportDialog.cpp:92
@@ -1692,13 +1692,13 @@ msgstr "%1 (i användning)"
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:192
 #, qt-format
 msgctxt "CreateShortcutDialog|"
 msgid "%1 - Server %2"
-msgstr "%1 - Server %2"
+msgstr ""
 
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:210
 msgctxt "CreateShortcutDialog|"
@@ -1713,7 +1713,7 @@ msgstr "värld"
 #: launcher/ui/dialogs/CreateShortcutDialog.cpp:221
 msgctxt "CreateShortcutDialog|"
 msgid "server"
-msgstr "server"
+msgstr ""
 
 #: launcher/ui/widgets/CustomCommands.ui:32
 msgctxt "CustomCommands|"
@@ -1987,12 +1987,12 @@ msgstr "Formatera"
 #: launcher/ui/dialogs/ExportListDialog.cpp:99
 msgctxt "ExportListDialog|"
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:100
 msgctxt "ExportListDialog|"
 msgid "Markdown"
-msgstr "Markdown"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:101
 msgctxt "ExportListDialog|"
@@ -2002,12 +2002,12 @@ msgstr "Oklartext"
 #: launcher/ui/dialogs/ExportListDialog.cpp:102
 msgctxt "ExportListDialog|"
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:103
 msgctxt "ExportListDialog|"
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:104
 msgctxt "ExportListDialog|"
@@ -2043,7 +2043,7 @@ msgstr "Valfri information"
 #: launcher/ui/dialogs/ExportListDialog.cpp:135
 msgctxt "ExportListDialog|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:132
 #: launcher/ui/dialogs/ExportListDialog.cpp:136
@@ -2055,7 +2055,7 @@ msgstr "Författare"
 #: launcher/ui/dialogs/ExportListDialog.cpp:137
 msgctxt "ExportListDialog|"
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportListDialog.cpp:134
 #: launcher/ui/dialogs/ExportListDialog.cpp:138
@@ -2112,12 +2112,12 @@ msgstr "&Namn:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:44
 msgctxt "ExportPackDialog|"
 msgid "&Version:"
-msgstr "&Version:"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:54
 msgctxt "ExportPackDialog|"
 msgid "1.0.0"
-msgstr "1.0.0"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:61
 msgctxt "ExportPackDialog|"
@@ -2142,7 +2142,7 @@ msgstr "&Rekommenderat Minne:"
 #: launcher/ui/dialogs/ExportPackDialog.ui:151
 msgctxt "ExportPackDialog|"
 msgid " MiB"
-msgstr " MiB"
+msgstr ""
 
 #: launcher/ui/dialogs/ExportPackDialog.ui:183
 msgctxt "ExportPackDialog|"
@@ -2508,7 +2508,7 @@ msgstr "Sök och filtrera ..."
 #: launcher/ui/pages/modplatform/ftb/FtbPage.h:48
 msgctxt "FtbPage|"
 msgid "FTB"
-msgstr "FTB"
+msgstr ""
 
 #: launcher/minecraft/gameoptions/GameOptions.cpp:96
 msgctxt "GameOptions|"
@@ -2589,12 +2589,12 @@ msgstr "Filer"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "+"
-msgstr "+"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:67
 msgctxt "GitVersioningPage|"
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:79
 msgctxt "GitVersioningPage|"
@@ -2645,7 +2645,7 @@ msgstr "Ingen versionshistorik än. Snapshot nu för att börja spåra ändringa
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "HEAD: <b>%1</b>"
-msgstr "HEAD: <b>%1</b>"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:136
 #, qt-format
@@ -2662,13 +2662,13 @@ msgstr "Rena arbetsträdet"
 #, qt-format
 msgctxt "GitVersioningPage|"
 msgid "git %1"
-msgstr "git %1"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:195
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:211
 msgctxt "GitVersioningPage|"
 msgid "Snapshot"
-msgstr "Snapshot"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:196
 msgctxt "GitVersioningPage|"
@@ -2712,7 +2712,7 @@ msgstr "Återställning misslyckades"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:242
 msgctxt "GitVersioningPage|"
 msgid "Tag commit"
-msgstr "Tag commit"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:242
 msgctxt "GitVersioningPage|"
@@ -3320,7 +3320,7 @@ msgstr "Mapp (relativ till .minecraft):"
 #: launcher/ui/pages/instance/InstanceSettingsPage.ui:552
 msgctxt "InstanceSettingsPage|"
 msgid "datapacks"
-msgstr "datapacks"
+msgstr ""
 
 #: launcher/ui/pages/instance/InstanceSettingsPage.cpp:341
 msgctxt "InstanceSettingsPage|"
@@ -3434,7 +3434,7 @@ msgstr "Leverantör"
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:71
 msgctxt "JavaDownloadDialog|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/ui/dialogs/JavaDownloadDialog.cpp:78
 msgctxt "JavaDownloadDialog|"
@@ -3780,7 +3780,7 @@ msgstr "Installerade Java körtider"
 #: launcher/ui/pages/global/JavaPage.ui:287
 msgctxt "JavaPage|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/ui/pages/global/JavaPage.ui:292
 msgctxt "JavaPage|"
@@ -3838,7 +3838,7 @@ msgstr "Är du säker på att du vill ta bort denna Java-installation?\n\n"
 #: launcher/ui/pages/global/JavaPage.h:47
 msgctxt "JavaPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/widgets/JavaSettingsWidget.cpp:175
 msgctxt "JavaSettingsWidget|"
@@ -3896,7 +3896,7 @@ msgstr "Bläddra"
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:137
 msgctxt "JavaWizardPage|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/setupwizard/JavaWizardPage.cpp:138
 msgctxt "JavaWizardPage|"
@@ -4301,7 +4301,7 @@ msgstr "Är du säker att du vill ta bort pack %1?"
 #: launcher/ui/pages/modplatform/legacy_ftb/Page.h:59
 msgctxt "LegacyFTB::Page|"
 msgid "FTB Legacy"
-msgstr "FTB Legacy"
+msgstr ""
 
 #: launcher/minecraft/legacy/LegacyInstance.cpp:218
 msgctxt "LegacyInstance|"
@@ -4590,7 +4590,7 @@ msgstr "&Instans"
 #: launcher/ui/MacMenuBar.cpp:138
 msgctxt "MacMenuBar|"
 msgid "F&olders"
-msgstr "F&olders"
+msgstr ""
 
 #: launcher/ui/MacMenuBar.cpp:139
 msgctxt "MacMenuBar|"
@@ -4640,7 +4640,7 @@ msgstr "&Visa"
 #: launcher/ui/MainWindow.ui:208
 msgctxt "MainWindow|"
 msgid "F&olders"
-msgstr "F&olders"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:229
 msgctxt "MainWindow|"
@@ -4715,7 +4715,7 @@ msgstr "Öppna mappen för skinn i en filwebbläsare."
 #: launcher/ui/MainWindow.ui:345
 msgctxt "MainWindow|"
 msgid "Java"
-msgstr "Java"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:348
 msgctxt "MainWindow|"
@@ -5033,7 +5033,7 @@ msgstr "Öppna den utvalda instansens mapp i en filhanterare."
 #: launcher/ui/MainWindow.ui:785
 msgctxt "MainWindow|"
 msgid "E&xport..."
-msgstr "E&xport..."
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:788
 msgctxt "MainWindow|"
@@ -5049,12 +5049,12 @@ msgstr "Exportera den valda instansen till format som stöds."
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 (zip)"
-msgstr "%1 (zip)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:813
 msgctxt "MainWindow|"
 msgid "Modrinth (mrpack)"
-msgstr "Modrinth (mrpack)"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:824
 msgctxt "MainWindow|"
@@ -5105,7 +5105,7 @@ msgstr "Öppna bugg-trackern för att rapportera en bugg med %1."
 #: launcher/ui/MainWindow.ui:891
 msgctxt "MainWindow|"
 msgid "Discord"
-msgstr "Discord"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:894
 #, qt-format
@@ -5116,7 +5116,7 @@ msgstr "Öppna %1s discord-ljudchatt."
 #: launcher/ui/MainWindow.ui:905
 msgctxt "MainWindow|"
 msgid "Reddit"
-msgstr "Reddit"
+msgstr ""
 
 #: launcher/ui/MainWindow.ui:908
 #, qt-format
@@ -5182,7 +5182,7 @@ msgstr "Få hjälp med %1 eller Minecraft."
 #: launcher/ui/MainWindow.cpp:1150
 msgctxt "MainWindow|"
 msgid "Profiles"
-msgstr "Profiles"
+msgstr ""
 
 #: launcher/ui/MainWindow.cpp:531 launcher/ui/MainWindow.cpp:703
 msgctxt "MainWindow|"
@@ -5491,7 +5491,7 @@ msgstr "Webbplats: <a href=%1>%2</a>    <unk> Pack ID: %3    <unk> Version ID: %
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:323
 msgctxt "ManagedPackPage|"
 msgid "URL:"
-msgstr "URL:"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:324
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:547
@@ -5574,7 +5574,7 @@ msgstr "Förbannelse pack"
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:745
 msgctxt "ManagedPackPage|"
 msgid "Modpack"
-msgstr "Modpack"
+msgstr ""
 
 #: launcher/ui/pages/instance/ManagedPackPage.cpp:750
 msgctxt "ManagedPackPage|"
@@ -5753,7 +5753,7 @@ msgstr "MeshMC loggar"
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:36
 msgctxt "MeshMCLogsDialog|"
 msgid "Reload"
-msgstr "Reload"
+msgstr ""
 
 #: launcher/ui/dialogs/MeshMCLogsDialog.ui:43
 msgctxt "MeshMCLogsDialog|"
@@ -5906,12 +5906,12 @@ msgstr "Mappar"
 #: launcher/ui/pages/global/MeshMCPage.ui:128
 msgctxt "MeshMCPage|"
 msgid "I&nstances:"
-msgstr "I&nstances:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:148
 msgctxt "MeshMCPage|"
 msgid "&Mods:"
-msgstr "&Mods:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:171
 msgctxt "MeshMCPage|"
@@ -5926,7 +5926,7 @@ msgstr "&Utseende:"
 #: launcher/ui/pages/global/MeshMCPage.ui:211
 msgctxt "MeshMCPage|"
 msgid "&Java:"
-msgstr "&Java:"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.ui:228
 msgctxt "MeshMCPage|"
@@ -6099,7 +6099,7 @@ msgstr "Ytterligare instansmapp"
 #: launcher/ui/pages/global/MeshMCPage.cpp:193
 msgctxt "MeshMCPage|"
 msgid "Duplicate directory"
-msgstr "Duplicate directory"
+msgstr ""
 
 #: launcher/ui/pages/global/MeshMCPage.cpp:187
 msgctxt "MeshMCPage|"
@@ -6877,22 +6877,22 @@ msgstr "Namn"
 #: launcher/minecraft/MinecraftInstance.cpp:865
 msgctxt "MinecraftInstance|"
 msgid "<SESSION ID>"
-msgstr "<SESSION ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:867
 msgctxt "MinecraftInstance|"
 msgid "<ACCESS TOKEN>"
-msgstr "<ACCESS TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:869
 msgctxt "MinecraftInstance|"
 msgid "<CLIENT TOKEN>"
-msgstr "<CLIENT TOKEN>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:871
 msgctxt "MinecraftInstance|"
 msgid "<PROFILE ID>"
-msgstr "<PROFILE ID>"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:946
 msgctxt "MinecraftInstance|"
@@ -6903,7 +6903,7 @@ msgstr "trasig"
 #, qt-format
 msgctxt "MinecraftInstance|"
 msgid "Minecraft %1 (%2)"
-msgstr "Minecraft %1 (%2)"
+msgstr ""
 
 #: launcher/minecraft/MinecraftInstance.cpp:957
 #, qt-format
@@ -6980,7 +6980,7 @@ msgstr "Spara tid tillbringad på att spela instanser"
 #: launcher/ui/pages/global/MinecraftPage.h:47
 msgctxt "MinecraftPage|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/minecraft/auth/steps/MinecraftProfileStep.cpp:37
 msgctxt "MinecraftProfileStep|"
@@ -7025,7 +7025,7 @@ msgstr "Namn"
 #: launcher/minecraft/mod/ModFolderModel.cpp:547
 msgctxt "ModFolderModel|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/minecraft/mod/ModFolderModel.cpp:549
 msgctxt "ModFolderModel|"
@@ -7210,7 +7210,7 @@ msgstr "Välj %1"
 #: launcher/ui/pages/instance/ModFolderPage.cpp:583
 msgctxt "ModFolderPage|"
 msgid "No Mod Loader"
-msgstr "No Mod Loader"
+msgstr ""
 
 #: launcher/ui/pages/instance/ModFolderPage.cpp:541
 msgctxt "ModFolderPage|"
@@ -7388,7 +7388,7 @@ msgstr "%1 mod(s) har nyare kompatibla versioner. Markera de du vill uppdatera."
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
 msgid "Mod"
-msgstr "Mod"
+msgstr ""
 
 #: launcher/ui/dialogs/ModUpdateDialog.cpp:59
 msgctxt "ModUpdateDialog|"
@@ -7462,7 +7462,7 @@ msgstr "Det gick inte att kopiera filer"
 #: launcher/modplatform/modpacksch/FTBPackInstallTask.cpp:208
 msgctxt "ModpacksCH::PackInstallTask|"
 msgid "Installing modpack"
-msgstr "Installing modpack"
+msgstr ""
 
 #: launcher/modplatform/modrinth/ModrinthPackExportTask.cpp:172
 msgctxt "ModrinthPackExportTask|"
@@ -7548,7 +7548,7 @@ msgstr "Namn"
 #: launcher/ui/dialogs/NewComponentDialog.ui:37
 msgctxt "NewComponentDialog|"
 msgid "uid"
-msgstr "uid"
+msgstr ""
 
 #: launcher/ui/dialogs/NewInstanceDialog.ui:17
 #: launcher/ui/dialogs/NewInstanceDialog.cpp:163
@@ -7813,7 +7813,7 @@ msgstr "Namn"
 #: launcher/minecraft/PackProfile.cpp:822
 msgctxt "PackProfile|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/ui/pagedialog/PageDialog.cpp:50
 msgctxt "PageDialog|"
@@ -7927,7 +7927,7 @@ msgstr "Signatur"
 #: launcher/ui/dialogs/PluginsDialog.ui:111
 msgctxt "PluginsDialog|"
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:211
 msgctxt "PluginsDialog|"
@@ -8134,7 +8134,7 @@ msgstr "Hoppa över"
 #, qt-format
 msgctxt "ProjectItemDelegate|"
 msgid "%1 [installed]"
-msgstr "%1 [installed]"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:42
 msgctxt "ProxyPage|"
@@ -8164,7 +8164,7 @@ msgstr "&Ingen"
 #: launcher/ui/pages/global/ProxyPage.ui:84
 msgctxt "ProxyPage|"
 msgid "SOC&KS5"
-msgstr "SOC&KS5"
+msgstr ""
 
 #: launcher/ui/pages/global/ProxyPage.ui:94
 msgctxt "ProxyPage|"
@@ -8199,7 +8199,7 @@ msgstr "Obs: Proxyanvändarnamn och lösenord lagras i klartext i MeshMCs konfig
 #: launcher/ui/pages/global/ProxyPage.h:44
 msgctxt "ProxyPage|"
 msgid "Proxy"
-msgstr "Proxy"
+msgstr ""
 
 #: launcher/InstanceImportTask.cpp:1806
 msgctxt "QObject|"
@@ -8554,25 +8554,25 @@ msgstr "Sortera efter Nyaste"
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 B"
-msgstr "%1 B"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:14
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 KiB"
-msgstr "%1 KiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:17
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 MiB"
-msgstr "%1 MiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.cpp:19
 #, qt-format
 msgctxt "QObject|"
 msgid "%1 GiB"
-msgstr "%1 GiB"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPage.h:32
 msgctxt "QObject|"
@@ -8582,7 +8582,7 @@ msgstr "Versionshistorik"
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:128
 msgctxt "QObject|"
 msgid "Git Versioning"
-msgstr "Git Versioning"
+msgstr ""
 
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:133
 #: launcher/plugin/plugins/GitVersioning/GitVersioningPlugin.cpp:234
@@ -8734,7 +8734,7 @@ msgstr "Tvingar Minecraft att använda NVIDIA diskret GPU på Optimus bärbara d
 #: launcher/plugin/plugins/OfflineWiki/WikiPage.h:40
 msgctxt "QObject|"
 msgid "Offline Wiki"
-msgstr "Offline Wiki"
+msgstr ""
 
 #: launcher/plugin/plugins/SystemTray/SystemTrayPlugin.cpp:303
 msgctxt "QObject|"
@@ -8896,7 +8896,7 @@ msgstr "Namn:"
 #: launcher/ui/dialogs/PluginsDialog.cpp:83
 msgctxt "QObject|"
 msgid "Version:"
-msgstr "Version:"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:84
 msgctxt "QObject|"
@@ -8948,7 +8948,7 @@ msgstr "Beroenden:"
 #: launcher/ui/dialogs/PluginsDialog.cpp:130
 msgctxt "QObject|"
 msgid "Status:"
-msgstr "Status:"
+msgstr ""
 
 #: launcher/ui/dialogs/PluginsDialog.cpp:128
 msgctxt "QObject|"
@@ -9016,22 +9016,22 @@ msgstr "Ett ljust Fusion-baserat tema med gröna accenter"
 #: launcher/ui/themes/SystemTheme.cpp:70
 msgctxt "QObject|"
 msgid "Windows Vista"
-msgstr "Windows Vista"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:72
 msgctxt "QObject|"
 msgid "Windows 9x"
-msgstr "Windows 9x"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:74
 msgctxt "QObject|"
 msgid "Windows 11"
-msgstr "Windows 11"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:76
 msgctxt "QObject|"
 msgid "System"
-msgstr "System"
+msgstr ""
 
 #: launcher/ui/themes/SystemTheme.cpp:85
 msgctxt "QObject|"
@@ -10079,7 +10079,7 @@ msgstr "Släppta versioner"
 #: launcher/ui/pages/modplatform/VanillaPage.ui:64
 msgctxt "VanillaPage|"
 msgid "Snapshots"
-msgstr "Snapshots"
+msgstr ""
 
 #: launcher/ui/pages/modplatform/VanillaPage.ui:74
 msgctxt "VanillaPage|"
@@ -10109,7 +10109,7 @@ msgstr "Uppdatera"
 #: launcher/ui/pages/modplatform/VanillaPage.h:45
 msgctxt "VanillaPage|"
 msgid "Vanilla"
-msgstr "Vanilla"
+msgstr ""
 
 #: launcher/minecraft/launch/VerifyJavaInstall.cpp:158
 #, qt-format
@@ -10501,17 +10501,17 @@ msgstr "Ett fel inträffade vid uppdateringen av instansen"
 #: launcher/ui/pages/instance/VersionPage.h:43
 msgctxt "VersionPage|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:106
 msgctxt "VersionProxyModel|"
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:108
 msgctxt "VersionProxyModel|"
 msgid "Minecraft"
-msgstr "Minecraft"
+msgstr ""
 
 #: launcher/VersionProxyModel.cpp:110
 msgctxt "VersionProxyModel|"
