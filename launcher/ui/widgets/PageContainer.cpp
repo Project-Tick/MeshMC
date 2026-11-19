@@ -34,7 +34,6 @@
 
 #include "settings/SettingsObject.h"
 
-#include "ui/themes/AppearanceManager.h"
 #include "ui/widgets/IconLabel.h"
 
 #include "DesktopServices.h"
@@ -90,15 +89,6 @@ PageContainer::PageContainer(BasePageProvider* pageProvider, QString defaultId,
 			&QItemSelectionModel::currentRowChanged, this,
 			[this](const QModelIndex& current, const QModelIndex&) {
 				currentChanged(current);
-			});
-	// The icons of the page list and of the header are asked of the pages
-	// once; a new icon theme or palette means asking again.
-	connect(APPLICATION->appearance(), &AppearanceManager::iconsChanged, this,
-			[this] {
-				m_model->refreshIcons();
-				if (m_currentPage) {
-					m_iconHeader->setIcon(m_currentPage->icon());
-				}
 			});
 	m_pageStack->setStackingMode(QStackedLayout::StackOne);
 	m_pageList->setFocus();

@@ -22,7 +22,6 @@
 
 #include <QColor>
 #include <QObject>
-#include <QString>
 #include <QWindow>
 #include <memory>
 
@@ -63,11 +62,7 @@ class AppearanceManager : public QObject
   private:
 	void initialize(KConfigSettingsObject* legacySettings);
 	GlobalSettings* m_settings;
-	QString m_systemStyle;
-	bool m_styleOverridden = false;
-	bool m_applyingStyle = false;
 	void paletteChanged();
-	void refreshLooks();
 	void setTitlebarColorOfAllWindowsOnMac(QColor color);
 	void setTitlebarColorOnMac(WId windowId, QColor color);
 	void stopSettingNewWindowColorsOnMac();

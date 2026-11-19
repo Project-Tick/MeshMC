@@ -89,10 +89,8 @@ AppearancePage::AppearancePage(QWidget* parent)
 		QDir().mkpath(ThemedIcons::userDirectory());
 		DesktopServices::openDirectory(ThemedIcons::userDirectory(), true);
 	});
-	connect(ui->iconsReloadButton, &QPushButton::clicked, this, [this] {
-		ThemedIcons::reload();
-		loadIconThemes();
-	});
+	connect(ui->iconsReloadButton, &QPushButton::clicked, this,
+			&AppearancePage::loadIconThemes);
 	loadIconThemes();
 
 	updateIconPreview();
