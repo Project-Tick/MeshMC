@@ -28,6 +28,7 @@ class JProfilerFactory : public BaseProfilerFactory
 	{
 		return "JProfiler";
 	}
+	void registerSettings(SettingsObjectPtr settings) override;
 	BaseExternalTool* createTool(InstancePtr instance,
 								 QObject* parent = 0) override;
 	bool check(QString* error) override;

@@ -1,5 +1,8 @@
 target_sources(MeshMC_logic PRIVATE
     # GUI - dialogs
+    AboutDialog.cpp
+    AboutDialog.h
+    AboutDialog.ui
     BlockedModsDialog.cpp
     BlockedModsDialog.h
     ProfileSelectDialog.cpp

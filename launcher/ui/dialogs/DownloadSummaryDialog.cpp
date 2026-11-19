@@ -27,7 +27,6 @@
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
 #include <algorithm>
-#include <KLocalizedString>
 
 namespace
 {
@@ -129,13 +128,14 @@ DownloadSummaryDialog::DownloadSummaryDialog(
 		auto* item = new QTreeWidgetItem(m_rootItem);
 		item->setText(0, unresolved.name.isEmpty() ? unresolved.projectId
 												   : unresolved.name);
-		item->setText(1, i18n("not found"));
+		item->setText(1, tr("not found"));
 		item->setFlags(Qt::ItemIsEnabled);
 		item->setForeground(0, QBrush(Qt::red));
 		item->setForeground(1, QBrush(Qt::red));
 		item->setToolTip(
-			0, i18n("No compatible version of this dependency could be found "
-				  "on either provider. The %1 that needs it may not work.", ModPlatform::contentTypeNoun(m_contentType)));
+			0, tr("No compatible version of this dependency could be found "
+				  "on either provider. The %1 that needs it may not work.")
+				   .arg(ModPlatform::contentTypeNoun(m_contentType)));
 	}
 
 	m_rootItem->setExpanded(true);
@@ -154,7 +154,7 @@ void DownloadSummaryDialog::appendRow(const ModPlatform::DownloadItem& item,
 	row->setCheckState(0, enabled ? Qt::Checked : Qt::Unchecked);
 	row->setText(0, item.name);
 	if (!enabled) {
-		row->setToolTip(0, i18n("Unticked because a version of this is already "
+		row->setToolTip(0, tr("Unticked because a version of this is already "
 							  "installed. Tick it to replace that version."));
 	}
 
@@ -163,21 +163,21 @@ void DownloadSummaryDialog::appendRow(const ModPlatform::DownloadItem& item,
 	 * under UserRole so copying a line yields the value rather than the
 	 * label along with it. */
 	auto* fileNameItem = new QTreeWidgetItem(row);
-	fileNameItem->setText(0, i18n("Filename: %1", item.fileName));
+	fileNameItem->setText(0, tr("Filename: %1").arg(item.fileName));
 	fileNameItem->setData(0, Qt::UserRole, item.fileName);
 
 	auto* providerItem = new QTreeWidgetItem(row);
-	providerItem->setText(0, i18n("Provider: %1", provider));
+	providerItem->setText(0, tr("Provider: %1").arg(provider));
 	providerItem->setData(0, Qt::UserRole, provider);
 
 	if (!requiredBy.isEmpty()) {
 		auto* requiredByItem = new QTreeWidgetItem(row);
 		if (requiredBy.size() == 1) {
 			requiredByItem->setText(
-				0, i18n("Required by: %1", requiredBy.back()));
+				0, tr("Required by: %1").arg(requiredBy.back()));
 			requiredByItem->setData(0, Qt::UserRole, requiredBy.back());
 		} else {
-			requiredByItem->setText(0, i18n("Required by:"));
+			requiredByItem->setText(0, tr("Required by:"));
 			for (const QString& name : requiredBy) {
 				auto* nameItem = new QTreeWidgetItem(requiredByItem);
 				nameItem->setText(0, name);
@@ -187,7 +187,7 @@ void DownloadSummaryDialog::appendRow(const ModPlatform::DownloadItem& item,
 
 	if (!versionType.isEmpty()) {
 		auto* versionTypeItem = new QTreeWidgetItem(row);
-		versionTypeItem->setText(0, i18n("Version type: %1", versionType));
+		versionTypeItem->setText(0, tr("Version type: %1").arg(versionType));
 		versionTypeItem->setData(0, Qt::UserRole, versionType);
 	}
 
@@ -197,7 +197,7 @@ void DownloadSummaryDialog::appendRow(const ModPlatform::DownloadItem& item,
 		 * file has to be fetched by hand afterwards. */
 		auto* blockedItem = new QTreeWidgetItem(row);
 		blockedItem->setText(
-			0, i18n("The author has blocked third-party downloads for this "
+			0, tr("The author has blocked third-party downloads for this "
 				  "file. It will be fetched through the website instead, "
 				  "which does not always work."));
 		blockedItem->setForeground(0, QBrush(Qt::darkYellow));
@@ -238,7 +238,7 @@ void DownloadSummaryDialog::setupUi()
 {
 	const QString contents = ModPlatform::contentTypeNounPlural(m_contentType);
 
-	setWindowTitle(i18n("Confirm %1 selection", contents));
+	setWindowTitle(tr("Confirm %1 selection").arg(contents));
 	setSizeGripEnabled(true);
 	setModal(true);
 	resize(500, 350);
@@ -246,7 +246,7 @@ void DownloadSummaryDialog::setupUi()
 	auto* layout = new QVBoxLayout(this);
 
 	m_explainLabel = new QLabel(
-		i18n("You're about to download the following %1:", contents), this);
+		tr("You're about to download the following %1:").arg(contents), this);
 	m_explainLabel->setWordWrap(true);
 	layout->addWidget(m_explainLabel);
 
@@ -311,7 +311,7 @@ void DownloadSummaryDialog::setupUi()
 
 	auto* bottomLayout = new QHBoxLayout();
 
-	m_toggleDepsButton = new QPushButton(i18n("Toggle Dependencies"), this);
+	m_toggleDepsButton = new QPushButton(tr("Toggle Dependencies"), this);
 	/* Shown by appendRow() as soon as there is a dependency row. */
 	m_toggleDepsButton->setVisible(false);
 	connect(m_toggleDepsButton, &QPushButton::clicked, this,
@@ -319,13 +319,13 @@ void DownloadSummaryDialog::setupUi()
 	bottomLayout->addWidget(m_toggleDepsButton);
 
 	m_onlyCheckedLabel =
-		new QLabel(i18n("Only %1 with a check will be downloaded!", contents),
+		new QLabel(tr("Only %1 with a check will be downloaded!").arg(contents),
 				   this);
 	m_onlyCheckedLabel->setWordWrap(true);
 	bottomLayout->addWidget(m_onlyCheckedLabel, 1);
 
-	m_cancelButton = new QPushButton(i18n("Cancel"), this);
-	m_continueButton = new QPushButton(i18n("OK"), this);
+	m_cancelButton = new QPushButton(tr("Cancel"), this);
+	m_continueButton = new QPushButton(tr("OK"), this);
 	m_continueButton->setDefault(true);
 
 	connect(m_cancelButton, &QPushButton::clicked, this, &QDialog::reject);

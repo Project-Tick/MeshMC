@@ -21,16 +21,13 @@
 
 #include <QStringList>
 #include <QMap>
+#include <QSettings>
 #include <QFile>
 #include <QProcess>
 #include <QDebug>
 #include <QDir>
 #include <QRegularExpression>
 #include <QString>
-
-#include <KConfig>
-#include <KConfigGroup>
-#include <KOSRelease>
 
 #include <functional>
 #include <fstream>
@@ -193,21 +190,19 @@ Sys::DistributionInfo Sys::read_os_release()
 		if (!QFile::exists(file)) {
 			continue;
 		}
-		// KOSRelease knows the os-release format, quoting and escapes
-		// included, which a plain INI parser does not.
-		const KOSRelease osRelease(file);
-		if (!osRelease.id().isEmpty()) {
-			name = osRelease.id().toLower();
-		} else if (!osRelease.name().isEmpty()) {
-			name = osRelease.name().toLower();
+		QSettings settings(file, QSettings::IniFormat);
+		if (settings.contains("ID")) {
+			name = settings.value("ID").toString().toLower();
+		} else if (settings.contains("NAME")) {
+			name = settings.value("NAME").toString().toLower();
 		} else {
 			continue;
 		}
 
-		if (!osRelease.versionId().isEmpty()) {
-			version = osRelease.versionId().toLower();
-		} else if (!osRelease.version().isEmpty()) {
-			version = osRelease.version().toLower();
+		if (settings.contains("VERSION_ID")) {
+			version = settings.value("VERSION_ID").toString().toLower();
+		} else if (settings.contains("VERSION")) {
+			version = settings.value("VERSION").toString().toLower();
 		}
 		break;
 	}
@@ -258,27 +253,13 @@ bool Sys::fallback_lsb_info(Sys::LsbInfo& out)
 	// distribution, but `lsb_release` remains optional.
 	QString file = "/etc/lsb-release";
 	if (QFile::exists(file)) {
-		KConfig settings(file, KConfig::SimpleConfig);
-		const KConfigGroup values = settings.group(QString());
-		// Some distributions put quotes around the values; KConfig, unlike the
-		// QSettings this used to be, keeps them.
-		const auto unquoted = [](QString value) {
-			value = value.trimmed();
-			if (value.size() >= 2 &&
-				((value.startsWith('"') && value.endsWith('"')) ||
-				 (value.startsWith('\'') && value.endsWith('\'')))) {
-				value = value.mid(1, value.size() - 2);
-			}
-			return value;
-		};
-		if (values.hasKey("DISTRIB_ID")) {
-			out.distributor =
-				unquoted(values.readEntry("DISTRIB_ID", QString())).toLower();
+		QSettings settings(file, QSettings::IniFormat);
+		if (settings.contains("DISTRIB_ID")) {
+			out.distributor = settings.value("DISTRIB_ID").toString().toLower();
 		}
-		if (values.hasKey("DISTRIB_RELEASE")) {
+		if (settings.contains("DISTRIB_RELEASE")) {
 			out.version =
-				unquoted(values.readEntry("DISTRIB_RELEASE", QString()))
-					.toLower();
+				settings.value("DISTRIB_RELEASE").toString().toLower();
 		}
 		return !out.distributor.isEmpty();
 	}

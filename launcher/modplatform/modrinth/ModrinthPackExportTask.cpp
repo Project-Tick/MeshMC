@@ -43,7 +43,6 @@
 #include "modplatform/modrinth/ModrinthApi.h"
 #include "net/Download.h"
 #include "net/NetJob.h"
-#include <KLocalizedString>
 
 namespace
 {
@@ -170,7 +169,7 @@ ModrinthPackExportTask::ModrinthPackExportTask(
 
 void ModrinthPackExportTask::executeTask()
 {
-	setStatus(i18n("Searching for files..."));
+	setStatus(tr("Searching for files..."));
 	/* Indeterminate: the file count is the first thing the scan finds
 	 * out, so until it comes back there is no total to show. */
 	setProgress(0, 0);
@@ -298,7 +297,7 @@ void ModrinthPackExportTask::onScanFinished()
 
 	const ScanResult result = m_scanFuture.result();
 	if (!result.ok) {
-		emitFailed(i18n("Could not read the instance's files."));
+		emitFailed(tr("Could not read the instance's files."));
 		return;
 	}
 
@@ -316,7 +315,7 @@ void ModrinthPackExportTask::onScanFinished()
 
 void ModrinthPackExportTask::lookUpPendingFiles()
 {
-	setStatus(i18n("Looking up files on Modrinth..."));
+	setStatus(tr("Looking up files on Modrinth..."));
 
 	m_lookupsTotal = m_pending.size();
 	m_lookupsDone = 0;
@@ -433,7 +432,7 @@ void ModrinthPackExportTask::onOneLookupDone()
 
 void ModrinthPackExportTask::buildZip()
 {
-	setStatus(i18n("Adding files..."));
+	setStatus(tr("Adding files..."));
 
 	auto* zip = new MMCZip::ExportToZipTask(m_output, m_gameRoot, m_files,
 										   QStringLiteral("overrides/"), true);

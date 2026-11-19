@@ -26,7 +26,6 @@
 #include <MMCZip.h>
 #include "TechnicPackProcessor.h"
 #include "net/ChecksumValidator.h"
-#include <KLocalizedString>
 
 Technic::SolderPackInstallTask::SolderPackInstallTask(
 	shared_qobject_ptr<QNetworkAccessManager> network, const QUrl& sourceUrl,
@@ -48,8 +47,8 @@ bool Technic::SolderPackInstallTask::abort()
 void Technic::SolderPackInstallTask::executeTask()
 {
 	setStatus(
-		i18n("Finding recommended version:\n%1", m_sourceUrl.toString()));
-	m_filesNetJob = new NetJob(i18n("Finding recommended version"), m_network);
+		tr("Finding recommended version:\n%1").arg(m_sourceUrl.toString()));
+	m_filesNetJob = new NetJob(tr("Finding recommended version"), m_network);
 	m_filesNetJob->addNetAction(
 		Net::Download::makeByteArray(m_sourceUrl, &m_response));
 	auto job = m_filesNetJob.get();
@@ -74,8 +73,8 @@ void Technic::SolderPackInstallTask::versionSucceeded()
 		return;
 	}
 
-	setStatus(i18n("Resolving modpack files:\n%1", m_sourceUrl.toString()));
-	m_filesNetJob = new NetJob(i18n("Resolving modpack files"), m_network);
+	setStatus(tr("Resolving modpack files:\n%1").arg(m_sourceUrl.toString()));
+	m_filesNetJob = new NetJob(tr("Resolving modpack files"), m_network);
 	m_filesNetJob->addNetAction(
 		Net::Download::makeByteArray(m_sourceUrl, &m_response));
 	auto job = m_filesNetJob.get();
@@ -88,7 +87,7 @@ void Technic::SolderPackInstallTask::versionSucceeded()
 
 void Technic::SolderPackInstallTask::fileListSucceeded()
 {
-	setStatus(i18n("Downloading modpack:"));
+	setStatus(tr("Downloading modpack:"));
 
 	/* Solder publishes an md5 alongside every mod URL. Carry the two together
 	 * so the download can actually be checked against it - reading only the
@@ -122,7 +121,7 @@ void Technic::SolderPackInstallTask::fileListSucceeded()
 		m_filesNetJob.reset();
 		return;
 	}
-	m_filesNetJob = new NetJob(i18n("Downloading modpack"), m_network);
+	m_filesNetJob = new NetJob(tr("Downloading modpack"), m_network);
 	int i = 0;
 	for (const auto& mod : modsToDownload) {
 		auto path = FS::PathCombine(m_outputDir.path(), QString("%1").arg(i));
@@ -164,7 +163,7 @@ void Technic::SolderPackInstallTask::downloadSucceeded()
 {
 	m_abortable = false;
 
-	setStatus(i18n("Extracting modpack"));
+	setStatus(tr("Extracting modpack"));
 	m_filesNetJob.reset();
 	m_extractFuture = QtConcurrent::run([this]() {
 		int i = 0;
@@ -205,7 +204,7 @@ void Technic::SolderPackInstallTask::downloadProgressChanged(qint64 current,
 void Technic::SolderPackInstallTask::extractFinished()
 {
 	if (!m_extractFuture.result()) {
-		emitFailed(i18n("Failed to extract modpack"));
+		emitFailed(tr("Failed to extract modpack"));
 		return;
 	}
 	QDir extractDir(m_stagingPath);
@@ -230,7 +229,7 @@ void Technic::SolderPackInstallTask::extractFinished()
 		if (origPermissions != permissions) {
 			if (!QFile::setPermissions(filepath, permissions)) {
 				logWarning(
-					i18n("Could not fix permissions for %1", filepath));
+					tr("Could not fix permissions for %1").arg(filepath));
 			} else {
 				qDebug() << "Fixed" << filepath;
 			}
@@ -249,6 +248,6 @@ void Technic::SolderPackInstallTask::extractFinished()
 
 void Technic::SolderPackInstallTask::extractAborted()
 {
-	emitFailed(i18n("Instance import has been aborted."));
+	emitFailed(tr("Instance import has been aborted."));
 	return;
 }

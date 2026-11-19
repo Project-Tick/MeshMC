@@ -28,10 +28,8 @@
 #include "ui/pages/BasePage.h"
 #include "JavaCommon.h"
 #include "Application.h"
-#include <KLocalizedString>
 
 class JavaChecker;
-class OverrideGroup;
 namespace Ui
 {
 	class InstanceSettingsPage;
@@ -46,7 +44,7 @@ class InstanceSettingsPage : public QWidget, public BasePage
 	virtual ~InstanceSettingsPage();
 	virtual QString displayName() const override
 	{
-		return i18n("Settings");
+		return tr("Settings");
 	}
 	virtual QIcon icon() const override
 	{
@@ -80,13 +78,7 @@ class InstanceSettingsPage : public QWidget, public BasePage
 	void globalSettingsButtonClicked(bool checked);
 
   private:
-	void setupGroups();
-
-  private:
 	Ui::InstanceSettingsPage* ui;
-	QList<OverrideGroup*> m_groups;
-	OverrideGroup* m_memory = nullptr;
-	OverrideGroup* m_javaArgs = nullptr;
 	BaseInstance* m_instance;
 	SettingsObjectPtr m_settings;
 	unique_qobject_ptr<JavaCommon::TestCheck> checker;

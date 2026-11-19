@@ -20,7 +20,6 @@
 #include "FlameApi.h"
 
 #include <QObject>
-#include <KLocalizedString>
 
 namespace
 {
@@ -97,14 +96,14 @@ QList<ModPlatform::SortingMethod> FlameApi::sortingMethods() const
 	 * verbatim as sortField, so the order of this list is free to be
 	 * whatever reads best - it is no longer tied to the wire format. */
 	return {
-		{QStringLiteral("1"), i18n("Sort by Featured")},
-		{QStringLiteral("2"), i18n("Sort by Popularity")},
-		{QStringLiteral("3"), i18n("Sort by Last Updated")},
-		{QStringLiteral("4"), i18n("Sort by Name")},
-		{QStringLiteral("5"), i18n("Sort by Author")},
-		{QStringLiteral("6"), i18n("Sort by Downloads")},
-		{QStringLiteral("7"), i18n("Sort by Category")},
-		{QStringLiteral("8"), i18n("Sort by Game Version")},
+		{QStringLiteral("1"), QObject::tr("Sort by Featured")},
+		{QStringLiteral("2"), QObject::tr("Sort by Popularity")},
+		{QStringLiteral("3"), QObject::tr("Sort by Last Updated")},
+		{QStringLiteral("4"), QObject::tr("Sort by Name")},
+		{QStringLiteral("5"), QObject::tr("Sort by Author")},
+		{QStringLiteral("6"), QObject::tr("Sort by Downloads")},
+		{QStringLiteral("7"), QObject::tr("Sort by Category")},
+		{QStringLiteral("8"), QObject::tr("Sort by Game Version")},
 	};
 }
 

@@ -25,7 +25,6 @@
 #include "minecraft/AssetsUtils.h"
 
 #include "Application.h"
-#include <KLocalizedString>
 
 AssetUpdateTask::AssetUpdateTask(MinecraftInstance* inst)
 {
@@ -36,13 +35,13 @@ AssetUpdateTask::~AssetUpdateTask() {}
 
 void AssetUpdateTask::executeTask()
 {
-	setStatus(i18n("Updating assets index..."));
+	setStatus(tr("Updating assets index..."));
 	auto components = m_inst->getPackProfile();
 	auto profile = components->getProfile();
 	auto assets = profile->getMinecraftAssets();
 	QUrl indexUrl = assets->url;
 	QString localPath = assets->id + ".json";
-	auto job = new NetJob(i18n("Asset index for %1", m_inst->name()),
+	auto job = new NetJob(tr("Asset index for %1").arg(m_inst->name()),
 						  APPLICATION->network());
 
 	auto metacache = APPLICATION->metacache();
@@ -92,12 +91,12 @@ void AssetUpdateTask::assetIndexFinished()
 		auto entry =
 			metacache->resolveEntry("asset_indexes", assets->id + ".json");
 		metacache->evictEntry(entry);
-		emitFailed(i18n("Failed to read the assets index!"));
+		emitFailed(tr("Failed to read the assets index!"));
 	}
 
 	auto job = index.getDownloadJob();
 	if (job) {
-		setStatus(i18n("Getting the assets files from Mojang..."));
+		setStatus(tr("Getting the assets files from Mojang..."));
 		downloadJob = job;
 		connect(downloadJob.get(), &NetJob::succeeded, this,
 				&AssetUpdateTask::emitSucceeded);
@@ -118,12 +117,12 @@ void AssetUpdateTask::assetIndexFinished()
 void AssetUpdateTask::assetIndexFailed(QString reason)
 {
 	qDebug() << m_inst->name() << ": Failed asset index download";
-	emitFailed(i18n("Failed to download the assets index:\n%1", reason));
+	emitFailed(tr("Failed to download the assets index:\n%1").arg(reason));
 }
 
 void AssetUpdateTask::assetsFailed(QString reason)
 {
-	emitFailed(i18n("Failed to download assets:\n%1", reason));
+	emitFailed(tr("Failed to download assets:\n%1").arg(reason));
 }
 
 bool AssetUpdateTask::abort()

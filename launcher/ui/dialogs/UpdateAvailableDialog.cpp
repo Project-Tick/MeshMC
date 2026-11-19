@@ -26,7 +26,6 @@
 #include "BuildConfig.h"
 #include "HoeDown.h"
 #include "MMCStrings.h"
-#include <KLocalizedString>
 
 UpdateAvailableDialog::UpdateAvailableDialog(const QString& currentVersion,
 											 const QString& availableVersion,
@@ -36,10 +35,11 @@ UpdateAvailableDialog::UpdateAvailableDialog(const QString& currentVersion,
 {
 	ui->setupUi(this);
 
-	ui->headerLabel->setText(i18n("A new version of MeshMC is available!"));
+	ui->headerLabel->setText(tr("A new version of MeshMC is available!"));
 	ui->versionAvailableLabel->setText(
-		i18n("Version %1 is now available - you have %2 . Would you like to "
-		   "download it now?", availableVersion, currentVersion));
+		tr("Version %1 is now available - you have %2 . Would you like to "
+		   "download it now?")
+			.arg(availableVersion, currentVersion));
 	ui->icon->setPixmap(QIcon::fromTheme("checkupdate").pixmap(64));
 
 	HoeDown markdown;

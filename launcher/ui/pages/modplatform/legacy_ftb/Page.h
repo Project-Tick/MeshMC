@@ -30,7 +30,6 @@
 #include "modplatform/legacy_ftb/PackHelpers.h"
 #include "modplatform/legacy_ftb/PackFetchTask.h"
 #include "QObjectPtr.h"
-#include <KLocalizedString>
 
 class NewInstanceDialog;
 
@@ -57,7 +56,7 @@ namespace LegacyFTB
 		virtual ~Page();
 		QString displayName() const override
 		{
-			return i18n("FTB Legacy");
+			return tr("FTB Legacy");
 		}
 		QIcon icon() const override
 		{

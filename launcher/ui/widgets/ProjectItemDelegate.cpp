@@ -27,7 +27,6 @@
 #include <QPainter>
 #include <QTextLayout>
 #include <QTextLine>
-#include <KLocalizedString>
 
 namespace
 {
@@ -167,7 +166,7 @@ void ProjectItemDelegate::paint(QPainter* painter,
 		QString title = index.data(ProjectItemRole::Title).toString();
 		if (isInstalled) {
 			//: Suffix on a search result the user already has installed
-			title = i18n("%1 [installed]", title);
+			title = tr("%1 [installed]").arg(title);
 		}
 
 		QFont titleFont = opt.font;

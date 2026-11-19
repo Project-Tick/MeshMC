@@ -5,4 +5,6 @@ target_sources(MeshMC_logic PRIVATE
     BaseWizardPage.h
     JavaWizardPage.cpp
     JavaWizardPage.h
+    LanguageWizardPage.cpp
+    LanguageWizardPage.h
 )

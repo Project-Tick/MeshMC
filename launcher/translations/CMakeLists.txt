@@ -1,4 +1,6 @@
 target_sources(MeshMC_logic PRIVATE
-    Translations.h
-    Translations.cpp
+    TranslationsModel.h
+    TranslationsModel.cpp
+    POTranslator.h
+    POTranslator.cpp
 )

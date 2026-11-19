@@ -26,14 +26,13 @@
 #include "minecraft/auth/Parsers.h"
 
 #include "Application.h"
-#include <KLocalizedString>
 
 MSAStep::MSAStep(AccountData* data, Action action)
 	: AuthStep(data), m_action(action)
 {
 	m_replyHandler = new QOAuthHttpServerReplyHandler(this);
 	m_replyHandler->setCallbackText(
-		i18n("Login successful! You can close this page and return to MeshMC."));
+		tr("Login successful! You can close this page and return to MeshMC."));
 
 	m_oauth2 = new QOAuth2AuthorizationCodeFlow(this);
 	m_oauth2->setClientIdentifier(APPLICATION->msaClientId());
@@ -60,7 +59,7 @@ MSAStep::~MSAStep() noexcept = default;
 
 QString MSAStep::describe()
 {
-	return i18n("Logging in with Microsoft account.");
+	return tr("Logging in with Microsoft account.");
 }
 
 void MSAStep::rehydrate()
@@ -95,7 +94,7 @@ void MSAStep::perform()
 			if (!m_replyHandler->isListening()) {
 				if (!m_replyHandler->listen(QHostAddress::LocalHost)) {
 					emit finished(AccountTaskState::STATE_FAILED_HARD,
-								  i18n("Failed to start local HTTP server for "
+								  tr("Failed to start local HTTP server for "
 									 "OAuth2 callback."));
 					return;
 				}
@@ -139,7 +138,7 @@ void MSAStep::onGranted()
 	}
 	m_data->msaToken.validity = Katabasis::Validity::Certain;
 
-	emit finished(AccountTaskState::STATE_WORKING, i18n("Got MSA token."));
+	emit finished(AccountTaskState::STATE_WORKING, tr("Got MSA token."));
 }
 
 void MSAStep::onRequestFailed(QAbstractOAuth::Error error)
@@ -150,24 +149,24 @@ void MSAStep::onRequestFailed(QAbstractOAuth::Error error)
 		case QAbstractOAuth::Error::NetworkError:
 			emit finished(
 				AccountTaskState::STATE_OFFLINE,
-				i18n("Microsoft authentication failed due to a network error."));
+				tr("Microsoft authentication failed due to a network error."));
 			return;
 		case QAbstractOAuth::Error::ServerError:
 		case QAbstractOAuth::Error::OAuthTokenNotFoundError:
 		case QAbstractOAuth::Error::OAuthTokenSecretNotFoundError:
 		case QAbstractOAuth::Error::OAuthCallbackNotVerified:
 			emit finished(AccountTaskState::STATE_FAILED_HARD,
-						  i18n("Microsoft authentication failed."));
+						  tr("Microsoft authentication failed."));
 			return;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
 		case QAbstractOAuth::Error::ExpiredError:
 			emit finished(AccountTaskState::STATE_FAILED_GONE,
-						  i18n("Microsoft authentication token expired."));
+						  tr("Microsoft authentication token expired."));
 			return;
 #endif
 		default:
 			emit finished(AccountTaskState::STATE_FAILED_HARD,
-						  i18n("Microsoft authentication failed with an "
+						  tr("Microsoft authentication failed with an "
 							 "unrecognized error."));
 			return;
 	}

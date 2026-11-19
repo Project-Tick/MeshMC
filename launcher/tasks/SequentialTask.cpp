@@ -18,7 +18,6 @@
  */
 
 #include "SequentialTask.h"
-#include <KLocalizedString>
 
 SequentialTask::SequentialTask(QObject* parent, QString task_name)
 	: ConcurrentTask(parent, task_name, 1)
@@ -35,7 +34,9 @@ void SequentialTask::updateState()
 	}
 
 	setProgress(finishedSize(), totalSize());
-	setStatus(i18n("Executing task %1 out of %2", QString::number(m_doing.size() + finishedSize()), QString::number(totalSize())));
+	setStatus(tr("Executing task %1 out of %2")
+				  .arg(QString::number(m_doing.size() + finishedSize()),
+					   QString::number(totalSize())));
 }
 
 void SequentialTask::subTaskFailed(Task::Ptr task, const QString& reason)

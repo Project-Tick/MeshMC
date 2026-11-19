@@ -22,13 +22,12 @@
 
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
-#include <KLocalizedString>
 
 DataPackPage::DataPackPage(MinecraftInstance* instance,
 						   std::shared_ptr<ModFolderModel> model,
 						   QWidget* parent)
 	: ModFolderPage(instance, std::move(model), "datapacks", "resourcepacks",
-					i18n("Data packs"), "Data-packs", parent)
+					tr("Data packs"), "Data-packs", parent)
 {
 	ui->actionView_configs->setVisible(false);
 	setContentType(ModPlatform::ContentType::DataPack);
@@ -61,7 +60,7 @@ GlobalDataPackPage::GlobalDataPackPage(MinecraftInstance* instance,
 QString GlobalDataPackPage::displayName() const
 {
 	if (m_underlyingPage == nullptr) {
-		return i18n("Data packs");
+		return tr("Data packs");
 	}
 	return m_underlyingPage->displayName();
 }

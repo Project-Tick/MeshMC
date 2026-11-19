@@ -18,7 +18,6 @@
  * complete. */
 #include "ui/widgets/VersionListView.h"
 #include "ui/widgets/VersionSelectWidget.h"
-#include <KLocalizedString>
 
 /* One loader's version list, dressed up as a page in the sidebar.
  *
@@ -43,14 +42,18 @@ class LoaderVersionPage final : public VersionSelectWidget, public BasePage
 			Version(m_minecraftVersion) <
 				Version(m_loader->earliestMinecraft)) {
 			m_supported = false;
-			setEmptyString(i18n("%1 does not run on Minecraft %2. The earliest "
-							  "version it supports is %3.", m_loader->brandName, m_minecraftVersion, m_loader->earliestMinecraft));
+			setEmptyString(tr("%1 does not run on Minecraft %2. The earliest "
+							  "version it supports is %3.")
+							   .arg(m_loader->brandName, m_minecraftVersion,
+									m_loader->earliestMinecraft));
 			return;
 		}
 
-		setEmptyString(i18n("No %1 builds are published for Minecraft %2.", m_loader->brandName, m_minecraftVersion));
+		setEmptyString(tr("No %1 builds are published for Minecraft %2.")
+						   .arg(m_loader->brandName, m_minecraftVersion));
 		setEmptyErrorString(
-			i18n("The %1 version list could not be downloaded.", m_loader->brandName));
+			tr("The %1 version list could not be downloaded.")
+				.arg(m_loader->brandName));
 
 		/* Builds that name a Minecraft version are held to the one this
 		 * instance runs. Builds that name none - Fabric Loader and Quilt
@@ -159,22 +162,24 @@ namespace
 	{
 		QMessageBox box(parent);
 		box.setIcon(QMessageBox::Warning);
-		box.setWindowTitle(i18n("Two mod loaders"));
+		box.setWindowTitle(QObject::tr("Two mod loaders"));
 		box.setText(
-			i18n("%1 is already installed and switched on here. It and %2 "
+			QObject::tr(
+				"%1 is already installed and switched on here. It and %2 "
 				"hook into the same parts of the game, and an instance "
 				"carrying both will usually fail to start.\n\nWhat should "
-				"happen to %1?", existing, incoming));
+				"happen to %1?")
+				.arg(existing, incoming));
 		box.setTextInteractionFlags(Qt::TextBrowserInteraction);
 
-		QAbstractButton* keep = box.addButton(i18n("Leave it alone"),
+		QAbstractButton* keep = box.addButton(QObject::tr("Leave it alone"),
 											  QMessageBox::AcceptRole);
 		QAbstractButton* disable =
-			canDisable ? box.addButton(i18n("Turn it off"),
+			canDisable ? box.addButton(QObject::tr("Turn it off"),
 									   QMessageBox::ActionRole)
 					   : nullptr;
 		QAbstractButton* uninstall =
-			canUninstall ? box.addButton(i18n("Remove it"),
+			canUninstall ? box.addButton(QObject::tr("Remove it"),
 										 QMessageBox::DestructiveRole)
 						 : nullptr;
 		box.addButton(QMessageBox::Cancel);
@@ -249,17 +254,17 @@ void InstallLoaderDialog::buildPages(const QString& initialUid)
 	 * go in together, stacked. That puts the filter directly under the
 	 * list it filters, which is where the version page keeps its own. */
 	m_search = new QLineEdit(this);
-	m_search->setPlaceholderText(i18n("Filter builds"));
+	m_search->setPlaceholderText(tr("Filter builds"));
 	m_search->setClearButtonEnabled(true);
 
 	m_buttons.setContentsMargins(0, 0, 6, 6);
 	QPushButton* refresh =
-		m_buttons.addButton(i18n("&Refresh"), QDialogButtonBox::ResetRole);
-	refresh->setToolTip(i18n("Download this loader's version list again."));
+		m_buttons.addButton(tr("&Refresh"), QDialogButtonBox::ResetRole);
+	refresh->setToolTip(tr("Download this loader's version list again."));
 	refresh->setAutoDefault(false);
 
 	QPushButton* ok = m_buttons.button(QDialogButtonBox::Ok);
-	ok->setText(i18n("Install"));
+	ok->setText(tr("Install"));
 	ok->setDefault(true);
 
 	auto* bottom = new QVBoxLayout();
@@ -303,7 +308,7 @@ QList<BasePage*> InstallLoaderDialog::getPages()
 
 QString InstallLoaderDialog::dialogTitle()
 {
-	return i18n("Install Loader");
+	return tr("Install Loader");
 }
 
 LoaderVersionPage* InstallLoaderDialog::currentPage() const

@@ -19,7 +19,6 @@
  */
 
 #include "Application.h"
-#include "settings/GlobalSettings.h"
 #include "NewInstanceDialog.h"
 #include "ui_NewInstanceDialog.h"
 
@@ -47,7 +46,6 @@
 #include "ui/pages/modplatform/modrinth/ModrinthPage.h"
 #include "ui/pages/modplatform/ImportPage.h"
 #include "ui/pages/modplatform/technic/TechnicPage.h"
-#include <KLocalizedString>
 
 NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 									 const QString& url, QWidget* parent)
@@ -72,7 +70,7 @@ NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 		index = 0;
 	}
 	ui->groupBox->setCurrentIndex(index);
-	ui->groupBox->lineEdit()->setPlaceholderText(i18n("No group"));
+	ui->groupBox->lineEdit()->setPlaceholderText(tr("No group"));
 
 	refreshInstDirBox();
 	/* Reopen on the folder used last time.
@@ -83,7 +81,7 @@ NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 	 * having been removed from the settings since.
 	 */
 	const QString lastUsedDir =
-		APPLICATION->globalSettings()->lastUsedInstDirForNewInstance();
+		APPLICATION->settings()->get("LastUsedInstDirForNewInstance").toString();
 	const int lastUsedIdx = ui->instDirBox->findData(lastUsedDir);
 	ui->instDirBox->setCurrentIndex(lastUsedIdx >= 0 ? lastUsedIdx : 0);
 
@@ -131,22 +129,20 @@ NewInstanceDialog::NewInstanceDialog(const QString& initialGroup,
 	updateDialogState();
 
 	restoreGeometry(QByteArray::fromBase64(
-		APPLICATION->globalSettings()->newInstanceGeometry().toUtf8()));
+		APPLICATION->settings()->get("NewInstanceGeometry").toByteArray()));
 }
 
 void NewInstanceDialog::reject()
 {
-	APPLICATION->globalSettings()->setNewInstanceGeometry(
-		QString::fromLatin1(saveGeometry().toBase64()));
-	APPLICATION->globalSettings()->save();
+	APPLICATION->settings()->set("NewInstanceGeometry",
+								 saveGeometry().toBase64());
 	QDialog::reject();
 }
 
 void NewInstanceDialog::accept()
 {
-	APPLICATION->globalSettings()->setNewInstanceGeometry(
-		QString::fromLatin1(saveGeometry().toBase64()));
-	APPLICATION->globalSettings()->save();
+	APPLICATION->settings()->set("NewInstanceGeometry",
+								 saveGeometry().toBase64());
 	importIconNow();
 	QDialog::accept();
 }
@@ -164,7 +160,7 @@ QList<BasePage*> NewInstanceDialog::getPages()
 
 QString NewInstanceDialog::dialogTitle()
 {
-	return i18n("New Instance");
+	return tr("New Instance");
 }
 
 NewInstanceDialog::~NewInstanceDialog()
@@ -222,13 +218,13 @@ void NewInstanceDialog::refreshInstDirBox()
 	 * nothing they asked. The resolved path is still what gets selected -
 	 * it is carried in the item's data. */
 	const QString rawPrimary =
-		APPLICATION->globalSettings()->instanceDir();
+		APPLICATION->settings()->get("InstanceDir").toString();
 
 	const QStringList dirs = APPLICATION->instances()->instanceDirs();
 	for (int i = 0; i < dirs.size(); i++) {
 		const QString& dir = dirs.at(i);
 		ui->instDirBox->addItem(
-			i == 0 ? i18n("Default (%1)", rawPrimary) : dir, dir);
+			i == 0 ? tr("Default (%1)").arg(rawPrimary) : dir, dir);
 	}
 
 	const int idx = ui->instDirBox->findData(previouslySelected);
@@ -310,7 +306,6 @@ void NewInstanceDialog::importIconNow()
 		InstIconKey = importIconName;
 		importIcon = false;
 	}
-	APPLICATION->globalSettings()->setNewInstanceGeometry(
-		QString::fromLatin1(saveGeometry().toBase64()));
-	APPLICATION->globalSettings()->save();
+	APPLICATION->settings()->set("NewInstanceGeometry",
+								 saveGeometry().toBase64());
 }

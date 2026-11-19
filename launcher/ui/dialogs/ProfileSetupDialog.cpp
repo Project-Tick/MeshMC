@@ -32,7 +32,6 @@
 #include <Application.h>
 #include "minecraft/auth/AuthRequest.h"
 #include "minecraft/auth/Parsers.h"
-#include <KLocalizedString>
 
 ProfileSetupDialog::ProfileSetupDialog(MinecraftAccountPtr accountToSetup,
 									   QWidget* parent)
@@ -110,7 +109,7 @@ void ProfileSetupDialog::nameEdited(const QString& name)
 {
 	if (!ui->nameEdit->hasAcceptableInput()) {
 		setNameStatus(NameStatus::NotSet,
-					  i18n("Name is too short - must be between 3 and 16 "
+					  tr("Name is too short - must be between 3 and 16 "
 						 "characters long."));
 		return;
 	}
@@ -176,18 +175,19 @@ void ProfileSetupDialog::checkFinished(
 			setNameStatus(NameStatus::Available);
 		} else if (statusValue == "DUPLICATE") {
 			setNameStatus(NameStatus::Exists,
-						  i18n("Minecraft profile with name %1 already exists.", currentCheck));
+						  tr("Minecraft profile with name %1 already exists.")
+							  .arg(currentCheck));
 		} else if (statusValue == "NOT_ALLOWED") {
 			setNameStatus(NameStatus::Exists,
-						  i18n("The name %1 is not allowed.", currentCheck));
+						  tr("The name %1 is not allowed.").arg(currentCheck));
 		} else {
 			setNameStatus(
 				NameStatus::Error,
-				i18n("Unhandled profile name status: %1", statusValue));
+				tr("Unhandled profile name status: %1").arg(statusValue));
 		}
 	} else {
 		setNameStatus(NameStatus::Error,
-					  i18n("Failed to check name availability."));
+					  tr("Failed to check name availability."));
 	}
 	isChecking = false;
 }
@@ -271,7 +271,7 @@ void ProfileSetupDialog::setupProfileFinished(
 	} else {
 		auto parsedError = MojangError::fromJSON(data);
 		ui->errorLabel->setVisible(true);
-		ui->errorLabel->setText(i18n("The server returned the following error:") +
+		ui->errorLabel->setText(tr("The server returned the following error:") +
 								"\n\n" + parsedError.errorMessage);
 		qDebug() << parsedError.rawError;
 		auto button = ui->buttonBox->button(QDialogButtonBox::Cancel);

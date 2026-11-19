@@ -20,7 +20,6 @@
 #include "DarkTheme.h"
 
 #include <QObject>
-#include <KLocalizedString>
 
 QString DarkTheme::id()
 {
@@ -29,12 +28,12 @@ QString DarkTheme::id()
 
 QString DarkTheme::name()
 {
-	return i18n("Dark");
+	return QObject::tr("Dark");
 }
 
 QString DarkTheme::tooltip()
 {
-	return i18n("A dark Fusion-based theme with green accents");
+	return QObject::tr("A dark Fusion-based theme with green accents");
 }
 
 bool DarkTheme::hasColorScheme()

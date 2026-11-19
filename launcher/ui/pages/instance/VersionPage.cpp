@@ -19,7 +19,6 @@
  */
 
 #include "Application.h"
-#include "settings/GlobalSettings.h"
 
 #include <QMessageBox>
 #include <QLabel>
@@ -53,7 +52,6 @@
 
 #include "meta/Index.h"
 #include "meta/VersionList.h"
-#include <KLocalizedString>
 
 class IconProxy : public QIdentityProxyModel
 {
@@ -163,7 +161,7 @@ VersionPage::~VersionPage()
 
 void VersionPage::showContextMenu(const QPoint& pos)
 {
-	auto menu = ui->toolBar->createContextMenu(this, i18n("Context menu"));
+	auto menu = ui->toolBar->createContextMenu(this, tr("Context menu"));
 	menu->exec(ui->packageView->mapToGlobal(pos));
 	delete menu;
 }
@@ -181,10 +179,10 @@ void VersionPage::packageCurrent(const QModelIndex& current,
 	switch (severity) {
 		case ProblemSeverity::Warning:
 			ui->frame->setModText(
-				i18n("%1 possibly has issues.", patch->getName()));
+				tr("%1 possibly has issues.").arg(patch->getName()));
 			break;
 		case ProblemSeverity::Error:
-			ui->frame->setModText(i18n("%1 has issues!", patch->getName()));
+			ui->frame->setModText(tr("%1 has issues!").arg(patch->getName()));
 			break;
 		default:
 		case ProblemSeverity::None:
@@ -196,9 +194,9 @@ void VersionPage::packageCurrent(const QModelIndex& current,
 	QString problemOut;
 	for (auto& problem : problems) {
 		if (problem.m_severity == ProblemSeverity::Error) {
-			problemOut += i18n("Error: ");
+			problemOut += tr("Error: ");
 		} else if (problem.m_severity == ProblemSeverity::Warning) {
-			problemOut += i18n("Warning: ");
+			problemOut += tr("Warning: ");
 		}
 		problemOut += problem.m_description;
 		problemOut += "\n";
@@ -265,11 +263,11 @@ bool VersionPage::reloadPackProfile()
 		m_profile->reload(Net::Mode::Online);
 		return true;
 	} catch (const Exception& e) {
-		QMessageBox::critical(this, i18n("Error"), e.cause());
+		QMessageBox::critical(this, tr("Error"), e.cause());
 		return false;
 	} catch (...) {
-		QMessageBox::critical(this, i18n("Error"),
-							  i18n("Couldn't load the instance profile."));
+		QMessageBox::critical(this, tr("Error"),
+							  tr("Couldn't load the instance profile."));
 		return false;
 	}
 }
@@ -285,8 +283,8 @@ void VersionPage::on_actionRemove_triggered()
 	if (ui->packageView->currentIndex().isValid()) {
 		// FIXME: use actual model, not reloading.
 		if (!m_profile->remove(ui->packageView->currentIndex().row())) {
-			QMessageBox::critical(this, i18n("Error"),
-								  i18n("Couldn't remove file"));
+			QMessageBox::critical(this, tr("Error"),
+								  tr("Couldn't remove file"));
 		}
 	}
 	updateButtons();
@@ -304,8 +302,8 @@ void VersionPage::on_actionInstall_mods_triggered()
 void VersionPage::on_actionAdd_to_Minecraft_jar_triggered()
 {
 	auto list = GuiUtil::BrowseForFiles(
-		"jarmod", i18n("Select jar mods"), i18n("Minecraft.jar mods (*.zip *.jar)"),
-		APPLICATION->globalSettings()->centralModsDir(),
+		"jarmod", tr("Select jar mods"), tr("Minecraft.jar mods (*.zip *.jar)"),
+		APPLICATION->settings()->get("CentralModsDir").toString(),
 		this->parentWidget());
 	if (!list.empty()) {
 		m_profile->installJarMods(list);
@@ -316,8 +314,8 @@ void VersionPage::on_actionAdd_to_Minecraft_jar_triggered()
 void VersionPage::on_actionReplace_Minecraft_jar_triggered()
 {
 	auto jarPath = GuiUtil::BrowseForFile(
-		"jar", i18n("Select jar"), i18n("Minecraft.jar replacement (*.jar)"),
-		APPLICATION->globalSettings()->centralModsDir(),
+		"jar", tr("Select jar"), tr("Minecraft.jar replacement (*.jar)"),
+		APPLICATION->settings()->get("CentralModsDir").toString(),
 		this->parentWidget());
 	if (!jarPath.isEmpty()) {
 		m_profile->installCustomJar(jarPath);
@@ -330,7 +328,7 @@ void VersionPage::on_actionMove_up_triggered()
 	try {
 		m_profile->move(currentRow(), PackProfile::MoveUp);
 	} catch (const Exception& e) {
-		QMessageBox::critical(this, i18n("Error"), e.cause());
+		QMessageBox::critical(this, tr("Error"), e.cause());
 	}
 	updateButtons();
 }
@@ -340,7 +338,7 @@ void VersionPage::on_actionMove_down_triggered()
 	try {
 		m_profile->move(currentRow(), PackProfile::MoveDown);
 	} catch (const Exception& e) {
-		QMessageBox::critical(this, i18n("Error"), e.cause());
+		QMessageBox::critical(this, tr("Error"), e.cause());
 	}
 	updateButtons();
 }
@@ -375,12 +373,12 @@ void VersionPage::on_actionChange_version_triggered()
 		return;
 	}
 
-	VersionSelectDialog vselect(list.get(), i18n("Change %1 version", name),
+	VersionSelectDialog vselect(list.get(), tr("Change %1 version").arg(name),
 								this);
 	if (uid == "net.fabricmc.intermediary" || uid == "org.quiltmc.hashed") {
 		vselect.setEmptyString(
-			i18n("No intermediary mappings versions are currently available."));
-		vselect.setEmptyErrorString(i18n("Couldn't load or download the "
+			tr("No intermediary mappings versions are currently available."));
+		vselect.setEmptyErrorString(tr("Couldn't load or download the "
 									   "intermediary mappings version lists!"));
 	}
 
@@ -415,8 +413,8 @@ void VersionPage::on_actionDownload_All_triggered()
 {
 	if (!APPLICATION->accounts()->anyAccountIsValid()) {
 		CustomMessageBox::selectable(
-			this, i18n("Error"),
-			i18n("MeshMC cannot download Minecraft or update instances unless "
+			this, tr("Error"),
+			tr("MeshMC cannot download Minecraft or update instances unless "
 			   "you have at least "
 			   "one account added.\nPlease add your Mojang or Minecraft "
 			   "account."),
@@ -510,7 +508,7 @@ void VersionPage::preselect(int row)
 
 void VersionPage::onGameUpdateError(QString error)
 {
-	CustomMessageBox::selectable(this, i18n("Error updating instance"), error,
+	CustomMessageBox::selectable(this, tr("Error updating instance"), error,
 								 QMessageBox::Warning)
 		->show();
 }

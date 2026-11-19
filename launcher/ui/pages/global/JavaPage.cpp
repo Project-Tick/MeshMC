@@ -41,17 +41,14 @@
 #include "settings/SettingsObject.h"
 #include <FileSystem.h>
 #include "Application.h"
-#include "settings/GlobalSettings.h"
-#include "ui/widgets/ChoiceBinding.h"
 #include "Sys.h"
-#include <KLocalizedString>
 
 JavaPage::JavaPage(QWidget* parent) : QWidget(parent), ui(new Ui::JavaPage)
 {
 	ui->setupUi(this);
 
 	auto sysMiB = Sys::getSystemRam() / Sys::mebibyte;
-	ui->kcfg_MaxMemAlloc->setMaximum(sysMiB);
+	ui->maxMemSpinBox->setMaximum(sysMiB);
 
 	// Populate vendor combobox
 	auto providers = JavaDownload::JavaProviderInfo::availableProviders();
@@ -59,18 +56,14 @@ JavaPage::JavaPage(QWidget* parent) : QWidget(parent), ui(new Ui::JavaPage)
 		ui->javaAutoDownloadVendorBox->addItem(provider.name, provider.uid);
 	}
 
-	// The vendor is the ID of a provider, not the name that is shown, which
-	// the settings dialog cannot bind by itself.
-	auto* vendor = new ChoiceBinding("JavaAutoDownloadVendor", this);
-	vendor->setComboBox(ui->javaAutoDownloadVendorBox);
-
+	loadSettings();
 #ifdef MeshMC_DISABLE_JAVA_DOWNLOADER
 	// Hide the entire Installations tab when Java downloader is disabled
 	int idx = ui->tabWidget->indexOf(ui->tabInstallations);
 	if (idx != -1)
 		ui->tabWidget->removeTab(idx);
 	// Hide vendor selector and auto-download toggle when downloader is disabled
-	ui->kcfg_JavaAutoDownload->setVisible(false);
+	ui->javaAutoDownloadCheck->setVisible(false);
 	ui->labelAutoDownloadVendor->setVisible(false);
 	ui->javaAutoDownloadVendorBox->setVisible(false);
 #else
@@ -91,24 +84,57 @@ bool JavaPage::apply()
 
 void JavaPage::applySettings()
 {
-	auto* s = APPLICATION->globalSettings();
+	auto s = APPLICATION->settings();
 
-	// The memory, the paths, the vendor and the arguments are bound to their settings by
-	// the settings dialog (the widgets named kcfg_<ID>), which has saved them
-	// when this is called. What is left: the smaller of the two memory
-	// values is the minimum,
-	int min = ui->kcfg_MinMemAlloc->value();
-	int max = ui->kcfg_MaxMemAlloc->value();
-	if (min > max) {
-		ui->kcfg_MinMemAlloc->setValue(max);
-		ui->kcfg_MaxMemAlloc->setValue(min);
-		s->setMinMemAlloc(max);
-		s->setMaxMemAlloc(min);
-		s->save();
+	// Memory
+	int min = ui->minMemSpinBox->value();
+	int max = ui->maxMemSpinBox->value();
+	if (min < max) {
+		s->set("MinMemAlloc", min);
+		s->set("MaxMemAlloc", max);
+	} else {
+		s->set("MinMemAlloc", max);
+		s->set("MaxMemAlloc", min);
 	}
+	s->set("PermGen", ui->permGenSpinBox->value());
 
-	// and the arguments are checked.
-	JavaCommon::checkJVMArgs(ui->kcfg_JvmArgs->text(), this->parentWidget());
+	// Java Settings
+	s->set("JavaPath", ui->javaPathTextBox->text());
+	s->set("JvmArgs", ui->jvmArgsTextBox->text());
+	s->set("JavaAutoDownload", ui->javaAutoDownloadCheck->isChecked());
+	s->set("JavaAutoDownloadVendor",
+		   ui->javaAutoDownloadVendorBox->currentData().toString());
+	JavaCommon::checkJVMArgs(s->get("JvmArgs").toString(),
+							 this->parentWidget());
+}
+void JavaPage::loadSettings()
+{
+	auto s = APPLICATION->settings();
+	// Memory
+	int min = s->get("MinMemAlloc").toInt();
+	int max = s->get("MaxMemAlloc").toInt();
+	if (min < max) {
+		ui->minMemSpinBox->setValue(min);
+		ui->maxMemSpinBox->setValue(max);
+	} else {
+		ui->minMemSpinBox->setValue(max);
+		ui->maxMemSpinBox->setValue(min);
+	}
+	ui->permGenSpinBox->setValue(s->get("PermGen").toInt());
+
+	// Java Settings
+	ui->javaPathTextBox->setText(s->get("JavaPath").toString());
+	ui->jvmArgsTextBox->setText(s->get("JvmArgs").toString());
+
+	// Auto-download
+	ui->javaAutoDownloadCheck->setChecked(s->get("JavaAutoDownload").toBool());
+
+	// Auto-download vendor
+	auto currentVendor = s->get("JavaAutoDownloadVendor").toString();
+	int idx = ui->javaAutoDownloadVendorBox->findData(currentVendor);
+	if (idx >= 0) {
+		ui->javaAutoDownloadVendorBox->setCurrentIndex(idx);
+	}
 }
 
 void JavaPage::on_javaDetectBtn_clicked()
@@ -116,21 +142,21 @@ void JavaPage::on_javaDetectBtn_clicked()
 	JavaInstallPtr java;
 
 	VersionSelectDialog vselect(APPLICATION->javalist().get(),
-								i18n("Select a Java version"), this, true);
+								tr("Select a Java version"), this, true);
 	vselect.setResizeOn(2);
 	vselect.exec();
 
 	if (vselect.result() == QDialog::Accepted && vselect.selectedVersion()) {
 		java =
 			std::dynamic_pointer_cast<JavaInstall>(vselect.selectedVersion());
-		ui->kcfg_JavaPath->setText(java->path);
+		ui->javaPathTextBox->setText(java->path);
 	}
 }
 
 void JavaPage::on_javaBrowseBtn_clicked()
 {
 	QString raw_path =
-		QFileDialog::getOpenFileName(this, i18n("Find Java executable"));
+		QFileDialog::getOpenFileName(this, tr("Find Java executable"));
 
 	// do not allow current dir - it's dirty. Do not allow dirs that don't exist
 	if (raw_path.isEmpty()) {
@@ -143,7 +169,7 @@ void JavaPage::on_javaBrowseBtn_clicked()
 	if (!javaInfo.exists() || !javaInfo.isExecutable()) {
 		return;
 	}
-	ui->kcfg_JavaPath->setText(cooked_path);
+	ui->javaPathTextBox->setText(cooked_path);
 }
 
 void JavaPage::on_javaTestBtn_clicked()
@@ -152,9 +178,9 @@ void JavaPage::on_javaTestBtn_clicked()
 		return;
 	}
 	checker.reset(new JavaCommon::TestCheck(
-		this, ui->kcfg_JavaPath->text(), ui->kcfg_JvmArgs->text(),
-		ui->kcfg_MinMemAlloc->value(), ui->kcfg_MaxMemAlloc->value(),
-		ui->kcfg_PermGen->value()));
+		this, ui->javaPathTextBox->text(), ui->jvmArgsTextBox->text(),
+		ui->minMemSpinBox->value(), ui->maxMemSpinBox->value(),
+		ui->permGenSpinBox->value()));
 	connect(checker.get(), &JavaCommon::TestCheck::finished, this,
 			&JavaPage::checkerFinished);
 	checker->run();
@@ -196,8 +222,9 @@ void JavaPage::on_javaRemoveBtn_clicked()
 	javaDir.cdUp();			 // java root
 
 	auto result = QMessageBox::question(
-		this, i18n("Remove Java Installation"),
-		i18n("Are you sure you want to remove this Java installation?\n\n%1", javaDir.absolutePath()),
+		this, tr("Remove Java Installation"),
+		tr("Are you sure you want to remove this Java installation?\n\n%1")
+			.arg(javaDir.absolutePath()),
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (result != QMessageBox::Yes)
@@ -215,7 +242,7 @@ void JavaPage::on_javaUseBtn_clicked()
 
 	QString path = item->text(2);
 	if (!path.isEmpty()) {
-		ui->kcfg_JavaPath->setText(path);
+		ui->javaPathTextBox->setText(path);
 		ui->tabWidget->setCurrentIndex(0); // Switch to Settings tab
 	}
 }

@@ -22,8 +22,6 @@
 
 #include <QStandardPaths>
 #include <QTimer>
-#include <KLazyLocalizedString>
-#include <KLocalizedString>
 
 #include "launch/LaunchTask.h"
 #include "minecraft/MinecraftInstance.h"
@@ -128,14 +126,11 @@ void MeshMCPartLaunch::executeTask()
 		auto realWrapperCommand =
 			QStandardPaths::findExecutable(wrapperCommand);
 		if (realWrapperCommand.isEmpty()) {
-			// The log stays in English, it ends up in bug reports; only the
-			// failure reason shown to the user is translated.
-			const KLazyLocalizedString reason =
-				kli18n("The wrapper command \"%1\" couldn't be found.");
-			emit logLine(QString::fromUtf8(reason.untranslatedText())
-							 .arg(wrapperCommand),
+			const char* reason =
+				QT_TR_NOOP("The wrapper command \"%1\" couldn't be found.");
+			emit logLine(QString(reason).arg(wrapperCommand),
 						 MessageLevel::Fatal);
-			emitFailed(reason.subs(wrapperCommand).toString());
+			emitFailed(tr(reason).arg(wrapperCommand));
 			return;
 		}
 		emit logLine("Wrapper command is:\n" + wrapperCommandStr + "\n\n",
@@ -151,19 +146,16 @@ void MeshMCPartLaunch::on_state(LoggedProcess::State state)
 {
 	switch (state) {
 		case LoggedProcess::FailedToStart: {
-			// i18n: Error message displayed if instance can't start
-			const KLazyLocalizedString reason =
-				kli18n("Could not launch minecraft!");
-			// The log stays in English, only the failure reason is translated.
-			emit logLine(QString::fromUtf8(reason.untranslatedText()),
-						 MessageLevel::Fatal);
-			emitFailed(reason.toString());
+			//: Error message displayed if instace can't start
+			const char* reason = QT_TR_NOOP("Could not launch minecraft!");
+			emit logLine(reason, MessageLevel::Fatal);
+			emitFailed(tr(reason));
 			return;
 		}
 		case LoggedProcess::Aborted:
 		case LoggedProcess::Crashed: {
 			m_parent->setPid(-1);
-			emitFailed(i18n("Game crashed."));
+			emitFailed(tr("Game crashed."));
 			return;
 		}
 		case LoggedProcess::Finished: {
@@ -171,7 +163,7 @@ void MeshMCPartLaunch::on_state(LoggedProcess::State state)
 			// if the exit code wasn't 0, report this as a crash
 			auto exitCode = m_process.exitCode();
 			if (exitCode != 0) {
-				emitFailed(i18n("Game crashed."));
+				emitFailed(tr("Game crashed."));
 				return;
 			}
 			// FIXME: make this work again
@@ -232,7 +224,7 @@ bool MeshMCPartLaunch::abort()
 				state != LoggedProcess::Starting) {
 				return;
 			}
-			emit logLine(i18n("The game did not react to the abort request. "
+			emit logLine(tr("The game did not react to the abort request. "
 							"Killing it."),
 						 MessageLevel::MeshMC);
 			m_process.kill();

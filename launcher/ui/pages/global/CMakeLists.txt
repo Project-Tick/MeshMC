@@ -14,6 +14,8 @@ target_sources(MeshMC_logic PRIVATE
     JavaPage.cpp
     JavaPage.h
     JavaPage.ui
+    LanguagePage.cpp
+    LanguagePage.h
     MinecraftPage.cpp
     MinecraftPage.h
     MinecraftPage.ui

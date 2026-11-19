@@ -18,7 +18,6 @@
  */
 
 #include "Application.h"
-#include "settings/GlobalSettings.h"
 #include "BuildConfig.h"
 #include "plugin/PluginManager.h"
 
@@ -34,6 +33,7 @@
 #include "ui/pages/global/MeshMCPage.h"
 #include "ui/pages/global/MinecraftPage.h"
 #include "ui/pages/global/JavaPage.h"
+#include "ui/pages/global/LanguagePage.h"
 #include "ui/pages/global/ProxyPage.h"
 #include "ui/pages/global/ExternalToolsPage.h"
 #include "ui/pages/global/AccountListPage.h"
@@ -45,11 +45,12 @@
 #include "ui/themes/ThemeManager.h"
 
 #include "ui/setupwizard/SetupWizard.h"
+#include "ui/setupwizard/LanguageWizardPage.h"
 #include "ui/setupwizard/JavaWizardPage.h"
 
 #include "ui/dialogs/CustomMessageBox.h"
 
-#include "ui/pagedialog/GlobalSettingsDialog.h"
+#include "ui/pagedialog/PageDialog.h"
 
 #include "ApplicationMessage.h"
 
@@ -95,11 +96,10 @@
 
 #include <QIcon>
 
-#include "settings/KConfigSettingsObject.h"
-#include "settings/GlobalSettingsSetup.h"
+#include "settings/INISettingsObject.h"
 #include "settings/Setting.h"
 
-#include "translations/Translations.h"
+#include "translations/TranslationsModel.h"
 #include "meta/Index.h"
 
 #include <Commandline.h>
@@ -115,8 +115,6 @@
 #include "Sys.h"
 #include "Logging.h"
 #include "MMCStrings.h"
-
-#include <KLocalizedString>
 
 #if defined Q_OS_WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -437,9 +435,9 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 		 * additional folders too - otherwise "list instances" would
 		 * disagree with the window that shows them. */
 		QStringList instDirs;
-		instDirs << globalSettings()->instanceDir();
+		instDirs << m_settings->get("InstanceDir").toString();
 		instDirs << InstanceList::decodeInstanceDirList(
-			globalSettings()->additionalInstanceDirs());
+			m_settings->get("AdditionalInstanceDirs"));
 		m_instances.reset(new InstanceList(m_settings, instDirs, this));
 		m_instances->loadList();
 
@@ -511,7 +509,7 @@ void Application::initPlatform()
 	setOrganizationName("MeshMC");
 	setOrganizationDomain("projecttick.org");
 	setApplicationName("MeshMC");
-	setApplicationDisplayName(QString("MeshMC"));
+	setApplicationDisplayName(QString("MeshMC %2").arg(BuildConfig.printableVersionString()));
 	setApplicationVersion(BuildConfig.printableVersionString());
 
 	startTime = QDateTime::currentDateTime();
@@ -925,31 +923,258 @@ void Application::setupPaths(const QString& binPath, const QString& origcwdPath,
 
 void Application::initSettings()
 {
-	auto* file = new KConfigSettingsObject("meshmc.cfg", this);
-	m_settings.reset(file);
-	// Every global setting is declared in settings/GlobalSettings.kcfg: what
-	// it is, and what it is when meshmc.cfg does not say. kconfig_compiler
-	// turns that file into the class GlobalSettings; this registers its
-	// entries. The comments on what a setting is for are in the .kcfg.
-	registerGlobalSettings(file);
-	m_typedSettings = typedGlobalSettings(file);
+	m_settings.reset(
+		new INISettingsObject("meshmc.cfg", this));
+	// Updates
+	m_settings->registerSetting("UpdateChannel", BuildConfig.VERSION_CHANNEL);
+	m_settings->registerSetting("AutoUpdate", true);
+
+	// Theming
+	m_settings->registerSetting("IconTheme", QString("pe_colored"));
+	m_settings->registerSetting("ApplicationTheme", QString("system"));
+
+	/* Screen-top menu bar. Only macOS has one; elsewhere the setting is
+	 * carried but never acted on. The second key is what this shipped as
+	 * originally, kept so existing configs still read. */
+	m_settings->registerSetting(
+		{MacMenuBar::settingKey(), MacMenuBar::legacySettingKey()}, true);
+
+	// Notifications
+	m_settings->registerSetting("ShownNotifications", QString());
+
+	// Remembered state
+	m_settings->registerSetting("LastUsedGroupForNewInstance", QString());
+
+	QString defaultMonospace;
+	int defaultSize = 11;
+#ifdef Q_OS_WIN32
+	defaultMonospace = "Courier";
+	defaultSize = 10;
+#elif defined(Q_OS_MAC)
+	defaultMonospace = "Menlo";
+#else
+	defaultMonospace = "Monospace";
+#endif
+
+	// resolve the font so the default actually matches
+	QFont consoleFont;
+	consoleFont.setFamily(defaultMonospace);
+	consoleFont.setStyleHint(QFont::Monospace);
+	consoleFont.setFixedPitch(true);
+	QFontInfo consoleFontInfo(consoleFont);
+	QString resolvedDefaultMonospace = consoleFontInfo.family();
+	QFont resolvedFont(resolvedDefaultMonospace);
+	qDebug() << "Detected default console font:" << resolvedDefaultMonospace
+			 << ", substitutions:" << resolvedFont.substitutions().join(',');
+
+	m_settings->registerSetting("ConsoleFont", resolvedDefaultMonospace);
+	m_settings->registerSetting("ConsoleFontSize", defaultSize);
+	m_settings->registerSetting("ConsoleMaxLines", 100000);
+	m_settings->registerSetting("ConsoleOverflowStop", true);
+
+	// Folders
+	m_settings->registerSetting("InstanceDir", "instances");
+	/* Extra instance folders, searched after the primary one.
+	 *
+	 * Instances found in these are listed and launched exactly like the
+	 * ones in "InstanceDir"; the primary folder keeps its special roles -
+	 * it is the default destination for new instances, and it holds the
+	 * group file. Empty by default, so a launcher nobody has configured
+	 * behaves exactly as it did when there was only one folder.
+	 *
+	 * Held as a JSON array in a single string, not as a QStringList:
+	 * INIFile saves every value through QVariant::toString(), which is
+	 * empty for a multi-element list, so a list would not survive being
+	 * written and read back. Use InstanceList::decodeInstanceDirList() and
+	 * encodeInstanceDirList() at the boundary rather than touching the
+	 * raw value.
+	 */
+	m_settings->registerSetting("AdditionalInstanceDirs", QString());
+	/* Which folder the new-instance dialog opens on. A single path, so it
+	 * needs no encoding; empty until the user has created something, which
+	 * the dialog reads as "the primary folder". */
+	m_settings->registerSetting("LastUsedInstDirForNewInstance", QString());
+	m_settings->registerSetting({"CentralModsDir", "ModsDir"}, "mods");
+	m_settings->registerSetting("IconsDir", "icons");
+	m_settings->registerSetting("SkinsDir", "skins");
+    m_settings->registerSetting("JavaDir", "java");
+
+	/* Whether installing a modpack that is already installed offers to
+	 * update that instance instead of creating a second one.
+	 *
+	 * Phrased as "skip" so that false - the default, and what every
+	 * existing config reads as - means the question gets asked. Anyone
+	 * who deliberately keeps several copies of a pack around is the one
+	 * person for whom the question is only ever noise, and this is how
+	 * they turn it off. */
+	m_settings->registerSetting("SkipModpackUpdatePrompt", false);
+
+	/* Whether creating or updating an instance also fetches the game's
+	 * own files - version metadata, libraries, assets - instead of
+	 * leaving all of it to the first launch.
+	 *
+	 * On by default: the download happens either way, and doing it while
+	 * the user is already waiting for an install to finish is time they
+	 * have agreed to spend. The alternative is that the first launch of a
+	 * freshly installed pack is the slow one, which is the worst moment
+	 * for it. */
+	m_settings->registerSetting("DownloadGameFilesDuringInstanceCreation",
+								true);
+
+	// Editors
+	m_settings->registerSetting("JsonEditor", QString());
+
+	// Language
+	m_settings->registerSetting("Language", QString());
+
+	// Console
+	m_settings->registerSetting("ShowConsole", false);
+	m_settings->registerSetting("AutoCloseConsole", false);
+	m_settings->registerSetting("ShowConsoleOnError", true);
+	m_settings->registerSetting("LogPrePostOutput", true);
+
+	// Window Size
+	m_settings->registerSetting({"LaunchMaximized", "MCWindowMaximize"}, false);
+	m_settings->registerSetting({"MinecraftWinWidth", "MCWindowWidth"}, 854);
+	m_settings->registerSetting({"MinecraftWinHeight", "MCWindowHeight"}, 480);
+
+	// Proxy Settings
+	m_settings->registerSetting("ProxyType", "None");
+	m_settings->registerSetting({"ProxyAddr", "ProxyHostName"}, "127.0.0.1");
+	m_settings->registerSetting("ProxyPort", 8080);
+	m_settings->registerSetting({"ProxyUser", "ProxyUsername"}, "");
+	m_settings->registerSetting({"ProxyPass", "ProxyPassword"}, "");
+
+	// Memory — compute reasonable defaults based on system RAM
+	int defaultMinMem = 512;
+	int defaultMaxMem = 1024;
+	{
+		uint64_t systemRamMiB = Sys::getSystemRam() / Sys::mebibyte;
+		if (systemRamMiB >= 32768) { // 32+ GB
+			defaultMinMem = 1024;
+			defaultMaxMem = 8192;
+		} else if (systemRamMiB >= 16384) { // 16-32 GB
+			defaultMinMem = 1024;
+			defaultMaxMem = 6144;
+		} else if (systemRamMiB >= 8192) { // 8-16 GB
+			defaultMinMem = 512;
+			defaultMaxMem = 4096;
+		} else if (systemRamMiB >= 4096) { // 4-8 GB
+			defaultMinMem = 512;
+			defaultMaxMem = 2048;
+		}
+		// <4 GB: keep 512/1024 defaults
+	}
+	m_settings->registerSetting({"MinMemAlloc", "MinMemoryAlloc"},
+								defaultMinMem);
+	m_settings->registerSetting({"MaxMemAlloc", "MaxMemoryAlloc"},
+								defaultMaxMem);
+	m_settings->registerSetting("PermGen", 128);
 
 	// CurseForge API key — baked in at compile time via BuildConfig.
 	// Exposed as a read-only app setting so .mmco plugins can read it
 	// through the MMCOContext::app_setting_get channel (ABI 3). Plugins
 	// cannot link BuildConfig directly: the SDK is Qt-only and the
 	// BuildConfig symbol is not part of the plugin ABI.
-	m_typedSettings->setCurseForgeAPIKey(BuildConfig.CURSEFORGE_API_KEY);
-	m_typedSettings->save();
+	m_settings->registerSetting("CurseForgeAPIKey", "");
+	m_settings->set("CurseForgeAPIKey", BuildConfig.CURSEFORGE_API_KEY);
+
+	// Java Settings
+	m_settings->registerSetting("JavaPath", "");
+	m_settings->registerSetting("JavaTimestamp", 0);
+	m_settings->registerSetting("JavaArchitecture", "");
+	m_settings->registerSetting("JavaVersion", "");
+	m_settings->registerSetting("JavaVendor", "");
+	m_settings->registerSetting("LastHostname", "");
+	m_settings->registerSetting("JvmArgs", "");
+
+	// Java auto-download
+	m_settings->registerSetting("JavaAutoDownload", true);
+	m_settings->registerSetting("JavaAutoDownloadVendor", "net.minecraft.java");
+
+	// Native library workarounds
+	m_settings->registerSetting("UseNativeOpenAL", false);
+	m_settings->registerSetting("UseNativeGLFW", false);
+
+	// Game time
+	m_settings->registerSetting("ShowGameTime", true);
+	m_settings->registerSetting("ShowGlobalGameTime", true);
+	m_settings->registerSetting("RecordGameTime", true);
+
+	// Minecraft launch method
+	m_settings->registerSetting("MCLaunchMethod", "MeshMCPart");
+
+	// Wrapper command for launch
+	m_settings->registerSetting("WrapperCommand", "");
+
+	// Custom Commands
+	m_settings->registerSetting({"PreLaunchCommand", "PreLaunchCmd"}, "");
+	m_settings->registerSetting({"PostExitCommand", "PostExitCmd"}, "");
+
+	// Instance backups.
+	//
+	// The legacy synonym is the key the out-of-tree BackupSystem .mmco
+	// plugin registered through app_setting_register() — same config
+	// file, so anyone who had pre-launch snapshots switched on keeps
+	// them after the plugin graduated into core. The old key is dropped
+	// from meshmc.cfg the first time the setting is written.
+	m_settings->registerSetting(
+		{"BackupBeforeLaunch", "plugin.backup_system.BackupBeforeLaunch"},
+		false);
+
+	// The cat
+	m_settings->registerSetting("TheCat", false);
+	m_settings->registerSetting("BackgroundCat", QString("kitteh"));
+	m_settings->registerSetting("CatOpacity", 100);
+
+	m_settings->registerSetting("InstSortMode", "Name");
+	m_settings->registerSetting("SelectedInstance", QString());
+
+	// Toolbar customization
+	m_settings->registerSetting("ToolbarsLocked", false);
+
+	/* Whether the main window keeps its menu bar and gives up the main
+	 * toolbar. Off means the toolbar stays and tapping Alt shows the menu
+	 * bar for a moment. No effect on macOS, where the menu bar is native
+	 * and always present. */
+	m_settings->registerSetting("MenuBarInsteadOfToolBar", false);
+
+	// Window state and geometry
+	m_settings->registerSetting("MainWindowState", "");
+	m_settings->registerSetting("MainWindowGeometry", "");
+
+	m_settings->registerSetting("ConsoleWindowState", "");
+	m_settings->registerSetting("ConsoleWindowGeometry", "");
+
+	m_settings->registerSetting("SettingsGeometry", "");
+
+	m_settings->registerSetting("PagedGeometry", "");
+
+	m_settings->registerSetting("NewInstanceGeometry", "");
+
+
+	m_settings->registerSetting("DataPackManagerGeometry", "");
+
+	m_settings->registerSetting("ModDownloadGeometry", "");
+
+	m_settings->registerSetting("RPDownloadGeometry", "");
+
+	m_settings->registerSetting("ShaderDownloadGeometry", "");
+
+	m_settings->registerSetting("DataPackDownloadGeometry", "");
+
+	// paste.ee API key
+	m_settings->registerSetting("PasteEEAPIKey", "meshmc");
 
 	// Init page provider
 	{
 		m_globalSettingsProvider =
-			std::make_shared<GenericPageProvider>(i18n("Settings"));
+			std::make_shared<GenericPageProvider>(tr("Settings"));
 		m_globalSettingsProvider->addPage<MeshMCPage>();
 		m_globalSettingsProvider->addPage<AppearancePage>();
 		m_globalSettingsProvider->addPage<MinecraftPage>();
 		m_globalSettingsProvider->addPage<JavaPage>();
+		m_globalSettingsProvider->addPage<LanguagePage>();
 		m_globalSettingsProvider->addPage<CustomCommandsPage>();
 		m_globalSettingsProvider->addPage<ProxyPage>();
 		m_globalSettingsProvider->addPage<ExternalToolsPage>();
@@ -964,20 +1189,21 @@ void Application::initSubsystems()
 	// initialize network access and proxy setup
 	{
 		m_network = new QNetworkAccessManager();
-		QString proxyTypeStr = globalSettings()->proxyType();
-		QString addr = globalSettings()->proxyAddr();
-		int port = static_cast<qint16>(globalSettings()->proxyPort());
-		QString user = globalSettings()->proxyUser();
-		QString pass = globalSettings()->proxyPass();
+		QString proxyTypeStr = settings()->get("ProxyType").toString();
+		QString addr = settings()->get("ProxyAddr").toString();
+		int port = settings()->get("ProxyPort").value<qint16>();
+		QString user = settings()->get("ProxyUser").toString();
+		QString pass = settings()->get("ProxyPass").toString();
 		updateProxySettings(proxyTypeStr, addr, port, user, pass);
 		qDebug() << "<> Network done.";
 	}
 
 	// load translations
 	{
-		// The language is chosen with the dialog of the Help menu, and
-		// found again here, see Translations.h.
-		Translations::initialize(m_settings.get());
+		m_translations.reset(new TranslationsModel("translations"));
+		auto bcp47Name = m_settings->get("Language").toString();
+		m_translations->selectLanguage(bcp47Name);
+		qDebug() << "Your language is" << bcp47Name;
 		qDebug() << "<> Translations loaded.";
 	}
 
@@ -996,7 +1222,7 @@ void Application::initSubsystems()
 			m_mainWindow, m_rootPath, m_dataPath,
 			// Migrates the launcher's old "check on start" setting into the
 			// updater's config, once. See the constructor.
-			globalSettings()->autoUpdate()));
+			m_settings->get("AutoUpdate").toBool()));
 #endif
 		if (m_updater) {
 			// A build follows the channel it was published on unless the user
@@ -1049,9 +1275,9 @@ void Application::initSubsystems()
 			m_settings->getSetting("AdditionalInstanceDirs");
 
 		QStringList instDirs;
-		instDirs << globalSettings()->instanceDir();
+		instDirs << InstDirSetting->get().toString();
 		instDirs << InstanceList::decodeInstanceDirList(
-			globalSettings()->additionalInstanceDirs());
+			AdditionalInstDirsSetting->get());
 
 		// instance path: check for problems with '!' in instance path and
 		// warn the user in the log and remember that we have to show him a
@@ -1124,19 +1350,27 @@ void Application::initSubsystems()
 		m_metacache->addBase("ContentImages",
 							 QDir("cache/ContentImages").absolutePath());
 		m_metacache->addBase("root", QDir::currentPath());
+		m_metacache->addBase("translations",
+							 QDir("translations").absolutePath());
 		m_metacache->addBase("icons", QDir("cache/icons").absolutePath());
 		m_metacache->addBase("meta", QDir("meta").absolutePath());
 		m_metacache->Load();
 		qDebug() << "<> Cache initialized.";
 	}
 
+	// now we have network, download translation updates
+	m_translations->downloadIndex();
+
 	// FIXME: what to do with these?
 	m_profilers.insert("jprofiler", std::make_shared<JProfilerFactory>());
 	m_profilers.insert("jvisualvm", std::make_shared<JVisualVMFactory>());
+	for (auto profiler : m_profilers.values()) {
+		profiler->registerSettings(m_settings);
+	}
 
 	// Create the MCEdit thing... why is this here?
 	{
-		m_mcedit.reset(new MCEditTool());
+		m_mcedit.reset(new MCEditTool(m_settings));
 	}
 
 	connect(this, &Application::aboutToQuit, [this]() {
@@ -1164,23 +1398,30 @@ bool Application::createSetupWizard()
 {
 	bool javaRequired = [&]() {
 		QString currentHostName = QHostInfo::localHostName();
-		QString oldHostName = globalSettings()->lastHostname();
+		QString oldHostName = settings()->get("LastHostname").toString();
 		if (currentHostName != oldHostName) {
-			globalSettings()->setLastHostname(currentHostName);
-			globalSettings()->save();
+			settings()->set("LastHostname", currentHostName);
 			return true;
 		}
-		QString currentJavaPath = globalSettings()->javaPath();
+		QString currentJavaPath = settings()->get("JavaPath").toString();
 		QString actualPath = FS::ResolveExecutable(currentJavaPath);
 		if (actualPath.isNull()) {
 			return true;
 		}
 		return false;
 	}();
-	bool wizardRequired = javaRequired;
+	bool languageRequired = [&]() {
+		if (settings()->get("Language").toString().isEmpty())
+			return true;
+		return false;
+	}();
+	bool wizardRequired = javaRequired || languageRequired;
 
 	if (wizardRequired) {
 		m_setupWizard = new SetupWizard(nullptr);
+		if (languageRequired) {
+			m_setupWizard->addPage(new LanguageWizardPage(m_setupWizard));
+		}
 		if (javaRequired) {
 			m_setupWizard->addPage(new JavaWizardPage(m_setupWizard));
 		}
@@ -1460,6 +1701,11 @@ void Application::messageReceived(const QByteArray& message)
 	}
 }
 
+std::shared_ptr<TranslationsModel> Application::translations()
+{
+	return m_translations;
+}
+
 std::shared_ptr<JavaInstallList> Application::javalist()
 {
 	if (!m_javalist) {
@@ -1499,10 +1745,10 @@ QIcon Application::getThemedIcon(const QString& name)
 bool Application::openJsonEditor(const QString& filename)
 {
 	const QString file = QDir::current().absoluteFilePath(filename);
-	if (globalSettings()->jsonEditor().isEmpty()) {
+	if (m_settings->get("JsonEditor").toString().isEmpty()) {
 		return DesktopServices::openUrl(QUrl::fromLocalFile(file));
 	} else {
-		return DesktopServices::run(globalSettings()->jsonEditor(),
+		return DesktopServices::run(m_settings->get("JsonEditor").toString(),
 									{file});
 	}
 }
@@ -1683,8 +1929,8 @@ bool Application::reportUpdateMarkers()
 		UpdateLockFile::Contents lock;
 		UpdateLockFile::read(lockPath, &lock);
 
-		QMessageBox box(QMessageBox::Warning, i18n("Update In Progress"),
-						i18n("This installation has an update lock file at: %1\n"
+		QMessageBox box(QMessageBox::Warning, tr("Update In Progress"),
+						tr("This installation has an update lock file at: %1\n"
 						   "\n"
 						   "Timestamp: %2\n"
 						   "Updating from version %3 to %4\n"
@@ -1699,7 +1945,12 @@ bool Application::reportUpdateMarkers()
 						   "has the details of the last attempt.\n"
 						   "\n"
 						   "To delete this lock and continue, choose "
-						   "\"Ignore\".", QDir::toNativeSeparators(lockPath), lock.timestamp.toString(Qt::ISODate), lock.from, lock.to, lock.target, lock.dataPath, QDir::toNativeSeparators(updateLog)),
+						   "\"Ignore\".")
+							.arg(QDir::toNativeSeparators(lockPath),
+								 lock.timestamp.toString(Qt::ISODate),
+								 lock.from, lock.to, lock.target,
+								 lock.dataPath,
+								 QDir::toNativeSeparators(updateLog)),
 						QMessageBox::Ignore | QMessageBox::Abort);
 		box.setDefaultButton(QMessageBox::Abort);
 		box.setModal(true);
@@ -1717,14 +1968,15 @@ bool Application::reportUpdateMarkers()
 	const QString failMarker = UpdateLockFile::markerPath(
 		m_dataPath, QLatin1String(UpdateLockFile::kFailMarkerName));
 	if (QFileInfo::exists(failMarker)) {
-		QMessageBox box(QMessageBox::Warning, i18n("Update Failed"),
-						i18n("An update attempt failed.\n"
+		QMessageBox box(QMessageBox::Warning, tr("Update Failed"),
+						tr("An update attempt failed.\n"
 						   "\n"
 						   "Please make sure your installation still works "
 						   "before continuing.\n"
 						   "The updater log at:\n"
 						   "%1\n"
-						   "has the details of the last attempt.", QDir::toNativeSeparators(updateLog)),
+						   "has the details of the last attempt.")
+							.arg(QDir::toNativeSeparators(updateLog)),
 						QMessageBox::Ignore | QMessageBox::Abort);
 		box.setDefaultButton(QMessageBox::Abort);
 		box.setModal(true);
@@ -1745,13 +1997,15 @@ bool Application::reportUpdateMarkers()
 		// Shown without blocking startup: the news is good, and the details
 		// are there for anyone who wants them.
 		auto* box = new QMessageBox(
-			QMessageBox::Information, i18n("Update Succeeded"),
-			i18n("The update succeeded.\n"
+			QMessageBox::Information, tr("Update Succeeded"),
+			tr("The update succeeded.\n"
 			   "\n"
 			   "You are now running %1.\n"
 			   "The updater log at:\n"
 			   "%2\n"
-			   "has the details.", BuildConfig.printableVersionString(), QDir::toNativeSeparators(updateLog)),
+			   "has the details.")
+				.arg(BuildConfig.printableVersionString(),
+					 QDir::toNativeSeparators(updateLog)),
 			QMessageBox::Ok);
 		box->setDefaultButton(QMessageBox::Ok);
 		box->setDetailedText(logContents());
@@ -1822,7 +2076,7 @@ namespace
 	 *
 	 * This mirrors what InstancePageProvider does for instance pages: the
 	 * hook is dispatched every time the dialog is built, so plugin pages
-	 * are created fresh on each open (GlobalSettingsDialog takes ownership) and
+	 * are created fresh on each open (PageDialog takes ownership) and
 	 * never accumulate. Without this bridge the hook is defined but never
 	 * fired, so plugins such as OfflineWiki that register a global page
 	 * through it stay invisible. */
@@ -1861,20 +2115,11 @@ void Application::ShowGlobalSettings(class QWidget* parent, QString open_page)
 	if (!m_globalSettingsProvider) {
 		return;
 	}
-	// The dialog binds widgets to the settings through the KConfig they are
-	// kept in.
-	auto* settings = dynamic_cast<KConfigSettingsObject*>(m_settings.get());
-	if (!settings) {
-		qCritical() << "The global settings are not in a KConfig file; "
-					   "there is no settings dialog.";
-		return;
-	}
 	emit globalSettingsAboutToOpen();
 	{
 		SettingsObject::Lock lock(APPLICATION->settings());
 		PluginAugmentedPageProvider provider(m_globalSettingsProvider.get());
-		GlobalSettingsDialog dlg(&provider, settings->skeleton(), open_page,
-								 parent);
+		PageDialog dlg(&provider, open_page, parent);
 		dlg.exec();
 	}
 	emit globalSettingsClosed();
@@ -1900,9 +2145,9 @@ MainWindow* Application::showMainWindow(bool minimized)
 	} else {
 		m_mainWindow = new MainWindow();
 		m_mainWindow->restoreState(QByteArray::fromBase64(
-			APPLICATION->globalSettings()->mainWindowState().toUtf8()));
+			APPLICATION->settings()->get("MainWindowState").toByteArray()));
 		m_mainWindow->restoreGeometry(QByteArray::fromBase64(
-			APPLICATION->globalSettings()->mainWindowGeometry().toUtf8()));
+			APPLICATION->settings()->get("MainWindowGeometry").toByteArray()));
 		if (minimized) {
 			m_mainWindow->showMinimized();
 		} else {
@@ -2099,5 +2344,5 @@ QString Application::getJarsPath()
 
 const QString Application::javaPath()
 {
-    return globalSettings()->javaDir();
+    return m_settings->get("JavaDir").toString();
 }

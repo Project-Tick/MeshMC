@@ -28,15 +28,17 @@
 
 #include "BaseInstance.h"
 
-BaseExternalTool::BaseExternalTool(InstancePtr instance, QObject* parent)
-	: QObject(parent), m_instance(instance)
+BaseExternalTool::BaseExternalTool(SettingsObjectPtr settings,
+								   InstancePtr instance, QObject* parent)
+	: QObject(parent), m_instance(instance), globalSettings(settings)
 {
 }
 
 BaseExternalTool::~BaseExternalTool() {}
 
-BaseDetachedTool::BaseDetachedTool(InstancePtr instance, QObject* parent)
-	: BaseExternalTool(instance, parent)
+BaseDetachedTool::BaseDetachedTool(SettingsObjectPtr settings,
+								   InstancePtr instance, QObject* parent)
+	: BaseExternalTool(settings, instance, parent)
 {
 }
 

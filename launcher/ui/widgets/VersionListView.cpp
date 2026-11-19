@@ -24,11 +24,10 @@
 #include <QDrag>
 #include <QPainter>
 #include "VersionListView.h"
-#include <KLocalizedString>
 
 VersionListView::VersionListView(QWidget* parent) : QTreeView(parent)
 {
-	m_emptyString = i18n("No versions are currently available.");
+	m_emptyString = tr("No versions are currently available.");
 }
 
 void VersionListView::rowsInserted(const QModelIndex& parent, int start,

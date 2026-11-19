@@ -49,7 +49,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QCheckBox" name="kcfg_LaunchMaximized">
+           <widget class="QCheckBox" name="maximizedCheckBox">
             <property name="text">
              <string>Start Minecraft maximized?</string>
             </property>
@@ -63,7 +63,7 @@
                <string>Window hei&amp;ght:</string>
               </property>
               <property name="buddy">
-               <cstring>kcfg_MinecraftWinHeight</cstring>
+               <cstring>windowHeightSpinBox</cstring>
               </property>
              </widget>
             </item>
@@ -73,12 +73,12 @@
                <string>W&amp;indow width:</string>
               </property>
               <property name="buddy">
-               <cstring>kcfg_MinecraftWinWidth</cstring>
+               <cstring>windowWidthSpinBox</cstring>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="kcfg_MinecraftWinWidth">
+             <widget class="QSpinBox" name="windowWidthSpinBox">
               <property name="minimum">
                <number>1</number>
               </property>
@@ -94,7 +94,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QSpinBox" name="kcfg_MinecraftWinHeight">
+             <widget class="QSpinBox" name="windowHeightSpinBox">
               <property name="minimum">
                <number>1</number>
               </property>
@@ -118,14 +118,14 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QCheckBox" name="kcfg_UseNativeGLFW">
+           <widget class="QCheckBox" name="useNativeGLFWCheck">
             <property name="text">
              <string>Use system installation of GLFW</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="kcfg_UseNativeOpenAL">
+           <widget class="QCheckBox" name="useNativeOpenALCheck">
             <property name="text">
              <string>Use system installation of OpenAL</string>
             </property>
@@ -141,21 +141,21 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
-           <widget class="QCheckBox" name="kcfg_ShowGameTime">
+           <widget class="QCheckBox" name="showGameTime">
             <property name="text">
              <string>Show time spent playing instances</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="kcfg_ShowGlobalGameTime">
+           <widget class="QCheckBox" name="showGlobalGameTime">
             <property name="text">
              <string>Show time spent playing across all instances</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="kcfg_RecordGameTime">
+           <widget class="QCheckBox" name="recordGameTime">
             <property name="text">
              <string>Record time spent playing instances</string>
             </property>
@@ -185,11 +185,11 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>kcfg_LaunchMaximized</tabstop>
-  <tabstop>kcfg_MinecraftWinWidth</tabstop>
-  <tabstop>kcfg_MinecraftWinHeight</tabstop>
-  <tabstop>kcfg_UseNativeGLFW</tabstop>
-  <tabstop>kcfg_UseNativeOpenAL</tabstop>
+  <tabstop>maximizedCheckBox</tabstop>
+  <tabstop>windowWidthSpinBox</tabstop>
+  <tabstop>windowHeightSpinBox</tabstop>
+  <tabstop>useNativeGLFWCheck</tabstop>
+  <tabstop>useNativeOpenALCheck</tabstop>
  </tabstops>
  <resources/>
  <connections/>

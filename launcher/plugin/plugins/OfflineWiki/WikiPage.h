@@ -14,7 +14,6 @@
 #pragma once
 
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
-#include <KLocalizedString>
 
 class QTextBrowser;
 class QListWidget;
@@ -38,7 +37,7 @@ class WikiPage : public QWidget, public BasePage
 	}
 	QString displayName() const override
 	{
-		return i18n("Offline Wiki");
+		return QObject::tr("Offline Wiki");
 	}
 	QIcon icon() const override
 	{

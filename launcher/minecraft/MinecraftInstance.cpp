@@ -71,7 +71,6 @@
 #include "MinecraftLoadAndCheck.h"
 #include "minecraft/gameoptions/GameOptions.h"
 #include "minecraft/update/FoldersTask.h"
-#include <KLocalizedString>
 
 #define IBUS "@im=ibus"
 
@@ -863,13 +862,13 @@ MinecraftInstance::createCensorFilterFromSession(AuthSessionPtr session)
 		}
 	};
 	if (sessionRef.session != "-") {
-		addToFilter(sessionRef.session, i18n("<SESSION ID>"));
+		addToFilter(sessionRef.session, tr("<SESSION ID>"));
 	}
-	addToFilter(sessionRef.access_token, i18n("<ACCESS TOKEN>"));
+	addToFilter(sessionRef.access_token, tr("<ACCESS TOKEN>"));
 	if (sessionRef.client_token.size()) {
-		addToFilter(sessionRef.client_token, i18n("<CLIENT TOKEN>"));
+		addToFilter(sessionRef.client_token, tr("<CLIENT TOKEN>"));
 	}
-	addToFilter(sessionRef.uuid, i18n("<PROFILE ID>"));
+	addToFilter(sessionRef.uuid, tr("<PROFILE ID>"));
 
 	return filter;
 }
@@ -944,27 +943,29 @@ QString MinecraftInstance::getStatusbarDescription()
 {
 	QStringList traits;
 	if (hasVersionBroken()) {
-		traits.append(i18n("broken"));
+		traits.append(tr("broken"));
 	}
 
 	QString description;
 	/* Through the accessor, so that a profile nobody has read yet gets loaded
 	 * instead of putting an empty version in the status bar. */
 	description.append(
-		i18n("Minecraft %1 (%2)", minecraftVersion(), typeName()));
+		tr("Minecraft %1 (%2)").arg(minecraftVersion()).arg(typeName()));
 	if (m_settings->get("ShowGameTime").toBool()) {
 		if (lastTimePlayed() > 0) {
 			description.append(
-				i18n(", last played for %1", Time::prettifyDuration(lastTimePlayed())));
+				tr(", last played for %1")
+					.arg(Time::prettifyDuration(lastTimePlayed())));
 		}
 
 		if (totalTimePlayed() > 0) {
 			description.append(
-				i18n(", total played for %1", Time::prettifyDuration(totalTimePlayed())));
+				tr(", total played for %1")
+					.arg(Time::prettifyDuration(totalTimePlayed())));
 		}
 	}
 	if (hasCrashed()) {
-		description.append(i18n(", has crashed."));
+		description.append(tr(", has crashed."));
 	}
 	return description;
 }

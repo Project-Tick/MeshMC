@@ -18,12 +18,11 @@
  */
 
 #include "InstanceCopyTask.h"
-#include "settings/KConfigSettingsObject.h"
+#include "settings/INISettingsObject.h"
 #include "FileSystem.h"
 #include "NullInstance.h"
 #include "pathmatcher/RegexpMatcher.h"
 #include <QtConcurrentRun>
-#include <KLocalizedString>
 
 InstanceCopyTask::InstanceCopyTask(InstancePtr origInstance, bool copySaves,
 								   bool keepPlaytime)
@@ -41,7 +40,7 @@ InstanceCopyTask::InstanceCopyTask(InstancePtr origInstance, bool copySaves,
 
 void InstanceCopyTask::executeTask()
 {
-	setStatus(i18n("Copying instance %1", m_origInstance->name()));
+	setStatus(tr("Copying instance %1").arg(m_origInstance->name()));
 
 	FS::copy folderCopy(m_origInstance->instanceRoot(), m_stagingPath);
 	folderCopy.followSymlinks(false).blacklist(m_matcher.get());
@@ -58,11 +57,11 @@ void InstanceCopyTask::copyFinished()
 {
 	auto successful = m_copyFuture.result();
 	if (!successful) {
-		emitFailed(i18n("Instance folder copy failed."));
+		emitFailed(tr("Instance folder copy failed."));
 		return;
 	}
 	// FIXME: shouldn't this be able to report errors?
-	auto instanceSettings = std::make_shared<KConfigSettingsObject>(
+	auto instanceSettings = std::make_shared<INISettingsObject>(
 		FS::PathCombine(m_stagingPath, "instance.cfg"));
 	instanceSettings->registerSetting("InstanceType", "Legacy");
 
@@ -78,6 +77,6 @@ void InstanceCopyTask::copyFinished()
 
 void InstanceCopyTask::copyAborted()
 {
-	emitFailed(i18n("Instance folder copy has been aborted."));
+	emitFailed(tr("Instance folder copy has been aborted."));
 	return;
 }

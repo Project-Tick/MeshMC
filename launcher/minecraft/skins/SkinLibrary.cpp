@@ -33,7 +33,6 @@
 
 #include "FileSystem.h"
 #include "Json.h"
-#include <KLocalizedString>
 
 namespace
 {
@@ -388,18 +387,18 @@ QString SkinLibrary::importFile(const QString& sourcePath,
 								const QString& preferredName)
 {
 	if (sourcePath.isEmpty()) {
-		return i18n("Path is empty.");
+		return tr("Path is empty.");
 	}
 
 	const QFileInfo source(sourcePath);
 	if (!source.exists()) {
-		return i18n("File doesn't exist.");
+		return tr("File doesn't exist.");
 	}
 	if (!source.isFile()) {
-		return i18n("Not a file.");
+		return tr("Not a file.");
 	}
 	if (!source.isReadable()) {
-		return i18n("File is not readable.");
+		return tr("File is not readable.");
 	}
 
 	/* A ".png" suffix is taken at face value; anything else has to prove it
@@ -408,17 +407,17 @@ QString SkinLibrary::importFile(const QString& sourcePath,
 	if (source.suffix().compare(QLatin1String("png"), Qt::CaseInsensitive) !=
 			0 &&
 		!SkinEntry(source.absoluteFilePath()).isUsable()) {
-		return i18n("Skin images must be 64x64 or 64x32 pixel PNG files.");
+		return tr("Skin images must be 64x64 or 64x32 pixel PNG files.");
 	}
 
 	const QString target = availableName(
 		m_dir, preferredName.isEmpty() ? source.fileName() : preferredName);
 	if (target.isEmpty()) {
-		return i18n("Unable to find a free file name in the skins folder.");
+		return tr("Unable to find a free file name in the skins folder.");
 	}
 
 	if (!QFile::copy(source.absoluteFilePath(), target)) {
-		return i18n("Unable to copy file");
+		return tr("Unable to copy file");
 	}
 	return QString();
 }

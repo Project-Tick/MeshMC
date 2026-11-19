@@ -18,7 +18,6 @@
  */
 
 #include "LogPage.h"
-#include "settings/GlobalSettings.h"
 #include "ui_LogPage.h"
 
 #include "Application.h"
@@ -148,8 +147,14 @@ LogPage::LogPage(InstancePtr instance, QWidget* parent)
 	// set up fonts in the log proxy
 	{
 		QString fontFamily =
-			APPLICATION->globalSettings()->consoleFont();
-		int fontSize = APPLICATION->globalSettings()->consoleFontSize();
+			APPLICATION->settings()->get("ConsoleFont").toString();
+		bool conversionOk = false;
+		int fontSize = APPLICATION->settings()
+						   ->get("ConsoleFontSize")
+						   .toInt(&conversionOk);
+		if (!conversionOk) {
+			fontSize = 11;
+		}
 		m_proxy->setFont(QFont(fontFamily, fontSize));
 	}
 

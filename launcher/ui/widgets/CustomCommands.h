@@ -38,10 +38,6 @@ class CustomCommands : public QWidget
 					const QString& wrapper, const QString& postexit);
 
 	bool checked() const;
-	void setChecked(bool checked);
-	void setPrelaunchCommand(const QString& command);
-	void setWrapperCommand(const QString& command);
-	void setPostexitCommand(const QString& command);
 	QString prelaunchCommand() const;
 	QString wrapperCommand() const;
 	QString postexitCommand() const;

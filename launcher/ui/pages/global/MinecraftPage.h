@@ -26,7 +26,6 @@
 #include "java/JavaChecker.h"
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include <KLocalizedString>
 
 class SettingsObject;
 
@@ -45,7 +44,7 @@ class MinecraftPage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return i18n("Minecraft");
+		return tr("Minecraft");
 	}
 	QIcon icon() const override
 	{
@@ -59,8 +58,15 @@ class MinecraftPage : public QWidget, public BasePage
 	{
 		return "Minecraft-settings";
 	}
+	bool apply() override;
+
   private:
 	void updateCheckboxStuff();
+	void applySettings();
+	void loadSettings();
+
+  private slots:
+	void on_maximizedCheckBox_clicked(bool checked);
 
   private:
 	Ui::MinecraftPage* ui;

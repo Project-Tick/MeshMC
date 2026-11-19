@@ -25,7 +25,6 @@
 #include "BaseInstance.h"
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -41,7 +40,7 @@ class NotesPage : public QWidget, public BasePage
 	virtual ~NotesPage();
 	virtual QString displayName() const override
 	{
-		return i18n("Notes");
+		return tr("Notes");
 	}
 	virtual QIcon icon() const override
 	{

@@ -29,7 +29,6 @@
 #include "Application.h"
 #include "ui/pages/BasePage.h"
 #include "tasks/Task.h"
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -49,7 +48,7 @@ class AtlPage : public QWidget,
 	virtual ~AtlPage();
 	virtual QString displayName() const override
 	{
-		return i18n("ATLauncher");
+		return tr("ATLauncher");
 	}
 	virtual QIcon icon() const override
 	{

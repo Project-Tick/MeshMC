@@ -38,8 +38,6 @@
 #include "Json.h"
 #include "java/JavaUtils.h"
 
-#include <KLocalizedString>
-
 #ifndef MeshMC_DISABLE_JAVA_DOWNLOADER
 #include "BuildConfig.h"
 #include <optional>
@@ -157,19 +155,23 @@ void VerifyJavaInstall::executeTask()
 
 	// Java version insufficient — try to find an already-downloaded one
 	emit logLine(
-		i18n("Current Java version %1 does not meet the requirement of Java %2.", javaVersion.toString(), requiredMajor),
+		tr("Current Java version %1 does not meet the requirement of Java %2.")
+			.arg(javaVersion.toString())
+			.arg(requiredMajor),
 		MessageLevel::Warning);
 
 	QString existingJava = findInstalledJava(requiredMajor);
 	if (!existingJava.isEmpty()) {
-		emit logLine(i18n("Found installed Java %1 at: %2", requiredMajor, existingJava),
+		emit logLine(tr("Found installed Java %1 at: %2")
+						 .arg(requiredMajor)
+						 .arg(existingJava),
 					 MessageLevel::MeshMC);
 #ifndef MeshMC_DISABLE_JAVA_DOWNLOADER
 		setJavaPathAndSucceed(existingJava);
 #else
 		m_inst->settings()->set("OverrideJavaLocation", true);
 		m_inst->settings()->set("JavaPath", existingJava);
-		emit logLine(i18n("Java path set to: %1", existingJava),
+		emit logLine(tr("Java path set to: %1").arg(existingJava),
 					 MessageLevel::MeshMC);
 		emitSucceeded();
 #endif
@@ -179,18 +181,20 @@ void VerifyJavaInstall::executeTask()
 #ifndef MeshMC_DISABLE_JAVA_DOWNLOADER
 	// Check runtime setting for auto-download
 	if (!m_inst->settings()->get("JavaAutoDownload").toBool()) {
-		emitFailed(i18n("Java %1 is required but not installed. Automatic Java "
-					  "download is disabled.", requiredMajor));
+		emitFailed(tr("Java %1 is required but not installed. Automatic Java "
+					  "download is disabled.")
+					   .arg(requiredMajor));
 		return;
 	}
 	// Not found — auto-download
 	emit logLine(
-		i18n("No installed Java %1 found. Downloading...", requiredMajor),
+		tr("No installed Java %1 found. Downloading...").arg(requiredMajor),
 		MessageLevel::MeshMC);
 	autoDownloadJava(requiredMajor);
 #else
 	emitFailed(
-		i18n("Java %1 is required but not installed. Please install it manually.", requiredMajor));
+		tr("Java %1 is required but not installed. Please install it manually.")
+			.arg(requiredMajor));
 #endif
 }
 
@@ -206,7 +210,7 @@ void VerifyJavaInstall::autoDownloadJava(int requiredMajor)
 	if (m_preferredVendor.isEmpty()) {
 		m_preferredVendor = "net.minecraft.java";
 	}
-	emit logLine(i18n("Using Java vendor: %1", m_preferredVendor),
+	emit logLine(tr("Using Java vendor: %1").arg(m_preferredVendor),
 				 MessageLevel::MeshMC);
 	fetchVersionList(requiredMajor);
 }
@@ -217,7 +221,7 @@ void VerifyJavaInstall::fetchVersionList(int requiredMajor)
 	QString uid = m_preferredVendor;
 	QString url = QString("%1%2/index.json").arg(BuildConfig.META_URL, uid);
 
-	m_fetchJob = new NetJob(i18n("Fetch Java versions"), APPLICATION->network());
+	m_fetchJob = new NetJob(tr("Fetch Java versions"), APPLICATION->network());
 	auto dl = Net::Download::makeByteArray(QUrl(url), &m_fetchData);
 	m_fetchJob->addNetAction(dl);
 
@@ -231,12 +235,13 @@ void VerifyJavaInstall::fetchVersionList(int requiredMajor)
 				doc = Json::requireDocument(m_fetchData);
 			} catch (const Exception& e) {
 				emitFailed(
-					i18n("Failed to parse Java version list from meta server: %1", e.cause()));
+					tr("Failed to parse Java version list from meta server: %1")
+						.arg(e.cause()));
 				return;
 			}
 			if (!doc.isObject()) {
 				emitFailed(
-					i18n("Failed to parse Java version list from meta server."));
+					tr("Failed to parse Java version list from meta server."));
 				return;
 			}
 
@@ -254,16 +259,19 @@ void VerifyJavaInstall::fetchVersionList(int requiredMajor)
 			}
 
 			if (!found) {
-				emitFailed(i18n("Java %1 is not available for download from the "
+				emitFailed(tr("Java %1 is not available for download from the "
 							  "selected vendor. Please install it manually or "
-							  "try a different vendor in settings.", requiredMajor));
+							  "try a different vendor in settings.")
+							   .arg(requiredMajor));
 			}
 		});
 
 	connect(m_fetchJob.get(), &NetJob::failed, this,
 			[this, requiredMajor](QString reason) {
-				emitFailed(i18n("Failed to fetch Java version list: %1. Please "
-							  "install Java %2 manually.", reason, requiredMajor));
+				emitFailed(tr("Failed to fetch Java version list: %1. Please "
+							  "install Java %2 manually.")
+							   .arg(reason)
+							   .arg(requiredMajor));
 				m_fetchJob.reset();
 			});
 
@@ -279,7 +287,7 @@ void VerifyJavaInstall::fetchRuntimes(const QString& versionId,
 		QString("%1%2/%3.json").arg(BuildConfig.META_URL, uid, versionId);
 
 	m_fetchJob =
-		new NetJob(i18n("Fetch Java runtime details"), APPLICATION->network());
+		new NetJob(tr("Fetch Java runtime details"), APPLICATION->network());
 	auto dl = Net::Download::makeByteArray(QUrl(url), &m_fetchData);
 	m_fetchJob->addNetAction(dl);
 
@@ -291,11 +299,12 @@ void VerifyJavaInstall::fetchRuntimes(const QString& versionId,
 				try {
 					doc = Json::requireDocument(m_fetchData);
 				} catch (const Exception& e) {
-					emitFailed(i18n("Failed to parse Java runtime details: %1", e.cause()));
+					emitFailed(tr("Failed to parse Java runtime details: %1")
+								   .arg(e.cause()));
 					return;
 				}
 				if (!doc.isObject()) {
-					emitFailed(i18n("Failed to parse Java runtime details."));
+					emitFailed(tr("Failed to parse Java runtime details."));
 					return;
 				}
 
@@ -305,19 +314,22 @@ void VerifyJavaInstall::fetchRuntimes(const QString& versionId,
 				// Filter for current platform
 				for (const auto& rt : allRuntimes) {
 					if (rt.runtimeOS == myOS) {
-						emit logLine(i18n("Downloading %1 (%2)...", rt.name, rt.version.toString()),
+						emit logLine(tr("Downloading %1 (%2)...")
+										 .arg(rt.name, rt.version.toString()),
 									 MessageLevel::MeshMC);
 						startDownload(rt, requiredMajor);
 						return;
 					}
 				}
 
-				emitFailed(i18n("No Java %1 download available for your platform "
-							  "(%2). Please install it manually.", requiredMajor, myOS));
+				emitFailed(tr("No Java %1 download available for your platform "
+							  "(%2). Please install it manually.")
+							   .arg(requiredMajor)
+							   .arg(myOS));
 			});
 
 	connect(m_fetchJob.get(), &NetJob::failed, this, [this](QString reason) {
-		emitFailed(i18n("Failed to fetch Java runtime details: %1", reason));
+		emitFailed(tr("Failed to fetch Java runtime details: %1").arg(reason));
 		m_fetchJob.reset();
 	});
 
@@ -340,18 +352,20 @@ void VerifyJavaInstall::startDownload(const JavaDownload::RuntimeEntry& runtime,
 
 		if (javaPath.isEmpty()) {
 			emitFailed(
-				i18n("Java was downloaded but the binary could not be found."));
+				tr("Java was downloaded but the binary could not be found."));
 			return;
 		}
 
-		emit logLine(i18n("Java downloaded and installed at: %1", javaPath),
+		emit logLine(tr("Java downloaded and installed at: %1").arg(javaPath),
 					 MessageLevel::MeshMC);
 		setJavaPathAndSucceed(javaPath);
 	});
 
 	connect(m_downloadTask.get(), &Task::failed, this,
 			[this, requiredMajor](const QString& reason) {
-				emitFailed(i18n("Failed to download Java %1: %2", requiredMajor, reason));
+				emitFailed(tr("Failed to download Java %1: %2")
+							   .arg(requiredMajor)
+							   .arg(reason));
 				m_downloadTask.reset();
 			});
 
@@ -370,7 +384,7 @@ void VerifyJavaInstall::setJavaPathAndSucceed(const QString& javaPath)
 	// Set Java path override on the instance only, not globally
 	m_inst->settings()->set("OverrideJavaLocation", true);
 	m_inst->settings()->set("JavaPath", javaPath);
-	emit logLine(i18n("Java path set to: %1", javaPath),
+	emit logLine(tr("Java path set to: %1").arg(javaPath),
 				 MessageLevel::MeshMC);
 	emitSucceeded();
 }

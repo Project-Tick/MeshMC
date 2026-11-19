@@ -28,7 +28,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QFile>
-#include <KLocalizedString>
 
 static QString applyFilters(QString logContent)
 {
@@ -137,7 +136,7 @@ void PasteUpload::executeTask()
 	QNetworkReply* rep = APPLICATION->network()->post(request, m_jsonContent);
 
 	m_reply = std::shared_ptr<QNetworkReply>(rep);
-	setStatus(i18n("Uploading to paste.ee"));
+	setStatus(tr("Uploading to paste.ee"));
 	connect(rep, &QNetworkReply::uploadProgress, this, &Task::setProgress);
 	connect(rep, &QNetworkReply::errorOccurred, this,
 			&PasteUpload::downloadError);
@@ -165,7 +164,7 @@ void PasteUpload::downloadFinished()
 			return;
 		}
 		if (!parseResult(doc)) {
-			emitFailed(i18n("paste.ee returned an error. Please consult the logs "
+			emitFailed(tr("paste.ee returned an error. Please consult the logs "
 						  "for more information"));
 			return;
 		}

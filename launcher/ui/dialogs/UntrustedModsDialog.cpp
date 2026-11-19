@@ -24,7 +24,6 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QTimer>
-#include <KLocalizedString>
 
 /* How long the confirmation stays out of reach.
  *
@@ -40,7 +39,7 @@ UntrustedModsDialog::UntrustedModsDialog(const QStringList& paths,
 	m_ui->modList->addItems(paths);
 
 	auto* ok = m_ui->buttonBox->button(QDialogButtonBox::Ok);
-	ok->setText(i18n("Install anyway"));
+	ok->setText(tr("Install anyway"));
 	/* Unavailable until the box is ticked, and the box itself is
 	 * unavailable at first, so the fastest possible "yes" still involves
 	 * reading something. */

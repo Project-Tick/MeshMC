@@ -41,7 +41,6 @@
 #include "ComponentUpdateTask.h"
 
 #include "Application.h"
-#include <KLocalizedString>
 
 PackProfile::PackProfile(MinecraftInstance* instance) : QAbstractListModel()
 {
@@ -192,7 +191,8 @@ static bool loadPackProfile(PackProfile* parent, const QString& filename,
 		auto version = Json::requireInteger(obj.value("formatVersion"));
 		if (version != currentComponentsFileVersion) {
 			throw JSONValidationError(
-				i18n("Invalid component file version, expected %1", currentComponentsFileVersion));
+				QObject::tr("Invalid component file version, expected %1")
+					.arg(currentComponentsFileVersion));
 		}
 		auto orderArray = Json::requireArray(obj.value("components"));
 		for (auto item : orderArray) {
@@ -817,9 +817,9 @@ QVariant PackProfile::headerData(int section, Qt::Orientation orientation,
 		if (role == Qt::DisplayRole) {
 			switch (section) {
 				case NameColumn:
-					return i18n("Name");
+					return tr("Name");
 				case VersionColumn:
-					return i18n("Version");
+					return tr("Version");
 				default:
 					return QVariant();
 			}

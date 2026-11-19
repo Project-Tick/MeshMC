@@ -25,7 +25,6 @@
 #include <QDebug>
 
 #include <utility>
-#include <KLocalizedString>
 
 InstanceTask::InstanceTask() {}
 
@@ -75,7 +74,7 @@ void InstanceTask::downloadFiles(MinecraftInstance* instance)
 	 * still labelled "Abort" here would be offering to undo an install
 	 * that is already finished. */
 	reportAbortStatus();
-	setAbortButtonText(i18n("Skip"));
+	setAbortButtonText(tr("Skip"));
 
 	connect(task.get(), &Task::finished, this, [this]() {
 		if (!isRunning()) {
@@ -99,9 +98,10 @@ void InstanceTask::downloadFiles(MinecraftInstance* instance)
 			 * is missing, exactly as it did before this step existed. */
 			const QString reason = finished->failReason();
 			qWarning() << "Could not pre-download game files:" << reason;
-			logWarning(i18n("The instance was installed, but its game files "
+			logWarning(tr("The instance was installed, but its game files "
 						  "could not be downloaded yet: %1\n"
-						  "They will be downloaded when you launch it.", reason));
+						  "They will be downloaded when you launch it.")
+						   .arg(reason));
 		}
 		emitSucceeded();
 	});
@@ -114,7 +114,7 @@ void InstanceTask::downloadFiles(MinecraftInstance* instance)
 	 * collapsing them into one opaque bar. */
 	propagateStepsFrom(task.get());
 
-	setStatus(i18n("Downloading the game's files..."));
+	setStatus(tr("Downloading the game's files..."));
 	task->start();
 }
 

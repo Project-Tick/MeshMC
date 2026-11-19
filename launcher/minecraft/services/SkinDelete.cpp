@@ -23,7 +23,6 @@
 #include <QHttpMultiPart>
 
 #include "Application.h"
-#include <KLocalizedString>
 
 SkinDelete::SkinDelete(QObject* parent, QString token)
 	: Task(parent), m_token(token)
@@ -39,7 +38,7 @@ void SkinDelete::executeTask()
 	QNetworkReply* rep = APPLICATION->network()->deleteResource(request);
 	m_reply = shared_qobject_ptr<QNetworkReply>(rep);
 
-	setStatus(i18n("Deleting skin"));
+	setStatus(tr("Deleting skin"));
 	connect(rep, &QNetworkReply::uploadProgress, this, &Task::setProgress);
 	connect(rep, &QNetworkReply::errorOccurred, this,
 			&SkinDelete::downloadError);

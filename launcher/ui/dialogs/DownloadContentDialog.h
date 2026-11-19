@@ -138,7 +138,7 @@ class DownloadContentDialog final : public QDialog, public BasePageProvider
 	 * and refreshes the pages' buttons. */
 	void queueChanged();
 	void saveGeometryState();
-	QString savedGeometry() const;
+	QString geometrySaveKey() const;
 
   private:
 	MinecraftInstance* m_instance;

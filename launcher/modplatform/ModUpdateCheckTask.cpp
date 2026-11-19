@@ -34,7 +34,6 @@
 #include "modplatform/modrinth/ModrinthApi.h"
 #include "net/Download.h"
 #include "net/NetJob.h"
-#include <KLocalizedString>
 
 ModUpdateCheckTask::ModUpdateCheckTask(std::shared_ptr<ModMetadataIndex> index,
 									   QString mcVersion, QString loader,
@@ -228,12 +227,12 @@ void ModUpdateCheckTask::executeTask()
 	}
 
 	if (m_total == 0) {
-		setStatus(i18n("No tracked mods to check."));
+		setStatus(tr("No tracked mods to check."));
 		emitSucceeded();
 		return;
 	}
 
-	setStatus(i18n("Checking %1 mod(s) for updates...", m_total));
+	setStatus(tr("Checking %1 mod(s) for updates...").arg(m_total));
 
 	for (const auto& e : entries) {
 		if (!e.hasPlatformOrigin()) {

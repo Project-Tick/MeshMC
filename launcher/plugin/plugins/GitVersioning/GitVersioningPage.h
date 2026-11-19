@@ -9,7 +9,6 @@
 
 #include "plugin/sdk/mmco_cxx_sdk.hpp"
 #include "GitRepo.h"
-#include <KLocalizedString>
 
 class GitVersioningPage : public QWidget, public BasePage
 {
@@ -30,7 +29,7 @@ class GitVersioningPage : public QWidget, public BasePage
 	}
 	QString displayName() const override
 	{
-		return i18n("Version History");
+		return QObject::tr("Version History");
 	}
 	QIcon icon() const override;
 	QString helpPage() const override

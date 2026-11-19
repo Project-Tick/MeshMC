@@ -25,11 +25,9 @@
 #include <minecraft/MinecraftInstance.h>
 #include <minecraft/PackProfile.h>
 #include <MMCZip.h>
-#include <settings/KConfigSettingsObject.h>
-#include <settings/PropertiesFile.h>
+#include <settings/INISettingsObject.h>
 
 #include <memory>
-#include <KLocalizedString>
 
 void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 										const QString& instName,
@@ -40,7 +38,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 {
 	QString minecraftPath = FS::PathCombine(stagingPath, ".minecraft");
 	QString configPath = FS::PathCombine(stagingPath, "instance.cfg");
-	auto instanceSettings = std::make_shared<KConfigSettingsObject>(configPath);
+	auto instanceSettings = std::make_shared<INISettingsObject>(configPath);
 	instanceSettings->registerSetting("InstanceType", "Legacy");
 	instanceSettings->set("InstanceType", "OneSix");
 	MinecraftInstance instance(globalSettings, instanceSettings, stagingPath);
@@ -66,21 +64,23 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 					modpackJar, "fmlversion.properties");
 				if (fmlVersionData.isEmpty()) {
 					emit failed(
-						i18n("Unable to open \"fmlversion.properties\"!"));
+						tr("Unable to open \"fmlversion.properties\"!"));
 					return;
 				}
-				PropertiesFile props(fmlVersionData);
+				INIFile iniFile;
+				iniFile.loadFile(fmlVersionData);
 				// If not present, this evaluates to a null string
-				fmlMinecraftVersion = props.get("fmlbuild.mcversion");
+				fmlMinecraftVersion = iniFile["fmlbuild.mcversion"].toString();
 			}
 			data = MMCZip::readFileFromZip(modpackJar, "version.json");
 			if (data.isEmpty()) {
-				emit failed(i18n("Unable to open \"version.json\"!"));
+				emit failed(tr("Unable to open \"version.json\"!"));
 				return;
 			}
 		} else {
 			if (minecraftVersion.isEmpty())
-				emit failed(i18n("Could not find \"version.json\" inside "
+				emit failed(tr(
+					"Could not find \"version.json\" inside "
 					"\"bin/modpack.jar\", but minecraft version is unknown"));
 			components->setComponentVersion("net.minecraft", minecraftVersion,
 											true);
@@ -96,19 +96,20 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 					// Really shouldn't happen, but error handling shall not be
 					// forgotten
 					emit failed(
-						i18n("Unable to open \"forgeversion.properties\""));
+						tr("Unable to open \"forgeversion.properties\""));
 					return;
 				}
-				PropertiesFile props(forgeVersionData);
+				INIFile iniFile;
+				iniFile.loadFile(forgeVersionData);
 				QString major, minor, revision, build;
-				major = props.get("forge.major.number");
-				minor = props.get("forge.minor.number");
-				revision = props.get("forge.revision.number");
-				build = props.get("forge.build.number");
+				major = iniFile["forge.major.number"].toString();
+				minor = iniFile["forge.minor.number"].toString();
+				revision = iniFile["forge.revision.number"].toString();
+				build = iniFile["forge.build.number"].toString();
 
 				if (major.isEmpty() || minor.isEmpty() || revision.isEmpty() ||
 					build.isEmpty()) {
-					emit failed(i18n("Invalid \"forgeversion.properties\"!"));
+					emit failed(tr("Invalid \"forgeversion.properties\"!"));
 					return;
 				}
 
@@ -124,14 +125,14 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 	} else if (QFile::exists(versionJson)) {
 		QFile file(versionJson);
 		if (!file.open(QIODevice::ReadOnly)) {
-			emit failed(i18n("Unable to open \"version.json\"!"));
+			emit failed(tr("Unable to open \"version.json\"!"));
 			return;
 		}
 		data = file.readAll();
 		file.close();
 	} else {
 		// This is the "Vanilla" modpack, excluded by the search code
-		emit failed(i18n("Unable to find a \"version.json\"!"));
+		emit failed(tr("Unable to find a \"version.json\"!"));
 		return;
 	}
 
@@ -142,7 +143,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 			Json::ensureString(root, "inheritsFrom", QString(), "");
 		if (minecraftVersion.isEmpty()) {
 			if (fmlMinecraftVersion.isEmpty()) {
-				emit failed(i18n("Could not understand "
+				emit failed(tr("Could not understand "
 							   "\"version.json\":\ninheritsFrom is missing"));
 				return;
 			}
@@ -190,7 +191,7 @@ void Technic::TechnicPackProcessor::run(SettingsObjectPtr globalSettings,
 			}
 		}
 	} catch (const JSONValidationError& e) {
-		emit failed(i18n("Could not understand \"version.json\":\n") + e.cause());
+		emit failed(tr("Could not understand \"version.json\":\n") + e.cause());
 		return;
 	}
 

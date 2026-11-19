@@ -31,7 +31,6 @@
 #include <QFile>
 #include <QThreadPool>
 #include <QtConcurrent>
-#include <KLocalizedString>
 
 #include <memory>
 
@@ -1024,7 +1023,7 @@ MMCZip::ExportToZipTask::ExportToZipTask(QString outputPath, const QString& dir,
 
 void MMCZip::ExportToZipTask::executeTask()
 {
-	setStatus(i18n("Adding files..."));
+	setStatus(tr("Adding files..."));
 	setProgress(0, m_files.length() + m_extraFiles.size());
 
 	m_future = QtConcurrent::run(QThreadPool::globalInstance(),
@@ -1063,12 +1062,13 @@ void MMCZip::ExportToZipTask::reportProgress(qint64 current, qint64 total)
 auto MMCZip::ExportToZipTask::exportZip() -> ZipResult
 {
 	if (!m_dir.exists()) {
-		return ZipResult(i18n("The folder to export does not exist."));
+		return ZipResult(tr("The folder to export does not exist."));
 	}
 
 	ZipWriter zip(m_outputPath);
 	if (!zip.open()) {
-		return ZipResult(i18n("Could not create '%1': %2", m_outputPath, zip.errorString()));
+		return ZipResult(tr("Could not create '%1': %2")
+							 .arg(m_outputPath, zip.errorString()));
 	}
 
 	qint64 done = 0;
@@ -1082,7 +1082,8 @@ auto MMCZip::ExportToZipTask::exportZip() -> ZipResult
 		if (m_cancelled.load())
 			return ZipResult();
 		if (!zip.addFile(it.key(), it.value())) {
-			return ZipResult(i18n("Could not add %1: %2", it.key(), zip.errorString()));
+			return ZipResult(tr("Could not add %1: %2")
+								 .arg(it.key(), zip.errorString()));
 		}
 		reportProgress(++done, total);
 	}
@@ -1099,7 +1100,7 @@ auto MMCZip::ExportToZipTask::exportZip() -> ZipResult
 			continue;
 		}
 
-		reportStatus(i18n("Compressing: %1", relative));
+		reportStatus(tr("Compressing: %1").arg(relative));
 
 		if (m_followSymlinks) {
 			/* An instance's mods folder is frequently a tree of
@@ -1116,13 +1117,15 @@ auto MMCZip::ExportToZipTask::exportZip() -> ZipResult
 		}
 
 		if (!zip.addFile(absolute, m_destinationPrefix + relative)) {
-			return ZipResult(i18n("Could not read and compress %1: %2", relative, zip.errorString()));
+			return ZipResult(tr("Could not read and compress %1: %2")
+								 .arg(relative, zip.errorString()));
 		}
 		reportProgress(++done, total);
 	}
 
 	if (!zip.close()) {
-		return ZipResult(i18n("Could not finish '%1': %2", m_outputPath, zip.errorString()));
+		return ZipResult(tr("Could not finish '%1': %2")
+							 .arg(m_outputPath, zip.errorString()));
 	}
 	return ZipResult();
 }
@@ -1156,7 +1159,7 @@ MMCZip::ExtractZipTask::ExtractZipTask(QString input, QDir outputDir,
 
 void MMCZip::ExtractZipTask::executeTask()
 {
-	setStatus(i18n("Extracting files..."));
+	setStatus(tr("Extracting files..."));
 	setProgress(0, 0);
 
 	m_future = QtConcurrent::run(QThreadPool::globalInstance(),
@@ -1201,7 +1204,7 @@ auto MMCZip::ExtractZipTask::extractZip() -> ZipResult
 	reporting.isCancelled = [this]() { return m_cancelled.load(); };
 	reporting.entryStarted = [this](const QString& name) {
 		if (!name.isEmpty()) {
-			reportStatus(i18n("Unpacking: %1", name));
+			reportStatus(tr("Unpacking: %1").arg(name));
 		}
 	};
 
@@ -1215,7 +1218,8 @@ auto MMCZip::ExtractZipTask::extractZip() -> ZipResult
 			return ZipResult();
 		}
 		return ZipResult(
-			i18n("Failed to unpack %1. The archive appears to be damaged.", QFileInfo(m_input).fileName()));
+			tr("Failed to unpack %1. The archive appears to be damaged.")
+				.arg(QFileInfo(m_input).fileName()));
 	}
 
 	m_extracted = extracted.value();

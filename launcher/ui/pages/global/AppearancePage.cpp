@@ -21,7 +21,6 @@
 #include "ui_AppearancePage.h"
 
 #include "Application.h"
-#include "settings/GlobalSettings.h"
 #include "DesktopServices.h"
 #include "ui/themes/ITheme.h"
 #include "ui/themes/ThemeManager.h"
@@ -96,16 +95,15 @@ bool AppearancePage::apply()
 
 void AppearancePage::applyWidgetTheme(int index)
 {
-	auto settings = APPLICATION->globalSettings();
-	auto originalTheme = settings->applicationTheme();
+	auto settings = APPLICATION->settings();
+	auto originalTheme = settings->get("ApplicationTheme").toString();
 	auto newTheme = ui->widgetStyleComboBox->itemData(index).toString();
 	if (originalTheme != newTheme) {
-		settings->setApplicationTheme(newTheme);
-		settings->save();
+		settings->set("ApplicationTheme", newTheme);
 		APPLICATION->themeManager()->applyCurrentlySelectedTheme();
 
 		// Sync icon combo to the auto-resolved icon theme
-		auto resolvedIcon = settings->iconTheme();
+		auto resolvedIcon = settings->get("IconTheme").toString();
 		auto iconThemes = APPLICATION->themeManager()->iconThemes();
 		QString resolvedFamily;
 		for (const auto& entry : iconThemes) {
@@ -128,16 +126,15 @@ void AppearancePage::applyWidgetTheme(int index)
 
 void AppearancePage::applyIconTheme(int index)
 {
-	auto settings = APPLICATION->globalSettings();
+	auto settings = APPLICATION->settings();
 	auto tm = APPLICATION->themeManager();
 	auto family = ui->iconsComboBox->itemData(index).toString();
 	auto resolved = tm->resolveIconTheme(family);
 	if (resolved.isEmpty())
 		return;
-	auto originalIconTheme = settings->iconTheme();
+	auto originalIconTheme = settings->get("IconTheme").toString();
 	if (originalIconTheme != resolved) {
-		settings->setIconTheme(resolved);
-		settings->save();
+		settings->set("IconTheme", resolved);
 		tm->applyCurrentlySelectedTheme();
 	}
 	updateIconPreview();
@@ -152,7 +149,7 @@ void AppearancePage::applySettings()
 
 void AppearancePage::loadSettings()
 {
-	auto settings = APPLICATION->globalSettings();
+	auto settings = APPLICATION->settings();
 	auto tm = APPLICATION->themeManager();
 
 	// Block signals during population
@@ -162,7 +159,7 @@ void AppearancePage::loadSettings()
 
 	// --- Widget themes (flat list) ---
 	ui->widgetStyleComboBox->clear();
-	auto currentThemeId = settings->applicationTheme();
+	auto currentThemeId = settings->get("ApplicationTheme").toString();
 	auto themes = tm->allThemes();
 	int themeIdx = 0;
 
@@ -182,7 +179,7 @@ void AppearancePage::loadSettings()
 
 	// --- Icon themes (one entry per family, auto-resolves dark/light) ---
 	ui->iconsComboBox->clear();
-	auto currentIconTheme = settings->iconTheme();
+	auto currentIconTheme = settings->get("IconTheme").toString();
 	auto iconThemeList = tm->iconThemes();
 	int iconIdx = 0;
 
@@ -217,7 +214,7 @@ void AppearancePage::loadSettings()
 
 	// --- Cat Packs ---
 	ui->catPackComboBox->clear();
-	auto currentCat = settings->backgroundCat();
+	auto currentCat = settings->get("BackgroundCat").toString();
 	auto cats = tm->getValidCatPacks();
 	int catIdx = 0;
 
@@ -257,12 +254,11 @@ void AppearancePage::updateIconPreview()
 
 void AppearancePage::applyCatTheme(int index)
 {
-	auto settings = APPLICATION->globalSettings();
-	auto originalCat = settings->backgroundCat();
+	auto settings = APPLICATION->settings();
+	auto originalCat = settings->get("BackgroundCat").toString();
 	auto newCat = ui->catPackComboBox->itemData(index).toString();
 	if (originalCat != newCat) {
-		settings->setBackgroundCat(newCat);
-		settings->save();
+		settings->set("BackgroundCat", newCat);
 	}
 	updateCatPreview();
 }

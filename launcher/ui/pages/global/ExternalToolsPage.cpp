@@ -30,9 +30,7 @@
 #include "tools/BaseProfiler.h"
 #include <FileSystem.h>
 #include "Application.h"
-#include "settings/GlobalSettings.h"
 #include <tools/MCEditTool.h>
-#include <KLocalizedString>
 
 ExternalToolsPage::ExternalToolsPage(QWidget* parent)
 	: QWidget(parent), ui(new Ui::ExternalToolsPage)
@@ -41,12 +39,13 @@ ExternalToolsPage::ExternalToolsPage(QWidget* parent)
 	ui->tabWidget->tabBar()->hide();
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
-	ui->kcfg_JsonEditor->setClearButtonEnabled(true);
+	ui->jsonEditorTextBox->setClearButtonEnabled(true);
 #endif
 
 	ui->mceditLink->setOpenExternalLinks(true);
 	ui->jvisualvmLink->setOpenExternalLinks(true);
 	ui->jprofilerLink->setOpenExternalLinks(true);
+	loadSettings();
 }
 
 ExternalToolsPage::~ExternalToolsPage()
@@ -54,12 +53,26 @@ ExternalToolsPage::~ExternalToolsPage()
 	delete ui;
 }
 
+void ExternalToolsPage::loadSettings()
+{
+	auto s = APPLICATION->settings();
+	ui->jprofilerPathEdit->setText(s->get("JProfilerPath").toString());
+	ui->jvisualvmPathEdit->setText(s->get("JVisualVMPath").toString());
+	ui->mceditPathEdit->setText(s->get("MCEditPath").toString());
+
+	// Editors
+	ui->jsonEditorTextBox->setText(s->get("JsonEditor").toString());
+}
 void ExternalToolsPage::applySettings()
 {
-	// The paths are bound to their settings by the settings dialog (the
-	// widgets named kcfg_<ID>); what is left is to turn the name of the editor
-	// into the path of its executable.
-	QString jsonEditor = ui->kcfg_JsonEditor->text();
+	auto s = APPLICATION->settings();
+
+	s->set("JProfilerPath", ui->jprofilerPathEdit->text());
+	s->set("JVisualVMPath", ui->jvisualvmPathEdit->text());
+	s->set("MCEditPath", ui->mceditPathEdit->text());
+
+	// Editors
+	QString jsonEditor = ui->jsonEditorTextBox->text();
 	if (!jsonEditor.isEmpty() && (!QFileInfo(jsonEditor).exists() ||
 								  !QFileInfo(jsonEditor).isExecutable())) {
 		QString found = QStandardPaths::findExecutable(jsonEditor);
@@ -67,29 +80,27 @@ void ExternalToolsPage::applySettings()
 			jsonEditor = found;
 		}
 	}
-	ui->kcfg_JsonEditor->setText(jsonEditor);
-	APPLICATION->globalSettings()->setJsonEditor(jsonEditor);
-	APPLICATION->globalSettings()->save();
+	s->set("JsonEditor", jsonEditor);
 }
 
 void ExternalToolsPage::on_jprofilerPathBtn_clicked()
 {
-	QString raw_dir = ui->kcfg_JProfilerPath->text();
+	QString raw_dir = ui->jprofilerPathEdit->text();
 	QString error;
 	do {
 		raw_dir = QFileDialog::getExistingDirectory(
-			this, i18n("JProfiler Folder"), raw_dir);
+			this, tr("JProfiler Folder"), raw_dir);
 		if (raw_dir.isEmpty()) {
 			break;
 		}
 		QString cooked_dir = FS::NormalizePath(raw_dir);
 		if (!APPLICATION->profilers()["jprofiler"]->check(cooked_dir, &error)) {
 			QMessageBox::critical(
-				this, i18n("Error"),
-				i18n("Error while checking JProfiler install:\n%1", error));
+				this, tr("Error"),
+				tr("Error while checking JProfiler install:\n%1").arg(error));
 			continue;
 		} else {
-			ui->kcfg_JProfilerPath->setText(cooked_dir);
+			ui->jprofilerPathEdit->setText(cooked_dir);
 			break;
 		}
 	} while (1);
@@ -98,22 +109,22 @@ void ExternalToolsPage::on_jprofilerCheckBtn_clicked()
 {
 	QString error;
 	if (!APPLICATION->profilers()["jprofiler"]->check(
-			ui->kcfg_JProfilerPath->text(), &error)) {
+			ui->jprofilerPathEdit->text(), &error)) {
 		QMessageBox::critical(
-			this, i18n("Error"),
-			i18n("Error while checking JProfiler install:\n%1", error));
+			this, tr("Error"),
+			tr("Error while checking JProfiler install:\n%1").arg(error));
 	} else {
-		QMessageBox::information(this, i18n("OK"),
-								 i18n("JProfiler setup seems to be OK"));
+		QMessageBox::information(this, tr("OK"),
+								 tr("JProfiler setup seems to be OK"));
 	}
 }
 
 void ExternalToolsPage::on_jvisualvmPathBtn_clicked()
 {
-	QString raw_dir = ui->kcfg_JVisualVMPath->text();
+	QString raw_dir = ui->jvisualvmPathEdit->text();
 	QString error;
 	do {
-		raw_dir = QFileDialog::getOpenFileName(this, i18n("JVisualVM Executable"),
+		raw_dir = QFileDialog::getOpenFileName(this, tr("JVisualVM Executable"),
 											   raw_dir);
 		if (raw_dir.isEmpty()) {
 			break;
@@ -121,11 +132,11 @@ void ExternalToolsPage::on_jvisualvmPathBtn_clicked()
 		QString cooked_dir = FS::NormalizePath(raw_dir);
 		if (!APPLICATION->profilers()["jvisualvm"]->check(cooked_dir, &error)) {
 			QMessageBox::critical(
-				this, i18n("Error"),
-				i18n("Error while checking JVisualVM install:\n%1", error));
+				this, tr("Error"),
+				tr("Error while checking JVisualVM install:\n%1").arg(error));
 			continue;
 		} else {
-			ui->kcfg_JVisualVMPath->setText(cooked_dir);
+			ui->jvisualvmPathEdit->setText(cooked_dir);
 			break;
 		}
 	} while (1);
@@ -134,26 +145,26 @@ void ExternalToolsPage::on_jvisualvmCheckBtn_clicked()
 {
 	QString error;
 	if (!APPLICATION->profilers()["jvisualvm"]->check(
-			ui->kcfg_JVisualVMPath->text(), &error)) {
+			ui->jvisualvmPathEdit->text(), &error)) {
 		QMessageBox::critical(
-			this, i18n("Error"),
-			i18n("Error while checking JVisualVM install:\n%1", error));
+			this, tr("Error"),
+			tr("Error while checking JVisualVM install:\n%1").arg(error));
 	} else {
-		QMessageBox::information(this, i18n("OK"),
-								 i18n("JVisualVM setup seems to be OK"));
+		QMessageBox::information(this, tr("OK"),
+								 tr("JVisualVM setup seems to be OK"));
 	}
 }
 
 void ExternalToolsPage::on_mceditPathBtn_clicked()
 {
-	QString raw_dir = ui->kcfg_MCEditPath->text();
+	QString raw_dir = ui->mceditPathEdit->text();
 	QString error;
 	do {
 #ifdef Q_OS_MACOS
-		raw_dir = QFileDialog::getOpenFileName(this, i18n("MCEdit Application"),
+		raw_dir = QFileDialog::getOpenFileName(this, tr("MCEdit Application"),
 											   raw_dir);
 #else
-		raw_dir = QFileDialog::getExistingDirectory(this, i18n("MCEdit Folder"),
+		raw_dir = QFileDialog::getExistingDirectory(this, tr("MCEdit Folder"),
 													raw_dir);
 #endif
 		if (raw_dir.isEmpty()) {
@@ -162,11 +173,11 @@ void ExternalToolsPage::on_mceditPathBtn_clicked()
 		QString cooked_dir = FS::NormalizePath(raw_dir);
 		if (!APPLICATION->mcedit()->check(cooked_dir, error)) {
 			QMessageBox::critical(
-				this, i18n("Error"),
-				i18n("Error while checking MCEdit install:\n%1", error));
+				this, tr("Error"),
+				tr("Error while checking MCEdit install:\n%1").arg(error));
 			continue;
 		} else {
-			ui->kcfg_MCEditPath->setText(cooked_dir);
+			ui->mceditPathEdit->setText(cooked_dir);
 			break;
 		}
 	} while (1);
@@ -174,21 +185,21 @@ void ExternalToolsPage::on_mceditPathBtn_clicked()
 void ExternalToolsPage::on_mceditCheckBtn_clicked()
 {
 	QString error;
-	if (!APPLICATION->mcedit()->check(ui->kcfg_MCEditPath->text(), error)) {
+	if (!APPLICATION->mcedit()->check(ui->mceditPathEdit->text(), error)) {
 		QMessageBox::critical(
-			this, i18n("Error"),
-			i18n("Error while checking MCEdit install:\n%1", error));
+			this, tr("Error"),
+			tr("Error while checking MCEdit install:\n%1").arg(error));
 	} else {
-		QMessageBox::information(this, i18n("OK"),
-								 i18n("MCEdit setup seems to be OK"));
+		QMessageBox::information(this, tr("OK"),
+								 tr("MCEdit setup seems to be OK"));
 	}
 }
 
 void ExternalToolsPage::on_jsonEditorBrowseBtn_clicked()
 {
 	QString raw_file =
-		QFileDialog::getOpenFileName(this, i18n("JSON Editor"),
-									 ui->kcfg_JsonEditor->text().isEmpty()
+		QFileDialog::getOpenFileName(this, tr("JSON Editor"),
+									 ui->jsonEditorTextBox->text().isEmpty()
 #if defined(Q_OS_LINUX)
 										 ? QString("/usr/bin")
 #else
@@ -197,7 +208,7 @@ void ExternalToolsPage::on_jsonEditorBrowseBtn_clicked()
 												   ApplicationsLocation)
 											   .first()
 #endif
-										 : ui->kcfg_JsonEditor->text());
+										 : ui->jsonEditorTextBox->text());
 
 	if (raw_file.isEmpty()) {
 		return;
@@ -207,11 +218,11 @@ void ExternalToolsPage::on_jsonEditorBrowseBtn_clicked()
 	// it has to exist and be an executable
 	if (QFileInfo(cooked_file).exists() &&
 		QFileInfo(cooked_file).isExecutable()) {
-		ui->kcfg_JsonEditor->setText(cooked_file);
+		ui->jsonEditorTextBox->setText(cooked_file);
 	} else {
 		QMessageBox::warning(
-			this, i18n("Invalid"),
-			i18n("The file chosen does not seem to be an executable"));
+			this, tr("Invalid"),
+			tr("The file chosen does not seem to be an executable"));
 	}
 }
 

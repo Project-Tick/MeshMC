@@ -22,7 +22,6 @@
 #include <QStyle>
 #include <QStyleFactory>
 #include <QDebug>
-#include <KLocalizedString>
 
 static const QStringList S_NATIVE_STYLES{"windows11", "windowsvista", "macos",
 										 "system", "windows"};
@@ -68,13 +67,13 @@ QString SystemTheme::id()
 QString SystemTheme::name()
 {
 	if (m_themeName.toLower() == "windowsvista") {
-		return i18n("Windows Vista");
+		return QObject::tr("Windows Vista");
 	} else if (m_themeName.toLower() == "windows") {
-		return i18n("Windows 9x");
+		return QObject::tr("Windows 9x");
 	} else if (m_themeName.toLower() == "windows11") {
-		return i18n("Windows 11");
+		return QObject::tr("Windows 11");
 	} else if (m_themeName.toLower() == "system") {
-		return i18n("System");
+		return QObject::tr("System");
 	} else {
 		return m_themeName;
 	}
@@ -83,15 +82,15 @@ QString SystemTheme::name()
 QString SystemTheme::tooltip()
 {
 	if (m_themeName.toLower() == "windowsvista") {
-		return i18n("Widget style trying to look like your win32 theme");
+		return QObject::tr("Widget style trying to look like your win32 theme");
 	} else if (m_themeName.toLower() == "windows") {
-		return i18n("Windows 9x inspired widget style");
+		return QObject::tr("Windows 9x inspired widget style");
 	} else if (m_themeName.toLower() == "windows11") {
-		return i18n("WinUI 3 inspired Qt widget style");
+		return QObject::tr("WinUI 3 inspired Qt widget style");
 	} else if (m_themeName.toLower() == "fusion") {
-		return i18n("The default Qt widget style");
+		return QObject::tr("The default Qt widget style");
 	} else if (m_themeName.toLower() == "system") {
-		return i18n("Your current system theme");
+		return QObject::tr("Your current system theme");
 	} else {
 		return QString();
 	}

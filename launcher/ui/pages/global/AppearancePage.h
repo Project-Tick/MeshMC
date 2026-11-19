@@ -22,7 +22,6 @@
 #include <QWidget>
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -39,7 +38,7 @@ class AppearancePage : public QWidget, public BasePage
 
 	QString displayName() const override
 	{
-		return i18n("Appearance");
+		return tr("Appearance");
 	}
 	QIcon icon() const override
 	{

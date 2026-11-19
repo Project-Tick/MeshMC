@@ -29,9 +29,7 @@
 
 #include "settings/SettingsObject.h"
 
-#include <QIODevice>
-#include <QString>
-#include <QVariant>
+#include "settings/INIFile.h"
 #include "BaseVersionList.h"
 #include "minecraft/auth/MinecraftAccount.h"
 #include "MessageLevel.h"

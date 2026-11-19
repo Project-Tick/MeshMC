@@ -25,7 +25,6 @@
 #include "minecraft/MinecraftInstance.h"
 #include "minecraft/PackProfile.h"
 #include "ui/pages/BasePage.h"
-#include <KLocalizedString>
 
 namespace Ui
 {
@@ -41,7 +40,7 @@ class VersionPage : public QMainWindow, public BasePage
 	virtual ~VersionPage();
 	virtual QString displayName() const override
 	{
-		return i18n("Version");
+		return tr("Version");
 	}
 	virtual QIcon icon() const override;
 	virtual QString id() const override

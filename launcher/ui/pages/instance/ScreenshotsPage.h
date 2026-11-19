@@ -24,7 +24,6 @@
 
 #include "ui/pages/BasePage.h"
 #include <Application.h>
-#include <KLocalizedString>
 
 class QFileSystemModel;
 class QIdentityProxyModel;
@@ -52,7 +51,7 @@ class ScreenshotsPage : public QMainWindow, public BasePage
 	virtual bool eventFilter(QObject*, QEvent*) override;
 	virtual QString displayName() const override
 	{
-		return i18n("Screenshots");
+		return tr("Screenshots");
 	}
 	virtual QIcon icon() const override
 	{

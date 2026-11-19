@@ -19,7 +19,6 @@
  */
 
 #include "OtherLogsPage.h"
-#include "settings/GlobalSettings.h"
 #include "ui_OtherLogsPage.h"
 
 #include <QMessageBox>
@@ -30,7 +29,6 @@
 #include <GZip.h>
 #include <FileSystem.h>
 #include <QShortcut>
-#include <KLocalizedString>
 
 OtherLogsPage::OtherLogsPage(QString path, IPathMatcher::Ptr fileFilter,
 							 QWidget* parent)
@@ -126,21 +124,29 @@ void OtherLogsPage::on_btnReload_clicked()
 		setControlsEnabled(false);
 		ui->btnReload->setEnabled(true); // allow reload
 		m_currentFile = QString();
-		QMessageBox::critical(this, i18n("Error"),
-							  i18n("Unable to open %1 for reading: %2", m_currentFile, file.errorString()));
+		QMessageBox::critical(this, tr("Error"),
+							  tr("Unable to open %1 for reading: %2")
+								  .arg(m_currentFile, file.errorString()));
 	} else {
 		auto setPlainText = [&](const QString& text) {
 			QString fontFamily =
-				APPLICATION->globalSettings()->consoleFont();
-			int fontSize = APPLICATION->globalSettings()->consoleFontSize();
+				APPLICATION->settings()->get("ConsoleFont").toString();
+			bool conversionOk = false;
+			int fontSize = APPLICATION->settings()
+							   ->get("ConsoleFontSize")
+							   .toInt(&conversionOk);
+			if (!conversionOk) {
+				fontSize = 11;
+			}
 			QTextDocument* doc = ui->text->document();
 			doc->setDefaultFont(QFont(fontFamily, fontSize));
 			ui->text->setPlainText(text);
 		};
 		auto showTooBig = [&]() {
-			setPlainText(i18n("The file (%1) is too big. You may want to open it "
+			setPlainText(tr("The file (%1) is too big. You may want to open it "
 							"in a viewer optimized "
-							"for large files.", file.fileName()));
+							"for large files.")
+							 .arg(file.fileName()));
 		};
 		if (file.size() > (1024ll * 1024ll * 12ll)) {
 			showTooBig();
@@ -151,7 +157,7 @@ void OtherLogsPage::on_btnReload_clicked()
 			QByteArray temp;
 			if (!GZip::unzip(file.readAll(), temp)) {
 				setPlainText(
-					i18n("The file (%1) is not readable.", file.fileName()));
+					tr("The file (%1) is not readable.").arg(file.fileName()));
 				return;
 			}
 			content = QString::fromUtf8(temp);
@@ -183,15 +189,16 @@ void OtherLogsPage::on_btnDelete_clicked()
 		return;
 	}
 	if (QMessageBox::question(
-			this, i18n("Delete"),
-			i18n("Do you really want to delete %1?", m_currentFile),
+			this, tr("Delete"),
+			tr("Do you really want to delete %1?").arg(m_currentFile),
 			QMessageBox::Yes, QMessageBox::No) == QMessageBox::No) {
 		return;
 	}
 	QFile file(FS::PathCombine(m_path, m_currentFile));
 	if (!file.remove()) {
-		QMessageBox::critical(this, i18n("Error"),
-							  i18n("Unable to delete %1: %2", m_currentFile, file.errorString()));
+		QMessageBox::critical(this, tr("Error"),
+							  tr("Unable to delete %1: %2")
+								  .arg(m_currentFile, file.errorString()));
 	}
 }
 
@@ -202,12 +209,13 @@ void OtherLogsPage::on_btnClean_clicked()
 		return;
 	}
 	QMessageBox* messageBox = new QMessageBox(this);
-	messageBox->setWindowTitle(i18n("Clean up"));
+	messageBox->setWindowTitle(tr("Clean up"));
 	if (toDelete.size() > 5) {
-		messageBox->setText(i18n("Do you really want to delete all log files?"));
+		messageBox->setText(tr("Do you really want to delete all log files?"));
 		messageBox->setDetailedText(toDelete.join('\n'));
 	} else {
-		messageBox->setText(i18n("Do you really want to delete these files?\n%1", toDelete.join('\n')));
+		messageBox->setText(tr("Do you really want to delete these files?\n%1")
+								.arg(toDelete.join('\n')));
 	}
 	messageBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	messageBox->setDefaultButton(QMessageBox::Ok);
@@ -227,13 +235,13 @@ void OtherLogsPage::on_btnClean_clicked()
 	}
 	if (!failed.empty()) {
 		QMessageBox* messageBox = new QMessageBox(this);
-		messageBox->setWindowTitle(i18n("Error"));
+		messageBox->setWindowTitle(tr("Error"));
 		if (failed.size() > 5) {
-			messageBox->setText(i18n("Couldn't delete some files!"));
+			messageBox->setText(tr("Couldn't delete some files!"));
 			messageBox->setDetailedText(failed.join('\n'));
 		} else {
 			messageBox->setText(
-				i18n("Couldn't delete some files:\n%1", failed.join('\n')));
+				tr("Couldn't delete some files:\n%1").arg(failed.join('\n')));
 		}
 		messageBox->setStandardButtons(QMessageBox::Ok);
 		messageBox->setDefaultButton(QMessageBox::Ok);

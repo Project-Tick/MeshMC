@@ -95,7 +95,6 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#include <KLocalizedString>
 #endif
 
 PluginManager::PluginManager(Application* app, QObject* parent)
@@ -1635,7 +1634,7 @@ int PluginManager::api_zip_compress_dir(void* mh, const char* zip,
 			*lastReported = current / step;
 			task->reportProgress(
 				QString(),
-				i18n("%1 / %2 files", current, total),
+				PluginManager::tr("%1 / %2 files").arg(current).arg(total),
 				current, total);
 		};
 	}
