@@ -78,6 +78,22 @@ runs:
         cd ${{ env.INSTALL_DIR }}
         test -d MeshMC.app
         test -f MeshMC.app/Contents/Info.plist
+        chmod -R u+w MeshMC.app
+
+        if command -v macdeployqt >/dev/null 2>&1; then
+          macdeployqt MeshMC.app -always-overwrite -verbose=1
+        elif [[ -n "${Qt5_ROOT:-}" && -x "$Qt5_ROOT/bin/macdeployqt" ]]; then
+          "$Qt5_ROOT/bin/macdeployqt" MeshMC.app -always-overwrite -verbose=1
+        else
+          qt_prefix="$(brew --prefix qt@5)"
+          if [[ -x "$qt_prefix/bin/macdeployqt" ]]; then
+            "$qt_prefix/bin/macdeployqt" MeshMC.app -always-overwrite -verbose=1
+          else
+            echo "::error::macdeployqt is missing."
+            exit 1
+          fi
+        fi
+        chmod -R u+w MeshMC.app
 
         if [[ -n "$APPLE_CODESIGN_ID" ]]; then
           timestamp_flag=(--timestamp)
@@ -88,11 +104,13 @@ runs:
 
         sign_nested() {
           [ -e "$1" ] || return 0
+          chmod -R u+w "$1" 2>/dev/null || true
           echo "Signing $1"
           codesign --sign "$APPLE_CODESIGN_ID" --force --options runtime "${timestamp_flag[@]}" "$1"
         }
 
         for framework in MeshMC.app/Contents/Frameworks/*.framework; do
+          [[ -L "$framework" ]] && continue
           [ -d "$framework" ] || continue
           for xpc in "$framework"/Versions/*/XPCServices/*.xpc; do
             sign_nested "$xpc"

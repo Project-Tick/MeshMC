@@ -69,21 +69,6 @@
       }
     },
     {
-      "name": "windows_msvc",
-      "displayName": "Windows (MSVC)",
-      "inherits": [
-        "base"
-      ],
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      },
-      "cacheVariables": {
-        "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "Embedded"
-      }
-    },
-    {
       "hidden": true,
       "name": "Qt",
       "cacheVariables": {
@@ -134,16 +119,6 @@
         "rhs": "Windows"
       },
       "configurePreset": "windows_mingw"
-    },
-    {
-      "name": "windows_msvc",
-      "displayName": "Windows (MSVC)",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      },
-      "configurePreset": "windows_msvc"
     }
   ],
   "testPresets": [
@@ -214,19 +189,6 @@
         "rhs": "Windows"
       },
       "configurePreset": "windows_mingw"
-    },
-    {
-      "name": "windows_msvc",
-      "displayName": "Windows (MSVC)",
-      "inherits": [
-        "base"
-      ],
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      },
-      "configurePreset": "windows_msvc"
     }
   ],
   "vendor": {

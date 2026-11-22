@@ -206,29 +206,6 @@ configure_file("${PROJECT_SOURCE_DIR}/branding/meshmc.rc.in" "${PROJECT_BINARY_D
 set(Launcher_Branding_WindowsRC "${PROJECT_BINARY_DIR}/branding/meshmc.rc")
 set(Launcher_Branding_LogoQRC "${PROJECT_SOURCE_DIR}/branding/logo.qrc")
 
-if(MSVC)
-    set(Launcher_MSVC_Redist_NSIS_Section [=[
-!ifdef haveNScurl
-Section "Visual Studio Runtime"
-    Var /GLOBAL vc_redist_exe
-    ${If} ${IsNativeARM64}
-        StrCpy $vc_redist_exe "vc_redist.arm64.exe"
-    ${Else}
-        StrCpy $vc_redist_exe "vc_redist.x64.exe"
-    ${EndIf}
-    DetailPrint 'Downloading Microsoft Visual C++ Redistributable...'
-    NScurl::http GET "https://aka.ms/vs/17/release/$vc_redist_exe" "$INSTDIR\vc_redist\$vc_redist_exe" /INSIST /CANCEL /Zone.Identifier /END
-    Pop $0
-    ${If} $0 == "OK"
-        DetailPrint "Download successful"
-        ExecWait "$INSTDIR\vc_redist\$vc_redist_exe /install /passive /norestart"
-    ${Else}
-        DetailPrint "Download failed with error $0"
-    ${EndIf}
-SectionEnd
-!endif
-]=])
-endif()
 
 configure_file(branding/win_install.nsi.in win_install.nsi @ONLY)
 

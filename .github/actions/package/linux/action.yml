@@ -112,13 +112,13 @@ runs:
         desktop_dir="$INSTALL_APPIMAGE_DIR/usr/share/applications"
         metainfo_dir="$INSTALL_APPIMAGE_DIR/usr/share/metainfo"
         icon_dir="$INSTALL_APPIMAGE_DIR/usr/share/icons/hicolor/256x256/apps"
-        mkdir -p "$desktop_dir" "$icon_dir"
+        mkdir -p "$desktop_dir" "$metainfo_dir" "$icon_dir"
         cp "$GITHUB_WORKSPACE/branding/org.projecttick.MeshMC.desktop" "$desktop_dir/"
         cp "$GITHUB_WORKSPACE/branding/org.projecttick.MeshMC.metainfo.xml" "$metainfo_dir/"
         rsvg-convert -w 256 -h 256 "$GITHUB_WORKSPACE/branding/logo.svg" \
           -o "$icon_dir/org.projecttick.MeshMC.png"
         cp "$desktop_dir/org.projecttick.MeshMC.desktop" "$INSTALL_APPIMAGE_DIR/"
-        cp "$desktop_dir/org.projecttick.MeshMC.metainfo.xml" "$INSTALL_APPIMAGE_DIR/"
+        cp "$metainfo_dir/org.projecttick.MeshMC.metainfo.xml" "$INSTALL_APPIMAGE_DIR/"
         cp "$icon_dir/org.projecttick.MeshMC.png" "$INSTALL_APPIMAGE_DIR/"
 
         printf '%s\n' \
@@ -128,6 +128,7 @@ runs:
         mv "$INSTALL_APPIMAGE_DIR"/{sharun,AppRun}
         test -x "$INSTALL_APPIMAGE_DIR/AppRun"
         test -s "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.desktop"
+        test -s "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.metainfo.xml"
         test -s "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.png"
 
         if [[ "${{ github.ref_type }}" == "tag" ]]; then

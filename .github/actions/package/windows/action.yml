@@ -42,6 +42,18 @@ runs:
         build_dir="$(cygpath -u "${BUILD_DIR}")"
         install_dir="$(cygpath -u "${INSTALL_DIR}")"
         cmake --install "$build_dir" --config ${{ inputs.build-type }}
+        qt_bin="${MINGW_PREFIX:-}/bin"
+        windeployqt="$(find "$qt_bin" -maxdepth 1 -iname 'windeployqt*.exe' -print -quit)"
+        if [[ -z "$windeployqt" ]]; then
+          windeployqt="$(command -v windeployqt.exe || command -v windeployqt || true)"
+        fi
+        if [[ -z "$windeployqt" ]]; then
+          echo "::error::windeployqt is missing."
+          exit 1
+        fi
+        "$windeployqt" --compiler-runtime --no-translations --no-opengl-sw "$install_dir/MeshMC.exe"
+        test -f "$install_dir/Qt5Core.dll"
+        test -f "$install_dir/platforms/qwindows.dll"
 
     - name: Validate Windows runtime
       shell: pwsh
