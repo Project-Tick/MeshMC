@@ -74,8 +74,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_DEPRECATED_WARNINGS=Y")
 ##################################### Set Application options #####################################
 
 ######## Set URLs ########
-set(Launcher_NEWS_URL "https://multimc.org/posts.html" CACHE STRING "URL to open Launcher's news.")
-set(Launcher_NEWS_RSS_URL "https://multimc.org/rss.xml" CACHE STRING "URL to fetch Launcher's news RSS feed from.")
+set(Launcher_NEWS_URL "https://projecttick.org/news" CACHE STRING "URL to open Launcher's news.")
+set(Launcher_NEWS_RSS_URL "https://projecttick.org/feed/feed.xml" CACHE STRING "URL to fetch Launcher's news RSS feed from.")
 
 ######## Set version numbers ########
 # The version is 5.<minor>.<build> (the Design repo's Updater.md, Versions): the minor version
@@ -83,7 +83,7 @@ set(Launcher_NEWS_RSS_URL "https://multimc.org/rss.xml" CACHE STRING "URL to fet
 # towards it carry it, and Stable gets it when one of them is promoted. The major version
 # changes only for a break (the data layout move, say). The build number comes from the release
 # pipeline and only goes up. Tagging a build (Testing, Stable) never changes its version.
-set(Launcher_VERSION_MAJOR    5)
+set(Launcher_VERSION_MAJOR    12)
 set(Launcher_VERSION_MINOR    0)
 
 # Build number
@@ -104,8 +104,8 @@ set(Launcher_BUILD_PLATFORM "" CACHE STRING "A short string identifying the plat
 
 # Our sites, each a list of base URLs: the main server first, then its copies, in the order they are tried.
 # Every URL on a site is one of its base URLs and a path.
-set(Launcher_FILES_MIRRORS "https://files.multimc.org/;https://files-r2.multimc.org/" CACHE STRING "Base URLs of the files site (updates, notifications, translations, ...), in order.")
-set(Launcher_META_MIRRORS "https://meta.multimc.org/;https://meta-r2.multimc.org/" CACHE STRING "Base URLs of the meta site, in order.")
+set(Launcher_FILES_MIRRORS "https://files.projecttick.org/" CACHE STRING "Base URLs of the files site (updates, notifications, translations, ...), in order.")
+set(Launcher_META_MIRRORS "https://meta.projecttick.org/" CACHE STRING "Base URLs of the meta site, in order.")
 foreach(site FILES META)
     if(NOT Launcher_${site}_MIRRORS)
         message(FATAL_ERROR "Launcher_${site}_MIRRORS must have at least one base URL")
@@ -186,31 +186,31 @@ endif()
 
 ####################################### Branding #######################################
 
-set(Launcher_CommonName "MultiMC")
+set(Launcher_CommonName "MeshMC")
 
-set(Launcher_Copyright "MultiMC Contributors")
-set(Launcher_Domain "multimc.org")
+set(Launcher_Copyright "Project Tick")
+set(Launcher_Domain "projecttick.org")
 set(Launcher_Name "${Launcher_CommonName}")
 # the 5 is in the version now (5.<minor>.<build>), not in the name
 set(Launcher_DisplayName "${Launcher_CommonName}")
 set(Launcher_UserAgent "${Launcher_CommonName}/5.0")
-set(Launcher_ConfigFile "multimc.cfg")
-set(Launcher_Git "https://github.com/MultiMC/Launcher")
+set(Launcher_ConfigFile "meshmc.cfg")
+set(Launcher_Git "https://github.com/Project-Tick/MeshMC")
 
 set(Launcher_Branding_ICNS "${PROJECT_SOURCE_DIR}/branding/${Launcher_CommonName}.icns")
 # with the version filled in (major,minor,build,0: the Microsoft Store keeps the fourth part)
 set(Launcher_Branding_SourceDir "${PROJECT_SOURCE_DIR}/branding")
-configure_file("${PROJECT_SOURCE_DIR}/branding/multimc.rc.in" "${PROJECT_BINARY_DIR}/branding/multimc.rc" @ONLY)
-set(Launcher_Branding_WindowsRC "${PROJECT_BINARY_DIR}/branding/multimc.rc")
+configure_file("${PROJECT_SOURCE_DIR}/branding/meshmc.rc.in" "${PROJECT_BINARY_DIR}/branding/meshmc.rc" @ONLY)
+set(Launcher_Branding_WindowsRC "${PROJECT_BINARY_DIR}/branding/meshmc.rc")
 set(Launcher_Branding_LogoQRC "${PROJECT_SOURCE_DIR}/branding/logo.qrc")
 
-set(Launcher_PASTE_EE_API_KEY "utLvciUouSURFzfjPxLBf5W4ISsUX4pwBDF7N1AfZ")
-set(Launcher_MSA_CLIENT_ID "499546d9-bbfe-4b9b-a086-eb3d75afb78f")
+set(Launcher_PASTE_EE_API_KEY "ay2miY3lWxUHEEzYucj5e4YShIuo1aaY43MfwsUAe")
+set(Launcher_MSA_CLIENT_ID "3035382c-8f73-493a-b579-d182905c2864")
 set(Launcher_IMGUR_CLIENT_ID "5b97b0713fba4a3")
-set(Launcher_BUG_TRACKER_URL "https://github.com/MultiMC/Launcher/issues")
-set(Launcher_DISCORD_URL "https://discord.gg/multimc")
-set(Launcher_SUBREDDIT_URL "https://www.reddit.com/r/MultiMC/")
-set(Launcher_PATREON_URL "https://www.patreon.com/multimc")
+set(Launcher_BUG_TRACKER_URL "https://github.com/Project-Tick/MeshMC/issues")
+set(Launcher_DISCORD_URL "")
+set(Launcher_SUBREDDIT_URL "")
+set(Launcher_PATREON_URL "https://www.patreon.com/meshmc")
 
 ####################################### Install layout #######################################
 
@@ -247,7 +247,7 @@ if(Launcher_LAYOUT_REAL STREQUAL "mac-bundle")
     # Mac bundle settings
     set(MACOSX_BUNDLE_BUNDLE_NAME "${Launcher_Name}")
     set(MACOSX_BUNDLE_INFO_STRING "${Launcher_Name}:  Minecraft launcher and management utility.")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.multimc.${Launcher_Name}")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.projecttick.${Launcher_Name}")
     # three integers, as the App Store wants; the build part only goes up
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${Launcher_VERSION_NAME}")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${Launcher_VERSION_NAME}")

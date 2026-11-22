@@ -4,8 +4,8 @@
 #include <windows.h>
 
 // configured by CMake into the build directory, so the files next to it are named in full
-IDI_ICON1               ICON    DISCARDABLE     "@Launcher_Branding_SourceDir@/MultiMC.ico"
-1 RT_MANIFEST "@Launcher_Branding_SourceDir@/MultiMC.manifest"
+IDI_ICON1               ICON    DISCARDABLE     "@Launcher_Branding_SourceDir@/MeshMC.ico"
+1 RT_MANIFEST "@Launcher_Branding_SourceDir@/MeshMC.manifest"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     @Launcher_VERSION_MAJOR@,@Launcher_VERSION_MINOR@,@Launcher_VERSION_BUILD_PART@,0
@@ -17,10 +17,10 @@ BEGIN
         BEGIN
                 BLOCK "000004b0"
                 BEGIN
-                        VALUE "CompanyName", "MultiMC Contributors"
-                        VALUE "FileDescription", "MultiMC Launcher"
+                        VALUE "CompanyName", "Project-Tick"
+                        VALUE "FileDescription", "MeshMC Launcher"
                         VALUE "FileVersion", "@Launcher_VERSION_NAME@"
-                        VALUE "ProductName", "MultiMC"
+                        VALUE "ProductName", "MeshMC"
                         VALUE "ProductVersion", "@Launcher_VERSION_NAME@"
                 END
         END

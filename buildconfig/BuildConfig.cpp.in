@@ -28,7 +28,7 @@ Config::Config()
     TRANSLATIONS_BASE_URL = FILES_MIRRORS.first() + "translations/";
     FMLLIBS_BASE_URL = FILES_MIRRORS.first() + "fmllibs/";
     PATRONS_URL = FILES_MIRRORS.first() + "patrons.txt";
-    META_URL = META_MIRRORS.first() + "v1/";
+    META_URL = META_MIRRORS.first();
     FULL_VERSION_STR = "@Launcher_VERSION_MAJOR@.@Launcher_VERSION_MINOR@.@Launcher_VERSION_BUILD@";
 
     UPDATER_ROOT_KEYS = QStringList{@Launcher_UPDATER_ROOT_KEYS_LITERALS@};
