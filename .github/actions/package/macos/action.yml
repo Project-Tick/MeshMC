@@ -13,27 +13,6 @@ inputs:
     description: Name of the uploaded artifact
     required: true
     default: macOS
-  apple-codesign-cert:
-    description: Certificate for signing macOS builds
-    required: false
-  apple-codesign-password:
-    description: Password for signing macOS builds
-    required: false
-  apple-codesign-id:
-    description: Certificate ID for signing macOS builds
-    required: false
-  apple-notarize-apple-id:
-    description: Apple ID used for notarizing macOS builds
-    required: false
-  apple-notarize-team-id:
-    description: Team ID used for notarizing macOS builds
-    required: false
-  apple-notarize-password:
-    description: Password used for notarizing macOS builds
-    required: false
-  sparkle-ed25519-key:
-    description: Private key for signing Sparkle updates
-    required: false
   qt-major:
     description: Major version of Qt used, to keep artifact names distinct
     required: false
@@ -43,29 +22,6 @@ runs:
   using: composite
 
   steps:
-    - name: Fetch codesign certificate
-      shell: bash
-      env:
-        APPLE_CODESIGN_CERT: ${{ inputs.apple-codesign-cert }}
-        APPLE_CODESIGN_PASSWORD: ${{ inputs.apple-codesign-password }}
-        APPLE_CODESIGN_ID: ${{ inputs.apple-codesign-id }}
-      run: |
-        if [[ -n "$APPLE_CODESIGN_ID" ]]; then
-          if [[ -z "$APPLE_CODESIGN_CERT" || -z "$APPLE_CODESIGN_PASSWORD" ]]; then
-            echo "::error::The Apple signing certificate and password are both required when a signing ID is set."
-            exit 1
-          fi
-          printf '%s' "$APPLE_CODESIGN_CERT" | base64 --decode > codesign.p12
-          security create-keychain -p "$APPLE_CODESIGN_PASSWORD" build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "$APPLE_CODESIGN_PASSWORD" build.keychain
-          security import codesign.p12 -k build.keychain -P "$APPLE_CODESIGN_PASSWORD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_CODESIGN_PASSWORD" build.keychain
-        else
-          : > codesign.p12
-          echo ":warning: Using ad-hoc code signing for macOS, as certificate was not present." >> $GITHUB_STEP_SUMMARY
-        fi
-
     - name: Package
       shell: bash
       env:
@@ -143,40 +99,6 @@ runs:
         main_binary_name="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' MeshMC.app/Contents/Info.plist)"
         main_binary="MeshMC.app/Contents/MacOS/$main_binary_name"
         chmod +x "$main_binary"
-        echo "Signing MeshMC.app"
-        codesign --sign "$APPLE_CODESIGN_ID" --force \
-          --options runtime "${timestamp_flag[@]}" \
-          MeshMC.app
-
-        codesign --verify --deep --strict --verbose=2 MeshMC.app
-
-    - name: Notarize
-      shell: bash
-      env:
-        INSTALL_DIR: install
-        APPLE_NOTARIZE_APPLE_ID: ${{ inputs.apple-notarize-apple-id }}
-        APPLE_NOTARIZE_TEAM_ID: ${{ inputs.apple-notarize-team-id }}
-        APPLE_NOTARIZE_PASSWORD: ${{ inputs.apple-notarize-password }}
-      run: |
-        cd ${{ env.INSTALL_DIR }}
-
-        if [[ -n "$APPLE_NOTARIZE_PASSWORD" ]]; then
-          if [[ -z "$APPLE_NOTARIZE_APPLE_ID" || -z "$APPLE_NOTARIZE_TEAM_ID" ]]; then
-            echo "::error::Apple ID and team ID are required when notarization credentials are set."
-            exit 1
-          fi
-          ditto -c -k --sequesterRsrc --keepParent "MeshMC.app" ../MeshMC.zip
-          xcrun notarytool submit ../MeshMC.zip \
-            --wait --progress \
-            --apple-id "$APPLE_NOTARIZE_APPLE_ID" \
-            --team-id "$APPLE_NOTARIZE_TEAM_ID" \
-            --password "$APPLE_NOTARIZE_PASSWORD"
-
-          xcrun stapler staple "MeshMC.app"
-        else
-          echo ":warning: Skipping notarization as credentials are not present." >> $GITHUB_STEP_SUMMARY
-        fi
-        ditto -c -k --sequesterRsrc --keepParent "MeshMC.app" ../MeshMC.zip
 
     - name: Create DMG
       shell: bash
@@ -195,29 +117,6 @@ runs:
             -srcfolder src \
             -ov -format ULMO \
             "../MeshMC.dmg"
-
-    - name: Make Sparkle signature
-      shell: bash
-      env:
-        SPARKLE_ED25519_KEY: ${{ inputs.sparkle-ed25519-key }}
-      run: |
-        if [[ -n "$SPARKLE_ED25519_KEY" ]]; then
-          printf '%s\n' "$SPARKLE_ED25519_KEY" > ed25519-priv.pem
-          OPENSSL=$(brew --prefix openssl@3)/bin/openssl
-          signature_zip=$("$OPENSSL" pkeyutl -sign -rawin -in ${{ github.workspace }}/MeshMC.zip -inkey ed25519-priv.pem | openssl base64 | tr -d \\n)
-          signature_dmg=$("$OPENSSL" pkeyutl -sign -rawin -in ${{ github.workspace }}/MeshMC.dmg -inkey ed25519-priv.pem | openssl base64 | tr -d \\n)
-          rm ed25519-priv.pem
-          cat >> $GITHUB_STEP_SUMMARY << EOF
-        ### Artifact Information :information_source:
-        - :memo: Sparkle Signature (ed25519): \`$signature_zip\` (ZIP)
-        - :memo: Sparkle Signature (ed25519): \`$signature_dmg\` (DMG)
-        EOF
-        else
-          cat >> $GITHUB_STEP_SUMMARY << EOF
-        ### Artifact Information :information_source:
-        - :warning: Sparkle Signature (ed25519): No private key available (likely a pull request or fork)
-        EOF
-        fi
 
     - name: Upload binary tarball
       uses: actions/upload-artifact@v7
