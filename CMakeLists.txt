@@ -242,7 +242,7 @@ if(Launcher_LAYOUT_REAL STREQUAL "mac-bundle")
     set(LIBRARY_DEST_DIR "${Launcher_Name}.app/Contents/MacOS")
     set(PLUGIN_DEST_DIR "${Launcher_Name}.app/Contents/MacOS")
     set(RESOURCES_DEST_DIR "${Launcher_Name}.app/Contents/Resources")
-    set(JARS_DEST_DIR "${Launcher_Name}.app/Contents/MacOS/jars")
+    set(JARS_DEST_DIR "${Launcher_Name}.app/Contents/Resources/jars")
 
     set(BUNDLE_DEST_DIR ".")
 

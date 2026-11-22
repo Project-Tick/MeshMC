@@ -1702,7 +1702,11 @@ QString Application::getJarsPath()
 {
     if(m_jarsPath.isEmpty())
     {
+#ifdef Q_OS_MAC
+        return FS::PathCombine(QCoreApplication::applicationDirPath(), "../Resources/jars");
+#else
         return FS::PathCombine(QCoreApplication::applicationDirPath(), "jars");
+#endif
     }
     return m_jarsPath;
 }

@@ -268,12 +268,19 @@ jobs:
         shell: bash
         run: |
           case "$RUNNER_OS" in
-            Linux) source_dir=install-portable ;;
-            Windows|macOS) source_dir=install ;;
+            Linux)
+              source_dir="$GITHUB_WORKSPACE/install-appdir"
+              test -d "$source_dir"
+              cp -a "$source_dir" "$RUNNER_TEMP/updater-linux"
+              rm -f "$RUNNER_TEMP/updater-linux/bin/AppImageUpdate.AppImage"
+              source_dir="$RUNNER_TEMP/updater-linux"
+              ;;
+            Windows|macOS) source_dir="$GITHUB_WORKSPACE/install" ;;
             *) echo "::error::Unsupported updater runner OS: $RUNNER_OS"; exit 1 ;;
           esac
+          test -d "$source_dir"
           python "$GITHUB_WORKSPACE/tools/updater_v2/prepare_payload.py" \
-            --source "$GITHUB_WORKSPACE/$source_dir" \
+            --source "$source_dir" \
             --output "$RUNNER_TEMP/updater-payload" \
             --variant "${{ matrix.updater-variant }}" \
             --name "${{ matrix.updater-name }}" \

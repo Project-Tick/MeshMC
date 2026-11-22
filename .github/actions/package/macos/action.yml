@@ -121,6 +121,7 @@ runs:
         done
 
         for framework in MeshMC.app/Contents/Frameworks/*.framework; do
+          [[ -L "$framework" ]] && continue
           sign_nested "$framework"
         done
 
