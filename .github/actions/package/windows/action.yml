@@ -33,8 +33,7 @@ runs:
     - name: Install NSIS
       uses: negrutiu/nsis-install@v3
 
-    - name: Package (MinGW)
-      if: ${{ inputs.msystem != '' }}
+    - name: Package
       shell: msys2 {0}
       env:
         BUILD_DIR: ${{ github.workspace }}/build
@@ -43,15 +42,6 @@ runs:
         build_dir="$(cygpath -u "${BUILD_DIR}")"
         install_dir="$(cygpath -u "${INSTALL_DIR}")"
         cmake --install "$build_dir" --config ${{ inputs.build-type }}
-
-    - name: Package (MSVC)
-      if: ${{ inputs.msystem == '' }}
-      shell: pwsh
-      env:
-        BUILD_DIR: ${{ github.workspace }}/build
-        INSTALL_DIR: ${{ github.workspace }}/install
-      run: |
-        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
 
     - name: Validate Windows runtime
       shell: pwsh

@@ -55,7 +55,6 @@ runs:
         build-type: ${{ inputs.build-type }}
         msystem: ${{ inputs.msystem }}
         vcvars-arch: ${{ inputs.vcvars-arch }}
-        qt-major: ${{ inputs.qt-major }}
 
     # TODO(@YongDo-Hyun): Get this working on MSYS2!
     - name: Setup ccache
@@ -124,15 +123,6 @@ runs:
         aqtsource: "git+https://github.com/miurahr/aqtinstall.git@076e1659807d0b362a3ed684d54c2e9c775eb9c7"
         version: ${{ inputs.qt-version }}
         modules: qtnetworkauth
-        cache: ${{ inputs.build-type == 'Debug' }}
-
-    - name: Install Qt 6
-      if: ${{ inputs.msystem == '' && inputs.qt-major == '6' }}
-      uses: jurplel/install-qt-action@v4
-      with:
-        aqtsource: "git+https://github.com/miurahr/aqtinstall.git@076e1659807d0b362a3ed684d54c2e9c775eb9c7"
-        version: ${{ inputs.qt-version }}
-        modules: qtimageformats qtnetworkauth
         cache: ${{ inputs.build-type == 'Debug' }}
 
     - name: Setup bundled OpenSSL

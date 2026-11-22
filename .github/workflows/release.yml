@@ -49,19 +49,10 @@ jobs:
 
           tar --exclude='.git' -czf MeshMC-${{ env.VERSION }}.tar.gz MeshMC-${{ env.VERSION }}
 
-          for d in MeshMC-Qt5-Windows-MSVC*; do
+          for d in MeshMC-Qt5-Windows-w64*; do
             cd "${d}" || continue
             INST="$(echo -n ${d} | grep -o Setup || true)"
-            NAME="MeshMC-Qt5-Windows-MSVC"
-            test -z "${INST}" || mv MeshMC-*.exe ../${NAME}-Setup-${{ env.VERSION }}.exe
-            test -n "${INST}" || zip -r -9 "../${NAME}-${{ env.VERSION }}.zip" *
-            cd ..
-          done
-
-          for d in MeshMC-Qt5-Windows-MinGW-w64*; do
-            cd "${d}" || continue
-            INST="$(echo -n ${d} | grep -o Setup || true)"
-            NAME="MeshMC-Qt5-Windows-MinGW-w64"
+            NAME="MeshMC-Qt5-Windows-w64"
             test -z "${INST}" || mv MeshMC-*.exe ../${NAME}-Setup-${{ env.VERSION }}.exe
             test -n "${INST}" || zip -r -9 "../${NAME}-${{ env.VERSION }}.zip" *
             cd ..
@@ -81,10 +72,8 @@ jobs:
           files: |
             MeshMC-Qt5-Linux-x86_64.AppImage
             MeshMC-Qt5-Linux-x86_64.AppImage.zsync
-            MeshMC-Qt5-Windows-MinGW-w64-${{ env.VERSION }}.zip
-            MeshMC-Qt5-Windows-MinGW-w64-Setup-${{ env.VERSION }}.exe
-            MeshMC-Qt5-Windows-MSVC-${{ env.VERSION }}.zip
-            MeshMC-Qt5-Windows-MSVC-Setup-${{ env.VERSION }}.exe
+            MeshMC-Qt5-Windows-w64-${{ env.VERSION }}.zip
+            MeshMC-Qt5-Windows-w64-Setup-${{ env.VERSION }}.exe
             MeshMC-Qt5-macOS-ARM-${{ env.VERSION }}.zip
             MeshMC-Qt5-macOS-ARM-${{ env.VERSION }}.dmg
             MeshMC-${{ env.VERSION }}.tar.gz

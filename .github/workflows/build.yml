@@ -88,62 +88,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # TODO: PORT Qt6
-          # - os: ubuntu-26.04
-          #   artifact-name: Linux
-          #   cmake-preset: linux
-          #   qt-version: 6.12.0
-          #   qt-major: 6
-          #   build-name: Linux x86_64 Qt6
-
-          # - os: ubuntu-26.04-arm
-          #   artifact-name: Linux-aarch64
-          #   cmake-preset: linux
-          #   qt-version: 6.12.0
-          #   qt-major: 6
-          #   build-name: Linux aarch64 Qt6
-
-          # - os: windows-2025
-          #   artifact-name: Windows-MinGW-w64
-          #   cmake-preset: windows_mingw
-          #   msystem: CLANG64
-          #   vcvars-arch: amd64_x86
-          #   qt-major: 6
-          #   build-name: Windows MinGW x86_64 Qt6
-
-          # - os: windows-2025-vs2026
-          #   artifact-name: Windows-MSVC
-          #   cmake-preset: windows_msvc
-          #   # TODO(@YongDo-Hyun): This is the default in setup-dependencies/windows. Why isn't it working?!?!
-          #   vcvars-arch: amd64
-          #   qt-version: 6.12.0
-          #   qt-major: 6
-          #   build-name: Windows MSVC x86_64 Qt6
-
-          # - os: windows-11-vs2026-arm
-          #   artifact-name: Windows-MSVC-arm64
-          #   cmake-preset: windows_msvc
-          #   vcvars-arch: arm64
-          #   qt-version: 6.12.0
-          #   qt-major: 6
-          #   build-name: Windows MSVC aarch64 Qt6
-
-          # - os: macos-26
-          #   artifact-name: macOS
-          #   cmake-preset: macos_universal
-          #   macosx-deployment-target: 14.0
-          #   qt-version: 6.12.0
-          #   qt-major: 6
-          #   build-name: macOS Universal Qt6
-
-          # - os: macos-26
-          #   artifact-name: Legacy-macOS
-          #   cmake-preset: macos_universal
-          #   macosx-deployment-target: 12.0
-          #   qt-version: 6.9.3
-          #   qt-major: 6
-          #   build-name: macOS Universal Legacy Qt6
-
           - os: ubuntu-26.04
             artifact-name: Linux
             cmake-preset: linux
@@ -156,29 +100,16 @@ jobs:
             build-name: Linux x86_64 Qt5
 
           - os: windows-2025
-            artifact-name: Windows-MinGW-w64
+            artifact-name: Windows-w64
             cmake-preset: windows_mingw
-            msystem: CLANG64
+            msystem: UCRT64
             vcvars-arch: amd64_x86
             qt-major: 5
-            updater-variant: windows-x86_64-qt5-mingw
-            updater-name: Windows x86_64 Qt 5 MinGW
+            updater-variant: windows-x86_64-qt5
+            updater-name: Windows x86_64 Qt 5
             updater-requirements: '{"os":"windows","arch":"x86_64","os_version":"10.0"}'
             build-platform: win64
-            build-name: Windows MinGW x86_64 Qt5
-
-          - os: windows-2022
-            artifact-name: Windows-MSVC
-            cmake-preset: windows_msvc
-            # TODO(@YongDo-Hyun): This is the default in setup-dependencies/windows. Why isn't it working?!?!
-            vcvars-arch: amd64
-            qt-version: 5.15.2
-            qt-major: 5
-            updater-variant: windows-x86_64-qt5-msvc
-            updater-name: Windows x86_64 Qt 5 MSVC
-            updater-requirements: '{"os":"windows","arch":"x86_64","os_version":"10.0"}'
-            build-platform: win64
-            build-name: Windows MSVC x86_64 Qt5
+            build-name: Windows x86_64 Qt5
 
           - os: macos-26
             artifact-name: macOS-ARM
@@ -221,6 +152,12 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 17
 
       - name: Setup dependencies
         id: setup-dependencies
