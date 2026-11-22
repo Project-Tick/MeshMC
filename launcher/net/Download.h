@@ -84,6 +84,8 @@ private: /* data */
     std::unique_ptr<Sink> m_sink;
     Options m_options;
     QTimer m_stall_timer;
+    /// fail when a connection never produces a first byte
+    QTimer m_connect_timer;
     /// the URL the download was made for; m_url is the one being requested
     QUrl m_requested_url;
     /// the URLs to try, in order (Net::Mirrors), and which one is being tried

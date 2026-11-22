@@ -40,7 +40,74 @@ runs:
       if: ${{ inputs.msystem == '' }}
       shell: pwsh
       run: |
+        $ErrorActionPreference = "Stop"
+
         choco install pkgconfiglite -y --allow-empty-checksums
+
+        $vcpkgRoot = $env:VCPKG_INSTALLATION_ROOT
+        if (-not $vcpkgRoot) {
+          $vcpkgRoot = $env:VCPKG_ROOT
+        }
+        if (-not $vcpkgRoot) {
+          throw "VCPKG_INSTALLATION_ROOT/VCPKG_ROOT is not set on this runner."
+        }
+
+        $triplet = if ($env:RUNNER_ARCH -eq "ARM64") {
+          "arm64-windows"
+        } else {
+          "x64-windows"
+        }
+
+        & "$vcpkgRoot\vcpkg.exe" install --classic zlib`
+          "--triplet=$triplet"
+
+        if ($LASTEXITCODE -ne 0) {
+          throw "vcpkg dependency installation failed."
+        }
+
+        $tripletRoot = Join-Path $vcpkgRoot "installed\$triplet"
+        $toolsRoot = Join-Path $tripletRoot "tools"
+
+        $pathEntries = [System.Collections.Generic.HashSet[string]]::new(
+          [System.StringComparer]::OrdinalIgnoreCase
+        )
+
+        # Executables installed directly in the triplet's bin directory.
+        $binPath = Join-Path $tripletRoot "bin"
+        if (Test-Path $binPath) {
+          [void]$pathEntries.Add($binPath)
+        }
+
+        # vcpkg commonly installs build tools in tools\<port>\.
+        if (Test-Path $toolsRoot) {
+          Get-ChildItem -Path $toolsRoot -Directory -Recurse |
+            ForEach-Object {
+              $directory = $_.FullName
+
+              if (
+                Get-ChildItem -LiteralPath $directory -File `
+                  -ErrorAction SilentlyContinue |
+                  Where-Object {
+                    $_.Extension -in @(".exe", ".cmd", ".bat", ".com")
+                  } |
+                  Select-Object -First 1
+              ) {
+                [void]$pathEntries.Add($directory)
+              }
+            }
+
+          # Also include the tools root itself.
+          [void]$pathEntries.Add($toolsRoot)
+        }
+
+        foreach ($entry in $pathEntries) {
+          Add-Content -Path $env:GITHUB_PATH -Value $entry
+          Write-Host "Added to PATH: $entry"
+        }
+
+        Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_TRIPLET_ROOT=$tripletRoot"
+        Add-Content -Path $env:GITHUB_ENV -Value "CMAKE_PREFIX_PATH=$tripletRoot"
+        Add-Content -Path $env:GITHUB_ENV -Value "PKG_CONFIG_PATH=$(Join-Path $tripletRoot 'lib\pkgconfig')"
 
     - name: Setup MSYS2 (MinGW)
       if: ${{ inputs.msystem != '' }}

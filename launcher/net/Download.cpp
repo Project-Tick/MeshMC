@@ -33,9 +33,15 @@ Download::Download():NetAction()
 {
     m_status = Job_NotStarted;
     m_stall_timer.setSingleShot(true);
+    m_connect_timer.setSingleShot(true);
     connect(&m_stall_timer, &QTimer::timeout, this, [this]()
     {
         qCritical() << "Download" << m_url.toString() << "stalled, giving up";
+        stop(QNetworkReply::TimeoutError);
+    });
+    connect(&m_connect_timer, &QTimer::timeout, this, [this]()
+    {
+        qCritical() << "Download" << m_url.toString() << "did not connect, giving up";
         stop(QNetworkReply::TimeoutError);
     });
 }
@@ -86,6 +92,7 @@ void Download::stop(QNetworkReply::NetworkError error)
     m_status = Job_Failed;
     m_network_error = error;
     m_stall_timer.stop();
+    m_connect_timer.stop();
     if(m_reply)
     {
         m_reply->abort();
@@ -114,6 +121,7 @@ void Download::startImpl()
 
 void Download::startRequest()
 {
+    m_connect_timer.stop();
     m_network_error = QNetworkReply::NoError;
     m_http_status = 0;
     QNetworkRequest request(m_url);
@@ -150,10 +158,12 @@ void Download::startRequest()
     {
         m_stall_timer.start();
     }
+    m_connect_timer.start(5000);
 }
 
 void Download::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
+    m_connect_timer.stop();
     m_total_progress = bytesTotal;
     m_progress = bytesReceived;
     if(m_stall_timer.isActive())
@@ -299,6 +309,7 @@ bool Download::tryNextMirror()
 void Download::downloadFinished()
 {
     m_stall_timer.stop();
+    m_connect_timer.stop();
     auto status = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     m_http_status = status.isValid() ? status.toInt() : 0;
 
@@ -366,6 +377,7 @@ void Download::downloadFinished()
 
 void Download::downloadReadyRead()
 {
+    m_connect_timer.stop();
     if(m_status == Job_InProgress)
     {
         auto data = m_reply->readAll();
