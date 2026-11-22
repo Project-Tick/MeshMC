@@ -22,7 +22,9 @@ Actions variable `UPDATER_PUBLISH_ENABLED` to `true` only after the public boots
 both secrets, and the requirement floors below are ready.
 
 The first publish initializes the otherwise-empty updates repository with a short README,
-then creates one `build-N` Release per source workflow run. Each Release contains
+then creates one `build-N` Release per source workflow run. `N` is allocated by
+querying the updates repository for the highest existing `build-N` tag and adding
+one, so it is independent of GitHub's `run_number`. Each Release contains
 content-addressed `file-<sha256>` assets and the complete signed metadata snapshot needed
 by the client. The Release is published only after all assets are uploaded. Pushes to
 `master` advance all tiers; `develop` and `release-*` advance Testing and Latest; other

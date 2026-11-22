@@ -1,7 +1,7 @@
 name: Build
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.sha }}
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_type == 'branch' && 'updater-build-counter' || github.ref }}
   cancel-in-progress: false
 
 on:
@@ -28,8 +28,54 @@ on:
 permissions: {}
 
 jobs:
+  build-number:
+    name: Allocate updater build number
+    if: ${{ github.event_name == 'push' && github.ref_type == 'branch' }}
+    runs-on: ubuntu-slim
+    outputs:
+      build-number: ${{ steps.allocate.outputs.build-number }}
+    steps:
+      - name: Allocate next build number
+        id: allocate
+        shell: bash
+        run: |
+          set -euo pipefail
+          max_build=0
+          page=1
+          while true; do
+            response="$(curl -sS -w $'\n%{http_code}' \
+              "https://api.github.com/repos/Project-Tick/MeshMC-Updates/git/matching-refs/tags/build-?per_page=100&page=${page}")"
+            status="${response##*$'\n'}"
+            refs="${response%$'\n'*}"
+            if [[ "$status" == "409" && "$page" == "1" ]]; then
+              break
+            fi
+            if [[ "$status" != "200" ]]; then
+              echo "::error::Could not read build tags (GitHub API status $status)."
+              exit 1
+            fi
+            count="$(python3 -c 'import json,sys; print(len(json.load(sys.stdin)))' <<<"$refs")"
+            if [[ "$count" == "0" ]]; then
+              break
+            fi
+            max_build="$(python3 -c 'import json,sys; maximum=int(sys.argv[1]); maximum=max([maximum]+[int(r["ref"][16:]) for r in json.load(sys.stdin) if r.get("ref","").startswith("refs/tags/build-") and r["ref"][16:].isdigit()]); print(maximum)' "$max_build" <<<"$refs")"
+            if [[ "$count" -lt 100 ]]; then
+              break
+            fi
+            page=$((page + 1))
+          done
+          next_build=$((max_build + 1))
+          if [[ "$next_build" -gt 65535 ]]; then
+            echo "::error::Updater build number $next_build exceeds the Windows version limit."
+            exit 1
+          fi
+          echo "build-number=$next_build" >> "$GITHUB_OUTPUT"
+          echo "Allocated updater build $next_build"
+
   build:
     name: Build (${{ matrix.build-name }})
+    needs: [build-number]
+    if: ${{ always() && (needs.build-number.result == 'success' || needs.build-number.result == 'skipped') }}
 
     environment: ${{ inputs.environment || '' }}
 
@@ -196,7 +242,7 @@ jobs:
           updater_args=()
           if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "branch" ]]; then
             updater_args+=(
-              -DLauncher_VERSION_BUILD="$GITHUB_RUN_NUMBER"
+              -DLauncher_VERSION_BUILD="${{ needs.build-number.outputs.build-number }}"
               -DLauncher_BUILD_PLATFORM="${{ matrix.build-platform }}"
             )
             if [[ "$UPDATER_PUBLISH_ENABLED" == "true" && ( ! -f launcher/updater/v2/keys/1.json || ! -f launcher/updater/v2/keys/1.json.sig || ! -f launcher/updater/v2/keys/root-keys.txt ) ]]; then
@@ -307,7 +353,7 @@ jobs:
 
   publish-updater:
     name: Publish Updater V2 release
-    needs: [build]
+    needs: [build-number, build]
     if: >-
       github.event_name == 'push' &&
       github.ref_type == 'branch' &&
@@ -336,7 +382,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.UPDATES_REPO_TOKEN }}
           UPDATER_ONLINE_SIGNING_KEY: ${{ secrets.UPDATER_ONLINE_SIGNING_KEY }}
-          BUILD_NUMBER: ${{ github.run_number }}
+          BUILD_NUMBER: ${{ needs.build-number.outputs.build-number }}
           SOURCE_COMMIT: ${{ github.sha }}
           SOURCE_BRANCH: ${{ github.ref_name }}
         run: |

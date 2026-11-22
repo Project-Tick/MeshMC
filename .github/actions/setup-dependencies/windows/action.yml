@@ -58,7 +58,7 @@ runs:
           "x64-windows"
         }
 
-        & "$vcpkgRoot\vcpkg.exe" install --classic zlib`
+        & "$vcpkgRoot\vcpkg.exe" install --classic zlib `
           "--triplet=$triplet"
 
         if ($LASTEXITCODE -ne 0) {
