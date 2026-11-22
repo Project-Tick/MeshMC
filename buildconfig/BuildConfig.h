@@ -50,6 +50,13 @@ public:
     qint64 UPDATER_SERIAL_FLOOR = 0;
     /// Updater v2: this build's variant ID
     QString UPDATER_VARIANT;
+    /// Updater metadata base URL; empty to use the files site's first mirror
+    QString UPDATER_SITE;
+
+    QString updaterSite() const
+    {
+        return UPDATER_SITE.isEmpty() ? FILES_MIRRORS.first() : UPDATER_SITE;
+    }
 
 
     /// User-Agent to use.

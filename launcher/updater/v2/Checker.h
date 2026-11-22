@@ -25,8 +25,8 @@ namespace UpdaterV2
  */
 struct Config
 {
-    // the files site's first base URL (its mirror list is the tree's mirrors.json); the tree
-    // is at updater/ under it
+    // the updater site's first base URL (its mirror list is the tree's mirrors.json); it can be
+    // a files-site root or a GitHub Releases /latest/download/ URL
     QString site;
     // the pinned root keys (hex) and the compiled-in keys document, which must list exactly them
     QStringList rootKeys;

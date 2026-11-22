@@ -17,7 +17,7 @@ runs:
       shell: bash
       run: |
         brew update
-        brew install ninja extra-cmake-modules temurin@17 autoconf pkg-config \
+        brew install ninja extra-cmake-modules temurin@17 openssl@3 autoconf pkg-config \
         autoconf-archive automake libtool
 
     - name: Install Qt5

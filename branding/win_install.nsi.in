@@ -12,7 +12,7 @@ InstallDirRegKey HKCU "Software\MeshMC" "InstallDir"
 RequestExecutionLevel user
 OutFile "../MeshMC-Setup.exe"
 
-!define MUI_ICON "@CMAKE_SOURCE_DIR@/launcher/packaging/windows/org.projecttick.MeshMC.ico"
+!define MUI_ICON "@Launcher_Branding_SourceDir@/MeshMC.ico"
 
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\MeshMC"
 
@@ -106,13 +106,13 @@ OutFile "../MeshMC-Setup.exe"
 ;--------------------------------
 
 ; Version info
-VIProductVersion "@MeshMC_VERSION_NAME4@"
-VIFileVersion "@MeshMC_VERSION_NAME4@"
+VIProductVersion "@Launcher_VERSION_NAME4@"
+VIFileVersion "@Launcher_VERSION_NAME4@"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "MeshMC"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "MeshMC Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "Project Tick"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "@MeshMC_VERSION_NAME4@"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "@MeshMC_VERSION_NAME4@"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "@Launcher_VERSION_NAME4@"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "@Launcher_VERSION_NAME4@"
 
 ;--------------------------------
 ; Conditional comp with file exist
@@ -373,19 +373,7 @@ Section "MeshMC"
 
   SetOutPath $INSTDIR
 
-  File "meshmc.exe"
-  File "meshmc-updater.exe"
-  File "meshmc-crashreporter.exe"
-  File /r "mmcmodules"
-  File "qt.conf"
-  File "qtlogging.ini"
-  File *.dll
-  File /r "iconengines"
-  File /r "imageformats"
-  File /r "jars"
-  File /r "platforms"
-  File /r "styles"
-  File /nonfatal /r "tls"
+  File /r "*.*"
 
   ; Write the installation path into the registry
   WriteRegStr HKCU Software\MeshMC "InstallDir" "$INSTDIR"
@@ -413,10 +401,10 @@ Section "MeshMC"
     WriteRegStr HKCU "${UNINST_KEY}" "QuietUninstallString" '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
     WriteRegStr HKCU "${UNINST_KEY}" "InstallLocation" "$INSTDIR"
     WriteRegStr HKCU "${UNINST_KEY}" "Publisher" "Project Tick"
-    WriteRegStr HKCU "${UNINST_KEY}" "Version" "@MeshMC_VERSION_NAME4@"
-    WriteRegStr HKCU "${UNINST_KEY}" "DisplayVersion" "@MeshMC_RELEASE_VERSION_NAME@"
-    WriteRegStr HKCU "${UNINST_KEY}" "VersionMajor" "@MeshMC_VERSION_MAJOR@"
-    WriteRegStr HKCU "${UNINST_KEY}" "VersionMinor" "@MeshMC_VERSION_MINOR@"
+    WriteRegStr HKCU "${UNINST_KEY}" "Version" "@Launcher_VERSION_NAME4@"
+    WriteRegStr HKCU "${UNINST_KEY}" "DisplayVersion" "@Launcher_RELEASE_VERSION_NAME@"
+    WriteRegStr HKCU "${UNINST_KEY}" "VersionMajor" "@Launcher_VERSION_MAJOR@"
+    WriteRegStr HKCU "${UNINST_KEY}" "VersionMinor" "@Launcher_VERSION_MINOR@"
     ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
     IntFmt $0 "0x%08X" $0
     WriteRegDWORD HKCU "${UNINST_KEY}" "EstimatedSize" "$0"

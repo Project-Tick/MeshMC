@@ -850,7 +850,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
     if(BuildConfig.UPDATER_ENABLED)
     {
         UpdaterV2::Config config;
-        config.site = BuildConfig.FILES_MIRRORS.first();
+        config.site = BuildConfig.updaterSite();
         config.rootKeys = BuildConfig.UPDATER_ROOT_KEYS;
         config.floorKeys = BuildConfig.UPDATER_KEYS_FLOOR;
         config.serialFloor = BuildConfig.UPDATER_SERIAL_FLOOR;
@@ -1066,7 +1066,7 @@ void Application::startHeadlessUpdate()
         return;
     }
     m_status = Application::Initialized;
-    auto update = new UpdaterV2::HeadlessUpdate(m_updaterV2.get(), m_network, BuildConfig.FILES_MIRRORS.first(), root(), tier, this);
+    auto update = new UpdaterV2::HeadlessUpdate(m_updaterV2.get(), m_network, BuildConfig.updaterSite(), root(), tier, this);
     // once the event loop runs, so that exiting works even when the check ends right away
     QTimer::singleShot(0, update, &UpdaterV2::HeadlessUpdate::start);
 }

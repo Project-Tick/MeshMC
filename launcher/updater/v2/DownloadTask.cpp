@@ -67,7 +67,8 @@ void DownloadTask::executeTask()
     m_job = new NetJob(tr("Update to build %1").arg(m_update.build), m_network);
     for(auto &download: downloads)
     {
-        auto dl = Net::Download::makeFile(treeUrl(m_site, contentPath(download.file.sha256)), download.target);
+        auto options = download.file.assetUrl.isEmpty() ? Net::Download::Option::NoOptions : Net::Download::Option::NoMirrors;
+        auto dl = Net::Download::makeFile(contentUrl(m_site, download.file), download.target, options);
         dl->addValidator(new Net::SizeValidator(download.file.size));
         dl->addValidator(new Net::ChecksumValidator(QCryptographicHash::Sha256, QByteArray::fromHex(download.file.sha256.toLatin1())));
         dl->setStallTimeout(StallTimeout);

@@ -259,6 +259,22 @@ Variant variant(const QString &id, const QJsonValue &value, const QString &where
         file.sha256 = hex(entry.value("sha256"), 32, at(w, "sha256"));
         file.size = Json::requireValueBoundedInteger(entry.value("size"), 0, Json::MaxExactInteger, at(w, "size"));
         file.executable = Json::requireIsType<bool>(entry.value("executable"), at(w, "executable"));
+        auto assetUrl = entry.value("asset_url");
+        if(!assetUrl.isUndefined())
+        {
+            auto text = Json::requireIsType<QString>(assetUrl, at(w, "asset_url"));
+            file.assetUrl = QUrl(text, QUrl::StrictMode);
+            auto parts = file.assetUrl.path().split('/', QString::SkipEmptyParts);
+            QRegularExpression buildTag("\\Abuild-(0|[1-9][0-9]*)\\z");
+            if(!file.assetUrl.isValid() || file.assetUrl.scheme() != "https" || file.assetUrl.host() != "github.com" ||
+               file.assetUrl.port(-1) != -1 || !file.assetUrl.userName().isEmpty() || !file.assetUrl.password().isEmpty() ||
+               !file.assetUrl.query().isEmpty() || !file.assetUrl.fragment().isEmpty() || parts.size() != 6 ||
+               parts[0] != "Project-Tick" || parts[1] != "MeshMC-Updates" || parts[2] != "releases" ||
+               parts[3] != "download" || !buildTag.match(parts[4]).hasMatch() || parts[5] != "file-" + file.sha256)
+            {
+                fail(QString("%1: isn't a MeshMC-Updates content asset URL").arg(at(w, "asset_url")));
+            }
+        }
         out.files.append(file);
         paths.append(file.path);
     }
@@ -391,7 +407,20 @@ QString contentPath(const QString &sha256)
 
 QUrl treeUrl(const QString &site, const QString &name)
 {
+    auto base = QUrl(site);
+    if(base.scheme() == "https" && base.host() == "github.com" &&
+       base.path() == "/Project-Tick/MeshMC-Updates/releases/latest/download/")
+    {
+        auto asset = QString("updater--%1").arg(name);
+        asset.replace('/', "--");
+        return QUrl(site + asset);
+    }
     return QUrl(site + "updater/" + name);
+}
+
+QUrl contentUrl(const QString &site, const FileEntry &file)
+{
+    return file.assetUrl.isEmpty() ? treeUrl(site, contentPath(file.sha256)) : file.assetUrl;
 }
 
 bool parseKeys(const QByteArray &data, qint64 expected, KeysDocument &out, QString &error)

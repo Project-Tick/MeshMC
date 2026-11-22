@@ -128,8 +128,14 @@ set(Launcher_UPDATER_KEYS_FLOOR "" CACHE FILEPATH "Updater v2: the keys document
 set(Launcher_UPDATER_SERIAL_FLOOR "0" CACHE STRING "Updater v2: the lowest tags serial accepted")
 # Updater v2: the variant ID this build is, e.g. linux-x86_64-qt5 (see Design/UpdaterFormats.md)
 set(Launcher_UPDATER_VARIANT "" CACHE STRING "Updater v2: this build's variant ID")
+# Optional base URL for signed updater metadata, separate from the files site used by other
+# downloads. GitHub Releases sites end in /releases/latest/download/.
+set(Launcher_UPDATER_SITE "" CACHE STRING "Updater v2: metadata site, empty to use the files site")
 if(NOT Launcher_UPDATER_SERIAL_FLOOR MATCHES "^(0|[1-9][0-9]*)$")
     message(FATAL_ERROR "Launcher_UPDATER_SERIAL_FLOOR must be a number, not '${Launcher_UPDATER_SERIAL_FLOOR}'")
+endif()
+if(Launcher_UPDATER_SITE AND NOT Launcher_UPDATER_SITE STREQUAL "https://github.com/Project-Tick/MeshMC-Updates/releases/latest/download/")
+    message(FATAL_ERROR "Launcher_UPDATER_SITE must be the MeshMC-Updates latest Release download URL")
 endif()
 foreach(key ${Launcher_UPDATER_ROOT_KEYS})
     if(NOT key MATCHES "^[0-9a-f]+$")
@@ -159,6 +165,7 @@ message(STATUS "Git commit: ${Launcher_GIT_COMMIT}")
 message(STATUS "Git refspec: ${Launcher_GIT_REFSPEC}")
 
 set(Launcher_RELEASE_VERSION_NAME "${Launcher_VERSION_NAME}")
+set(Launcher_VERSION_NAME4 "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_BUILD_PART}.0")
 
 #### Custom target to just print the version.
 add_custom_target(version echo "Version: ${Launcher_RELEASE_VERSION_NAME}")
@@ -203,6 +210,32 @@ set(Launcher_Branding_SourceDir "${PROJECT_SOURCE_DIR}/branding")
 configure_file("${PROJECT_SOURCE_DIR}/branding/meshmc.rc.in" "${PROJECT_BINARY_DIR}/branding/meshmc.rc" @ONLY)
 set(Launcher_Branding_WindowsRC "${PROJECT_BINARY_DIR}/branding/meshmc.rc")
 set(Launcher_Branding_LogoQRC "${PROJECT_SOURCE_DIR}/branding/logo.qrc")
+
+if(MSVC)
+    set(Launcher_MSVC_Redist_NSIS_Section [=[
+!ifdef haveNScurl
+Section "Visual Studio Runtime"
+    Var /GLOBAL vc_redist_exe
+    ${If} ${IsNativeARM64}
+        StrCpy $vc_redist_exe "vc_redist.arm64.exe"
+    ${Else}
+        StrCpy $vc_redist_exe "vc_redist.x64.exe"
+    ${EndIf}
+    DetailPrint 'Downloading Microsoft Visual C++ Redistributable...'
+    NScurl::http GET "https://aka.ms/vs/17/release/$vc_redist_exe" "$INSTDIR\vc_redist\$vc_redist_exe" /INSIST /CANCEL /Zone.Identifier /END
+    Pop $0
+    ${If} $0 == "OK"
+        DetailPrint "Download successful"
+        ExecWait "$INSTDIR\vc_redist\$vc_redist_exe /install /passive /norestart"
+    ${Else}
+        DetailPrint "Download failed with error $0"
+    ${EndIf}
+SectionEnd
+!endif
+]=])
+endif()
+
+configure_file(branding/win_install.nsi.in win_install.nsi @ONLY)
 
 set(Launcher_PASTE_EE_API_KEY "ay2miY3lWxUHEEzYucj5e4YShIuo1aaY43MfwsUAe")
 set(Launcher_MSA_CLIENT_ID "3035382c-8f73-493a-b579-d182905c2864")

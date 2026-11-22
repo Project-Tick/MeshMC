@@ -69,6 +69,8 @@ struct FileEntry
     QString sha256;
     qint64 size = 0;
     bool executable = false;
+    // Optional direct URL to a content-addressed GitHub Release asset
+    QUrl assetUrl;
 };
 
 struct LinkEntry
@@ -131,8 +133,10 @@ bool isValidPath(const QString &path, bool dotdot = false);
 QString contentPath(const QString &sha256);
 
 /**
- * A file of the tree on the files site whose base URL is `site`: the tree is at updater/.
+ * A file in the updater tree. GitHub Releases sites use flattened asset names.
  */
 QUrl treeUrl(const QString &site, const QString &name);
+/// A content-addressed release asset, or the legacy file-tree URL when the manifest has none.
+QUrl contentUrl(const QString &site, const FileEntry &file);
 
 }

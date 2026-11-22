@@ -1648,7 +1648,7 @@ void MainWindow::downloadUpdateV2(const UpdaterV2::CheckResult &result)
     {
         CustomMessageBox::selectable(this, tr("Error"), tr("Couldn't create folder for update downloads:\n%1").arg(dlPath), QMessageBox::Warning)->show();
     }
-    UpdaterV2::DownloadTask updateTask(APPLICATION->network(), result, BuildConfig.FILES_MIRRORS.first(), APPLICATION->root(), dlPath, &updateDlg);
+    UpdaterV2::DownloadTask updateTask(APPLICATION->network(), result, BuildConfig.updaterSite(), APPLICATION->root(), dlPath, &updateDlg);
     // If the task succeeds, install the updates.
     if (updateDlg.execWithTask(&updateTask))
     {

@@ -36,6 +36,7 @@ Config::Config()
     UPDATER_KEYS_FLOOR = QByteArray(keysFloor, sizeof(keysFloor) - 1);
     UPDATER_SERIAL_FLOOR = @Launcher_UPDATER_SERIAL_FLOOR@;
     UPDATER_VARIANT = "@Launcher_UPDATER_VARIANT@";
+    UPDATER_SITE = "@Launcher_UPDATER_SITE@";
     bool updaterConfigured = !UPDATER_ROOT_KEYS.isEmpty() && !UPDATER_KEYS_FLOOR.isEmpty() && !UPDATER_VARIANT.isEmpty();
 
     GIT_COMMIT = "@Launcher_GIT_COMMIT@";

@@ -45,15 +45,24 @@ runs:
   steps:
     - name: Fetch codesign certificate
       shell: bash
+      env:
+        APPLE_CODESIGN_CERT: ${{ inputs.apple-codesign-cert }}
+        APPLE_CODESIGN_PASSWORD: ${{ inputs.apple-codesign-password }}
+        APPLE_CODESIGN_ID: ${{ inputs.apple-codesign-id }}
       run: |
-        echo '${{ inputs.apple-codesign-cert }}' | base64 --decode > codesign.p12
-        if [ -n '${{ inputs.apple-codesign-id }}' ]; then
-          security create-keychain -p '${{ inputs.apple-codesign-password }}' build.keychain
+        if [[ -n "$APPLE_CODESIGN_ID" ]]; then
+          if [[ -z "$APPLE_CODESIGN_CERT" || -z "$APPLE_CODESIGN_PASSWORD" ]]; then
+            echo "::error::The Apple signing certificate and password are both required when a signing ID is set."
+            exit 1
+          fi
+          printf '%s' "$APPLE_CODESIGN_CERT" | base64 --decode > codesign.p12
+          security create-keychain -p "$APPLE_CODESIGN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
-          security unlock-keychain -p '${{ inputs.apple-codesign-password }}' build.keychain
-          security import codesign.p12 -k build.keychain -P '${{ inputs.apple-codesign-password }}' -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k '${{ inputs.apple-codesign-password }}' build.keychain
+          security unlock-keychain -p "$APPLE_CODESIGN_PASSWORD" build.keychain
+          security import codesign.p12 -k build.keychain -P "$APPLE_CODESIGN_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_CODESIGN_PASSWORD" build.keychain
         else
+          : > codesign.p12
           echo ":warning: Using ad-hoc code signing for macOS, as certificate was not present." >> $GITHUB_STEP_SUMMARY
         fi
 
@@ -62,25 +71,25 @@ runs:
       env:
         BUILD_DIR: build
         INSTALL_DIR: install
+        APPLE_CODESIGN_ID: ${{ inputs.apple-codesign-id }}
       run: |
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
 
         cd ${{ env.INSTALL_DIR }}
+        test -d MeshMC.app
+        test -f MeshMC.app/Contents/Info.plist
 
-        if [ -n '${{ inputs.apple-codesign-id }}' ]; then
-          APPLE_CODESIGN_ID='${{ inputs.apple-codesign-id }}'
-          ENTITLEMENTS_FILE='../launcher/packaging/macos/App.entitlements'
-          TIMESTAMP_FLAG='--timestamp'
+        if [[ -n "$APPLE_CODESIGN_ID" ]]; then
+          timestamp_flag=(--timestamp)
         else
           APPLE_CODESIGN_ID='-'
-          ENTITLEMENTS_FILE='../launcher/packaging/macos/AdhocSignedApp.entitlements'
-          TIMESTAMP_FLAG='--timestamp=none'
+          timestamp_flag=(--timestamp=none)
         fi
 
         sign_nested() {
           [ -e "$1" ] || return 0
           echo "Signing $1"
-          codesign --sign "$APPLE_CODESIGN_ID" --force --options runtime $TIMESTAMP_FLAG "$1"
+          codesign --sign "$APPLE_CODESIGN_ID" --force --options runtime "${timestamp_flag[@]}" "$1"
         }
 
         for framework in MeshMC.app/Contents/Frameworks/*.framework; do
@@ -112,10 +121,12 @@ runs:
           sign_nested "$path"
         done
 
-        chmod +x MeshMC.app/Contents/MacOS/meshmc
+        main_binary_name="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' MeshMC.app/Contents/Info.plist)"
+        main_binary="MeshMC.app/Contents/MacOS/$main_binary_name"
+        chmod +x "$main_binary"
         echo "Signing MeshMC.app"
         codesign --sign "$APPLE_CODESIGN_ID" --force \
-          --entitlements "$ENTITLEMENTS_FILE" --options runtime $TIMESTAMP_FLAG \
+          --options runtime "${timestamp_flag[@]}" \
           MeshMC.app
 
         codesign --verify --deep --strict --verbose=2 MeshMC.app
@@ -124,16 +135,23 @@ runs:
       shell: bash
       env:
         INSTALL_DIR: install
+        APPLE_NOTARIZE_APPLE_ID: ${{ inputs.apple-notarize-apple-id }}
+        APPLE_NOTARIZE_TEAM_ID: ${{ inputs.apple-notarize-team-id }}
+        APPLE_NOTARIZE_PASSWORD: ${{ inputs.apple-notarize-password }}
       run: |
         cd ${{ env.INSTALL_DIR }}
 
-        if [ -n '${{ inputs.apple-notarize-password }}' ]; then
+        if [[ -n "$APPLE_NOTARIZE_PASSWORD" ]]; then
+          if [[ -z "$APPLE_NOTARIZE_APPLE_ID" || -z "$APPLE_NOTARIZE_TEAM_ID" ]]; then
+            echo "::error::Apple ID and team ID are required when notarization credentials are set."
+            exit 1
+          fi
           ditto -c -k --sequesterRsrc --keepParent "MeshMC.app" ../MeshMC.zip
           xcrun notarytool submit ../MeshMC.zip \
             --wait --progress \
-            --apple-id '${{ inputs.apple-notarize-apple-id }}' \
-            --team-id '${{ inputs.apple-notarize-team-id }}' \
-            --password '${{ inputs.apple-notarize-password }}'
+            --apple-id "$APPLE_NOTARIZE_APPLE_ID" \
+            --team-id "$APPLE_NOTARIZE_TEAM_ID" \
+            --password "$APPLE_NOTARIZE_PASSWORD"
 
           xcrun stapler staple "MeshMC.app"
         else
@@ -161,9 +179,11 @@ runs:
 
     - name: Make Sparkle signature
       shell: bash
+      env:
+        SPARKLE_ED25519_KEY: ${{ inputs.sparkle-ed25519-key }}
       run: |
-        if [ '${{ inputs.sparkle-ed25519-key }}' != '' ]; then
-          echo '${{ inputs.sparkle-ed25519-key }}' > ed25519-priv.pem
+        if [[ -n "$SPARKLE_ED25519_KEY" ]]; then
+          printf '%s\n' "$SPARKLE_ED25519_KEY" > ed25519-priv.pem
           OPENSSL=$(brew --prefix openssl@3)/bin/openssl
           signature_zip=$("$OPENSSL" pkeyutl -sign -rawin -in ${{ github.workspace }}/MeshMC.zip -inkey ed25519-priv.pem | openssl base64 | tr -d \\n)
           signature_dmg=$("$OPENSSL" pkeyutl -sign -rawin -in ${{ github.workspace }}/MeshMC.dmg -inkey ed25519-priv.pem | openssl base64 | tr -d \\n)

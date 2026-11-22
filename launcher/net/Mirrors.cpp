@@ -37,6 +37,14 @@ struct State
     // base URL -> until when it is tried last
     QMap<QString, qint64> unreachable;
     std::function<void(QStringList &)> shuffle = randomShuffle;
+
+    State()
+    {
+        if(!BuildConfig.UPDATER_SITE.isEmpty())
+        {
+            sites.append({BuildConfig.UPDATER_SITE});
+        }
+    }
 };
 
 State &state()

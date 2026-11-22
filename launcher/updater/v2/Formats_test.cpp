@@ -472,6 +472,31 @@ slots:
         QCOMPARE(contentPath("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"),
                  QString("files/9f/9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"));
     }
+
+    void test_releaseAssets()
+    {
+        const QString url = "https://github.com/Project-Tick/MeshMC-Updates/releases/download/build-5/file-9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
+        auto data = changed(manifest, "\"executable\": false", QString("\"executable\": false, \"asset_url\": \"%1\"").arg(url));
+        BuildManifest build;
+        QString error;
+        QVERIFY2(parseBuild(data, 5, build, error), qPrintable(error));
+        auto file = build.variants.value("macos-x86_64-qt5.15").files.first();
+        QCOMPARE(file.assetUrl, QUrl(url));
+        QCOMPARE(contentUrl("https://files.example/", file), QUrl(url));
+
+        auto invalid = changed(data, url, "http://github.com/Project-Tick/MeshMC-Updates/releases/download/build-5/file");
+        QVERIFY2(parseBuild(invalid, 5, build, error), qPrintable(error));
+        QVERIFY(build.unreadable.contains("macos-x86_64-qt5.15"));
+        QVERIFY(build.unreadable.value("macos-x86_64-qt5.15").contains("MeshMC-Updates content asset URL"));
+
+        const QString releaseSite = "https://github.com/Project-Tick/MeshMC-Updates/releases/latest/download/";
+        QCOMPARE(treeUrl(releaseSite, "keys/1.json"),
+                 QUrl(releaseSite + "updater--keys--1.json"));
+        FileEntry legacyFile;
+        legacyFile.sha256 = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b0b822cd15d6c15b0f00a08";
+        QCOMPARE(contentUrl("https://files.example/", legacyFile),
+                 QUrl("https://files.example/updater/files/9f/9f86d081884c7d659a2feaa0c55ad015a3bf4f1b0b822cd15d6c15b0f00a08"));
+    }
 };
 
 QTEST_GUILESS_MAIN(UpdaterV2FormatsTest)

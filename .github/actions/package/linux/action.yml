@@ -73,13 +73,16 @@ runs:
         INSTALL_APPIMAGE_DIR: install-appdir
 
         GPG_PRIVATE_KEY: ${{ inputs.gpg-private-key }}
+        GPG_PRIVATE_KEY_ID: ${{ inputs.gpg-private-key-id }}
       run: |
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_APPIMAGE_DIR }}
+        test -x "$INSTALL_APPIMAGE_DIR/MeshMC"
+        test -x "$INSTALL_APPIMAGE_DIR/bin/MeshMC"
 
-        if [ '${{ inputs.gpg-private-key-id }}' != '' ]; then
-          echo "$GPG_PRIVATE_KEY" > privkey.asc
+        if [[ -n "$GPG_PRIVATE_KEY_ID" ]]; then
+          printf '%s\n' "$GPG_PRIVATE_KEY" > privkey.asc
           gpg --import privkey.asc
-          gpg --export --armor ${{ inputs.gpg-private-key-id }} > pubkey.asc
+          gpg --export --armor "$GPG_PRIVATE_KEY_ID" > pubkey.asc
         else
           echo ":warning: Skipped code signing for Linux AppImage, as gpg key was not present." >> $GITHUB_STEP_SUMMARY
         fi
@@ -106,15 +109,26 @@ runs:
         # FIXME(@YongDo-Hyun): gamemode doesn't seem to be very portable with DBus. Find a way to make it work!
         find "$INSTALL_APPIMAGE_DIR" -name '*gamemode*' -exec rm {} +
 
-        #disable OpenGL and Vulkan launcher features until https://github.com/VHSgunzo/sharun/issues/35
-        echo "LAUNCHER_DISABLE_GLVULKAN=1" > "$INSTALL_APPIMAGE_DIR"/.env
-        #makes the launcher use portals for file picking
-        echo "QT_QPA_PLATFORMTHEME=xdgdesktopportal" > "$INSTALL_APPIMAGE_DIR"/.env
-        ln -s org.projecttick.MeshMC.metainfo.xml "$INSTALL_APPIMAGE_DIR"/share/metainfo/org.projecttick.MeshMC.appdata.xml
-        ln -s share/applications/org.projecttick.MeshMC.desktop "$INSTALL_APPIMAGE_DIR"
-        ln -s share/icons/hicolor/256x256/apps/org.projecttick.MeshMC.png "$INSTALL_APPIMAGE_DIR"
+        desktop_dir="$INSTALL_APPIMAGE_DIR/usr/share/applications"
+        metainfo_dir="$INSTALL_APPIMAGE_DIR/usr/share/metainfo"
+        icon_dir="$INSTALL_APPIMAGE_DIR/usr/share/icons/hicolor/256x256/apps"
+        mkdir -p "$desktop_dir" "$icon_dir"
+        cp "$GITHUB_WORKSPACE/branding/org.projecttick.MeshMC.desktop" "$desktop_dir/"
+        cp "$GITHUB_WORKSPACE/branding/org.projecttick.MeshMC.metainfo.xml" "$metainfo_dir/org.projecttick.MeshMC.appdata.xml"
+        rsvg-convert -w 256 -h 256 "$GITHUB_WORKSPACE/branding/logo.svg" \
+          -o "$icon_dir/org.projecttick.MeshMC.png"
+        cp "$desktop_dir/org.projecttick.MeshMC.desktop" "$INSTALL_APPIMAGE_DIR/"
+        cp "$desktop_dir/org.projecttick.MeshMC.appdata.xml" "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.metainfo.xml"
+        cp "$icon_dir/org.projecttick.MeshMC.png" "$INSTALL_APPIMAGE_DIR/"
+
+        printf '%s\n' \
+          'LAUNCHER_DISABLE_GLVULKAN=1' \
+          'QT_QPA_PLATFORMTHEME=xdgdesktopportal' \
+          > "$INSTALL_APPIMAGE_DIR/.env"
         mv "$INSTALL_APPIMAGE_DIR"/{sharun,AppRun}
-        ls -la "$INSTALL_APPIMAGE_DIR"
+        test -x "$INSTALL_APPIMAGE_DIR/AppRun"
+        test -s "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.desktop"
+        test -s "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.png"
 
         if [[ "${{ github.ref_type }}" == "tag" ]]; then
           APPIMAGE_DEST="MeshMC-Linux-$APPIMAGE_ARCH.AppImage"
@@ -126,45 +140,8 @@ runs:
           --updateinformation "gh-releases-zsync|${{ github.repository_owner }}|${{ github.event.repository.name }}|latest|MeshMC-Linux-$APPIMAGE_ARCH.AppImage.zsync" \
           "$INSTALL_APPIMAGE_DIR" \
           "$APPIMAGE_DEST"
-
-    - name: Package portable tarball
-      shell: bash
-      env:
-        BUILD_DIR: build
-
-        INSTALL_PORTABLE_DIR: install-portable
-      run: |
-        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }}
-        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }} --component portable
-
-        # Same as the AppImage above: the portable tarball carries its own Qt,
-        # so it also has to carry the OpenSSL that Qt is able to load.
-        openssl_libs=()
-        if [[ -n "${MESHMC_OPENSSL_LIB_DIR:-}" ]]; then
-          openssl_libs=(
-            "$MESHMC_OPENSSL_LIB_DIR"/libssl.so.1.1
-            "$MESHMC_OPENSSL_LIB_DIR"/libcrypto.so.1.1
-          )
-        fi
-
-        sharun lib4bin \
-          --with-hooks \
-          --hard-links \
-          --dst-dir "$INSTALL_PORTABLE_DIR" \
-          "$INSTALL_PORTABLE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so "${openssl_libs[@]}"
-
-        # FIXME(@YongDo-Hyun): gamemode doesn't seem to be very portable with DBus. Find a way to make it work!
-        find "$INSTALL_PORTABLE_DIR" -name '*gamemode*' -exec rm {} +
-
-        for l in $(find ${{ env.INSTALL_PORTABLE_DIR }} -type f -o -type l); do l=${l#$(pwd)/}; l=${l#${{ env.INSTALL_PORTABLE_DIR }}/}; l=${l#./}; echo $l; done > ${{ env.INSTALL_PORTABLE_DIR }}/manifest.txt
-        cd ${{ env.INSTALL_PORTABLE_DIR }}
-        tar -czf ../MeshMC-portable.tar.gz *
-
-    - name: Upload portable tarball
-      uses: actions/upload-artifact@v7
-      with:
-        name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-Portable-${{ inputs.version }}-${{ inputs.build-type }}
-        path: MeshMC-portable.tar.gz
+        test -s "$APPIMAGE_DEST"
+        test -s "$APPIMAGE_DEST.zsync"
 
     - name: Upload AppImage
       uses: actions/upload-artifact@v7

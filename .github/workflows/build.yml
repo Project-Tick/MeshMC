@@ -1,14 +1,11 @@
 name: Build
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
 
 on:
   push:
-    branches:
-      - 'develop'
-      - 'release-*'
   merge_group:
     types: [checks_requested]
   pull_request:
@@ -45,6 +42,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # TODO: PORT Qt6
           # - os: ubuntu-26.04
           #   artifact-name: Linux
           #   cmake-preset: linux
@@ -105,6 +103,10 @@ jobs:
             cmake-preset: linux
             qt-version: 5.15.2
             qt-major: 5
+            updater-variant: linux-x86_64-qt5
+            updater-name: Linux x86_64 Qt 5
+            updater-requirements: '{"os":"linux","arch":"x86_64","glibc":"2.19","glibcxx":"3.4.21","qt":"5.15.2"}'
+            build-platform: lin64
             build-name: Linux x86_64 Qt5
 
           - os: windows-2025
@@ -113,6 +115,10 @@ jobs:
             msystem: CLANG64
             vcvars-arch: amd64_x86
             qt-major: 5
+            updater-variant: windows-x86_64-qt5-mingw
+            updater-name: Windows x86_64 Qt 5 MinGW
+            updater-requirements: '{"os":"windows","arch":"x86_64","os_version":"10.0"}'
+            build-platform: win64
             build-name: Windows MinGW x86_64 Qt5
 
           - os: windows-2022
@@ -122,6 +128,10 @@ jobs:
             vcvars-arch: amd64
             qt-version: 5.15.2
             qt-major: 5
+            updater-variant: windows-x86_64-qt5-msvc
+            updater-name: Windows x86_64 Qt 5 MSVC
+            updater-requirements: '{"os":"windows","arch":"x86_64","os_version":"10.0"}'
+            build-platform: win64
             build-name: Windows MSVC x86_64 Qt5
 
           - os: macos-26
@@ -129,6 +139,10 @@ jobs:
             cmake-preset: macos
             macosx-deployment-target: 12.0
             qt-major: 5
+            updater-variant: macos-aarch64-qt5
+            updater-name: macOS aarch64 Qt 5
+            updater-requirements: '{"os":"macos","arch":"aarch64","os_version":"12.0"}'
+            build-platform: macos
             build-name: macOS aarch64 Qt5
 
     runs-on: ${{ matrix.os }}
@@ -140,11 +154,11 @@ jobs:
     env:
       ARTIFACT_NAME: ${{ matrix.artifact-name }}-Qt${{ matrix.qt-major }}
       BUILD_PLATFORM: official
-      BUILD_TYPE: ${{ inputs.build-type || 'Debug' }}
+      BUILD_TYPE: ${{ inputs.build-type || (github.event_name == 'push' && github.ref_type == 'branch' && 'Release' || 'Debug') }}
       CMAKE_PRESET: ${{ matrix.cmake-preset }}
       UPDATE_CHANNEL: stable
       QT_MAJOR: ${{ matrix.qt-major }}
-
+      UPDATER_PUBLISH_ENABLED: ${{ vars.UPDATER_PUBLISH_ENABLED }}
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx-deployment-target }}
 
     steps:
@@ -156,6 +170,11 @@ jobs:
         uses: actions/checkout@v7
         with:
           submodules: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
 
       - name: Setup dependencies
         id: setup-dependencies
@@ -174,7 +193,27 @@ jobs:
 
       - name: Configure project
         run: |
-          cmake --preset "$CMAKE_PRESET" -D VCPKG_HOST_TRIPLET="$VCPKG_TRIPLET" -D VCPKG_TARGET_TRIPLET="$VCPKG_TRIPLET" -DMeshMC_QT_VERSION_MAJOR="$QT_MAJOR" -DMeshMC_BUNDLE_OPENSSL_LIBS="${MESHMC_BUNDLE_OPENSSL_LIBS:-}"
+          updater_args=()
+          if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "branch" ]]; then
+            updater_args+=(
+              -DLauncher_VERSION_BUILD="$GITHUB_RUN_NUMBER"
+              -DLauncher_BUILD_PLATFORM="${{ matrix.build-platform }}"
+            )
+            if [[ "$UPDATER_PUBLISH_ENABLED" == "true" && ( ! -f launcher/updater/v2/keys/1.json || ! -f launcher/updater/v2/keys/1.json.sig || ! -f launcher/updater/v2/keys/root-keys.txt ) ]]; then
+              echo "::error::Updater V2 bootstrap files are missing. Run tools/updater_v2/bootstrap.py and commit its public files first."
+              exit 1
+            fi
+            if [[ "$UPDATER_PUBLISH_ENABLED" == "true" ]]; then
+              root_keys="$(paste -sd ';' launcher/updater/v2/keys/root-keys.txt)"
+              updater_args+=(
+                -DLauncher_UPDATER_ROOT_KEYS="$root_keys"
+                -DLauncher_UPDATER_KEYS_FLOOR="$GITHUB_WORKSPACE/launcher/updater/v2/keys/1.json"
+                -DLauncher_UPDATER_VARIANT="${{ matrix.updater-variant }}"
+                -DLauncher_UPDATER_SITE="https://github.com/Project-Tick/MeshMC-Updates/releases/latest/download/"
+              )
+            fi
+          fi
+          cmake --preset "$CMAKE_PRESET" -D VCPKG_HOST_TRIPLET="$VCPKG_TRIPLET" -D VCPKG_TARGET_TRIPLET="$VCPKG_TRIPLET" -DMeshMC_QT_VERSION_MAJOR="$QT_MAJOR" -DMeshMC_BUNDLE_OPENSSL_LIBS="${MESHMC_BUNDLE_OPENSSL_LIBS:-}" "${updater_args[@]}"
 
       - name: Run build
         run: |
@@ -183,6 +222,11 @@ jobs:
       - name: Run tests
         run: |
           ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE" --output-on-failure
+
+      - name: Test updater release tooling
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          python -m unittest -v tools.updater_v2.test_publish_release
 
       ##
       # PACKAGE
@@ -235,3 +279,81 @@ jobs:
           windows-codesign-password: ${{ secrets.WINDOWS_CODESIGN_PASSWORD }}
           msystem: ${{ matrix.msystem }}
           qt-major: ${{ matrix.qt-major }}
+
+      - name: Prepare updater payload
+        if: ${{ github.event_name == 'push' && github.ref_type == 'branch' }}
+        shell: bash
+        run: |
+          case "$RUNNER_OS" in
+            Linux) source_dir=install-portable ;;
+            Windows|macOS) source_dir=install ;;
+            *) echo "::error::Unsupported updater runner OS: $RUNNER_OS"; exit 1 ;;
+          esac
+          python "$GITHUB_WORKSPACE/tools/updater_v2/prepare_payload.py" \
+            --source "$GITHUB_WORKSPACE/$source_dir" \
+            --output "$RUNNER_TEMP/updater-payload" \
+            --variant "${{ matrix.updater-variant }}" \
+            --name "${{ matrix.updater-name }}" \
+            --requirements '${{ matrix.updater-requirements }}'
+
+      - name: Upload updater payload
+        if: ${{ github.event_name == 'push' && github.ref_type == 'branch' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: updater-${{ matrix.updater-variant }}
+          path: ${{ runner.temp }}/updater-payload/*
+          if-no-files-found: error
+          retention-days: 1
+
+  publish-updater:
+    name: Publish Updater V2 release
+    needs: [build]
+    if: >-
+      github.event_name == 'push' &&
+      github.ref_type == 'branch' &&
+      vars.UPDATER_PUBLISH_ENABLED == 'true'
+    environment: Release
+    permissions:
+      actions: read
+      contents: read
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Download updater payloads
+        uses: actions/download-artifact@v8
+        with:
+          pattern: updater-*
+          path: ${{ runner.temp }}/updater-payloads
+
+      - name: Publish signed build release
+        env:
+          GH_TOKEN: ${{ secrets.UPDATES_REPO_TOKEN }}
+          UPDATER_ONLINE_SIGNING_KEY: ${{ secrets.UPDATER_ONLINE_SIGNING_KEY }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          SOURCE_COMMIT: ${{ github.sha }}
+          SOURCE_BRANCH: ${{ github.ref_name }}
+        run: |
+          if [[ ! -f launcher/updater/v2/keys/1.json || ! -f launcher/updater/v2/keys/1.json.sig || ! -f launcher/updater/v2/keys/root-keys.txt ]]; then
+            echo "::error::Updater V2 bootstrap files are missing. Run tools/updater_v2/bootstrap.py and commit its public files first."
+            exit 1
+          fi
+          if [[ -z "$GH_TOKEN" || -z "$UPDATER_ONLINE_SIGNING_KEY" ]]; then
+            echo "::error::Configure UPDATES_REPO_TOKEN and UPDATER_ONLINE_SIGNING_KEY in the protected Release environment."
+            exit 1
+          fi
+          signing_key="$RUNNER_TEMP/updater-online-key.pem"
+          printf '%s\n' "$UPDATER_ONLINE_SIGNING_KEY" > "$signing_key"
+          chmod 600 "$signing_key"
+          python tools/updater_v2/publish_release.py \
+            --payload-root "$RUNNER_TEMP/updater-payloads" \
+            --build-number "$BUILD_NUMBER" \
+            --commit "$SOURCE_COMMIT" \
+            --branch "$SOURCE_BRANCH" \
+            --signing-key "$signing_key"

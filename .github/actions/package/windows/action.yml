@@ -43,8 +43,6 @@ runs:
         build_dir="$(cygpath -u "${BUILD_DIR}")"
         install_dir="$(cygpath -u "${INSTALL_DIR}")"
         cmake --install "$build_dir" --config ${{ inputs.build-type }}
-        touch "$install_dir/manifest.txt"
-        for l in $(find "$install_dir" -type f); do l=$(cygpath -u "$l"); l=${l#${install_dir}/}; echo $l; done >> "$install_dir/manifest.txt"
 
     - name: Package (MSVC)
       if: ${{ inputs.msystem == '' }}
@@ -55,73 +53,50 @@ runs:
       run: |
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
 
-        # NOTE: do NOT use String.TrimStart() to strip the install prefix here.
-        # .NET has no TrimStart(string) overload, so PowerShell binds to
-        # TrimStart(params char[]) and strips *any* leading character that
-        # appears anywhere in the prefix -- "iconengines" became "conengines",
-        # "platforms" became "forms" and "bin" vanished entirely. Substring()
-        # off the measured prefix length is the only correct way.
-        $installDir = (Resolve-Path -LiteralPath '${{ env.INSTALL_DIR }}').Path.TrimEnd('\', '/')
-        $manifest = Join-Path $installDir 'manifest.txt'
-        New-Item -ItemType File -Path $manifest -Force | Out-Null  # list the manifest itself, like the MinGW branch does
-        Get-ChildItem -LiteralPath $installDir -Recurse -File |
-            ForEach-Object { $_.FullName.Substring($installDir.Length).TrimStart('\', '/') } |
-            Set-Content -LiteralPath $manifest -Encoding utf8
+    - name: Validate Windows runtime
+      shell: pwsh
+      env:
+        INSTALL_DIR: ${{ github.workspace }}/install
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $requiredFiles = @('MeshMC.exe', 'qt.conf', 'Qt5Core.dll', 'platforms/qwindows.dll')
+        foreach ($file in $requiredFiles) {
+          $path = Join-Path $env:INSTALL_DIR $file
+          if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+            throw "Windows runtime package is missing $file"
+          }
+        }
 
     - name: Fetch codesign certificate
       shell: bash # yes, we are not using MSYS2 or PowerShell here
+      env:
+        WINDOWS_CODESIGN_CERT: ${{ inputs.windows-codesign-cert }}
       run: |
-        echo '${{ inputs.windows-codesign-cert }}' | base64 --decode > codesign.pfx
+        if [[ -n "$WINDOWS_CODESIGN_CERT" ]]; then
+          printf '%s' "$WINDOWS_CODESIGN_CERT" | base64 --decode > codesign.pfx
+        else
+          : > codesign.pfx
+        fi
 
     - name: Sign executable
       shell: pwsh
       env:
         INSTALL_DIR: ${{ github.workspace }}/install
         CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
+        CODESIGN_PASSWORD: ${{ inputs.windows-codesign-password }}
       run: |
-        if (Get-Content $env:CODESIGN_CERT_PATH){
-          cd ${{ env.INSTALL_DIR }}
-            # We ship the exact same executable for portable and non-portable editions, so signing just once is fine
-            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com meshmc.exe meshmc-updater.exe meshmc-crashreporter.exe
+        if ((Get-Item -LiteralPath $env:CODESIGN_CERT_PATH).Length -gt 0) {
+          $installDir = (Resolve-Path -LiteralPath $env:INSTALL_DIR).Path
+          $executables = @('MeshMC.exe', 'meshmc-updater.exe', 'meshmc-crashreporter.exe') |
+              ForEach-Object { Join-Path $installDir $_ } |
+              Where-Object { Test-Path -LiteralPath $_ }
+          if (-not ($executables | Where-Object { [IO.Path]::GetFileName($_) -ieq 'MeshMC.exe' })) {
+            throw 'The installed MeshMC.exe executable is missing.'
+          }
+          SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p $env:CODESIGN_PASSWORD /tr http://timestamp.digicert.com $executables
         } else {
           ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
         }
-
-    - name: Package (MinGW, portable)
-      if: ${{ inputs.msystem != '' }}
-      shell: msys2 {0}
-      env:
-        BUILD_DIR: ${{ github.workspace }}/build
-        INSTALL_DIR: ${{ github.workspace }}/install
-        INSTALL_PORTABLE_DIR: ${{ github.workspace }}/install-portable
-      run: |
-        build_dir="$(cygpath -u "${BUILD_DIR}")"
-        install_dir="$(cygpath -u "${INSTALL_DIR}")"
-        install_portable_dir="$(cygpath -u "${INSTALL_PORTABLE_DIR}")"
-        cp -r "$install_dir" "$install_portable_dir"  # cmake install on Windows is slow, let's just copy instead
-        cmake --install "$build_dir" --config ${{ inputs.build-type }} --prefix "$install_portable_dir" --component portable
-        for l in $(find "$install_portable_dir" -type f); do l=$(cygpath -u "$l"); l=${l#${install_portable_dir}/}; echo $l; done >> "$install_portable_dir/manifest.txt"
-
-    - name: Package (MSVC, portable)
-      if: ${{ inputs.msystem == '' }}
-      shell: pwsh
-      env:
-        BUILD_DIR: ${{ github.workspace }}/build
-        INSTALL_DIR: ${{ github.workspace }}/install
-        INSTALL_PORTABLE_DIR: ${{ github.workspace }}/install-portable
-      run: |
-        cp -r ${{ env.INSTALL_DIR }} ${{ env.INSTALL_PORTABLE_DIR }}  # cmake install on Windows is slow, let's just copy instead
-        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_PORTABLE_DIR }} --component portable
-
-        # See the note in "Package (MSVC)" about TrimStart(). This block also
-        # used to write its manifest to INSTALL_DIR, clobbering the
-        # non-portable manifest with the portable file list.
-        $portableDir = (Resolve-Path -LiteralPath '${{ env.INSTALL_PORTABLE_DIR }}').Path.TrimEnd('\', '/')
-        $manifest = Join-Path $portableDir 'manifest.txt'
-        New-Item -ItemType File -Path $manifest -Force | Out-Null
-        Get-ChildItem -LiteralPath $portableDir -Recurse -File |
-            ForEach-Object { $_.FullName.Substring($portableDir.Length).TrimStart('\', '/') } |
-            Set-Content -LiteralPath $manifest -Encoding utf8
 
     - name: Package (installer)
       shell: pwsh
@@ -144,15 +119,19 @@ runs:
         $nsisScript = Resolve-Path (Join-Path "${{ env.BUILD_DIR }}" "win_install.nsi")
         cd ${{ env.INSTALL_DIR }}
         makensis -NOCD "$nsisScript"
+        if (-not (Test-Path -LiteralPath "${{ github.workspace }}/MeshMC-Setup.exe" -PathType Leaf)) {
+          throw 'NSIS did not produce MeshMC-Setup.exe.'
+        }
 
     - name: Sign installer
       shell: pwsh
       env:
         CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
         INSTALLER_PATH: ${{ github.workspace }}/MeshMC-Setup.exe
+        CODESIGN_PASSWORD: ${{ inputs.windows-codesign-password }}
       run: |
-          if (Get-Content $env:CODESIGN_CERT_PATH){
-            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p '${{ inputs.windows-codesign-password }}' /tr http://timestamp.digicert.com $env:INSTALLER_PATH
+          if ((Get-Item -LiteralPath $env:CODESIGN_CERT_PATH).Length -gt 0) {
+            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p $env:CODESIGN_PASSWORD /tr http://timestamp.digicert.com $env:INSTALLER_PATH
           } else {
             ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
           }
@@ -162,12 +141,6 @@ runs:
       with:
         name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
         path: ${{ github.workspace }}/install/**
-
-    - name: Upload portable zip
-      uses: actions/upload-artifact@v7
-      with:
-        name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-Portable-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ github.workspace }}/install-portable/**
 
     - name: Upload installer
       uses: actions/upload-artifact@v7
