@@ -504,12 +504,16 @@ def _next_tags(build_number: int, branch: str, previous: dict | None,
 
 
 def _initialise_empty_repository(repository: str) -> None:
-    repo_info = _gh_json(f"repos/{repository}")
-    if repo_info.get("size", 1) != 0:
-        return
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
         command("git", "init", "--initial-branch=main", cwd=root)
+        command("gh", "auth", "setup-git")
+        command("git", "remote", "add", "origin", f"https://github.com/{repository}.git", cwd=root)
+        if command(
+            "git", "ls-remote", "--heads", "origin", "refs/heads/main",
+            capture=True, cwd=root,
+        ).stdout.strip():
+            return
         command("git", "config", "user.name", "github-actions[bot]", cwd=root)
         command("git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com", cwd=root)
         (root / "README.md").write_text(
@@ -518,9 +522,14 @@ def _initialise_empty_repository(repository: str) -> None:
         )
         command("git", "add", "README.md", cwd=root)
         command("git", "commit", "-m", "Initialize updater releases repository", cwd=root)
-        command("gh", "auth", "setup-git")
-        command("git", "remote", "add", "origin", f"https://github.com/{repository}.git", cwd=root)
-        command("git", "push", "-u", "origin", "main", cwd=root)
+        try:
+            command("git", "push", "-u", "origin", "main", cwd=root)
+        except subprocess.CalledProcessError:
+            if not command(
+                "git", "ls-remote", "--heads", "origin", "refs/heads/main",
+                capture=True, cwd=root,
+            ).stdout.strip():
+                raise
 
 
 def _sync_historical_builds(repository: str, latest: dict, online_key: str, work: Path) -> None:

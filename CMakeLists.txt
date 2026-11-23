@@ -216,6 +216,7 @@ set(Launcher_BUG_TRACKER_URL "https://github.com/Project-Tick/MeshMC/issues")
 set(Launcher_DISCORD_URL "")
 set(Launcher_SUBREDDIT_URL "")
 set(Launcher_PATREON_URL "https://www.patreon.com/meshmc")
+set(Launcher_TRANSLATIONS_BASE_URL "https://i18n.projecttick.org/")
 
 ####################################### Install layout #######################################
 

@@ -51,51 +51,6 @@ runs:
         fi
         chmod -R u+w MeshMC.app
 
-        if [[ -n "$APPLE_CODESIGN_ID" ]]; then
-          timestamp_flag=(--timestamp)
-        else
-          APPLE_CODESIGN_ID='-'
-          timestamp_flag=(--timestamp=none)
-        fi
-
-        sign_nested() {
-          [ -e "$1" ] || return 0
-          chmod -R u+w "$1" 2>/dev/null || true
-          echo "Signing $1"
-          codesign --sign "$APPLE_CODESIGN_ID" --force --options runtime "${timestamp_flag[@]}" "$1"
-        }
-
-        for framework in MeshMC.app/Contents/Frameworks/*.framework; do
-          [[ -L "$framework" ]] && continue
-          [ -d "$framework" ] || continue
-          for xpc in "$framework"/Versions/*/XPCServices/*.xpc; do
-            sign_nested "$xpc"
-          done
-          for helper in "$framework"/Versions/*/Autoupdate "$framework"/Versions/*/Updater.app; do
-            sign_nested "$helper"
-          done
-        done
-
-        for framework in MeshMC.app/Contents/Frameworks/*.framework; do
-          [[ -L "$framework" ]] && continue
-          sign_nested "$framework"
-        done
-
-        find MeshMC.app/Contents -type f \( -name '*.dylib' -o -name '*.so' -o -name '*.mmco' \) -print0 |
-          while IFS= read -r -d '' lib; do
-            sign_nested "$lib"
-          done
-
-        for binary in meshmc-updater meshmc-crashreporter; do
-          path="MeshMC.app/Contents/MacOS/$binary"
-          if [ ! -f "$path" ]; then
-            echo "::notice::$path not present, nothing to sign."
-            continue
-          fi
-          chmod +x "$path"
-          sign_nested "$path"
-        done
-
         main_binary_name="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' MeshMC.app/Contents/Info.plist)"
         main_binary="MeshMC.app/Contents/MacOS/$main_binary_name"
         chmod +x "$main_binary"

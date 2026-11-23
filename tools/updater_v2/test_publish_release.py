@@ -8,7 +8,12 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from tools.updater_v2.publish_release import _add_metadata_assets, _next_tags, _reuse_draft_release
+from tools.updater_v2.publish_release import (
+    _add_metadata_assets,
+    _initialise_empty_repository,
+    _next_tags,
+    _reuse_draft_release,
+)
 from tools.updater_v2.publish_release import make_build, public_key, verify_signature
 
 
@@ -211,6 +216,37 @@ class DraftReleaseRetryTest(unittest.TestCase):
     def test_refuses_to_replace_published_release(self):
         with self.assertRaisesRegex(ValueError, "already exists and is published"):
             _reuse_draft_release("Project-Tick/MeshMC-Updates", "build-1", {"draft": False})
+
+
+class EmptyRepositoryInitTest(unittest.TestCase):
+    @patch("tools.updater_v2.publish_release.command")
+    def test_existing_main_branch_is_not_reinitialized(self, command):
+        command.return_value = subprocess.CompletedProcess(
+            ("git", "ls-remote"), 0, "abc123\trefs/heads/main\n", "",
+        )
+
+        _initialise_empty_repository("Project-Tick/MeshMC-Updates")
+
+        self.assertFalse(any(call.args[:2] == ("git", "push") for call in command.call_args_list))
+        self.assertFalse(any(call.args[:2] == ("git", "commit") for call in command.call_args_list))
+
+    @patch("tools.updater_v2.publish_release.command")
+    def test_concurrent_main_creation_does_not_fail_initialization(self, command):
+        remote_checks = iter(("", "abc123\trefs/heads/main\n"))
+
+        def fake_command(*args, capture=False, cwd=None):
+            if args[:2] == ("git", "ls-remote"):
+                return subprocess.CompletedProcess(args, 0, next(remote_checks), "")
+            if args[:2] == ("git", "push"):
+                raise subprocess.CalledProcessError(1, args)
+            return subprocess.CompletedProcess(args, 0, "", "")
+
+        command.side_effect = fake_command
+
+        _initialise_empty_repository("Project-Tick/MeshMC-Updates")
+
+        pushes = [call for call in command.call_args_list if call.args[:2] == ("git", "push")]
+        self.assertEqual(len(pushes), 1)
 
 
 if __name__ == "__main__":
