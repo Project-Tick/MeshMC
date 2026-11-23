@@ -186,22 +186,17 @@ void DeviceFlow::onDeviceAuthReplyFinished()
       qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: reply is null";
       return;
     }
-    if (tokenReply->error() == QNetworkReply::NoError) {
-        QByteArray replyData = tokenReply->readAll();
-
-        // Dump replyData
-        // SENSITIVE DATA in RelWithDebInfo or Debug builds
-        //qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: replyData\n";
-        //qDebug() << QString( replyData );
+    tokenReply->deleteLater();
+    if (tokenReply->error() != QNetworkReply::NoError) {
+        const auto status = tokenReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        qWarning() << "DeviceFlow: Device authorization request failed" << tokenReply->error() << status;
+        updateActivity(status >= 400 && status < 500 ? Activity::FailedHard : Activity::FailedSoft);
+        return;
+    }
+    {
+        const auto replyData = tokenReply->readAll();
 
         QVariantMap params = parseJsonResponse(replyData);
-
-        // Dump tokens
-        qDebug() << "DeviceFlow::onDeviceAuthReplyFinished: Tokens returned:\n";
-        foreach (QString key, params.keys()) {
-            // SENSITIVE DATA in RelWithDebInfo or Debug builds, so it is truncated first
-            qDebug() << key << ": "<< params.value( key ).toString();
-        }
 
         // Check for mandatory parameters
         if (hasMandatoryDeviceAuthParams(params)) {
@@ -212,17 +207,19 @@ void DeviceFlow::onDeviceAuthReplyFinished()
             if (uri.isEmpty())
                 uri = params.take(OAUTH2_VERIFICATION_URL).toUrl();
 
-            if (params.contains(OAUTH2_VERIFICATION_URI_COMPLETE))
-                emit openBrowser(params.take(OAUTH2_VERIFICATION_URI_COMPLETE).toUrl());
-
             bool ok = false;
             int expiresIn = params[OAUTH2_EXPIRES_IN].toInt(&ok);
-            if (!ok) {
-                qWarning() << "DeviceFlow::startPollServer: No expired_in parameter";
+            if (!ok || expiresIn <= 0 || userCode.isEmpty() || !uri.isValid() ||
+                uri.scheme() != QStringLiteral("https") || uri.host().isEmpty() ||
+                params.value(OAUTH2_DEVICE_CODE).toString().isEmpty()) {
+                qWarning() << "DeviceFlow: Invalid device authorization response";
                 updateActivity(Activity::FailedHard);
                 return;
             }
 
+            const auto complete = params.take(OAUTH2_VERIFICATION_URI_COMPLETE).toUrl();
+            if (complete.isValid() && complete.scheme() == QStringLiteral("https") && !complete.host().isEmpty())
+                emit openBrowser(complete);
             emit showVerificationUriAndCode(uri, userCode, expiresIn);
 
             startPollServer(params, expiresIn);
@@ -231,7 +228,6 @@ void DeviceFlow::onDeviceAuthReplyFinished()
             updateActivity(Activity::FailedHard);
         }
     }
-    tokenReply->deleteLater();
 }
 
 // Spin up polling for the user completing the login flow out of band
@@ -251,7 +247,7 @@ void DeviceFlow::startPollServer(const QVariantMap &params, int expiresIn)
     if ( !options_.clientSecret.isEmpty() ) {
         parameters.append(RequestParameter(OAUTH2_CLIENT_SECRET, options_.clientSecret.toUtf8()));
     }
-    parameters.append(RequestParameter(OAUTH2_CODE, deviceCode.toUtf8()));
+    parameters.append(RequestParameter(OAUTH2_DEVICE_CODE, deviceCode.toUtf8()));
     parameters.append(RequestParameter(OAUTH2_GRANT_TYPE, grantType.toUtf8()));
     QByteArray payload = createQueryParameters(parameters);
 
@@ -259,7 +255,7 @@ void DeviceFlow::startPollServer(const QVariantMap &params, int expiresIn)
     if (params.contains(OAUTH2_INTERVAL)) {
         bool ok = false;
         int interval = params[OAUTH2_INTERVAL].toInt(&ok);
-        if (ok) {
+        if (ok && interval > 0 && interval <= expiresIn) {
             pollServer->setInterval(interval);
         }
     }
@@ -275,7 +271,7 @@ void DeviceFlow::onVerificationReceived(const QMap<QString, QString> response) {
     emit closeBrowser();
 
     if (response.contains("error")) {
-        qWarning() << "DeviceFlow::onVerificationReceived: Verification failed:" << response;
+        qWarning() << "DeviceFlow::onVerificationReceived: Verification failed:" << response.value("error");
         updateActivity(Activity::FailedHard);
         return;
     }
@@ -333,9 +329,6 @@ QString DeviceFlow::refreshToken() {
 }
 
 void DeviceFlow::setRefreshToken(const QString &v) {
-#ifndef NDEBUG
-    qDebug() << "DeviceFlow::setRefreshToken" << v << "...";
-#endif
     token_.refresh_token = v;
 }
 

@@ -61,15 +61,6 @@ void MSAStep::onOAuthActivityChanged(Katabasis::Activity activity) {
         case Katabasis::Activity::Succeeded: {
             // Succeeded or did not invalidate tokens
             emit hideVerificationUriAndCode();
-            QVariantMap extraTokens = m_oauth2->extraTokens();
-#ifndef NDEBUG
-            if (!extraTokens.isEmpty()) {
-                qDebug() << "Extra tokens in response:";
-                foreach (QString key, extraTokens.keys()) {
-                    qDebug() << "\t" << key << ":" << extraTokens.value(key);
-                }
-            }
-#endif
             emit finished(AccountTaskState::STATE_WORKING, tr("Got "));
             return;
         }
