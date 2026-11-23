@@ -1,3 +1,9 @@
+# NOTICE
+
+This project branch can no longer be officially compiled.
+
+# NOTICE
+
 # MeshMC
 
 [![LICENSE](https://img.shields.io/badge/license-GPL--3.0--or--later-blue?logo=GNU)](https://www.gnu.org/licenses/gpl-3.0.html) [![Crowdin](https://badges.crowdin.net/projtlauncher/localized.svg)](https://crowdin.com/project/projtlauncher)
