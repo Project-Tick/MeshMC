@@ -1,6 +1,20 @@
-# MeshMC 12.0.0 (DRAFT)
+# MeshMC 12.0
 
-**XXX**
+## Highlights
+
+Hello everyone! It’s been a little while not too long, but some time has passed.
+MeshMC is starting fresh! We’ve caught up to the latest point in the MultiMC
+codebase; we are now fully synced with the most recent commit. Furthermore, we’ve
+overhauled the update system. From now on, I’ll only be posting "highlights" here,
+as we’ve shifted to a continuous update model meaning we are now fully integrated
+with MultiMC’s own updater. It’s a bit wild, but that’s how it is! You can view
+every individual change directly within the launcher. I’ll only be posting these
+kinds of tags for stable releases, distribution-specific builds, and platforms
+like Flathub. Please, if possible, don’t expect any more tags from me in the
+future. Rest assured, I’m working on speeding up the Flathub deployment process.
+Also, a quick note: this version is more about the new underlying foundation,
+which means some features may have been lost in the transition. You’re all
+the best take care, and give your cats some love!
 
 ## Previous versions
 
