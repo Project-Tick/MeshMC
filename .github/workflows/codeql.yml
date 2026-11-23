@@ -38,8 +38,8 @@ jobs:
         uses: ./.github/actions/setup-dependencies
         with:
           build-type: Debug
-          qt-version: 6.12.0
-          qt-major: 6
+          qt-version: 5.15.2
+          qt-major: 5
 
       - name: Configure and Build
         run: |

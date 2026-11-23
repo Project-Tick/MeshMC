@@ -62,6 +62,7 @@ runs:
       with:
         variant: sccache
         create-symlink: ${{ runner.os != 'Windows' }}
+        max-size: 500M
         key: ${{ runner.os }}-${{ runner.arch }}-${{ inputs.artifact-name }}-sccache
 
     - name: Use ccache
