@@ -47,6 +47,7 @@
 #include "MinecraftUpdate.h"
 #include "MinecraftLoadAndCheck.h"
 #include "minecraft/gameoptions/GameOptions.h"
+#include "minecraft/mod/DataPackFolderModel.h"
 #include "minecraft/update/FoldersTask.h"
 #include "minecraft/VersionFilterData.h"
 
@@ -79,6 +80,18 @@ MinecraftInstance::MinecraftInstance(SettingsObjectPtr globalSettings, SettingsO
     : BaseInstance(globalSettings, settings, rootDir)
 {
     // Java Settings
+    m_settings->registerSetting("ExportName", "");
+    m_settings->registerSetting("ExportVersion", "1.0.0");
+    m_settings->registerSetting("ExportSummary", "");
+    m_settings->registerSetting("ExportAuthor", "");
+    m_settings->registerSetting("ExportOptionalFiles", true);
+    m_settings->registerSetting("ExportRecommendedRAM", 0);
+
+    auto dataPacksEnabled = m_settings->registerSetting("GlobalDataPacksEnabled", false);
+    auto dataPacksPath = m_settings->registerSetting("GlobalDataPacksPath", "");
+    connect(dataPacksEnabled.get(), &Setting::SettingChanged, this, [this] { m_data_pack_list.reset(); });
+    connect(dataPacksPath.get(), &Setting::SettingChanged, this, [this] { m_data_pack_list.reset(); });
+
     auto javaOverride = m_settings->registerSetting("OverrideJava", false);
     auto locationOverride = m_settings->registerSetting("OverrideJavaLocation", false);
     auto argsOverride = m_settings->registerSetting("OverrideJavaArgs", false);
@@ -1141,3 +1154,21 @@ QList< Mod > MinecraftInstance::getJarMods() const
 
 
 #include "MinecraftInstance.moc"
+
+QString MinecraftInstance::dataPacksDir() const
+{
+    const auto configured = settings()->get("GlobalDataPacksPath").toString().trimmed();
+    const auto relative = configured.isEmpty() ? QStringLiteral("datapacks") : configured;
+    const auto path = FS::PathInside(gameRoot(), relative);
+    return path && *path != gameRoot() ? *path : QString();
+}
+
+std::shared_ptr<ModFolderModel> MinecraftInstance::dataPackList() const
+{
+    if (!m_data_pack_list && settings()->get("GlobalDataPacksEnabled").toBool()) {
+        const auto path = dataPacksDir();
+        if (!path.isEmpty())
+            m_data_pack_list = std::make_shared<DataPackFolderModel>(path);
+    }
+    return m_data_pack_list;
+}

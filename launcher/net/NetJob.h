@@ -58,6 +58,8 @@ public:
     QStringList getFailedFiles();
 
     bool canAbort() const override;
+    bool isMultiStep() const override { return true; }
+    TaskStepProgressList getStepProgress() const override;
 
 private slots:
     void startMoreParts();
@@ -73,6 +75,9 @@ private slots:
     void partAborted(int index);
 
 private:
+    void emitPartStep(int index, TaskStepState state);
+    void updateStatus();
+
     shared_qobject_ptr<QNetworkAccessManager> m_network;
 
     struct part_info
@@ -80,6 +85,7 @@ private:
         qint64 current_progress = 0;
         qint64 total_progress = 1;
         int failures = 0;
+        std::shared_ptr<TaskStepProgress> step;
     };
     QList<NetAction::Ptr> downloads;
     QList<part_info> parts_progress;

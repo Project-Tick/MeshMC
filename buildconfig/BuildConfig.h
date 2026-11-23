@@ -42,6 +42,11 @@ public:
     QStringList FILES_MIRRORS;
     QStringList META_MIRRORS;
 
+    /**
+	 * API key for the CurseForge API
+	 */
+	QString CURSEFORGE_API_KEY;
+
     /// The updater (Design/Updater.md in the MultiMC repository): pinned root public keys (hex)
     QStringList UPDATER_ROOT_KEYS;
     /// Updater v2: the keys document trusted without a signature, as its exact bytes

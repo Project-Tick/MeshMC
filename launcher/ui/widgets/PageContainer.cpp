@@ -171,8 +171,14 @@ void PageContainer::addButtons(QLayout *buttons)
     m_layout->addLayout(buttons, 2, 0, 1, 2);
 }
 
+void PageContainer::hidePageList()
+{
+    m_pageList->hide();
+}
+
 void PageContainer::showPage(int row)
 {
+    auto* previous = m_currentPage;
     if (m_currentPage)
     {
         m_currentPage->closed();
@@ -198,6 +204,7 @@ void PageContainer::showPage(int row)
         m_header->setText(QString());
         m_iconHeader->setIcon(APPLICATION->getThemedIcon("bug"));
     }
+    emit selectedPageChanged(previous, m_currentPage);
 }
 
 void PageContainer::help()

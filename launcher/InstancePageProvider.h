@@ -6,10 +6,12 @@
 #include "ui/pages/BasePageProvider.h"
 #include "ui/pages/instance/LogPage.h"
 #include "ui/pages/instance/VersionPage.h"
+#include "ui/pages/instance/ManagedPackPage.h"
 #include "ui/pages/instance/ModFolderPage.h"
 #include "ui/pages/instance/ResourcePackPage.h"
 #include "ui/pages/instance/TexturePackPage.h"
 #include "ui/pages/instance/ShaderPackPage.h"
+#include "ui/pages/instance/DataPackPage.h"
 #include "ui/pages/instance/NotesPage.h"
 #include "ui/pages/instance/ScreenshotsPage.h"
 #include "ui/pages/instance/InstanceSettingsPage.h"
@@ -37,6 +39,8 @@ public:
         if(onesix)
         {
             values.append(new VersionPage(onesix.get()));
+            if (ManagedPackPage::isSupported(onesix.get()))
+                values.append(new ManagedPackPage(onesix.get()));
             auto modsPage = new ModFolderPage(onesix.get(), onesix->loaderModList(), "mods", "loadermods", tr("Loader mods"), "Loader-mods");
             modsPage->setFilter("%1 (*.zip *.jar *.litemod)");
             values.append(modsPage);
@@ -44,6 +48,7 @@ public:
             values.append(new ResourcePackPage(onesix.get()));
             values.append(new TexturePackPage(onesix.get()));
             values.append(new ShaderPackPage(onesix.get()));
+            values.append(new GlobalDataPackPage(onesix.get()));
             values.append(new NotesPage(onesix.get()));
             values.append(new WorldListPage(onesix, onesix->worldList()));
             values.append(new ServersPage(onesix));

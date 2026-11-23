@@ -86,6 +86,8 @@ public:
 
     void setRunning(bool running);
     bool isRunning() const;
+    bool isApplyingPackUpdate() const { return m_applyingPackUpdate; }
+    void setApplyingPackUpdate(bool applying);
     /// Stop counting play time and save it. The instance can still be running (post-exit command).
     void recordTimePlayed();
     int64_t totalTimePlayed() const;
@@ -235,6 +237,18 @@ public:
     virtual bool canEdit() const = 0;
     virtual bool canExport() const = 0;
 
+    QString managedPackProvider() const;
+    QString managedPackId() const;
+    QString managedPackSlug() const;
+    QString managedPackName() const;
+    QString managedPackVersionId() const;
+    QString managedPackVersionName() const;
+    QString managedPackSourceUrl() const;
+    bool isManagedPack() const;
+    bool hasManagedPackId() const;
+    QString managedPackUpdateUrl() const;
+    void setManagedPackUpdateUrl(const QString& url);
+
     bool reloadSettings();
 
     /**
@@ -270,6 +284,7 @@ protected: /* data */
     SettingsObjectPtr m_settings;
     // InstanceFlags m_flags;
     bool m_isRunning = false;
+    bool m_applyingPackUpdate = false;
     shared_qobject_ptr<LaunchTask> m_launchProcess;
     QElapsedTimer m_timeStarted; // monotonic: changing the system clock or timezone doesn't affect it
     bool m_countingTime = false;

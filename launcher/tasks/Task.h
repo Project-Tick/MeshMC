@@ -15,11 +15,61 @@
 
 #pragma once
 
+#include <QUuid>
+#include <QPointer>
+#include <memory>
+
 #include <QObject>
 #include <QString>
 #include <QStringList>
 
 #include "QObjectPtr.h"
+
+/**
+ * The lifecycle of a single step of a multi step task, as seen by the UI.
+ */
+enum class TaskStepState { Waiting, Running, Failed, Succeeded };
+
+Q_DECLARE_METATYPE(TaskStepState)
+
+/**
+ * A snapshot of one step of a multi step task.
+ *
+ * Multi step tasks (see Task::isMultiStep) report every step they are made of
+ * through Task::stepProgress, so the UI can show one line per step instead of
+ * a single opaque progress bar. A step keeps the same uid for its whole
+ * lifetime, which lets the UI update the line it already has instead of piling
+ * up new ones.
+ */
+struct TaskStepProgress {
+	QUuid uid;
+	qint64 current = 0;
+	qint64 total = -1;
+
+	QString status;
+	QString details;
+	TaskStepState state = TaskStepState::Waiting;
+
+	TaskStepProgress() : uid(QUuid::createUuid()) {}
+	explicit TaskStepProgress(QUuid step_uid) : uid(step_uid) {}
+
+	bool isDone() const
+	{
+		return state == TaskStepState::Failed ||
+			   state == TaskStepState::Succeeded;
+	}
+
+	void update(qint64 new_current, qint64 new_total)
+	{
+		current = new_current;
+		total = new_total;
+		state = TaskStepState::Running;
+	}
+};
+
+Q_DECLARE_METATYPE(TaskStepProgress)
+
+using TaskStepProgressList = QList<std::shared_ptr<TaskStepProgress>>;
 
 class Task : public QObject
 {
@@ -43,6 +93,7 @@ public:
     bool isRunning() const;
     bool isFinished() const;
     bool wasSuccessful() const;
+    bool wasAborted() const { return m_state == State::AbortedByUser; }
 
     /*!
      * Returns the string that was passed to emitFailed as the error message when the task failed.
@@ -51,6 +102,10 @@ public:
     QString failReason() const;
 
     virtual QStringList warnings() const;
+
+    virtual bool isMultiStep() const { return !m_stepSources.isEmpty(); }
+    virtual TaskStepProgressList getStepProgress() const;
+    QString getDetails() const { return m_details; }
 
     virtual bool canAbort() const { return false; }
 
@@ -70,6 +125,8 @@ public:
     }
 
 protected:
+    void propagateStepsFrom(Task* task);
+    void setDetails(const QString& details);
     void logWarning(const QString & line);
 
 private:
@@ -82,6 +139,8 @@ signals:
     void succeeded();
     void failed(QString reason);
     void status(QString status);
+    void details(const QString& details);
+    void stepProgress(const TaskStepProgress& step);
 
 public slots:
     virtual void start();
@@ -104,7 +163,9 @@ private:
     QStringList m_Warnings;
     QString m_failReason = "";
     QString m_status;
-    int m_progress = 0;
-    int m_progressTotal = 100;
+    QString m_details;
+    QList<QPointer<Task>> m_stepSources;
+    qint64 m_progress = 0;
+    qint64 m_progressTotal = 100;
 };
 

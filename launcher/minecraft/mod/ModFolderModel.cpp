@@ -14,6 +14,8 @@
  */
 
 #include "ModFolderModel.h"
+#include <QSaveFile>
+#include <QCryptographicHash>
 #include <FileSystem.h>
 #include <QMimeData>
 #include <QUrl>
@@ -246,7 +248,7 @@ bool ModFolderModel::installMod(const QString &filename)
     }
 
     auto type = installedMod.type();
-    if (type == Mod::MOD_UNKNOWN)
+    if (!acceptsFile(fileinfo, type))
     {
         qDebug() << "Cannot recognize mod type of" << originalPath << ", ignoring it.";
         return false;
@@ -261,22 +263,34 @@ bool ModFolderModel::installMod(const QString &filename)
 
     if (type == Mod::MOD_SINGLEFILE || type == Mod::MOD_ZIPFILE || type == Mod::MOD_LITEMOD)
     {
-        if(QFile::exists(newpath) || QFile::exists(newpath + QString(".disabled")))
-        {
-            if(!QFile::remove(newpath))
-            {
-                // FIXME: report error in a user-visible way
-                qWarning() << "Copy from" << originalPath << "to" << newpath << "has failed.";
-                return false;
-            }
-            qDebug() << newpath << "has been deleted.";
-        }
-        if (!QFile::copy(fileinfo.filePath(), newpath))
-        {
-            qWarning() << "Copy from" << originalPath << "to" << newpath << "has failed.";
-            // FIXME: report error in a user-visible way
+        const auto disabledPath = newpath + QStringLiteral(".disabled");
+        if (!QFileInfo::exists(newpath) && QFileInfo::exists(disabledPath))
+            newpath = disabledPath;
+        QFile source(fileinfo.filePath());
+        QSaveFile destination(newpath);
+        if (!source.open(QIODevice::ReadOnly) || !destination.open(QIODevice::WriteOnly))
             return false;
+
+        QCryptographicHash checksum(QCryptographicHash::Sha1);
+        while (!source.atEnd()) {
+            const auto block = source.read(64 * 1024);
+            if (block.isEmpty() || destination.write(block) != block.size())
+                return false;
+            checksum.addData(block);
         }
+        if (!destination.commit())
+            return false;
+
+        const auto index = metadataIndex();
+        const auto name = ModMetadataIndex::canonicalFileName(QFileInfo(newpath).fileName());
+        index->remove(name);
+        ModMetadataIndex::Entry entry;
+        entry.fileName = name;
+        entry.name = installedMod.name();
+        entry.platform = QStringLiteral("local");
+        entry.sha1 = QString::fromLatin1(checksum.result().toHex());
+        entry.fileSize = source.size();
+        index->put(entry);
         FS::updateTimestamp(newpath);
         installedMod.repath(newpath);
         update();
@@ -334,7 +348,9 @@ bool ModFolderModel::deleteMods(const QModelIndexList& indexes)
     for (auto i: indexes)
     {
         Mod &m = mods[i.row()];
-        m.destroy();
+        const auto name = m.filename().fileName();
+        if (m.destroy())
+            metadataIndex()->remove(name);
     }
     return true;
 }
@@ -554,4 +570,13 @@ bool ModFolderModel::dropMimeData(const QMimeData* data, Qt::DropAction action, 
         return true;
     }
     return false;
+}
+
+
+std::shared_ptr<ModMetadataIndex> ModFolderModel::metadataIndex()
+{
+    if (!m_metadataIndex)
+        m_metadataIndex = std::make_shared<ModMetadataIndex>(m_dir);
+    m_metadataIndex->load();
+    return m_metadataIndex;
 }

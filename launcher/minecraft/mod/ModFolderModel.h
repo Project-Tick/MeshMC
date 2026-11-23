@@ -23,6 +23,7 @@
 #include <QAbstractListModel>
 
 #include "Mod.h"
+#include "ModMetadataIndex.h"
 
 #include "ModFolderLoadTask.h"
 #include "LocalModParseTask.h"
@@ -53,6 +54,7 @@ public:
         Toggle
     };
     ModFolderModel(const QString &dir);
+    std::shared_ptr<ModMetadataIndex> metadataIndex();
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
@@ -135,12 +137,14 @@ private:
     bool setModStatus(int index, ModStatusAction action);
 
 protected:
+    virtual bool acceptsFile(const QFileInfo&, Mod::ModType type) const { return type != Mod::MOD_UNKNOWN; }
     QFileSystemWatcher *m_watcher;
     bool is_watching = false;
     ModFolderLoadTask::ResultPtr m_update;
     bool scheduled_update = false;
     bool interaction_disabled = false;
     QDir m_dir;
+    std::shared_ptr<ModMetadataIndex> m_metadataIndex;
     QMap<QString, int> modsIndex;
     QMap<int, LocalModParseTask::ResultPtr> activeTickets;
     int nextResolutionTicket = 0;

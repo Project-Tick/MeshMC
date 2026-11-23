@@ -34,6 +34,17 @@ BaseInstance::BaseInstance(SettingsObjectPtr globalSettings, SettingsObjectPtr s
     m_settings = settings;
     m_rootDir = rootDir;
 
+    m_settings->registerSetting("PackProvider", "");
+    m_settings->registerSetting("PackId", "");
+    m_settings->registerSetting("PackSlug", "");
+    m_settings->registerSetting("PackVersionId", "");
+    m_settings->registerSetting("PackVersionLabel", "");
+    m_settings->registerSetting("PackIconUrl", "");
+    m_settings->registerSetting("PackSourceUrl", "");
+    m_settings->registerSetting("PackInstalledAt", "");
+    m_settings->registerSetting("PackManifestSha512", "");
+    m_settings->registerSetting("PackName", "");
+    m_settings->registerSetting("PackUpdateUrl", "");
     m_settings->registerSetting("name", "Unnamed Instance");
     m_settings->registerSetting("iconKey", "default");
     m_settings->registerSetting("notes", "");
@@ -173,6 +184,14 @@ QString BaseInstance::id() const
     return QFileInfo(instanceRoot()).fileName();
 }
 
+void BaseInstance::setApplyingPackUpdate(bool applying)
+{
+    if (m_applyingPackUpdate == applying)
+        return;
+    m_applyingPackUpdate = applying;
+    emit propertiesChanged(this);
+}
+
 bool BaseInstance::isRunning() const
 {
     return m_isRunning;
@@ -259,7 +278,7 @@ SettingsObjectPtr BaseInstance::settings() const
 
 bool BaseInstance::canLaunch() const
 {
-    return (!hasVersionBroken() && !isRunning());
+    return !hasVersionBroken() && !isRunning() && !isApplyingPackUpdate();
 }
 
 bool BaseInstance::reloadSettings()
@@ -333,4 +352,81 @@ QStringList BaseInstance::extraArguments() const
 shared_qobject_ptr<LaunchTask> BaseInstance::getLaunchTask()
 {
     return m_launchProcess;
+}
+
+QString BaseInstance::managedPackProvider() const
+{
+	return m_settings->get("PackProvider").toString().trimmed();
+}
+
+QString BaseInstance::managedPackId() const
+{
+	return m_settings->get("PackId").toString().trimmed();
+}
+
+QString BaseInstance::managedPackSlug() const
+{
+	return m_settings->get("PackSlug").toString().trimmed();
+}
+
+QString BaseInstance::managedPackName() const
+{
+	const QString recorded = m_settings->get("PackName").toString().trimmed();
+	if (!recorded.isEmpty()) {
+		return recorded;
+	}
+	/* Older imports never recorded the title. The slug is the next best
+	 * thing - it is derived from the title and is at least stable - and
+	 * failing that the instance name, which the user chose and will
+	 * recognise even if it is not what the catalogue calls the pack. */
+	const QString slug = managedPackSlug();
+	if (!slug.isEmpty()) {
+		return slug;
+	}
+	return name();
+}
+
+QString BaseInstance::managedPackVersionId() const
+{
+	return m_settings->get("PackVersionId").toString().trimmed();
+}
+
+QString BaseInstance::managedPackVersionName() const
+{
+	return m_settings->get("PackVersionLabel").toString().trimmed();
+}
+
+QString BaseInstance::managedPackSourceUrl() const
+{
+	return m_settings->get("PackSourceUrl").toString().trimmed();
+}
+
+bool BaseInstance::isManagedPack() const
+{
+	return !managedPackProvider().isEmpty();
+}
+
+bool BaseInstance::hasManagedPackId() const
+{
+	/* An id without a provider does not say which API to ask, and a
+	 * provider without an id gives every endpoint nothing to key on, so
+	 * a catalogue lookup needs both. */
+	return !managedPackProvider().isEmpty() && !managedPackId().isEmpty();
+}
+
+QString BaseInstance::managedPackUpdateUrl() const
+{
+	return m_settings->get("PackUpdateUrl").toString().trimmed();
+}
+
+void BaseInstance::setManagedPackUpdateUrl(const QString& url)
+{
+	const QString trimmed = url.trimmed();
+	if (managedPackUpdateUrl() == trimmed) {
+		// Writing a setting writes a file; this one is fed by a
+		// textChanged signal, so it would otherwise write on every
+		// keystroke that does not change the trimmed value.
+		return;
+	}
+	m_settings->set("PackUpdateUrl", trimmed);
 }

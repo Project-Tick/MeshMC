@@ -48,6 +48,7 @@ public:
     static Download::Ptr makeCached(QUrl url, MetaEntryPtr entry, Options options = Option::NoOptions);
     static Download::Ptr makeByteArray(QUrl url, QByteArray *output, Options options = Option::NoOptions);
     static Download::Ptr makeFile(QUrl url, QString path, Options options = Option::NoOptions);
+    static Download::Ptr makeFileWithMirrors(const QList<QUrl>& urls, QString path);
 
 public: /* methods */
     QString getTargetFilepath()
@@ -89,6 +90,7 @@ private: /* data */
     /// the URL the download was made for; m_url is the one being requested
     QUrl m_requested_url;
     /// the URLs to try, in order (Net::Mirrors), and which one is being tried
+    QList<QUrl> m_explicitMirrors;
     QList<QUrl> m_mirrors;
     int m_mirror = 0;
     /// a mirror tried so far answered that the file isn't there

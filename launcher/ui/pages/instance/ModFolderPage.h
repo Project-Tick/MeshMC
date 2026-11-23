@@ -15,6 +15,9 @@
 
 #pragma once
 
+#include "modplatform/ModDownloadTypes.h"
+#include "modplatform/ContentType.h"
+
 #include <QMainWindow>
 #include <QSortFilterProxyModel>
 
@@ -100,6 +103,25 @@ slots:
     void on_filterTextChanged(const QString & newContents);
     void on_RunningState_changed(bool running);
     void on_actionAdd_triggered();
+    void on_actionDownload_triggered();
+    void on_actionExportList_triggered();
+    void on_actionVerifyDependencies_triggered();
+    void on_actionResetMetadata_triggered();
+    void on_actionViewHomepage_triggered();
+    void on_actionChangeVersion_triggered();
+    void on_actionUpdate_triggered();
+
+private:
+    ModPlatform::ContentType m_contentType = ModPlatform::ContentType::Mod;
+    void installSelection(const QList<ModPlatform::SelectedMod>& selectedMods, const QString& mcVersion, const QString& loaderType);
+    void reviewAndInstall(const QList<ModPlatform::SelectedMod>& selectedMods,
+                          const QList<ModPlatform::DependencyInfo>& dependencies,
+                          const QList<ModPlatform::UnresolvedDep>& unresolvedDeps);
+    bool offerManualDownloads(const QList<ModPlatform::DownloadItem>& plan, const QString& targetDir);
+    void runUpdateCheck();
+    bool ensureModLoaderPresent();
+
+private slots:
     void on_actionRemove_triggered();
     void on_actionEnable_triggered();
     void on_actionDisable_triggered();

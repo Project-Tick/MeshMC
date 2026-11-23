@@ -210,6 +210,13 @@ bool MMCZip::findFilesInZip(QuaZip * zip, const QString & what, QStringList & re
 // ours
 nonstd::optional<QStringList> MMCZip::extractSubDir(QuaZip *zip, const QString & subdir, const QString &target)
 {
+    return extractSubDirWithProgress(zip, subdir, target, {});
+}
+
+nonstd::optional<QStringList> MMCZip::extractSubDirWithProgress(
+    QuaZip* zip, const QString& subdir, const QString& target,
+    const std::function<bool(int, int, const QString&)>& progress)
+{
     QDir directory(target);
     QStringList extracted;
 
@@ -229,9 +236,12 @@ nonstd::optional<QStringList> MMCZip::extractSubDir(QuaZip *zip, const QString &
         return nonstd::nullopt;
     }
 
+    int processed = 0;
     do
     {
         QString name = zip->getCurrentFileName();
+        if (progress && !progress(processed++, numEntries, name))
+            return nonstd::nullopt;
         if(!name.startsWith(subdir))
         {
             continue;
@@ -260,6 +270,8 @@ nonstd::optional<QStringList> MMCZip::extractSubDir(QuaZip *zip, const QString &
         extracted.append(absFilePath);
         qDebug() << "Extracted file" << name;
     } while (zip->goToNextFile());
+    if (progress && !progress(numEntries, numEntries, QString()))
+        return nonstd::nullopt;
     return extracted;
 }
 
@@ -413,4 +425,47 @@ bool MMCZip::extractFile(QString fileCompressed, QString file, QString target)
         return false;
     }
     return MMCZip::extractRelFile(&zip, file, target);
+}
+
+bool MMCZip::collectFileListRecursively(const QString& rootDir,
+									   const QString& subDir,
+									   QFileInfoList* files,
+									   FilterFileFunction excludeFilter)
+{
+	QDir rootDirectory(rootDir);
+	if (!rootDirectory.exists())
+		return false;
+
+	QDir directory = subDir.isNull() ? rootDirectory : QDir(subDir);
+	if (!directory.exists())
+		return false; // shouldn't ever happen
+
+	// recurse into subdirectories first, so the list comes out in a
+	// stable, depth-first order rather than in readdir order
+	const QFileInfoList dirs = directory.entryInfoList(
+		QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
+	for (const auto& dir : dirs) {
+		/* A directory the user unchecked is not walked at all: the
+		 * filter already answers "no" for everything inside it, and
+		 * descending into a blocked `.minecraft/logs` only to throw
+		 * every entry away is the slow way of doing nothing. */
+		if (dir.isSymLink() || (excludeFilter && excludeFilter(dir)))
+			continue;
+		if (!collectFileListRecursively(rootDir, dir.filePath(), files,
+										excludeFilter))
+			return false;
+	}
+
+	const QFileInfoList entries =
+		directory.entryInfoList(QDir::Files | QDir::Hidden);
+	for (const auto& entry : entries) {
+		if (excludeFilter && excludeFilter(entry)) {
+			qDebug() << "Skipping file"
+					 << rootDirectory.relativeFilePath(
+							entry.absoluteFilePath());
+			continue;
+		}
+		files->append(entry);
+	}
+	return true;
 }

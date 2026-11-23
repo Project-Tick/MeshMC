@@ -116,7 +116,18 @@ void ModrinthPage::suggestCurrent()
         return;
     }
 
-    dialog->setSuggestedPack(current.name + " " + currentVersion.name, new InstanceImportTask(currentVersion.download.url));
+    auto* task = new InstanceImportTask(currentVersion.download.url);
+    InstanceImportTask::PackSourceHint hint;
+    hint.provider = "modrinth";
+    hint.packId = current.id;
+    hint.packName = current.name;
+    hint.versionId = currentVersion.id;
+    hint.versionLabel = currentVersion.name;
+    hint.iconUrl = current.iconUrl.toString();
+    hint.sourceUrl = QStringLiteral("https://modrinth.com/modpack/") + current.id;
+    task->setPackSourceHint(hint);
+    task->setTrustedSource(true);
+    dialog->setSuggestedPack(current.name + " " + currentVersion.name, task);
     MetaEntryPtr entry = APPLICATION->metacache()->resolveEntry("ModrinthPacks", QString("logos/%1").arg(current.id));
     dialog->setSuggestedIconFromFile(entry->getFullPath(), QString("modrinth-%1").arg(current.id));
 }

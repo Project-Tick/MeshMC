@@ -12,7 +12,7 @@ public:
         connect(this, &ActionButton::clicked, action, &QAction::trigger);
         actionChanged();
     };
-private slots:
+public slots:
     void actionChanged() {
         setEnabled(m_action->isEnabled());
         setChecked(m_action->isChecked());
@@ -20,6 +20,9 @@ private slots:
         setText(m_action->text());
         setIcon(m_action->icon());
         setToolTip(m_action->toolTip());
+        if (menu() != m_action->menu())
+            setMenu(m_action->menu());
+        setPopupMode(menu() ? QToolButton::MenuButtonPopup : QToolButton::DelayedPopup);
         setFocusPolicy(Qt::NoFocus);
     }
 private:
@@ -93,6 +96,16 @@ void WideBar::insertSpacer(QAction* action)
     entry->qAction = insertWidget((*iter)->qAction, spacer);
     entry->type = BarEntry::Spacer;
     m_entries.insert(iter, entry);
+}
+
+void WideBar::refreshActions()
+{
+    for (const auto* entry : m_entries) {
+        if (entry->type == BarEntry::Action) {
+            if (auto* button = qobject_cast<ActionButton*>(widgetForAction(entry->qAction)))
+                button->actionChanged();
+        }
+    }
 }
 
 QMenu * WideBar::createContextMenu(QWidget *parent, const QString & title)

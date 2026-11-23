@@ -736,6 +736,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         m_settings->registerSetting("SettingsGeometry", "");
 
         m_settings->registerSetting("PagedGeometry", "");
+        m_settings->registerSetting("DataPackManagerGeometry", "");
 
         m_settings->registerSetting("NewInstanceGeometry", "");
 
@@ -924,7 +925,11 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         m_metacache->addBase("ATLauncherPacks", QDir("cache/ATLauncherPacks").absolutePath());
         m_metacache->addBase("FTBPacks", QDir("cache/FTBPacks").absolutePath());
         m_metacache->addBase("TechnicPacks", QDir("cache/TechnicPacks").absolutePath());
+        m_metacache->addBase("FlamePacks", QDir("cache/FlamePacks").absolutePath());
+        m_metacache->addBase("FlameModIcons", QDir("cache/FlameModIcons").absolutePath());
         m_metacache->addBase("ModrinthPacks", QDir("cache/ModrinthPacks").absolutePath());
+        m_metacache->addBase("ModrinthModIcons", QDir("cache/ModrinthModIcons").absolutePath());
+        m_metacache->addBase("ContentImages", QDir("cache/ContentImages").absolutePath());
         m_metacache->addBase("root", QDir::currentPath());
         m_metacache->addBase("translations", QDir("translations").absolutePath());
         m_metacache->addBase("icons", QDir("cache/icons").absolutePath());

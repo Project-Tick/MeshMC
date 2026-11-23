@@ -38,6 +38,8 @@ public:
     {
         m_instGroup = group;
     }
+    QString overrideInstance() const { return m_overrideInstance; }
+
     QString group() const
     {
         return m_instGroup;
@@ -49,4 +51,5 @@ protected: /* data */
     QString m_instIcon;
     QString m_instGroup;
     QString m_stagingPath;
+    QString m_overrideInstance;
 };

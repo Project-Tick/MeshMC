@@ -116,11 +116,13 @@ void MinecraftUpdate::next()
     {
         qCritical() << "MinecraftUpdate: Skipping finished subtask" << m_currentTask << ":" << task.get();
         next();
+        return;
     }
     connect(task.get(), &Task::succeeded, this, &MinecraftUpdate::subtaskSucceeded);
     connect(task.get(), &Task::failed, this, &MinecraftUpdate::subtaskFailed);
     connect(task.get(), &Task::progress, this, &MinecraftUpdate::progress);
     connect(task.get(), &Task::status, this, &MinecraftUpdate::setStatus);
+    propagateStepsFrom(task.get());
     // if the task is already running, do not start it again
     if(!task->isRunning())
     {

@@ -89,7 +89,7 @@
 #include "ui/dialogs/NotificationDialog.h"
 #include "ui/dialogs/CreateShortcutDialog.h"
 #include "ui/dialogs/ExportInstanceDialog.h"
-#include "ui/dialogs/ModrinthExportDialog.h"
+#include "ui/dialogs/ExportPackDialog.h"
 
 #include "KonamiCode.h"
 
@@ -1075,15 +1075,22 @@ void MainWindow::updateToolsMenu()
     exportMenu->addSeparator()->setText(tr("Format"));
 
     QAction *mmcExport = exportMenu->addAction(BuildConfig.LAUNCHER_NAME);
-    QAction *modrinthExport = exportMenu->addAction(tr("Modrinth (WIP)"));
+    auto* modrinthExport = exportMenu->addAction(tr("Modrinth Pack"));
+    auto* curseForgeExport = exportMenu->addAction(tr("CurseForge Pack"));
 
     connect(mmcExport, &QAction::triggered, this, &MainWindow::on_actionExportInstance_triggered);
-    connect(modrinthExport, &QAction::triggered, [this]()
-    {
-        if (m_selectedInstance) {
-            ModrinthExportDialog dlg(m_selectedInstance, this);
-            dlg.exec();
+    const auto exportPack = [this](ExportPackDialog::Format format) {
+        auto instance = std::dynamic_pointer_cast<MinecraftInstance>(m_selectedInstance);
+        if (instance) {
+            ExportPackDialog dialog(instance.get(), this, format);
+            dialog.exec();
         }
+    };
+    connect(modrinthExport, &QAction::triggered, this, [exportPack] {
+        exportPack(ExportPackDialog::Format::ModrinthPack);
+    });
+    connect(curseForgeExport, &QAction::triggered, this, [exportPack] {
+        exportPack(ExportPackDialog::Format::CurseForgePack);
     });
 
     ui->actionExportInstance->setMenu(exportMenu);
@@ -1708,27 +1715,25 @@ void MainWindow::setCatBackground(bool enabled)
 
 void MainWindow::runModalTask(Task *task)
 {
-    connect(task, &Task::failed, [this](QString reason)
-        {
+    auto* dialog = new ProgressDialog(this);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    task->setParent(dialog);
+    connect(task, &Task::failed, this, [this, task](const QString& reason) {
+        if (!task->wasAborted())
             CustomMessageBox::selectable(this, tr("Error"), reason, QMessageBox::Critical)->show();
-        });
-    connect(task, &Task::succeeded, [this, task]()
-        {
-            QStringList warnings = task->warnings();
-            if(warnings.count())
-            {
-                CustomMessageBox::selectable(this, tr("Warnings"), warnings.join('\n'), QMessageBox::Warning)->show();
-            }
-        });
-    ProgressDialog loadDialog(this);
-    loadDialog.setSkipButton(true, tr("Stop"));
-    loadDialog.execWithTask(task);
+    });
+    connect(task, &Task::succeeded, this, [this, task] {
+        const auto warnings = task->warnings();
+        if (!warnings.isEmpty())
+            CustomMessageBox::selectable(this, tr("Warnings"), warnings.join('\n'), QMessageBox::Warning)->show();
+    });
+    dialog->setSkipButton(true, tr("Stop"));
+    dialog->openWithTask(task);
 }
 
 void MainWindow::instanceFromInstanceTask(InstanceTask *rawTask)
 {
-    unique_qobject_ptr<Task> task(APPLICATION->instances()->wrapInstanceTask(rawTask));
-    runModalTask(task.get());
+    runModalTask(APPLICATION->instances()->wrapInstanceTask(rawTask));
 }
 
 void MainWindow::on_actionCopyInstance_triggered()
@@ -1744,8 +1749,7 @@ void MainWindow::on_actionCopyInstance_triggered()
     copyTask->setName(copyInstDlg.instName());
     copyTask->setGroup(copyInstDlg.instGroup());
     copyTask->setIcon(copyInstDlg.iconKey());
-    unique_qobject_ptr<Task> task(APPLICATION->instances()->wrapInstanceTask(copyTask));
-    runModalTask(task.get());
+    runModalTask(APPLICATION->instances()->wrapInstanceTask(copyTask));
 }
 
 void MainWindow::finalizeInstance(InstancePtr inst)

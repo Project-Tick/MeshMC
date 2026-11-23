@@ -14,6 +14,15 @@
  */
 
 #include "WorldListPage.h"
+#include "ui/pages/instance/DataPackPage.h"
+#include "ui/pages/BasePageProvider.h"
+#include "ui/widgets/PageContainer.h"
+#include <QPushButton>
+#include "minecraft/MinecraftInstance.h"
+#include "minecraft/mod/DataPackFolderModel.h"
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
 #include "ui_WorldListPage.h"
 #include "minecraft/WorldList.h"
 
@@ -190,7 +199,45 @@ void WorldListPage::on_actionDatapacks_triggered()
 
     auto fullPath = m_worlds->data(index, WorldList::FolderRole).toString();
 
-    DesktopServices::openDirectory(FS::PathCombine(fullPath, "datapacks"));
+    const auto path = FS::PathCombine(fullPath, "datapacks");
+    auto* instance = dynamic_cast<MinecraftInstance*>(m_inst.get());
+    if (!instance) {
+        DesktopServices::openDirectory(path);
+        return;
+    }
+
+    auto* dialog = new QDialog(this);
+    dialog->setWindowTitle(tr("Data packs for %1").arg(m_worlds->data(index, WorldList::NameRole).toString()));
+    dialog->setWindowModality(Qt::WindowModal);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->resize(qMax(window()->width() / 2, 400), qMax(window()->height() * 3 / 4, 400));
+    const auto settings = APPLICATION->settings();
+    dialog->restoreGeometry(QByteArray::fromBase64(settings->get("DataPackManagerGeometry").toByteArray()));
+
+    const auto model = std::make_shared<DataPackFolderModel>(path);
+    GenericPageProvider provider(dialog->windowTitle());
+    provider.addPageCreator([instance, model] { return new DataPackPage(instance, model); });
+
+    auto* layout = new QVBoxLayout(dialog);
+    auto* defaultButton = new QPushButton(dialog);
+    defaultButton->setDefault(true);
+    defaultButton->hide();
+    layout->addWidget(defaultButton);
+
+    auto* container = new PageContainer(&provider, "datapacks", dialog);
+    container->hidePageList();
+    layout->addWidget(container);
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Close | QDialogButtonBox::Help, dialog);
+    connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+    connect(buttons, &QDialogButtonBox::helpRequested, container, &PageContainer::help);
+    layout->addWidget(buttons);
+
+    connect(dialog, &QDialog::finished, dialog, [dialog, container, settings] {
+        settings->set("DataPackManagerGeometry", dialog->saveGeometry().toBase64());
+        container->prepareToClose();
+    });
+    dialog->open();
 }
 
 

@@ -15,6 +15,8 @@
 
 #include <QDir>
 #include <QDirIterator>
+#include <QFutureWatcher>
+#include <QtConcurrentRun>
 #include <QSet>
 #include <QFile>
 #include <QThread>
@@ -29,12 +31,22 @@
 #include <QMimeData>
 
 #include "InstanceList.h"
+#include "modplatform/PackContents.h"
+#include "minecraft/mod/ModMetadataIndex.h"
+#include "minecraft/MinecraftInstance.h"
+#include "minecraft/PackProfile.h"
+#include "settings/INIFile.h"
+#include <QTemporaryDir>
+#include <QDirIterator>
+#include <QFutureWatcher>
+#include <QtConcurrentRun>
 #include "BaseInstance.h"
 #include "InstanceTask.h"
 #include "settings/INISettingsObject.h"
 #include "minecraft/legacy/LegacyInstance.h"
 #include "NullInstance.h"
 #include "minecraft/MinecraftInstance.h"
+#include "minecraft/PackProfile.h"
 #include "FileSystem.h"
 #include "ExponentialSeries.h"
 #include "WatchLock.h"
@@ -291,6 +303,9 @@ void InstanceList::deleteInstance(const InstanceId& id)
         qDebug() << "Cannot delete instance" << id << ". No such instance is present (deleted externally?).";
         return;
     }
+
+    if (inst->isApplyingPackUpdate())
+        return;
 
     if(m_instanceGroupIndex.remove(id))
     {
@@ -772,6 +787,174 @@ void InstanceList::on_GroupStateChanged(const QString& group, bool collapsed)
     saveGroupList();
 }
 
+namespace
+{
+struct PackFileChange
+{
+    QString source;
+    QString target;
+    QString backup;
+    bool placed = false;
+};
+
+bool safePackTarget(const QString& root, const QString& path)
+{
+    const QDir directory(root);
+    const auto relative = directory.relativeFilePath(path);
+    if (relative.isEmpty() || QDir::isAbsolutePath(relative) || relative.contains(':') ||
+        relative == "." || relative == ".." || relative.startsWith("../"))
+        return false;
+    auto probe = directory.absolutePath();
+    for (const auto& part : relative.split('/')) {
+        probe = FS::PathCombine(probe, part);
+        if (QFileInfo(probe).isSymLink())
+            return false;
+    }
+    return true;
+}
+
+QString applyPackUpdate(const QString& root, const QString& gameRoot, const QString& staging)
+{
+    const QDir stagedGame(FS::PathCombine(staging, ".minecraft"));
+    const QDir targetGame(gameRoot);
+    QStringList installed;
+    QStringList incoming;
+    if (!PackContents::read(staging, incoming))
+        return QObject::tr("The selected archive could not be installed as a managed modpack.");
+    PackContents::read(root, installed);
+
+    INIFile oldSettings;
+    INIFile newSettings;
+    const auto stagedConfig = FS::PathCombine(staging, "instance.cfg");
+    if (!oldSettings.loadFile(FS::PathCombine(root, "instance.cfg")) ||
+        !newSettings.loadFile(stagedConfig))
+        return QObject::tr("Could not read the modpack settings.");
+    for (const auto& key : {"PackProvider", "PackId", "PackSlug", "PackName", "PackVersionId",
+                           "PackVersionLabel", "PackIconUrl", "PackSourceUrl", "PackInstalledAt",
+                           "PackManifestSha512"}) {
+        oldSettings.set(key, newSettings.value(key));
+    }
+    if (!oldSettings.saveFile(stagedConfig))
+        return QObject::tr("Could not preserve the instance settings.");
+
+    QTemporaryDir backup(FS::PathCombine(QFileInfo(staging).absolutePath(), "pack-backup-XXXXXX"));
+    if (!backup.isValid())
+        return QObject::tr("Could not create a backup directory for the update.");
+
+    QList<PackFileChange> changes;
+    QSet<QString> destinations;
+    const auto plan = [&](const QString& source, const QString& target) {
+        if (destinations.contains(target))
+            return;
+        PackFileChange change;
+        change.source = source;
+        change.target = target;
+        changes.append(change);
+        destinations.insert(target);
+    };
+    const auto isSave = [](const QString& relative) {
+        return relative.startsWith("saves/", Qt::CaseInsensitive);
+    };
+    QStringList retained;
+    QDirIterator stagedFiles(stagedGame.absolutePath(), QDir::Files | QDir::Hidden | QDir::NoSymLinks,
+                             QDirIterator::Subdirectories);
+    while (stagedFiles.hasNext()) {
+        const auto source = stagedFiles.next();
+        const auto relative = stagedGame.relativeFilePath(source);
+        auto target = targetGame.filePath(relative);
+        if (isSave(relative) && QFileInfo::exists(target)) {
+            incoming.removeAll(relative);
+            continue;
+        }
+        const auto canonical = ModMetadataIndex::canonicalFileName(relative);
+        const auto disabled = canonical + QStringLiteral(".disabled");
+        if (installed.contains(canonical) || installed.contains(disabled)) {
+            const bool hadEnabled = QFileInfo::exists(targetGame.filePath(canonical));
+            const bool hadDisabled = QFileInfo::exists(targetGame.filePath(disabled));
+            if (hadEnabled != hadDisabled) {
+                const auto retainedPath = hadEnabled ? canonical : disabled;
+                if (retainedPath != relative) {
+                    target = targetGame.filePath(retainedPath);
+                    incoming.removeAll(relative);
+                    retained.append(retainedPath);
+                }
+            }
+        }
+        plan(source, target);
+    }
+    incoming.append(retained);
+    if (!PackContents::write(staging, incoming))
+        return QObject::tr("Could not update the list of pack files.");
+
+    QHash<QString, std::shared_ptr<ModMetadataIndex>> indexes;
+    for (const auto& relative : PackContents::staleEntries(installed, incoming)) {
+        const auto target = targetGame.filePath(relative);
+        if (isSave(relative) || !QFileInfo::exists(target))
+            continue;
+        plan({}, target);
+
+        const auto parent = QFileInfo(target).absolutePath();
+        auto& metadata = indexes[parent];
+        if (!metadata) {
+            metadata = std::make_shared<ModMetadataIndex>(QDir(parent));
+            metadata->load();
+        }
+        const auto sidecar = metadata->sidecarPathFor(QFileInfo(target).fileName());
+        if (!sidecar.isEmpty())
+            plan({}, sidecar);
+    }
+    for (const auto& name : {QStringLiteral("mmc-pack.json"), QStringLiteral("instance.cfg"),
+                             QFileInfo(PackContents::listPath(staging)).fileName()}) {
+        const auto source = FS::PathCombine(staging, name);
+        if (!QFileInfo::exists(source))
+            return QObject::tr("The staged modpack is missing %1.").arg(name);
+        plan(source, FS::PathCombine(root, name));
+    }
+
+    for (const auto& change : changes) {
+        const QFileInfo target(change.target);
+        if (!safePackTarget(root, change.target) || (target.exists() && !target.isFile()))
+            return QObject::tr("Cannot replace %1 safely.").arg(change.target);
+    }
+
+    int position = 0;
+    for (; position < changes.size(); ++position) {
+        auto& change = changes[position];
+        if (!FS::ensureFilePathExists(change.target))
+            break;
+        if (QFileInfo::exists(change.target)) {
+            const auto original = backup.filePath(QString::number(position));
+            if (!QFile::rename(change.target, original))
+                break;
+            change.backup = original;
+        }
+        if (!change.source.isEmpty()) {
+            if (!QFile::rename(change.source, change.target))
+                break;
+            change.placed = true;
+        }
+    }
+
+    if (position == changes.size())
+        return {};
+
+    bool restored = true;
+    const auto failedPath = changes.at(position).target;
+    for (; position >= 0; --position) {
+        const auto& change = changes.at(position);
+        if (change.placed && !QFile::rename(change.target, change.source))
+            restored = false;
+        if (!change.backup.isEmpty() && !QFile::rename(change.backup, change.target))
+            restored = false;
+    }
+    if (!restored) {
+        backup.setAutoRemove(false);
+        return QObject::tr("Could not restore every file. The update backup is in %1.").arg(backup.path());
+    }
+    return QObject::tr("Could not update %1. The original files were restored.").arg(failedPath);
+}
+}
+
 class InstanceStaging : public Task
 {
 Q_OBJECT
@@ -788,10 +971,14 @@ public:
     {
         m_parent = parent;
         m_child.reset(child);
+        if (auto* instanceTask = qobject_cast<InstanceTask*>(child))
+            m_overrideInstance = instanceTask->overrideInstance();
         connect(child, &Task::succeeded, this, &InstanceStaging::childSucceded);
         connect(child, &Task::failed, this, &InstanceStaging::childFailed);
         connect(child, &Task::status, this, &InstanceStaging::setStatus);
         connect(child, &Task::progress, this, &InstanceStaging::setProgress);
+        connect(child, &Task::details, this, &InstanceStaging::setDetails);
+        propagateStepsFrom(child);
         m_instanceName = instanceName;
         m_groupName = groupName;
         m_stagingPath = stagingPath;
@@ -799,13 +986,18 @@ public:
         connect(&m_backoffTimer, &QTimer::timeout, this, &InstanceStaging::childSucceded);
     }
 
-    virtual ~InstanceStaging() {};
+    ~InstanceStaging() override
+    {
+        m_commit.waitForFinished();
+        if (m_updatingInstance)
+            m_updatingInstance->setApplyingPackUpdate(false);
+    }
 
 
     // FIXME/TODO: add ability to abort during instance commit retries
     bool abort() override
     {
-        if(m_child && m_child->canAbort())
+        if(m_child && m_child->isRunning() && m_child->canAbort())
         {
             return m_child->abort();
         }
@@ -813,7 +1005,7 @@ public:
     }
     bool canAbort() const override
     {
-        if(m_child && m_child->canAbort())
+        if(m_child && !m_child->isFinished() && m_child->canAbort())
         {
             return true;
         }
@@ -823,6 +1015,10 @@ public:
 protected:
     virtual void executeTask() override
     {
+        if (m_stagingPath.isEmpty()) {
+            emitFailed(tr("Could not create a directory to prepare the instance."));
+            return;
+        }
         m_child->start();
     }
     QStringList warnings() const override
@@ -833,6 +1029,38 @@ protected:
 private slots:
     void childSucceded()
     {
+        if (!m_overrideInstance.isEmpty()) {
+            auto instance = std::dynamic_pointer_cast<MinecraftInstance>(
+                m_parent->getInstanceById(m_overrideInstance));
+            if (!instance || instance->isRunning() || instance->isApplyingPackUpdate()) {
+                m_parent->destroyStagingPath(m_stagingPath);
+                emitFailed(tr("The instance is no longer available for an update."));
+                return;
+            }
+
+            m_updatingInstance = instance;
+            instance->setApplyingPackUpdate(true);
+            setStatus(tr("Applying modpack update..."));
+            setProgress(0, 0);
+            connect(&m_commitWatcher, &QFutureWatcher<QString>::finished, this, [this, instance] {
+                const auto error = m_commitWatcher.result();
+                m_parent->destroyStagingPath(m_stagingPath);
+                if (error.isEmpty()) {
+                    instance->reloadSettings();
+                    instance->getPackProfile()->reload(Net::Mode::Offline);
+                }
+                m_updatingInstance.reset();
+                instance->setApplyingPackUpdate(false);
+                if (error.isEmpty())
+                    emitSucceeded();
+                else
+                    emitFailed(error);
+            });
+            m_commit = QtConcurrent::run(applyPackUpdate, instance->instanceRoot(),
+                                         instance->gameRoot(), m_stagingPath);
+            m_commitWatcher.setFuture(m_commit);
+            return;
+        }
         unsigned sleepTime = backoff();
         if(m_parent->commitStagedInstance(m_stagingPath, m_instanceName, m_groupName))
         {
@@ -851,7 +1079,10 @@ private slots:
     void childFailed(const QString & reason)
     {
         m_parent->destroyStagingPath(m_stagingPath);
-        emitFailed(reason);
+        if (m_child->wasAborted())
+            emitAborted();
+        else
+            emitFailed(reason);
     }
 
 private:
@@ -862,6 +1093,10 @@ private:
      */
     ExponentialSeries backoff;
     QString m_stagingPath;
+    QString m_overrideInstance;
+    InstancePtr m_updatingInstance;
+    QFuture<QString> m_commit;
+    QFutureWatcher<QString> m_commitWatcher;
     InstanceList * m_parent;
     unique_qobject_ptr<Task> m_child;
     QString m_instanceName;

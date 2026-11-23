@@ -65,6 +65,7 @@ void LibrariesTask::executeTask()
     connect(downloadJob.get(), &NetJob::succeeded, this, &LibrariesTask::emitSucceeded);
     connect(downloadJob.get(), &NetJob::failed, this, &LibrariesTask::jarlibFailed);
     connect(downloadJob.get(), &NetJob::progress, this, &LibrariesTask::progress);
+    propagateStepsFrom(downloadJob.get());
     downloadJob->start();
 }
 

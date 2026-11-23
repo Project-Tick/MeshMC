@@ -59,6 +59,12 @@ public:
     }
 
     virtual bool selectPage(QString pageId) override;
+    void hidePageList();
+
+signals:
+    void selectedPageChanged(BasePage* previous, BasePage* selected);
+
+public:
 
     void refreshContainer() override;
     virtual void setParentContainer(BasePageContainer * container)

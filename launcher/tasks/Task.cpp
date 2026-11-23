@@ -166,3 +166,33 @@ QStringList Task::warnings() const
 {
     return m_Warnings;
 }
+
+void Task::setDetails(const QString& text)
+{
+    if (m_details == text)
+        return;
+    m_details = text;
+    emit details(m_details);
+}
+
+void Task::propagateStepsFrom(Task* task)
+{
+    for (int i = m_stepSources.size() - 1; i >= 0; --i) {
+        if (m_stepSources.at(i).isNull())
+            m_stepSources.removeAt(i);
+    }
+    if (!task || task == this || m_stepSources.contains(task))
+        return;
+    m_stepSources.append(task);
+    connect(task, &Task::stepProgress, this, &Task::stepProgress);
+}
+
+TaskStepProgressList Task::getStepProgress() const
+{
+    TaskStepProgressList steps;
+    for (const auto& task : m_stepSources) {
+        if (task)
+            steps.append(task->getStepProgress());
+    }
+    return steps;
+}

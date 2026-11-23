@@ -112,7 +112,9 @@ void Download::startImpl()
     {
         m_requested_url = m_url;
     }
-    m_mirrors = (m_options & Option::NoMirrors) ? QList<QUrl>{m_requested_url} : Mirrors::candidates(m_requested_url);
+    m_mirrors = m_explicitMirrors;
+    if (m_mirrors.isEmpty())
+        m_mirrors = (m_options & Option::NoMirrors) ? QList<QUrl>{m_requested_url} : Mirrors::candidates(m_requested_url);
     m_mirror = 0;
     m_mirrorSaidNotFound = false;
     m_url = m_mirrors.first();
@@ -145,6 +147,12 @@ void Download::startRequest()
     }
 
     request.setHeader(QNetworkRequest::UserAgentHeader, BuildConfig.USER_AGENT);
+
+    if (!BuildConfig.CURSEFORGE_API_KEY.isEmpty() && m_url.scheme() == "https" &&
+        m_url.host() == "api.curseforge.com") {
+        request.setRawHeader("x-api-key", BuildConfig.CURSEFORGE_API_KEY.toUtf8());
+        request.setRawHeader("Accept", "application/json");
+    }
 
     QNetworkReply *rep = m_network->get(request);
 
@@ -421,4 +429,11 @@ bool Net::Download::abort()
 bool Net::Download::canAbort()
 {
     return true;
+}
+
+Net::Download::Ptr Net::Download::makeFileWithMirrors(const QList<QUrl>& urls, QString path)
+{
+    auto download = makeFile(urls.value(0), std::move(path), Option::NoMirrors);
+    download->m_explicitMirrors = urls;
+    return download;
 }

@@ -19,6 +19,7 @@
 #include <QCryptographicHash>
 #include <QString>
 #include <QUrl>
+#include <QList>
 
 namespace Modrinth {
 struct File
@@ -28,7 +29,8 @@ struct File
     QByteArray hash;
     /// -1 when the pack doesn't say
     qint64 size = -1;
-    // TODO: should this support multiple download URLs, like the JSON does?
     QUrl download;
+    QList<QUrl> mirrors;
+    QString sha1;
 };
 }

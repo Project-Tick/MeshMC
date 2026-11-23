@@ -24,8 +24,14 @@
 #include <JlCompress.h>
 #include <nonstd/optional>
 
+#include <functional>
+
 namespace MMCZip
 {
+    using FilterFileFunction = std::function<bool(const QFileInfo&)>;
+    bool collectFileListRecursively(const QString& rootDir, const QString& subDir,
+                                    QFileInfoList* files, FilterFileFunction excludeFilter);
+
 
     /**
      * Merge two zip files, using a filter function
@@ -63,6 +69,10 @@ namespace MMCZip
      * in themselves (themes): the sizes in an archive can lie, so the limit counts what is
      * actually written. Fails, removing what was extracted, when there is more.
      */
+    nonstd::optional<QStringList> extractSubDirWithProgress(
+        QuaZip* zip, const QString& subdir, const QString& target,
+        const std::function<bool(int, int, const QString&)>& progress);
+
     nonstd::optional<QStringList> extractSubDirLimited(QuaZip *zip, const QString & subdir, const QString &target, qint64 maxBytes);
 
     bool extractRelFile(QuaZip *zip, const QString & file, const QString &target);

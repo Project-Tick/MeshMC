@@ -38,6 +38,7 @@ public:
     QString resourcePacksDir() const;
     QString texturePacksDir() const;
     QString shaderPacksDir() const;
+    QString dataPacksDir() const;
     QString modsRoot() const override;
     QString coreModsDir() const;
     QString modsCacheLocation() const;
@@ -71,6 +72,7 @@ public:
     std::shared_ptr<ModFolderModel> resourcePackList() const;
     std::shared_ptr<ModFolderModel> texturePackList() const;
     std::shared_ptr<ModFolderModel> shaderPackList() const;
+    std::shared_ptr<ModFolderModel> dataPackList() const;
     std::shared_ptr<WorldList> worldList() const;
     std::shared_ptr<GameOptions> gameOptionsModel() const;
 
@@ -122,6 +124,7 @@ protected: // data
     mutable std::shared_ptr<ModFolderModel> m_core_mod_list;
     mutable std::shared_ptr<ModFolderModel> m_resource_pack_list;
     mutable std::shared_ptr<ModFolderModel> m_shader_pack_list;
+    mutable std::shared_ptr<ModFolderModel> m_data_pack_list;
     mutable std::shared_ptr<ModFolderModel> m_texture_pack_list;
     mutable std::shared_ptr<WorldList> m_world_list;
     mutable std::shared_ptr<GameOptions> m_game_options;

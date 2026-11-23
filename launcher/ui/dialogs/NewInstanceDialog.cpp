@@ -36,6 +36,7 @@
 
 #include "ui/widgets/PageContainer.h"
 #include "ui/pages/modplatform/VanillaPage.h"
+#include "ui/pages/modplatform/flame/FlamePage.h"
 #include "ui/pages/modplatform/atlauncher/AtlPage.h"
 #include "ui/pages/modplatform/legacy_ftb/Page.h"
 #include "ui/pages/modplatform/import_ftb/FTBAPage.h"
@@ -128,12 +129,14 @@ void NewInstanceDialog::accept()
 QList<BasePage *> NewInstanceDialog::getPages()
 {
     importPage = new ImportPage(this);
+    flamePage = new FlamePage(this);
     auto technicPage = new TechnicPage(this);
     return
     {
         new VanillaPage(this),
         importPage,
         new ModrinthPage(this),
+        flamePage,
         new AtlPage(this),
         new ImportFTB::FTBAPage(this),
         new LegacyFTB::Page(this),

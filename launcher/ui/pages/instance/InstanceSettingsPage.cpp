@@ -98,6 +98,10 @@ bool InstanceSettingsPage::apply()
 
 void InstanceSettingsPage::applySettings()
 {
+    if (dynamic_cast<MinecraftInstance*>(m_instance)) {
+        m_settings->set("GlobalDataPacksPath", ui->globalDataPacksPath->text().trimmed());
+        m_settings->set("GlobalDataPacksEnabled", ui->globalDataPacksGroupBox->isChecked());
+    }
     SettingsObject::Lock lock(m_settings);
 
     // Console
@@ -260,6 +264,12 @@ void InstanceSettingsPage::applySettings()
 
 void InstanceSettingsPage::loadSettings()
 {
+    const bool minecraft = dynamic_cast<MinecraftInstance*>(m_instance) != nullptr;
+    ui->globalDataPacksGroupBox->setVisible(minecraft);
+    if (minecraft) {
+        ui->globalDataPacksPath->setText(m_settings->get("GlobalDataPacksPath").toString());
+        ui->globalDataPacksGroupBox->setChecked(m_settings->get("GlobalDataPacksEnabled").toBool());
+    }
     // Console
     ui->consoleSettingsBox->setChecked(m_settings->get("OverrideConsole").toBool());
     ui->showConsoleCheck->setChecked(m_settings->get("ShowConsole").toBool());

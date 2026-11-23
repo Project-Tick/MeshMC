@@ -493,6 +493,11 @@ add_unit_test(Library
     )
 
 # FIXME: shares data with FileSystem test
+add_unit_test(PackContents
+    SOURCES modplatform/PackContents_test.cpp
+    LIBS Launcher_logic
+)
+
 add_unit_test(ModFolderModel
     SOURCES minecraft/mod/ModFolderModel_test.cpp
     DATA testdata
@@ -639,6 +644,15 @@ set(MODRINTH_SOURCES
     modplatform/modrinth/ModrinthHashLookupRequest.cpp
 )
 
+set(FLAME_SOURCES
+    modplatform/flame/FlamePackIndex.cpp
+    modplatform/flame/FlamePackIndex.h
+    modplatform/flame/PackManifest.h
+    modplatform/flame/PackManifest.cpp
+    modplatform/flame/FileResolvingTask.h
+    modplatform/flame/FileResolvingTask.cpp
+)
+
 add_unit_test(Index
     SOURCES meta/Index_test.cpp
     LIBS Launcher_logic
@@ -655,6 +669,54 @@ add_unit_test(UpdateStep
 find_package(ZLIB REQUIRED)
 
 set(LOGIC_SOURCES
+    modplatform/PackContents.cpp
+    modplatform/PackContents.h
+    modplatform/ManagedPackVersions.cpp
+    modplatform/ManagedPackVersions.h
+    archive/ExportToZipTask.h
+    archive/ExportToZipTask.cpp
+    modplatform/flame/FlamePackExportTask.h
+    modplatform/flame/FlamePackExportTask.cpp
+    modplatform/modrinth/ModrinthPackExportTask.h
+    modplatform/modrinth/ModrinthPackExportTask.cpp
+    modplatform/ContentApi.h
+    modplatform/ContentListExport.cpp
+    modplatform/ContentListExport.h
+    modplatform/ContentDownloadTask.h
+    modplatform/ContentDownloadTask.cpp
+    modplatform/ContentProviderModel.h
+    modplatform/ContentProviderModel.cpp
+    modplatform/ContentType.h
+    modplatform/DependencyResolver.h
+    modplatform/DependencyResolver.cpp
+    modplatform/ModDownloadTypes.h
+    modplatform/ModInstallConflictAnalyzer.h
+    modplatform/ModInstallConflictAnalyzer.cpp
+    modplatform/ModUpdateCheckTask.h
+    modplatform/ModUpdateCheckTask.cpp
+    modplatform/VersionPicker.h
+    modplatform/VersionPicker.cpp
+    modplatform/flame/FlameApi.h
+    modplatform/flame/FlameApi.cpp
+    modplatform/flame/FlameContentModel.h
+    modplatform/flame/FlameContentModel.cpp
+    modplatform/flame/FlameFingerprint.h
+    modplatform/flame/FlameFingerprint.cpp
+    modplatform/modrinth/ModrinthApi.h
+    modplatform/modrinth/ModrinthApi.cpp
+    modplatform/modrinth/ModrinthContentModel.h
+    modplatform/modrinth/ModrinthContentModel.cpp
+    minecraft/mod/ModMetadataIndex.h
+    minecraft/mod/DataPackFolderModel.cpp
+    minecraft/mod/DataPackFolderModel.h
+    minecraft/mod/PackLayout.cpp
+    minecraft/mod/PackLayout.h
+    minecraft/mod/ModMetadataIndex.cpp
+    minecraft/mod/PackwizSidecar.cpp
+    minecraft/mod/PackwizSidecar.h
+    net/JsonPost.h
+    net/JsonPost.cpp
+    QtCompat.h
     ${CORE_SOURCES}
     ${PATHMATCHER_SOURCES}
     ${NET_SOURCES}
@@ -676,9 +738,40 @@ set(LOGIC_SOURCES
     ${TECHNIC_SOURCES}
     ${ATLAUNCHER_SOURCES}
     ${MODRINTH_SOURCES}
+    ${FLAME_SOURCES}
 )
 
 SET(LAUNCHER_SOURCES
+    ui/pages/instance/DataPackPage.cpp
+    ui/pages/instance/DataPackPage.h
+    ui/pages/instance/ManagedPackPage.cpp
+    ui/pages/instance/ManagedPackPage.h
+    FileIgnoreProxy.h
+    FileIgnoreProxy.cpp
+    ui/dialogs/ExportPackDialog.h
+    ui/dialogs/ExportPackDialog.cpp
+    ui/dialogs/BlockedModsDialog.h
+    ui/dialogs/UntrustedModsDialog.cpp
+    ui/dialogs/UntrustedModsDialog.h
+    ui/dialogs/BlockedModsDialog.cpp
+    ui/dialogs/DownloadContentDialog.h
+    ui/dialogs/DownloadContentDialog.cpp
+    ui/dialogs/DownloadSummaryDialog.h
+    ui/dialogs/ExportListDialog.cpp
+    ui/dialogs/ExportListDialog.h
+    ui/dialogs/DownloadSummaryDialog.cpp
+    ui/dialogs/ModUpdateDialog.h
+    ui/dialogs/ModUpdateDialog.cpp
+    ui/widgets/ContentFilterWidget.h
+    ui/widgets/ContentFilterWidget.cpp
+    ui/widgets/CheckComboBox.cpp
+    ui/widgets/CheckComboBox.h
+    ui/widgets/ProjectDescriptionPage.h
+    ui/widgets/ProjectDescriptionPage.cpp
+    ui/widgets/ProjectItemDelegate.h
+    ui/widgets/ProjectItemDelegate.cpp
+    ui/pages/modplatform/ContentProviderPage.h
+    ui/pages/modplatform/ContentProviderPage.cpp
     # Application base
     Application.h
     Application.cpp
@@ -870,6 +963,11 @@ SET(LAUNCHER_SOURCES
     ui/pages/modplatform/modrinth/ModrinthPage.cpp
     ui/pages/modplatform/modrinth/ModrinthPage.h
 
+    ui/pages/modplatform/flame/FlameModel.cpp
+    ui/pages/modplatform/flame/FlameModel.h
+    ui/pages/modplatform/flame/FlamePage.cpp
+    ui/pages/modplatform/flame/FlamePage.h
+
     ui/pages/modplatform/technic/TechnicModel.cpp
     ui/pages/modplatform/technic/TechnicModel.h
     ui/pages/modplatform/technic/TechnicPage.cpp
@@ -909,6 +1007,8 @@ SET(LAUNCHER_SOURCES
     ui/dialogs/OfflineNameDialog.h
     ui/pagedialog/PageDialog.cpp
     ui/pagedialog/PageDialog.h
+    ui/widgets/TaskStepProgressBar.cpp
+    ui/widgets/TaskStepProgressBar.h
     ui/dialogs/ProgressDialog.cpp
     ui/dialogs/ProgressDialog.h
     ui/dialogs/UpdateDialog.cpp
@@ -1012,6 +1112,9 @@ else()
 endif()
 
 qt5_wrap_ui(LAUNCHER_UI
+    ui/pages/instance/ManagedPackPage.ui
+    ui/dialogs/ExportPackDialog.ui
+    ui/pages/modplatform/ContentProviderPage.ui
     ui/dialogs/AboutDialog.ui
     ui/dialogs/AccountsDialog.ui
     ui/dialogs/CopyInstanceDialog.ui
@@ -1023,6 +1126,8 @@ qt5_wrap_ui(LAUNCHER_UI
     ui/dialogs/NewInstanceDialog.ui
     ui/dialogs/NotificationDialog.ui
     ui/dialogs/ProfileSelectDialog.ui
+    ui/widgets/TaskStepProgressBar.ui
+    ui/dialogs/UntrustedModsDialog.ui
     ui/dialogs/ProgressDialog.ui
     ui/dialogs/UpdateDialog.ui
     ui/pages/global/ExternalToolsPage.ui
@@ -1049,6 +1154,7 @@ qt5_wrap_ui(LAUNCHER_UI
     ui/pages/modplatform/import_ftb/FTBAPage.ui
     ui/pages/modplatform/legacy_ftb/Page.ui
     ui/pages/modplatform/modrinth/ModrinthPage.ui
+    ui/pages/modplatform/flame/FlamePage.ui
     ui/pages/modplatform/technic/TechnicPage.ui
     ui/widgets/CustomCommands.ui
     ui/widgets/CustomCommands.ui
