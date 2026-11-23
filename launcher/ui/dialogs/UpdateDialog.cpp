@@ -55,11 +55,11 @@ void UpdateDialog::loadChangelog()
 {
     dljob = new NetJob("Changelog", APPLICATION->network());
     QString url;
-    url = QString("https://api.github.com/repos/MultiMC/Launcher/compare/%1...develop").arg(BuildConfig.GIT_COMMIT);
+    url = QString("https://api.github.com/repos/Project-Tick/MeshMC/compare/%1...develop").arg(BuildConfig.GIT_COMMIT);
     if(m_target != "develop")
     {
         // updater v2 offers builds of any tier: compare with the one offered
-        url = QString("https://api.github.com/repos/MultiMC/Launcher/compare/%1...%2").arg(BuildConfig.GIT_COMMIT, m_target);
+        url = QString("https://api.github.com/repos/Project-Tick/MeshMC/compare/%1...%2").arg(BuildConfig.GIT_COMMIT, m_target);
     }
     m_changelogType = CHANGELOG_COMMITS;
     dljob->addNetAction(Net::Download::makeByteArray(QUrl(url), &changelogData));
@@ -74,7 +74,7 @@ QString reprocessMarkdown(QByteArray markdown)
     QString output = hoedown.process(markdown);
 
     // HACK: easier than customizing hoedown
-    output.replace(QRegExp("GH-([0-9]+)"), "<a href=\"https://github.com/MultiMC/Launcher/issues/\\1\">GH-\\1</a>");
+    output.replace(QRegExp("GH-([0-9]+)"), "<a href=\"https://github.com/Project-Tick/MeshMC/issues/\\1\">GH-\\1</a>");
     qDebug() << output;
     return output;
 }
@@ -115,7 +115,7 @@ QString reprocessCommits(QByteArray json)
                 result += "<tr><td>";
                 if(issuenr.length())
                 {
-                    result += QString("<a href=\"https://github.com/MultiMC/Launcher/issues/%1\">GH-%2</a>").arg(issuenr, issuenr);
+                    result += QString("<a href=\"https://github.com/Project-Tick/MeshMC/issues/%1\">GH-%2</a>").arg(issuenr, issuenr);
                 }
                 else if(prefix.length())
                 {
