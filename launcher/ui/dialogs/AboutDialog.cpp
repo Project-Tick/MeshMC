@@ -33,10 +33,13 @@ QString getCreditsHtml(QStringList patrons)
     stream.setCodec(QTextCodec::codecForName("UTF-8"));
     stream << "<center>\n";
 
-    stream << "<h3>" << QObject::tr("Original Author", "About Credits") << "</h3>\n";
+    stream << "<h3>" << QObject::tr("MeshMC Maintainer", "About Credits") << "</h3>\n";
+    stream << "<p>Mehmet Samet Duman &lt;<a href='mailto:yongdohyun@projecttick.org'>yongdohyun@projecttick.org</a>&gt;</p>\n";
+
+    stream << "<h3>" << QObject::tr("MultiMC Author", "About Credits") << "</h3>\n";
     stream << "<p>Andrew Okin &lt;<a href='mailto:forkk@forkk.net'>forkk@forkk.net</a>&gt;</p>\n";
 
-    stream << "<h3>" << QObject::tr("Maintainer", "About Credits") << "</h3>\n";
+    stream << "<h3>" << QObject::tr("MultiMC Maintainer", "About Credits") << "</h3>\n";
     stream << "<p>Petr Mr&aacute;zek &lt;<a href='mailto:peterix@gmail.com'>peterix@gmail.com</a>&gt;</p>\n";
 
     // TODO: grab contributors from git history
@@ -114,28 +117,9 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AboutDia
     connect(ui->closeButton, SIGNAL(clicked()), SLOT(close()));
 
     connect(ui->aboutQt, &QPushButton::clicked, &QApplication::aboutQt);
-
-    loadPatronList();
 }
 
 AboutDialog::~AboutDialog()
 {
     delete ui;
 }
-
-void AboutDialog::loadPatronList()
-{
-    netJob = new NetJob("Patreon Patron List", APPLICATION->network());
-    netJob->addNetAction(Net::Download::makeByteArray(QUrl(BuildConfig.PATRONS_URL), &dataSink));
-    connect(netJob.get(), &NetJob::succeeded, this, &AboutDialog::patronListLoaded);
-    netJob->start();
-}
-
-void AboutDialog::patronListLoaded()
-{
-    QString patronListStr(dataSink);
-    dataSink.clear();
-    QString html = getCreditsHtml(patronListStr.split("\n", QString::SkipEmptyParts));
-    ui->creditsText->setHtml(html);
-}
-
