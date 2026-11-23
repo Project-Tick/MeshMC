@@ -6,8 +6,9 @@ import sys
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
-from tools.updater_v2.publish_release import _add_metadata_assets, _next_tags
+from tools.updater_v2.publish_release import _add_metadata_assets, _next_tags, _reuse_draft_release
 from tools.updater_v2.publish_release import make_build, public_key, verify_signature
 
 
@@ -23,6 +24,12 @@ class PreparePayloadTest(unittest.TestCase):
             executable = source / "meshmc"
             executable.write_bytes(b"launcher")
             executable.chmod(0o755)
+            signature_marker = (
+                source / "MeshMC.app/Contents/Frameworks/QtCore.framework/"
+                "_CodeSignature/CodeSignature"
+            )
+            signature_marker.parent.mkdir(parents=True)
+            signature_marker.touch()
             (source / "current").symlink_to("meshmc")
 
             payload_root = root / "artifacts"
@@ -53,6 +60,38 @@ class PreparePayloadTest(unittest.TestCase):
                              "build-42/file-" + hashlib.sha256(b"launcher").hexdigest())
             self.assertEqual(variant["links"], [{"path": "current", "target": "meshmc"}])
             self.assertEqual((assets / ("file-" + hashlib.sha256(b"launcher").hexdigest())).read_bytes(), b"launcher")
+            self.assertNotIn("MeshMC.app/Contents/Frameworks/QtCore.framework/_CodeSignature/CodeSignature",
+                             {entry["path"] for entry in variant["files"]})
+            self.assertNotIn("file-" + hashlib.sha256(b"").hexdigest(),
+                             {asset.name for asset in assets.iterdir()})
+
+    def test_rejects_unexpected_zero_byte_file(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "install"
+            source.mkdir()
+            (source / "unexpected-empty").touch()
+
+            payload_root = root / "artifacts"
+            payload = payload_root / "updater-linux"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "tools/updater_v2/prepare_payload.py"),
+                    "--source", str(source),
+                    "--output", str(payload),
+                    "--variant", "linux-x86_64-qt5",
+                    "--name", "Linux x86_64 Qt 5",
+                    "--requirements",
+                    '{"os":"linux","arch":"x86_64","glibc":"2.19","glibcxx":"3.4.21","qt":"5.15.2"}',
+                ],
+                check=True,
+            )
+
+            output = root / "output"
+            output.mkdir()
+            with self.assertRaisesRegex(ValueError, "zero-byte updater file"):
+                make_build(payload_root, 42, "a" * 40, "2026-11-22T00:00:00Z", output)
 
     def test_rejects_archive_path_traversal(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -157,6 +196,21 @@ class TierTagsTest(unittest.TestCase):
             _next_tags(12, "master", {"latest": 11, "testing": 11, "stable": 7}),
             {"latest": 12, "testing": 12, "stable": 12},
         )
+
+
+class DraftReleaseRetryTest(unittest.TestCase):
+    @patch("tools.updater_v2.publish_release.command")
+    def test_reuses_draft_after_removing_partial_assets(self, command):
+        release = {"draft": True, "assets": [{"id": 123}]}
+        self.assertTrue(_reuse_draft_release("Project-Tick/MeshMC-Updates", "build-1", release))
+        command.assert_called_once_with(
+            "gh", "api", "--method", "DELETE",
+            "repos/Project-Tick/MeshMC-Updates/releases/assets/123",
+        )
+
+    def test_refuses_to_replace_published_release(self):
+        with self.assertRaisesRegex(ValueError, "already exists and is published"):
+            _reuse_draft_release("Project-Tick/MeshMC-Updates", "build-1", {"draft": False})
 
 
 if __name__ == "__main__":

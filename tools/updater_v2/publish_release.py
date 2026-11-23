@@ -301,12 +301,21 @@ def _variant_files(root: Path, variant: dict, build_number: int, assets: Path) -
         if not path.is_file():
             continue
 
+        size = path.stat().st_size
+        if size == 0:
+            if (
+                path.name == "CodeSignature"
+                and path.parent.name == "_CodeSignature"
+                and path.parent.parent.name.endswith(".framework")
+            ):
+                continue
+            raise ValueError(f"zero-byte updater file cannot be uploaded to a GitHub Release: {relative}")
+
         digest_builder = hashlib.sha256()
         with path.open("rb") as source:
             for block in iter(lambda: source.read(1024 * 1024), b""):
                 digest_builder.update(block)
         digest = digest_builder.hexdigest()
-        size = path.stat().st_size
         asset_name = f"file-{digest}"
         asset_path = assets / asset_name
         if asset_path.exists():
@@ -390,6 +399,19 @@ def _release_list(repository: str) -> list[dict]:
     if not isinstance(releases, list):
         raise ValueError("GitHub returned an unexpected releases response")
     return releases
+
+
+def _reuse_draft_release(repository: str, release_tag: str, release: dict | None) -> bool:
+    if not release:
+        return False
+    if not release.get("draft"):
+        raise ValueError(f"release {release_tag} already exists and is published")
+    for asset in release.get("assets", []):
+        command(
+            "gh", "api", "--method", "DELETE",
+            f"repos/{repository}/releases/assets/{asset['id']}",
+        )
+    return True
 
 
 def _target_release(repository: str) -> dict | None:
@@ -689,8 +711,11 @@ def publish(args) -> None:
         history_dir.mkdir()
         existing = _release_list(repository)
         release_tag = f"build-{build_number}"
-        if any(release.get("tag_name") == release_tag for release in existing):
-            raise ValueError(f"release {release_tag} already exists; remove its draft before retrying")
+        existing_build = next(
+            (release for release in existing if release.get("tag_name") == release_tag),
+            None,
+        )
+        reuse_draft = _reuse_draft_release(repository, release_tag, existing_build)
         previous = _target_release(repository)
         previous_builds = []
         if previous:
@@ -714,14 +739,15 @@ def publish(args) -> None:
             advance,
         )
         _initialise_empty_repository(repository)
-        command(
-            "gh", "release", "create", release_tag,
-            "--repo", repository,
-            "--draft",
-            "--title", f"MeshMC updater build {build_number}",
-            "--notes", f"Source commit: {args.commit}\nBranch: {args.branch}",
-            "--target", "main",
-        )
+        if not reuse_draft:
+            command(
+                "gh", "release", "create", release_tag,
+                "--repo", repository,
+                "--draft",
+                "--title", f"MeshMC updater build {build_number}",
+                "--notes", f"Source commit: {args.commit}\nBranch: {args.branch}",
+                "--target", "main",
+            )
 
         all_assets = sorted(content_assets.iterdir()) + sorted(metadata_assets)
         for offset in range(0, len(all_assets), 50):
