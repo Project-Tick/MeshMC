@@ -401,6 +401,25 @@ def _release_list(repository: str) -> list[dict]:
     return releases
 
 
+def _create_draft_release(repository: str, tag: str, title: str, notes: str) -> dict:
+    release = _gh_json(
+        "--method", "POST", f"repos/{repository}/releases",
+        "-f", f"tag_name={tag}",
+        "-F", "draft=true",
+        "-f", f"name={title}",
+        "-f", f"body={notes}",
+        "-f", "target_commitish=main",
+    )
+    if (
+        not isinstance(release, dict)
+        or release.get("tag_name") != tag
+        or release.get("draft") is not True
+        or type(release.get("id")) is not int
+    ):
+        raise ValueError(f"GitHub returned an invalid draft release for {tag}")
+    return release
+
+
 def _reuse_draft_release(repository: str, release_tag: str, release: dict | None) -> bool:
     if not release:
         return False
@@ -748,15 +767,14 @@ def publish(args) -> None:
             advance,
         )
         _initialise_empty_repository(repository)
-        if not reuse_draft:
-            command(
-                "gh", "release", "create", release_tag,
-                "--repo", repository,
-                "--draft",
-                "--title", f"MeshMC updater build {build_number}",
-                "--notes", f"Source commit: {args.commit}\nBranch: {args.branch}",
-                "--target", "main",
-            )
+        release = existing_build if reuse_draft else _create_draft_release(
+            repository,
+            release_tag,
+            f"MeshMC updater build {build_number}",
+            f"Source commit: {args.commit}\nBranch: {args.branch}",
+        )
+        if release is None:
+            raise ValueError(f"GitHub did not return the draft release for {release_tag}")
 
         all_assets = sorted(content_assets.iterdir()) + sorted(metadata_assets)
         for offset in range(0, len(all_assets), 50):
@@ -766,7 +784,6 @@ def publish(args) -> None:
                 "--repo", repository,
             )
 
-        release = _gh_json(f"repos/{repository}/releases/tags/{release_tag}")
         latest = _target_release(repository)
         latest_builds = [
             int(match.group(1))

@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from tools.updater_v2.publish_release import (
     _add_metadata_assets,
+    _create_draft_release,
     _initialise_empty_repository,
     _next_tags,
     _reuse_draft_release,
@@ -216,6 +217,30 @@ class DraftReleaseRetryTest(unittest.TestCase):
     def test_refuses_to_replace_published_release(self):
         with self.assertRaisesRegex(ValueError, "already exists and is published"):
             _reuse_draft_release("Project-Tick/MeshMC-Updates", "build-1", {"draft": False})
+
+    @patch("tools.updater_v2.publish_release._gh_json")
+    def test_uses_created_draft_response(self, gh_json):
+        draft = {"id": 123, "tag_name": "build-1", "draft": True}
+        gh_json.return_value = draft
+
+        self.assertIs(
+            _create_draft_release(
+                "Project-Tick/MeshMC-Updates",
+                "build-1",
+                "MeshMC updater build 1",
+                "Source commit: abc\nBranch: develop",
+            ),
+            draft,
+        )
+        gh_json.assert_called_once_with(
+            "--method", "POST",
+            "repos/Project-Tick/MeshMC-Updates/releases",
+            "-f", "tag_name=build-1",
+            "-F", "draft=true",
+            "-f", "name=MeshMC updater build 1",
+            "-f", "body=Source commit: abc\nBranch: develop",
+            "-f", "target_commitish=main",
+        )
 
 
 class EmptyRepositoryInitTest(unittest.TestCase):
