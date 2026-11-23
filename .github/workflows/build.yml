@@ -260,14 +260,7 @@ jobs:
         shell: bash
         run: |
           case "$RUNNER_OS" in
-            Linux)
-              source_dir="$GITHUB_WORKSPACE/install-appdir"
-              test -d "$source_dir"
-              cp -a "$source_dir" "$RUNNER_TEMP/updater-linux"
-              rm -f "$RUNNER_TEMP/updater-linux/bin/AppImageUpdate.AppImage"
-              source_dir="$RUNNER_TEMP/updater-linux"
-              ;;
-            Windows|macOS) source_dir="$GITHUB_WORKSPACE/install" ;;
+            Linux|Windows|macOS) source_dir="$GITHUB_WORKSPACE/install" ;;
             *) echo "::error::Unsupported updater runner OS: $RUNNER_OS"; exit 1 ;;
           esac
           test -d "$source_dir"

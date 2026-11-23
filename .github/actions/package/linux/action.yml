@@ -144,6 +144,11 @@ runs:
         test -s "$APPIMAGE_DEST"
         test -s "$APPIMAGE_DEST.zsync"
 
+    - name: Install classic tarball
+      shell: bash
+      run: |
+        cmake --install build --config ${{ inputs.build-type }} --prefix install
+
     - name: Upload AppImage
       uses: actions/upload-artifact@v7
       with:
