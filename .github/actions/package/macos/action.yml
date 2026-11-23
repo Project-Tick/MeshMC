@@ -102,13 +102,9 @@ runs:
 
     - name: Create DMG
       shell: bash
-      env:
-        INSTALL_DIR: install
       run: |
-        cd ${{ env.INSTALL_DIR }}
-
         mkdir -p src
-        cp -R "MeshMC.app" src/
+        cp -R "install/MeshMC.app" src/
 
         ln -s /Applications src/
 
@@ -116,7 +112,7 @@ runs:
             -volname "MeshMC ${{ inputs.version }}" \
             -srcfolder src \
             -ov -format ULMO \
-            "../MeshMC.dmg"
+            "MeshMC.dmg"
 
     - name: Upload binary tarball
       uses: actions/upload-artifact@v7
