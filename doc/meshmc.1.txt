@@ -20,6 +20,9 @@ multiple installations of Minecraft at once. It also allows you to easily
 install and remove mods by simply dragging and dropping.
 Here are the current features of MeshMC.
 
+Additionally, if you place a portable.txt file in the root directory of
+MeshMC, portable mode will be activated.
+
 OPTIONS
 -------
 *-d, --dir*='DIRECTORY'::

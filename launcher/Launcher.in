@@ -36,13 +36,13 @@ if [ "x$DEPS_LIST" = "x" ]; then
     chmod +x "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}"
 
     # Run the launcher
-    exec -a "${LAUNCHER_DIR}/${LAUNCHER_NAME}" "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" -d "${LAUNCHER_DIR}" "$@"
+    exec -a "${LAUNCHER_DIR}/${LAUNCHER_NAME}" "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" "$@"
 
     # Run the launcher in valgrind
-    # valgrind --log-file="valgrind.log" --leak-check=full --track-origins=yes "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" -d "${LAUNCHER_DIR}" "$@"
+    # valgrind --log-file="valgrind.log" --leak-check=full --track-origins=yes "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" "$@"
 
     # Run the launcher with callgrind, delay instrumentation
-    # valgrind --log-file="valgrind.log" --tool=callgrind --instr-atstart=no "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" -d "${LAUNCHER_DIR}" "$@"
+    # valgrind --log-file="valgrind.log" --tool=callgrind --instr-atstart=no "${LAUNCHER_DIR}/bin/${LAUNCHER_NAME}" "$@"
     # use callgrind_control -i on/off to profile actions
 
     # Exit with launcher's exit code.

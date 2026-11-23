@@ -282,61 +282,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
     QString binPath = applicationDirPath();
     QString adjustedBy;
     QString dataPath;
-    // change folder
-    QString dirParam = args["dir"].toString();
-    if (!dirParam.isEmpty())
-    {
-        // the dir param. it makes multimc data path point to whatever the user specified
-        // on command line
-        adjustedBy += "Command line " + dirParam;
-        dataPath = dirParam;
-    }
-    else
-    {
-#if defined(Q_OS_MAC)
-        QDir foo(FS::PathCombine(applicationDirPath(), "../../Data"));
-        dataPath = foo.absolutePath();
-        adjustedBy += "Fallback to special Mac location " + dataPath;
-#else
-        dataPath = applicationDirPath();
-        adjustedBy += "Fallback to binary path " + dataPath;
-#endif
-    }
-
-    if (!FS::ensureFolderPathExists(dataPath))
-    {
-        showFatalErrorMessage(
-            "The launcher data folder could not be created.",
-            QString(
-                "The launcher data folder could not be created.\n"
-                "\n"
-#if defined(Q_OS_MAC)
-                MACOS_HINT
-#endif
-                "Make sure you have the right permissions to the launcher data folder and any folder needed to access it.\n"
-                "(%1)\n"
-                "\n"
-                "The launcher cannot continue until you fix this problem."
-            ).arg(dataPath)
-        );
-        return;
-    }
-    if (!QDir::setCurrent(dataPath))
-    {
-        showFatalErrorMessage(
-            "The launcher data folder could not be opened.",
-            QString(
-                "The launcher data folder could not be opened.\n"
-                "\n"
-#if defined(Q_OS_MAC)
-                MACOS_HINT
-#endif
-                "Make sure you have the right permissions to the launcher data folder.\n"
-                "(%1)\n"
-                "\n"
-                "The launcher cannot continue until you fix this problem."
-            ).arg(dataPath)
-        );
+    if (!resolveDataPath(args, dataPath, adjustedBy, origcwdPath)) {
         return;
     }
 
@@ -1036,6 +982,98 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         return;
     }
     performMainStartupAction();
+}
+
+bool Application::resolveDataPath(const QHash<QString, QVariant>& args,
+                         QString& dataPath, QString& adjustedBy,
+                         QString& origcwdPath)
+{
+    origcwdPath = QDir::currentPath();
+    QString dirParam = args["dir"].toString();
+    if (!dirParam.isEmpty()) {
+        adjustedBy += "Command line " + dirParam;
+        dataPath = dirParam;
+    } else {
+#ifdef Q_OS_MACOS
+        const auto base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        if (!base.isEmpty()) {
+            dataPath = QDir::cleanPath(FS::PathCombine(base, ".."));
+        } else {
+            dataPath = FS::PathCombine(QDir::homePath(), "Library", "Application Support", BuildConfig.LAUNCHER_NAME);
+        }
+        adjustedBy += "Normal mode " + dataPath;
+#elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
+        QDir portableDir(applicationDirPath());
+        portableDir.cdUp();
+        QString portableRoot = portableDir.absolutePath();
+        QString portablePath = FS::PathCombine(portableRoot, "portable.txt");
+        if (QFileInfo::exists(portablePath)) {
+            dataPath = portableRoot;
+            adjustedBy += "Portable mode, using portable root " + dataPath;
+        } else {
+            QString xdgDataHome = QProcessEnvironment::systemEnvironment().value("XDG_DATA_HOME");
+            if (xdgDataHome.isEmpty()) {
+                xdgDataHome = QDir::homePath() + "/.local/share";
+            }
+            dataPath = FS::PathCombine(xdgDataHome, "MeshMC");
+            adjustedBy += "Normal mode " + dataPath;
+        }
+#elif defined(Q_OS_WIN32)
+        QString portablePath = FS::PathCombine(applicationDirPath(), "portable.txt");
+        if (QFileInfo::exists(portablePath)) {
+            dataPath = applicationDirPath();
+            adjustedBy += "Portable mode, using binary path " + dataPath;
+        } else {
+            QString appDataPath = QDir::cleanPath(FS::PathCombine(
+                QStandardPaths::writableLocation(QStandardPaths::AppDataLocation), ".."));
+            dataPath = appDataPath;
+            adjustedBy += "Normal mode, " + dataPath;
+        }
+#else
+        dataPath = applicationDirPath();
+        adjustedBy += "Fallback to binary path " + dataPath;
+#endif
+    }
+
+    if (!FS::ensureFolderPathExists(dataPath))
+    {
+        showFatalErrorMessage(
+            "The launcher data folder could not be created.",
+            QString(
+                "The launcher data folder could not be created.\n"
+                "\n"
+#if defined(Q_OS_MAC)
+                MACOS_HINT
+#endif
+                "Make sure you have the right permissions to the launcher data folder and any folder needed to access it.\n"
+                "(%1)\n"
+                "\n"
+                "The launcher cannot continue until you fix this problem."
+            ).arg(dataPath)
+        );
+        return false;
+    }
+
+    if (!QDir::setCurrent(dataPath))
+    {
+        showFatalErrorMessage(
+            "The launcher data folder could not be opened.",
+            QString(
+                "The launcher data folder could not be opened.\n"
+                "\n"
+#if defined(Q_OS_MAC)
+                MACOS_HINT
+#endif
+                "Make sure you have the right permissions to the launcher data folder.\n"
+                "(%1)\n"
+                "\n"
+                "The launcher cannot continue until you fix this problem."
+            ).arg(dataPath)
+        );
+        return false;
+    }
+
+    return true;
 }
 
 void Application::startHeadlessUpdate()

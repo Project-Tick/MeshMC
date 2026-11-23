@@ -255,4 +255,8 @@ public:
     std::unique_ptr<QFile> logFile;
     // --update: the tier to update to without any window (UpdaterV2::HeadlessUpdate)
     QString m_headlessUpdateTier;
+private:
+    bool resolveDataPath(const QHash<QString, QVariant>& args,
+                         QString& dataPath, QString& adjustedBy,
+                         QString& origcwdPath);
 };
