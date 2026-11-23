@@ -161,15 +161,14 @@ void Checker::fetchSigned(const QString &name, int limit, const QStringList &tru
     // the files site's mirrors in the order Net::Mirrors gives, the unreachable ones last
     for(auto &candidate: Net::Mirrors::candidates(url(name)))
     {
-        auto text = candidate.toString(QUrl::FullyEncoded);
-        fetch.mirrors.append(text.left(text.size() - name.size()));
+        fetch.urls.append(candidate.toString(QUrl::FullyEncoded));
     }
     fetchFrom(fetch, 0);
 }
 
 void Checker::fetchFrom(const Fetch &fetch, int index)
 {
-    if(index >= fetch.mirrors.size())
+    if(index >= fetch.urls.size())
     {
         if(fetch.optional && fetch.notFound)
         {
@@ -181,19 +180,20 @@ void Checker::fetchFrom(const Fetch &fetch, int index)
     }
     // a document and its signature from the same mirror, as they were written together: a
     // mirror that lags behind can't mix its signature with another mirror's document
-    auto base = fetch.mirrors[index];
-    auto next = [this, fetch, index, base](Net::Download *download, const QString &error)
+    auto documentUrl = QUrl(fetch.urls[index]);
+    auto next = [this, fetch, index, documentUrl](Net::Download *download, const QString &error)
     {
         auto tried = fetch;
         if(download->wasNotFound())
         {
             tried.notFound = true;
         }
-        tried.errors.append(QString("%1: %2").arg(base, error.isEmpty() ? failure(download) : error));
+        tried.errors.append(QString("%1: %2").arg(
+            documentUrl.toString(QUrl::FullyEncoded), error.isEmpty() ? failure(download) : error));
         fetchFrom(tried, index + 1);
     };
     auto signature = std::make_shared<QByteArray>();
-    auto sigDownload = Net::Download::makeByteArray(QUrl(base + fetch.name + ".sig"), signature.get(), Net::Download::Option::NoMirrors);
+    auto sigDownload = Net::Download::makeByteArray(signatureUrl(documentUrl), signature.get(), Net::Download::Option::NoMirrors);
     sigDownload->addValidator(new Net::SizeValidator(MaxSignatureFileSize));
     sigDownload->setStallTimeout(StallTimeout);
     // the downloads are kept in m_download for as long as they run
@@ -202,11 +202,11 @@ void Checker::fetchFrom(const Fetch &fetch, int index)
     {
         next(sig, QString());
     });
-    connect(sig, &Net::Download::succeeded, this, [this, signature, fetch, base, next]()
+    connect(sig, &Net::Download::succeeded, this, [this, signature, fetch, documentUrl, next]()
     {
         auto data = std::make_shared<QByteArray>();
         auto error = std::make_shared<QString>();
-        auto download = Net::Download::makeByteArray(QUrl(base + fetch.name), data.get(), Net::Download::Option::NoMirrors);
+        auto download = Net::Download::makeByteArray(documentUrl, data.get(), Net::Download::Option::NoMirrors);
         download->addValidator(new Net::SizeValidator(fetch.limit));
         download->addValidator(new SignatureValidator(*signature, fetch.trusted, fetch.accept, error));
         download->setStallTimeout(StallTimeout);

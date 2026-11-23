@@ -177,8 +177,8 @@ private:
         bool optional = false;
         std::function<bool(const QByteArray &, QString &)> accept;
         std::function<void(bool)> then;
-        // the files site's base URLs, in the order to try them
-        QStringList mirrors;
+        // the document URLs on each mirror, in the order to try them
+        QStringList urls;
         // a mirror said the document isn't there
         bool notFound = false;
         QStringList errors;

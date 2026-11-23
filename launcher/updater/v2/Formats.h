@@ -136,6 +136,8 @@ QString contentPath(const QString &sha256);
  * A file in the updater tree. GitHub Releases sites use flattened asset names.
  */
 QUrl treeUrl(const QString &site, const QString &name);
+/// The detached signature URL for a document URL, with `.sig` appended to its path.
+QUrl signatureUrl(QUrl document);
 /// A content-addressed release asset, or the legacy file-tree URL when the manifest has none.
 QUrl contentUrl(const QString &site, const FileEntry &file);
 

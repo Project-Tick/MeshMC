@@ -418,6 +418,12 @@ QUrl treeUrl(const QString &site, const QString &name)
     return QUrl(site + "updater/" + name);
 }
 
+QUrl signatureUrl(QUrl document)
+{
+    document.setPath(document.path(QUrl::FullyEncoded) + ".sig", QUrl::TolerantMode);
+    return document;
+}
+
 QUrl contentUrl(const QString &site, const FileEntry &file)
 {
     return file.assetUrl.isEmpty() ? treeUrl(site, contentPath(file.sha256)) : file.assetUrl;

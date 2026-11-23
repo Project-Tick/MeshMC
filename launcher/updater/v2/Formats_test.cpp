@@ -492,6 +492,9 @@ slots:
         const QString releaseSite = "https://github.com/Project-Tick/MeshMC-Updates/releases/latest/download/";
         QCOMPARE(treeUrl(releaseSite, "keys/1.json"),
                  QUrl(releaseSite + "updater--keys--1.json"));
+        const auto buildDocument = treeUrl(releaseSite, "builds/1.json");
+        QCOMPARE(buildDocument, QUrl(releaseSite + "updater--builds--1.json"));
+        QCOMPARE(signatureUrl(buildDocument), QUrl(releaseSite + "updater--builds--1.json.sig"));
         FileEntry legacyFile;
         legacyFile.sha256 = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b0b822cd15d6c15b0f00a08";
         QCOMPARE(contentUrl("https://files.example/", legacyFile),
