@@ -42,9 +42,7 @@ runs:
           qt5-imageformats:p
           qt5-networkauth:p
           qt5-tools:p
-          gpgme:p
-          qgpgme:p
-          gpgmepp:p
+          angleproject:p
 
     - name: List pacman packages
       shell: msys2 {0}
