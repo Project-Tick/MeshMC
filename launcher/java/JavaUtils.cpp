@@ -18,6 +18,9 @@
 #include <QDir>
 #include <QStringList>
 
+#include "Application.h"
+#include <QDirIterator>
+
 #include <settings/Setting.h>
 
 #include <QDebug>
@@ -26,6 +29,26 @@
 #include "FileSystem.h"
 
 #define IBUS "@im=ibus"
+
+
+static QStringList managedJavaCandidates()
+{
+    const auto managed = JavaUtils::managedJavaRoot();
+#if defined(Q_OS_WIN)
+    const QString binary = QStringLiteral("javaw.exe");
+#else
+    const QString binary = QStringLiteral("java");
+#endif
+    QDirIterator entries(managed, {binary}, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
+    QStringList paths;
+    while (entries.hasNext()) {
+        const auto path = entries.next();
+        const auto relative = QDir(managed).relativeFilePath(path);
+        if (!relative.startsWith('.') && QFileInfo(path).dir().dirName() == "bin")
+            paths.append(path);
+    }
+    return paths;
+}
 
 JavaUtils::JavaUtils()
 {
@@ -340,6 +363,7 @@ QList<QString> JavaUtils::FindJavaPaths()
         }
     }
 
+    candidates.append(managedJavaCandidates());
     return candidates;
 }
 
@@ -363,6 +387,7 @@ QList<QString> JavaUtils::FindJavaPaths()
         javas.append(systemLibraryJVMDir.absolutePath() + "/" + java + "/Contents/Home/bin/java");
         javas.append(systemLibraryJVMDir.absolutePath() + "/" + java + "/Contents/Commands/java");
     }
+    javas.append(managedJavaCandidates());
     return javas;
 }
 
@@ -403,10 +428,11 @@ QList<QString> JavaUtils::FindJavaPaths()
     scanJavaDir("/usr/lib64/jvm");
     scanJavaDir("/usr/lib32/jvm");
     // javas stored in MultiMC's folder
-    scanJavaDir("java");
+    scanJavaDir(managedJavaRoot());
     // manually installed JDKs in /opt
     scanJavaDir("/opt/jdk");
     scanJavaDir("/opt/jdks");
+    javas.append(managedJavaCandidates());
     return javas;
 }
 #else
@@ -417,6 +443,14 @@ QList<QString> JavaUtils::FindJavaPaths()
     QList<QString> javas;
     javas.append(this->GetDefaultJava()->path);
 
+    javas.append(managedJavaCandidates());
     return javas;
 }
 #endif
+
+QString JavaUtils::managedJavaRoot()
+{
+    const auto settings = APPLICATION ? APPLICATION->settings() : nullptr;
+    const auto configured = settings ? settings->get("JavaDir").toString().trimmed() : QString();
+    return QDir(configured.isEmpty() ? QStringLiteral("java") : configured).absolutePath();
+}

@@ -14,13 +14,14 @@
  */
 
 #include "JavaPage.h"
+#include "ui/dialogs/JavaDownloadDialog.h"
+#include <QDirIterator>
 #include "JavaCommon.h"
 #include "ui_JavaPage.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDir>
-#include <QTabBar>
 
 #include "ui/dialogs/VersionSelectDialog.h"
 
@@ -35,7 +36,6 @@
 JavaPage::JavaPage(QWidget *parent) : QWidget(parent), ui(new Ui::JavaPage)
 {
     ui->setupUi(this);
-    ui->tabWidget->tabBar()->hide();
 
     auto sysMiB = Sys::getSystemRam() / Sys::mebibyte;
     ui->maxMemSpinBox->setMaximum(sysMiB);
@@ -45,6 +45,7 @@ JavaPage::JavaPage(QWidget *parent) : QWidget(parent), ui(new Ui::JavaPage)
         ui->javaTestBtn->setEnabled(!path.trimmed().isEmpty());
     });
     loadSettings();
+    refreshInstalledJavas();
 }
 
 JavaPage::~JavaPage()
@@ -155,4 +156,114 @@ void JavaPage::on_javaTestBtn_clicked()
 void JavaPage::checkerFinished()
 {
     checker.reset();
+}
+
+void JavaPage::on_javaDownloadBtn_clicked()
+{
+	JavaDownloadDialog dlg(this);
+	if (dlg.exec() == QDialog::Accepted) {
+		refreshInstalledJavas();
+	}
+
+}
+
+void JavaPage::on_javaRefreshBtn_clicked()
+{
+	refreshInstalledJavas();
+}
+
+void JavaPage::on_javaRemoveBtn_clicked()
+{
+	auto* item = ui->installedJavaTree->currentItem();
+	if (!item)
+		return;
+
+	QString path = item->text(2);
+	if (path.isEmpty())
+		return;
+
+    const QDir managed(JavaUtils::managedJavaRoot());
+    const auto relative = managed.relativeFilePath(path).split('/');
+    if (relative.size() < 4 || relative.first().startsWith('.') || relative.at(1).startsWith('.')) {
+        return;
+    }
+    QDir javaDir(managed.filePath(relative.first() + "/" + relative.at(1)));
+    if (!javaDir.exists() ||
+        !javaDir.canonicalPath().startsWith(managed.canonicalPath() + '/')) {
+        return;
+    }
+
+	auto result = QMessageBox::question(
+		this, tr("Remove Java Installation"),
+		tr("Are you sure you want to remove this Java installation?\n\n%1")
+			.arg(javaDir.absolutePath()),
+		QMessageBox::Yes | QMessageBox::No);
+
+	if (result != QMessageBox::Yes)
+		return;
+
+    if (!javaDir.removeRecursively()) {
+        QMessageBox::warning(this, tr("Remove Java Installation"), tr("Could not remove %1.").arg(javaDir.absolutePath()));
+    }
+	refreshInstalledJavas();
+}
+
+void JavaPage::on_javaUseBtn_clicked()
+{
+	auto* item = ui->installedJavaTree->currentItem();
+	if (!item)
+		return;
+
+	QString path = item->text(2);
+	if (!path.isEmpty()) {
+		ui->javaPathTextBox->setText(path);
+		ui->tabWidget->setCurrentIndex(0); // Switch to Settings tab
+	}
+}
+
+void JavaPage::refreshInstalledJavas()
+{
+	ui->installedJavaTree->clear();
+
+	QString javaBaseDir = JavaUtils::managedJavaRoot();
+	QDir baseDir(javaBaseDir);
+	if (!baseDir.exists())
+		return;
+
+	// Scan for java binaries under java/{vendor}/{version}/
+	QDirIterator vendorIt(javaBaseDir, QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+	while (vendorIt.hasNext()) {
+		vendorIt.next();
+		QString vendorName = vendorIt.fileName();
+		QString vendorPath = vendorIt.filePath();
+
+		QDirIterator versionIt(vendorPath, QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+		while (versionIt.hasNext()) {
+			versionIt.next();
+			QString versionPath = versionIt.filePath();
+
+			// Look for java binary
+#if defined(Q_OS_WIN)
+			QString binaryName = "javaw.exe";
+#else
+			QString binaryName = "java";
+#endif
+			QDirIterator binIt(versionPath, QStringList() << binaryName,
+							   QDir::Files, QDirIterator::Subdirectories);
+			while (binIt.hasNext()) {
+				binIt.next();
+				QString javaPath = binIt.filePath();
+				if (javaPath.contains("/bin/")) {
+					auto* item = new QTreeWidgetItem(ui->installedJavaTree);
+					item->setText(0, versionIt.fileName());
+					item->setText(1, vendorName);
+					item->setText(2, javaPath);
+					break; // Only first binary per version dir
+				}
+			}
+		}
+	}
+
+	ui->installedJavaTree->resizeColumnToContents(0);
+	ui->installedJavaTree->resizeColumnToContents(1);
 }

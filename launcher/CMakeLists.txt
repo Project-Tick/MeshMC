@@ -557,6 +557,9 @@ set(JAVA_SOURCES
     java/JavaInstallList.h
     java/JavaInstallList.cpp
     java/JavaUtils.h
+    java/download/JavaDownloadTask.cpp
+    java/download/JavaDownloadTask.h
+    java/download/JavaRuntime.h
     java/JavaUtils.cpp
     java/JavaVersion.h
     java/JavaVersion.cpp
@@ -913,6 +916,8 @@ SET(LAUNCHER_SOURCES
     ui/pages/global/CustomCommandsPage.h
     ui/pages/global/ExternalToolsPage.cpp
     ui/pages/global/ExternalToolsPage.h
+    ui/dialogs/JavaDownloadDialog.cpp
+    ui/dialogs/JavaDownloadDialog.h
     ui/pages/global/JavaPage.cpp
     ui/pages/global/JavaPage.h
     ui/pages/global/LanguagePage.cpp

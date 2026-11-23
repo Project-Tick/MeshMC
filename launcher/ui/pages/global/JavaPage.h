@@ -65,6 +65,11 @@ slots:
     void on_javaTestBtn_clicked();
     void on_javaBrowseBtn_clicked();
     void checkerFinished();
+    void on_javaDownloadBtn_clicked();
+    void on_javaRefreshBtn_clicked();
+    void on_javaRemoveBtn_clicked();
+    void on_javaUseBtn_clicked();
+    void refreshInstalledJavas();
 
 private:
     Ui::JavaPage *ui;

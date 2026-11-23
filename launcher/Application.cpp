@@ -688,6 +688,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
 
         // Java Settings
         m_settings->registerSetting("JavaPath", "");
+        m_settings->registerSetting("JavaDir", "java");
         m_settings->registerSetting("JavaTimestamp", 0);
         m_settings->registerSetting("JavaArchitecture", "");
         m_settings->registerSetting("JavaVersion", "");

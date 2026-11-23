@@ -30,6 +30,7 @@ class JavaUtils : public QObject
 {
     Q_OBJECT
 public:
+    static QString managedJavaRoot();
     JavaUtils();
 
     JavaInstallPtr MakeJavaPtr(QString path, QString id = "unknown", Sys::Architecture arch = Sys::Architecture());

@@ -128,6 +128,11 @@ AccountsDialog::AccountsDialog(QWidget *parent, const QString& internalId) : QDi
 
     connect(ui->linkButton, &QToolButton::clicked, this, &AccountsDialog::onQrButtonClicked);
     connect(ui->copyLinkButton, &QToolButton::clicked, this, &AccountsDialog::onCopyLinkButtonClicked);
+    connect(ui->copyCodeButton, &QToolButton::clicked, this, [this] {
+        if (!m_code.isEmpty())
+            QGuiApplication::clipboard()->setText(m_code);
+    });
+    ui->copyCodeButton->hide();
     connect(&m_externalLoginTimer, &QTimer::timeout, this, &AccountsDialog::externalLoginTick);
 
     ui->createProfileErrorLabel->setVisible(false);
@@ -492,11 +497,16 @@ void AccountsDialog::updateSkinDisplay()
 void AccountsDialog::stopLogin()
 {
     m_externalLoginTimer.stop();
+    if (m_loginTask)
+        disconnect(m_loginTask.get(), nullptr, this, nullptr);
     m_loginTask = nullptr;
     m_loginAccount = nullptr;
     ui->getFreshCodeButton->setEnabled(true);
     ui->linkButton->setVisible(false);
     ui->copyLinkButton->setVisible(false);
+    ui->copyCodeButton->hide();
+    m_code.clear();
+    m_codeUrl.clear();
 }
 
 void AccountsDialog::startLogin()
@@ -504,6 +514,9 @@ void AccountsDialog::startLogin()
     ui->getFreshCodeButton->setEnabled(false);
     ui->linkButton->setVisible(false);
     ui->copyLinkButton->setVisible(false);
+    ui->copyCodeButton->hide();
+    m_code.clear();
+    m_codeUrl.clear();
     m_loginAccount = MinecraftAccount::createBlankMSA();
     m_loginTask = m_loginAccount->loginMSA();
     connect(m_loginTask.get(), &Task::failed, this, &AccountsDialog::onLoginTaskFailed);
@@ -523,7 +536,10 @@ void AccountsDialog::onGetFreshCodeButtonClicked(bool)
 
 void AccountsDialog::onQrButtonClicked(bool)
 {
-    DesktopServices::openUrl(m_codeUrl);
+    if (!m_codeUrl.isEmpty()) {
+        QGuiApplication::clipboard()->setText(m_code);
+        DesktopServices::openUrl(m_codeUrl);
+    }
 }
 
 void AccountsDialog::onCopyLinkButtonClicked(bool)
@@ -580,36 +596,37 @@ void AccountsDialog::showVerificationUriAndCode(const QUrl& uri, const QString& 
     ui->progressBar->setVisible(true);
 
     m_codeUrl = uri;
-    QUrlQuery query;
-    query.addQueryItem("otc", code);
-    m_codeUrl.setQuery(query);
-    QString codeUrlString = m_codeUrl.toString();
-
-    QImage qrcode = qrcode::generateQr(codeUrlString, 300);
-    ui->linkButton->setIcon(QPixmap::fromImage(qrcode));
-    ui->linkButton->setText(codeUrlString);
-    ui->linkButton->setVisible(true);
-    ui->copyLinkButton->setVisible(true);
-
-    ui->label->setText(tr("You can scan the QR code and complete the login process on a separate device, or you can open the link and login on this machine."));
     m_code = code;
+    const auto url = uri.toString(QUrl::FullyEncoded);
+    const auto qr = qrcode::generateQr(url, 300);
+    ui->linkButton->setIcon(QPixmap::fromImage(qr));
+    ui->linkButton->setText(uri.toDisplayString());
+    ui->linkButton->show();
+    ui->copyLinkButton->show();
+    ui->copyCodeButton->show();
+    ui->label->setText(tr("Scan the QR code or open the link, then enter this code on Microsoft's page: %1").arg(code));
 }
 
 void AccountsDialog::hideVerificationUriAndCode() {
     ui->linkButton->setVisible(false);
     ui->copyLinkButton->setVisible(false);
+    ui->copyCodeButton->hide();
+    m_code.clear();
+    m_codeUrl.clear();
     ui->progressBar->setVisible(false);
     m_externalLoginTimer.stop();
 }
 
 void AccountsDialog::onLoginTaskFailed(const QString &reason)
 {
+    hideVerificationUriAndCode();
+    ui->getFreshCodeButton->setEnabled(true);
     // Set message
     auto lines = reason.split('\n');
     QString processed;
     for(auto line: lines) {
         if(line.size()) {
-            processed += "<font color='red'>" + line + "</font><br />";
+            processed += "<font color='red'>" + line.toHtmlEscaped() + "</font><br />";
         }
         else {
             processed += "<br />";
