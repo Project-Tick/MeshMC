@@ -326,6 +326,7 @@ jobs:
           signing_key="$RUNNER_TEMP/updater-online-key.pem"
           printf '%s\n' "$UPDATER_ONLINE_SIGNING_KEY" > "$signing_key"
           chmod 600 "$signing_key"
+          gh auth setup-git --hostname github.com
           python tools/updater_v2/publish_release.py \
             --payload-root "$RUNNER_TEMP/updater-payloads" \
             --build-number "$BUILD_NUMBER" \
