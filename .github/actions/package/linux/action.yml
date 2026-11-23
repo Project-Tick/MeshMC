@@ -9,154 +9,33 @@ inputs:
     description: Type for the build
     required: true
     default: Debug
-  artifact-name:
-    description: Name of the uploaded artifact
-    required: true
-    default: Linux
-  qt-version:
-    description: Version of Qt to use
-    required: true
   qt-major:
     description: Major version of Qt used, to keep artifact names distinct
     required: false
     default: "6"
-  gpg-private-key:
-    description: Private key for AppImage signing
-    required: false
-  gpg-private-key-id:
-    description: ID for the gpg-private-key, to select the signing key
-    required: false
 
 runs:
   using: composite
 
   steps:
-    - name: Cleanup Qt installation on Linux
-      shell: bash
-      run: |
-        rm -rf "$QT_PLUGIN_PATH"/printsupport
-        rm -rf "$QT_PLUGIN_PATH"/sqldrivers
-        rm -rf "$QT_PLUGIN_PATH"/help
-        rm -rf "$QT_PLUGIN_PATH"/designer
-        rm -rf "$QT_PLUGIN_PATH"/qmltooling
-        rm -rf "$QT_PLUGIN_PATH"/qmlls
-        rm -rf "$QT_PLUGIN_PATH"/qmllint
-        rm -rf "$QT_PLUGIN_PATH"/platformthemes/libqgtk3.so
-
-    - name: Setup build variables
-      shell: bash
-      run: |
-        # Fixup architecture naming for AppImages
-        dpkg_arch="$(dpkg-architecture -q DEB_HOST_ARCH_CPU)"
-        case "$dpkg_arch" in
-          "amd64")
-            APPIMAGE_ARCH="x86_64"
-            ;;
-          "arm64")
-            APPIMAGE_ARCH="aarch64"
-            ;;
-          *)
-            echo "# 🚨 The Debian architecture \"$deb_arch\" is not recognized!" >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-            ;;
-        esac
-        echo "APPIMAGE_ARCH=$APPIMAGE_ARCH" >> "$GITHUB_ENV"
-
-        # Used for the file paths of libraries
-        echo "DEB_HOST_MULTIARCH=$(dpkg-architecture -q DEB_HOST_MULTIARCH)" >> "$GITHUB_ENV"
-
-    - name: Package AppImage
+    - name: Install and package
       shell: bash
       env:
-        VERSION: ${{ github.ref_type == 'tag' && github.ref_name || inputs.version }}
-        BUILD_DIR: build
-        INSTALL_APPIMAGE_DIR: install-appdir
-
-        GPG_PRIVATE_KEY: ${{ inputs.gpg-private-key }}
-        GPG_PRIVATE_KEY_ID: ${{ inputs.gpg-private-key-id }}
-      run: |
-        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }} --prefix ${{ env.INSTALL_APPIMAGE_DIR }}
-        test -x "$INSTALL_APPIMAGE_DIR/MeshMC"
-        test -x "$INSTALL_APPIMAGE_DIR/bin/MeshMC"
-
-        if [[ -n "$GPG_PRIVATE_KEY_ID" ]]; then
-          printf '%s\n' "$GPG_PRIVATE_KEY" > privkey.asc
-          gpg --import privkey.asc
-          gpg --export --armor "$GPG_PRIVATE_KEY_ID" > pubkey.asc
-        else
-          echo ":warning: Skipped code signing for Linux AppImage, as gpg key was not present." >> $GITHUB_STEP_SUMMARY
-        fi
-
-        # Qt dlopen()s OpenSSL rather than linking it, so lib4bin cannot
-        # discover it from the binaries and has to be handed the files. Only
-        # set for the Qt 5 builds, whose Qt speaks the 1.1.1 API that no
-        # current distribution ships; see .github/actions/setup-openssl.
-        openssl_libs=()
-        if [[ -n "${MESHMC_OPENSSL_LIB_DIR:-}" ]]; then
-          openssl_libs=(
-            "$MESHMC_OPENSSL_LIB_DIR"/libssl.so.1.1
-            "$MESHMC_OPENSSL_LIB_DIR"/libcrypto.so.1.1
-          )
-        fi
-
-        sharun lib4bin \
-          --hard-links \
-          --with-hooks \
-          --dst-dir "$INSTALL_APPIMAGE_DIR" \
-          "$INSTALL_APPIMAGE_DIR"/bin/* "$QT_PLUGIN_PATH"/*/*.so "${openssl_libs[@]}"
-
-        cp ~/bin/AppImageUpdate.AppImage "$INSTALL_APPIMAGE_DIR"/bin/
-        # FIXME(@YongDo-Hyun): gamemode doesn't seem to be very portable with DBus. Find a way to make it work!
-        find "$INSTALL_APPIMAGE_DIR" -name '*gamemode*' -exec rm {} +
-
-        desktop_dir="$INSTALL_APPIMAGE_DIR/usr/share/applications"
-        metainfo_dir="$INSTALL_APPIMAGE_DIR/usr/share/metainfo"
-        icon_dir="$INSTALL_APPIMAGE_DIR/usr/share/icons/hicolor/256x256/apps"
-        mkdir -p "$desktop_dir" "$metainfo_dir" "$icon_dir"
-        cp "$GITHUB_WORKSPACE/branding/org.projecttick.MeshMC.desktop" "$desktop_dir/"
-        cp "$GITHUB_WORKSPACE/branding/org.projecttick.MeshMC.metainfo.xml" "$metainfo_dir/"
-        rsvg-convert -w 256 -h 256 "$GITHUB_WORKSPACE/branding/logo.svg" \
-          -o "$icon_dir/org.projecttick.MeshMC.png"
-        cp "$desktop_dir/org.projecttick.MeshMC.desktop" "$INSTALL_APPIMAGE_DIR/"
-        cp "$metainfo_dir/org.projecttick.MeshMC.metainfo.xml" "$INSTALL_APPIMAGE_DIR/"
-        cp "$icon_dir/org.projecttick.MeshMC.png" "$INSTALL_APPIMAGE_DIR/"
-
-        printf '%s\n' \
-          'LAUNCHER_DISABLE_GLVULKAN=1' \
-          'QT_QPA_PLATFORMTHEME=xdgdesktopportal' \
-          > "$INSTALL_APPIMAGE_DIR/.env"
-        mv "$INSTALL_APPIMAGE_DIR"/{sharun,AppRun}
-        test -x "$INSTALL_APPIMAGE_DIR/AppRun"
-        test -s "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.desktop"
-        test -s "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.metainfo.xml"
-        test -s "$INSTALL_APPIMAGE_DIR/org.projecttick.MeshMC.png"
-
-        if [[ "${{ github.ref_type }}" == "tag" ]]; then
-          APPIMAGE_DEST="MeshMC-Linux-$APPIMAGE_ARCH.AppImage"
-        else
-          APPIMAGE_DEST="MeshMC-Linux-$VERSION-${{ inputs.build-type }}-$APPIMAGE_ARCH.AppImage"
-        fi
-
-        mkappimage \
-          --updateinformation "gh-releases-zsync|${{ github.repository_owner }}|${{ github.event.repository.name }}|latest|MeshMC-Linux-$APPIMAGE_ARCH.AppImage.zsync" \
-          "$INSTALL_APPIMAGE_DIR" \
-          "$APPIMAGE_DEST"
-        test -s "$APPIMAGE_DEST"
-        test -s "$APPIMAGE_DEST.zsync"
-
-    - name: Install classic tarball
-      shell: bash
+        PACKAGE_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || inputs.version }}
       run: |
         cmake --install build --config ${{ inputs.build-type }} --prefix install
+        test -x install/MeshMC
+        package="$GITHUB_WORKSPACE/MeshMC-Qt${{ inputs.qt-major }}-Linux-x86_64-${PACKAGE_VERSION}.tar.gz"
+        python tools/package_release.py \
+          --source install \
+          --output "$package" \
+          --format tar.gz \
+          --archive-root MeshMC
+        test -s "$package"
 
-    - name: Upload AppImage
+    - name: Upload Linux archive
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-Qt${{ inputs.qt-major }}-${{ runner.os }}-${{ inputs.version }}-${{ inputs.build-type }}-${{ env.APPIMAGE_ARCH }}.AppImage
-        path: MeshMC-${{ runner.os }}-*${{ env.APPIMAGE_ARCH }}.AppImage
-
-    - name: Upload AppImage Zsync
-      uses: actions/upload-artifact@v7
-      with:
-        name: MeshMC-Qt${{ inputs.qt-major }}-${{ runner.os }}-${{ inputs.version }}-${{ inputs.build-type }}-${{ env.APPIMAGE_ARCH }}.AppImage.zsync
-        path: MeshMC-${{ runner.os }}-*${{ env.APPIMAGE_ARCH }}.AppImage.zsync
+        name: MeshMC-Qt${{ inputs.qt-major }}-Linux-x86_64
+        path: ${{ github.workspace }}/MeshMC-Qt${{ inputs.qt-major }}-Linux-x86_64-*.tar.gz
+        if-no-files-found: error

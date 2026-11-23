@@ -206,10 +206,10 @@ jobs:
         run: |
           ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE" --output-on-failure
 
-      - name: Test updater release tooling
+      - name: Test release packaging and updater tooling
         if: ${{ runner.os == 'Linux' }}
         run: |
-          python -m unittest -v tools.updater_v2.test_publish_release
+          python -m unittest -v tools.test_package_release tools.updater_v2.test_publish_release
 
       ##
       # PACKAGE
@@ -227,12 +227,7 @@ jobs:
         with:
           version: ${{ steps.short-version.outputs.version }}
           build-type: ${{ steps.setup-dependencies.outputs.build-type }}
-          artifact-name: ${{ matrix.artifact-name }}
-          qt-version: ${{ steps.setup-dependencies.outputs.qt-version }}
           qt-major: ${{ matrix.qt-major }}
-
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-private-key-id: ${{ secrets.GPG_PRIVATE_KEY_ID }}
 
       - name: Package (macOS)
         if: ${{ runner.os == 'macOS' }}
@@ -240,7 +235,6 @@ jobs:
         with:
           version: ${{ steps.short-version.outputs.version }}
           build-type: ${{ steps.setup-dependencies.outputs.build-type }}
-          artifact-name: ${{ matrix.artifact-name }}
           qt-major: ${{ matrix.qt-major }}
 
       - name: Package (Windows)
@@ -249,7 +243,6 @@ jobs:
         with:
           version: ${{ steps.short-version.outputs.version }}
           build-type: ${{ env.BUILD_TYPE }}
-          artifact-name: ${{ matrix.artifact-name }}
           windows-codesign-cert: ${{ secrets.WINDOWS_CODESIGN_CERT }}
           windows-codesign-password: ${{ secrets.WINDOWS_CODESIGN_PASSWORD }}
           msystem: ${{ matrix.msystem }}

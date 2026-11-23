@@ -9,9 +9,6 @@ inputs:
     description: Type for the build
     required: true
     default: Debug
-  artifact-name:
-    description: Name of the uploaded artifact
-    required: true
   msystem:
     description: MSYS2 subsystem to use
     required: false
@@ -30,9 +27,6 @@ runs:
   using: composite
 
   steps:
-    - name: Install NSIS
-      uses: negrutiu/nsis-install@v3
-
     - name: Package
       shell: msys2 {0}
       env:
@@ -100,52 +94,68 @@ runs:
           ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
         }
 
-    - name: Package (installer)
+    - name: Install NSIS
+      uses: negrutiu/nsis-install@v3
+
+    - name: Create NSIS installer
       shell: pwsh
       env:
+        PACKAGE_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || inputs.version }}
         BUILD_DIR: ${{ github.workspace }}/build
         INSTALL_DIR: ${{ github.workspace }}/install
-
-        NSCURL_VERSION: "v24.9.26.122"
-        NSCURL_SHA256: "AEE6C4BE3CB6455858E9C1EE4B3AFE0DB9960FA03FE99CCDEDC28390D57CCBB0"
-      run: |
-        New-Item -Name NSISPlugins -ItemType Directory
-        Invoke-Webrequest https://github.com/negrutiu/nsis-nscurl/releases/download/"${{ env.NSCURL_VERSION }}"/NScurl.zip -OutFile NSISPlugins\NScurl.zip
-        $nscurl_hash = Get-FileHash NSISPlugins\NScurl.zip -Algorithm Sha256 | Select-Object -ExpandProperty Hash
-        if ( $nscurl_hash -ne "${{ env.nscurl_sha256 }}") {
-          echo "::error:: NSCurl.zip sha256 mismatch"
-          exit 1
-        }
-        Expand-Archive -Path NSISPlugins\NScurl.zip -DestinationPath NSISPlugins\NScurl
-
-        $nsisScript = Resolve-Path (Join-Path "${{ env.BUILD_DIR }}" "win_install.nsi")
-        cd ${{ env.INSTALL_DIR }}
-        makensis -NOCD "$nsisScript"
-        if (-not (Test-Path -LiteralPath "${{ github.workspace }}/MeshMC-Setup.exe" -PathType Leaf)) {
-          throw 'NSIS did not produce MeshMC-Setup.exe.'
-        }
-
-    - name: Sign installer
-      shell: pwsh
-      env:
         CODESIGN_CERT_PATH: ${{ github.workspace }}/codesign.pfx
-        INSTALLER_PATH: ${{ github.workspace }}/MeshMC-Setup.exe
         CODESIGN_PASSWORD: ${{ inputs.windows-codesign-password }}
       run: |
-          if ((Get-Item -LiteralPath $env:CODESIGN_CERT_PATH).Length -gt 0) {
-            SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p $env:CODESIGN_PASSWORD /tr http://timestamp.digicert.com $env:INSTALLER_PATH
-          } else {
-            ":warning: Skipped code signing for Windows, as certificate was not present." >> $env:GITHUB_STEP_SUMMARY
+        $ErrorActionPreference = 'Stop'
+        $script = (Resolve-Path -LiteralPath (Join-Path $env:BUILD_DIR 'win_install.nsi')).Path
+        $installer = Join-Path $env:GITHUB_WORKSPACE 'MeshMC-Setup.exe'
+        $package = Join-Path $env:GITHUB_WORKSPACE "MeshMC-Qt${{ inputs.qt-major }}-Windows-x86_64-Setup-$($env:PACKAGE_VERSION).exe"
+
+        # The configured script reads the deployed runtime from its working directory.
+        Push-Location -LiteralPath $env:INSTALL_DIR
+        try {
+          makensis -NOCD "$script"
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $installer -PathType Leaf)) {
+            throw 'NSIS did not produce MeshMC-Setup.exe.'
           }
+        } finally {
+          Pop-Location
+        }
 
-    - name: Upload binary zip
+        if ((Get-Item -LiteralPath $env:CODESIGN_CERT_PATH).Length -gt 0) {
+          SignTool sign /fd sha256 /td sha256 /f $env:CODESIGN_CERT_PATH /p $env:CODESIGN_PASSWORD /tr http://timestamp.digicert.com $installer
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Could not sign the Windows installer.'
+          }
+        }
+        Move-Item -LiteralPath $installer -Destination $package
+
+    - name: Upload Windows installer
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ github.workspace }}/install/**
+        name: MeshMC-Qt${{ inputs.qt-major }}-Windows-x86_64-Setup
+        path: ${{ github.workspace }}/MeshMC-Qt${{ inputs.qt-major }}-Windows-x86_64-Setup-*.exe
+        if-no-files-found: error
 
-    - name: Upload installer
+    - name: Create ZIP package
+      shell: pwsh
+      env:
+        PACKAGE_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || inputs.version }}
+        INSTALL_DIR: ${{ github.workspace }}/install
+      run: |
+        $package = Join-Path $env:GITHUB_WORKSPACE "MeshMC-Qt${{ inputs.qt-major }}-Windows-x86_64-$($env:PACKAGE_VERSION).zip"
+        python "$env:GITHUB_WORKSPACE/tools/package_release.py" `
+          --source $env:INSTALL_DIR `
+          --output $package `
+          --format zip `
+          --archive-root MeshMC
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $package -PathType Leaf)) {
+          throw 'Could not create the Windows ZIP package.'
+        }
+
+    - name: Upload Windows archive
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-Setup-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ${{ github.workspace }}/MeshMC-Setup.exe
+        name: MeshMC-Qt${{ inputs.qt-major }}-Windows-x86_64
+        path: ${{ github.workspace }}/MeshMC-Qt${{ inputs.qt-major }}-Windows-x86_64-*.zip
+        if-no-files-found: error

@@ -9,10 +9,6 @@ inputs:
     description: Type for the build
     required: true
     default: Debug
-  artifact-name:
-    description: Name of the uploaded artifact
-    required: true
-    default: macOS
   qt-major:
     description: Major version of Qt used, to keep artifact names distinct
     required: false
@@ -27,11 +23,11 @@ runs:
       env:
         BUILD_DIR: build
         INSTALL_DIR: install
-        APPLE_CODESIGN_ID: ${{ inputs.apple-codesign-id }}
+        PACKAGE_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || inputs.version }}
       run: |
-        cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
+        cmake --install "$BUILD_DIR" --config ${{ inputs.build-type }}
 
-        cd ${{ env.INSTALL_DIR }}
+        cd "$INSTALL_DIR"
         test -d MeshMC.app
         test -f MeshMC.app/Contents/Info.plist
         chmod -R u+w MeshMC.app
@@ -54,29 +50,17 @@ runs:
         main_binary_name="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' MeshMC.app/Contents/Info.plist)"
         main_binary="MeshMC.app/Contents/MacOS/$main_binary_name"
         chmod +x "$main_binary"
+        package="$GITHUB_WORKSPACE/MeshMC-Qt${{ inputs.qt-major }}-macOS-aarch64-${PACKAGE_VERSION}.tar.gz"
+        python "$GITHUB_WORKSPACE/tools/package_release.py" \
+          --source "$GITHUB_WORKSPACE/$INSTALL_DIR/MeshMC.app" \
+          --output "$package" \
+          --format tar.gz \
+          --archive-root MeshMC.app
+        test -s "$package"
 
-    - name: Create DMG
-      shell: bash
-      run: |
-        mkdir -p src
-        cp -R "install/MeshMC.app" src/
-
-        ln -s /Applications src/
-
-        hdiutil create \
-            -volname "MeshMC ${{ inputs.version }}" \
-            -srcfolder src \
-            -ov -format ULMO \
-            "MeshMC.dmg"
-
-    - name: Upload binary tarball
+    - name: Upload macOS archive
       uses: actions/upload-artifact@v7
       with:
-        name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
-        path: MeshMC.zip
-
-    - name: Upload disk image
-      uses: actions/upload-artifact@v7
-      with:
-        name: MeshMC-Qt${{ inputs.qt-major }}-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}.dmg
-        path: MeshMC.dmg
+        name: MeshMC-Qt${{ inputs.qt-major }}-macOS-aarch64
+        path: ${{ github.workspace }}/MeshMC-Qt${{ inputs.qt-major }}-macOS-aarch64-*.tar.gz
+        if-no-files-found: error

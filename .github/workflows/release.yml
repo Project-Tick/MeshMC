@@ -28,36 +28,18 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          submodules: "true"
-          path: "MeshMC-source"
       - name: Download artifacts
         uses: actions/download-artifact@v8
       - name: Grab and store version
         run: |
-          tag_name=$(echo ${{ github.ref }} | grep -oE "[^/]+$")
-          echo "VERSION=$tag_name" >> $GITHUB_ENV
-      - name: Package artifacts properly
+          echo "VERSION=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+      - name: Collect release packages
         run: |
-          mv ${{ github.workspace }}/MeshMC-source MeshMC-${{ env.VERSION }}
-          mv MeshMC-Qt5-Linux*.AppImage/MeshMC-*-x86_64.AppImage MeshMC-Qt5-Linux-x86_64.AppImage
-          mv MeshMC-Qt5-Linux*.AppImage.zsync/MeshMC-*-x86_64.AppImage.zsync MeshMC-Qt5-Linux-x86_64.AppImage.zsync
-          mv MeshMC-Qt5-macOS-ARM*/MeshMC.zip MeshMC-Qt5-macOS-ARM-${{ env.VERSION }}.zip
-          mv MeshMC-Qt5-macOS-ARM*/MeshMC.dmg MeshMC-Qt5-macOS-ARM-${{ env.VERSION }}.dmg
-
-          tar --exclude='.git' -czf MeshMC-${{ env.VERSION }}.tar.gz MeshMC-${{ env.VERSION }}
-
-          for d in MeshMC-Qt5-Windows-w64*; do
-            cd "${d}" || continue
-            INST="$(echo -n ${d} | grep -o Setup || true)"
-            NAME="MeshMC-Qt5-Windows-w64"
-            test -z "${INST}" || mv MeshMC-*.exe ../${NAME}-Setup-${{ env.VERSION }}.exe
-            test -n "${INST}" || zip -r -9 "../${NAME}-${{ env.VERSION }}.zip" *
-            cd ..
-          done
-
+          set -euo pipefail
+          mv "MeshMC-Qt5-Linux-x86_64/MeshMC-Qt5-Linux-x86_64-${VERSION}.tar.gz" .
+          mv "MeshMC-Qt5-Windows-x86_64/MeshMC-Qt5-Windows-x86_64-${VERSION}.zip" .
+          mv "MeshMC-Qt5-Windows-x86_64-Setup/MeshMC-Qt5-Windows-x86_64-Setup-${VERSION}.exe" .
+          mv "MeshMC-Qt5-macOS-aarch64/MeshMC-Qt5-macOS-aarch64-${VERSION}.tar.gz" .
 
       - name: Create release
         id: create_release
@@ -70,10 +52,7 @@ jobs:
           prerelease: false
           fail_on_unmatched_files: true
           files: |
-            MeshMC-Qt5-Linux-x86_64.AppImage
-            MeshMC-Qt5-Linux-x86_64.AppImage.zsync
-            MeshMC-Qt5-Windows-w64-${{ env.VERSION }}.zip
-            MeshMC-Qt5-Windows-w64-Setup-${{ env.VERSION }}.exe
-            MeshMC-Qt5-macOS-ARM-${{ env.VERSION }}.zip
-            MeshMC-Qt5-macOS-ARM-${{ env.VERSION }}.dmg
-            MeshMC-${{ env.VERSION }}.tar.gz
+            MeshMC-Qt5-Linux-x86_64-${{ env.VERSION }}.tar.gz
+            MeshMC-Qt5-Windows-x86_64-${{ env.VERSION }}.zip
+            MeshMC-Qt5-Windows-x86_64-Setup-${{ env.VERSION }}.exe
+            MeshMC-Qt5-macOS-aarch64-${{ env.VERSION }}.tar.gz

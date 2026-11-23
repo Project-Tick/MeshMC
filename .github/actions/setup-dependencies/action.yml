@@ -127,5 +127,4 @@ runs:
     - name: Setup bundled OpenSSL
       uses: ./.github/actions/setup-openssl
       with:
-        qt-major: ${{ inputs.qt-major }}
         msystem: ${{ inputs.msystem }}
