@@ -27,7 +27,7 @@ CheckComboBox::CheckComboBox(QWidget* parent)
 	installEventFilter(this);
 
 	/* Activation is a tick here, not a choice. */
-	connect(this, QOverload<int>::of(&QComboBox::activated), this, &CheckComboBox::toggleItem);
+	connect(this, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &CheckComboBox::toggleItem);
 }
 
 void CheckComboBox::setDefaultText(const QString& text)

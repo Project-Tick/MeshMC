@@ -19,7 +19,6 @@
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
-#include <QVersionNumber>
 
 #include "BrightTheme.h"
 #include "FileSystem.h"
@@ -235,7 +234,10 @@ ThemeManager::ThemeManager(SettingsObjectPtr settings, QObject *parent) : QObjec
         m_platformClassPalettes.append(qMakePair(name, QApplication::palette(name)));
     }
     // the Qt we run with, not the one we were built with: Linux builds use the system's
-    m_paletteResetWorks = QVersionNumber::fromString(qVersion()) >= QVersionNumber(5, 15);
+    const QString runtimeVersion = QString::fromLatin1(qVersion());
+    const int runtimeMajor = runtimeVersion.section('.', 0, 0).toInt();
+    const int runtimeMinor = runtimeVersion.section('.', 1, 1).toInt();
+    m_paletteResetWorks = runtimeMajor > 5 || (runtimeMajor == 5 && runtimeMinor >= 15);
 
     m_system = new SystemAppearance(this);
     m_builtIn.emplace_back(new SystemTheme(m_system));

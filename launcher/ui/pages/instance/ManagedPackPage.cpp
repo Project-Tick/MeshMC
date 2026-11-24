@@ -142,7 +142,7 @@ ManagedPackPage::ManagedPackPage(BaseInstance* instance,
 
 	connect(ui->reloadButton, &QPushButton::clicked, this,
 			&ManagedPackPage::reload);
-	connect(ui->versionsComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+	connect(ui->versionsComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
 			&ManagedPackPage::suggestVersion);
 	connect(ui->updateButton, &QPushButton::clicked, this,
 			&ManagedPackPage::update);

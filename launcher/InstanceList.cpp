@@ -923,7 +923,7 @@ QString applyPackUpdate(const QString& root, const QString& gameRoot, const QStr
         if (!FS::ensureFilePathExists(change.target))
             break;
         if (QFileInfo::exists(change.target)) {
-            const auto original = backup.filePath(QString::number(position));
+            const auto original = FS::PathCombine(backup.path(), QString::number(position));
             if (!QFile::rename(change.target, original))
                 break;
             change.backup = original;

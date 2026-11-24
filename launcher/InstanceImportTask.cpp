@@ -617,7 +617,7 @@ void InstanceImportTask::processModrinth() {
                     break;
                 }
             }
-            const auto parts = source.path().split('/', Qt::SkipEmptyParts);
+            const auto parts = source.path().split('/', QString::SkipEmptyParts);
             if (parts.size() < 5 || parts.at(0) != "data" || parts.at(2) != "versions")
                 continue;
 

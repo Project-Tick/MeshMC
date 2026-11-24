@@ -52,7 +52,7 @@ void JavaDownloadTask::executeTask()
         emitFailed(tr("Could not stage the Java installation."));
         return;
     }
-    m_targetDir = m_staging->filePath("runtime");
+    m_targetDir = FS::PathCombine(m_staging->path(), "runtime");
     if (!QDir().mkpath(m_targetDir)) {
         emitFailed(tr("Could not create the staging directory."));
         return;
@@ -72,9 +72,9 @@ void JavaDownloadTask::downloadArchive()
 	QUrl url(m_runtime.url);
 	QString filename = url.fileName();
 	if (filename.endsWith(".zip", Qt::CaseInsensitive))
-        m_archivePath = m_staging->filePath("runtime.zip");
+        m_archivePath = FS::PathCombine(m_staging->path(), "runtime.zip");
     else if (filename.endsWith(".tar.gz", Qt::CaseInsensitive) || filename.endsWith(".tgz", Qt::CaseInsensitive))
-        m_archivePath = m_staging->filePath("runtime.tar.gz");
+        m_archivePath = FS::PathCombine(m_staging->path(), "runtime.tar.gz");
     else {
         emitFailed(tr("Unsupported Java archive format."));
         return;
@@ -184,7 +184,7 @@ void JavaDownloadTask::installStagedRuntime()
     }
 #endif
     const auto relative = QDir(m_targetDir).relativeFilePath(binary);
-    const auto backup = m_staging->filePath("previous");
+    const auto backup = FS::PathCombine(m_staging->path(), "previous");
     QDir fs;
     const QFileInfo existing(m_destination);
     const bool replacing = existing.exists();

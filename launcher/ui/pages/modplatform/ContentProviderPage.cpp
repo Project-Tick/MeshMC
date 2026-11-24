@@ -108,9 +108,9 @@ ContentProviderPage::ContentProviderPage(DownloadContentDialog* dialog,
 			&ContentProviderPage::onSearchTextEdited);
 	connect(m_ui->searchEdit, &QLineEdit::returnPressed, this,
 			&ContentProviderPage::triggerSearch);
-	connect(m_ui->sortByBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+	connect(m_ui->sortByBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
 			&ContentProviderPage::onSortChanged);
-	connect(m_ui->versionSelectionBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+	connect(m_ui->versionSelectionBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
 			&ContentProviderPage::onVersionChanged);
 	connect(m_ui->contentSelectionButton, &QPushButton::clicked, this,
 			&ContentProviderPage::onSelectionButtonClicked);
@@ -344,7 +344,7 @@ void ContentProviderPage::openProject(const QString& projectId)
 
 	m_ui->bottomLayout->addWidget(buttonBox, 1, 2);
 
-	connect(m_ui->versionSelectionBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+	connect(m_ui->versionSelectionBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
 			[this, okButton](int index) {
 				/* The "No valid version found." placeholder carries -1,
 				 * a real version its position in the list. */

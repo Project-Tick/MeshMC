@@ -276,7 +276,7 @@ bool DownloadContentDialog::openProjectLink(const QUrl& url)
 
 	for (const auto& handler : urlHandlersFor(m_contentType)) {
 		const QRegularExpression expression(
-			QRegularExpression::anchoredPattern(handler.pattern));
+			QStringLiteral("\\A(?:%1)\\z").arg(handler.pattern));
 		const auto match = expression.match(address);
 		if (!match.hasMatch()) {
 			continue;

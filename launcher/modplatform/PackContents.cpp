@@ -109,7 +109,7 @@ namespace PackContents
 		/* cleanPath resolves "a/../b" on its own, so a ".." left in the
 		 * result is one that climbs above the game directory. */
 		const QStringList segments =
-			clean.split(QLatin1Char('/'), Qt::SkipEmptyParts);
+			clean.split(QLatin1Char('/'), QString::SkipEmptyParts);
 		if (segments.contains(QLatin1String(".."))) {
 			return {};
 		}
@@ -212,7 +212,11 @@ namespace PackContents
 		const QStringList oldClean = normalizeAll(oldPaths);
 		const QStringList newClean = normalizeAll(newPaths);
 
-		QSet<QString> shipped(newClean.begin(), newClean.end());
+		QSet<QString> shipped;
+		shipped.reserve(newClean.size());
+		for (const QString& path : newClean) {
+			shipped.insert(path);
+		}
 
 		QStringList stale;
 		for (const QString& path : oldClean) {

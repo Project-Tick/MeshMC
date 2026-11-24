@@ -10,7 +10,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLatin1Char>
-#include <QLatin1String>
 
 namespace
 {
@@ -19,16 +18,12 @@ namespace
 
 	/* Backslash comes first on purpose: escaping it afterwards would
 	 * also escape the backslashes this loop has just added. */
-	const QLatin1String kMarkdownSpecials("\\`*_{}[]<>()#+-.!|");
+	const QString kMarkdownSpecials = QStringLiteral("\\`*_{}[]<>()#+-.!|");
 
 	QString markdownEscaped(const QString& text)
 	{
 		QString out = text;
-		for (const char c : kMarkdownSpecials) {
-			/* Assigned rather than constructed with parentheses: the
-			 * parenthesised form of this reads as a function
-			 * declaration taking a QLatin1Char, not as a variable. */
-			const QChar ch = QLatin1Char(c);
+		for (const QChar ch : kMarkdownSpecials) {
 			const QString escaped = QStringLiteral("\\") + ch;
 			out.replace(ch, escaped);
 		}

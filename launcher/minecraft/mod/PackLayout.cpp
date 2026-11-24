@@ -167,7 +167,11 @@ namespace PackLayout
 			return false;
 		}
 
-		const QSet<QString> entrySet(entries.begin(), entries.end());
+		QSet<QString> entrySet;
+		entrySet.reserve(entries.size());
+		for (const QString& entry : entries) {
+			entrySet.insert(entry);
+		}
 		if (entrySet.contains(QStringLiteral("pack.mcmeta")) &&
 			anyEntryUnder(entries, QStringLiteral("data/"))) {
 			return true;

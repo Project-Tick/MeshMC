@@ -37,7 +37,7 @@ FlamePage::FlamePage(NewInstanceDialog* dialog, QWidget* parent)
 	ui->sortByBox->addItem(tr("Sort by author"));
 	ui->sortByBox->addItem(tr("Sort by total downloads"));
 
-	connect(ui->sortByBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+	connect(ui->sortByBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
 			&FlamePage::triggerSearch);
 	connect(ui->packView->selectionModel(),
 			&QItemSelectionModel::currentChanged, this,

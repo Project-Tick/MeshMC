@@ -8,6 +8,7 @@
 #pragma once
 
 #include <QString>
+#include <cstdint>
 #include <map>
 #include <set>
 #include <QStringList>

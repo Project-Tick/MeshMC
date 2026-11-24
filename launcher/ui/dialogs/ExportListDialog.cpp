@@ -174,7 +174,7 @@ void ExportListDialog::buildUi()
 	buttonRow->addWidget(buttons);
 	root->addLayout(buttonRow);
 
-	connect(m_formatBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+	connect(m_formatBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
 			&ExportListDialog::formatChanged);
 	for (QCheckBox* box : {m_versionCheck, m_authorsCheck, m_urlCheck,
 						   m_fileNameCheck}) {

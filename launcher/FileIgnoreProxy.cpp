@@ -289,7 +289,7 @@ void FileIgnoreProxy::loadBlockedPathsFromFile(const QString& fileName)
 	}
 	auto ignoreData = ignoreFile.readAll();
 	auto string = QString::fromUtf8(ignoreData);
-	setBlockedPaths(string.split('\n', Qt::SkipEmptyParts));
+	setBlockedPaths(string.split('\n', QString::SkipEmptyParts));
 }
 
 void FileIgnoreProxy::saveBlockedPathsToFile(const QString& fileName)
