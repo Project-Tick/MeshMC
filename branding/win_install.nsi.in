@@ -12,7 +12,10 @@ InstallDirRegKey HKCU "Software\MeshMC" "InstallDir"
 RequestExecutionLevel user
 OutFile "../MeshMC-Setup.exe"
 
-!define MUI_ICON "@Launcher_Branding_SourceDir@/MeshMC.ico"
+!ifndef MESHMC_ICON
+!define MESHMC_ICON "@Launcher_Branding_SourceDir@/MeshMC.ico"
+!endif
+!define MUI_ICON "${MESHMC_ICON}"
 
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\MeshMC"
 
@@ -355,7 +358,9 @@ SectionEnd
 ; used for MSVS redist download
 ; extract to ../NSISPlugins/NScurl
 ; https://github.com/negrutiu/nsis-nscurl/releases/latest/download/NScurl.zip
+!ifndef MESHMC_HOST_NSIS
 !insertmacro CompileTimeIfFileExist "../NSISPlugins/NScurl/Plugins/" haveNScurl
+!endif
 !ifdef haveNScurl
 !AddPluginDir /x86-unicode     "../NSISPlugins/NScurl/Plugins/x86-unicode"
 !AddPluginDir /x86-ansi        "../NSISPlugins/NScurl/Plugins/x86-ansi"

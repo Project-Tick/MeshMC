@@ -4,6 +4,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 import datetime as dt
 import hashlib
+from itertools import zip_longest
 import json
 import os
 import posixpath
@@ -380,6 +381,7 @@ def make_build(payload_root: Path, build_number: int, commit: str, built: str, o
             _extract_archive(archive, target)
             variants[variant_id] = _variant_files(target, metadata, build_number, assets)
 
+    _variant_successors(variants)
     document = {
         "type": "build",
         "format": 1,
@@ -547,6 +549,64 @@ def _next_tags(build_number: int, branch: str, previous: dict | None,
     return {"latest": build_number, "testing": testing, "stable": stable}
 
 
+def _variant_successors(variants: dict) -> dict[str, str]:
+    successors = {}
+    for variant_id, variant in variants.items():
+        for predecessor in variant["supersedes"]:
+            if predecessor in successors:
+                raise ValueError(f"multiple successors for updater variant {predecessor}")
+            successors[predecessor] = variant_id
+
+    for predecessor in successors:
+        visited = set()
+        while predecessor in successors:
+            if predecessor in visited:
+                raise ValueError(f"cycle in updater variant successors at {predecessor}")
+            visited.add(predecessor)
+            predecessor = successors[predecessor]
+    return successors
+
+
+def _requirements_cover(previous: dict, candidate: dict) -> bool:
+    for name, value in candidate.items():
+        if name not in previous:
+            return False
+        if name in ("os", "arch"):
+            if value != previous[name]:
+                return False
+            continue
+        if name == "qt" and value.split(".", 1)[0] != previous[name].split(".", 1)[0]:
+            return False
+        old_parts = map(int, previous[name].split("."))
+        new_parts = map(int, value.split("."))
+        for old, new in zip_longest(old_parts, new_parts, fillvalue=0):
+            if old != new:
+                if new > old:
+                    return False
+                break
+    return True
+
+
+def _check_variant_continuity(previous: dict, candidate: dict) -> None:
+    variants = candidate["variants"]
+    successors = _variant_successors(variants)
+    stranded = []
+    for variant_id, variant in previous["variants"].items():
+        chain = [variant_id]
+        while chain[-1] in successors:
+            chain.append(successors[chain[-1]])
+        if not any(
+            name in variants and _requirements_cover(variant["requires"], variants[name]["requires"])
+            for name in chain
+        ):
+            stranded.append(variant_id)
+    if stranded:
+        raise ValueError(
+            f"updater continuity from build {previous['build']} to {candidate['build']}: "
+            f"missing compatible variants for {', '.join(sorted(stranded))}"
+        )
+
+
 def _initialise_empty_repository(repository: str) -> None:
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
@@ -634,6 +694,42 @@ def _upload_assets(repository: str, tag: str, assets: list[Path]) -> None:
         )
 
 
+def _publish_draft(repository: str, release: dict, advance: bool) -> None:
+    command(
+        "gh", "api", "--method", "PATCH",
+        f"repos/{repository}/releases/{release['id']}",
+        "-F", "draft=false",
+        "-F", "prerelease=false",
+        "-f", f"make_latest={'true' if advance else 'false'}",
+    )
+
+
+def _finish_release(repository: str, release_tag: str, online_key: str, work: Path) -> None:
+    latest = _target_release(repository)
+    if not latest:
+        raise ValueError(f"could not locate a published release after publishing {release_tag}")
+    _sync_historical_builds(repository, latest, online_key, work / "sync")
+    if latest["tag_name"] != release_tag:
+        command(
+            "gh", "api", "--method", "PATCH",
+            f"repos/{repository}/releases/{latest['id']}",
+            "-f", "make_latest=true",
+        )
+
+
+def _resume_published_release(repository: str, release: dict, build_data: bytes,
+                              online_key: str, work: Path) -> None:
+    candidate = json.loads(build_data)
+    document, _signature = _download_manifest(repository, release, candidate["build"], work, [online_key])
+    published = json.loads(document.read_bytes())
+    # Build timestamps can change when the same payload is retried.
+    candidate.pop("built", None)
+    published.pop("built", None)
+    if published != candidate or release.get("prerelease"):
+        raise ValueError(f"published release {release['tag_name']} does not match this build")
+    _finish_release(repository, release["tag_name"], online_key, work)
+
+
 def _sign_file(private_key: Path, key_id: str, data: bytes, output: Path) -> Path:
     raw_signature = output.parent / (output.name + ".raw")
     signature = sign(private_key, data, raw_signature)
@@ -650,14 +746,30 @@ def _add_metadata_assets(directory: Path, floor_data: bytes, floor_signature: by
     repository = "Project-Tick/MeshMC-Updates"
     trusted = [online_key]
     old_tags = _previous_tags(repository, previous, history_dir, trusted)
+    if previous and re.fullmatch(r"build-[1-9][0-9]*", previous["tag_name"]) and not old_tags:
+        raise ValueError("the previous updater Release is missing signed tags metadata")
     tags_for_release = _next_tags(build_number, branch, old_tags, advance)
     if previous:
         available = _manifest_assets(previous)
         retained = _retained_builds(set(available), set(tags_for_release.values()) | {build_number})
+        replaced = {
+            number for tier, number in (old_tags or {}).items()
+            if number != tags_for_release[tier] and tags_for_release[tier] == build_number
+        }
         historical = _download_history(
-            repository, {number: previous for number in retained - {build_number}}, history_dir, trusted
+            repository, {number: previous for number in (retained | replaced) - {build_number}}, history_dir, trusted
         )
+        if replaced:
+            candidate = json.loads(build_data)
+            for number in sorted(replaced):
+                document = history_dir / f"build-{number}" / f"updater--builds--{number}.json"
+                old_build = json.loads(document.read_bytes())
+                if old_build.get("build") != number:
+                    raise ValueError(f"previous updater manifest has the wrong build number: {document.name}")
+                _check_variant_continuity(old_build, candidate)
         for source in historical:
+            if int(BUILD_ASSET.fullmatch(source.name).group(1)) not in retained:
+                continue
             target = directory / source.name
             shutil.copyfile(source, target)
             assets.append(target)
@@ -774,6 +886,11 @@ def publish(args) -> None:
             (release for release in existing if release.get("tag_name") == release_tag),
             None,
         )
+        if existing_build and not existing_build.get("draft"):
+            _resume_published_release(repository, existing_build, build_data, online_key, work)
+            print(f"Completed history synchronization for {release_tag}.")
+            return
+
         previous = _target_release(repository)
         previous_builds = []
         if previous:
@@ -810,24 +927,8 @@ def publish(args) -> None:
             raise ValueError(f"GitHub did not return the draft release for {release_tag}")
 
         _upload_assets(repository, release_tag, all_assets)
-
-        command(
-            "gh", "api", "--method", "PATCH",
-            f"repos/{repository}/releases/{release['id']}",
-            "-F", "draft=false",
-            "-F", "prerelease=false",
-            "-F", f"make_latest={'true' if advance else 'false'}",
-        )
-        newest = _target_release(repository)
-        if newest and newest["tag_name"] != release_tag:
-            newest_release = _gh_json(f"repos/{repository}/releases/tags/{newest['tag_name']}")
-            command(
-                "gh", "api", "--method", "PATCH",
-                f"repos/{repository}/releases/{newest_release['id']}",
-                "-F", "make_latest=true",
-            )
-        if newest:
-            _sync_historical_builds(repository, newest, online_key, work / "sync")
+        _publish_draft(repository, release, advance)
+        _finish_release(repository, release_tag, online_key, work)
         print(f"Published {release_tag} with {len(all_assets)} assets.")
 
 

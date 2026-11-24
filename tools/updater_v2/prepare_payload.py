@@ -14,6 +14,7 @@ def main() -> None:
     parser.add_argument("--variant", required=True)
     parser.add_argument("--name", required=True)
     parser.add_argument("--requirements", required=True)
+    parser.add_argument("--supersedes", action="append", default=[], metavar="VARIANT")
     args = parser.parse_args()
 
     source = args.source.resolve(strict=True)
@@ -31,7 +32,7 @@ def main() -> None:
     metadata = {
         "id": args.variant,
         "name": args.name,
-        "supersedes": [],
+        "supersedes": args.supersedes,
         "requires": requirements,
     }
     (output / "variant.json").write_text(

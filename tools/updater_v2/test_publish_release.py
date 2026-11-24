@@ -11,10 +11,13 @@ from unittest.mock import patch
 from tools.updater_v2.publish_release import (
     _add_metadata_assets,
     _check_asset_limit,
+    _check_variant_continuity,
     _download_manifest,
     _create_draft_release,
     _initialise_empty_repository,
     _next_tags,
+    _publish_draft,
+    _resume_published_release,
     _reuse_draft_release,
     _retained_builds,
     _sync_historical_builds,
@@ -50,10 +53,11 @@ class PreparePayloadTest(unittest.TestCase):
                     str(ROOT / "tools/updater_v2/prepare_payload.py"),
                     "--source", str(source),
                     "--output", str(payload),
-                    "--variant", "linux-x86_64-qt5",
+                    "--variant", "linux-x86_64-qt5.6",
                     "--name", "Linux x86_64 Qt 5",
+                    "--supersedes", "linux-x86_64-qt5",
                     "--requirements",
-                    '{"os":"linux","arch":"x86_64","glibc":"2.19","glibcxx":"3.4.21","qt":"5.15.2"}',
+                    '{"os":"linux","arch":"x86_64","glibc":"2.19","glibcxx":"3.4.21","qt":"5.6.3"}',
                 ],
                 check=True,
             )
@@ -62,7 +66,8 @@ class PreparePayloadTest(unittest.TestCase):
             output.mkdir()
             data, assets = make_build(payload_root, 42, "a" * 40, "2026-11-22T00:00:00Z", output)
             manifest = json.loads(data)
-            variant = manifest["variants"]["linux-x86_64-qt5"]
+            variant = manifest["variants"]["linux-x86_64-qt5.6"]
+            self.assertEqual(variant["supersedes"], ["linux-x86_64-qt5"])
             self.assertEqual(variant["files"][0]["sha256"], hashlib.sha256(b"launcher").hexdigest())
             self.assertTrue(variant["files"][0]["executable"])
             self.assertEqual(variant["files"][0]["asset_url"],
@@ -266,7 +271,69 @@ class ManifestRetentionTest(unittest.TestCase):
         ))
 
 
+class VariantContinuityTest(unittest.TestCase):
+    def test_compatible_successor_covers_existing_installations(self):
+        previous = {"build": 1, "variants": {
+            "linux-x86_64-qt5": {"requires": {
+                "os": "linux", "arch": "x86_64", "glibc": "2.19", "glibcxx": "3.4.21", "qt": "5.15.2",
+            }},
+        }}
+        successor = {"supersedes": ["linux-x86_64-qt5"], "requires": {
+            "os": "linux", "arch": "x86_64", "glibc": "2.19.0", "glibcxx": "3.4.21", "qt": "5.6.3",
+        }}
+        candidate = {"build": 2, "variants": {"linux-x86_64-qt5.6": successor}}
+        _check_variant_continuity(previous, candidate)
+
+        for requirements in ({"glibc": "2.20"}, {"qt": "4.8.7"}, {"arch": "x86"}):
+            with self.subTest(requirements=requirements):
+                with patch.dict(successor["requires"], requirements):
+                    with self.assertRaisesRegex(ValueError, "missing compatible variants for linux-x86_64-qt5"):
+                        _check_variant_continuity(previous, candidate)
+
+        successor["supersedes"] = []
+        with self.assertRaisesRegex(ValueError, "missing compatible variants for linux-x86_64-qt5"):
+            _check_variant_continuity(previous, candidate)
+
+    def test_rejects_cycles_and_ambiguous_successors(self):
+        previous = {"build": 1, "variants": {}}
+        for links, error in (
+            ({"one": ["two"], "two": ["one"]}, "cycle"),
+            ({"one": ["old"], "two": ["old"]}, "multiple successors"),
+        ):
+            with self.subTest(links=links):
+                candidate = {"build": 2, "variants": {
+                    name: {"supersedes": predecessors} for name, predecessors in links.items()
+                }}
+                with self.assertRaisesRegex(ValueError, error):
+                    _check_variant_continuity(previous, candidate)
+
+
 class DraftReleaseRetryTest(unittest.TestCase):
+    @patch("tools.updater_v2.publish_release._finish_release")
+    @patch("tools.updater_v2.publish_release._download_manifest")
+    def test_resumes_history_only_for_the_same_signed_build(self, download, finish):
+        release = {"tag_name": "build-42"}
+        candidate = {"build": 42, "commit": "a" * 40, "variants": {}, "built": "new timestamp"}
+        with tempfile.TemporaryDirectory() as temporary:
+            work = Path(temporary)
+            document = work / "build.json"
+            document.write_text(json.dumps({**candidate, "built": "old timestamp"}))
+            download.return_value = (document, work / "build.json.sig")
+
+            _resume_published_release("repo", release, json.dumps(candidate).encode(), "key", work)
+            download.assert_called_once_with("repo", release, 42, work, ["key"])
+            finish.assert_called_once_with("repo", "build-42", "key", work)
+            finish.reset_mock()
+            with self.assertRaisesRegex(ValueError, "does not match"):
+                different = {**candidate, "commit": "b" * 40}
+                _resume_published_release("repo", release, json.dumps(different).encode(), "key", work)
+            finish.assert_not_called()
+
+    @patch("tools.updater_v2.publish_release.command")
+    def test_make_latest_is_sent_as_a_string(self, command):
+        _publish_draft("repo", {"id": 123}, False)
+        self.assertEqual(command.call_args.args[-2:], ("-f", "make_latest=false"))
+
     @patch("tools.updater_v2.publish_release.command")
     def test_reuses_draft_after_removing_partial_assets(self, command):
         release = {"draft": True, "assets": [{"id": 123}]}

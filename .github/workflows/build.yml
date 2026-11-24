@@ -6,6 +6,7 @@ concurrency:
 
 on:
   push:
+    branches: ['**']
   merge_group:
     types: [checks_requested]
   pull_request:
@@ -73,203 +74,231 @@ jobs:
           echo "Allocated updater build $next_build"
 
   build:
-    name: Build (${{ matrix.build-name }})
+    name: Build (${{ matrix.platform }})
     needs: [build-number]
-    if: ${{ always() && (needs.build-number.result == 'success' || needs.build-number.result == 'skipped') }}
-
+    if: always() && (needs.build-number.result == 'success' || needs.build-number.result == 'skipped')
     environment: ${{ inputs.environment || '' }}
-
     permissions:
       contents: read
-      id-token: write
-      packages: write
-
+      packages: read
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-26.04
-            artifact-name: Linux
-            cmake-preset: linux
-            qt-version: 5.15.2
-            qt-major: 5
-            updater-variant: linux-x86_64-qt5
-            updater-name: Linux x86_64 Qt 5
-            updater-requirements: '{"os":"linux","arch":"x86_64","glibc":"2.19","glibcxx":"3.4.21","qt":"5.15.2"}'
-            build-platform: lin64
-            build-name: Linux x86_64 Qt5
-
-          - os: windows-2025
-            artifact-name: Windows-w64
-            cmake-preset: windows_mingw
-            msystem: UCRT64
-            vcvars-arch: amd64_x86
-            qt-major: 5
-            updater-variant: windows-x86_64-qt5
-            updater-name: Windows x86_64 Qt 5
-            updater-requirements: '{"os":"windows","arch":"x86_64","os_version":"10.0"}'
-            build-platform: win64
-            build-name: Windows x86_64 Qt5
-
-          - os: macos-26
-            artifact-name: macOS-ARM
-            cmake-preset: macos
-            macosx-deployment-target: 12.0
-            qt-major: 5
-            updater-variant: macos-aarch64-qt5
-            updater-name: macOS aarch64 Qt 5
-            updater-requirements: '{"os":"macos","arch":"aarch64","os_version":"12.0"}'
-            build-platform: macos
-            build-name: macOS aarch64 Qt5
-
-    runs-on: ${{ matrix.os }}
-
-    defaults:
-      run:
-        shell: ${{ matrix.msystem != '' && 'msys2 {0}' || 'bash' }}
+          - platform: lin64
+            image: linux-x64
+            architecture: linux/amd64
+            archive: tar.gz
+            variant: linux-x86_64-qt5.6
+            supersedes: linux-x86_64-qt5
+            requirements: '{"os":"linux","arch":"x86_64","glibc":"2.19","glibcxx":"3.4.21","qt":"5.6.3"}'
+          - platform: lin32
+            image: linux-x32
+            architecture: linux/386
+            archive: tar.gz
+            variant: linux-x86-qt5.6
+            requirements: '{"os":"linux","arch":"x86","glibc":"2.19","glibcxx":"3.4.21","qt":"5.6.3"}'
+          - platform: win32
+            image: windows-win32
+            architecture: linux/amd64
+            archive: zip
+            variant: windows-x86-qt5.6
+            requirements: '{"os":"windows","arch":"x86","os_version":"5.1"}'
+          - platform: win32-5.15.2
+            image: windows-win32
+            architecture: linux/amd64
+            archive: zip
+            variant: windows-x86-qt5.15
+            supersedes: windows-x86-qt5.6
+            requirements: '{"os":"windows","arch":"x86","os_version":"6.1"}'
+          - platform: osx64-5.15.2
+            image: macos-osx64
+            architecture: linux/amd64
+            archive: tar.gz
+            variant: macos-x86_64-qt5.15
+            requirements: '{"os":"macos","arch":"x86_64","os_version":"10.13"}'
 
     env:
-      ARTIFACT_NAME: ${{ matrix.artifact-name }}-Qt${{ matrix.qt-major }}
-      BUILD_PLATFORM: official
-      BUILD_TYPE: ${{ inputs.build-type || (github.event_name == 'push' && github.ref_type == 'branch' && 'Release' || 'Debug') }}
-      CMAKE_PRESET: ${{ matrix.cmake-preset }}
-      UPDATE_CHANNEL: stable
-      QT_MAJOR: ${{ matrix.qt-major }}
+      PLATFORM: ${{ matrix.platform }}
+      TOOLCHAIN_IMAGE: ghcr.io/project-tick/meshmc/${{ matrix.image }}:dev
+      IMAGE_PLATFORM: ${{ matrix.architecture }}
+      BUILD_TYPE: ${{ inputs.build-type || (github.event_name == 'push' && 'Release' || 'Debug') }}
+      BUILD_NUMBER: ${{ needs.build-number.outputs.build-number || '-1' }}
+      UPDATER_VARIANT: ${{ matrix.variant }}
       UPDATER_PUBLISH_ENABLED: ${{ vars.UPDATER_PUBLISH_ENABLED }}
-      MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx-deployment-target }}
 
     steps:
-      ##
-      # SETUP
-      ##
-
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
-          submodules: true
+          submodules: recursive
+          persist-credentials: false
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
-      - name: Setup Java
-        uses: actions/setup-java@v6
-        with:
-          distribution: zulu
-          java-version: 17
+      - name: Test release tooling
+        if: matrix.platform == 'lin64'
+        run: python -m unittest -v tools.test_package_release tools.updater_v2.test_publish_release
 
-      - name: Setup dependencies
-        id: setup-dependencies
-        uses: ./.github/actions/setup-dependencies
-        with:
-          build-type: ${{ env.BUILD_TYPE }}
-          artifact-name: ${{ matrix.artifact-name }}
-          msystem: ${{ matrix.msystem }}
-          vcvars-arch: ${{ matrix.vcvars-arch }}
-          qt-version: ${{ matrix.qt-version }}
-          qt-major: ${{ matrix.qt-major }}
+      - name: Set build output directory
+        run: echo "BUILD_OUTPUT=$RUNNER_TEMP/meshmc-build" >> "$GITHUB_ENV"
 
-      ##
-      # BUILD
-      ##
-
-      - name: Configure project
+      - name: Pull toolchain image
+        env:
+          GHCR_TOKEN: ${{ github.token }}
         run: |
-          updater_args=()
-          if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "branch" ]]; then
-            updater_args+=(
-              -DLauncher_VERSION_BUILD="${{ needs.build-number.outputs.build-number }}"
-              -DLauncher_BUILD_PLATFORM="${{ matrix.build-platform }}"
-            )
-            if [[ "$UPDATER_PUBLISH_ENABLED" == "true" && ( ! -f launcher/updater/v2/keys/1.json || ! -f launcher/updater/v2/keys/1.json.sig || ! -f launcher/updater/v2/keys/root-keys.txt ) ]]; then
-              echo "::error::Updater V2 bootstrap files are missing. Run tools/updater_v2/bootstrap.py and commit its public files first."
+          printf '%s\n' "$GHCR_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          docker pull --platform "$IMAGE_PLATFORM" "$TOOLCHAIN_IMAGE"
+          docker logout ghcr.io
+
+      - name: Build and install in toolchain
+        run: |
+          mkdir -p "$BUILD_OUTPUT"
+          updater_site=
+          updater_keys=
+          if [[ "$BUILD_NUMBER" != -1 && "$UPDATER_PUBLISH_ENABLED" == true ]]; then
+            keys=launcher/updater/v2/keys
+            if [[ ! -s "$keys/1.json" || ! -s "$keys/1.json.sig" || ! -s "$keys/root-keys.txt" ]]; then
+              echo "::error::Updater V2 bootstrap files are missing."
               exit 1
             fi
-            if [[ "$UPDATER_PUBLISH_ENABLED" == "true" ]]; then
-              root_keys="$(paste -sd ';' launcher/updater/v2/keys/root-keys.txt)"
-              updater_args+=(
-                -DLauncher_UPDATER_ROOT_KEYS="$root_keys"
-                -DLauncher_UPDATER_KEYS_FLOOR="$GITHUB_WORKSPACE/launcher/updater/v2/keys/1.json"
-                -DLauncher_UPDATER_VARIANT="${{ matrix.updater-variant }}"
-                -DLauncher_UPDATER_SITE="https://github.com/Project-Tick/MeshMC-Updates/releases/latest/download/"
-              )
-            fi
+            cp "$keys/1.json" "$BUILD_OUTPUT/updater-keys-floor.json"
+            updater_keys="$(paste -sd ';' "$keys/root-keys.txt")"
+            updater_site="https://github.com/Project-Tick/MeshMC-Updates/releases/latest/download/"
           fi
-          cmake --preset "$CMAKE_PRESET" -D VCPKG_HOST_TRIPLET="$VCPKG_TRIPLET" -D VCPKG_TARGET_TRIPLET="$VCPKG_TRIPLET" -DMeshMC_QT_VERSION_MAJOR="$QT_MAJOR" -DMeshMC_BUNDLE_OPENSSL_LIBS="${MESHMC_BUNDLE_OPENSSL_LIBS:-}" "${updater_args[@]}"
 
-      - name: Run build
-        run: |
-          cmake --build --preset "$CMAKE_PRESET" --config "$BUILD_TYPE"
+          docker run --rm --init --network none --platform "$IMAGE_PLATFORM" \
+            --user "$(id -u):$(id -g)" \
+            --env HOME=/tmp --env PLATFORM --env BUILD_TYPE --env BUILD_NUMBER \
+            --env UPDATER_VARIANT \
+            --env "UPDATER_ROOT_KEYS=$updater_keys" --env "UPDATER_SITE=$updater_site" \
+            --volume "$GITHUB_WORKSPACE:/src:ro" --volume "$BUILD_OUTPUT:/out" \
+            --entrypoint /bin/bash "$TOOLCHAIN_IMAGE" /src/.github/scripts/build-toolchain.sh
 
-      - name: Run tests
-        run: |
-          ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE" --output-on-failure
-
-      - name: Test release packaging and updater tooling
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          python -m unittest -v tools.test_package_release tools.updater_v2.test_publish_release
-
-      ##
-      # PACKAGE
-      ##
-
-      - name: Get short version
-        id: short-version
-        shell: bash
-        run: |
-          echo "version=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Package (Linux)
-        if: ${{ runner.os == 'Linux' }}
-        uses: ./.github/actions/package/linux
-        with:
-          version: ${{ steps.short-version.outputs.version }}
-          build-type: ${{ steps.setup-dependencies.outputs.build-type }}
-          qt-major: ${{ matrix.qt-major }}
-
-      - name: Package (macOS)
-        if: ${{ runner.os == 'macOS' }}
-        uses: ./.github/actions/package/macos
-        with:
-          version: ${{ steps.short-version.outputs.version }}
-          build-type: ${{ steps.setup-dependencies.outputs.build-type }}
-          qt-major: ${{ matrix.qt-major }}
-
-      - name: Package (Windows)
-        if: ${{ runner.os == 'Windows' }}
-        uses: ./.github/actions/package/windows
-        with:
-          version: ${{ steps.short-version.outputs.version }}
-          build-type: ${{ env.BUILD_TYPE }}
-          windows-codesign-cert: ${{ secrets.WINDOWS_CODESIGN_CERT }}
-          windows-codesign-password: ${{ secrets.WINDOWS_CODESIGN_PASSWORD }}
-          msystem: ${{ matrix.msystem }}
-          qt-major: ${{ matrix.qt-major }}
-
-      - name: Prepare updater payload
-        if: ${{ github.event_name == 'push' && github.ref_type == 'branch' }}
-        shell: bash
-        run: |
-          case "$RUNNER_OS" in
-            Linux|Windows|macOS) source_dir="$GITHUB_WORKSPACE/install" ;;
-            *) echo "::error::Unsupported updater runner OS: $RUNNER_OS"; exit 1 ;;
-          esac
-          test -d "$source_dir"
-          python "$GITHUB_WORKSPACE/tools/updater_v2/prepare_payload.py" \
-            --source "$source_dir" \
-            --output "$RUNNER_TEMP/updater-payload" \
-            --variant "${{ matrix.updater-variant }}" \
-            --name "${{ matrix.updater-name }}" \
-            --requirements '${{ matrix.updater-requirements }}'
-
-      - name: Upload updater payload
-        if: ${{ github.event_name == 'push' && github.ref_type == 'branch' }}
+      - name: Upload build logs
+        if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: updater-${{ matrix.updater-variant }}
+          name: logs-${{ matrix.platform }}
+          path: ${{ runner.temp }}/meshmc-build/*.log
+          if-no-files-found: ignore
+
+      - name: Validate installed launcher architecture
+        run: |
+          install_dir="$BUILD_OUTPUT/install"
+          case "$PLATFORM" in
+            lin64)
+              test -x "$install_dir/MeshMC/MeshMC"
+              file -b "$install_dir/MeshMC/bin/MeshMC" | grep -E "ELF 64-bit.*x86-64"
+              ;;
+            lin32)
+              test -x "$install_dir/MeshMC/MeshMC"
+              file -b "$install_dir/MeshMC/bin/MeshMC" | grep -E "ELF 32-bit.*Intel 80386"
+              ;;
+            win32|win32-5.15.2)
+              test -f "$install_dir/MeshMC/Qt5Core.dll"
+              test -f "$install_dir/MeshMC/qt.conf"
+              test -f "$install_dir/MeshMC/platforms/qwindows.dll"
+              launcher="$install_dir/MeshMC/MeshMC.exe"
+              file -b "$launcher" | grep -E "PE32 executable.*(Intel 80386|Intel i386)"
+              major=5
+              if [[ "$PLATFORM" == win32-5.15.2 ]]; then
+                major=6
+                test -f "$install_dir/MeshMC/libcrypto-1_1.dll"
+                test -f "$install_dir/MeshMC/libssl-1_1.dll"
+                test -f "$install_dir/MeshMC/msvcr100.dll"
+              fi
+              objdump -p "$launcher" | awk -v major="$major" '
+                $1 == "MajorOSystemVersion" { os_major = $2 }
+                $1 == "MinorOSystemVersion" { os_minor = $2 }
+                $1 == "MajorSubsystemVersion" { subsys_major = $2 }
+                $1 == "MinorSubsystemVersion" { subsys_minor = $2 }
+                END {
+                  if (os_major != major || os_minor != 1 || subsys_major != major || subsys_minor != 1) {
+                    print "Unexpected Windows version in PE header"
+                    exit 1
+                  }
+                }'
+              ;;
+            osx64-5.15.2)
+              test -f "$install_dir/MeshMC.app/Contents/Info.plist"
+              file -b "$install_dir/MeshMC.app/Contents/MacOS/MeshMC" | grep -E "Mach-O 64-bit.*x86_64"
+              ;;
+          esac
+
+      - name: Build and sign the Windows installer
+        if: startsWith(matrix.platform, 'win32')
+        env:
+          WINDOWS_CODESIGN_CERT: ${{ secrets.WINDOWS_CODESIGN_CERT }}
+          WINDOWS_CODESIGN_PASSWORD: ${{ secrets.WINDOWS_CODESIGN_PASSWORD }}
+        run: bash .github/scripts/package-windows-installer.sh
+
+      - name: Upload Windows installer
+        if: startsWith(matrix.platform, 'win32')
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-${{ matrix.platform }}-setup
+          path: dist/*-${{ matrix.platform }}-Setup.exe
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Package build
+        env:
+          ARCHIVE_FORMAT: ${{ matrix.archive }}
+        run: |
+          version="$(git rev-parse --short HEAD)"
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            version="$GITHUB_REF_NAME"
+          fi
+          bundle=MeshMC
+          if [[ "$PLATFORM" == osx64-5.15.2 ]]; then
+            bundle=MeshMC.app
+          fi
+          mkdir -p dist
+          python tools/package_release.py \
+            --source "$BUILD_OUTPUT/install/$bundle" \
+            --output "dist/MeshMC-$version-$PLATFORM.$ARCHIVE_FORMAT" \
+            --format "$ARCHIVE_FORMAT" --archive-root "$bundle"
+
+      - name: Upload download package
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-${{ matrix.platform }}
+          path: dist/*-${{ matrix.platform }}.${{ matrix.archive }}
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Prepare updater payload
+        if: needs.build-number.result == 'success' && vars.UPDATER_PUBLISH_ENABLED == 'true'
+        env:
+          UPDATER_REQUIREMENTS: ${{ matrix.requirements }}
+          UPDATER_SUPERSEDES: ${{ matrix.supersedes }}
+        run: |
+          source_dir="$BUILD_OUTPUT/install/MeshMC"
+          if [[ "$PLATFORM" == osx64-5.15.2 ]]; then
+            source_dir="$BUILD_OUTPUT/install/MeshMC.app"
+          fi
+          predecessor=()
+          if [[ -n "$UPDATER_SUPERSEDES" ]]; then
+            predecessor=(--supersedes "$UPDATER_SUPERSEDES")
+          fi
+          python tools/updater_v2/prepare_payload.py \
+            --source "$source_dir" \
+            --output "$RUNNER_TEMP/updater-payload" \
+            --variant "$UPDATER_VARIANT" \
+            --name "MeshMC $PLATFORM" \
+            --requirements "$UPDATER_REQUIREMENTS" \
+            "${predecessor[@]}"
+
+      - name: Upload updater payload
+        if: needs.build-number.result == 'success' && vars.UPDATER_PUBLISH_ENABLED == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: updater-${{ matrix.variant }}
           path: ${{ runner.temp }}/updater-payload/*
+          compression-level: 0
           if-no-files-found: error
           retention-days: 1
 
@@ -277,7 +306,7 @@ jobs:
     name: Publish Updater V2 release
     needs: [build-number, build]
     if: >-
-      github.event_name == 'push' &&
+      needs.build-number.result == 'success' &&
       github.ref_type == 'branch' &&
       vars.UPDATER_PUBLISH_ENABLED == 'true'
     environment: Release
