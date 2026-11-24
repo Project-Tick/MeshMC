@@ -91,7 +91,7 @@ jobs:
             architecture: linux/amd64
             archive: tar.gz
             variant: linux-x86_64-qt5.6
-            supersedes: linux-x86_64-qt5
+            supersedes: [linux-x86_64-qt5]
             requirements: '{"os":"linux","arch":"x86_64","glibc":"2.19","glibcxx":"3.4.21","qt":"5.6.3"}'
           - platform: lin32
             image: linux-x32
@@ -110,13 +110,14 @@ jobs:
             architecture: linux/amd64
             archive: zip
             variant: windows-x86-qt5.15
-            supersedes: windows-x86-qt5.6
+            supersedes: [windows-x86-qt5.6, windows-x86_64-qt5]
             requirements: '{"os":"windows","arch":"x86","os_version":"6.1"}'
           - platform: osx64-5.15.2
             image: macos-osx64
             architecture: linux/amd64
             archive: tar.gz
             variant: macos-x86_64-qt5.15
+            supersedes: [macos-aarch64-qt5]
             requirements: '{"os":"macos","arch":"x86_64","os_version":"10.13"}'
 
     env:
@@ -274,23 +275,24 @@ jobs:
         if: needs.build-number.result == 'success' && vars.UPDATER_PUBLISH_ENABLED == 'true'
         env:
           UPDATER_REQUIREMENTS: ${{ matrix.requirements }}
-          UPDATER_SUPERSEDES: ${{ matrix.supersedes }}
+          UPDATER_SUPERSEDES: ${{ join(matrix.supersedes, ' ') }}
         run: |
           source_dir="$BUILD_OUTPUT/install/MeshMC"
           if [[ "$PLATFORM" == osx64-5.15.2 ]]; then
             source_dir="$BUILD_OUTPUT/install/MeshMC.app"
           fi
-          predecessor=()
-          if [[ -n "$UPDATER_SUPERSEDES" ]]; then
-            predecessor=(--supersedes "$UPDATER_SUPERSEDES")
-          fi
+          read -r -a predecessors <<< "$UPDATER_SUPERSEDES"
+          supersedes_args=()
+          for predecessor in "${predecessors[@]}"; do
+            supersedes_args+=(--supersedes "$predecessor")
+          done
           python tools/updater_v2/prepare_payload.py \
             --source "$source_dir" \
             --output "$RUNNER_TEMP/updater-payload" \
             --variant "$UPDATER_VARIANT" \
             --name "MeshMC $PLATFORM" \
             --requirements "$UPDATER_REQUIREMENTS" \
-            "${predecessor[@]}"
+            "${supersedes_args[@]}"
 
       - name: Upload updater payload
         if: needs.build-number.result == 'success' && vars.UPDATER_PUBLISH_ENABLED == 'true'

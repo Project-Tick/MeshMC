@@ -571,8 +571,18 @@ def _requirements_cover(previous: dict, candidate: dict) -> bool:
     for name, value in candidate.items():
         if name not in previous:
             return False
-        if name in ("os", "arch"):
+        if name == "os":
             if value != previous[name]:
+                return False
+            continue
+        if name == "arch":
+            # Match the compatibility routes used by the launcher. The macOS route requires Rosetta.
+            route = (previous["os"], previous["arch"], value)
+            if value != previous["arch"] and route not in (
+                ("windows", "x86_64", "x86"),
+                ("macos", "aarch64", "x86_64"),
+                ("macos", "arm64", "x86_64"),
+            ):
                 return False
             continue
         if name == "qt" and value.split(".", 1)[0] != previous[name].split(".", 1)[0]:

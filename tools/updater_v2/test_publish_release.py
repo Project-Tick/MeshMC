@@ -272,6 +272,28 @@ class ManifestRetentionTest(unittest.TestCase):
 
 
 class VariantContinuityTest(unittest.TestCase):
+    def test_accepts_windows_and_macos_compatibility_routes(self):
+        previous = {"build": 8, "variants": {
+            "windows-x86_64-qt5": {"requires": {"os": "windows", "arch": "x86_64", "os_version": "10.0"}},
+            "macos-aarch64-qt5": {"requires": {"os": "macos", "arch": "aarch64", "os_version": "12.0"}},
+        }}
+        candidate = {"build": 10, "variants": {
+            "windows-x86-qt5.15": {
+                "supersedes": ["windows-x86-qt5.6", "windows-x86_64-qt5"],
+                "requires": {"os": "windows", "arch": "x86", "os_version": "6.1"},
+            },
+            "macos-x86_64-qt5.15": {
+                "supersedes": ["macos-aarch64-qt5"],
+                "requires": {"os": "macos", "arch": "x86_64", "os_version": "10.13"},
+            },
+        }}
+        _check_variant_continuity(previous, candidate)
+
+        mac_requirements = candidate["variants"]["macos-x86_64-qt5.15"]["requires"]
+        with patch.dict(mac_requirements, {"os_version": "13.0"}):
+            with self.assertRaisesRegex(ValueError, "missing compatible variants for macos-aarch64-qt5"):
+                _check_variant_continuity(previous, candidate)
+
     def test_compatible_successor_covers_existing_installations(self):
         previous = {"build": 1, "variants": {
             "linux-x86_64-qt5": {"requires": {
