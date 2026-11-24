@@ -10,10 +10,14 @@ from unittest.mock import patch
 
 from tools.updater_v2.publish_release import (
     _add_metadata_assets,
+    _check_asset_limit,
+    _download_manifest,
     _create_draft_release,
     _initialise_empty_repository,
     _next_tags,
     _reuse_draft_release,
+    _retained_builds,
+    _sync_historical_builds,
 )
 from tools.updater_v2.publish_release import make_build, public_key, verify_signature
 
@@ -202,6 +206,64 @@ class TierTagsTest(unittest.TestCase):
             _next_tags(12, "master", {"latest": 11, "testing": 11, "stable": 7}),
             {"latest": 12, "testing": 12, "stable": 12},
         )
+
+
+class ManifestRetentionTest(unittest.TestCase):
+    def test_keeps_newest_builds_and_reserves_slots_for_active_tiers(self):
+        retained = _retained_builds(set(range(1, 101)), {1, 2, 101})
+        self.assertEqual(retained, {1, 2, *range(54, 102)})
+
+    def test_asset_limit_includes_payload_and_metadata(self):
+        _check_asset_limit("build-101", 1000)
+        with self.assertRaisesRegex(ValueError, "1001 assets"):
+            _check_asset_limit("build-101", 1001)
+
+    @patch("tools.updater_v2.publish_release.verify_signature")
+    @patch("tools.updater_v2.publish_release.command")
+    def test_download_requests_only_the_selected_manifest_and_signature(self, command, verify):
+        def download(*args):
+            target = Path(args[-1])
+            (target / "updater--builds--10.json").write_bytes(b"manifest")
+            (target / "updater--builds--10.json.sig").write_bytes(b"signature")
+
+        command.side_effect = download
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            document, signature = _download_manifest("repo", {"tag_name": "build-100"}, 10, root, ["key"])
+            self.assertEqual(command.call_args.args[6:-2], (
+                "--pattern", document.name, "--pattern", signature.name,
+            ))
+            verify.assert_called_once_with(b"manifest", b"signature", ["key"], root / "build-10")
+
+    @patch("tools.updater_v2.publish_release.command")
+    @patch("tools.updater_v2.publish_release._download_history")
+    @patch("tools.updater_v2.publish_release._release_list")
+    @patch("tools.updater_v2.publish_release._previous_tags")
+    def test_sync_replaces_oldest_unpinned_manifest_with_late_build(self, tags, releases, download, command):
+        def assets(number):
+            name = f"updater--builds--{number}.json"
+            return [{"name": name + suffix, "id": number * 2 + index}
+                    for index, suffix in enumerate(("", ".sig"))]
+
+        late = {"tag_name": "build-99"}
+        releases.return_value = [late, {"tag_name": "build-2"}]
+        tags.return_value = {"latest": 100, "testing": 100, "stable": 1}
+        newest = {"tag_name": "build-100", "assets": [
+            asset for number in (1, *range(51, 99), 100) for asset in assets(number)
+        ]}
+        download.return_value = [Path(asset["name"]) for asset in assets(99)]
+        with tempfile.TemporaryDirectory() as temporary:
+            work = Path(temporary) / "sync"
+            _sync_historical_builds("repo", newest, "key", work)
+            download.assert_called_once_with("repo", {99: late}, work, ["key"])
+        self.assertEqual(
+            {call.args[-1] for call in command.call_args_list if call.args[1] == "api"},
+            {"repos/repo/releases/assets/102", "repos/repo/releases/assets/103"},
+        )
+        self.assertEqual(command.call_args.args, (
+            "gh", "release", "upload", "build-100",
+            "updater--builds--99.json", "updater--builds--99.json.sig", "--repo", "repo",
+        ))
 
 
 class DraftReleaseRetryTest(unittest.TestCase):

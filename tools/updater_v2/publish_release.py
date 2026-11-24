@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import datetime as dt
 import hashlib
 import json
@@ -17,6 +18,9 @@ import tempfile
 
 ASSET_BASE = "https://github.com/Project-Tick/MeshMC-Updates/releases/download/"
 LATEST_BASE = "https://github.com/Project-Tick/MeshMC-Updates/releases/latest/download/"
+MAX_RELEASE_ASSETS = 1000
+MAX_BUILD_MANIFESTS = 50
+HISTORY_WORKERS = 4
 KEYS_FILE = "launcher/updater/v2/keys/1.json"
 KEYS_SIGNATURE_FILE = KEYS_FILE + ".sig"
 BUILD_ASSET = re.compile(r"updater--builds--([1-9][0-9]*)\.json(?:\.sig)?\Z")
@@ -446,26 +450,47 @@ def _target_release(repository: str) -> dict | None:
     return published[0] if published else None
 
 
-def _download_history(repository: str, release: dict | None, output: Path, trusted: list[str]) -> list[Path]:
-    if not release:
-        return []
-    if not any(asset["name"].startswith("updater--builds--") for asset in release.get("assets", [])):
-        return []
+def _manifest_assets(release: dict) -> dict[int, list[dict]]:
+    builds = {}
+    for asset in release.get("assets", []):
+        if match := BUILD_ASSET.fullmatch(asset["name"]):
+            builds.setdefault(int(match.group(1)), []).append(asset)
+    return builds
+
+
+def _retained_builds(available: set[int], required: set[int]) -> set[int]:
+    remaining = MAX_BUILD_MANIFESTS - len(required)
+    return required | set(sorted(available - required, reverse=True)[:remaining])
+
+
+def _download_manifest(repository: str, release: dict, build_number: int, output: Path,
+                       trusted: list[str]) -> tuple[Path, Path]:
+    name = f"updater--builds--{build_number}.json"
+    work = output / f"build-{build_number}"
+    work.mkdir()
     command(
         "gh", "release", "download", release["tag_name"],
         "--repo", repository,
-        "--pattern", "updater--builds--*.json*",
-        "--dir", str(output),
+        "--pattern", name,
+        "--pattern", name + ".sig",
+        "--dir", str(work),
     )
-    builds = []
-    for doc_path in sorted(output.glob("updater--builds--*.json")):
-        match = re.fullmatch(r"updater--builds--([1-9][0-9]*)\.json", doc_path.name)
-        signature_path = Path(str(doc_path) + ".sig")
-        if not match or not signature_path.is_file():
-            raise ValueError(f"incomplete historical build metadata: {doc_path.name}")
-        verify_signature(doc_path.read_bytes(), signature_path.read_bytes(), trusted, output)
-        builds.extend((doc_path, signature_path))
-    return builds
+    document = work / name
+    signature = work / (name + ".sig")
+    if not document.is_file() or not signature.is_file():
+        raise ValueError(f"{release['tag_name']} is missing the signed manifest for build {build_number}")
+    verify_signature(document.read_bytes(), signature.read_bytes(), trusted, work)
+    return document, signature
+
+
+def _download_history(repository: str, sources: dict[int, dict], output: Path,
+                      trusted: list[str]) -> list[Path]:
+    with ThreadPoolExecutor(max_workers=HISTORY_WORKERS) as pool:
+        jobs = [
+            pool.submit(_download_manifest, repository, release, number, output, trusted)
+            for number, release in sorted(sources.items())
+        ]
+        return [path for job in jobs for path in job.result()]
 
 
 def _previous_signed_document(repository: str, release: dict | None, name: str,
@@ -551,62 +576,62 @@ def _initialise_empty_repository(repository: str) -> None:
                 raise
 
 
+def _check_asset_limit(tag: str, count: int) -> None:
+    if count > MAX_RELEASE_ASSETS:
+        raise ValueError(f"{tag} needs {count} assets, exceeding GitHub's limit of {MAX_RELEASE_ASSETS}")
+
+
 def _sync_historical_builds(repository: str, latest: dict, online_key: str, work: Path) -> None:
     latest_tag = latest["tag_name"]
-    latest_match = re.fullmatch(r"build-([1-9][0-9]*)", latest_tag)
-    if not latest_match:
-        raise ValueError(f"latest updater Release has an unexpected tag: {latest_tag}")
-    latest_number = int(latest_match.group(1))
+    latest_number = int(latest_tag.removeprefix("build-"))
+    work.mkdir()
+    trusted = [online_key]
+    tags = _previous_tags(repository, latest, work, trusted)
+    if not tags:
+        raise ValueError(f"{latest_tag} is missing signed tags metadata")
+
+    current = _manifest_assets(latest)
+    sources = {}
     for release in _release_list(repository):
-        if release.get("draft") or release.get("prerelease") or release["tag_name"] == latest_tag:
+        if release.get("draft") or release.get("prerelease"):
             continue
         match = re.fullmatch(r"build-([1-9][0-9]*)", release["tag_name"])
-        if not match or int(match.group(1)) > latest_number:
-            continue
-        build_number = int(match.group(1))
-        document_name = f"updater--builds--{build_number}.json"
-        signature_name = document_name + ".sig"
-        latest_assets = {asset["name"] for asset in latest.get("assets", [])}
-        missing_names = {document_name, signature_name} - latest_assets
-        if not missing_names:
-            continue
+        if match and int(match.group(1)) < latest_number:
+            sources[int(match.group(1))] = release
 
-        source_assets = {asset["name"] for asset in release.get("assets", [])}
-        if not {document_name, signature_name}.issubset(source_assets):
-            raise ValueError(f"{release['tag_name']} is missing its signed build manifest")
-        download_dir = work / f"sync-{build_number}"
-        download_dir.mkdir()
+    retained = _retained_builds(current.keys() | sources.keys(), set(tags.values()) | {latest_number})
+    missing = {
+        number: sources[number]
+        for number in retained
+        if len(current.get(number, [])) != 2 and number in sources
+    }
+    if any(len(current.get(number, [])) != 2 and number not in missing for number in retained):
+        raise ValueError(f"{latest_tag} is missing a retained signed build manifest")
+    obsolete = [asset for number in current.keys() - retained for asset in current[number]]
+    downloaded = _download_history(repository, missing, work, trusted)
+    current_names = {asset["name"] for asset in latest.get("assets", [])}
+    upload = [path for path in downloaded if path.name not in current_names]
+    _check_asset_limit(latest_tag, len(current_names) - len(obsolete) + len(upload))
+
+    for asset in obsolete:
+        command("gh", "api", "--method", "DELETE", f"repos/{repository}/releases/assets/{asset['id']}")
+    try:
+        _upload_assets(repository, latest_tag, upload)
+    except subprocess.CalledProcessError:
+        refreshed = _gh_json(f"repos/{repository}/releases/tags/{latest_tag}")
+        refreshed_names = {asset["name"] for asset in refreshed.get("assets", [])}
+        if any(path.name not in refreshed_names for path in upload):
+            raise
+
+
+def _upload_assets(repository: str, tag: str, assets: list[Path]) -> None:
+    # The GitHub CLI uploads assets within each batch concurrently.
+    for offset in range(0, len(assets), 50):
         command(
-            "gh", "release", "download", release["tag_name"],
+            "gh", "release", "upload", tag,
+            *[str(path) for path in assets[offset:offset + 50]],
             "--repo", repository,
-            "--pattern", document_name + "*",
-            "--dir", str(download_dir),
         )
-        document = download_dir / document_name
-        signature = Path(str(document) + ".sig")
-        if not document.is_file() or not signature.is_file():
-            raise ValueError(f"could not download the signed manifest for {release['tag_name']}")
-        verify_signature(document.read_bytes(), signature.read_bytes(), [online_key], download_dir)
-
-        current_latest = _gh_json(f"repos/{repository}/releases/tags/{latest_tag}")
-        current_assets = {asset["name"] for asset in current_latest.get("assets", [])}
-        upload = [
-            path for path in (document, signature)
-            if path.name not in current_assets
-        ]
-        if upload:
-            try:
-                command(
-                    "gh", "release", "upload", latest_tag,
-                    *[str(path) for path in upload],
-                    "--repo", repository,
-                )
-            except subprocess.CalledProcessError:
-                current_latest = _gh_json(f"repos/{repository}/releases/tags/{latest_tag}")
-                current_assets = {asset["name"] for asset in current_latest.get("assets", [])}
-                if any(path.name not in current_assets for path in upload):
-                    raise
-        latest = _gh_json(f"repos/{repository}/releases/tags/{latest_tag}")
 
 
 def _sign_file(private_key: Path, key_id: str, data: bytes, output: Path) -> Path:
@@ -622,15 +647,21 @@ def _add_metadata_assets(directory: Path, floor_data: bytes, floor_signature: by
                          private_key: Path, history_dir: Path, previous: dict | None,
                          advance: bool) -> list[Path]:
     assets = []
-    historical = _download_history(
-        "Project-Tick/MeshMC-Updates", previous, history_dir, [online_key]
-    )
-    for source in historical:
-        target = directory / source.name
-        shutil.copyfile(source, target)
-        assets.append(target)
+    repository = "Project-Tick/MeshMC-Updates"
+    trusted = [online_key]
+    old_tags = _previous_tags(repository, previous, history_dir, trusted)
+    tags_for_release = _next_tags(build_number, branch, old_tags, advance)
+    if previous:
+        available = _manifest_assets(previous)
+        retained = _retained_builds(set(available), set(tags_for_release.values()) | {build_number})
+        historical = _download_history(
+            repository, {number: previous for number in retained - {build_number}}, history_dir, trusted
+        )
+        for source in historical:
+            target = directory / source.name
+            shutil.copyfile(source, target)
+            assets.append(target)
 
-    old_tags = _previous_tags("Project-Tick/MeshMC-Updates", previous, history_dir, [online_key])
     assets.append(metadata_asset("keys/1.json", floor_data, directory))
     assets.append(metadata_asset("keys/1.json.sig", floor_signature, directory))
 
@@ -661,7 +692,7 @@ def _add_metadata_assets(directory: Path, floor_data: bytes, floor_signature: by
             "format": 1,
             "serial": build_number,
             "issued": now,
-            "tags": _next_tags(build_number, branch, old_tags),
+            "tags": tags_for_release,
             "withdrawn": [],
         }
         for name, document in (("mirrors.json", mirrors), ("tags.json", tags)):
@@ -743,7 +774,6 @@ def publish(args) -> None:
             (release for release in existing if release.get("tag_name") == release_tag),
             None,
         )
-        reuse_draft = _reuse_draft_release(repository, release_tag, existing_build)
         previous = _target_release(repository)
         previous_builds = []
         if previous:
@@ -766,6 +796,9 @@ def publish(args) -> None:
             previous,
             advance,
         )
+        all_assets = sorted(content_assets.iterdir()) + sorted(metadata_assets)
+        _check_asset_limit(release_tag, len(all_assets))
+        reuse_draft = _reuse_draft_release(repository, release_tag, existing_build)
         _initialise_empty_repository(repository)
         release = existing_build if reuse_draft else _create_draft_release(
             repository,
@@ -776,21 +809,8 @@ def publish(args) -> None:
         if release is None:
             raise ValueError(f"GitHub did not return the draft release for {release_tag}")
 
-        all_assets = sorted(content_assets.iterdir()) + sorted(metadata_assets)
-        for offset in range(0, len(all_assets), 50):
-            command(
-                "gh", "release", "upload", release_tag,
-                *[str(path) for path in all_assets[offset:offset + 50]],
-                "--repo", repository,
-            )
+        _upload_assets(repository, release_tag, all_assets)
 
-        latest = _target_release(repository)
-        latest_builds = [
-            int(match.group(1))
-            for asset in latest.get("assets", [])
-            if (match := BUILD_ASSET.fullmatch(asset["name"]))
-        ] if latest else []
-        advance = not latest_builds or build_number > max(latest_builds)
         command(
             "gh", "api", "--method", "PATCH",
             f"repos/{repository}/releases/{release['id']}",
@@ -806,9 +826,8 @@ def publish(args) -> None:
                 f"repos/{repository}/releases/{newest_release['id']}",
                 "-F", "make_latest=true",
             )
-        advance = bool(newest and newest["tag_name"] == release_tag)
         if newest:
-            _sync_historical_builds(repository, newest, online_key, work)
+            _sync_historical_builds(repository, newest, online_key, work / "sync")
         print(f"Published {release_tag} with {len(all_assets)} assets.")
 
 
