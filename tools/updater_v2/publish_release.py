@@ -536,13 +536,15 @@ def _previous_tags(repository: str, release: dict | None, output: Path, trusted:
 
 def _next_tags(build_number: int, branch: str, previous: dict | None,
                advance: bool = True) -> dict[str, int]:
+    if branch not in ("master", "testing", "develop"):
+        raise ValueError(f"unsupported branch: {branch}")
     if previous and not advance:
         return {key: previous[key] for key in ("latest", "testing", "stable")}
     stable = previous["stable"] if previous else build_number
     testing = previous["testing"] if previous else build_number
     if branch == "master":
         stable = testing = build_number
-    elif branch == "develop" or branch.startswith("release-"):
+    elif branch == "testing":
         testing = build_number
     if not stable <= testing <= build_number:
         raise ValueError("the new build would put update tiers out of order")
