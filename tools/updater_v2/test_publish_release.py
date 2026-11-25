@@ -201,16 +201,42 @@ class BootstrapTest(unittest.TestCase):
 
 
 class TierTagsTest(unittest.TestCase):
-    def test_master_advances_all_tiers_while_develop_advances_testing(self):
+    def test_develop_advances_only_latest(self):
         previous = {"latest": 10, "testing": 9, "stable": 7}
         self.assertEqual(
             _next_tags(11, "develop", previous),
-            {"latest": 11, "testing": 11, "stable": 7},
+            {"latest": 11, "testing": 9, "stable": 7},
         )
+
+    def test_testing_advances_latest_and_testing(self):
+        previous = {"latest": 11, "testing": 9, "stable": 7}
         self.assertEqual(
-            _next_tags(12, "master", {"latest": 11, "testing": 11, "stable": 7}),
-            {"latest": 12, "testing": 12, "stable": 12},
+            _next_tags(12, "testing", previous),
+            {"latest": 12, "testing": 12, "stable": 7},
         )
+
+    def test_master_advances_all_tiers(self):
+        previous = {"latest": 12, "testing": 12, "stable": 7}
+        self.assertEqual(
+            _next_tags(13, "master", previous),
+            {"latest": 13, "testing": 13, "stable": 13},
+        )
+
+    def test_rejects_unsupported_branches(self):
+        previous = {"latest": 10, "testing": 9, "stable": 7}
+        for branch in ("feature-example", "release-12.0", "main"):
+            with self.subTest(branch=branch):
+                with self.assertRaisesRegex(ValueError, "unsupported branch"):
+                    _next_tags(11, branch, previous)
+
+    def test_preserves_tiers_when_advance_is_disabled(self):
+        previous = {"latest": 10, "testing": 9, "stable": 7}
+        for branch in ("master", "testing", "develop"):
+            with self.subTest(branch=branch):
+                self.assertEqual(
+                    _next_tags(11, branch, previous, advance=False),
+                    previous,
+                )
 
 
 class ManifestRetentionTest(unittest.TestCase):
