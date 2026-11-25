@@ -15,6 +15,7 @@ import stat
 import subprocess
 import tarfile
 import tempfile
+import time
 
 
 ASSET_BASE = "https://github.com/Project-Tick/MeshMC-Updates/releases/download/"
@@ -408,14 +409,31 @@ def _release_list(repository: str) -> list[dict]:
 
 
 def _create_draft_release(repository: str, tag: str, title: str, notes: str) -> dict:
-    release = _gh_json(
-        "--method", "POST", f"repos/{repository}/releases",
-        "-f", f"tag_name={tag}",
-        "-F", "draft=true",
-        "-f", f"name={title}",
-        "-f", f"body={notes}",
-        "-f", "target_commitish=main",
-    )
+    # The POST can succeed remotely even when gh receives an empty or truncated response.
+    for delay in (1, 2, 4):
+        try:
+            release = _gh_json(
+                "--method", "POST", f"repos/{repository}/releases",
+                "-f", f"tag_name={tag}",
+                "-F", "draft=true",
+                "-f", f"name={title}",
+                "-f", f"body={notes}",
+                "-f", "target_commitish=main",
+            )
+            break
+        except (subprocess.CalledProcessError, json.JSONDecodeError) as error:
+            print(f"GitHub did not confirm draft creation for {tag}; checking after {delay}s.", flush=True)
+            time.sleep(delay)
+            release = next(
+                (item for item in _release_list(repository) if item.get("tag_name") == tag),
+                None,
+            )
+            if release is not None:
+                if release.get("body") != notes:
+                    raise ValueError(f"release {tag} already belongs to a different build") from error
+                break
+            if delay == 4:
+                raise RuntimeError(f"GitHub did not create a draft release for {tag} after 3 attempts") from error
     if (
         not isinstance(release, dict)
         or release.get("tag_name") != tag

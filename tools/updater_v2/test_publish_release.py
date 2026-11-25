@@ -357,6 +357,45 @@ class VariantContinuityTest(unittest.TestCase):
 
 
 class DraftReleaseRetryTest(unittest.TestCase):
+    @patch("tools.updater_v2.publish_release.time.sleep")
+    @patch("tools.updater_v2.publish_release._release_list")
+    @patch("tools.updater_v2.publish_release._gh_json")
+    def test_recovers_draft_after_gh_reports_a_truncated_response(self, gh_json, releases, sleep):
+        draft = {"id": 123, "tag_name": "build-20", "draft": True, "body": "source commit"}
+        gh_json.side_effect = subprocess.CalledProcessError(1, ["gh", "api"])
+        releases.return_value = [draft]
+
+        self.assertIs(_create_draft_release("repo", "build-20", "title", "source commit"), draft)
+
+        gh_json.assert_called_once()
+        releases.assert_called_once_with("repo")
+        sleep.assert_called_once_with(1)
+
+    @patch("tools.updater_v2.publish_release.time.sleep")
+    @patch("tools.updater_v2.publish_release._release_list", return_value=[])
+    @patch("tools.updater_v2.publish_release._gh_json")
+    def test_retries_creation_when_no_draft_was_created(self, gh_json, releases, sleep):
+        draft = {"id": 123, "tag_name": "build-20", "draft": True}
+        gh_json.side_effect = [json.JSONDecodeError("empty response", "", 0), draft]
+
+        self.assertIs(_create_draft_release("repo", "build-20", "title", "source commit"), draft)
+
+        self.assertEqual(gh_json.call_count, 2)
+        releases.assert_called_once_with("repo")
+        sleep.assert_called_once_with(1)
+
+    @patch("tools.updater_v2.publish_release.time.sleep")
+    @patch("tools.updater_v2.publish_release._release_list")
+    @patch("tools.updater_v2.publish_release._gh_json")
+    def test_does_not_recover_an_unrelated_draft(self, gh_json, releases, sleep):
+        gh_json.side_effect = subprocess.CalledProcessError(1, ["gh", "api"])
+        releases.return_value = [{"id": 123, "tag_name": "build-20", "draft": True, "body": "other source"}]
+
+        with self.assertRaisesRegex(ValueError, "belongs to a different build"):
+            _create_draft_release("repo", "build-20", "title", "source commit")
+
+        gh_json.assert_called_once()
+
     @patch("tools.updater_v2.publish_release._finish_release")
     @patch("tools.updater_v2.publish_release._download_manifest")
     def test_resumes_history_only_for_the_same_signed_build(self, download, finish):
