@@ -46,7 +46,7 @@ jobs:
               echo "::error::Expected one non-empty $suffix in $artifact."
               exit 1
             fi
-            cp -- "${files[0]}" "dist/MeshMC-build-$BUILD_NUMBER-$suffix"
+            cp -- "${files[0]}" "dist/MeshMC-stable-$suffix"
           }
 
           collect package-lin64 lin64.tar.gz
@@ -80,19 +80,18 @@ jobs:
             name="${file##*/}"
             digest="sha256:$(sha256sum "$file" | cut -d ' ' -f1)"
             asset="$(jq -c --arg name "$name" '[.[] | select(.name == $name)] | first // {}' <<< "$assets")"
-            if [[ "$asset" == '{}' ]]; then
-              pending+=("$file")
-            elif [[ "$(jq -r '.state' <<< "$asset")" == starter ]]; then
-              asset_id="$(jq -er '.id' <<< "$asset")"
-              gh api --method DELETE "repos/$repo/releases/assets/$asset_id"
+            if [[ "$asset" == '{}' || "$(jq -r '.state' <<< "$asset")" == starter ]]; then
               pending+=("$file")
             elif ! jq -e --arg digest "$digest" '.state == "uploaded" and .digest == $digest' <<< "$asset" >/dev/null; then
-              echo "::error::The existing Stable asset $name has different content."
-              exit 1
+              if [[ "$current_build" == "$BUILD_NUMBER" ]]; then
+                echo "::error::The existing Stable asset $name has different content for build $BUILD_NUMBER."
+                exit 1
+              fi
+              pending+=("$file")
             fi
           done
           if (( ${#pending[@]} )); then
-            gh release upload "$tag" "${pending[@]}" --repo "$repo"
+            gh release upload "$tag" "${pending[@]}" --clobber --repo "$repo"
           fi
 
           # Keep source archives aligned with the binaries, including when retrying a draft.
@@ -108,13 +107,10 @@ jobs:
             -f 'name=MeshMC Stable' -f "body=$notes" -f "target_commitish=$GITHUB_SHA" \
             -F draft=false -F prerelease=false -f make_latest=true >/dev/null
 
-          # Remove only archives managed by this workflow, after the new set is ready.
+          # Remove legacy build-numbered archives once the fixed names are available.
           gh api --paginate --slurp "$assets_endpoint" |
-            jq -r --arg prefix "MeshMC-build-$BUILD_NUMBER-" '
-              .[][] | select(
-                (.name | test("^MeshMC-build-[1-9][0-9]*-(lin(32|64)\\.tar\\.gz|win32(-5\\.15\\.2)?(\\.zip|-Setup\\.exe)|osx64-5\\.15\\.2\\.tar\\.gz)$"))
-                and (.name | startswith($prefix) | not)
-              ) | .id' > "$RUNNER_TEMP/obsolete-stable-assets"
+            jq -r '.[][] | select(.name | test("^MeshMC-build-[1-9][0-9]*-(lin(32|64)\\.tar\\.gz|win32(-5\\.15\\.2)?(\\.zip|-Setup\\.exe)|osx64-5\\.15\\.2\\.tar\\.gz)$")) | .id' \
+            > "$RUNNER_TEMP/obsolete-stable-assets"
           while IFS= read -r asset_id; do
             gh api --method DELETE "repos/$repo/releases/assets/$asset_id"
           done < "$RUNNER_TEMP/obsolete-stable-assets"
