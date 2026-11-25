@@ -66,20 +66,21 @@ bool Sys::lookupSystemStatusCode(uint64_t code, std::string &name, std::string &
     return false;
 }
 
-Sys::Architecture Sys::systemArchitecture() {
-    struct utsname buf;
-    uname(&buf);
-    QString arch = buf.machine;
-    if (arch == "x86_64") {
-        return Sys::Architecture(ArchitectureType::AMD64);
-    }
-    else if (arch == "i386") {
-        return Sys::Architecture(ArchitectureType::X86);
-    }
-    else if (arch == "arm64") {
+Sys::Architecture Sys::systemArchitecture()
+{
+    int arm64 = 0;
+    size_t size = sizeof(arm64);
+
+    if (sysctlbyname("hw.optional.arm64", &arm64, &size, nullptr, 0) == 0 && arm64 == 1)
+    {
         return Sys::Architecture(ArchitectureType::AARCH64);
     }
-    else {
-        return Sys::Architecture(arch);
+
+    struct utsname buf;
+    if (uname(&buf) != 0)
+    {
+        return Sys::Architecture();
     }
+
+    return Sys::Architecture::fromOSArch(QString::fromLatin1(buf.machine));
 }
