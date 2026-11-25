@@ -1,0 +1,120 @@
+name: MeshMC Stable Release
+
+on:
+  workflow_call:
+    inputs:
+      build-number:
+        description: Published Updater V2 Stable build number
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  publish:
+    name: Update MeshMC Stable
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: meshmc-stable-release
+      cancel-in-progress: false
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download packages from this build
+        uses: actions/download-artifact@v8
+        with:
+          pattern: package-*
+          path: packages
+
+      - name: Update the Stable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_NUMBER: ${{ inputs.build-number }}
+        run: |
+          set -euo pipefail
+          [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,4}$ ]]
+          tag=stable
+          repo="$GITHUB_REPOSITORY"
+          mkdir -p dist
+          shopt -s nullglob
+
+          collect() {
+            local artifact=$1 suffix=$2
+            local files=("packages/$artifact"/MeshMC-*-"$suffix")
+            if [[ "${#files[@]}" -ne 1 || ! -s "${files[0]}" ]]; then
+              echo "::error::Expected one non-empty $suffix in $artifact."
+              exit 1
+            fi
+            cp -- "${files[0]}" "dist/MeshMC-build-$BUILD_NUMBER-$suffix"
+          }
+
+          collect package-lin64 lin64.tar.gz
+          collect package-lin32 lin32.tar.gz
+          collect package-win32 win32.zip
+          collect package-win32-setup win32-Setup.exe
+          collect package-win32-5.15.2 win32-5.15.2.zip
+          collect package-win32-5.15.2-setup win32-5.15.2-Setup.exe
+          collect package-osx64-5.15.2 osx64-5.15.2.tar.gz
+
+          release="$(gh api --paginate --slurp "repos/$repo/releases?per_page=100" |
+            jq -c --arg tag "$tag" '[.[][] | select(.tag_name == $tag)] | first // {}')"
+          current_build="$(jq -r '.body // ""' <<< "$release" |
+            sed -n '/^Updater build: [1-9][0-9]*$/ { s/^Updater build: //; p; q; }')"
+          if [[ -n "$current_build" ]] && (( current_build > BUILD_NUMBER )); then
+            echo "Stable already has newer build $current_build."
+            exit 0
+          fi
+
+          if [[ "$release" == '{}' ]]; then
+            release="$(gh api --method POST "repos/$repo/releases" \
+              -f "tag_name=$tag" -f "target_commitish=$GITHUB_SHA" \
+              -f 'name=MeshMC Stable' -F draft=true)"
+          fi
+          release_id="$(jq -er '.id' <<< "$release")"
+          endpoint="repos/$repo/releases/$release_id"
+          assets_endpoint="repos/$repo/releases/$release_id/assets?per_page=100"
+          assets="$(gh api --paginate --slurp "$assets_endpoint" | jq -c 'add // []')"
+          pending=()
+          for file in dist/*; do
+            name="${file##*/}"
+            digest="sha256:$(sha256sum "$file" | cut -d ' ' -f1)"
+            asset="$(jq -c --arg name "$name" '[.[] | select(.name == $name)] | first // {}' <<< "$assets")"
+            if [[ "$asset" == '{}' ]]; then
+              pending+=("$file")
+            elif [[ "$(jq -r '.state' <<< "$asset")" == starter ]]; then
+              asset_id="$(jq -er '.id' <<< "$asset")"
+              gh api --method DELETE "repos/$repo/releases/assets/$asset_id"
+              pending+=("$file")
+            elif ! jq -e --arg digest "$digest" '.state == "uploaded" and .digest == $digest' <<< "$asset" >/dev/null; then
+              echo "::error::The existing Stable asset $name has different content."
+              exit 1
+            fi
+          done
+          if (( ${#pending[@]} )); then
+            gh release upload "$tag" "${pending[@]}" --repo "$repo"
+          fi
+
+          # Keep source archives aligned with the binaries, including when retrying a draft.
+          existing_ref="$(gh api "repos/$repo/git/matching-refs/tags/$tag" |
+            jq -r --arg ref "refs/tags/$tag" '.[] | select(.ref == $ref) | .object.sha')"
+          if [[ -n "$existing_ref" && "$existing_ref" != "$GITHUB_SHA" ]]; then
+            gh api --method PATCH "repos/$repo/git/refs/tags/$tag" \
+              -f "sha=$GITHUB_SHA" -F force=false >/dev/null
+          fi
+
+          notes="$(printf 'Updater build: %s\n\nSource commit: %s\n' "$BUILD_NUMBER" "$GITHUB_SHA")"
+          gh api --method PATCH "$endpoint" \
+            -f 'name=MeshMC Stable' -f "body=$notes" -f "target_commitish=$GITHUB_SHA" \
+            -F draft=false -F prerelease=false -f make_latest=true >/dev/null
+
+          # Remove only archives managed by this workflow, after the new set is ready.
+          gh api --paginate --slurp "$assets_endpoint" |
+            jq -r --arg prefix "MeshMC-build-$BUILD_NUMBER-" '
+              .[][] | select(
+                (.name | test("^MeshMC-build-[1-9][0-9]*-(lin(32|64)\\.tar\\.gz|win32(-5\\.15\\.2)?(\\.zip|-Setup\\.exe)|osx64-5\\.15\\.2\\.tar\\.gz)$"))
+                and (.name | startswith($prefix) | not)
+              ) | .id' > "$RUNNER_TEMP/obsolete-stable-assets"
+          while IFS= read -r asset_id; do
+            gh api --method DELETE "repos/$repo/releases/assets/$asset_id"
+          done < "$RUNNER_TEMP/obsolete-stable-assets"

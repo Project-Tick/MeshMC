@@ -367,8 +367,12 @@ class DraftReleaseRetryTest(unittest.TestCase):
             document = work / "build.json"
             document.write_text(json.dumps({**candidate, "built": "old timestamp"}))
             download.return_value = (document, work / "build.json.sig")
+            finish.return_value = 41
 
-            _resume_published_release("repo", release, json.dumps(candidate).encode(), "key", work)
+            self.assertEqual(
+                _resume_published_release("repo", release, json.dumps(candidate).encode(), "key", work),
+                41,
+            )
             download.assert_called_once_with("repo", release, 42, work, ["key"])
             finish.assert_called_once_with("repo", "build-42", "key", work)
             finish.reset_mock()

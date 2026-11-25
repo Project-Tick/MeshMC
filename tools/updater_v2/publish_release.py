@@ -653,7 +653,7 @@ def _check_asset_limit(tag: str, count: int) -> None:
         raise ValueError(f"{tag} needs {count} assets, exceeding GitHub's limit of {MAX_RELEASE_ASSETS}")
 
 
-def _sync_historical_builds(repository: str, latest: dict, online_key: str, work: Path) -> None:
+def _sync_historical_builds(repository: str, latest: dict, online_key: str, work: Path) -> int:
     latest_tag = latest["tag_name"]
     latest_number = int(latest_tag.removeprefix("build-"))
     work.mkdir()
@@ -694,6 +694,7 @@ def _sync_historical_builds(repository: str, latest: dict, online_key: str, work
         refreshed_names = {asset["name"] for asset in refreshed.get("assets", [])}
         if any(path.name not in refreshed_names for path in upload):
             raise
+    return tags["stable"]
 
 
 def _upload_assets(repository: str, tag: str, assets: list[Path]) -> None:
@@ -716,21 +717,22 @@ def _publish_draft(repository: str, release: dict, advance: bool) -> None:
     )
 
 
-def _finish_release(repository: str, release_tag: str, online_key: str, work: Path) -> None:
+def _finish_release(repository: str, release_tag: str, online_key: str, work: Path) -> int:
     latest = _target_release(repository)
     if not latest:
         raise ValueError(f"could not locate a published release after publishing {release_tag}")
-    _sync_historical_builds(repository, latest, online_key, work / "sync")
+    stable_build = _sync_historical_builds(repository, latest, online_key, work / "sync")
     if latest["tag_name"] != release_tag:
         command(
             "gh", "api", "--method", "PATCH",
             f"repos/{repository}/releases/{latest['id']}",
             "-f", "make_latest=true",
         )
+    return stable_build
 
 
 def _resume_published_release(repository: str, release: dict, build_data: bytes,
-                              online_key: str, work: Path) -> None:
+                              online_key: str, work: Path) -> int:
     candidate = json.loads(build_data)
     document, _signature = _download_manifest(repository, release, candidate["build"], work, [online_key])
     published = json.loads(document.read_bytes())
@@ -739,7 +741,7 @@ def _resume_published_release(repository: str, release: dict, build_data: bytes,
     published.pop("built", None)
     if published != candidate or release.get("prerelease"):
         raise ValueError(f"published release {release['tag_name']} does not match this build")
-    _finish_release(repository, release["tag_name"], online_key, work)
+    return _finish_release(repository, release["tag_name"], online_key, work)
 
 
 def _sign_file(private_key: Path, key_id: str, data: bytes, output: Path) -> Path:
@@ -831,7 +833,7 @@ def _add_metadata_assets(directory: Path, floor_data: bytes, floor_signature: by
     return assets
 
 
-def publish(args) -> None:
+def publish(args) -> int:
     if not re.fullmatch(r"[0-9a-f]{40}", args.commit):
         raise ValueError("commit must be a full lowercase Git SHA")
     if not args.build_number.isdecimal() or int(args.build_number) < 1:
@@ -899,9 +901,9 @@ def publish(args) -> None:
             None,
         )
         if existing_build and not existing_build.get("draft"):
-            _resume_published_release(repository, existing_build, build_data, online_key, work)
+            stable_build = _resume_published_release(repository, existing_build, build_data, online_key, work)
             print(f"Completed history synchronization for {release_tag}.")
-            return
+            return stable_build
 
         previous = _target_release(repository)
         previous_builds = []
@@ -940,8 +942,9 @@ def publish(args) -> None:
 
         _upload_assets(repository, release_tag, all_assets)
         _publish_draft(repository, release, advance)
-        _finish_release(repository, release_tag, online_key, work)
+        stable_build = _finish_release(repository, release_tag, online_key, work)
         print(f"Published {release_tag} with {len(all_assets)} assets.")
+        return stable_build
 
 
 def main() -> None:
@@ -954,8 +957,12 @@ def main() -> None:
     parser.add_argument("--floor-keys", default=KEYS_FILE)
     parser.add_argument("--floor-signature", default=KEYS_SIGNATURE_FILE)
     parser.add_argument("--signing-key", required=True)
+    parser.add_argument("--github-output", type=Path)
     args = parser.parse_args()
-    publish(args)
+    stable_build = publish(args)
+    if args.github_output:
+        with args.github_output.open("a", encoding="utf-8") as output:
+            output.write(f"stable-build={stable_build}\n")
 
 
 if __name__ == "__main__":

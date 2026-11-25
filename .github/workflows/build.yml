@@ -315,6 +315,8 @@ jobs:
     permissions:
       actions: read
       contents: read
+    outputs:
+      stable-build: ${{ steps.publish.outputs.stable-build }}
     runs-on: ubuntu-26.04
     steps:
       - name: Checkout
@@ -332,6 +334,7 @@ jobs:
           path: ${{ runner.temp }}/updater-payloads
 
       - name: Publish signed build release
+        id: publish
         env:
           GH_TOKEN: ${{ secrets.UPDATES_REPO_TOKEN }}
           UPDATER_ONLINE_SIGNING_KEY: ${{ secrets.UPDATER_ONLINE_SIGNING_KEY }}
@@ -356,4 +359,18 @@ jobs:
             --build-number "$BUILD_NUMBER" \
             --commit "$SOURCE_COMMIT" \
             --branch "$SOURCE_BRANCH" \
-            --signing-key "$signing_key"
+            --signing-key "$signing_key" \
+            --github-output "$GITHUB_OUTPUT"
+
+  publish-stable:
+    name: Publish MeshMC Stable downloads
+    needs: [build-number, publish-updater]
+    if: >-
+      needs.publish-updater.result == 'success' &&
+      needs.publish-updater.outputs.stable-build == needs.build-number.outputs.build-number
+    uses: ./.github/workflows/release.yml
+    permissions:
+      actions: read
+      contents: write
+    with:
+      build-number: ${{ needs.build-number.outputs.build-number }}
