@@ -20,6 +20,7 @@
 
 #include "Application.h"
 #include <QDirIterator>
+#include <QFileInfo>
 
 #include <settings/Setting.h>
 
@@ -432,6 +433,16 @@ QList<QString> JavaUtils::FindJavaPaths()
     // manually installed JDKs in /opt
     scanJavaDir("/opt/jdk");
     scanJavaDir("/opt/jdks");
+    // Flatpak embeds Java directly in these homes.
+    for (const auto &home : {QStringLiteral("/app/jdk"), QStringLiteral("/app/jre")})
+    {
+        for (const auto &binary : {QStringLiteral("bin/java"), QStringLiteral("jre/bin/java")})
+        {
+            const QFileInfo java(FS::PathCombine(home, binary));
+            if (java.isFile() && java.isExecutable())
+                javas.append(java.absoluteFilePath());
+        }
+    }
     javas.append(managedJavaCandidates());
     return javas;
 }
