@@ -747,7 +747,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         m_settings->registerSetting("AccountsDialogSplitterState", "");
 
         // paste.ee API key
-        m_settings->registerSetting("PasteEEAPIKey", "multimc");
+        m_settings->registerSetting("PasteEEAPIKey", "meshmc");
 
         // Init page provider
         {

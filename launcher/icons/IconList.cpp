@@ -293,7 +293,7 @@ void IconList::installIcon(const QString &file, const QString &name)
     const QByteArray format = QImageReader::imageFormat(file);
     if (format.isEmpty())
     {
-        qWarning() << "Icon" << file << "for" << name << "isn't an image MultiMC can read, not installed";
+        qWarning() << "Icon" << file << "for" << name << "isn't an image MeshMC can read, not installed";
         return;
     }
     const QString extension = format == "jpeg" ? QStringLiteral("jpg") : QString::fromLatin1(format);

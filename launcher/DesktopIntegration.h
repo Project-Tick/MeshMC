@@ -16,7 +16,7 @@
  *
  * The entry and icon are the user's (XDG_DATA_HOME: applications/org.multimc.MultiMC.desktop,
  * icons/hicolor/scalable/apps/org.multimc.MultiMC.svg) and name the copy that wrote them
- * (X-MultiMC-Root). One copy owns the entry: others leave it alone until that copy is gone
+ * (X-MeshMC-Root). One copy owns the entry: others leave it alone until that copy is gone
  * (its start script missing), or the user switches it in the settings. Its TryExec hides it
  * from the menu once the copy is deleted.
  *

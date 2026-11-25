@@ -191,7 +191,7 @@ QByteArray kdeColorScheme(const QPalette &p)
         const QColor c = p.color(QPalette::Active, role);
         return QString("%1,%2,%3").arg(c.red()).arg(c.green()).arg(c.blue());
     };
-    QString out = "[General]\nColorScheme=MultiMC\nName=MultiMC\n";
+    QString out = "[General]\nColorScheme=MeshMC\nName=MeshMC\n";
     auto set = [&](const char *name, QPalette::ColorRole background, QPalette::ColorRole alternate,
                    QPalette::ColorRole foreground) {
         out += QString("\n[Colors:%1]\n").arg(name);

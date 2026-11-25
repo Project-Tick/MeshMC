@@ -166,7 +166,7 @@ void InstanceImportTask::processZipPack()
     if (!mmcFound.isNull())
     {
         // process as MultiMC instance/pack
-        qDebug() << "MultiMC:" << mmcFound;
+        qDebug() << "MeshMC:" << mmcFound;
         root = mmcFound;
         m_modpackType = ModpackType::MultiMC;
     }

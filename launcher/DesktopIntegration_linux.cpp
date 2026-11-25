@@ -19,8 +19,8 @@
 namespace {
 // The Launcher's Wayland app id (organization domain multimc.org and the executable's name, as
 // Qt makes it) and the name the packages use; the X11 window class is MultiMC
-const QString ID = QStringLiteral("org.multimc.MultiMC");
-const QString ROOT_KEY = QStringLiteral("X-MultiMC-Root=");
+const QString ID = QStringLiteral("org.projecttick.MeshMC");
+const QString ROOT_KEY = QStringLiteral("X-MeshMC-Root=");
 
 QString dataHome()
 {
@@ -39,7 +39,7 @@ QString iconPath()
 
 QString startScript(const QString &root)
 {
-    return root + "/MultiMC";
+    return root + "/MeshMC";
 }
 
 // A package's entry: in one of the system's data folders, not the user's
@@ -57,9 +57,9 @@ bool packaged()
 QString unavailable(const QString &root)
 {
     if (root.startsWith(QDir::tempPath()) || root.contains("/TempState/") || root.contains("Rar$", Qt::CaseInsensitive))
-        return QObject::tr("This copy of MultiMC is in a temporary folder.");
+        return QObject::tr("This copy of MeshMC is in a temporary folder.");
     if (!QFileInfo(startScript(root)).isExecutable())
-        return QObject::tr("This copy of MultiMC has no start script (%1).").arg(startScript(root));
+        return QObject::tr("This copy of MeshMC has no start script (%1).").arg(startScript(root));
     return QString();
 }
 
@@ -105,13 +105,13 @@ QByteArray entry(const QString &root, bool shown)
     QStringList lines = {
         "[Desktop Entry]",
         "Type=Application",
-        "Name=MultiMC",
+        "Name=MeshMC",
         "GenericName=Minecraft launcher",
         "Comment=Manage Minecraft instances with ease",
         "Exec=" + execArgument(startScript(root)),
         "TryExec=" + escaped(startScript(root)),
         "Icon=" + ID,
-        "StartupWMClass=MultiMC",
+        "StartupWMClass=MeshMC",
         "StartupNotify=true",
         "Terminal=false",
         "Categories=Game;",

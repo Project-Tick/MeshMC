@@ -249,7 +249,7 @@
           <item>
            <widget class="QCheckBox" name="applicationsMenuCheck">
             <property name="text">
-             <string>Show MultiMC in the applications menu</string>
+             <string>Show MeshMC in the applications menu</string>
             </property>
            </widget>
           </item>

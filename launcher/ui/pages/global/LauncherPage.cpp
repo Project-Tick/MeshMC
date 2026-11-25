@@ -245,17 +245,17 @@ void LauncherPage::showApplicationsMenu()
         text = status.why;
         break;
     case DesktopIntegration::State::Packaged:
-        text = tr("MultiMC is installed as a package here: the package provides its applications menu entry.");
+        text = tr("MeshMC is installed as a package here: the package provides its applications menu entry.");
         break;
     case DesktopIntegration::State::Ours:
         text = ui->applicationsMenuCheck->isChecked()
-            ? tr("The applications menu starts this copy of MultiMC.")
-            : tr("MultiMC is hidden from the applications menu. Its entry stays, to give MultiMC's windows their icon.");
+            ? tr("The applications menu starts this copy of MeshMC.")
+            : tr("MeshMC is hidden from the applications menu. Its entry stays, to give MeshMC's windows their icon.");
         break;
     case DesktopIntegration::State::Other:
         text = status.other.isEmpty()
-            ? tr("The applications menu has an entry for MultiMC that MultiMC didn't make. It is left as it is.")
-            : tr("The applications menu starts another copy of MultiMC, in %1.").arg(status.other);
+            ? tr("The applications menu has an entry for MeshMC that MeshMC didn't make. It is left as it is.")
+            : tr("The applications menu starts another copy of MeshMC, in %1.").arg(status.other);
         break;
     }
     ui->applicationsMenuCheck->setEnabled(usable);
