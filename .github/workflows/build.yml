@@ -362,6 +362,27 @@ jobs:
             --signing-key "$signing_key" \
             --github-output "$GITHUB_OUTPUT"
 
+      - name: Download packages for the build archive
+        uses: actions/download-artifact@v8
+        with:
+          pattern: package-*
+          path: ${{ runner.temp }}/archive-packages
+
+      - name: Publish packages to MeshMC-Archive
+        env:
+          GH_TOKEN: ${{ secrets.UPDATES_REPO_TOKEN }}
+          BUILD_NUMBER: ${{ needs.build-number.outputs.build-number }}
+          STABLE_BUILD: ${{ steps.publish.outputs.stable-build }}
+        run: bash .github/scripts/publish-build-archive.sh "$RUNNER_TEMP/archive-packages"
+
+      - name: Archive the previous Stable packages before replacement
+        if: steps.publish.outputs.stable-build == needs.build-number.outputs.build-number
+        env:
+          GH_TOKEN: ${{ secrets.UPDATES_REPO_TOKEN }}
+          SOURCE_READ_TOKEN: ${{ github.token }}
+          BUILD_NUMBER: ${{ needs.build-number.outputs.build-number }}
+        run: bash .github/scripts/archive-current-stable.sh
+
   publish-stable:
     name: Publish MeshMC Stable downloads
     needs: [build-number, publish-updater]
