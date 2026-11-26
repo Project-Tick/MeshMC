@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "QtContainerCompat.h"
 #include "Application.h"
 #include "NewComponentDialog.h"
 #include "ui_NewComponentDialog.h"
@@ -46,7 +47,7 @@ NewComponentDialog::NewComponentDialog(const QString & initialName, const QStrin
     connect(ui->nameTextBox, &QLineEdit::textChanged, this, &NewComponentDialog::updateDialogState);
     connect(ui->uidTextBox, &QLineEdit::textChanged, this, &NewComponentDialog::updateDialogState);
 
-    auto groups = APPLICATION->instances()->getGroups().toSet();
+    auto groups = QtCompat::toSet(APPLICATION->instances()->getGroups());
     ui->nameTextBox->setFocus();
 
     originalPlaceholderText = ui->uidTextBox->placeholderText();

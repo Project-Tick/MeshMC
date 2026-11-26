@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "QtSignalCompat.h"
 #include "Download.h"
 
 #include <QFileInfo>
@@ -159,7 +160,7 @@ void Download::startRequest()
     m_reply.reset(rep);
     connect(rep, SIGNAL(downloadProgress(qint64, qint64)), SLOT(downloadProgress(qint64, qint64)));
     connect(rep, SIGNAL(finished()), SLOT(downloadFinished()));
-    connect(rep, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(downloadError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(rep, this, Download, downloadError);
     connect(rep, &QNetworkReply::sslErrors, this, &Download::sslErrors);
     connect(rep, &QNetworkReply::readyRead, this, &Download::downloadReadyRead);
     if(m_stall_timer.interval() > 0)

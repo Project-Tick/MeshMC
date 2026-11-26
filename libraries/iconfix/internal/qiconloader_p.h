@@ -123,7 +123,13 @@ private:
     QString key() const;
     bool hasIcon() const;
     void ensureLoaded();
-    void virtual_hook(int id, void *data);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QList<QSize> availableSizes(QIcon::Mode mode, QIcon::State state) override;
+    QString iconName() override;
+#else
+    void virtual_hook(int id, void *data) override;
+#endif
+    QList<QSize> entrySizes();
     QIconLoaderEngineEntry *entryForSize(const QSize &size);
     QIconLoaderEngineFixed(const QIconLoaderEngineFixed &other);
     QThemeIconEntries m_entries;

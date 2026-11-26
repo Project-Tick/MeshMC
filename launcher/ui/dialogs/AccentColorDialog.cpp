@@ -15,7 +15,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -375,7 +375,7 @@ void AccentColorDialog::build(const QColor &initial, const QList<QPair<QColor, Q
     auto hexRow = new QHBoxLayout();
     auto hexLabel = new QLabel(tr("&Hex"), this);
     m_hex = new QLineEdit(this);
-    m_hex->setValidator(new QRegExpValidator(QRegExp("#?[0-9a-fA-F]{0,6}"), m_hex));
+    m_hex->setValidator(new QRegularExpressionValidator(QRegularExpression("#?[0-9a-fA-F]{0,6}"), m_hex));
     m_hex->setMaxLength(7);
     hexLabel->setBuddy(m_hex);
     hexRow->addStretch(1);

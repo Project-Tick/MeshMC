@@ -4,6 +4,7 @@
  * Please see the COPYING.md file for more information.
  */
 
+#include "QtContainerCompat.h"
 #include "PackContents.h"
 
 #include <QDebug>
@@ -109,7 +110,7 @@ namespace PackContents
 		/* cleanPath resolves "a/../b" on its own, so a ".." left in the
 		 * result is one that climbs above the game directory. */
 		const QStringList segments =
-			clean.split(QLatin1Char('/'), QString::SkipEmptyParts);
+			clean.split(QLatin1Char('/'), QtCompat::SkipEmptyParts);
 		if (segments.contains(QLatin1String(".."))) {
 			return {};
 		}

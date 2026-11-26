@@ -47,10 +47,22 @@ set(CMAKE_JAVA_TARGET_OUTPUT_DIR ${PROJECT_BINARY_DIR}/jars)
 ######## Set compiler flags ########
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_C_STANDARD_REQUIRED true)
-set(CMAKE_CXX_STANDARD 11)
+set(Launcher_QT_MAJOR 5 CACHE STRING "Qt major version (5 or 6)")
+set_property(CACHE Launcher_QT_MAJOR PROPERTY STRINGS 5 6)
+if(Launcher_QT_MAJOR STREQUAL "6")
+    set(CMAKE_CXX_STANDARD 17)
+elseif(Launcher_QT_MAJOR STREQUAL "5")
+    set(CMAKE_CXX_STANDARD 11)
+else()
+    message(FATAL_ERROR "Launcher_QT_MAJOR must be 5 or 6")
+endif()
 set(CMAKE_C_STANDARD 11)
 include(GenerateExportHeader)
-set(CMAKE_CXX_FLAGS " -Wall -pedantic -Wno-deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=0 -fstack-protector-strong --param=ssp-buffer-size=4 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS " -Wall -pedantic -Wno-deprecated-declarations -fstack-protector-strong --param=ssp-buffer-size=4 ${CMAKE_CXX_FLAGS}")
+if(Launcher_QT_MAJOR STREQUAL "5")
+    # Keep the legacy libstdc++ ABI for the Qt 5 toolchains.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=0")
+endif()
 set(CMAKE_CXX_FLAGS_RELEASE " -O3 -D_FORTIFY_SOURCE=2 ${CMAKE_CXX_FLAGS_RELEASE}")
 if(UNIX AND APPLE)
     set(CMAKE_CXX_FLAGS " -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
@@ -168,23 +180,7 @@ add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.LAUNCH
 
 ################################ 3rd Party Libs ################################
 
-# Find the required Qt parts
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Concurrent REQUIRED)
-find_package(Qt5Network REQUIRED)
-find_package(Qt5Test REQUIRED)
-find_package(Qt5Xml REQUIRED)
-
-# The Qt5 cmake files don't provide its install paths, so ask qmake.
-include(QMakeQuery)
-query_qmake(QUERY QT_INSTALL_PLUGINS RESULT QT_PLUGINS_DIR)
-query_qmake(QUERY QT_INSTALL_LIBS RESULT QT_LIBS_DIR)
-query_qmake(QUERY QT_INSTALL_LIBEXECS RESULT QT_LIBEXECS_DIR)
-
-if (Qt5_POSITION_INDEPENDENT_CODE)
-    SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
-endif()
+include(LauncherQt)
 
 ####################################### Branding #######################################
 

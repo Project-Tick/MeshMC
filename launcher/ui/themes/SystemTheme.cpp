@@ -20,7 +20,11 @@ QString SystemTheme::name()
 QPalette SystemTheme::palette()
 {
     QPalette p = m_system->palette();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    if (p.resolveMask() == 0)
+#else
     if (p.resolve() == 0)
+#endif
     {
         p = m_system->isDark() ? DarkTheme::colors() : BrightTheme::colors();
     }

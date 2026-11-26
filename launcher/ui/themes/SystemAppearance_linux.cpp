@@ -128,15 +128,33 @@ QMap<QString, QMap<QString, QColor>> readKdeColors(const QString &path)
     return out;
 }
 
+QPalette emptyPalette()
+{
+    QPalette palette;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    palette.setResolveMask(0);
+#else
+    palette.resolve(0);
+#endif
+    return palette;
+}
+
+quint64 paletteMask(const QPalette &palette)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return palette.resolveMask();
+#else
+    return palette.resolve();
+#endif
+}
+
 // The scheme as a palette, every role set: what it leaves out from our Bright or Dark,
 // whichever is closer to its window colour. None (no roles set) without a scheme.
 QPalette kdePalette(const QMap<QString, QMap<QString, QColor>> &scheme)
 {
-    QPalette none;
-    none.resolve(0);
     const QColor window = scheme.value("Window").value("BackgroundNormal");
     if (!window.isValid())
-        return none;
+        return emptyPalette();
     const QPalette base = Colors::isDark(window) ? DarkTheme::colors() : BrightTheme::colors();
     auto color = [&](const char *set, const char *key, QPalette::ColorRole fallback) {
         const QColor c = scheme.value(set).value(key);
@@ -165,11 +183,7 @@ QPalette kdePalette(const QMap<QString, QMap<QString, QColor>> &scheme)
 QPalette readPalette()
 {
     if (!onKde())
-    {
-        QPalette none;
-        none.resolve(0);
-        return none;
-    }
+        return emptyPalette();
     return kdePalette(readKdeColors(kdeGlobalsPath()));
 }
 
@@ -187,7 +201,7 @@ public:
             watcher.addPath(kdeGlobalsPath());
             connect(&watcher, &QFileSystemWatcher::fileChanged, this, &Private::schemeMaybeChanged);
             connect(&watcher, &QFileSystemWatcher::directoryChanged, this, &Private::schemeMaybeChanged);
-            qDebug() << "KDE colour scheme:" << (palette.resolve() ? "read from" : "not in") << kdeGlobalsPath();
+            qDebug() << "KDE colour scheme:" << (paletteMask(palette) ? "read from" : "not in") << kdeGlobalsPath();
         }
         qDebug().noquote() << "Portal: colour scheme"
                            << (mode == Mode::Unknown ? "unknown" : (mode == Mode::Dark ? "dark" : "bright"))
@@ -208,7 +222,7 @@ private slots:
         if (!watcher.files().contains(kdeGlobalsPath()) && QFileInfo::exists(kdeGlobalsPath()))
             watcher.addPath(kdeGlobalsPath());
         const QPalette now = readPalette();
-        if (now == palette && now.resolve() == palette.resolve())
+        if (now == palette && paletteMask(now) == paletteMask(palette))
             return;
         palette = now;
         emit q->changed();

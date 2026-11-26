@@ -30,7 +30,6 @@ QString getCreditsHtml(QStringList patrons)
 {
     QString output;
     QTextStream stream(&output);
-    stream.setCodec(QTextCodec::codecForName("UTF-8"));
     stream << "<center>\n";
 
     stream << "<h3>" << QObject::tr("MeshMC Maintainer", "About Credits") << "</h3>\n";

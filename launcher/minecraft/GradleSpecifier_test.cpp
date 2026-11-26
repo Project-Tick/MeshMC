@@ -53,11 +53,22 @@ slots:
 
         QCOMPARE(converted, expected);
     }
+    void test_ReassignmentClearsOptionalParts()
+    {
+        GradleSpecifier spec("group:artifact:1.0:client@zip");
+        spec = QStringLiteral("group:artifact:2.0");
+
+        QVERIFY(spec.valid());
+        QCOMPARE(spec.serialize(), QStringLiteral("group:artifact:2.0"));
+        QCOMPARE(spec.getFileName(), QStringLiteral("artifact-2.0.jar"));
+    }
+
     void test_Negative_data()
     {
         QTest::addColumn<QString>("input");
 
         QTest::newRow("too many :") << "org:gradle.test:class:::ifiers:service:1.0::";
+        QTest::newRow("empty extension") << "group:artifact:1.0@";
         QTest::newRow("nonsense") << "I like turtles";
         QTest::newRow("empty string") << "";
         QTest::newRow("missing version") << "herp.derp:artifact";

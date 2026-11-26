@@ -470,7 +470,7 @@ add_executable(PackageManifest
 )
 target_link_libraries(PackageManifest
     Launcher_logic
-    Qt5::Test
+    Qt${Launcher_QT_MAJOR}::Test
 )
 target_include_directories(PackageManifest
     PRIVATE ../cmake/UnitTest/
@@ -1105,7 +1105,6 @@ elseif(APPLE)
     list(APPEND LAUNCHER_SOURCES MacOS.h ui/themes/TitleBar_mac.mm ui/themes/SystemAppearance_mac.mm)
 else()
     # the desktop portal, over D-Bus
-    find_package(Qt5DBus REQUIRED)
     list(APPEND LAUNCHER_SOURCES ui/themes/TitleBar_other.cpp ui/themes/SystemAppearance_linux.cpp)
 endif()
 
@@ -1116,7 +1115,7 @@ else()
     list(APPEND LAUNCHER_SOURCES DesktopIntegration.h DesktopIntegration_other.cpp)
 endif()
 
-qt5_wrap_ui(LAUNCHER_UI
+launcher_qt_wrap_ui(LAUNCHER_UI
     ui/pages/instance/ManagedPackPage.ui
     ui/dialogs/ExportPackDialog.ui
     ui/pages/modplatform/ContentProviderPage.ui
@@ -1169,7 +1168,7 @@ qt5_wrap_ui(LAUNCHER_UI
     ui/widgets/MCModInfoFrame.ui
 )
 
-qt5_add_resources(LAUNCHER_RESOURCES
+launcher_qt_add_resources(LAUNCHER_RESOURCES
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
     resources/pe_dark/pe_dark.qrc
@@ -1205,11 +1204,11 @@ target_link_libraries(Launcher_logic
     qrcode
 )
 target_link_libraries(Launcher_logic
-    Qt5::Core
-    Qt5::Xml
-    Qt5::Network
-    Qt5::Concurrent
-    Qt5::Gui
+    Qt${Launcher_QT_MAJOR}::Core
+    Qt${Launcher_QT_MAJOR}::Xml
+    Qt${Launcher_QT_MAJOR}::Network
+    Qt${Launcher_QT_MAJOR}::Concurrent
+    Qt${Launcher_QT_MAJOR}::Gui
 )
 target_link_libraries(Launcher_logic
     Launcher_iconfix
@@ -1217,10 +1216,14 @@ target_link_libraries(Launcher_logic
     hoedown
     LocalPeer
 )
+target_link_libraries(Launcher_logic Launcher_qt_compat)
+if(Launcher_QT_MAJOR STREQUAL "6")
+    target_link_libraries(Launcher_logic Qt6::OpenGL)
+endif()
 if(APPLE)
     target_link_libraries(Launcher_logic "-framework AppKit")
 elseif(NOT WIN32)
-    target_link_libraries(Launcher_logic Qt5::DBus)
+    target_link_libraries(Launcher_logic Qt${Launcher_QT_MAJOR}::DBus)
 endif()
 
 add_executable(${Launcher_Name} MACOSX_BUNDLE WIN32 main.cpp ${LAUNCHER_RCS})
@@ -1326,6 +1329,14 @@ if(INSTALL_BUNDLE STREQUAL "full")
                 REGEX "\\.dSYM" EXCLUDE
             )
         endif()
+    endif()
+    if(Launcher_QT_MAJOR STREQUAL "6" AND IS_DIRECTORY "${QT_PLUGINS_DIR}/tls")
+        install(
+            DIRECTORY "${QT_PLUGINS_DIR}/tls"
+            DESTINATION ${PLUGIN_DEST_DIR}
+            COMPONENT Runtime
+            REGEX "\\.dSYM" EXCLUDE
+        )
     endif()
     configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/install_prereqs.cmake.in"

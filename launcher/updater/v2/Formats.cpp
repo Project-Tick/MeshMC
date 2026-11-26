@@ -4,6 +4,7 @@
  * Please see the COPYING.md file for more information.
  */
 
+#include "QtContainerCompat.h"
 #include "Formats.h"
 
 #include <QDebug>
@@ -264,7 +265,7 @@ Variant variant(const QString &id, const QJsonValue &value, const QString &where
         {
             auto text = Json::requireIsType<QString>(assetUrl, at(w, "asset_url"));
             file.assetUrl = QUrl(text, QUrl::StrictMode);
-            auto parts = file.assetUrl.path().split('/', QString::SkipEmptyParts);
+            auto parts = file.assetUrl.path().split('/', QtCompat::SkipEmptyParts);
             QRegularExpression buildTag("\\Abuild-(0|[1-9][0-9]*)\\z");
             if(!file.assetUrl.isValid() || file.assetUrl.scheme() != "https" || file.assetUrl.host() != "github.com" ||
                file.assetUrl.port(-1) != -1 || !file.assetUrl.userName().isEmpty() || !file.assetUrl.password().isEmpty() ||
@@ -338,7 +339,7 @@ Variant variant(const QString &id, const QJsonValue &value, const QString &where
             }
         }
     }
-    auto entrySet = QSet<QString>::fromList(entries);
+    auto entrySet = QtCompat::toSet(entries);
     if(entrySet.size() != entries.size())
     {
         fail(QString("%1: a path is listed twice").arg(where));
@@ -348,7 +349,7 @@ Variant variant(const QString &id, const QJsonValue &value, const QString &where
         fail(QString("%1: a listed path is also a directory of other paths").arg(where));
     }
 
-    auto fileSet = QSet<QString>::fromList(paths);
+    auto fileSet = QtCompat::toSet(paths);
     for(auto &linkPath: linkPaths)
     {
         auto target = resolveLink(linkPath, links, QString("%1: link '%2'").arg(where, linkPath));

@@ -87,14 +87,19 @@ protected:
             return false;
         }
         const auto &mod = model->at(source_row);
-        if(mod.name().contains(filterRegExp())) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        auto filter = filterRegularExpression();
+#else
+        auto filter = filterRegExp();
+#endif
+        if(mod.name().contains(filter)) {
             return true;
         }
-        if(mod.description().contains(filterRegExp())) {
+        if(mod.description().contains(filter)) {
             return true;
         }
         for(auto & author: mod.authors()) {
-            if (author.contains(filterRegExp())) {
+            if (author.contains(filter)) {
                 return true;
             }
         }

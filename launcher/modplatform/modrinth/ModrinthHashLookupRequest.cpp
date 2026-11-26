@@ -5,6 +5,7 @@
  * Please see the COPYING.md file for more information.
  */
 
+#include "QtSignalCompat.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include "ModrinthHashLookupRequest.h"
@@ -43,7 +44,7 @@ void HashLookupRequest::startImpl()
     m_reply.reset(rep);
     connect(rep, &QNetworkReply::uploadProgress, this, &HashLookupRequest::downloadProgress);
     connect(rep, &QNetworkReply::finished, this, &HashLookupRequest::downloadFinished);
-    connect(rep, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(downloadError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(rep, this, HashLookupRequest, downloadError);
 }
 
 void HashLookupRequest::downloadError(QNetworkReply::NetworkError error)

@@ -1,6 +1,5 @@
 project(systeminfo)
 
-find_package(Qt5Core)
 
 set(systeminfo_SOURCES
     include/sys.h
@@ -22,7 +21,8 @@ elseif (UNIX)
 endif()
 
 add_library(systeminfo STATIC ${systeminfo_SOURCES})
-target_link_libraries(systeminfo Qt5::Core Qt5::Gui Qt5::Network)
+target_link_libraries(systeminfo Qt${Launcher_QT_MAJOR}::Core Qt${Launcher_QT_MAJOR}::Gui Qt${Launcher_QT_MAJOR}::Network)
+target_link_libraries(systeminfo Launcher_qt_compat)
 target_include_directories(systeminfo PUBLIC ${systeminfo_INCLUDE_DIRS})
 
 include (UnitTest)

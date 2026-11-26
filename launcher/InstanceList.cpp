@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "QtContainerCompat.h"
 #include <QDir>
 #include <QDirIterator>
 #include <QFutureWatcher>
@@ -145,7 +146,7 @@ QVariant InstanceList::data(const QModelIndex &index, int role) const
     {
     case InstancePointerRole:
     {
-        QVariant v = qVariantFromValue((void *)pdata);
+        QVariant v = QVariant::fromValue((void *)pdata);
         return v;
     }
     case InstanceIDRole:
@@ -261,7 +262,7 @@ void InstanceList::setInstanceGroup(const InstanceId& id, const GroupId& name)
 
 QStringList InstanceList::getGroups()
 {
-    return m_groupNameCache.toList();
+    return m_groupNameCache.values();
 }
 
 void InstanceList::deleteGroup(const QString& name)
@@ -365,7 +366,7 @@ QList< InstanceId > InstanceList::discoverInstances()
         out.append(id);
         qDebug() << "Found instance ID" << id;
     }
-    instanceSet = out.toSet();
+    instanceSet = QtCompat::toSet(out);
     m_instancesProbed = true;
     return out;
 }

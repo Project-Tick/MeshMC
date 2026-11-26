@@ -18,7 +18,7 @@
 
 #include "Application.h"
 
-const static QLatin1Literal defaultLangCode("en_US");
+const static QLatin1String defaultLangCode("en_US");
 
 enum class FileType
 {
@@ -370,7 +370,7 @@ QVariant TranslationsModel::data(const QModelIndex& index, int role) const
             case Column::Completeness:
             {
                 QString text;
-                text.sprintf("%3.1f %%", lang.percentTranslated());
+                text = QString::asprintf("%3.1f %%", lang.percentTranslated());
                 return text;
             }
         }
@@ -430,20 +430,20 @@ int TranslationsModel::columnCount(const QModelIndex& parent) const
     return 2;
 }
 
-Language * TranslationsModel::findLanguage(const QString& key)
+int TranslationsModel::findLanguageRow(const QString &key) const
 {
-    auto found = std::find_if(d->m_languages.begin(), d->m_languages.end(), [&](Language & lang)
+    const auto &languages = d->m_languages;
+    const auto found = std::find_if(languages.cbegin(), languages.cend(), [&key](const Language &lang)
     {
         return lang.key == key;
     });
-    if(found == d->m_languages.end())
-    {
-        return nullptr;
-    }
-    else
-    {
-        return found;
-    }
+    return found == languages.cend() ? -1 : static_cast<int>(found - languages.cbegin());
+}
+
+Language *TranslationsModel::findLanguage(const QString &key)
+{
+    const int row = findLanguageRow(key);
+    return row < 0 ? nullptr : &d->m_languages[row];
 }
 
 bool TranslationsModel::selectLanguage(QString key)
@@ -563,13 +563,8 @@ bool TranslationsModel::selectLanguage(QString key)
 
 QModelIndex TranslationsModel::selectedIndex()
 {
-    auto found = findLanguage(d->m_selectedLanguage);
-    if(found)
-    {
-        // QVector iterator freely converts to pointer to contained type
-        return index(found - d->m_languages.begin(), 0, QModelIndex());
-    }
-    return QModelIndex();
+    const int row = findLanguageRow(d->m_selectedLanguage);
+    return row < 0 ? QModelIndex() : index(row, 0, QModelIndex());
 }
 
 QString TranslationsModel::selectedLanguage()

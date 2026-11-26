@@ -44,7 +44,11 @@ public:
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        const QString pattern = filterRegularExpression().pattern();
+#else
         const QString pattern = filterRegExp().pattern();
+#endif
         const auto model = static_cast<PageModel *>(sourceModel());
         const auto page = model->pages().at(sourceRow);
         if (!page->shouldDisplay())
@@ -149,7 +153,7 @@ void PageContainer::createUI()
     headerHLayout->addSpacerItem(new QSpacerItem(rightMargin, 0, QSizePolicy::Fixed, QSizePolicy::Ignored));
     headerHLayout->setContentsMargins(0, 6, 0, 0);
 
-    m_pageStack->setMargin(0);
+    m_pageStack->setContentsMargins(0, 0, 0, 0);
     m_pageStack->addWidget(new QWidget(this));
 
     m_layout = new QGridLayout;

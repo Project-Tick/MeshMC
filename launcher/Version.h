@@ -39,16 +39,16 @@ private:
                     break;
                 }
             }
-            auto numPart = m_fullString.leftRef(cutoff);
+            auto numPart = m_fullString.left(cutoff);
             if(numPart.size())
             {
                 numValid = true;
                 m_numPart = numPart.toInt();
             }
-            auto stringPart = m_fullString.midRef(cutoff);
+            auto stringPart = m_fullString.mid(cutoff);
             if(stringPart.size())
             {
-                m_stringPart = stringPart.toString();
+                m_stringPart = stringPart;
             }
         }
         explicit Section() {}

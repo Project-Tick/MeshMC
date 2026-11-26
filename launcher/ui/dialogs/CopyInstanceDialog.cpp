@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "QtContainerCompat.h"
 #include <QLayout>
 #include <QPushButton>
 
@@ -40,8 +41,8 @@ CopyInstanceDialog::CopyInstanceDialog(InstancePtr original, QWidget *parent)
     ui->iconButton->setIcon(IconUtils::fittedIcon(APPLICATION->icons()->getIcon(InstIconKey)));
     ui->instNameTextBox->setText(original->name());
     ui->instNameTextBox->setFocus();
-    auto groups = APPLICATION->instances()->getGroups().toSet();
-    auto groupList = QStringList(groups.toList());
+    auto groups = QtCompat::toSet(APPLICATION->instances()->getGroups());
+    auto groupList = QStringList(groups.values());
     groupList.sort(Qt::CaseInsensitive);
     groupList.removeOne("");
     groupList.push_front("");

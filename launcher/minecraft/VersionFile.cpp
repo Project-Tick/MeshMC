@@ -1,3 +1,4 @@
+#include <QRegularExpression>
 #include <QJsonArray>
 #include <QJsonDocument>
 
@@ -52,7 +53,7 @@ void VersionFile::applyTo(LaunchProfile *profile)
     auto theirVersion = profile->getMinecraftVersion();
     if (!theirVersion.isNull() && !dependsOnMinecraftVersion.isNull())
     {
-        if (QRegExp(dependsOnMinecraftVersion, Qt::CaseInsensitive, QRegExp::Wildcard).indexIn(theirVersion) == -1)
+        if (QRegularExpression(dependsOnMinecraftVersion, Qt::CaseInsensitive, QRegularExpression::Wildcard).indexIn(theirVersion) == -1)
         {
             throw MinecraftVersionMismatch(uid, dependsOnMinecraftVersion, theirVersion);
         }

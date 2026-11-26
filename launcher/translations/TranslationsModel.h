@@ -40,6 +40,7 @@ public:
     void downloadIndex();
 
 private:
+    int findLanguageRow(const QString &key) const;
     Language *findLanguage(const QString & key);
     void reloadLocalFiles();
     void downloadTranslation(QString key);

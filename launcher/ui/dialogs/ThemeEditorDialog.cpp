@@ -253,7 +253,7 @@ ThemeEditorDialog::ThemeEditorDialog(const QString &themesFolder, const QString 
     connect(new QShortcut(QKeySequence::Undo, this), &QShortcut::activated, this, &ThemeEditorDialog::undo);
     connect(new QShortcut(QKeySequence::Redo, this), &QShortcut::activated, this, &ThemeEditorDialog::redo);
     // the platforms' redo keys differ (Ctrl+Shift+Z here, Ctrl+Y there): both everywhere
-    for(auto keys : {QKeySequence(Qt::CTRL + Qt::Key_Y), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Z)})
+    for(auto keys : {QKeySequence(Qt::CTRL | Qt::Key_Y), QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Z)})
     {
         if(!QKeySequence::keyBindings(QKeySequence::Redo).contains(keys))
             connect(new QShortcut(keys, this), &QShortcut::activated, this, &ThemeEditorDialog::redo);
@@ -372,8 +372,8 @@ bool ThemeEditorDialog::eventFilter(QObject *watched, QEvent *event)
         auto key = static_cast<QKeyEvent *>(event);
         const QKeySequence pressed(key->modifiers() | key->key());
         const bool undo = key->matches(QKeySequence::Undo);
-        const bool redo = key->matches(QKeySequence::Redo) || pressed == QKeySequence(Qt::CTRL + Qt::Key_Y)
-            || pressed == QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Z);
+        const bool redo = key->matches(QKeySequence::Redo) || pressed == QKeySequence(Qt::CTRL | Qt::Key_Y)
+            || pressed == QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Z);
         if(undo || redo)
         {
             // not overridden: the dialog's shortcut gets it

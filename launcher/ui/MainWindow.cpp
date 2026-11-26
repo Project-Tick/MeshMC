@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "QtContainerCompat.h"
 #include "Application.h"
 #include "BuildConfig.h"
 
@@ -30,7 +31,7 @@
 
 #include <QtGui/QKeyEvent>
 
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHBoxLayout>
@@ -46,7 +47,7 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QWidgetAction>
 #include <QtWidgets/QProgressDialog>
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 
 #include <BaseInstance.h>
 #include <InstanceList.h>
@@ -1370,7 +1371,7 @@ void MainWindow::updateNotAvailable()
 
 QList<int> stringToIntList(const QString &string)
 {
-    QStringList split = string.split(',', QString::SkipEmptyParts);
+    QStringList split = string.split(',', QtCompat::SkipEmptyParts);
     QList<int> out;
     for (int i = 0; i < split.size(); ++i)
     {

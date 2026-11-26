@@ -18,7 +18,11 @@ ReuseInfo ReuseInfo::read(const QString &file)
     if (!licenseFile.open(QIODevice::ReadOnly | QIODevice::Text))
         return info;
     QTextStream in(&licenseFile);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    in.setEncoding(QStringConverter::Utf8);
+#else
     in.setCodec("UTF-8");
+#endif
     while (!in.atEnd())
     {
         const QString line = in.readLine().trimmed();

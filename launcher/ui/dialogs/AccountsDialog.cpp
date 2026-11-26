@@ -4,6 +4,8 @@
  * Please see the COPYING.md file for more information.
  */
 
+#include <QtGlobal>
+#include <QRegularExpressionValidator>
 #include <QAction>
 #include "ui/GuiUtil.h"
 #include <QStatusBar>
@@ -143,9 +145,9 @@ AccountsDialog::AccountsDialog(QWidget *parent, const QString& internalId) : QDi
     m_goodIcon = APPLICATION->getThemedIcon("status-good");
     m_yellowIcon = APPLICATION->getThemedIcon("status-yellow");
     m_badIcon = APPLICATION->getThemedIcon("status-bad");
-    QRegExp permittedNames("[a-zA-Z0-9_]{3,16}");
+    QRegularExpression permittedNames("[a-zA-Z0-9_]{3,16}");
     auto nameEdit = ui->createProfileNameEdit;
-    nameEdit->setValidator(new QRegExpValidator(permittedNames));
+    nameEdit->setValidator(new QRegularExpressionValidator(permittedNames, nameEdit));
     nameEdit->setClearButtonEnabled(true);
 
     m_validityAction = nameEdit->addAction(m_yellowIcon, QLineEdit::LeadingPosition);

@@ -69,7 +69,11 @@ ThemeSelectionWidget::ThemeSelectionWidget(QWidget *parent) : QWidget(parent)
     styleLayout->addWidget(m_native);
     styleLayout->addStretch(1);
     choices->addRow(m_styleLabel, m_styleRow);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    connect(m_styleGroup, &QButtonGroup::idClicked, this, [this](int id) {
+#else
     connect(m_styleGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, [this](int id) {
+#endif
         m_choice.style = ThemeManager::Style(id);
         userChanged();
     });
@@ -94,7 +98,11 @@ ThemeSelectionWidget::ThemeSelectionWidget(QWidget *parent) : QWidget(parent)
     m_customAccent = accentButton(ThemeManager::AccentSource::Custom);
     accentLayout->addStretch(1);
     choices->addRow(m_accentLabel, m_accentRow);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    connect(m_accentGroup, &QButtonGroup::idClicked, this, [this](int id) {
+#else
     connect(m_accentGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, [this](int id) {
+#endif
         const auto source = ThemeManager::AccentSource(id);
         // Custom is a colour to choose, every time it is clicked
         if(source == ThemeManager::AccentSource::Custom)

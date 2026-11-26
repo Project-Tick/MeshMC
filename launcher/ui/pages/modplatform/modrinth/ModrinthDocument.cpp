@@ -22,12 +22,12 @@ Modrinth::ModrinthDocument::ModrinthDocument(const QString &markdown, QObject* p
 
 QVariant Modrinth::ModrinthDocument::loadResource(int type, const QUrl& name) {
     if(type == QTextDocument::ResourceType::ImageResource) {
-        auto pixmap = QPixmapCache::find(name.toString());
-        if(!pixmap) {
+        QPixmap pixmap;
+        if(!QPixmapCache::find(name.toString(), &pixmap)) {
             requestResource(name);
             return QVariant();
         }
-        return QVariant(*pixmap);
+        return QVariant(pixmap);
     }
     return QTextDocument::loadResource(type, name);
 }

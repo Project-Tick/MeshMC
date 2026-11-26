@@ -1,3 +1,4 @@
+#include "QtSignalCompat.h"
 #include <cassert>
 
 #include <QDebug>
@@ -20,7 +21,7 @@ void AuthRequest::get(const QNetworkRequest &req, int timeout/* = 60*1000*/) {
     reply_ = APPLICATION->network()->get(request_);
     status_ = Requesting;
     timedReplies_.add(new Katabasis::Reply(reply_, timeout));
-    connect(reply_, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onRequestError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(reply_, this, AuthRequest, onRequestError);
     connect(reply_, SIGNAL(finished()), this, SLOT(onRequestFinished()));
     connect(reply_, &QNetworkReply::sslErrors, this, &AuthRequest::onSslErrors);
 }
@@ -31,7 +32,7 @@ void AuthRequest::post(const QNetworkRequest &req, const QByteArray &data, int t
     status_ = Requesting;
     reply_ = APPLICATION->network()->post(request_, data_);
     timedReplies_.add(new Katabasis::Reply(reply_, timeout));
-    connect(reply_, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onRequestError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(reply_, this, AuthRequest, onRequestError);
     connect(reply_, SIGNAL(finished()), this, SLOT(onRequestFinished()));
     connect(reply_, &QNetworkReply::sslErrors, this, &AuthRequest::onSslErrors);
     connect(reply_, SIGNAL(uploadProgress(qint64,qint64)), this, SLOT(onUploadProgress(qint64,qint64)));
@@ -42,7 +43,7 @@ void AuthRequest::post(const QNetworkRequest &req, QHttpMultiPart *multipart, in
     status_ = Requesting;
     reply_ = APPLICATION->network()->post(request_, multipart);
     timedReplies_.add(new Katabasis::Reply(reply_, timeout));
-    connect(reply_, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onRequestError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(reply_, this, AuthRequest, onRequestError);
     connect(reply_, SIGNAL(finished()), this, SLOT(onRequestFinished()));
     connect(reply_, &QNetworkReply::sslErrors, this, &AuthRequest::onSslErrors);
     connect(reply_, SIGNAL(uploadProgress(qint64,qint64)), this, SLOT(onUploadProgress(qint64,qint64)));
@@ -54,7 +55,7 @@ void AuthRequest::put(const QNetworkRequest &req, const QByteArray &data, int ti
     status_ = Requesting;
     reply_ = APPLICATION->network()->put(request_, data_);
     timedReplies_.add(new Katabasis::Reply(reply_, timeout));
-    connect(reply_, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onRequestError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(reply_, this, AuthRequest, onRequestError);
     connect(reply_, SIGNAL(finished()), this, SLOT(onRequestFinished()));
     connect(reply_, &QNetworkReply::sslErrors, this, &AuthRequest::onSslErrors);
     connect(reply_, SIGNAL(uploadProgress(qint64,qint64)), this, SLOT(onUploadProgress(qint64,qint64)));
@@ -66,7 +67,7 @@ void AuthRequest::deleteResource(const QNetworkRequest& req, int timeout)
     status_ = Requesting;
     reply_ = APPLICATION->network()->deleteResource(request_);
     timedReplies_.add(new Katabasis::Reply(reply_, timeout));
-    connect(reply_, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onRequestError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(reply_, this, AuthRequest, onRequestError);
     connect(reply_, SIGNAL(finished()), this, SLOT(onRequestFinished()));
     connect(reply_, &QNetworkReply::sslErrors, this, &AuthRequest::onSslErrors);
     connect(reply_, SIGNAL(uploadProgress(qint64,qint64)), this, SLOT(onUploadProgress(qint64,qint64)));

@@ -1,3 +1,4 @@
+#include "QtSignalCompat.h"
 #include "LoggedProcess.h"
 #include "MessageLevel.h"
 #include <QDebug>
@@ -10,7 +11,7 @@ LoggedProcess::LoggedProcess(QObject *parent) : QProcess(parent)
     connect(this, &QProcess::readyReadStandardOutput, this, &LoggedProcess::on_stdOut);
     connect(this, &QProcess::readyReadStandardError, this, &LoggedProcess::on_stdErr);
     connect(this, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(on_exit(int,QProcess::ExitStatus)));
-    connect(this, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_error(QProcess::ProcessError)));
+    connect(this, QtCompat::ProcessError, this, &LoggedProcess::on_error);
     connect(this, &QProcess::stateChanged, this, &LoggedProcess::on_stateChange);
 }
 
@@ -194,7 +195,9 @@ void LoggedProcess::on_stateChange(QProcess::ProcessState state)
 
 qint64 LoggedProcess::processId() const
 {
-#ifdef Q_OS_WIN
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return QProcess::processId();
+#elif defined(Q_OS_WIN)
     return pid() ? pid()->dwProcessId : 0;
 #else
     return pid();

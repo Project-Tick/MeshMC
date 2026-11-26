@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "QtContainerCompat.h"
 #include "InstanceImportTask.h"
 #include "BaseInstance.h"
 #include "FileSystem.h"
@@ -617,7 +618,7 @@ void InstanceImportTask::processModrinth() {
                     break;
                 }
             }
-            const auto parts = source.path().split('/', QString::SkipEmptyParts);
+            const auto parts = source.path().split('/', QtCompat::SkipEmptyParts);
             if (parts.size() < 5 || parts.at(0) != "data" || parts.at(2) != "versions")
                 continue;
 

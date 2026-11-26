@@ -4,6 +4,7 @@
  * Please see the COPYING.md file for more information.
  */
 
+#include "QtContainerCompat.h"
 #include <QTest>
 #include <QElapsedTimer>
 #include <QTemporaryDir>
@@ -339,7 +340,7 @@ slots:
      */
     void test_liveTree()
     {
-        auto sites = QString::fromLocal8Bit(qgetenv("TREE_UPDATER_LIVE_SITES")).split(';', QString::SkipEmptyParts);
+        auto sites = QString::fromLocal8Bit(qgetenv("TREE_UPDATER_LIVE_SITES")).split(';', QtCompat::SkipEmptyParts);
         if(sites.isEmpty())
         {
             QSKIP("TREE_UPDATER_LIVE_SITES isn't set");

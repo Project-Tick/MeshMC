@@ -102,6 +102,9 @@ signals:
     void groupStateChanged(QString group, bool collapsed);
 
 protected:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QStyleOptionViewItem viewOptions() const;
+#endif
     bool isIndexHidden(const QModelIndex &index) const override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

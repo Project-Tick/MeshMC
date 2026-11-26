@@ -4,6 +4,7 @@
  * Please see the COPYING.md file for more information.
  */
 
+#include "QtContainerCompat.h"
 #include "FileIgnoreProxy.h"
 
 #include <QDebug>
@@ -289,7 +290,7 @@ void FileIgnoreProxy::loadBlockedPathsFromFile(const QString& fileName)
 	}
 	auto ignoreData = ignoreFile.readAll();
 	auto string = QString::fromUtf8(ignoreData);
-	setBlockedPaths(string.split('\n', QString::SkipEmptyParts));
+	setBlockedPaths(string.split('\n', QtCompat::SkipEmptyParts));
 }
 
 void FileIgnoreProxy::saveBlockedPathsToFile(const QString& fileName)

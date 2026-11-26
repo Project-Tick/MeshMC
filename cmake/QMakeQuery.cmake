@@ -3,7 +3,7 @@ if(__QMAKEQUERY_CMAKE__)
 endif()
 set(__QMAKEQUERY_CMAKE__ TRUE)
 
-get_target_property(QMAKE_EXECUTABLE Qt5::qmake LOCATION)
+get_target_property(QMAKE_EXECUTABLE Qt${Launcher_QT_MAJOR}::qmake LOCATION)
 
 function(QUERY_QMAKE)
     set(options "")

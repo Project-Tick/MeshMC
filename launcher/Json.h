@@ -29,6 +29,7 @@ void write(const QJsonObject &object, const QString &filename);
 /// @throw FileSystemException
 void write(const QJsonArray &array, const QString &filename);
 
+QJsonDocument fromBinary(const QByteArray &data);
 QByteArray toBinary(const QJsonObject &obj);
 QByteArray toBinary(const QJsonArray &array);
 QByteArray toText(const QJsonObject &obj);

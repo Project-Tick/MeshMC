@@ -1,10 +1,11 @@
+#include <QRegularExpression>
 #include "JavaCommon.h"
 #include "ui/dialogs/CustomMessageBox.h"
 #include <MMCStrings.h>
 
 bool JavaCommon::checkJVMArgs(QString jvmargs, QWidget *parent)
 {
-    if (jvmargs.contains("-XX:PermSize=") || jvmargs.contains(QRegExp("-Xm[sx]"))
+    if (jvmargs.contains("-XX:PermSize=") || (QRegularExpression("-Xm[sx]").match(jvmargs).hasMatch())
         || jvmargs.contains("-XX-MaxHeapSize") || jvmargs.contains("-XX:InitialHeapSize"))
     {
         auto warnStr = QObject::tr(
@@ -18,7 +19,7 @@ bool JavaCommon::checkJVMArgs(QString jvmargs, QWidget *parent)
         return false;
     }
     // block lunacy with passing required version to the JVM
-    if (jvmargs.contains(QRegExp("-version:.*"))) {
+    if (QRegExp("-version:.*").indexIn(jvmargs) >= 0) {
         auto warnStr = QObject::tr(
             "You tried to pass required java version argument to the JVM (using \"-version=xxx\"). This is not safe and will not be allowed.\n"
             "This message will be displayed until you remove this from the JVM arguments.");

@@ -18,7 +18,8 @@ add_library(Launcher_quazip SHARED
     "${quazip_source}/zip.c"
 )
 target_include_directories(Launcher_quazip PUBLIC "${quazip_source}")
-target_link_libraries(Launcher_quazip PUBLIC Qt5::Core ZLIB::ZLIB)
+target_link_libraries(Launcher_quazip PUBLIC Qt${Launcher_QT_MAJOR}::Core ZLIB::ZLIB)
+target_link_libraries(Launcher_quazip PUBLIC Launcher_qt_compat)
 target_compile_definitions(Launcher_quazip PRIVATE QUAZIP_BUILD)
 set_target_properties(Launcher_quazip PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
 install(TARGETS Launcher_quazip
@@ -28,7 +29,7 @@ install(TARGETS Launcher_quazip
 
 set(quazip_tests "${CMAKE_CURRENT_SOURCE_DIR}/libraries/quazip/qztest")
 file(GLOB quazip_test_sources "${quazip_tests}/*.cpp")
-qt5_add_resources(quazip_test_resources "${quazip_tests}/qztest.qrc")
+launcher_qt_add_resources(quazip_test_resources "${quazip_tests}/qztest.qrc")
 add_executable(Launcher_quazip_test ${quazip_test_sources} ${quazip_test_resources})
-target_link_libraries(Launcher_quazip_test PRIVATE Launcher_quazip Qt5::Network Qt5::Test)
+target_link_libraries(Launcher_quazip_test PRIVATE Launcher_quazip Qt${Launcher_QT_MAJOR}::Network Qt${Launcher_QT_MAJOR}::Test)
 add_test(NAME quazip_testsuite COMMAND Launcher_quazip_test)

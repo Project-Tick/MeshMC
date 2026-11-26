@@ -21,10 +21,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_C_STANDARD_REQUIRED true)
-set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
-find_package(Qt5 COMPONENTS Core Network REQUIRED)
 
 set( katabasis_PRIVATE
     src/DeviceFlow.cpp
@@ -43,7 +41,7 @@ set( katabasis_PUBLIC
 )
 
 add_library( Katabasis STATIC ${katabasis_PRIVATE} ${katabasis_PUBLIC} )
-target_link_libraries(Katabasis Qt5::Core Qt5::Network)
+target_link_libraries(Katabasis Qt${Launcher_QT_MAJOR}::Core Qt${Launcher_QT_MAJOR}::Network)
 
 # needed for statically linked Katabasis in shared libs on x86_64
 set_target_properties(Katabasis

@@ -3,6 +3,9 @@
 #include "Json.h"
 
 #include <QFile>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QBinaryJson>
+#endif
 #include <QRegularExpression>
 
 #include "FileSystem.h"
@@ -24,13 +27,29 @@ void write(const QJsonArray &array, const QString &filename)
     write(QJsonDocument(array), filename);
 }
 
+QJsonDocument fromBinary(const QByteArray &data)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return QBinaryJson::fromBinaryData(data);
+#else
+    return QJsonDocument::fromBinaryData(data);
+#endif
+}
 QByteArray toBinary(const QJsonObject &obj)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return QBinaryJson::toBinaryData(QJsonDocument(obj));
+#else
     return QJsonDocument(obj).toBinaryData();
+#endif
 }
 QByteArray toBinary(const QJsonArray &array)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return QBinaryJson::toBinaryData(QJsonDocument(array));
+#else
     return QJsonDocument(array).toBinaryData();
+#endif
 }
 QByteArray toText(const QJsonObject &obj)
 {
@@ -54,7 +73,7 @@ QJsonDocument requireDocument(const QByteArray &data, const QString &what)
 {
     if (isBinaryJson(data))
     {
-        QJsonDocument doc = QJsonDocument::fromBinaryData(data);
+        const auto doc = fromBinary(data);
         if (doc.isNull())
         {
             throw JsonException(what + ": Invalid JSON (binary JSON detected)");

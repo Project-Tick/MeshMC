@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "QtContainerCompat.h"
 #include "ExportInstanceDialog.h"
 #include "ui_ExportInstanceDialog.h"
 #include <BaseInstance.h>
@@ -97,7 +98,7 @@ public:
             flags |= Qt::ItemIsUserCheckable;
             if (sourceIndex.model()->hasChildren(sourceIndex))
             {
-                flags |= Qt::ItemIsTristate;
+                flags |= Qt::ItemIsAutoTristate;
             }
         }
 
@@ -190,7 +191,7 @@ public:
                 QStack<QModelIndex> todo;
                 while (1)
                 {
-                    auto node = doing.child(row, 0);
+                    auto node = doing.isValid() ? doing.model()->index(row, 0, doing) : QModelIndex();
                     if (!node.isValid())
                     {
                         if (!todo.size())
@@ -239,7 +240,7 @@ public:
             QStack<QModelIndex> todo;
             while (1)
             {
-                auto node = doing.child(row, 0);
+                auto node = doing.isValid() ? doing.model()->index(row, 0, doing) : QModelIndex();
                 if (!node.isValid())
                 {
                     if (!todo.size())
@@ -434,7 +435,7 @@ void ExportInstanceDialog::rowsInserted(QModelIndex parent, int top, int bottom)
     //WARNING: possible off-by-one?
     for(int i = top; i < bottom; i++)
     {
-        auto node = parent.child(i, 0);
+        auto node = parent.isValid() ? parent.model()->index(i, 0, parent) : QModelIndex();
         if(proxyModel->shouldExpand(node))
         {
             auto expNode = node.parent();
@@ -462,7 +463,7 @@ void ExportInstanceDialog::loadPackIgnore()
     }
     auto data = ignoreFile.readAll();
     auto string = QString::fromUtf8(data);
-    proxyModel->setBlockedPaths(string.split('\n', QString::SkipEmptyParts));
+    proxyModel->setBlockedPaths(string.split('\n', QtCompat::SkipEmptyParts));
 }
 
 void ExportInstanceDialog::savePackIgnore()

@@ -4,6 +4,7 @@
  * Please see the COPYING.md file for more information.
  */
 
+#include "QtContainerCompat.h"
 #include "State.h"
 
 #include <QDebug>
@@ -37,7 +38,7 @@ State::State(const QByteArray &floorKeys, const QStringList &pinnedRootKeys, qin
         m_error = QString("the compiled-in keys document isn't valid: %1").arg(error);
         return;
     }
-    if(QSet<QString>::fromList(m_floorKeys.rootKeys) != QSet<QString>::fromList(pinnedRootKeys) || m_floorKeys.rootKeys.size() != pinnedRootKeys.size())
+    if(QtCompat::toSet(m_floorKeys.rootKeys) != QtCompat::toSet(pinnedRootKeys) || m_floorKeys.rootKeys.size() != pinnedRootKeys.size())
     {
         m_error = "the compiled-in keys document doesn't list exactly the pinned root keys";
         return;

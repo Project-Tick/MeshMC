@@ -1,3 +1,4 @@
+#include "QtSignalCompat.h"
 #include "PasteUpload.h"
 #include "BuildConfig.h"
 #include "Application.h"
@@ -47,7 +48,7 @@ void PasteUpload::executeTask()
     m_reply = std::shared_ptr<QNetworkReply>(rep);
     setStatus(tr("Uploading to paste.ee"));
     connect(rep, &QNetworkReply::uploadProgress, this, &Task::setProgress);
-    connect(rep, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(downloadError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(rep, this, PasteUpload, downloadError);
     connect(rep, SIGNAL(finished()), this, SLOT(downloadFinished()));
 }
 

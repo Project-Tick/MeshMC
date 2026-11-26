@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <QRegularExpression>
 #include "MinecraftAccount.h"
 
 #include <QUuid>
@@ -37,7 +38,7 @@
 #include <Application.h>
 
 MinecraftAccount::MinecraftAccount(QObject* parent) : QObject(parent) {
-    data.internalId = QUuid::createUuid().toString().remove(QRegExp("[{}-]"));
+    data.internalId = QUuid::createUuid().toString().remove(QRegularExpression(QStringLiteral("[{}-]")));
 }
 
 MinecraftAccountPtr MinecraftAccount::loadFromJsonV3(const QJsonObject& json) {

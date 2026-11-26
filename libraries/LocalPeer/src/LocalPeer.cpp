@@ -62,6 +62,7 @@ static PProcessIdToSessionId pProcessIdToSessionId = 0;
 #include <chrono>
 #include <thread>
 #include <QCryptographicHash>
+#include <QRegularExpression>
 
 static const char* ack = "ack";
 
@@ -72,10 +73,14 @@ ApplicationId ApplicationId::fromTraditionalApp()
     protoId = protoId.toLower();
 #endif
     auto prefix = protoId.section(QLatin1Char('/'), -1);
-    prefix.remove(QRegExp("[^a-zA-Z]"));
+    prefix.remove(QRegularExpression(QStringLiteral("[^a-zA-Z]")));
     prefix.truncate(6);
     QByteArray idc = protoId.toUtf8();
-    quint16 idNum = qChecksum(idc.constData(), idc.size());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const quint16 idNum = qChecksum(idc);
+#else
+    const quint16 idNum = qChecksum(idc.constData(), idc.size());
+#endif
     auto socketName = QLatin1String("qtsingleapp-") + prefix + QLatin1Char('-') + QString::number(idNum, 16);
 #if defined(Q_OS_WIN)
     if (!pProcessIdToSessionId)

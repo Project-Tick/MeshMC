@@ -88,7 +88,13 @@ void PackInstallTask::unzip()
         return;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_extractFuture = QtConcurrent::run(QThreadPool::globalInstance(), [source = archivePath, target = extractDir.absolutePath() + "/unzip"] {
+        return MMCZip::extractDir(source, target);
+    });
+#else
     m_extractFuture = QtConcurrent::run(QThreadPool::globalInstance(), MMCZip::extractDir, archivePath, extractDir.absolutePath() + "/unzip");
+#endif
     connect(&m_extractFutureWatcher, &QFutureWatcher<QStringList>::finished, this, &PackInstallTask::onUnzipFinished);
     connect(&m_extractFutureWatcher, &QFutureWatcher<QStringList>::canceled, this, &PackInstallTask::onUnzipCanceled);
     m_extractFutureWatcher.setFuture(m_extractFuture);

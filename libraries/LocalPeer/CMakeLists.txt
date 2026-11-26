@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(LocalPeer)
 
-find_package(Qt5 COMPONENTS Core Network REQUIRED)
 
 set(SINGLE_SOURCES
 src/LocalPeer.cpp
@@ -25,7 +24,7 @@ endif()
 add_library(LocalPeer STATIC ${SINGLE_SOURCES})
 target_include_directories(LocalPeer PUBLIC include)
 
-target_link_libraries(LocalPeer Qt5::Core Qt5::Network)
+target_link_libraries(LocalPeer Qt${Launcher_QT_MAJOR}::Core Qt${Launcher_QT_MAJOR}::Network)
 
 include (UnitTest)
 add_unit_test(LocalPeer

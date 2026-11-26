@@ -89,7 +89,11 @@ ColorEdit::ColorEdit(QWidget *parent) : QWidget(parent)
     m_swatch = new ColorSwatch(this);
     m_edit = new QLineEdit(this);
     // room for #rrggbb, no more: the colours line up in a column
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_edit->setFixedWidth(m_edit->fontMetrics().horizontalAdvance("#DDDDDDD") + 2 * m_edit->style()->pixelMetric(QStyle::PM_DefaultFrameWidth) + 12);
+#else
     m_edit->setFixedWidth(m_edit->fontMetrics().width("#DDDDDDD") + 2 * m_edit->style()->pixelMetric(QStyle::PM_DefaultFrameWidth) + 12);
+#endif
     m_pick = new QToolButton(this);
     m_pick->setText("...");
     m_pick->setToolTip(tr("Pick a color"));

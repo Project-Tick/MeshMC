@@ -1,3 +1,4 @@
+#include "QtContainerCompat.h"
 #include "PrivatePackManager.h"
 
 #include <QDebug>
@@ -10,7 +11,7 @@ void PrivatePackManager::load()
 {
     try
     {
-        currentPacks = QString::fromUtf8(FS::read(m_filename)).split('\n', QString::SkipEmptyParts).toSet();
+        currentPacks = QtCompat::toSet(QString::fromUtf8(FS::read(m_filename)).split('\n', QtCompat::SkipEmptyParts));
         dirty = false;
     }
     catch(...)
@@ -28,7 +29,7 @@ void PrivatePackManager::save() const
     }
     try
     {
-        QStringList list = currentPacks.toList();
+        QStringList list = currentPacks.values();
         FS::write(m_filename, list.join('\n').toUtf8());
         dirty = false;
     }

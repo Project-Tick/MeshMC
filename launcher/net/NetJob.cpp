@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "QtContainerCompat.h"
 #include "NetJob.h"
 #include "Download.h"
 
@@ -256,10 +257,10 @@ bool NetJob::abort()
 {
     bool fullyAborted = true;
     // fail all waiting
-    m_failed.unite(m_todo.toSet());
+    m_failed.unite(QtCompat::toSet(m_todo));
     m_todo.clear();
     // abort active
-    auto toKill = m_doing.toList();
+    auto toKill = m_doing.values();
     for(auto index: toKill)
     {
         auto part = downloads[index];

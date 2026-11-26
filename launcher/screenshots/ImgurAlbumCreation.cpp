@@ -1,3 +1,4 @@
+#include "QtSignalCompat.h"
 #include "ImgurAlbumCreation.h"
 
 #include <QNetworkRequest>
@@ -38,7 +39,7 @@ void ImgurAlbumCreation::startImpl()
     m_reply.reset(rep);
     connect(rep, &QNetworkReply::uploadProgress, this, &ImgurAlbumCreation::downloadProgress);
     connect(rep, &QNetworkReply::finished, this, &ImgurAlbumCreation::downloadFinished);
-    connect(rep, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(downloadError(QNetworkReply::NetworkError)));
+    MESHMC_CONNECT_NETWORK_ERROR(rep, this, ImgurAlbumCreation, downloadError);
 }
 void ImgurAlbumCreation::downloadError(QNetworkReply::NetworkError error)
 {

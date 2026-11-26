@@ -115,7 +115,11 @@ QPalette SystemAppearance::palette() const
     if (d->mode == Mode::Unknown)
     {
         QPalette none;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        none.setResolveMask(0);
+#else
         none.resolve(0);
+#endif
         return none;
     }
     NSAppearance *saved = [NSAppearance currentAppearance];

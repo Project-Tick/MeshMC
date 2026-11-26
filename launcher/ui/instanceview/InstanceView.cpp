@@ -492,6 +492,15 @@ void InstanceView::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+QStyleOptionViewItem InstanceView::viewOptions() const
+{
+    QStyleOptionViewItem option;
+    initViewItemOption(&option);
+    return option;
+}
+#endif
+
 void InstanceView::mouseDoubleClickEvent(QMouseEvent *event)
 {
     executeDelayedItemsLayout();
@@ -501,9 +510,15 @@ void InstanceView::mouseDoubleClickEvent(QMouseEvent *event)
     {
         QMouseEvent me(
             QEvent::MouseButtonPress,
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            event->position(),
+            event->scenePosition(),
+            event->globalPosition(),
+#else
             event->localPos(),
             event->windowPos(),
             event->screenPos(),
+#endif
             event->button(),
             event->buttons(),
             event->modifiers()
@@ -881,7 +896,7 @@ QPair<VisualGroup *, VisualGroup::HitResults> InstanceView::rowDropPos(const QPo
 {
     VisualGroup::HitResults hitresult;
     auto group = categoryAt(pos + offset(), hitresult);
-    return qMakePair<VisualGroup*, int>(group, hitresult);
+    return {group, hitresult};
 }
 
 QPoint InstanceView::offset() const

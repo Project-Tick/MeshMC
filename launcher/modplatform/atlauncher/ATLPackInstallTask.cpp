@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <QRegularExpression>
 #include "ATLPackInstallTask.h"
 
 #include <QtConcurrent/QtConcurrent>
@@ -504,7 +505,13 @@ void PackInstallTask::extractConfigs()
         return;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_extractFuture = QtConcurrent::run(QThreadPool::globalInstance(), [source = archivePath, target = extractDir.absolutePath() + "/minecraft"] {
+        return MMCZip::extractDir(source, target);
+    });
+#else
     m_extractFuture = QtConcurrent::run(QThreadPool::globalInstance(), MMCZip::extractDir, archivePath, extractDir.absolutePath() + "/minecraft");
+#endif
     connect(&m_extractFutureWatcher, &QFutureWatcher<QStringList>::finished, this, [&]()
     {
         downloadMods();
@@ -652,7 +659,11 @@ void PackInstallTask::onModsDownloaded() {
     jobPtr.reset();
 
     if(!modsToExtract.empty() || !modsToDecomp.empty() || !modsToCopy.empty()) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        m_modExtractFuture = QtConcurrent::run(QThreadPool::globalInstance(), &PackInstallTask::extractMods, this, modsToExtract, modsToDecomp, modsToCopy);
+#else
         m_modExtractFuture = QtConcurrent::run(QThreadPool::globalInstance(), this, &PackInstallTask::extractMods, modsToExtract, modsToDecomp, modsToCopy);
+#endif
         connect(&m_modExtractFutureWatcher, &QFutureWatcher<QStringList>::finished, this, &PackInstallTask::onModsExtracted);
         connect(&m_modExtractFutureWatcher, &QFutureWatcher<QStringList>::canceled, this, [&]()
         {
@@ -704,7 +715,7 @@ bool PackInstallTask::extractMods(
         QString folderToExtract = "";
         if(mod.type == ModType::Extract) {
             folderToExtract = mod.extractFolder;
-            folderToExtract.remove(QRegExp("^/"));
+            folderToExtract.remove(QRegularExpression("^/"));
         }
 
         qDebug() << "Extracting " + mod.file + " to " + extractToDir;
