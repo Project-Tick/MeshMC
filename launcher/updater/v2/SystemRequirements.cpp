@@ -1,6 +1,15 @@
 #include "SystemRequirements.h"
 
 #include <QObject>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QHash>
+#include <QJsonArray>
+#include <QRegularExpression>
+#include <QSet>
+#include <QStandardPaths>
+#include <QProcess>
 #include <QSysInfo>
 #include <QVector>
 
@@ -8,10 +17,14 @@
 
 #include <sys.h>
 
+#ifdef Q_OS_LINUX
+#include <elf.h>
+#include <cstring>
+#endif
+
 #if defined(Q_OS_LINUX) && defined(__GLIBC__)
 #include <gnu/libc-version.h>
 #include <link.h>
-#include <cstring>
 #endif
 
 #if defined(Q_OS_MAC)
@@ -150,6 +163,10 @@ bool archRuns(const QString &os, const QString &machine, const QString &build)
     {
         return true;
     }
+    if(os == "macos" && build == "universal" && (machine == "x86_64" || machine == "arm64"))
+    {
+        return true;
+    }
     // Rosetta
     if(os == "macos" && machine == "arm64" && build == "x86_64")
     {
@@ -157,6 +174,179 @@ bool archRuns(const QString &os, const QString &machine, const QString &build)
     }
     return false;
 }
+
+#ifdef Q_OS_LINUX
+template <typename T>
+bool readElfRecord(QFile &file, quint64 offset, T &record)
+{
+    const auto size = static_cast<quint64>(file.size());
+    return offset <= size && sizeof(record) <= size - offset &&
+           file.seek(static_cast<qint64>(offset)) &&
+           file.read(reinterpret_cast<char *>(&record), sizeof(record)) == static_cast<qint64>(sizeof(record));
+}
+
+bool readX86ElfHeader(QFile &file, Elf64_Ehdr &header)
+{
+    return QFileInfo(file).isFile() && file.open(QIODevice::ReadOnly) && readElfRecord(file, 0, header) &&
+           std::memcmp(header.e_ident, ELFMAG, SELFMAG) == 0 &&
+           header.e_ident[EI_CLASS] == ELFCLASS64 && header.e_ident[EI_DATA] == ELFDATA2LSB &&
+           header.e_machine == EM_X86_64 && header.e_type == ET_DYN;
+}
+
+bool providesVersions(QFile &file, const Elf64_Ehdr &header, QSet<QString> missing)
+{
+    if(missing.isEmpty())
+        return true;
+    if(header.e_shentsize != sizeof(Elf64_Shdr))
+        return false;
+
+    const auto fileSize = static_cast<quint64>(file.size());
+    if(header.e_shoff > fileSize || quint64(header.e_shnum) * sizeof(Elf64_Shdr) > fileSize - header.e_shoff)
+        return false;
+
+    for(unsigned int index = 0; index < header.e_shnum; ++index)
+    {
+        Elf64_Shdr definitions;
+        if(!readElfRecord(file, header.e_shoff + index * sizeof(definitions), definitions))
+            return false;
+        if(definitions.sh_type != SHT_GNU_verdef)
+            continue;
+        Elf64_Shdr strings;
+        if(definitions.sh_link >= header.e_shnum ||
+           !readElfRecord(file, header.e_shoff + definitions.sh_link * sizeof(strings), strings) ||
+           strings.sh_type != SHT_STRTAB || strings.sh_offset > fileSize ||
+           strings.sh_size > fileSize - strings.sh_offset || strings.sh_size > 16 * 1024 * 1024 ||
+           definitions.sh_offset > fileSize || definitions.sh_size > fileSize - definitions.sh_offset ||
+           !file.seek(static_cast<qint64>(strings.sh_offset)))
+            return false;
+        const QByteArray names = file.read(static_cast<qint64>(strings.sh_size));
+        if(static_cast<quint64>(names.size()) != strings.sh_size)
+            return false;
+
+        quint64 offset = 0;
+        while(offset < definitions.sh_size)
+        {
+            Elf64_Verdef definition;
+            Elf64_Verdaux name;
+            const quint64 remaining = definitions.sh_size - offset;
+            if(remaining < sizeof(definition) ||
+               !readElfRecord(file, definitions.sh_offset + offset, definition) ||
+               definition.vd_version != VER_DEF_CURRENT || definition.vd_cnt == 0 ||
+               definition.vd_aux < sizeof(definition) || definition.vd_aux > remaining ||
+               remaining - definition.vd_aux < sizeof(name) ||
+               !readElfRecord(file, definitions.sh_offset + offset + definition.vd_aux, name) ||
+               name.vda_name >= strings.sh_size)
+                return false;
+
+            const char *begin = names.constData() + name.vda_name;
+            const auto *end = static_cast<const char *>(std::memchr(begin, 0, strings.sh_size - name.vda_name));
+            if(!end)
+                return false;
+            missing.remove(QString::fromLatin1(begin, static_cast<int>(end - begin)));
+            if(missing.isEmpty())
+                return true;
+            if(definition.vd_next == 0)
+                break;
+            if(definition.vd_next < sizeof(definition) || definition.vd_next > remaining)
+                return false;
+            offset += definition.vd_next;
+        }
+    }
+    return false;
+}
+
+QHash<QString, QStringList> systemElfLibraries()
+{
+    QHash<QString, QStringList> libraries;
+    const QString ldconfig = QStandardPaths::findExecutable("ldconfig", {"/sbin", "/usr/sbin"});
+    if(ldconfig.isEmpty())
+        return libraries;
+
+    QProcess process;
+    auto environment = QProcessEnvironment::systemEnvironment();
+    environment.insert("LC_ALL", "C");
+    process.setProcessEnvironment(environment);
+    process.start(ldconfig, {"-p"});
+    if(!process.waitForFinished(1500))
+    {
+        process.kill();
+        process.waitForFinished(500);
+        return libraries;
+    }
+    if(process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0)
+        return libraries;
+
+    const QRegularExpression entry(QStringLiteral(R"(\s*(\S+)\s+\([^
+]*\) => (/[^
+]+))"));
+    const auto output = QString::fromLocal8Bit(process.readAllStandardOutput());
+    auto matches = entry.globalMatch(output);
+    while(matches.hasNext())
+    {
+        const auto match = matches.next();
+        libraries[match.captured(1)].append(match.captured(2));
+    }
+    return libraries;
+}
+
+bool probeLinuxAbi(const QJsonObject &requirements)
+{
+    const QString interpreter = requirements.value("interpreter").toString();
+    const auto dependencies = requirements.value("libs").toArray();
+    if(requirements.value("format").toInt() != 1 || requirements.value("arch").toString() != "x86_64" ||
+       !QDir::isAbsolutePath(interpreter) || dependencies.isEmpty())
+        return false;
+    QFile loader(interpreter);
+    Elf64_Ehdr header;
+    if(!readX86ElfHeader(loader, header))
+        return false;
+
+    const auto cache = systemElfLibraries();
+    const auto overrides = QString::fromLocal8Bit(qgetenv("LD_LIBRARY_PATH")).split(':');
+    const QStringList defaults = {"/lib64", "/usr/lib64", "/lib/x86_64-linux-gnu",
+                                 "/usr/lib/x86_64-linux-gnu", "/lib", "/usr/lib"};
+    for(const auto &dependency : dependencies)
+    {
+        const auto library = dependency.toObject();
+        const QString name = library.value("soname").toString();
+        if(name.isEmpty() || name == "." || name == ".." || name.contains('/') ||
+           !library.value("versions").isArray())
+            return false;
+        QSet<QString> versions;
+        for(const auto &version : library.value("versions").toArray())
+        {
+            if(!version.isString() || version.toString().isEmpty())
+                return false;
+            versions.insert(version.toString());
+        }
+
+        QStringList candidates;
+        for(const auto &directory : overrides)
+        {
+            if(!directory.isEmpty())
+                candidates.append(QDir(directory).filePath(name));
+        }
+        candidates.append(cache.value(name));
+        for(const auto &directory : defaults)
+            candidates.append(QDir(directory).filePath(name));
+
+        bool found = false;
+        for(const auto &path : candidates)
+        {
+            QFile file(path);
+            if(!readX86ElfHeader(file, header))
+                continue;
+            if(!providesVersions(file, header, versions))
+                return false;
+            found = true;
+            break;
+        }
+        if(!found)
+            return false;
+    }
+    return true;
+}
+#endif
 
 #if defined(Q_OS_LINUX) && defined(__GLIBC__)
 /*
@@ -425,6 +615,9 @@ SystemRequirements::System detectNow()
     dl_iterate_phdr(findGlibcxxVersion, &out.glibcxx);
 #endif
 
+#ifdef Q_OS_LINUX
+    out.probeAbi = probeLinuxAbi;
+#endif
     out.qt = QString::fromLatin1(qVersion());
     return out;
 }
@@ -513,6 +706,11 @@ QStringList SystemRequirements::unmetRequirements(const Requirements &requiremen
         if(!parseVersion(requirements.qt, required))
         {
             incomplete(QString("qt %1").arg(requirements.qt));
+        }
+        else if(!requirements.abi.isEmpty())
+        {
+            if(out.isEmpty() && (!system.probeAbi || !system.probeAbi(requirements.abi)))
+                out.append(QObject::tr("The required system libraries for Qt %1 could not be verified.").arg(requirements.qt));
         }
         else if(!parseVersion(system.qt, found))
         {

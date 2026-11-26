@@ -1,6 +1,8 @@
 #pragma once
 #include <QString>
 #include <QStringList>
+#include <QJsonObject>
+#include <functional>
 
 /**
  * The system a build runs on, and what a build requires of it.
@@ -31,6 +33,7 @@ struct System
     QString glibcxx;
     // the version of Qt the Launcher runs on
     QString qt;
+    std::function<bool(const QJsonObject &)> probeAbi;
 };
 
 /**
@@ -60,6 +63,8 @@ struct Requirements
     QString glibcxx;
     // the major version must be the same, the rest is a minimum
     QString qt;
+    // Linux ELF requirements measured from the packaged binaries.
+    QJsonObject abi;
     // requirements this Launcher doesn't know, so it can't check them
     QStringList unknown;
 };

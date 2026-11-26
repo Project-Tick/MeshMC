@@ -144,7 +144,11 @@ QPalette SystemAppearance::palette() const
     if (d->mode != Mode::Dark)
     {
         QPalette none;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        none.setResolveMask(0);
+#else
         none.resolve(0);
+#endif
         return none;
     }
     const QColor window(0x20, 0x20, 0x20), button(0x2d, 0x2d, 0x2d), base(0x2b, 0x2b, 0x2b), text(Qt::white);

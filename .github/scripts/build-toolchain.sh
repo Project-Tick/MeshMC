@@ -29,7 +29,16 @@ case "$PLATFORM" in
             -DQt5_DIR=/opt/qt56
         )
         ;;
-    win32|win32-5.15.2)
+    lin64-qt6)
+        git config --global --add safe.directory /src
+        export QT_QPA_PLATFORM=offscreen
+        platform_args=(
+            -DLauncher_LAYOUT=lin-nodeps
+            -DLauncher_QT_MAJOR=6
+            -DCMAKE_PREFIX_PATH=/opt/qt6
+        )
+        ;;
+    win32|win32-5.15.2|win64-qt6)
         export WINEPREFIX=/out/prefix WINEDEBUG=-all WINEDLLOVERRIDES="mscoree,mshtml="
         cp -R "$PREFIX_TEMPLATE" "$WINEPREFIX"
         rm -f "$WINEPREFIX/dosdevices/z:" "$WINEPREFIX"/dosdevices/*::
@@ -37,7 +46,18 @@ case "$PLATFORM" in
         ln -sfn /src "$WINEPREFIX/dosdevices/s:"
         ln -sfn /out "$WINEPREFIX/dosdevices/o:"
         export JAVA_HOME="${JDK:-T:\jdk1.8.0_112}"
-        if [[ "$PLATFORM" == win32-5.15.2 ]]; then
+        qt_major=5
+        zlib='T:/GnuWin32'
+        zlib_bin='T:\GnuWin32\bin'
+        if [[ "$PLATFORM" == win64-qt6 ]]; then
+            qt_major=6
+            zlib='T:/Qt6/zlib-x64'
+            zlib_bin='T:\Qt6\zlib-x64\bin'
+            mingw='T:\Qt6\mingw810_64'
+            qt='T:\Qt6\6.0.0\mingw81_64'
+            pe_version='-Wl,--major-os-version,10,--minor-os-version,0,--major-subsystem-version,10,--minor-subsystem-version,0,--no-insert-timestamp'
+            runtime_dlls=("$TOOLS/Qt6/openssl-x64/"{libcrypto-1_1-x64,libssl-1_1-x64}.dll)
+        elif [[ "$PLATFORM" == win32-5.15.2 ]]; then
             mingw='T:\QtX\Tools\mingw810_32'
             qt='T:\QtX\5.15.2\mingw81_32'
             pe_version='-Wl,--major-os-version,6,--minor-os-version,1,--major-subsystem-version,6,--minor-subsystem-version,1,--no-insert-timestamp'
@@ -52,7 +72,7 @@ case "$PLATFORM" in
             pe_version='-Wl,--major-os-version,5,--minor-os-version,1,--major-subsystem-version,5,--minor-subsystem-version,1'
             runtime_dlls=("$TOOLS/OpenSSL-Win32/"{libeay32,ssleay32}.dll)
         fi
-        export WINEPATH="$mingw"'\bin;'"$qt"'\bin;T:\Tools;T:\GnuWin32\bin;'"$JAVA_HOME"'\bin'
+        export WINEPATH="$mingw"'\bin;'"$qt"'\bin;T:\Tools;'"$zlib_bin"';'"$JAVA_HOME"'\bin'
         source_dir='S:/'
         install_prefix='O:/install/MeshMC'
         if [[ -n "$updater_floor" ]]; then
@@ -71,13 +91,14 @@ case "$PLATFORM" in
             "-DCMAKE_EXE_LINKER_FLAGS=$pe_version"
             "-DCMAKE_SHARED_LINKER_FLAGS=$pe_version"
             "-DCMAKE_PREFIX_PATH=$qt"
-            "-DQt5_DIR=$qt"
-            '-DZLIB_ROOT=T:/GnuWin32'
+            "-DLauncher_QT_MAJOR=$qt_major"
+            "-DQt${qt_major}_DIR=$qt"
+            "-DZLIB_ROOT=$zlib"
             '-DCMAKE_GP_CMD_PATHS=T:/Tools'
             -DCMAKE_GP_TOOL=dumpbin
         )
         ;;
-    osx64-5.15.2)
+    osx64-5.15.2|osx-universal-qt6)
         git config --global --add safe.directory /src
         eval "$(/opt/osxcross/bin/osxcross-conf)"
         triple="x86_64-apple-$OSXCROSS_TARGET"
@@ -98,6 +119,20 @@ case "$PLATFORM" in
             "-DQt5_DIR=$qt/lib/cmake/Qt5"
             -DCMAKE_GP_TOOL=otool
         )
+        if [[ "$PLATFORM" == osx-universal-qt6 ]]; then
+            platform_args=(
+                -DLauncher_LAYOUT=mac-bundle
+                -DLauncher_QT_MAJOR=6
+                -DCMAKE_TOOLCHAIN_FILE=/opt/toolchain-osx64.cmake
+                "-DCMAKE_OSX_SYSROOT=$OSXCROSS_SDK"
+                '-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64'
+                -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14
+                -DQT_HOST_PATH=/opt/qt6-host
+                -DCMAKE_PREFIX_PATH=/opt/qt6-macos
+                -DLauncher_QT_TARGET_PREFIX=/opt/qt6-macos
+                -DCMAKE_GP_TOOL=otool
+            )
+        fi
         # CMake script mode otherwise uses the Linux host's platform.
         install=(cmake -DAPPLE=1 -DCMAKE_INSTALL_PREFIX=/out/install -P cmake_install.cmake)
         ;;
@@ -125,11 +160,15 @@ run_logged configure "${configure[@]}" "${platform_args[@]}" \
     "-DLauncher_UPDATER_SITE=$UPDATER_SITE" \
     "$source_dir"
 run_logged build "${build[@]}"
-if [[ "$PLATFORM" != osx64-5.15.2 ]]; then
+if [[ "$PLATFORM" != osx* ]]; then
     run_logged test "${test_command[@]}"
 fi
 run_logged install "${install[@]}"
 
-if [[ "$PLATFORM" == win32 || "$PLATFORM" == win32-5.15.2 ]]; then
+if [[ "$PLATFORM" == win* ]]; then
     run_logged runtime cp "${runtime_dlls[@]}" /out/install/MeshMC/
+fi
+
+if [[ "$PLATFORM" == lin64-qt6 ]]; then
+    run_logged abi bash -c 'python3 /src/tools/updater_v2/measure_linux_abi.py /out/install/MeshMC --details /out/abi-details.json > /out/abi.json'
 fi

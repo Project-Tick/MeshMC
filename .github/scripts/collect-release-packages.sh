@@ -34,3 +34,18 @@ collect package-win32-setup win32-Setup.exe
 collect package-win32-5.15.2 win32-5.15.2.zip
 collect package-win32-5.15.2-setup win32-5.15.2-Setup.exe
 collect package-osx64-5.15.2 osx64-5.15.2.tar.gz
+
+collect_optional() {
+    local artifact=$1 suffix=$2
+    if [[ -n "$stable_build" ]]; then
+        [[ -s "$packages/MeshMC-build-$stable_build-$suffix" ||
+           -s "$packages/MeshMC-stable-$suffix" ]] || return 0
+    else
+        [[ -d "$packages/$artifact" ]] || return 0
+    fi
+    collect "$artifact" "$suffix"
+}
+
+collect_optional package-lin64-qt6 lin64-qt6.tar.gz
+collect_optional package-win64-qt6 win64-qt6.zip
+collect_optional package-osx-universal-qt6 osx-universal-qt6.tar.gz

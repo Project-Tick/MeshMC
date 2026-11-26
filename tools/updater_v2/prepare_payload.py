@@ -14,6 +14,7 @@ def main() -> None:
     parser.add_argument("--variant", required=True)
     parser.add_argument("--name", required=True)
     parser.add_argument("--requirements", required=True)
+    parser.add_argument("--abi", type=Path)
     parser.add_argument("--supersedes", action="append", default=[], metavar="VARIANT")
     args = parser.parse_args()
 
@@ -26,6 +27,20 @@ def main() -> None:
         parser.error(f"--requirements is not valid JSON: {error}")
     if not isinstance(requirements, dict):
         parser.error("--requirements must be a JSON object")
+
+    if args.abi:
+        abi = json.loads(args.abi.read_text(encoding="utf-8"))
+        if requirements.get("os") != "linux" or abi.get("arch") != requirements.get("arch"):
+            parser.error("the measured ELF ABI does not match the Linux variant")
+        if not any(lib["soname"] == "libQt6Core.so.6" for lib in abi["libs"]):
+            parser.error("the Linux Qt 6 package must depend on system Qt 6")
+        requirements["abi"] = abi
+        for field, prefix in (("glibc", "GLIBC_"), ("glibcxx", "GLIBCXX_")):
+            versions = [version[len(prefix):] for lib in abi["libs"] for version in lib["versions"]
+                        if version.startswith(prefix) and all(part.isdigit() for part in version[len(prefix):].split("."))]
+            if not versions:
+                parser.error(f"cannot determine {field} from the ELF ABI")
+            requirements[field] = max(versions, key=lambda version: tuple(map(int, version.split("."))))
 
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)

@@ -455,7 +455,7 @@ QProcessEnvironment MinecraftInstance::createEnvironment()
 static QString replaceTokensIn(QString text, QMap<QString, QString> with)
 {
     QString result;
-    QRegularExpression token_regexp(QStringLiteral("\\$\\{(.+)\\}"), QRegularExpression::DotMatchesEverythingOption);
+    QRegularExpression token_regexp(QStringLiteral("\\$\\{(.+?)\\}"), QRegularExpression::DotMatchesEverythingOption);
     QStringList list;
     decltype(text.size()) tail = 0;
     auto matches = token_regexp.globalMatch(text);

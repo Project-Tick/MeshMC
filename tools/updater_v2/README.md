@@ -30,6 +30,34 @@ by the client. The Release is published only after all assets are uploaded. Push
 `master` advance all tiers; `develop` and `release-*` advance Testing and Latest; other
 branches advance Latest only.
 
+Linux Qt 6 packages use the host Qt. MeshMC's `measure_linux_abi.py` reads the
+package's ELF dependencies and symbol versions with GNU readelf in CI. The
+signed manifest carries the aggregate requirements in `requires.abi`. The CI
+artifact `abi-details-lin64-qt6` contains the source ELF path for each dependency
+and version requirement, RPATH/RUNPATH entries, undefined dynamic symbols with
+weak bindings marked, and warnings for private ABI. Versioned imports include
+their library and version where readelf provides the version index. To generate
+both outputs from an existing package:
+
+```sh
+python3 tools/updater_v2/measure_linux_abi.py path/to/MeshMC \
+  --details abi-details.json > abi.json
+```
+
+At runtime the updater
+checks for the interpreter and external libraries of the right ELF architecture,
+using `LD_LIBRARY_PATH`, the glibc loader cache and standard library directories.
+Version checks read the libraries' ELF version definitions without loading them.
+
+Qt 5 installations select the Qt 6 successor when the ABI check succeeds and
+otherwise stay on Qt 5. An older launcher first receives the Qt 5 build with
+ABI support. The check covers direct ELF dependencies and required version
+nodes, so Qt platform plugins and their runtime environment still need an
+actual startup test.
+
+The Windows Qt 6 and macOS universal Qt 6 variants bundle Qt and appear as
+optional variants for supported systems.
+
 The build workflow currently describes the Linux floor as glibc 2.19 / libstdc++ 3.4.21,
 Windows 10.0, and macOS 12.0. Verify these minimums against the packaged binaries before
 enabling production publishing; they are part of the signed update contract.

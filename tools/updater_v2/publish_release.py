@@ -230,6 +230,23 @@ def _validate_variant_metadata(metadata: object) -> dict:
         if not all(isinstance(requirements.get(key), str) and VERSION.fullmatch(requirements[key])
                    for key in ("glibc", "glibcxx", "qt")):
             raise ValueError(f"invalid Linux version requirements for {variant_id}")
+        if "abi" in requirements:
+            expected.add("abi")
+            abi = requirements["abi"]
+            if (not isinstance(abi, dict) or abi.get("format") != 1
+                    or abi.get("arch") != architecture or not isinstance(abi.get("interpreter"), str)
+                    or not abi["interpreter"].startswith("/") or not isinstance(abi.get("libs"), list)
+                    or not abi["libs"]
+                    or not all(isinstance(lib, dict) and isinstance(lib.get("soname"), str)
+                               and isinstance(lib.get("versions"), list)
+                               and all(isinstance(version, str) for version in lib["versions"])
+                               for lib in abi["libs"])):
+                raise ValueError(f"invalid ELF ABI requirements for {variant_id}")
+        if requirements["qt"].split(".", 1)[0] == "6" and (
+            "abi" not in requirements
+            or not any(lib["soname"] == "libQt6Core.so.6" for lib in requirements["abi"]["libs"])
+        ):
+            raise ValueError(f"Linux Qt 6 variant {variant_id} needs a measured Qt 6 ABI")
     elif os_name in ("windows", "macos"):
         expected = {"os", "arch", "os_version"}
         if not isinstance(requirements.get("os_version"), str) or not VERSION.fullmatch(requirements["os_version"]):
@@ -602,7 +619,19 @@ def _requirements_cover(previous: dict, candidate: dict) -> bool:
                 ("windows", "x86_64", "x86"),
                 ("macos", "aarch64", "x86_64"),
                 ("macos", "arm64", "x86_64"),
+                ("macos", "arm64", "universal"),
+                ("macos", "x86_64", "universal"),
             ):
+                return False
+            continue
+        if name == "abi":
+            old_abi = previous[name]
+            if any(value[key] != old_abi[key] for key in ("format", "arch", "interpreter")):
+                return False
+            old_libs = {lib["soname"]: set(lib["versions"]) for lib in old_abi["libs"]}
+            if any(lib["soname"] not in old_libs
+                   or not set(lib["versions"]) <= old_libs[lib["soname"]]
+                   for lib in value["libs"]):
                 return False
             continue
         if name == "qt" and value.split(".", 1)[0] != previous[name].split(".", 1)[0]:

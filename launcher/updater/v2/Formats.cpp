@@ -140,6 +140,8 @@ SystemRequirements::Requirements requirements(const QJsonValue &value, const QSt
         known << "glibc" << "glibcxx" << "qt";
     }
     Json::requireKeys(req, known, where);
+    if(os == "linux" && req.contains("abi"))
+        known << "abi";
     // a requirement this Launcher doesn't know can't be checked, so it isn't met (unmetRequirements)
     for(auto &key: req.keys())
     {
@@ -153,6 +155,13 @@ SystemRequirements::Requirements requirements(const QJsonValue &value, const QSt
         out.glibc = Json::requireValueMatching(req.value("glibc"), Version, at(where, "glibc"));
         out.glibcxx = Json::requireValueMatching(req.value("glibcxx"), Version, at(where, "glibcxx"));
         out.qt = Json::requireValueMatching(req.value("qt"), Version, at(where, "qt"));
+        if(req.contains("abi"))
+        {
+            out.abi = Json::requireIsType<QJsonObject>(req.value("abi"), at(where, "abi"));
+            if(out.abi.value("format").toInt() != 1 || out.abi.value("arch").toString() != out.arch ||
+               out.abi.value("interpreter").toString().isEmpty() || out.abi.value("libs").toArray().isEmpty())
+                fail(QString("%1: invalid ELF ABI requirements").arg(at(where, "abi")));
+        }
     }
     else if(os == "windows" || os == "macos")
     {

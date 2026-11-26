@@ -1,0 +1,117 @@
+[
+  {
+    "platform": "lin64",
+    "image": "linux-x64",
+    "architecture": "linux/amd64",
+    "archive": "tar.gz",
+    "variant": "linux-x86_64-qt5.6",
+    "supersedes": [
+      "linux-x86_64-qt5"
+    ],
+    "requirements": {
+      "os": "linux",
+      "arch": "x86_64",
+      "glibc": "2.19",
+      "glibcxx": "3.4.21",
+      "qt": "5.6.3"
+    }
+  },
+  {
+    "platform": "lin32",
+    "image": "linux-x32",
+    "architecture": "linux/386",
+    "archive": "tar.gz",
+    "variant": "linux-x86-qt5.6",
+    "requirements": {
+      "os": "linux",
+      "arch": "x86",
+      "glibc": "2.19",
+      "glibcxx": "3.4.21",
+      "qt": "5.6.3"
+    }
+  },
+  {
+    "platform": "win32",
+    "image": "windows-win32",
+    "architecture": "linux/amd64",
+    "archive": "zip",
+    "variant": "windows-x86-qt5.6",
+    "requirements": {
+      "os": "windows",
+      "arch": "x86",
+      "os_version": "5.1"
+    }
+  },
+  {
+    "platform": "win32-5.15.2",
+    "image": "windows-win32",
+    "architecture": "linux/amd64",
+    "archive": "zip",
+    "variant": "windows-x86-qt5.15",
+    "supersedes": [
+      "windows-x86-qt5.6",
+      "windows-x86_64-qt5"
+    ],
+    "requirements": {
+      "os": "windows",
+      "arch": "x86",
+      "os_version": "6.1"
+    }
+  },
+  {
+    "platform": "osx64-5.15.2",
+    "image": "macos-osx64",
+    "architecture": "linux/amd64",
+    "archive": "tar.gz",
+    "variant": "macos-x86_64-qt5.15",
+    "supersedes": [
+      "macos-aarch64-qt5"
+    ],
+    "requirements": {
+      "os": "macos",
+      "arch": "x86_64",
+      "os_version": "10.13"
+    }
+  },
+  {
+    "platform": "lin64-qt6",
+    "image": "linux-x64-qt6",
+    "architecture": "linux/amd64",
+    "archive": "tar.gz",
+    "variant": "linux-x86_64-qt6.0",
+    "supersedes": [
+      "linux-x86_64-qt5.6"
+    ],
+    "requirements": {
+      "os": "linux",
+      "arch": "x86_64",
+      "glibc": "2.31",
+      "glibcxx": "3.4.28",
+      "qt": "6.0.0"
+    }
+  },
+  {
+    "platform": "win64-qt6",
+    "image": "windows-x64-qt6",
+    "architecture": "linux/amd64",
+    "archive": "zip",
+    "variant": "windows-x86_64-qt6.0",
+    "requirements": {
+      "os": "windows",
+      "arch": "x86_64",
+      "os_version": "10.0"
+    }
+  },
+  {
+    "platform": "osx-universal-qt6",
+    "image": "macos-universal-qt6",
+    "architecture": "linux/amd64",
+    "archive": "tar.gz",
+    "variant": "macos-universal-qt6.2",
+    "requirements": {
+      "os": "macos",
+      "arch": "universal",
+      "os_version": "10.14"
+    }
+  }
+]

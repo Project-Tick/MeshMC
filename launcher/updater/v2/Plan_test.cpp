@@ -192,6 +192,50 @@ slots:
         QVERIFY(!choice.found);
         QVERIFY(choice.unmet.join(" ").contains("linux-arm64-qt5"));
     }
+    void test_macosUniversalIsAnOptionalVariant()
+    {
+        auto manifest = build(11);
+        const QString oldId = "macos-x86_64-qt5.15";
+        const QString newId = "macos-universal-qt6.2";
+        auto universal = manifest.variants.value(oldId);
+        universal.id = newId;
+        universal.supersedes.clear();
+        universal.requirements.arch = "universal";
+        universal.requirements.osVersion = "10.14";
+        manifest.variants.insert(newId, universal);
+
+        auto system = mac("10.15");
+        QCOMPARE(chooseVariant(manifest, oldId, QString(), system).variant.id, oldId);
+        QCOMPARE(chooseVariant(manifest, oldId, newId, system).variant.id, newId);
+        system.machineArch = "arm64";
+        system.osVersion = "11.0";
+        QCOMPARE(chooseVariant(manifest, oldId, newId, system).variant.id, newId);
+        QCOMPARE(chooseVariant(manifest, oldId, newId, mac("10.13")).variant.id, oldId);
+    }
+
+    void test_linuxQt6MigrationRequiresSystemAbi()
+    {
+        auto manifest = build(11);
+        const QString oldId = "linux-x86_64-qt5";
+        const QString newId = "linux-x86_64-qt6.0";
+        auto qt6 = manifest.variants.value(oldId);
+        qt6.id = newId;
+        qt6.supersedes = QStringList{oldId};
+        qt6.requirements.qt = "6.0.0";
+        qt6.requirements.abi = QJsonObject{{"format", 1}};
+        manifest.variants.insert(newId, qt6);
+
+        auto system = TestTrees::linuxSystem();
+        QCOMPARE(chooseVariant(manifest, oldId, QString(), system).variant.id, oldId);
+
+        system.probeAbi = [](const QJsonObject &) { return false; };
+        QCOMPARE(chooseVariant(manifest, oldId, QString(), system).variant.id, oldId);
+
+        system.probeAbi = [](const QJsonObject &abi) { return abi.value("format").toInt() == 1; };
+        QCOMPARE(chooseVariant(manifest, oldId, QString(), system).variant.id, newId);
+        QCOMPARE(chooseVariant(manifest, oldId, oldId, system).variant.id, oldId);
+    }
+
 };
 
 QTEST_GUILESS_MAIN(UpdaterV2PlanTest)

@@ -73,10 +73,34 @@ jobs:
           echo "build-number=$next_build" >> "$GITHUB_OUTPUT"
           echo "Allocated updater build $next_build"
 
+  toolchain-matrix:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+    outputs:
+      include: ${{ steps.matrix.outputs.include }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: matrix
+        env:
+          QT6_TOOLCHAINS_ENABLED: ${{ vars.QT6_TOOLCHAINS_ENABLED }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          rows = json.loads(Path(".github/toolchain-matrix.json").read_text())
+          enabled = os.environ["QT6_TOOLCHAINS_ENABLED"] == "true"
+          rows = [row for row in rows if enabled or not row["platform"].endswith("-qt6")]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              print("include=" + json.dumps(rows, separators=(",", ":")), file=output)
+          PY
+
   build:
     name: Build (${{ matrix.platform }})
-    needs: [build-number]
-    if: always() && (needs.build-number.result == 'success' || needs.build-number.result == 'skipped')
+    needs: [build-number, toolchain-matrix]
+    if: always() && needs.toolchain-matrix.result == 'success' && (needs.build-number.result == 'success' || needs.build-number.result == 'skipped')
     environment: ${{ inputs.environment || '' }}
     permissions:
       contents: read
@@ -85,40 +109,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - platform: lin64
-            image: linux-x64
-            architecture: linux/amd64
-            archive: tar.gz
-            variant: linux-x86_64-qt5.6
-            supersedes: [linux-x86_64-qt5]
-            requirements: '{"os":"linux","arch":"x86_64","glibc":"2.19","glibcxx":"3.4.21","qt":"5.6.3"}'
-          - platform: lin32
-            image: linux-x32
-            architecture: linux/386
-            archive: tar.gz
-            variant: linux-x86-qt5.6
-            requirements: '{"os":"linux","arch":"x86","glibc":"2.19","glibcxx":"3.4.21","qt":"5.6.3"}'
-          - platform: win32
-            image: windows-win32
-            architecture: linux/amd64
-            archive: zip
-            variant: windows-x86-qt5.6
-            requirements: '{"os":"windows","arch":"x86","os_version":"5.1"}'
-          - platform: win32-5.15.2
-            image: windows-win32
-            architecture: linux/amd64
-            archive: zip
-            variant: windows-x86-qt5.15
-            supersedes: [windows-x86-qt5.6, windows-x86_64-qt5]
-            requirements: '{"os":"windows","arch":"x86","os_version":"6.1"}'
-          - platform: osx64-5.15.2
-            image: macos-osx64
-            architecture: linux/amd64
-            archive: tar.gz
-            variant: macos-x86_64-qt5.15
-            supersedes: [macos-aarch64-qt5]
-            requirements: '{"os":"macos","arch":"x86_64","os_version":"10.13"}'
+        include: ${{ fromJSON(needs.toolchain-matrix.outputs.include) }}
 
     env:
       PLATFORM: ${{ matrix.platform }}
@@ -190,7 +181,7 @@ jobs:
         run: |
           install_dir="$BUILD_OUTPUT/install"
           case "$PLATFORM" in
-            lin64)
+            lin64|lin64-qt6)
               test -x "$install_dir/MeshMC/MeshMC"
               file -b "$install_dir/MeshMC/bin/MeshMC" | grep -E "ELF 64-bit.*x86-64"
               ;;
@@ -223,6 +214,19 @@ jobs:
                   }
                 }'
               ;;
+            win64-qt6)
+              test -f "$install_dir/MeshMC/Qt6Core.dll"
+              test -f "$install_dir/MeshMC/Qt6Core5Compat.dll"
+              test -f "$install_dir/MeshMC/platforms/qwindows.dll"
+              file -b "$install_dir/MeshMC/MeshMC.exe" | grep -E "PE32\+ executable.*x86-64"
+              ;;
+            osx-universal-qt6)
+              test -f "$install_dir/MeshMC.app/Contents/Info.plist"
+              launcher="$install_dir/MeshMC.app/Contents/MacOS/MeshMC"
+              file -b "$launcher" | grep 'universal binary'
+              file -b "$launcher" | grep 'x86_64'
+              file -b "$launcher" | grep 'arm64'
+              ;;
             osx64-5.15.2)
               test -f "$install_dir/MeshMC.app/Contents/Info.plist"
               file -b "$install_dir/MeshMC.app/Contents/MacOS/MeshMC" | grep -E "Mach-O 64-bit.*x86_64"
@@ -254,7 +258,7 @@ jobs:
             version="$GITHUB_REF_NAME"
           fi
           bundle=MeshMC
-          if [[ "$PLATFORM" == osx64-5.15.2 ]]; then
+          if [[ "$PLATFORM" == osx* ]]; then
             bundle=MeshMC.app
           fi
           mkdir -p dist
@@ -271,14 +275,22 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
+      - name: Upload Linux ABI diagnostics
+        if: matrix.platform == 'lin64-qt6'
+        uses: actions/upload-artifact@v7
+        with:
+          name: abi-details-${{ matrix.platform }}
+          path: ${{ env.BUILD_OUTPUT }}/abi-details.json
+          if-no-files-found: error
+
       - name: Prepare updater payload
         if: needs.build-number.result == 'success' && vars.UPDATER_PUBLISH_ENABLED == 'true'
         env:
-          UPDATER_REQUIREMENTS: ${{ matrix.requirements }}
+          UPDATER_REQUIREMENTS: ${{ toJSON(matrix.requirements) }}
           UPDATER_SUPERSEDES: ${{ join(matrix.supersedes, ' ') }}
         run: |
           source_dir="$BUILD_OUTPUT/install/MeshMC"
-          if [[ "$PLATFORM" == osx64-5.15.2 ]]; then
+          if [[ "$PLATFORM" == osx* ]]; then
             source_dir="$BUILD_OUTPUT/install/MeshMC.app"
           fi
           read -r -a predecessors <<< "$UPDATER_SUPERSEDES"
@@ -286,6 +298,9 @@ jobs:
           for predecessor in "${predecessors[@]}"; do
             supersedes_args+=(--supersedes "$predecessor")
           done
+          if [[ "$PLATFORM" == lin64-qt6 ]]; then
+            supersedes_args+=(--abi "$BUILD_OUTPUT/abi.json")
+          fi
           python tools/updater_v2/prepare_payload.py \
             --source "$source_dir" \
             --output "$RUNNER_TEMP/updater-payload" \

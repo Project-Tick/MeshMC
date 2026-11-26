@@ -80,6 +80,46 @@ class PreparePayloadTest(unittest.TestCase):
             self.assertNotIn("file-" + hashlib.sha256(b"").hexdigest(),
                              {asset.name for asset in assets.iterdir()})
 
+    def test_qt6_payload_carries_measured_linux_abi(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "install"
+            source.mkdir()
+            (source / "MeshMC").write_bytes(b"launcher")
+            payload_root = root / "artifacts"
+            payload = payload_root / "updater-linux-qt6"
+            abi = {
+                "format": 1,
+                "arch": "x86_64",
+                "interpreter": "/lib64/ld-linux-x86-64.so.2",
+                "libs": [
+                    {"soname": "libQt6Core.so.6", "versions": ["Qt_6", "Qt_6.0"]},
+                    {"soname": "libc.so.6", "versions": ["GLIBC_2.9", "GLIBC_2.17"]},
+                    {"soname": "libstdc++.so.6", "versions": ["GLIBCXX_3.4.26", "CXXABI_1.3"]},
+                ],
+            }
+            report = root / "abi.json"
+            report.write_text(json.dumps(abi), encoding="utf-8")
+            subprocess.run(
+                [
+                    sys.executable, str(ROOT / "tools/updater_v2/prepare_payload.py"),
+                    "--source", str(source), "--output", str(payload),
+                    "--variant", "linux-x86_64-qt6.0", "--name", "Linux Qt 6",
+                    "--supersedes", "linux-x86_64-qt5.6", "--abi", str(report),
+                    "--requirements",
+                    '{"os":"linux","arch":"x86_64","glibc":"2.31","glibcxx":"3.4.28","qt":"6.0.0"}',
+                ],
+                check=True,
+            )
+            output = root / "output"
+            output.mkdir()
+            data, _ = make_build(payload_root, 42, "a" * 40, "2026-11-22T00:00:00Z", output)
+            variant = json.loads(data)["variants"]["linux-x86_64-qt6.0"]
+            self.assertEqual(variant["supersedes"], ["linux-x86_64-qt5.6"])
+            self.assertEqual(variant["requires"]["abi"], abi)
+            self.assertEqual(variant["requires"]["glibc"], "2.17")
+            self.assertEqual(variant["requires"]["glibcxx"], "3.4.26")
+
     def test_rejects_unexpected_zero_byte_file(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
