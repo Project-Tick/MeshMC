@@ -205,7 +205,7 @@ QList<NetAction::Ptr> Library::getDownloads(
     return out;
 }
 
-bool Library::isActive() const
+bool Library::isActive(OpSys ruleSystem) const
 {
     bool result = true;
     if (m_rules.empty())
@@ -217,7 +217,7 @@ bool Library::isActive() const
         RuleAction ruleResult = Disallow;
         for (auto rule : m_rules)
         {
-            RuleAction temp = rule->apply(this);
+            RuleAction temp = rule->apply(this, ruleSystem);
             if (temp != Defer)
                 ruleResult = temp;
         }

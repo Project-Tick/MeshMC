@@ -7,7 +7,13 @@
 class LaunchProfile: public ProblemProvider
 {
 public:
+    explicit LaunchProfile(OpSys ruleSystem = currentSystem) : m_ruleSystem(ruleSystem) {}
     virtual ~LaunchProfile() {};
+
+    OpSys ruleSystem() const { return m_ruleSystem; }
+
+private:
+    OpSys m_ruleSystem;
 
 public: /* application of profile variables from patches */
     void applyMinecraftVersion(const QString& id);

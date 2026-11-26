@@ -1177,11 +1177,16 @@ bool PackProfile::installCustomJar_internal(QString filepath)
 
 std::shared_ptr<LaunchProfile> PackProfile::getProfile() const
 {
-    if(!d->m_profile)
+    const auto javaArchitecture = Sys::Architecture::deserialize(
+        d->m_instance->settings()->get("JavaArchitecture").toString());
+    const auto ruleSystem = libraryRuleSystem(javaArchitecture);
+    if (d->m_profile && d->m_profile->ruleSystem() != ruleSystem)
+        d->m_profile.reset();
+    if (!d->m_profile)
     {
         try
         {
-            auto profile = std::make_shared<LaunchProfile>();
+            auto profile = std::make_shared<LaunchProfile>(ruleSystem);
             for(auto file: d->components)
             {
                 qDebug() << "Applying" << file->getID() << (file->getProblemSeverity() == ProblemSeverity::Error ? "ERROR" : "GOOD");

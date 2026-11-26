@@ -140,7 +140,7 @@ public: /* methods */
     }
 
     /// Returns true if the library should be loaded (or extracted, in case of natives)
-    bool isActive() const;
+    bool isActive(OpSys ruleSystem = currentSystem) const;
 
     /// Returns true if the library is contained in an instance and false if it is shared
     bool isLocal() const;

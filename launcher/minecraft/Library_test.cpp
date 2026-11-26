@@ -4,6 +4,7 @@
 #include "minecraft/MojangVersionFormat.h"
 #include "minecraft/OneSixVersionFormat.h"
 #include "minecraft/Library.h"
+#include "minecraft/LaunchProfile.h"
 #include "net/HttpMetaCache.h"
 #include "FileSystem.h"
 
@@ -33,6 +34,35 @@ slots:
         cache.reset(new HttpMetaCache());
         cache->addBase("libraries", QDir("libraries").absolutePath());
         dataDir = QDir("data").absolutePath();
+    }
+    void test_macos_native_rules()
+    {
+        auto library = [](const QString &name, const QString &os)
+        {
+            QJsonObject rule{{"action", "allow"}, {"os", QJsonObject{{"name", os}}}};
+            QJsonObject metadata{{"name", name}, {"rules", QJsonArray{rule}}};
+            ProblemContainer problems;
+            return MojangVersionFormat::libraryFromJson(problems, metadata, name);
+        };
+
+        const auto arm = library("org.lwjgl:lwjgl-natives-macos-arm64:3.4.3", "osx-arm64");
+        const auto intel = library("org.lwjgl:lwjgl-natives-macos:3.4.3", "osx");
+        const auto shared = library("ca.weblite:java-objc-bridge:1.1", "osx");
+
+        LaunchProfile armProfile(Os_OSX_ARM64);
+        LaunchProfile intelProfile(Os_OSX);
+        for (const auto &entry : {arm, intel, shared})
+        {
+            armProfile.applyLibrary(entry);
+            intelProfile.applyLibrary(entry);
+        }
+
+        QCOMPARE(armProfile.getLibraries().size(), 2);
+        QCOMPARE(armProfile.getLibraries().at(0)->rawName().serialize(), arm->rawName().serialize());
+        QCOMPARE(armProfile.getLibraries().at(1)->rawName().serialize(), shared->rawName().serialize());
+        QCOMPARE(intelProfile.getLibraries().size(), 2);
+        QCOMPARE(intelProfile.getLibraries().at(0)->rawName().serialize(), intel->rawName().serialize());
+        QCOMPARE(intelProfile.getLibraries().at(1)->rawName().serialize(), shared->rawName().serialize());
     }
     void test_legacy()
     {

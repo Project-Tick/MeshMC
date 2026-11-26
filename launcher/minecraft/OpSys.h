@@ -15,17 +15,20 @@
 
 #pragma once
 #include <QString>
+#include <sys.h>
 enum OpSys
 {
     Os_Windows,
     Os_FreeBSD,
     Os_Linux,
     Os_OSX,
-    Os_Other
+    Os_Other,
+    Os_OSX_ARM64
 };
 
 OpSys OpSys_fromString(QString);
 QString OpSys_toString(OpSys);
+OpSys libraryRuleSystem(Sys::Architecture javaArchitecture);
 
 #ifdef Q_OS_WIN32
     #define currentSystem Os_Windows

@@ -17,6 +17,7 @@
 #include <QJsonArray>
 
 #include "Rule.h"
+#include "Library.h"
 
 RuleAction RuleAction_fromString(QString name)
 {
@@ -73,6 +74,18 @@ QJsonObject ImplicitRule::toJson()
     QJsonObject ruleObj;
     ruleObj.insert("action", m_result == Allow ? QString("allow") : QString("disallow"));
     return ruleObj;
+}
+
+bool OsRule::applies(const Library *library, OpSys system)
+{
+    if (m_system == system)
+        return true;
+    if (m_system != Os_OSX || system != Os_OSX_ARM64)
+        return false;
+
+    // macOS rules also cover ARM64 unless the coordinate identifies an Intel native.
+    const auto &name = library->rawName();
+    return !name.artifactId().endsWith("-natives-macos") && name.classifier() != "natives-macos";
 }
 
 QJsonObject OsRule::toJson()

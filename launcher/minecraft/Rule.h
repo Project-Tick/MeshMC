@@ -37,7 +37,7 @@ class Rule
 {
 protected:
     RuleAction m_result;
-    virtual bool applies(const Library *parent) = 0;
+    virtual bool applies(const Library *parent, OpSys system) = 0;
 
 public:
     Rule(RuleAction result) : m_result(result)
@@ -45,9 +45,9 @@ public:
     }
     virtual ~Rule() {};
     virtual QJsonObject toJson() = 0;
-    RuleAction apply(const Library *parent)
+    RuleAction apply(const Library *parent, OpSys system)
     {
-        if (applies(parent))
+        if (applies(parent, system))
             return m_result;
         else
             return Defer;
@@ -63,10 +63,7 @@ private:
     QString m_version_regexp;
 
 protected:
-    virtual bool applies(const Library *)
-    {
-        return (m_system == currentSystem);
-    }
+    bool applies(const Library *library, OpSys system) override;
     OsRule(RuleAction result, OpSys system, QString version_regexp)
         : Rule(result), m_system(system), m_version_regexp(version_regexp)
     {
@@ -84,7 +81,7 @@ public:
 class ImplicitRule : public Rule
 {
 protected:
-    virtual bool applies(const Library *)
+    bool applies(const Library *, OpSys) override
     {
         return true;
     }

@@ -25,6 +25,9 @@ OpSys OpSys_fromString(QString name)
         return Os_Windows;
     if (name == "osx")
         return Os_OSX;
+    if (name == "osx-arm64")
+        return Os_OSX_ARM64;
+
     return Os_Other;
 }
 
@@ -33,14 +36,29 @@ QString OpSys_toString(OpSys name)
     switch (name)
     {
     case Os_FreeBSD:
-	return "freebsd";
+        return "freebsd";
     case Os_Linux:
         return "linux";
     case Os_OSX:
         return "osx";
+    case Os_OSX_ARM64:
+        return "osx-arm64";
     case Os_Windows:
         return "windows";
     default:
         return "other";
     }
+}
+
+OpSys libraryRuleSystem(Sys::Architecture javaArchitecture)
+{
+#ifdef Q_OS_MAC
+    if (!javaArchitecture.is64() && !javaArchitecture.is32())
+        javaArchitecture = Sys::systemArchitecture();
+    if (javaArchitecture == Sys::Architecture(Sys::ArchitectureType::AARCH64))
+        return Os_OSX_ARM64;
+#else
+    Q_UNUSED(javaArchitecture);
+#endif
+    return currentSystem;
 }

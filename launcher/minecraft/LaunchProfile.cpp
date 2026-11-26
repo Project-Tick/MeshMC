@@ -128,7 +128,7 @@ void LaunchProfile::applyMods(const QList<LibraryPtr>& mods)
 
 void LaunchProfile::applyLibrary(LibraryPtr library)
 {
-    if(!library->isActive())
+    if(!library->isActive(m_ruleSystem))
     {
         return;
     }
@@ -160,7 +160,7 @@ void LaunchProfile::applyLibrary(LibraryPtr library)
 
 void LaunchProfile::applyMavenFile(LibraryPtr mavenFile)
 {
-    if(!mavenFile->isActive())
+    if(!mavenFile->isActive(m_ruleSystem))
     {
         return;
     }
