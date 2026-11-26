@@ -12,7 +12,6 @@
 #include <QFileInfo>
 #include <QTemporaryDir>
 
-#include <JlCompress.h>
 #include <quazip.h>
 
 #include "CustomTheme.h"
@@ -144,7 +143,7 @@ bool install(const QString &zipPath, const Contents &contents, const QString &fo
 bool exportTo(const QString &themeFolder, const QString &zipPath, QString &error)
 {
     const QFileInfo folder(themeFolder);
-    if(!JlCompress::compressDir(zipPath, folder.absoluteFilePath(), folder.fileName()))
+    if(!MMCZip::compressDir(zipPath, folder.absoluteFilePath(), folder.fileName()))
     {
         QFile::remove(zipPath);
         error = tr("The zip file %1 can't be written.").arg(zipPath);

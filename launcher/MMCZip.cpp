@@ -22,8 +22,80 @@
 
 #include <QDebug>
 
+namespace
+{
+bool compressFile(QuaZip &zip, const QFileInfo &file, const QString &name)
+{
+    if (!file.isSymLink())
+        return JlCompress::compressFile(&zip, file.absoluteFilePath(), name);
+
+    // Keep the contents of a linked file in the archive, as the old fork did.
+    QFile source(file.absoluteFilePath());
+    QuaZipFile entry(&zip);
+    if (!source.open(QIODevice::ReadOnly) ||
+        !entry.open(QIODevice::WriteOnly, QuaZipNewInfo(name, file.absoluteFilePath())))
+        return false;
+    const bool copied = JlCompress::copyData(source, entry);
+    entry.close();
+    return copied && entry.getZipError() == UNZ_OK;
+}
+
+bool compressSubDir(QuaZip &zip, const QDir &root, const QDir &directory,
+                    QSet<QString> &added, const QString &prefix, const MMCZip::ArchiveFilter &exclude)
+{
+    const QString relative = root.relativeFilePath(directory.absolutePath());
+    if (relative != "." && (!exclude || !exclude(relative)))
+    {
+        QuaZipFile entry(&zip);
+        if (!entry.open(QIODevice::WriteOnly, QuaZipNewInfo(prefix + relative + '/', directory.absolutePath()),
+                        nullptr, 0, 0))
+            return false;
+        entry.close();
+        if (entry.getZipError() != UNZ_OK)
+            return false;
+    }
+
+    for (const auto &child : directory.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden))
+    {
+        if (!compressSubDir(zip, root, QDir(child.absoluteFilePath()), added, prefix, exclude))
+            return false;
+    }
+    for (const auto &file : directory.entryInfoList(QDir::Files | QDir::Hidden))
+    {
+        const QString path = file.absoluteFilePath();
+        const QString name = root.relativeFilePath(path);
+        if (path == zip.getZipName() || (exclude && exclude(name)))
+            continue;
+        if (!compressFile(zip, file, prefix + name))
+            return false;
+        added.insert(prefix + name);
+    }
+    return true;
+}
+}
+
+bool MMCZip::compressDir(const QString &output, const QString &directory,
+                         const QString &prefix, const ArchiveFilter &exclude)
+{
+    const QFileInfo archive(output);
+    const QDir root(directory);
+    if (!root.exists() || !QDir().mkpath(archive.absolutePath()))
+        return false;
+
+    QuaZip zip(archive.absoluteFilePath());
+    if (!zip.open(QuaZip::mdCreate))
+        return false;
+    QSet<QString> added;
+    const bool complete = compressSubDir(zip, root, root, added, prefix.isEmpty() ? prefix : prefix + '/', exclude);
+    zip.close();
+    if (complete && zip.getZipError() == UNZ_OK)
+        return true;
+    QFile::remove(archive.absoluteFilePath());
+    return false;
+}
+
 // ours
-bool MMCZip::mergeZipFiles(QuaZip *into, QFileInfo from, QSet<QString> &contained, const JlCompress::FilterFunction filter)
+bool MMCZip::mergeZipFiles(QuaZip *into, QFileInfo from, QSet<QString> &contained, const ArchiveFilter &filter)
 {
     QuaZip modZip(from.filePath());
     modZip.open(QuaZip::mdUnzip);
@@ -111,7 +183,7 @@ bool MMCZip::createModdedJar(QString sourceJarPath, QString targetJarPath, const
         {
             // FIXME: buggy - does not work with addedFiles
             auto filename = mod.filename();
-            if (!JlCompress::compressFile(&zipOut, filename.absoluteFilePath(), filename.fileName()))
+            if (!compressFile(zipOut, filename, filename.fileName()))
             {
                 zipOut.close();
                 QFile::remove(targetJarPath);
@@ -128,7 +200,7 @@ bool MMCZip::createModdedJar(QString sourceJarPath, QString targetJarPath, const
             QDir dir(what_to_zip);
             dir.cdUp();
             QString parent_dir = dir.absolutePath();
-            if (!JlCompress::compressSubDir(&zipOut, what_to_zip, parent_dir, addedFiles))
+            if (!compressSubDir(zipOut, QDir(parent_dir), QDir(what_to_zip), addedFiles, {}, {}))
             {
                 zipOut.close();
                 QFile::remove(targetJarPath);
@@ -261,7 +333,7 @@ nonstd::optional<QStringList> MMCZip::extractSubDirWithProgress(
         {
             absFilePath += "/";
         }
-        if (!JlCompress::extractFile(zip, "", absFilePath))
+        if (!extractRelFile(zip, {}, absFilePath))
         {
             qWarning() << "Failed to extract file" << name << "to" << absFilePath;
             JlCompress::removeFile(extracted);
@@ -373,7 +445,27 @@ nonstd::optional<QStringList> MMCZip::extractSubDirLimited(QuaZip *zip, const QS
 
 bool MMCZip::extractRelFile(QuaZip *zip, const QString &file, const QString &target)
 {
-    return JlCompress::extractFile(zip, file, target);
+    if (!zip || zip->getMode() != QuaZip::mdUnzip || (!file.isEmpty() && !zip->setCurrentFile(file)))
+        return false;
+    QuaZipFile entry(zip);
+    if (!entry.open(QIODevice::ReadOnly))
+        return false;
+    if (target.endsWith('/'))
+        return QDir().mkpath(target);
+    if (!QDir().mkpath(QFileInfo(target).absolutePath()))
+        return false;
+
+    // Keep archive entries as regular files, including entries marked as symlinks.
+    QFile output(target);
+    if (!output.open(QIODevice::WriteOnly))
+        return false;
+    const bool copied = JlCompress::copyData(entry, output);
+    output.close();
+    entry.close();
+    if (copied && entry.getZipError() == UNZ_OK && output.error() == QFile::NoError)
+        return true;
+    output.remove();
+    return false;
 }
 
 // ours

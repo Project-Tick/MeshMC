@@ -37,6 +37,27 @@ class MMCZipTest : public QObject
 
 private
 slots:
+    void test_compressDirWithPrefixAndFilter()
+    {
+        QTemporaryDir temp;
+        QVERIFY(temp.isValid());
+        QDir root(temp.path());
+        QVERIFY(root.mkpath("source/empty"));
+        for (const auto &name : {QString(".hidden"), QString("skip.txt")})
+        {
+            QFile file(root.filePath("source/" + name));
+            QVERIFY(file.open(QIODevice::WriteOnly));
+            QCOMPARE(file.write("data"), qint64(4));
+        }
+
+        const QString archive = root.filePath("source/export.zip");
+        QVERIFY(MMCZip::compressDir(archive, root.filePath("source"), "instance",
+                                    [](const QString &name) { return name == "skip.txt"; }));
+        QuaZip zip(archive);
+        QVERIFY(zip.open(QuaZip::mdUnzip));
+        QCOMPARE(zip.getFileNameList(), QStringList({"instance/empty/", "instance/.hidden"}));
+    }
+
     void test_extractDir()
     {
         QTemporaryDir temp;

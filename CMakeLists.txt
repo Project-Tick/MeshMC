@@ -327,7 +327,7 @@ add_subdirectory(libraries/launcher) # java based launcher part for Minecraft
 add_subdirectory(libraries/javacheck) # java compatibility checker
 add_subdirectory(libraries/xz-embedded) # xz compression
 add_subdirectory(libraries/qrcode) # library for generating QR codes
-add_subdirectory(libraries/quazip) # zip manipulation library
+include(QuaZip)
 add_subdirectory(libraries/iconfix) # fork of Qt's QIcon loader
 add_subdirectory(libraries/LocalPeer) # fork of a library from Qt solutions
 add_subdirectory(libraries/classparser) # java class file parser

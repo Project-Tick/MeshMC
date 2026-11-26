@@ -21,13 +21,15 @@
 #include "minecraft/mod/Mod.h"
 #include <functional>
 
-#include <JlCompress.h>
+class QuaZip;
 #include <nonstd/optional>
-
-#include <functional>
 
 namespace MMCZip
 {
+    using ArchiveFilter = std::function<bool(const QString &)>;
+    bool compressDir(const QString &output, const QString &directory,
+                     const QString &prefix = {}, const ArchiveFilter &exclude = {});
+
     using FilterFileFunction = std::function<bool(const QFileInfo&)>;
     bool collectFileListRecursively(const QString& rootDir, const QString& subDir,
                                     QFileInfoList* files, FilterFileFunction excludeFilter);
@@ -37,7 +39,7 @@ namespace MMCZip
      * Merge two zip files, using a filter function
      */
     bool mergeZipFiles(QuaZip *into, QFileInfo from, QSet<QString> &contained,
-                                            const JlCompress::FilterFunction filter = nullptr);
+                                            const ArchiveFilter &filter = {});
 
     /**
      * take a source jar, add mods to it, resulting in target jar

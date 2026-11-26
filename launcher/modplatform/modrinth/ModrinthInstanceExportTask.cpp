@@ -14,7 +14,7 @@
 #include "net/NetJob.h"
 #include "Application.h"
 #include "ui/dialogs/ModrinthExportDialog.h"
-#include "JlCompress.h"
+#include "MMCZip.h"
 #include "FileSystem.h"
 #include "ModrinthHashLookupRequest.h"
 
@@ -252,7 +252,7 @@ void InstanceExportTask::lookupSucceeded()
         }
 
         setStatus(tr("Zipping modpack..."));
-        if (!JlCompress::compressDir(m_settings.exportPath, tmp.path())) {
+        if (!MMCZip::compressDir(m_settings.exportPath, tmp.path())) {
             emitFailed(tr("Failed to create zip file"));
             return;
         }

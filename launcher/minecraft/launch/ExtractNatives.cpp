@@ -78,7 +78,7 @@ static bool unzipNatives(QString source, QString targetFolder, bool applyJnilibH
         {
             absFilePath += "/";
         }
-        if (!JlCompress::extractFile(&zip, "", absFilePath))
+        if (!MMCZip::extractRelFile(&zip, {}, absFilePath))
         {
             return false;
         }
