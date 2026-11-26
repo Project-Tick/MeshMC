@@ -236,10 +236,10 @@ void CreateShortcutDialog::createWindowsLink(LPCSTR target, LPCSTR workingDir, L
                                              LPCSTR desc, LPCSTR iconPath)
 {
     HRESULT result;
-    IShellLink *link;
+    IShellLinkA *link;
 
     CoInitialize(nullptr);
-    result = CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *) &link);
+    result = CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLinkA, (LPVOID *) &link);
     if (SUCCEEDED(result))
     {
         IPersistFile *file;

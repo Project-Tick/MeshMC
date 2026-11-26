@@ -144,7 +144,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         auto out = GetStdHandle (STD_OUTPUT_HANDLE);
         DWORD written;
         const char * endline = "\n";
-        WriteConsole(out, endline, strlen(endline), &written, NULL);
+        WriteConsoleA(out, endline, strlen(endline), &written, NULL);
         consoleAttached = true;
     }
 #endif

@@ -97,6 +97,9 @@ case "$PLATFORM" in
             '-DCMAKE_GP_CMD_PATHS=T:/Tools'
             -DCMAKE_GP_TOOL=dumpbin
         )
+        if [[ "$PLATFORM" == win64-qt6 ]]; then
+            platform_args+=("-DZLIB_LIBRARY_RELEASE:FILEPATH=$zlib/lib/libz.a")
+        fi
         ;;
     osx64-5.15.2|osx-universal-qt6)
         git config --global --add safe.directory /src

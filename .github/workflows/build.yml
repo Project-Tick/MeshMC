@@ -234,14 +234,18 @@ jobs:
           esac
 
       - name: Build and sign the Windows installer
-        if: startsWith(matrix.platform, 'win32')
+        if: matrix.requirements.os == 'windows'
         env:
           WINDOWS_CODESIGN_CERT: ${{ secrets.WINDOWS_CODESIGN_CERT }}
           WINDOWS_CODESIGN_PASSWORD: ${{ secrets.WINDOWS_CODESIGN_PASSWORD }}
         run: bash .github/scripts/package-windows-installer.sh
 
+      - name: Ad-hoc sign the macOS Qt 6 bundle
+        if: matrix.platform == 'osx-universal-qt6'
+        run: bash .github/scripts/sign-macos-bundle.sh "$BUILD_OUTPUT/install/MeshMC.app"
+
       - name: Upload Windows installer
-        if: startsWith(matrix.platform, 'win32')
+        if: matrix.requirements.os == 'windows'
         uses: actions/upload-artifact@v7
         with:
           name: package-${{ matrix.platform }}-setup

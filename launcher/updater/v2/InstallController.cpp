@@ -14,6 +14,10 @@
 #include <QProcess>
 #include <QTextStream>
 
+#if defined(Q_OS_WIN32) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QSysInfo>
+#endif
+
 #include "BuildConfig.h"
 #include "FileSystem.h"
 #include "updater/LiveCheck.h"
@@ -65,6 +69,7 @@ void InstallController::installUpdates()
         {
             // for people who renamed the .exe
             change.path = QFileInfo(QApplication::applicationFilePath()).fileName();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             // Windows XP can't move a running .exe: a script does it after this process quits
             if(QSysInfo::windowsVersion() < QSysInfo::WV_VISTA)
             {
@@ -75,6 +80,7 @@ void InstallController::installUpdates()
                 useXPHack = true;
                 continue;
             }
+#endif
         }
 #endif
         changes.append(change);

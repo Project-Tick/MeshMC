@@ -48,4 +48,5 @@ collect_optional() {
 
 collect_optional package-lin64-qt6 lin64-qt6.tar.gz
 collect_optional package-win64-qt6 win64-qt6.zip
+collect_optional package-win64-qt6-setup win64-qt6-Setup.exe
 collect_optional package-osx-universal-qt6 osx-universal-qt6.tar.gz
