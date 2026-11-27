@@ -96,6 +96,7 @@
 #include "KonamiCode.h"
 
 #include "InstanceImportTask.h"
+#include "InstanceShortcuts.h"
 #include "InstanceCopyTask.h"
 
 #include "MMCTime.h"
@@ -2069,16 +2070,22 @@ void MainWindow::on_actionDeleteInstance_triggered()
     {
         return;
     }
-    auto id = m_selectedInstance->id();
+    const auto instance = m_selectedInstance;
+    const auto id = instance->id();
+    const int shortcutCount = InstanceShortcuts::countOwned(instance->instanceRoot());
+    auto message = tr("About to delete: %1\nThis is permanent and will completely delete the instance.").arg(instance->name());
+    if (shortcutCount > 0)
+        message += tr("\n%n associated shortcut(s) will also be deleted.", nullptr, shortcutCount);
+    message += "\n\n" + tr("Are you sure?");
     auto response = CustomMessageBox::selectable(
         this,
         tr("CAREFUL!"),
-        tr("About to delete: %1\nThis is permanent and will completely delete the instance.\n\nAre you sure?").arg(m_selectedInstance->name()),
+        message,
         QMessageBox::Warning,
         QMessageBox::Yes | QMessageBox::No,
         QMessageBox::No
     )->exec();
-    if (response == QMessageBox::Yes)
+    if (response == QMessageBox::Yes && APPLICATION->instances()->getInstanceById(id) == instance)
     {
         APPLICATION->instances()->deleteInstance(id);
     }

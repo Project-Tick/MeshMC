@@ -1,5 +1,6 @@
 /*
  * Copyright 2022 arthomnix
+ * Copyright 2026 Project Tick
  *
  * This source is subject to the Microsoft Public License (MS-PL).
  * Please see the COPYING.md file for more information.
@@ -8,13 +9,7 @@
 #pragma once
 
 #include <QDialog>
-#include "minecraft/auth/MinecraftAccount.h"
 #include "BaseInstance.h"
-#include "minecraft/ParseUtils.h"
-
-#ifdef Q_OS_WIN
-#include <windows.h>
-#endif
 
 namespace Ui
 {
@@ -39,12 +34,10 @@ private:
     Ui::CreateShortcutDialog *ui;
     InstancePtr m_instance;
 
-    QString getLaunchCommand(bool escapeQuotesTwice = false);
-    QString getLaunchArgs(bool escapeQuotesTwice = false);
+    QString m_iconKey;
 
-    void createShortcut();
-
-#ifdef Q_OS_WIN
-    void createWindowsLink(LPCSTR target, LPCSTR workingDir, LPCSTR args, LPCSTR filename, LPCSTR desc, LPCSTR iconPath);
-#endif
+    QString shortcutSuffix() const;
+    void browseShortcutPath(const QString& directory);
+    QStringList launchArguments(const QString& dataDir) const;
+    bool createShortcut(const QString& path, const QString& suffix);
 };

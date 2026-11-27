@@ -1,4 +1,5 @@
 /* Copyright 2013-2021 MultiMC Contributors
+ * Copyright 2026 Project Tick
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +33,7 @@
 #include <QMimeData>
 
 #include "InstanceList.h"
+#include "InstanceShortcuts.h"
 #include "modplatform/PackContents.h"
 #include "minecraft/mod/ModMetadataIndex.h"
 #include "minecraft/MinecraftInstance.h"
@@ -311,6 +313,7 @@ void InstanceList::deleteInstance(const InstanceId& id)
         return;
     }
 
+    InstanceShortcuts::removeOwned(inst->instanceRoot());
     qDebug() << "Instance" << id << "has been deleted by the launcher.";
 }
 

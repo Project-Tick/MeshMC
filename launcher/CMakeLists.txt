@@ -14,6 +14,8 @@ set(CORE_SOURCES
     BaseVersionList.cpp
     InstanceList.h
     InstanceList.cpp
+    InstanceShortcuts.h
+    InstanceShortcuts.cpp
     InstanceTask.h
     InstanceTask.cpp
     LoggedProcess.h
