@@ -32,7 +32,9 @@ public:
     {
         NameColumn,
         GameModeColumn,
-        LastPlayedColumn
+        LastPlayedColumn,
+        DayCountColumn,
+        ColumnCount
     };
 
     enum Roles

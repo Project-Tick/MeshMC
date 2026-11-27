@@ -14,6 +14,8 @@
  */
 
 #pragma once
+#include <functional>
+
 #include <QFileInfo>
 #include <QDateTime>
 #include <nonstd/optional>
@@ -62,7 +64,11 @@ public:
     }
     int64_t seed() const
     {
-        return m_randomSeed;
+        return m_randomSeed.value_or(0);
+    }
+    nonstd::optional<int64_t> dayCount() const
+    {
+        return m_dayCount;
     }
     bool isValid() const
     {
@@ -95,6 +101,7 @@ private:
     void readFromZip(const QFileInfo &file);
     void readFromFS(const QFileInfo &file);
     void loadFromLevelDat(QByteArray data);
+    void loadSupplementalData(const std::function<QByteArray(const QString&)>& readFile);
 
 protected:
 
@@ -105,7 +112,8 @@ protected:
     QString m_iconFile;
     QDateTime levelDatTime;
     QDateTime m_lastPlayed;
-    int64_t m_randomSeed = 0;
+    nonstd::optional<int64_t> m_randomSeed;
+    nonstd::optional<int64_t> m_dayCount;
     GameType m_gameType;
     bool is_valid = false;
 };

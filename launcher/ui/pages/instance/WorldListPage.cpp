@@ -92,7 +92,8 @@ WorldListPage::WorldListPage(InstancePtr inst, std::shared_ptr<WorldList> worlds
 
     auto head = ui->worldTreeView->header();
     head->setSectionResizeMode(0, QHeaderView::Stretch);
-    head->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    head->setSectionResizeMode(WorldList::GameModeColumn, QHeaderView::ResizeToContents);
+    head->setSectionResizeMode(WorldList::DayCountColumn, QHeaderView::ResizeToContents);
 
     connect(ui->worldTreeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &WorldListPage::worldChanged);
     worldChanged(QModelIndex(), QModelIndex());

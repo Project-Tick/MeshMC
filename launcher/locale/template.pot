@@ -4387,7 +4387,7 @@ msgctxt "MainWindow|"
 msgid "Kill the running instance"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:302 launcher/ui/MainWindow.cpp:1134
+#: launcher/ui/MainWindow.cpp:302 launcher/ui/MainWindow.cpp:1135
 msgctxt "MainWindow|"
 msgid "Launch"
 msgstr ""
@@ -4596,7 +4596,7 @@ msgctxt "MainWindow|"
 msgid "Change the selected instance's group."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:565 launcher/ui/MainWindow.cpp:1135
+#: launcher/ui/MainWindow.cpp:565 launcher/ui/MainWindow.cpp:1136
 msgctxt "MainWindow|"
 msgid "Launch Offline"
 msgstr ""
@@ -4731,7 +4731,7 @@ msgctxt "MainWindow|"
 msgid "Zoom:"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:846 launcher/ui/MainWindow.cpp:965
+#: launcher/ui/MainWindow.cpp:846 launcher/ui/MainWindow.cpp:966
 msgctxt "MainWindow|"
 msgid "No instance selected"
 msgstr ""
@@ -4741,74 +4741,79 @@ msgctxt "MainWindow|"
 msgid "Total playtime: 0s"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:959 launcher/ui/MainWindow.cpp:1290
+#: launcher/ui/MainWindow.cpp:960 launcher/ui/MainWindow.cpp:1316
 msgctxt "MainWindow|"
 msgid "Accounts"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1018
+#: launcher/ui/MainWindow.cpp:1019
 msgctxt "MainWindow|"
 msgid "Create instance"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1034
+#: launcher/ui/MainWindow.cpp:1035
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Delete group '%1'"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1079
+#: launcher/ui/MainWindow.cpp:1080
 msgctxt "MainWindow|"
 msgid "Format"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1082
+#: launcher/ui/MainWindow.cpp:1083
 msgctxt "MainWindow|"
 msgid "Modrinth Pack"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1083
+#: launcher/ui/MainWindow.cpp:1084
 msgctxt "MainWindow|"
 msgid "CurseForge Pack"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1144
+#: launcher/ui/MainWindow.cpp:1153
+msgctxt "MainWindow|"
+msgid "Launch &As"
+msgstr ""
+
+#: launcher/ui/MainWindow.cpp:1170
 msgctxt "MainWindow|"
 msgid "Profilers"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1156
+#: launcher/ui/MainWindow.cpp:1182
 msgctxt "MainWindow|"
 msgid "Profiler not setup correctly. Go into settings, \"External Tools\"."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1196
+#: launcher/ui/MainWindow.cpp:1222
 msgctxt "MainWindow|"
 msgid "No accounts added!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1235
+#: launcher/ui/MainWindow.cpp:1261
 msgctxt "MainWindow|"
 msgid "No Default Account"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1310
+#: launcher/ui/MainWindow.cpp:1336
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Size: %1 pixels"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1350
+#: launcher/ui/MainWindow.cpp:1376
 msgctxt "MainWindow|"
 msgid "Loading news..."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1363
+#: launcher/ui/MainWindow.cpp:1389
 msgctxt "MainWindow|"
 msgid "No news available."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1450
+#: launcher/ui/MainWindow.cpp:1476
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -4816,7 +4821,7 @@ msgid ""
 "that, it keeps working, but gets no more updates."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1455
+#: launcher/ui/MainWindow.cpp:1481
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -4824,30 +4829,30 @@ msgid ""
 "Settings, Updates."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1458
+#: launcher/ui/MainWindow.cpp:1484
 msgctxt "MainWindow|"
 msgid "Updates ending"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1484
+#: launcher/ui/MainWindow.cpp:1510
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Switch to %1, which replaces %2"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1488
+#: launcher/ui/MainWindow.cpp:1514
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
 "%1 isn't made for this computer any more, so this update switches to %2."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1523 launcher/ui/MainWindow.cpp:1544
+#: launcher/ui/MainWindow.cpp:1549 launcher/ui/MainWindow.cpp:1570
 msgctxt "MainWindow|"
 msgid "Switch version"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1524
+#: launcher/ui/MainWindow.cpp:1550
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -4857,34 +4862,34 @@ msgid ""
 "Switch now? If you keep %2, you can switch later in Settings, Updates."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1527
+#: launcher/ui/MainWindow.cpp:1553
 msgctxt "MainWindow|"
 msgid "Switch now"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1528
+#: launcher/ui/MainWindow.cpp:1554
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Keep %1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1529
+#: launcher/ui/MainWindow.cpp:1555
 msgctxt "MainWindow|"
 msgid "Ask me later"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1544
+#: launcher/ui/MainWindow.cpp:1570
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Switch this installation from %1 to %2 now?"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1559
+#: launcher/ui/MainWindow.cpp:1585
 msgctxt "MainWindow|"
 msgid "Older build"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1560
+#: launcher/ui/MainWindow.cpp:1586
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -4897,12 +4902,12 @@ msgid ""
 "Install build %2 anyway?"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1591 launcher/ui/MainWindow.cpp:1600
+#: launcher/ui/MainWindow.cpp:1617 launcher/ui/MainWindow.cpp:1626
 msgctxt "MainWindow|"
 msgid "No updates"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1601
+#: launcher/ui/MainWindow.cpp:1627
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -4910,56 +4915,56 @@ msgid ""
 "stays until there is a newer one."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1607
+#: launcher/ui/MainWindow.cpp:1633
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Build %1 is available, but it can't be installed here:"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1610
+#: launcher/ui/MainWindow.cpp:1636
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Builds are no longer made of %1, the version this installation runs."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1612
+#: launcher/ui/MainWindow.cpp:1638
 msgctxt "MainWindow|"
 msgid "Update not possible"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1619
+#: launcher/ui/MainWindow.cpp:1645
 msgctxt "MainWindow|"
 msgid "Update check failed"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1619
+#: launcher/ui/MainWindow.cpp:1645
 msgctxt "MainWindow|"
 msgid "Could not check for updates:"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1627
+#: launcher/ui/MainWindow.cpp:1653
 #, qt-format
 msgctxt "MainWindow|"
 msgid "%1 has not been able to check for updates since %2."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1628
+#: launcher/ui/MainWindow.cpp:1654
 #, qt-format
 msgctxt "MainWindow|"
 msgid "The last check that worked was on %1."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1629
+#: launcher/ui/MainWindow.cpp:1655
 msgctxt "MainWindow|"
 msgid "No check has worked on this installation yet."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1630
+#: launcher/ui/MainWindow.cpp:1656
 msgctxt "MainWindow|"
 msgid "The last attempt failed with:"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1631
+#: launcher/ui/MainWindow.cpp:1657
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -4967,24 +4972,24 @@ msgid ""
 "more. You can get the current version from %1."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1633
+#: launcher/ui/MainWindow.cpp:1659
 msgctxt "MainWindow|"
 msgid "Updates are not working"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1635
+#: launcher/ui/MainWindow.cpp:1661
 msgctxt "MainWindow|"
 msgid "Open the website"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1660 launcher/ui/MainWindow.cpp:1674
-#: launcher/ui/MainWindow.cpp:1727 launcher/ui/MainWindow.cpp:1770
-#: launcher/ui/MainWindow.cpp:1782
+#: launcher/ui/MainWindow.cpp:1686 launcher/ui/MainWindow.cpp:1700
+#: launcher/ui/MainWindow.cpp:1753 launcher/ui/MainWindow.cpp:1796
+#: launcher/ui/MainWindow.cpp:1808
 msgctxt "MainWindow|"
 msgid "Error"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1660
+#: launcher/ui/MainWindow.cpp:1686
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -4992,17 +4997,17 @@ msgid ""
 "%1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1732
+#: launcher/ui/MainWindow.cpp:1758
 msgctxt "MainWindow|"
 msgid "Warnings"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1734 launcher/ui/MainWindow.cpp:1774
+#: launcher/ui/MainWindow.cpp:1760 launcher/ui/MainWindow.cpp:1800
 msgctxt "MainWindow|"
 msgid "Stop"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1783
+#: launcher/ui/MainWindow.cpp:1809
 msgctxt "MainWindow|"
 msgid ""
 "The launcher cannot download Minecraft or update instances unless you have "
@@ -5010,28 +5015,28 @@ msgid ""
 "Please add your Mojang or Minecraft account."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1919
+#: launcher/ui/MainWindow.cpp:1945
 msgctxt "MainWindow|"
 msgid "Group name"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1919
+#: launcher/ui/MainWindow.cpp:1945
 msgctxt "MainWindow|"
 msgid "Enter a new group name."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1941
+#: launcher/ui/MainWindow.cpp:1967
 msgctxt "MainWindow|"
 msgid "Delete group"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:1941
+#: launcher/ui/MainWindow.cpp:1967
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Are you sure you want to delete the group %1"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2076
+#: launcher/ui/MainWindow.cpp:2102
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -5039,7 +5044,7 @@ msgid ""
 "This is permanent and will completely delete the instance."
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2078
+#: launcher/ui/MainWindow.cpp:2104
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -5050,28 +5055,28 @@ msgid_plural ""
 "%n associated shortcut(s) will also be deleted."
 msgstr[0] ""
 
-#: launcher/ui/MainWindow.cpp:2079
+#: launcher/ui/MainWindow.cpp:2105
 msgctxt "MainWindow|"
 msgid "Are you sure?"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2082
+#: launcher/ui/MainWindow.cpp:2108
 msgctxt "MainWindow|"
 msgid "CAREFUL!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2295
+#: launcher/ui/MainWindow.cpp:2321
 msgctxt "MainWindow|"
 msgid "Rename Instance"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2325
+#: launcher/ui/MainWindow.cpp:2351
 msgctxt "MainWindow|"
 msgid ""
 "Your instance folder contains '!' and this is known to cause Java problems!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2327
+#: launcher/ui/MainWindow.cpp:2353
 #, qt-format
 msgctxt "MainWindow|"
 msgid ""
@@ -5079,7 +5084,7 @@ msgid ""
 "<br/> - move this installation of %1 to a different folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2336
+#: launcher/ui/MainWindow.cpp:2362
 msgctxt "MainWindow|"
 msgid ""
 "This is a problem: <br/> - The launcher will likely be deleted without "
@@ -5087,26 +5092,26 @@ msgid ""
 "it to a real location, not a temporary folder"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2344
+#: launcher/ui/MainWindow.cpp:2370
 msgctxt "MainWindow|"
 msgid ""
 "Your instance folder contains 'Rar$' - that means you haven't extracted the "
 "launcher archive!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2353
+#: launcher/ui/MainWindow.cpp:2379
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Your instance folder is in a temporary folder: '%1'!"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2367
+#: launcher/ui/MainWindow.cpp:2393
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Total playtime: %1 hours"
 msgstr ""
 
-#: launcher/ui/MainWindow.cpp:2369
+#: launcher/ui/MainWindow.cpp:2395
 #, qt-format
 msgctxt "MainWindow|"
 msgid "Total playtime: %1"
@@ -9123,34 +9128,44 @@ msgid ""
 "%1"
 msgstr ""
 
-#: launcher/minecraft/WorldList.cpp:227
+#: launcher/minecraft/WorldList.cpp:234
 msgctxt "WorldList|"
 msgid "Name"
 msgstr ""
 
-#: launcher/minecraft/WorldList.cpp:229
+#: launcher/minecraft/WorldList.cpp:236
 msgctxt "WorldList|"
 msgid "Game Mode"
 msgstr ""
 
-#: launcher/minecraft/WorldList.cpp:231
+#: launcher/minecraft/WorldList.cpp:238
 msgctxt "WorldList|"
 msgid "Last Played"
 msgstr ""
 
 #: launcher/minecraft/WorldList.cpp:240
 msgctxt "WorldList|"
+msgid "Day Count"
+msgstr ""
+
+#: launcher/minecraft/WorldList.cpp:249
+msgctxt "WorldList|"
 msgid "The name of the world."
 msgstr ""
 
-#: launcher/minecraft/WorldList.cpp:242
+#: launcher/minecraft/WorldList.cpp:251
 msgctxt "WorldList|"
 msgid "Game mode of the world."
 msgstr ""
 
-#: launcher/minecraft/WorldList.cpp:244
+#: launcher/minecraft/WorldList.cpp:253
 msgctxt "WorldList|"
 msgid "Date and time the world was last played."
+msgstr ""
+
+#: launcher/minecraft/WorldList.cpp:255
+msgctxt "WorldList|"
+msgid "The in-game day the world is on."
 msgstr ""
 
 #: launcher/ui/pages/instance/WorldListPage.ui:65
@@ -9238,17 +9253,17 @@ msgctxt "WorldListPage|"
 msgid "Manage datapacks inside the world."
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:119
+#: launcher/ui/pages/instance/WorldListPage.cpp:120
 msgctxt "WorldListPage|"
 msgid "Context menu"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:169
+#: launcher/ui/pages/instance/WorldListPage.cpp:170
 msgctxt "WorldListPage|"
 msgid "Are you sure?"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:170
+#: launcher/ui/pages/instance/WorldListPage.cpp:171
 msgctxt "WorldListPage|"
 msgid ""
 "This will remove the selected world permenantly.\n"
@@ -9257,70 +9272,70 @@ msgid ""
 "Do you want to continue?"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:210
+#: launcher/ui/pages/instance/WorldListPage.cpp:211
 #, qt-format
 msgctxt "WorldListPage|"
 msgid "Data packs for %1"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:319
+#: launcher/ui/pages/instance/WorldListPage.cpp:320
 msgctxt "WorldListPage|"
 msgid "No MCEdit found or set up!"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:320
+#: launcher/ui/pages/instance/WorldListPage.cpp:321
 msgctxt "WorldListPage|"
 msgid ""
 "You do not have MCEdit set up or it was moved.\n"
 "You can set it up in the global settings."
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:329
+#: launcher/ui/pages/instance/WorldListPage.cpp:330
 msgctxt "WorldListPage|"
 msgid "MCEdit failed to start!"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:330
+#: launcher/ui/pages/instance/WorldListPage.cpp:331
 msgctxt "WorldListPage|"
 msgid ""
 "MCEdit failed to start.\n"
 "It may be necessary to reinstall it."
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:394
+#: launcher/ui/pages/instance/WorldListPage.cpp:395
 msgctxt "WorldListPage|"
 msgid "Select a Minecraft world zip"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:395
+#: launcher/ui/pages/instance/WorldListPage.cpp:396
 msgctxt "WorldListPage|"
 msgid "Minecraft World Zip File (*.zip)"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:416
+#: launcher/ui/pages/instance/WorldListPage.cpp:417
 msgctxt "WorldListPage|"
 msgid "Copy World"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:416
+#: launcher/ui/pages/instance/WorldListPage.cpp:417
 msgctxt "WorldListPage|"
 msgid ""
 "Changing a world while Minecraft is running is potentially unsafe.\n"
 "Do you wish to proceed?"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:440
-#: launcher/ui/pages/instance/WorldListPage.cpp:463
+#: launcher/ui/pages/instance/WorldListPage.cpp:441
+#: launcher/ui/pages/instance/WorldListPage.cpp:464
 msgctxt "WorldListPage|"
 msgid "World name"
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:440
+#: launcher/ui/pages/instance/WorldListPage.cpp:441
 msgctxt "WorldListPage|"
 msgid "Enter a new name for the copy."
 msgstr ""
 
-#: launcher/ui/pages/instance/WorldListPage.cpp:463
+#: launcher/ui/pages/instance/WorldListPage.cpp:464
 msgctxt "WorldListPage|"
 msgid "Enter a new world name."
 msgstr ""

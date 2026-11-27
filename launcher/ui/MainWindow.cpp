@@ -907,6 +907,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
     // Update the menu when the active account changes.
     connect(APPLICATION->accounts().get(), &AccountList::defaultAccountChanged, this, &MainWindow::defaultAccountChanged);
     connect(APPLICATION->accounts().get(), &AccountList::listChanged, this, &MainWindow::repopulateAccountsMenu);
+    connect(APPLICATION->accounts().get(), &AccountList::listChanged, this, &MainWindow::updateToolsMenu);
 
     // Show initial account
     defaultAccountChanged();
@@ -1141,6 +1142,31 @@ void MainWindow::updateToolsMenu()
             {
                 APPLICATION->launch(m_selectedInstance, false);
             });
+    const auto accounts = APPLICATION->accounts();
+    QList<MinecraftAccountPtr> launchAccounts;
+    for (int row = 0; row < accounts->count(); ++row) {
+        const auto& entry = accounts->at(row);
+        if (entry.isAccount && entry.account)
+            launchAccounts.append(entry.account);
+    }
+    if (launchAccounts.size() > 1) {
+        auto* launchAs = launchMenu->addMenu(tr("Launch &As"));
+        for (const auto& account : launchAccounts) {
+            const auto label = profileInUseFilter(account->profileName(), account->gamerTag(), account->isInUse());
+            const auto face = account->getFace();
+            auto* action = launchAs->addAction(face.isNull() ? APPLICATION->getThemedIcon("noaccount") : QIcon(face), label);
+            const auto accountId = account->internalId();
+            connect(action, &QAction::triggered, this, [this, accountId] {
+                const auto instance = m_selectedInstance;
+                if (!instance || instance->isRunning() || !instance->canLaunch())
+                    return;
+                MinecraftAccountPtr account;
+                int row;
+                if (APPLICATION->accounts()->getAccountById(accountId, account, row))
+                    APPLICATION->launch(instance, true, nullptr, nullptr, account);
+            });
+        }
+    }
     QString profilersTitle = tr("Profilers");
     launchMenu->addSeparator()->setText(profilersTitle);
     launchOfflineMenu->addSeparator()->setText(profilersTitle);

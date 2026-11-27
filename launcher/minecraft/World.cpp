@@ -105,6 +105,8 @@ QString GameType::toLogString() const
 
 std::unique_ptr <nbt::tag_compound> parseLevelDat(QByteArray data)
 {
+    if (data.isEmpty())
+        return nullptr;
     QByteArray output;
     if(!GZip::unzip(data, output))
     {
@@ -147,19 +149,15 @@ QString getLevelDatFromFS(const QFileInfo &file)
     return worldDir.absoluteFilePath("level.dat");
 }
 
-QByteArray getLevelDatDataFromFS(const QFileInfo &file)
+static QByteArray readWorldFile(const QFileInfo& world, const QString& relativePath)
 {
-    auto fullFilePath = getLevelDatFromFS(file);
-    if(fullFilePath.isNull())
-    {
-        return QByteArray();
-    }
-    QFile f(fullFilePath);
-    if(!f.open(QIODevice::ReadOnly))
-    {
-        return QByteArray();
-    }
-    return f.readAll();
+    QFile file(QDir(world.filePath()).filePath(relativePath));
+    return file.open(QIODevice::ReadOnly) ? file.readAll() : QByteArray();
+}
+
+QByteArray getLevelDatDataFromFS(const QFileInfo& file)
+{
+    return readWorldFile(file, QStringLiteral("level.dat"));
 }
 
 bool putLevelDatDataToFS(const QFileInfo &file, QByteArray & data)
@@ -196,9 +194,13 @@ void World::repath(const QFileInfo &file)
 {
     m_containerFile = file;
     m_folderName = file.fileName();
+    m_containerOffsetPath.clear();
+    m_iconFile.clear();
+    m_randomSeed = nullopt;
+    m_dayCount = nullopt;
+    is_valid = false;
     if(file.isFile() && file.suffix() == "zip")
     {
-        m_iconFile = QString();
         readFromZip(file);
     }
     else if(file.isDir())
@@ -231,47 +233,40 @@ void World::readFromFS(const QFileInfo &file)
         is_valid = false;
         return;
     }
+    levelDatTime = QFileInfo(getLevelDatFromFS(file)).lastModified();
     loadFromLevelDat(bytes);
-    levelDatTime = file.lastModified();
+    loadSupplementalData([&file](const QString& name) { return readWorldFile(file, name); });
 }
 
 void World::readFromZip(const QFileInfo &file)
 {
     QuaZip zip(file.absoluteFilePath());
-    is_valid = zip.open(QuaZip::mdUnzip);
-    if (!is_valid)
-    {
+    if (!zip.open(QuaZip::mdUnzip))
         return;
-    }
-    auto location = MMCZip::findFolderOfFileInZip(&zip, "level.dat");
-    is_valid = !location.isEmpty();
-    if (!is_valid)
-    {
+
+    const auto location = MMCZip::findFolderOfFileInZip(&zip, "level.dat");
+    if (location.isNull() || !zip.setCurrentFile(location + "level.dat"))
         return;
-    }
-    m_containerOffsetPath = location;
+
     QuaZipFile zippedFile(&zip);
-    // read the install profile
-    is_valid = zip.setCurrentFile(location + "level.dat");
-    if (!is_valid)
-    {
+    if (!zippedFile.open(QIODevice::ReadOnly))
         return;
-    }
-    is_valid = zippedFile.open(QIODevice::ReadOnly);
+
+    m_containerOffsetPath = location;
     QuaZipFileInfo64 levelDatInfo;
     zippedFile.getFileInfo(&levelDatInfo);
-    auto modTime = levelDatInfo.getNTFSmTime();
-    if(!modTime.isValid())
-    {
-        modTime = levelDatInfo.dateTime;
-    }
-    levelDatTime = modTime;
-    if (!is_valid)
-    {
-        return;
-    }
+    levelDatTime = levelDatInfo.getNTFSmTime();
+    if (!levelDatTime.isValid())
+        levelDatTime = levelDatInfo.dateTime;
+
     loadFromLevelDat(zippedFile.readAll());
     zippedFile.close();
+    loadSupplementalData([&zip, &location](const QString& name) {
+        if (!zip.setCurrentFile(location + name))
+            return QByteArray();
+        QuaZipFile entry(&zip);
+        return entry.open(QIODevice::ReadOnly) ? entry.readAll() : QByteArray();
+    });
 }
 
 bool World::install(const QString &to, const QString &name)
@@ -428,10 +423,64 @@ optional<int> read_int (nbt::value& parent, const char * name)
     }
 }
 
+nbt::tag_compound* readCompound(nbt::tag_compound& parent, const char* name)
+{
+    try {
+        auto& child = parent.at(name);
+        if (child.get_type() == nbt::tag_type::Compound)
+            return &child.as<nbt::tag_compound>();
+    } catch (const std::out_of_range&) {
+    }
+    return nullptr;
+}
+
+optional<int64_t> readInteger(const nbt::tag_compound& parent, const char* name)
+{
+    try {
+        const auto& value = parent.at(name);
+        if (value.get_type() == nbt::tag_type::Long)
+            return value.as<nbt::tag_long>().get();
+        if (value.get_type() == nbt::tag_type::Int)
+            return value.as<nbt::tag_int>().get();
+    } catch (const std::out_of_range&) {
+    }
+    return nullopt;
+}
+
+int64_t ticksToDays(int64_t ticks)
+{
+    return ticks > 0 ? ticks / 24000 : 0;
+}
+
 GameType read_gametype(nbt::value& parent, const char * name) {
     return GameType(read_int(parent, name));
 }
 
+}
+
+void World::loadSupplementalData(const std::function<QByteArray(const QString&)>& readFile)
+{
+    if (!is_valid)
+        return;
+
+    if (!m_randomSeed) {
+        const auto generation = parseLevelDat(readFile(QStringLiteral("data/minecraft/world_gen_settings.dat")));
+        if (generation) {
+            if (auto* data = readCompound(*generation, "data"))
+                m_randomSeed = readInteger(*data, "seed");
+        }
+    }
+    if (!m_dayCount) {
+        const auto clocks = parseLevelDat(readFile(QStringLiteral("data/minecraft/world_clocks.dat")));
+        if (clocks) {
+            if (auto* data = readCompound(*clocks, "data")) {
+                if (auto* overworld = readCompound(*data, "minecraft:overworld")) {
+                    if (const auto ticks = readInteger(*overworld, "total_ticks"))
+                        m_dayCount = ticksToDays(*ticks);
+                }
+            }
+        }
+    }
 }
 
 void World::loadFromLevelDat(QByteArray data)
@@ -466,22 +515,21 @@ void World::loadFromLevelDat(QByteArray data)
 
     m_gameType = read_gametype(val, "GameType");
 
-    optional<int64_t> randomSeed;
-    try {
-        auto &WorldGen_val = val.at("WorldGenSettings");
-        randomSeed = read_long(WorldGen_val, "seed");
-    }
-    catch (const std::out_of_range &) {}
-    if(!randomSeed) {
-        randomSeed = read_long(val, "RandomSeed");
-    }
-    m_randomSeed = randomSeed ? *randomSeed : 0;
+    auto& world = val.as<nbt::tag_compound>();
+
+    // Before the daylight clock existed, Time still measured daylight.
+    auto ticks = readInteger(world, "DayTime");
+    if (!ticks && !readInteger(world, "DataVersion"))
+        ticks = readInteger(world, "Time");
+    m_dayCount = ticks ? optional<int64_t>(ticksToDays(*ticks)) : nullopt;
+
+    if (auto* generation = readCompound(world, "WorldGenSettings"))
+        m_randomSeed = readInteger(*generation, "seed");
+    if (!m_randomSeed)
+        m_randomSeed = readInteger(world, "RandomSeed");
 
     qDebug() << "World Name:" << m_actualName;
     qDebug() << "Last Played:" << m_lastPlayed.toString();
-    if(randomSeed) {
-        qDebug() << "Seed:" << *randomSeed;
-    }
     qDebug() << "GameType:" << m_gameType.toLogString();
 }
 

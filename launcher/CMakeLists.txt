@@ -120,6 +120,11 @@ add_unit_test(MMCZip
     LIBS Launcher_logic
     )
 
+add_unit_test(World
+    SOURCES minecraft/World_test.cpp
+    LIBS Launcher_logic
+    )
+
 add_unit_test(ThemeArchive
     SOURCES ui/themes/ThemeArchive_test.cpp
     LIBS Launcher_logic

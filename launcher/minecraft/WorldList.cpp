@@ -150,7 +150,7 @@ bool WorldList::resetIcon(int row)
 
 int WorldList::columnCount(const QModelIndex &parent) const
 {
-    return 3;
+    return ColumnCount;
 }
 
 QVariant WorldList::data(const QModelIndex &index, int role) const
@@ -179,10 +179,17 @@ QVariant WorldList::data(const QModelIndex &index, int role) const
         case LastPlayedColumn:
             return world.lastPlayed();
 
+        case DayCountColumn:
+            if (const auto days = world.dayCount())
+                return QVariant::fromValue<qlonglong>(*days);
+            return QVariant();
+
         default:
             return QVariant();
         }
 
+    case Qt::TextAlignmentRole:
+        return column == DayCountColumn ? QVariant(int(Qt::AlignRight | Qt::AlignVCenter)) : QVariant();
     case Qt::ToolTipRole:
     {
         return world.folderName();
@@ -229,6 +236,8 @@ QVariant WorldList::headerData(int section, Qt::Orientation orientation, int rol
             return tr("Game Mode");
         case LastPlayedColumn:
             return tr("Last Played");
+        case DayCountColumn:
+            return tr("Day Count");
         default:
             return QVariant();
         }
@@ -242,6 +251,8 @@ QVariant WorldList::headerData(int section, Qt::Orientation orientation, int rol
             return tr("Game mode of the world.");
         case LastPlayedColumn:
             return tr("Date and time the world was last played.");
+        case DayCountColumn:
+            return tr("The in-game day the world is on.");
         default:
             return QVariant();
         }
