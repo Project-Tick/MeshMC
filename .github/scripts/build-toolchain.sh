@@ -54,7 +54,7 @@ case "$PLATFORM" in
             zlib='T:/Qt6/mingw810_64/x86_64-w64-mingw32'
             zlib_bin='T:\Qt6\mingw810_64\x86_64-w64-mingw32\bin'
             mingw='T:\Qt6\mingw810_64'
-            qt='T:\Qt6\6.0.0\mingw81_64'
+            qt='T:\Qt6\6.0.4\mingw81_64'
             # This MinGW runtime lacks the PE load config security cookie required by subsystem 6.3+.
             pe_version='-Wl,--major-os-version,10,--minor-os-version,0,--major-subsystem-version,6,--minor-subsystem-version,2,--no-insert-timestamp'
             runtime_dlls=("$TOOLS/Qt6/openssl-x64/"{libcrypto-1_1-x64,libssl-1_1-x64}.dll)

@@ -1,0 +1,23 @@
+.env
+
+# KDevelop project files
+*.kdev4
+
+# Large files live outside git (archived and mirrored; checksums and READMEs are tracked)
+*.tar
+*.tar.zst
+*.tar.xz
+*.tar.gz
+*.zip
+*.qcow2
+*.iso
+
+# Container inputs too large for git (in the archives)
+windows-win32/Tools/
+windows-win32/GE-Proton*/
+
+# Build logs
+*.log
+
+# Python bytecode
+__pycache__/
