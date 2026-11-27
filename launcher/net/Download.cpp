@@ -148,6 +148,12 @@ void Download::startRequest()
     }
 
     request.setHeader(QNetworkRequest::UserAgentHeader, BuildConfig.USER_AGENT);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    if(m_options & Option::DisableHttp2)
+    {
+        request.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);
+    }
+#endif
 
     if (!BuildConfig.CURSEFORGE_API_KEY.isEmpty() && m_url.scheme() == "https" &&
         m_url.host() == "api.curseforge.com") {

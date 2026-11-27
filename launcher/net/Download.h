@@ -37,7 +37,9 @@ public: /* types */
         AcceptLocalFiles = 1,
         /// only the URL given, without falling back to the copies of its site (for a caller that
         /// goes through Net::Mirrors::candidates() itself, keeping files of one mirror together)
-        NoMirrors = 2
+        NoMirrors = 2,
+        /// opt out of Qt 6's default HTTP/2 negotiation
+        DisableHttp2 = 4
     };
     Q_DECLARE_FLAGS(Options, Option)
 

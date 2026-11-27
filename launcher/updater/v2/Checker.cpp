@@ -22,6 +22,9 @@ namespace {
 // a transfer that gets nothing for this long fails, and the next mirror is tried
 const int StallTimeout = 30 * 1000;
 
+// Use HTTP/1.1 for signed metadata to avoid HTTP/2 stream closures during release redirects.
+const auto MetadataDownloadOptions = Net::Download::Option::NoMirrors | Net::Download::Option::DisableHttp2;
+
 /*
  * Refuses a document whose detached signature doesn't verify over its exact bytes, or that
  * isn't accepted once it does, so the download moves on to the next mirror.
@@ -76,11 +79,15 @@ QString failure(Net::Download *download)
     {
         return QObject::tr("not found");
     }
-    if(download->httpStatus())
+    if(download->httpStatus() >= 400)
     {
         return QObject::tr("HTTP status %1").arg(download->httpStatus());
     }
-    return QObject::tr("network error %1").arg(download->networkError());
+    if(download->networkError() != QNetworkReply::NoError)
+    {
+        return QObject::tr("network error %1").arg(download->networkError());
+    }
+    return QObject::tr("HTTP status %1").arg(download->httpStatus());
 }
 
 }
@@ -181,7 +188,7 @@ void Checker::fetchFrom(const Fetch &fetch, int index)
     // a document and its signature from the same mirror, as they were written together: a
     // mirror that lags behind can't mix its signature with another mirror's document
     auto documentUrl = QUrl(fetch.urls[index]);
-    auto next = [this, fetch, index, documentUrl](Net::Download *download, const QString &error)
+    auto next = [this, fetch, index](Net::Download *download, const QString &error)
     {
         auto tried = fetch;
         if(download->wasNotFound())
@@ -189,11 +196,11 @@ void Checker::fetchFrom(const Fetch &fetch, int index)
             tried.notFound = true;
         }
         tried.errors.append(QString("%1: %2").arg(
-            documentUrl.toString(QUrl::FullyEncoded), error.isEmpty() ? failure(download) : error));
+            download->url().toString(QUrl::FullyEncoded), error.isEmpty() ? failure(download) : error));
         fetchFrom(tried, index + 1);
     };
     auto signature = std::make_shared<QByteArray>();
-    auto sigDownload = Net::Download::makeByteArray(signatureUrl(documentUrl), signature.get(), Net::Download::Option::NoMirrors);
+    auto sigDownload = Net::Download::makeByteArray(signatureUrl(documentUrl), signature.get(), MetadataDownloadOptions);
     sigDownload->addValidator(new Net::SizeValidator(MaxSignatureFileSize));
     sigDownload->setStallTimeout(StallTimeout);
     // the downloads are kept in m_download for as long as they run
@@ -206,7 +213,7 @@ void Checker::fetchFrom(const Fetch &fetch, int index)
     {
         auto data = std::make_shared<QByteArray>();
         auto error = std::make_shared<QString>();
-        auto download = Net::Download::makeByteArray(documentUrl, data.get(), Net::Download::Option::NoMirrors);
+        auto download = Net::Download::makeByteArray(documentUrl, data.get(), MetadataDownloadOptions);
         download->addValidator(new Net::SizeValidator(fetch.limit));
         download->addValidator(new SignatureValidator(*signature, fetch.trusted, fetch.accept, error));
         download->setStallTimeout(StallTimeout);
