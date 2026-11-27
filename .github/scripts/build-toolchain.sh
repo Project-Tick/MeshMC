@@ -51,8 +51,8 @@ case "$PLATFORM" in
         zlib_bin='T:\GnuWin32\bin'
         if [[ "$PLATFORM" == win64-qt6 ]]; then
             qt_major=6
-            zlib='T:/Qt6/zlib-x64'
-            zlib_bin='T:\Qt6\zlib-x64\bin'
+            zlib='T:/Qt6/mingw810_64/x86_64-w64-mingw32'
+            zlib_bin='T:\Qt6\mingw810_64\x86_64-w64-mingw32\bin'
             mingw='T:\Qt6\mingw810_64'
             qt='T:\Qt6\6.0.0\mingw81_64'
             # This MinGW runtime lacks the PE load config security cookie required by subsystem 6.3+.
