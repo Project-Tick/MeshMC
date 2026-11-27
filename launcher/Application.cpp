@@ -651,6 +651,8 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
 
         // Folders
         m_settings->registerSetting("InstanceDir", "instances");
+        m_settings->registerSetting("AdditionalInstanceDirs", QString());
+        m_settings->registerSetting("LastUsedInstDirForNewInstance", QString());
         m_settings->registerSetting({"CentralModsDir", "ModsDir"}, "mods");
         m_settings->registerSetting("IconsDir", "icons");
         // the icon key instances without an icon of their own show; empty: MultiMC's logo
@@ -897,6 +899,8 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         }
         m_instances.reset(new InstanceList(m_settings, instDir, this));
         connect(InstDirSetting.get(), &Setting::SettingChanged, m_instances.get(), &InstanceList::on_InstFolderChanged);
+        connect(m_settings->getSetting("AdditionalInstanceDirs").get(), &Setting::SettingChanged,
+                m_instances.get(), &InstanceList::on_InstFolderChanged);
         qDebug() << "Loading Instances...";
         m_instances->loadList();
         qDebug() << "<> Instances loaded.";

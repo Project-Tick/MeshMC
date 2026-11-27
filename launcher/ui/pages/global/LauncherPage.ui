@@ -51,6 +51,28 @@
           <string>Folders</string>
          </property>
          <layout class="QGridLayout" name="foldersBoxLayout">
+          <item row="4" column="0">
+           <widget class="QLabel" name="additionalInstDirsLabel">
+            <property name="text"><string>Additional instance folders:</string></property>
+            <property name="buddy"><cstring>additionalInstDirs</cstring></property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QListWidget" name="additionalInstDirs">
+            <property name="maximumSize"><size><width>16777215</width><height>96</height></size></property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QPushButton" name="addInstDirBtn">
+            <property name="text"><string>Add…</string></property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QPushButton" name="removeInstDirBtn">
+            <property name="text"><string>Remove</string></property>
+            <property name="enabled"><bool>false</bool></property>
+           </widget>
+          </item>
           <item row="2" column="2">
            <widget class="QToolButton" name="iconsDirBrowseBtn">
             <property name="text">

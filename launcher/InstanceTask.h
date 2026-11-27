@@ -38,6 +38,9 @@ public:
     {
         m_instGroup = group;
     }
+    void setTargetInstanceDir(const QString& dir) { m_targetInstanceDir = dir; }
+    QString targetInstanceDir() const { return m_targetInstanceDir; }
+
     QString overrideInstance() const { return m_overrideInstance; }
 
     QString group() const
@@ -52,4 +55,5 @@ protected: /* data */
     QString m_instGroup;
     QString m_stagingPath;
     QString m_overrideInstance;
+    QString m_targetInstanceDir;
 };

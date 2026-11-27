@@ -58,19 +58,10 @@ InstanceList::InstanceList(SettingsObjectPtr settings, const QString & instDir, 
     : QAbstractListModel(parent), m_globalSettings(settings)
 {
     resumeWatch();
-    // Create aand normalize path
-    if (!QDir::current().exists(instDir))
-    {
-        QDir::current().mkpath(instDir);
-    }
-
     connect(this, &InstanceList::instancesChanged, this, &InstanceList::providerUpdated);
-
-    // NOTE: canonicalPath requires the path to exist. Do not move this above the creation block!
-    m_instDir = QDir(instDir).canonicalPath();
     m_watcher = new QFileSystemWatcher(this);
     connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, &InstanceList::instanceDirContentsChanged);
-    m_watcher->addPath(m_instDir);
+    refreshInstanceDirs(instDir);
 }
 
 InstanceList::~InstanceList()
@@ -342,32 +333,25 @@ static QMap<InstanceId, InstanceLocator> getIdMapping(const QList<InstancePtr> &
 
 QList< InstanceId > InstanceList::discoverInstances()
 {
-    qDebug() << "Discovering instances in" << m_instDir;
+    m_instancePaths.clear();
     QList<InstanceId> out;
-    QDirIterator iter(m_instDir, QDir::Dirs | QDir::NoDot | QDir::NoDotDot | QDir::Readable | QDir::Hidden, QDirIterator::FollowSymlinks);
-    while (iter.hasNext())
-    {
-        QString subDir = iter.next();
-        QFileInfo dirInfo(subDir);
-        if (!QFileInfo(FS::PathCombine(subDir, "instance.cfg")).exists())
-            continue;
-        // if it is a symlink, ignore it if it goes to the instance folder
-        if(dirInfo.isSymLink())
-        {
-            QFileInfo targetInfo(dirInfo.symLinkTarget());
-            QFileInfo instDirInfo(m_instDir);
-            if(targetInfo.canonicalPath() == instDirInfo.canonicalFilePath())
-            {
-                qDebug() << "Ignoring symlink" << subDir << "that leads into the instances folder";
+    for (const auto& root : m_instDirs) {
+        QDirIterator iter(root, QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable | QDir::Hidden);
+        while (iter.hasNext()) {
+            const auto path = iter.next();
+            const auto id = iter.fileName();
+            if (id == QStringLiteral("_LAUNCHER_TEMP") || m_instancePaths.contains(id)
+                || !QFileInfo(FS::PathCombine(path, "instance.cfg")).isFile()) {
                 continue;
             }
+            const QFileInfo info(path);
+            if (info.isSymLink() && m_instDirs.contains(QFileInfo(info.symLinkTarget()).canonicalPath()))
+                continue;
+
+            m_instancePaths.insert(id, path);
+            out.append(id);
         }
-        auto id = dirInfo.fileName();
-        out.append(id);
-        qDebug() << "Found instance ID" << id;
     }
-    instanceSet = QtCompat::toSet(out);
-    m_instancesProbed = true;
     return out;
 }
 
@@ -379,23 +363,19 @@ InstanceList::InstListError InstanceList::loadList()
 
     auto existingIds = getIdMapping(m_instances);
 
+    QStringList replacements;
     QList<InstancePtr> newList;
-
-    for(auto & id: discoverInstances())
-    {
-        if(existingIds.contains(id))
-        {
-            auto instPair = existingIds[id];
-            existingIds.remove(id);
-            qDebug() << "Should keep and soft-reload" << id;
-        }
-        else
-        {
-            InstancePtr instPtr = loadInstance(id);
-            if(instPtr)
-            {
-                newList.append(instPtr);
-            }
+    const auto discovered = discoverInstances();
+    for (const auto& id : discovered) {
+        auto existing = existingIds.find(id);
+        if (existing == existingIds.end()) {
+            auto instance = loadInstance(id);
+            if (instance)
+                newList.append(instance);
+        } else if (existing.value().first->instanceRoot() == m_instancePaths.value(id)) {
+            existingIds.erase(existing);
+        } else {
+            replacements.append(id);
         }
     }
 
@@ -446,6 +426,11 @@ InstanceList::InstListError InstanceList::loadList()
         {
             removeNow();
         }
+    }
+    for (const auto& id : replacements) {
+        auto instance = loadInstance(id);
+        if (instance)
+            newList.append(instance);
     }
     // the instances kept may be in other groups now
     if(!m_instances.isEmpty())
@@ -566,7 +551,7 @@ InstancePtr InstanceList::loadInstance(const InstanceId& id)
         loadGroupList();
     }
 
-    auto instanceRoot = FS::PathCombine(m_instDir, id);
+    const auto instanceRoot = m_instancePaths.value(id);
     auto instanceSettings = std::make_shared<INISettingsObject>(FS::PathCombine(instanceRoot, "instance.cfg"));
     InstancePtr inst;
 
@@ -593,13 +578,7 @@ InstancePtr InstanceList::loadInstance(const InstanceId& id)
 void InstanceList::saveGroupList()
 {
     qDebug() << "Will save group list now.";
-    if(!m_instancesProbed)
-    {
-        qDebug() << "Group saving prevented because we don't know the full list of instances yet.";
-        return;
-    }
-    WatchLock foo(m_watcher, m_instDir);
-    QString groupFileName = m_instDir + "/instgroups.json";
+    const auto groupFileName = QDir::current().absoluteFilePath("instgroups.json");
     QMap<QString, QSet<QString>> reverseGroupMap;
     for (auto iter = m_instanceGroupIndex.begin(); iter != m_instanceGroupIndex.end(); iter++)
     {
@@ -607,12 +586,6 @@ void InstanceList::saveGroupList()
         QString group = iter.value();
         if (group.isEmpty())
             continue;
-        if(!instanceSet.contains(id))
-        {
-            qDebug() << "Skipping saving missing instance" << id << "to groups list.";
-            continue;
-        }
-
         if (!reverseGroupMap.count(group))
         {
             QSet<QString> set;
@@ -658,21 +631,24 @@ void InstanceList::saveGroupList()
 void InstanceList::loadGroupList()
 {
     qDebug() << "Will load group list now.";
+    const auto groupFileName = QDir::current().absoluteFilePath("instgroups.json");
+    auto source = groupFileName;
+    if (!QFileInfo::exists(source) && !m_instDir.isEmpty())
+        source = QDir(m_instDir).absoluteFilePath("instgroups.json");
 
-    QString groupFileName = m_instDir + "/instgroups.json";
-
-    // no group file: no groups (also when it went away while running; one that can't be read or
-    // parsed below leaves the groups as they are, it may be in the middle of an edit)
-    if (!QFileInfo(groupFileName).exists())
-    {
+    // Read the legacy primary-folder file until it has been migrated.
+    if (!QFileInfo::exists(source)) {
         m_instanceGroupIndex.clear();
+        m_groupNameCache.clear();
+        m_collapsedGroups.clear();
+        m_groupsLoaded = true;
         return;
     }
 
     QByteArray jsonData;
     try
     {
-        jsonData = FS::read(groupFileName);
+        jsonData = FS::read(source);
     }
     catch (const FS::FileSystemException &e)
     {
@@ -714,6 +690,7 @@ void InstanceList::loadGroupList()
 
     QSet<QString> groupSet;
     m_instanceGroupIndex.clear();
+    m_collapsedGroups.clear();
 
     // Iterate through all the groups.
     QJsonObject groupMapping = rootObj.value("groups").toObject();
@@ -752,8 +729,10 @@ void InstanceList::loadGroupList()
         }
     }
     m_groupsLoaded = true;
-    m_groupNameCache.unite(groupSet);
+    m_groupNameCache = groupSet;
     qDebug() << "Group list loaded.";
+    if (source != groupFileName)
+        saveGroupList();
 }
 
 void InstanceList::instanceDirContentsChanged(const QString& path)
@@ -762,19 +741,53 @@ void InstanceList::instanceDirContentsChanged(const QString& path)
     emit instancesChanged();
 }
 
-void InstanceList::on_InstFolderChanged(const Setting &setting, QVariant value)
+QStringList InstanceList::decodeInstanceDirList(const QVariant& value)
 {
-    QString newInstDir = QDir(value.toString()).canonicalPath();
-    if(newInstDir != m_instDir)
-    {
-        if(m_groupsLoaded)
-        {
-            saveGroupList();
-        }
-        m_instDir = newInstDir;
-        m_groupsLoaded = false;
-        emit instancesChanged();
+    QStringList dirs;
+    const auto array = QJsonDocument::fromJson(value.toString().toUtf8()).array();
+    for (const auto& item : array) {
+        if (item.isString() && !item.toString().isEmpty())
+            dirs.append(item.toString());
     }
+    return dirs;
+}
+
+QString InstanceList::encodeInstanceDirList(const QStringList& dirs)
+{
+    return QString::fromUtf8(QJsonDocument(QJsonArray::fromStringList(dirs)).toJson(QJsonDocument::Compact));
+}
+
+void InstanceList::refreshInstanceDirs(const QString& primary)
+{
+    QString primaryDir;
+    if (!primary.isEmpty() && QDir().mkpath(primary))
+        primaryDir = QDir(primary).canonicalPath();
+
+    QStringList dirs;
+    if (!primaryDir.isEmpty())
+        dirs.append(primaryDir);
+    for (const auto& additional : decodeInstanceDirList(m_globalSettings->get("AdditionalInstanceDirs"))) {
+        const auto dir = QDir(additional).canonicalPath();
+        if (!dir.isEmpty() && !dirs.contains(dir))
+            dirs.append(dir);
+    }
+    if (m_instDir == primaryDir && m_instDirs == dirs)
+        return;
+
+    const auto watched = m_watcher->directories();
+    if (!watched.isEmpty())
+        m_watcher->removePaths(watched);
+    if (!dirs.isEmpty())
+        m_watcher->addPaths(dirs);
+
+    m_instDir = primaryDir;
+    m_instDirs = dirs;
+}
+
+void InstanceList::on_InstFolderChanged(const Setting&, QVariant)
+{
+    refreshInstanceDirs(m_globalSettings->get("InstanceDir").toString());
+    emit instancesChanged();
 }
 
 void InstanceList::on_GroupStateChanged(const QString& group, bool collapsed)
@@ -974,6 +987,8 @@ public:
         m_child.reset(child);
         if (auto* instanceTask = qobject_cast<InstanceTask*>(child))
             m_overrideInstance = instanceTask->overrideInstance();
+        if (!m_overrideInstance.isEmpty())
+            m_updateTarget = parent->getInstanceById(m_overrideInstance);
         connect(child, &Task::succeeded, this, &InstanceStaging::childSucceded);
         connect(child, &Task::failed, this, &InstanceStaging::childFailed);
         connect(child, &Task::status, this, &InstanceStaging::setStatus);
@@ -1033,7 +1048,8 @@ private slots:
         if (!m_overrideInstance.isEmpty()) {
             auto instance = std::dynamic_pointer_cast<MinecraftInstance>(
                 m_parent->getInstanceById(m_overrideInstance));
-            if (!instance || instance->isRunning() || instance->isApplyingPackUpdate()) {
+            if (!instance || instance != m_updateTarget.lock()
+                || instance->isRunning() || instance->isApplyingPackUpdate()) {
                 m_parent->destroyStagingPath(m_stagingPath);
                 emitFailed(tr("The instance is no longer available for an update."));
                 return;
@@ -1095,6 +1111,7 @@ private:
     ExponentialSeries backoff;
     QString m_stagingPath;
     QString m_overrideInstance;
+    std::weak_ptr<BaseInstance> m_updateTarget;
     InstancePtr m_updatingInstance;
     QFuture<QString> m_commit;
     QFutureWatcher<QString> m_commitWatcher;
@@ -1107,44 +1124,78 @@ private:
 
 Task * InstanceList::wrapInstanceTask(InstanceTask * task)
 {
-    auto stagingPath = getStagedInstancePath();
+    QString stagingPath;
+    if (task->overrideInstance().isEmpty()) {
+        stagingPath = getStagedInstancePath(task->targetInstanceDir());
+    } else if (const auto instance = getInstanceById(task->overrideInstance())) {
+        stagingPath = getStagedInstancePath(QFileInfo(instance->instanceRoot()).absolutePath());
+    }
     task->setStagingPath(stagingPath);
     task->setParentSettings(m_globalSettings);
     return new InstanceStaging(this, task, stagingPath, task->name(), task->group());
 }
 
-QString InstanceList::getStagedInstancePath()
+QString InstanceList::getStagedInstancePath(const QString& targetDir)
 {
-    QString key = QUuid::createUuid().toString();
-    QString relPath = FS::PathCombine("_LAUNCHER_TEMP/" , key);
-    QDir rootPath(m_instDir);
-    auto path = FS::PathCombine(m_instDir, relPath);
-    if(!rootPath.mkpath(relPath))
-    {
-        return QString();
-    }
-    return path;
+    const auto root = targetDir.isEmpty() ? m_instDir : targetDir;
+    if (!m_instDirs.contains(root))
+        return {};
+
+    const QDir dir(root);
+    if (!dir.exists() || QFileInfo(dir.absoluteFilePath("_LAUNCHER_TEMP")).isSymLink())
+        return {};
+    const auto relative = FS::PathCombine("_LAUNCHER_TEMP", QUuid::createUuid().toString());
+    return dir.mkpath(relative) ? dir.absoluteFilePath(relative) : QString();
+}
+
+QString InstanceList::stagingRoot(const QString& path) const
+{
+    if (path.isEmpty())
+        return {};
+    const QDir parent = QFileInfo(path).absoluteDir();
+    if (parent.dirName() != QStringLiteral("_LAUNCHER_TEMP"))
+        return {};
+    const auto root = QFileInfo(parent.absolutePath()).absolutePath();
+    return m_instDirs.contains(root) ? root : QString();
 }
 
 bool InstanceList::commitStagedInstance(const QString& path, const QString& instanceName, const QString& groupName)
 {
-    QDir dir;
-    QString instID = FS::DirNameFromString(instanceName, m_instDir);
+    const auto root = stagingRoot(path);
+    if (root.isEmpty())
+        return false;
+
+    auto baseName = FS::RemoveInvalidFilenameChars(instanceName);
+    if (baseName.isEmpty() || baseName == QStringLiteral(".") || baseName == QStringLiteral(".."))
+        baseName = QStringLiteral("instance");
+    QString id;
+    for (int suffix = 0; suffix <= 9000; ++suffix) {
+        const auto candidate = suffix == 0 ? baseName : baseName + QString::number(suffix);
+        const auto occupied = std::any_of(m_instDirs.cbegin(), m_instDirs.cend(), [&](const QString& dir) {
+            const QFileInfo entry(FS::PathCombine(dir, candidate));
+            return entry.exists() || entry.isSymLink();
+        });
+        if (!occupied) {
+            id = candidate;
+            break;
+        }
+    }
+    if (id.isEmpty())
+        return false;
+
     {
-        WatchLock lock(m_watcher, m_instDir);
-        QString destination = FS::PathCombine(m_instDir, instID);
-        if(!dir.rename(path, destination))
-        {
+        WatchLock lock(m_watcher, root);
+        const auto destination = FS::PathCombine(root, id);
+        if (!QDir().rename(path, destination)) {
             qWarning() << "Failed to move" << path << "to" << destination;
             return false;
         }
-        m_instanceGroupIndex[instID] = groupName;
-        instanceSet.insert(instID);
-        m_groupNameCache.insert(groupName);
-        emit instancesChanged();
-        emit instanceSelectRequest(instID);
     }
+    m_instanceGroupIndex[id] = groupName;
+    m_groupNameCache.insert(groupName);
     saveGroupList();
+    emit instancesChanged();
+    emit instanceSelectRequest(id);
     return true;
 }
 

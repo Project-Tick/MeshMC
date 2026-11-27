@@ -23,6 +23,7 @@
 #include "settings/SettingsObject.h"
 #include <FileSystem.h>
 #include "Application.h"
+#include "InstanceList.h"
 
 #include <QApplication>
 #include <QProcess>
@@ -44,6 +45,27 @@ LauncherPage::LauncherPage(QWidget *parent) : QWidget(parent), ui(new Ui::Launch
 
     ui->sortingModeGroup->setId(ui->sortByNameBtn, Sort_Name);
     ui->sortingModeGroup->setId(ui->sortLastLaunchedBtn, Sort_LastLaunch);
+
+    connect(ui->addInstDirBtn, &QPushButton::clicked, this, [this] {
+        const auto path = QFileDialog::getExistingDirectory(this, tr("Add Instance Folder"));
+        if (path.isEmpty())
+            return;
+        if (FS::checkProblemticPathJava(QDir(path))) {
+            QMessageBox::warning(this, tr("Invalid Instance Folder"),
+                                 tr("Choose a folder without an exclamation mark. Java may fail to launch from this folder."));
+            return;
+        }
+        const auto dir = QDir(path).canonicalPath();
+        if (!dir.isEmpty() && dir != QDir(ui->instDirTextBox->text()).canonicalPath()
+            && ui->additionalInstDirs->findItems(dir, Qt::MatchExactly).isEmpty()) {
+            ui->additionalInstDirs->addItem(dir);
+        }
+    });
+    connect(ui->removeInstDirBtn, &QPushButton::clicked, this, [this] {
+        delete ui->additionalInstDirs->takeItem(ui->additionalInstDirs->currentRow());
+    });
+    connect(ui->additionalInstDirs, &QListWidget::currentItemChanged, this,
+            [this](QListWidgetItem* current) { ui->removeInstDirBtn->setEnabled(current != nullptr); });
 
     m_languageModel = APPLICATION->translations();
     loadSettings();
@@ -183,6 +205,10 @@ void LauncherPage::applySettings()
     // Folders
     // TODO: Offer to move instances to new instance folder.
     s->set("InstanceDir", ui->instDirTextBox->text());
+    QStringList additionalDirs;
+    for (int row = 0; row < ui->additionalInstDirs->count(); ++row)
+        additionalDirs.append(ui->additionalInstDirs->item(row)->text());
+    s->set("AdditionalInstanceDirs", InstanceList::encodeInstanceDirList(additionalDirs));
     s->set("CentralModsDir", ui->modsDirTextBox->text());
     s->set("IconsDir", ui->iconsDirTextBox->text());
     s->set("SkinsDir", ui->skinsDirTextBox->text());
@@ -212,6 +238,8 @@ void LauncherPage::loadSettings()
 
     // Folders
     ui->instDirTextBox->setText(s->get("InstanceDir").toString());
+    ui->additionalInstDirs->clear();
+    ui->additionalInstDirs->addItems(InstanceList::decodeInstanceDirList(s->get("AdditionalInstanceDirs")));
     ui->modsDirTextBox->setText(s->get("CentralModsDir").toString());
     ui->iconsDirTextBox->setText(s->get("IconsDir").toString());
     ui->skinsDirTextBox->setText(s->get("SkinsDir").toString());

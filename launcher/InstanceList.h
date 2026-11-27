@@ -111,7 +111,12 @@ public:
      * Create a new empty staging area for instance creation and @return a path/key top commit it later.
      * Used by instance manipulation tasks.
      */
-    QString getStagedInstancePath();
+    QString getStagedInstancePath(const QString& targetDir = QString());
+
+    QString primaryDir() const { return m_instDir; }
+    QStringList instanceDirs() const { return m_instDirs; }
+    static QStringList decodeInstanceDirList(const QVariant& value);
+    static QString encodeInstanceDirList(const QStringList& dirs);
 
     /**
      * Commit the staging area given by @keyPath to the provider - used when creation succeeds.
@@ -163,6 +168,8 @@ private:
     void saveGroupList();
     QList<InstanceId> discoverInstances();
     InstancePtr loadInstance(const InstanceId& id);
+    void refreshInstanceDirs(const QString& primary);
+    QString stagingRoot(const QString& path) const;
 
 private:
     int m_watchLevel = 0;
@@ -173,11 +180,11 @@ private:
 
     SettingsObjectPtr m_globalSettings;
     QString m_instDir;
+    QStringList m_instDirs;
+    QMap<InstanceId, QString> m_instancePaths;
     QFileSystemWatcher * m_watcher;
     // FIXME: this is so inefficient that looking at it is almost painful.
     QSet<QString> m_collapsedGroups;
     QMap<InstanceId, GroupId> m_instanceGroupIndex;
-    QSet<InstanceId> instanceSet;
     bool m_groupsLoaded = false;
-    bool m_instancesProbed = false;
 };

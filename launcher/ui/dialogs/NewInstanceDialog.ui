@@ -26,6 +26,15 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
+     <item row="2" column="1">
+      <widget class="QLabel" name="instanceDirLabel">
+       <property name="text"><string>&amp;Folder:</string></property>
+       <property name="buddy"><cstring>instanceDirBox</cstring></property>
+      </widget>
+     </item>
+     <item row="2" column="2" colspan="2">
+      <widget class="QComboBox" name="instanceDirBox"/>
+     </item>
      <item row="0" column="2">
       <widget class="QLineEdit" name="instNameTextBox"/>
      </item>
@@ -88,6 +97,7 @@
   <tabstop>iconButton</tabstop>
   <tabstop>instNameTextBox</tabstop>
   <tabstop>groupBox</tabstop>
+  <tabstop>instanceDirBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -62,6 +62,7 @@
 #include <net/NetJob.h>
 #include <net/Download.h>
 #include <news/NewsChecker.h>
+#include "ui/dialogs/NewsViewerDialog.h"
 #include <notifications/NotificationChecker.h>
 #include <tools/BaseProfiler.h>
 #include <updater/v2/Checker.h>
@@ -495,7 +496,7 @@ public:
         actionMoreNews->setObjectName(QStringLiteral("actionMoreNews"));
         actionMoreNews->setIcon(APPLICATION->getThemedIcon("news"));
         actionMoreNews.setTextId(QT_TRANSLATE_NOOP("MainWindow", "More news..."));
-        actionMoreNews.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the development blog to read more news about %1."));
+        actionMoreNews.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Read news in the launcher."));
         all_actions.append(&actionMoreNews);
         newsToolBar->addAction(actionMoreNews);
 
@@ -755,6 +756,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
         ui->newsToolBar->insertWidget(ui->actionMoreNews, newsLabel);
         QObject::connect(newsLabel, &QAbstractButton::clicked, this, &MainWindow::newsButtonClicked);
         QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this, &MainWindow::updateNewsLabel);
+        QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoadingFailed, this, &MainWindow::updateNewsLabel);
         updateNewsLabel();
     }
 
@@ -1946,7 +1948,9 @@ void MainWindow::deleteGroup()
 
 void MainWindow::on_actionViewInstanceFolder_triggered()
 {
-    DesktopServices::openDirectory(APPLICATION->settings()->get("InstanceDir").toString());
+    const auto root = APPLICATION->instances()->primaryDir();
+    if (!root.isEmpty())
+        DesktopServices::openDirectory(root);
 }
 
 void MainWindow::refreshInstances()
@@ -2043,20 +2047,14 @@ void MainWindow::on_actionPatreon_triggered()
 
 void MainWindow::on_actionMoreNews_triggered()
 {
-    DesktopServices::openUrl(QUrl(BuildConfig.NEWS_URL));
+    NewsViewerDialog dialog(*m_newsChecker, true, this);
+    dialog.exec();
 }
 
 void MainWindow::newsButtonClicked()
 {
-    QList<NewsEntryPtr> entries = m_newsChecker->getNewsEntries();
-    if (entries.count() > 0)
-    {
-        DesktopServices::openUrl(QUrl(entries[0]->link));
-    }
-    else
-    {
-        DesktopServices::openUrl(QUrl(BuildConfig.NEWS_URL));
-    }
+    NewsViewerDialog dialog(*m_newsChecker, false, this);
+    dialog.exec();
 }
 
 void MainWindow::on_actionAbout_triggered()

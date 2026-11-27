@@ -293,6 +293,8 @@ set(NEWS_SOURCES
     news/NewsChecker.cpp
     news/NewsEntry.h
     news/NewsEntry.cpp
+    ui/dialogs/NewsViewerDialog.h
+    ui/dialogs/NewsViewerDialog.cpp
 )
 
 # Icon interface

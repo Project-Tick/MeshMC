@@ -72,6 +72,16 @@ NewInstanceDialog::NewInstanceDialog(const QString & initialGroup, const QString
     ui->groupBox->setCurrentIndex(index);
     ui->groupBox->lineEdit()->setPlaceholderText(tr("No group"));
 
+    const auto dirs = APPLICATION->instances()->instanceDirs();
+    for (const auto& dir : dirs)
+        ui->instanceDirBox->addItem(QDir::toNativeSeparators(dir), dir);
+    const auto lastDir = APPLICATION->settings()->get("LastUsedInstDirForNewInstance").toString();
+    const auto lastIndex = ui->instanceDirBox->findData(lastDir);
+    if (lastIndex >= 0)
+        ui->instanceDirBox->setCurrentIndex(lastIndex);
+    ui->instanceDirLabel->setVisible(dirs.size() > 1);
+    ui->instanceDirBox->setVisible(dirs.size() > 1);
+
 
     // NOTE: m_buttons must be initialized before PageContainer, because it indirectly accesses m_buttons through setSuggestedPack! Do not move this below.
     m_buttons = new QDialogButtonBox(QDialogButtonBox::Help | QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -201,6 +211,9 @@ InstanceTask * NewInstanceDialog::extractTask()
     creationTask.release();
     extracted->setName(instName());
     extracted->setGroup(instGroup());
+    const auto dir = ui->instanceDirBox->currentData().toString();
+    extracted->setTargetInstanceDir(dir);
+    APPLICATION->settings()->set("LastUsedInstDirForNewInstance", dir);
     extracted->setIcon(iconKey());
     return extracted;
 }
