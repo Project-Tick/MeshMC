@@ -85,24 +85,23 @@ set(Launcher_NEWS_URL "https://projecttick.org/news" CACHE STRING "URL to open L
 set(Launcher_NEWS_RSS_URL "https://projecttick.org/feed/feed.xml" CACHE STRING "URL to fetch Launcher's news RSS feed from.")
 
 ######## Set version numbers ########
-# The version is 5.<minor>.<build> (the Design repo's Updater.md, Versions): the minor version
-# goes up here, by hand, when work on a bigger user-facing change starts, so the builds working
-# towards it carry it, and Stable gets it when one of them is promoted. The major version
-# changes only for a break (the data layout move, say). The build number comes from the release
-# pipeline and only goes up. Tagging a build (Testing, Stable) never changes its version.
+# Published versions are major.minor.series. CI allocates the series component
+# separately from the updater's globally increasing build ID.
 set(Launcher_VERSION_MAJOR    12)
 set(Launcher_VERSION_MINOR    0)
 
-# Build number
-set(Launcher_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
-# Windows version resources hold each part in 16 bits
-if(Launcher_VERSION_BUILD GREATER 65535)
-    message(FATAL_ERROR "Build number ${Launcher_VERSION_BUILD} doesn't fit a Windows version resource (at most 65535)")
-endif()
-if(Launcher_VERSION_BUILD LESS 0)
+set(Launcher_VERSION_BUILD -1 CACHE STRING "Global updater build ID. -1 for no build ID.")
+set(Launcher_VERSION_SERIES -1 CACHE STRING "Version within the major.minor series. -1 for the legacy default.")
+if(Launcher_VERSION_SERIES GREATER_EQUAL 0)
+    set(Launcher_VERSION_BUILD_PART ${Launcher_VERSION_SERIES})
+elseif(Launcher_VERSION_BUILD LESS 0)
     set(Launcher_VERSION_BUILD_PART 0)
 else()
     set(Launcher_VERSION_BUILD_PART ${Launcher_VERSION_BUILD})
+endif()
+# Windows file version fields each hold 16 bits.
+if(Launcher_VERSION_BUILD_PART GREATER 65535)
+    message(FATAL_ERROR "Version component ${Launcher_VERSION_BUILD_PART} exceeds the Windows limit of 65535")
 endif()
 set(Launcher_VERSION_NAME "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_BUILD_PART}")
 

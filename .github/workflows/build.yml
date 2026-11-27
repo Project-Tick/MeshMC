@@ -33,45 +33,33 @@ jobs:
     name: Allocate updater build number
     if: ${{ github.event_name == 'push' && github.ref_type == 'branch' && (github.ref_name == 'master' || github.ref_name == 'develop' || github.ref_name == 'testing') }}
     runs-on: ubuntu-slim
+    permissions:
+      contents: read
     outputs:
       build-number: ${{ steps.allocate.outputs.build-number }}
+      version: ${{ steps.allocate.outputs.version }}
+      series-number: ${{ steps.allocate.outputs.series-number }}
     steps:
-      - name: Allocate next build number
+      - uses: actions/checkout@v7
+      - name: Allocate next build number and version
         id: allocate
-        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          max_build=0
-          page=1
-          while true; do
-            response="$(curl -sS -w $'\n%{http_code}' \
-              "https://api.github.com/repos/Project-Tick/MeshMC-Updates/git/matching-refs/tags/build-?per_page=100&page=${page}")"
-            status="${response##*$'\n'}"
-            refs="${response%$'\n'*}"
-            if [[ "$status" == "409" && "$page" == "1" ]]; then
-              break
-            fi
-            if [[ "$status" != "200" ]]; then
-              echo "::error::Could not read build tags (GitHub API status $status)."
+          repo=Project-Tick/MeshMC-Updates
+          refs="$RUNNER_TEMP/updater-refs.json"
+          releases="$RUNNER_TEMP/updater-releases.json"
+          if ! gh api --paginate --slurp "repos/$repo/git/matching-refs/tags/build-?per_page=100" > "$refs.pages" 2> "$refs.error"; then
+            if ! grep -q 'HTTP 409' "$refs.error"; then
+              cat "$refs.error" >&2
               exit 1
             fi
-            count="$(python3 -c 'import json,sys; print(len(json.load(sys.stdin)))' <<<"$refs")"
-            if [[ "$count" == "0" ]]; then
-              break
-            fi
-            max_build="$(python3 -c 'import json,sys; maximum=int(sys.argv[1]); maximum=max([maximum]+[int(r["ref"][16:]) for r in json.load(sys.stdin) if r.get("ref","").startswith("refs/tags/build-") and r["ref"][16:].isdigit()]); print(maximum)' "$max_build" <<<"$refs")"
-            if [[ "$count" -lt 100 ]]; then
-              break
-            fi
-            page=$((page + 1))
-          done
-          next_build=$((max_build + 1))
-          if [[ "$next_build" -gt 65535 ]]; then
-            echo "::error::Updater build number $next_build exceeds the Windows version limit."
-            exit 1
+            printf '[]\n' > "$refs.pages"
           fi
-          echo "build-number=$next_build" >> "$GITHUB_OUTPUT"
-          echo "Allocated updater build $next_build"
+          jq 'add // []' "$refs.pages" > "$refs"
+          gh api --paginate --slurp "repos/$repo/releases?per_page=100" | jq 'add // []' > "$releases"
+          python3 tools/updater_v2/allocate_version.py "$refs" "$releases" "$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
 
   toolchain-matrix:
     runs-on: ubuntu-slim
@@ -117,6 +105,7 @@ jobs:
       IMAGE_PLATFORM: ${{ matrix.architecture }}
       BUILD_TYPE: ${{ inputs.build-type || (github.event_name == 'push' && 'Release' || 'Debug') }}
       BUILD_NUMBER: ${{ needs.build-number.outputs.build-number || '-1' }}
+      SERIES_NUMBER: ${{ needs.build-number.outputs.series-number || '-1' }}
       UPDATER_VARIANT: ${{ matrix.variant }}
       UPDATER_PUBLISH_ENABLED: ${{ vars.UPDATER_PUBLISH_ENABLED }}
 
@@ -163,7 +152,7 @@ jobs:
 
           docker run --rm --init --network none --platform "$IMAGE_PLATFORM" \
             --user "$(id -u):$(id -g)" \
-            --env HOME=/tmp --env PLATFORM --env BUILD_TYPE --env BUILD_NUMBER \
+            --env HOME=/tmp --env PLATFORM --env BUILD_TYPE --env BUILD_NUMBER --env SERIES_NUMBER \
             --env UPDATER_VARIANT \
             --env "UPDATER_ROOT_KEYS=$updater_keys" --env "UPDATER_SITE=$updater_site" \
             --volume "$GITHUB_WORKSPACE:/src:ro" --volume "$BUILD_OUTPUT:/out" \
@@ -364,6 +353,7 @@ jobs:
           GH_TOKEN: ${{ secrets.UPDATES_REPO_TOKEN }}
           UPDATER_ONLINE_SIGNING_KEY: ${{ secrets.UPDATER_ONLINE_SIGNING_KEY }}
           BUILD_NUMBER: ${{ needs.build-number.outputs.build-number }}
+          VERSION: ${{ needs.build-number.outputs.version }}
           SOURCE_COMMIT: ${{ github.sha }}
           SOURCE_BRANCH: ${{ github.ref_name }}
         run: |
@@ -382,6 +372,8 @@ jobs:
           python tools/updater_v2/publish_release.py \
             --payload-root "$RUNNER_TEMP/updater-payloads" \
             --build-number "$BUILD_NUMBER" \
+            --version "$VERSION" \
+            --workflow-run "$GITHUB_RUN_ID" \
             --commit "$SOURCE_COMMIT" \
             --branch "$SOURCE_BRANCH" \
             --signing-key "$signing_key" \

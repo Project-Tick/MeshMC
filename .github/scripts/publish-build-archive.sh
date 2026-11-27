@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo=Project-Tick/MeshMC-Archive
-[[ "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,4}$ && "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ ]]
+[[ "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,9}$ && "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ ]]
 : "${GH_TOKEN:?Set ARCHIVE_REPO_TOKEN in the Release environment}"
 
 tag="build-$BUILD_NUMBER"

@@ -157,6 +157,7 @@ run_logged configure "${configure[@]}" "${platform_args[@]}" \
     "-DCMAKE_BUILD_TYPE=$BUILD_TYPE" \
     "-DCMAKE_INSTALL_PREFIX:PATH=$install_prefix" \
     "-DLauncher_VERSION_BUILD=$BUILD_NUMBER" \
+    "-DLauncher_VERSION_SERIES=${SERIES_NUMBER:--1}" \
     "-DLauncher_BUILD_PLATFORM=$PLATFORM" \
     "-DLauncher_UPDATER_ROOT_KEYS=$UPDATER_ROOT_KEYS" \
     "-DLauncher_UPDATER_KEYS_FLOOR=$updater_floor" \

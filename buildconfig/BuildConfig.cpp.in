@@ -29,7 +29,7 @@ Config::Config()
     FMLLIBS_BASE_URL = FILES_MIRRORS.first() + "fmllibs/";
     META_URL = META_MIRRORS.first();
     CURSEFORGE_API_KEY = "@Launcher_CURSEFORGE_API_KEY@";
-    FULL_VERSION_STR = "@Launcher_VERSION_MAJOR@.@Launcher_VERSION_MINOR@.@Launcher_VERSION_BUILD@";
+    FULL_VERSION_STR = "@Launcher_VERSION_NAME@";
 
     UPDATER_ROOT_KEYS = QStringList{@Launcher_UPDATER_ROOT_KEYS_LITERALS@};
     static const char keysFloor[] = "@Launcher_UPDATER_KEYS_FLOOR_BYTES@";
@@ -68,7 +68,7 @@ Config::Config()
 QString Config::printableVersionString() const
 {
     // major.minor.build, as in the binaries' version resources; 0 for a build without a number
-    QString vstr = QString("%1.%2.%3").arg(QString::number(VERSION_MAJOR), QString::number(VERSION_MINOR), QString::number(VERSION_BUILD >= 0 ? VERSION_BUILD : 0));
+    QString vstr = FULL_VERSION_STR;
 
     // If the build is not a main release, append the channel
     if(VERSION_CHANNEL != "develop" && VERSION_CHANNEL != "master" && VERSION_CHANNEL != "testing")

@@ -27,8 +27,15 @@ querying the updates repository for the highest existing `build-N` tag and addin
 one, so it is independent of GitHub's `run_number`. Each Release contains
 content-addressed `file-<sha256>` assets and the complete signed metadata snapshot needed
 by the client. The Release is published only after all assets are uploaded. Pushes to
-`master` advance all tiers; `develop` and `release-*` advance Testing and Latest; other
-branches advance Latest only.
+`master` advance all tiers, `testing` advances Testing and Latest, and `develop`
+advances Latest.
+
+The visible version is `major.minor.series`. The first published build for a new
+major/minor pair uses series number 0. Later builds of that pair increment it,
+including builds published by Testing and Stable pushes. The existing 12.0 series
+keeps its original numbering. Release notes record the version and workflow run ID
+so CI can allocate the next series number and reuse published numbers on a rerun.
+The signed build manifest also carries the visible version.
 
 Linux Qt 6 packages use the host Qt. MeshMC's `measure_linux_abi.py` reads the
 package's ELF dependencies and symbol versions with GNU readelf in CI. The

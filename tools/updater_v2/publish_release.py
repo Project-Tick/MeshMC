@@ -383,7 +383,8 @@ def _variant_files(root: Path, variant: dict, build_number: int, assets: Path) -
     return published
 
 
-def make_build(payload_root: Path, build_number: int, commit: str, built: str, output: Path) -> tuple[bytes, Path]:
+def make_build(payload_root: Path, build_number: int, commit: str, built: str, output: Path,
+               version: str | None = None) -> tuple[bytes, Path]:
     assets = output / "content"
     assets.mkdir()
     variants = {}
@@ -414,6 +415,8 @@ def make_build(payload_root: Path, build_number: int, commit: str, built: str, o
         "built": built,
         "variants": variants,
     }
+    if version is not None:
+        document["version"] = version
     data = (json.dumps(document, separators=(",", ":")) + "\n").encode("ascii")
     if len(data) > 8 * 1024 * 1024:
         raise ValueError("build manifest exceeds Updater V2's 8 MiB limit")
@@ -892,6 +895,14 @@ def publish(args) -> int:
     if not args.build_number.isdecimal() or int(args.build_number) < 1:
         raise ValueError("build number must be a positive integer")
     build_number = int(args.build_number)
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", args.version):
+        raise ValueError("version must be major.minor.series")
+    if not re.fullmatch(r"[1-9][0-9]*", args.workflow_run):
+        raise ValueError("workflow run must be a positive integer")
+    release_notes = (
+        f"Source commit: {args.commit}\nBranch: {args.branch}\n"
+        f"Version: {args.version}\nWorkflow run: {args.workflow_run}"
+    )
     private_key = Path(args.signing_key).resolve(strict=True)
     floor_path = Path(args.floor_keys).resolve(strict=True)
     floor_signature_path = Path(args.floor_signature).resolve(strict=True)
@@ -942,6 +953,7 @@ def publish(args) -> int:
             args.commit,
             args.built,
             work,
+            args.version,
         )
         metadata_dir = work / "metadata"
         metadata_dir.mkdir()
@@ -953,7 +965,19 @@ def publish(args) -> int:
             (release for release in existing if release.get("tag_name") == release_tag),
             None,
         )
+        if not existing_build:
+            # A rerun can refer to a published build outside the first release page.
+            older_release = _gh_json(
+                "--paginate", "--slurp", f"repos/{repository}/releases?per_page=100"
+            ) if len(existing) == 100 else []
+            existing_build = next(
+                (release for page in older_release for release in page
+                 if release.get("tag_name") == release_tag),
+                None,
+            )
         if existing_build and not existing_build.get("draft"):
+            if existing_build.get("body") != release_notes:
+                raise ValueError(f"release {release_tag} already belongs to a different workflow run")
             stable_build = _resume_published_release(repository, existing_build, build_data, online_key, work)
             print(f"Completed history synchronization for {release_tag}.")
             return stable_build
@@ -988,11 +1012,17 @@ def publish(args) -> int:
             repository,
             release_tag,
             f"MeshMC updater build {build_number}",
-            f"Source commit: {args.commit}\nBranch: {args.branch}",
+            release_notes,
         )
         if release is None:
             raise ValueError(f"GitHub did not return the draft release for {release_tag}")
 
+        if reuse_draft and release.get("body") != release_notes:
+            # The previous attempt never published this build ID.
+            _gh_json(
+                "--method", "PATCH", f"repos/{repository}/releases/{release['id']}",
+                "-f", f"body={release_notes}",
+            )
         _upload_assets(repository, release_tag, all_assets)
         _publish_draft(repository, release, advance)
         stable_build = _finish_release(repository, release_tag, online_key, work)
@@ -1004,6 +1034,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Publish a signed Updater V2 build release.")
     parser.add_argument("--payload-root", required=True)
     parser.add_argument("--build-number", required=True)
+    parser.add_argument("--version", required=True)
+    parser.add_argument("--workflow-run", required=True)
     parser.add_argument("--commit", required=True)
     parser.add_argument("--branch", required=True)
     parser.add_argument("--built", default=timestamp())

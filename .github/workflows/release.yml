@@ -37,7 +37,7 @@ jobs:
           BUILD_NUMBER: ${{ inputs.build-number }}
         run: |
           set -euo pipefail
-          [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,4}$ ]]
+          [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,9}$ ]]
           tag=stable
           repo="$GITHUB_REPOSITORY"
           bash .github/scripts/collect-release-packages.sh packages dist MeshMC-stable
