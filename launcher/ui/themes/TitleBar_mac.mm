@@ -7,6 +7,7 @@
 #include "TitleBar.h"
 #include "Colors.h"
 
+#include <QMainWindow>
 #include <QPalette>
 #include <QWidget>
 
@@ -27,7 +28,7 @@ NSColor *nsColor(const QColor &color)
 }
 }
 
-void TitleBar::apply(QWidget *window, Style style)
+void TitleBar::apply(QWidget *window, Style style, const QColor &captionOverride)
 {
     if (!window || !window->isWindow())
         return;
@@ -35,7 +36,7 @@ void TitleBar::apply(QWidget *window, Style style)
     NSWindow *nsWindow = view.window;
     if (!nsWindow)
         return;
-    const QColor caption = window->palette().color(QPalette::Window);
+    const QColor caption = captionOverride.isValid() ? captionOverride : window->palette().color(QPalette::Window);
     const bool colored = style == Style::Palette;
 
     if (macOSAtLeast(10, 14))
@@ -49,7 +50,8 @@ void TitleBar::apply(QWidget *window, Style style)
         nsWindow.appearance = appearance;
     }
     // The palette's colour: a transparent title bar shows the window's background colour
-    nsWindow.titlebarAppearsTransparent = colored;
+    const auto* mainWindow = qobject_cast<const QMainWindow*>(window);
+    nsWindow.titlebarAppearsTransparent = colored || (mainWindow && mainWindow->unifiedTitleAndToolBarOnMac());
     nsWindow.backgroundColor = colored ? nsColor(caption) : [NSColor windowBackgroundColor];
 }
 

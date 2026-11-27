@@ -11,6 +11,7 @@
 #include <QWidget>
 
 TitleBar::Style TitleBarWatcher::s_style = TitleBar::Style::Default;
+QColor TitleBarWatcher::s_captionOverride;
 
 bool TitleBarWatcher::eventFilter(QObject *watched, QEvent *event)
 {
@@ -25,7 +26,7 @@ bool TitleBarWatcher::eventFilter(QObject *watched, QEvent *event)
         auto widget = qobject_cast<QWidget *>(watched);
         // only windows that have a native window already: winId() would create one
         if (widget && widget->isWindow() && widget->testAttribute(Qt::WA_WState_Created))
-            TitleBar::apply(widget, s_style);
+            TitleBar::apply(widget, s_style, s_captionOverride);
         break;
     }
     default:
@@ -34,9 +35,10 @@ bool TitleBarWatcher::eventFilter(QObject *watched, QEvent *event)
     return QObject::eventFilter(watched, event);
 }
 
-void TitleBarWatcher::setStyle(TitleBar::Style style)
+void TitleBarWatcher::setStyle(TitleBar::Style style, const QColor &captionOverride)
 {
     s_style = style;
+    s_captionOverride = captionOverride;
     refresh();
 }
 
@@ -45,6 +47,6 @@ void TitleBarWatcher::refresh()
     for (auto widget : QApplication::topLevelWidgets())
     {
         if (widget->testAttribute(Qt::WA_WState_Created))
-            TitleBar::apply(widget, s_style);
+            TitleBar::apply(widget, s_style, s_captionOverride);
     }
 }

@@ -3,6 +3,7 @@
 #include "DesktopIntegration.h"
 
 #include "ui/MainWindow.h"
+#include "ui/MacMenuBar.h"
 #include "ui/InstanceWindow.h"
 
 #include "ui/instanceview/AccessibleInstanceView.h"
@@ -609,6 +610,8 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         m_settings->registerSetting("ThemeStyle", QString());
         m_settings->registerSetting("AccentSource", QString());
         m_settings->registerSetting("AccentColor", QString());
+
+        m_settings->registerSetting({MacMenuBar::settingKey(), MacMenuBar::legacySettingKey()}, true);
 
         // Notifications
         m_settings->registerSetting("ShownNotifications", QString());

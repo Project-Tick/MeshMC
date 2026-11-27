@@ -133,7 +133,7 @@ bool accentOnTitleBars()
 }
 }
 
-void TitleBar::apply(QWidget *window, Style style)
+void TitleBar::apply(QWidget *window, Style style, const QColor &)
 {
     if (!window || !window->isWindow() || !dwmSetWindowAttribute())
         return;

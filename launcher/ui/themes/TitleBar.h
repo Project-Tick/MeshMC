@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <QColor>
 #include <QObject>
 
 class QWidget;
@@ -25,7 +26,7 @@ enum class Style
 /// Set up the native title bar (and border) of a top-level window, as far as the system can:
 /// Windows 10 1809+ dark or light, Windows 11 any colour; macOS 10.14+ dark or light, the
 /// palette's colour through a transparent title bar. Elsewhere it's the window manager's.
-void apply(QWidget *window, Style style);
+void apply(QWidget *window, Style style, const QColor &captionOverride);
 
 enum class Appearance
 {
@@ -50,10 +51,12 @@ public:
 
     /// The style for all windows from now on, applied to the open ones at once: a theme
     /// change doesn't always change the palette, so PaletteChange alone isn't enough
-    static void setStyle(TitleBar::Style style);
+    /// On macOS, a valid caption override supplies the theme colour for native widgets.
+    static void setStyle(TitleBar::Style style, const QColor &captionOverride = QColor());
     /// The same style again, for all open windows: after a system setting it reads changed
     static void refresh();
 
 private:
     static TitleBar::Style s_style;
+    static QColor s_captionOverride;
 };

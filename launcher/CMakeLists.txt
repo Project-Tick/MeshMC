@@ -833,6 +833,8 @@ SET(LAUNCHER_SOURCES
     ui/ColorCache.cpp
     ui/MainWindow.h
     ui/MainWindow.cpp
+    ui/MacMenuBar.cpp
+    ui/MacMenuBar.h
     ui/InstanceWindow.h
     ui/InstanceWindow.cpp
 

@@ -484,7 +484,17 @@ void ThemeManager::apply(const Choice &choice)
     refreshToolBarExtensions();
     // also when the palette stays the same: Dark -> System in a dark Windows gives the same
     // palette, but the title bars go from the palette's colours to the system's
-    TitleBarWatcher::setStyle(now.style == Style::Native ? TitleBar::Style::Default : chosen->titleBarStyle());
+    auto titleBarStyle = now.style == Style::Native ? TitleBar::Style::Default : chosen->titleBarStyle();
+    QColor captionOverride;
+#ifdef Q_OS_MAC
+    if (now.style == Style::Native && nativeAbilities().themes && now.theme != "system")
+    {
+        // Native controls use AppKit's palette. Use the selected theme's colour for the caption.
+        titleBarStyle = chosen->titleBarStyle();
+        captionOverride = chosen->palette().color(QPalette::Window);
+    }
+#endif
+    TitleBarWatcher::setStyle(titleBarStyle, captionOverride);
     emit applied();
 }
 
@@ -641,7 +651,7 @@ ThemeManager::NativeAbilities ThemeManager::nativeAbilities() const
     // Bright and Dark force the app's appearance; checkboxes, radio buttons and default
     // buttons are drawn with AppKit's system accent whatever the palette says, so a custom one
     // would only reach selections and links
-    if (style == "macintosh")
+    if (style == "macintosh" || style == "macos")
         return {true, true, false};
     // anything else: we don't know what it does with a palette; the platform's look as it is
     return {false, false, false};

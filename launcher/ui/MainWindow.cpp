@@ -21,6 +21,7 @@
 #include "BuildConfig.h"
 
 #include "MainWindow.h"
+#include "MacMenuBar.h"
 
 #include <QShortcut>
 #include <QSlider>
@@ -248,6 +249,7 @@ public:
     TranslatedAction actionChangeInstIcon;
     TranslatedAction actionEditInstNotes;
     TranslatedAction actionEditInstance;
+    TranslatedAction actionInstanceSettings;
     TranslatedAction actionWorlds;
     TranslatedAction actionMods;
     TranslatedAction actionViewSelectedInstFolder;
@@ -505,6 +507,19 @@ public:
         MainWindow->addToolBar(Qt::BottomToolBarArea, newsToolBar);
     }
 
+    void setInstanceActionsEnabled(bool enabled)
+    {
+        instanceToolBar->setEnabled(enabled);
+        for (QAction* action : instanceToolBar->actions())
+            action->setEnabled(enabled);
+        actionRenameInstance->setEnabled(enabled);
+        actionChangeInstIcon->setEnabled(enabled);
+#ifdef Q_OS_MAC
+        actionInstanceSettings->setEnabled(enabled);
+        actionViewSelectedModsFolder->setEnabled(enabled);
+#endif
+    }
+
     void createInstanceToolbar(QMainWindow *MainWindow)
     {
         instanceToolBar = TranslatedToolbar(MainWindow);
@@ -576,6 +591,13 @@ public:
         all_actions.append(&actionEditInstance);
         instanceToolBar->addAction(actionEditInstance);
 
+#ifdef Q_OS_MAC
+        actionInstanceSettings = TranslatedAction(MainWindow);
+        actionInstanceSettings->setObjectName(QStringLiteral("actionInstanceSettings"));
+        actionInstanceSettings.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Instance Settings"));
+        all_actions.append(&actionInstanceSettings);
+#endif
+
         actionEditInstNotes = TranslatedAction(MainWindow);
         actionEditInstNotes->setObjectName(QStringLiteral("actionEditInstNotes"));
         actionEditInstNotes.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Edit Notes"));
@@ -613,14 +635,13 @@ public:
         all_actions.append(&actionViewSelectedMCFolder);
         instanceToolBar->addAction(actionViewSelectedMCFolder);
 
-        /*
+#ifdef Q_OS_MAC
         actionViewSelectedModsFolder = TranslatedAction(MainWindow);
         actionViewSelectedModsFolder->setObjectName(QStringLiteral("actionViewSelectedModsFolder"));
         actionViewSelectedModsFolder.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Mods Folder"));
         actionViewSelectedModsFolder.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the selected instance's mods folder in a file browser."));
         all_actions.append(&actionViewSelectedModsFolder);
-        instanceToolBar->addAction(actionViewSelectedModsFolder);
-        */
+#endif
 
         actionConfig_Folder = TranslatedAction(MainWindow);
         actionConfig_Folder->setObjectName(QStringLiteral("actionConfig_Folder"));
@@ -698,6 +719,7 @@ public:
         createStatusBar(MainWindow);
         createNewsToolbar(MainWindow);
         createInstanceToolbar(MainWindow);
+        setInstanceActionsEnabled(false);
 
         retranslateUi(MainWindow);
 
@@ -875,6 +897,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
     ui->mainToolBar->addWidget(spacer);
 
     accountMenu = new QMenu(this);
+    accountMenu->setObjectName(QStringLiteral("accountMenu"));
 
     repopulateAccountsMenu();
 
@@ -946,6 +969,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
     view->setFocus();
 
     retranslateUi();
+    MacMenuBar::attachTo(this);
 }
 
 void MainWindow::retranslateUi()
@@ -1201,7 +1225,13 @@ void MainWindow::updateToolsMenu()
 
 void MainWindow::repopulateAccountsMenu()
 {
-    accountMenu->clear();
+    // Profile actions can also be associated with the native menu.
+    for (auto* action : accountMenu->actions())
+    {
+        accountMenu->removeAction(action);
+        if (action->parent() == accountMenu)
+            action->deleteLater();
+    }
 
     auto accounts = APPLICATION->accounts();
     MinecraftAccountPtr defaultAccount = accounts->defaultAccount();
@@ -1219,7 +1249,7 @@ void MainWindow::repopulateAccountsMenu()
 
     if (accounts->count() <= 0)
     {
-        QAction *action = new QAction(tr("No accounts added!"), this);
+        QAction *action = new QAction(tr("No accounts added!"), accountMenu);
         action->setEnabled(false);
         accountMenu->addAction(action);
     }
@@ -1236,7 +1266,7 @@ void MainWindow::repopulateAccountsMenu()
             auto account = entry.account;
 
             auto profileLabel = profileInUseFilter(account->profileName(), account->gamerTag(), account->isInUse());
-            QAction *action = new QAction(profileLabel, this);
+            QAction *action = new QAction(profileLabel, accountMenu);
             action->setData(i);
             action->setCheckable(true);
             if (defaultAccount == account)
@@ -1258,7 +1288,7 @@ void MainWindow::repopulateAccountsMenu()
 
     accountMenu->addSeparator();
 
-    QAction *action = new QAction(tr("No Default Account"), this);
+    QAction *action = new QAction(tr("No Default Account"), accountMenu);
     action->setCheckable(true);
     action->setIcon(APPLICATION->getThemedIcon("noaccount"));
     action->setData(-1);
@@ -2184,6 +2214,7 @@ void MainWindow::changeEvent(QEvent* event)
 {
     if (event->type() == QEvent::LanguageChange)
     {
+        repopulateAccountsMenu();
         retranslateUi();
     }
     QMainWindow::changeEvent(event);
@@ -2265,7 +2296,7 @@ void MainWindow::instanceChanged(const QModelIndex &current, const QModelIndex &
     m_selectedInstance = APPLICATION->instances()->getInstanceById(id);
     if (m_selectedInstance)
     {
-        ui->instanceToolBar->setEnabled(true);
+        ui->setInstanceActionsEnabled(true);
         if(m_selectedInstance->isRunning())
         {
             ui->actionLaunchInstance->setEnabled(true);
@@ -2289,7 +2320,6 @@ void MainWindow::instanceChanged(const QModelIndex &current, const QModelIndex &
     }
     else
     {
-        ui->instanceToolBar->setEnabled(false);
         APPLICATION->settings()->set("SelectedInstance", QString());
         selectionBad();
         return;
@@ -2317,7 +2347,7 @@ void MainWindow::selectionBad()
     m_selectedInstance = nullptr;
 
     statusBar()->clearMessage();
-    ui->instanceToolBar->setEnabled(false);
+    ui->setInstanceActionsEnabled(false);
     ui->renameButton->setText(tr("Rename Instance"));
     updateInstanceToolIcon("logo");
 
