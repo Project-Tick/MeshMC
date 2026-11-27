@@ -55,7 +55,8 @@ case "$PLATFORM" in
             zlib_bin='T:\Qt6\zlib-x64\bin'
             mingw='T:\Qt6\mingw810_64'
             qt='T:\Qt6\6.0.0\mingw81_64'
-            pe_version='-Wl,--major-os-version,10,--minor-os-version,0,--major-subsystem-version,10,--minor-subsystem-version,0,--no-insert-timestamp'
+            # This MinGW runtime lacks the PE load config security cookie required by subsystem 6.3+.
+            pe_version='-Wl,--major-os-version,10,--minor-os-version,0,--major-subsystem-version,6,--minor-subsystem-version,2,--no-insert-timestamp'
             runtime_dlls=("$TOOLS/Qt6/openssl-x64/"{libcrypto-1_1-x64,libssl-1_1-x64}.dll)
         elif [[ "$PLATFORM" == win32-5.15.2 ]]; then
             mingw='T:\QtX\Tools\mingw810_32'
