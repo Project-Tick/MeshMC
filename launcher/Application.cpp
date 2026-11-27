@@ -734,6 +734,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
 
         // Window state and geometry
         m_settings->registerSetting("MainWindowState", "");
+        m_settings->registerSetting("ToolbarsLocked", false);
         m_settings->registerSetting("MainWindowGeometry", "");
 
         m_settings->registerSetting("ConsoleWindowState", "");
@@ -1394,7 +1395,8 @@ bool Application::launch(
         BaseProfilerFactory *profiler,
         QuickPlayTargetPtr quickPlayTarget,
         MinecraftAccountPtr accountToUse,
-        const QString& offlineName
+        const QString& offlineName,
+        bool demo
 ) {
     if(m_updateRunning)
     {
@@ -1419,6 +1421,7 @@ bool Application::launch(
         controller->setQuickPlayTarget(quickPlayTarget);
         controller->setAccountToUse(accountToUse);
         controller->setOfflineName(offlineName);
+        controller->setDemo(demo);
         if(window)
         {
             controller->setParentWidget(window);

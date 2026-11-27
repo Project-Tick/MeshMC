@@ -32,6 +32,10 @@ public:
         m_offlineName = offlineName;
     }
 
+    void setDemo(bool demo) {
+        m_demoRequested = demo;
+    }
+
     void setProfiler(BaseProfilerFactory *profiler) {
         m_profiler = profiler;
     }
@@ -57,6 +61,8 @@ public:
 
 private:
     void login();
+    bool supportsDemo() const;
+    void launchDemo();
     void launchInstance();
     void decideAccount();
 
@@ -70,6 +76,7 @@ private slots:
 private:
     BaseProfilerFactory *m_profiler = nullptr;
     bool m_userWantsOnline = true;
+    bool m_demoRequested = false;
     QString m_offlineName;
     InstancePtr m_instance;
     QWidget * m_parentWidget = nullptr;

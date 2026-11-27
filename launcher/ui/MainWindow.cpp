@@ -263,6 +263,7 @@ public:
     TranslatedAction actionScreenshots;
     TranslatedAction actionExportInstance;
     TranslatedAction actionCreateShortcut;
+    TranslatedAction actionLockToolbars;
     QVector<TranslatedAction *> all_actions;
 
     LabeledToolButton *renameButton = nullptr;
@@ -316,8 +317,7 @@ public:
     {
         mainToolBar = TranslatedToolbar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-        mainToolBar->setMovable(false);
-        mainToolBar->setAllowedAreas(Qt::TopToolBarArea);
+        mainToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
         mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         mainToolBar->setFloatable(false);
         mainToolBar.setWindowTitleId(QT_TRANSLATE_NOOP("MainWindow", "Main Toolbar"));
@@ -473,6 +473,13 @@ public:
         actionManageAccounts->setIcon(APPLICATION->getThemedIcon("accounts"));
         all_actions.append(&actionManageAccounts);
 
+        actionLockToolbars = TranslatedAction(MainWindow);
+        actionLockToolbars->setObjectName(QStringLiteral("actionLockToolbars"));
+        actionLockToolbars->setCheckable(true);
+        actionLockToolbars.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Lock Toolbars"));
+        actionLockToolbars.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Prevent the toolbars from being dragged."));
+        all_actions.append(&actionLockToolbars);
+
         all_toolbars.append(&mainToolBar);
         MainWindow->addToolBar(Qt::TopToolBarArea, mainToolBar);
     }
@@ -488,8 +495,7 @@ public:
     {
         newsToolBar = TranslatedToolbar(MainWindow);
         newsToolBar->setObjectName(QStringLiteral("newsToolBar"));
-        newsToolBar->setMovable(false);
-        newsToolBar->setAllowedAreas(Qt::BottomToolBarArea);
+        newsToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
         newsToolBar->setIconSize(QSize(16, 16));
         newsToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         newsToolBar->setFloatable(false);
@@ -751,8 +757,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
 {
     ui->setupUi(this);
 
-    // OSX magic.
-    setUnifiedTitleAndToolBarOnMac(true);
+    const auto applyToolbarLock = [this](bool locked) {
+        ui->mainToolBar->setMovable(!locked);
+        ui->newsToolBar->setMovable(!locked);
+        ui->instanceToolBar->setMovable(!locked);
+#ifdef Q_OS_MACOS
+        // Qt's unified title bar does not handle movable toolbars reliably.
+        setUnifiedTitleAndToolBarOnMac(locked);
+#endif
+    };
+    const bool locked = APPLICATION->settings()->get("ToolbarsLocked").toBool();
+    ui->actionLockToolbars->setChecked(locked);
+    applyToolbarLock(locked);
+    connect(ui->actionLockToolbars.operator->(), &QAction::toggled, this, [applyToolbarLock](bool locked) {
+        applyToolbarLock(locked);
+        APPLICATION->settings()->set("ToolbarsLocked", locked);
+    });
 
     // Global shortcuts
     {
@@ -1000,7 +1020,11 @@ MainWindow::~MainWindow()
 QMenu * MainWindow::createPopupMenu()
 {
     QMenu* filteredMenu = QMainWindow::createPopupMenu();
-    filteredMenu->removeAction( ui->mainToolBar->toggleViewAction() );
+    if (filteredMenu) {
+        filteredMenu->removeAction(ui->mainToolBar->toggleViewAction());
+        filteredMenu->addSeparator();
+        filteredMenu->addAction(ui->actionLockToolbars);
+    }
     return filteredMenu;
 }
 
@@ -1166,6 +1190,20 @@ void MainWindow::updateToolsMenu()
             {
                 APPLICATION->launch(m_selectedInstance, false);
             });
+    if (const auto minecraft = std::dynamic_pointer_cast<MinecraftInstance>(m_selectedInstance)) {
+        auto* demo = launchMenu->addAction(tr("Launch &Demo"));
+        demo->setEnabled(minecraft->supportsDemo());
+        demo->setToolTip(tr("Play the Minecraft demo with a local player name."));
+        launchMenu->setToolTipsVisible(true);
+        if (!demo->isEnabled())
+            demo->setToolTip(tr("This Minecraft version does not support demo mode."));
+        connect(demo, &QAction::triggered, this, [this] {
+            const auto instance = m_selectedInstance;
+            if (instance && instance->canLaunch())
+                APPLICATION->launch(instance, false, nullptr, nullptr, nullptr, {}, true);
+        });
+    }
+
     const auto accounts = APPLICATION->accounts();
     QList<MinecraftAccountPtr> launchAccounts;
     for (int row = 0; row < accounts->count(); ++row) {

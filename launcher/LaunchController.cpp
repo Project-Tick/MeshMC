@@ -1,5 +1,6 @@
 #include "LaunchController.h"
 #include "minecraft/auth/AccountList.h"
+#include "minecraft/MinecraftInstance.h"
 #include "Application.h"
 #include "BuildConfig.h"
 
@@ -17,6 +18,7 @@
 #include <QList>
 #include <QHostAddress>
 #include <QPushButton>
+#include <QRegularExpression>
 
 #include "BuildConfig.h"
 #include "JavaCommon.h"
@@ -51,35 +53,33 @@ void LaunchController::decideAccount()
         return;
     }
 
-    // Find a valid account to use.
     auto accounts = APPLICATION->accounts();
-    bool hasAValidAccount = false;
-    for (int i = 0; i < accounts.get()->count(); i++) {
-        auto currentAccount = accounts.get()->at(i);
-        if (currentAccount.isAccount && currentAccount.account != nullptr) {
-            hasAValidAccount = true;
-            break;
+    const auto hasAccount = [&accounts] {
+        for (int row = 0; row < accounts->count(); ++row) {
+            const auto& entry = accounts->at(row);
+            if (entry.isAccount && entry.account)
+                return true;
         }
-    }
+        return false;
+    };
+    if (!hasAccount()) {
+        QMessageBox box(QMessageBox::Question, tr("No Accounts"),
+            tr("Add a Minecraft account to play the full game. You can try the demo on supported versions."),
+            QMessageBox::Cancel, m_parentWidget);
+        auto* add = box.addButton(tr("Add Account"), QMessageBox::AcceptRole);
+        auto* demo = supportsDemo() ? box.addButton(tr("Play Demo"), QMessageBox::ActionRole) : nullptr;
+        box.setDefaultButton(add);
+        box.exec();
 
-    if (!hasAValidAccount)
-    {
-        // Tell the user they need to log in at least one account in order to play.
-        auto reply = CustomMessageBox::selectable(
-            m_parentWidget,
-            tr("No Accounts"),
-            tr("In order to play Minecraft, you must have at least one Minecraft account "
-               "logged in. "
-               "Would you like to open the account manager to add an account now?"),
-            QMessageBox::Information,
-            QMessageBox::Yes | QMessageBox::No
-        )->exec();
-
-        if (reply == QMessageBox::Yes)
-        {
-            // Open the account manager.
-            APPLICATION->ShowAccountsDialog(m_parentWidget);
+        if (demo && box.clickedButton() == demo) {
+            m_demoRequested = true;
+            return;
         }
+        if (box.clickedButton() != add)
+            return;
+        APPLICATION->ShowAccountsDialog(m_parentWidget);
+        if (!hasAccount())
+            return;
     }
 
     m_accountToUse = accounts->defaultAccount();
@@ -105,8 +105,51 @@ void LaunchController::decideAccount()
 }
 
 
+bool LaunchController::supportsDemo() const
+{
+    const auto instance = std::dynamic_pointer_cast<MinecraftInstance>(m_instance);
+    return instance && instance->supportsDemo();
+}
+
+void LaunchController::launchDemo()
+{
+    if (!supportsDemo()) {
+        const auto message = tr("This Minecraft version does not support demo mode.");
+        QMessageBox::information(m_parentWidget, tr("Play Demo"), message);
+        emitFailed(message);
+        return;
+    }
+
+    const auto preferredAccount = m_accountToUse ? m_accountToUse : APPLICATION->accounts()->defaultAccount();
+    static const QRegularExpression playerName(QStringLiteral("^[A-Za-z0-9_]{1,16}$"));
+    QString name = preferredAccount ? preferredAccount->profileName() : QString();
+    if (!playerName.match(name).hasMatch())
+        name = QStringLiteral("Player");
+    for (;;) {
+        bool accepted = false;
+        name = QInputDialog::getText(m_parentWidget, tr("Demo Player Name"),
+            tr("Enter a player name using 1 to 16 letters, numbers or underscores."),
+            QLineEdit::Normal, name, &accepted).trimmed();
+        if (!accepted) {
+            emitAborted();
+            return;
+        }
+        if (playerName.match(name).hasMatch())
+            break;
+    }
+
+    m_session = std::make_shared<AuthSession>();
+    m_session->MakeDemo(name);
+    launchInstance();
+}
+
 void LaunchController::login() {
-    decideAccount();
+    if (!m_demoRequested)
+        decideAccount();
+    if (m_demoRequested) {
+        launchDemo();
+        return;
+    }
 
     // if no account is selected, we bail
     if (!m_accountToUse)
@@ -200,15 +243,15 @@ void LaunchController::login() {
                     box.setWindowTitle(tr("Play demo?"));
                     box.setText(tr("This account does not own Minecraft.\nYou need to purchase the game first to play it.\n\nDo you want to play the demo?"));
                     box.setIcon(QMessageBox::Warning);
-                    auto demoButton = box.addButton(tr("Play Demo"), QMessageBox::ButtonRole::YesRole);
+                    auto* demoButton = supportsDemo() ? box.addButton(tr("Play Demo"), QMessageBox::YesRole) : nullptr;
+                    if (!demoButton)
+                        box.setText(tr("This account does not own Minecraft and this version does not support demo mode."));
                     auto cancelButton = box.addButton(tr("Cancel"), QMessageBox::ButtonRole::NoRole);
                     box.setDefaultButton(cancelButton);
 
                     box.exec();
-                    if(box.clickedButton() == demoButton) {
-                        // play demo here
-                        m_session->MakeDemo();
-                        launchInstance();
+                    if (demoButton && box.clickedButton() == demoButton) {
+                        launchDemo();
                     }
                     else {
                         emitFailed(tr("Launch cancelled - account does not own Minecraft."));
@@ -321,7 +364,9 @@ void LaunchController::launchInstance()
 
     // Prepend Online and Auth Status
     QString online_mode;
-    if(m_session->wants_online) {
+    if (m_session->demo) {
+        online_mode = "demo";
+    } else if(m_session->wants_online) {
         online_mode = "online";
 
         // Prepend Server Status

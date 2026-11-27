@@ -162,7 +162,8 @@ public slots:
             BaseProfilerFactory *profiler = nullptr,
             QuickPlayTargetPtr quickPlayTarget = nullptr,
             MinecraftAccountPtr accountToUse = nullptr,
-            const QString &offlineName = QString()
+            const QString &offlineName = QString(),
+            bool demo = false
     );
     bool kill(InstancePtr instance);
 

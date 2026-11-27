@@ -1,4 +1,5 @@
 #include <QRegularExpression>
+#include <QVersionNumber>
 #include "QtContainerCompat.h"
 #include "MinecraftInstance.h"
 #include "minecraft/launch/CreateGameFolders.h"
@@ -180,6 +181,18 @@ QSet<QString> MinecraftInstance::traits() const
         return {"version-incomplete"};
     }
     return profile->getTraits();
+}
+
+bool MinecraftInstance::supportsDemo() const
+{
+    auto version = m_components->getComponentVersion("net.minecraft");
+    if (version.isEmpty())
+        version = m_settings->get("IntendedVersion").toString();
+    static const QRegularExpression weeklySnapshot(QStringLiteral("^(\\d{2})w(\\d{2})[a-z]$"));
+    const auto snapshot = weeklySnapshot.match(version);
+    if (snapshot.hasMatch())
+        return snapshot.captured(1).toInt() * 100 + snapshot.captured(2).toInt() >= 1216;
+    return QVersionNumber::fromString(version) >= QVersionNumber(1, 3, 1);
 }
 
 QString MinecraftInstance::gameRoot() const
@@ -946,7 +959,9 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
         process->appendStep(new CreateGameFolders(pptr));
     }
 
-    if (!quickPlayTarget && m_settings->get("JoinWorldOnLaunch").toBool())
+    if (session->demo)
+        quickPlayTarget.reset();
+    else if (!quickPlayTarget && m_settings->get("JoinWorldOnLaunch").toBool())
     {
         if (m_settings->get("JoinServerOnLaunch").toBool())
         {

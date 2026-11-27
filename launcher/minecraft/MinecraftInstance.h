@@ -65,6 +65,7 @@ public:
 
     //////  Profile management //////
     std::shared_ptr<PackProfile> getPackProfile() const;
+    bool supportsDemo() const;
 
     //////  Mod Lists  //////
     std::shared_ptr<ModFolderModel> loaderModList() const;

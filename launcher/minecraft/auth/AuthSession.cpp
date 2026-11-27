@@ -1,4 +1,5 @@
 #include "AuthSession.h"
+#include <QCryptographicHash>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -31,7 +32,19 @@ bool AuthSession::MakeOffline(QString offline_playername)
     return true;
 }
 
-void AuthSession::MakeDemo() {
-    player_name = "Player";
+void AuthSession::MakeDemo(const QString& name)
+{
+    auto playerId = QCryptographicHash::hash("OfflinePlayer:" + name.toUtf8(), QCryptographicHash::Md5);
+    // Java's name-based UUID uses the version 3 and RFC 4122 variant bits.
+    playerId[6] = char((playerId.at(6) & 0x0f) | 0x30);
+    playerId[8] = char((playerId.at(8) & 0x3f) | 0x80);
+    uuid = QString::fromLatin1(playerId.toHex());
+    player_name = name;
+    session = "-";
+    access_token = "0";
+    user_type = "legacy";
+    wants_online = false;
+    // Use the regular online asset update without claiming a Minecraft account.
+    status = PlayableOnline;
     demo = true;
 }
