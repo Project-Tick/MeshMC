@@ -32,9 +32,11 @@ def main() -> None:
         abi = json.loads(args.abi.read_text(encoding="utf-8"))
         if requirements.get("os") != "linux" or abi.get("arch") != requirements.get("arch"):
             parser.error("the measured ELF ABI does not match the Linux variant")
-        if not any(lib["soname"] == "libQt6Core.so.6" for lib in abi["libs"]):
-            parser.error("the Linux Qt 6 package must depend on system Qt 6")
+        qt_major = requirements["qt"].split(".", 1)[0]
+        if not any(lib["soname"] == f"libQt{qt_major}Core.so.{qt_major}" for lib in abi["libs"]):
+            parser.error(f"the Linux package must depend on system Qt {qt_major}")
         requirements["abi"] = abi
+    if args.abi and qt_major == "6":
         for field, prefix in (("glibc", "GLIBC_"), ("glibcxx", "GLIBCXX_")):
             versions = [version[len(prefix):] for lib in abi["libs"] for version in lib["versions"]
                         if version.startswith(prefix) and all(part.isdigit() for part in version[len(prefix):].split("."))]

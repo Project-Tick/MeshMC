@@ -219,6 +219,7 @@ slots:
         const QString oldId = "linux-x86_64-qt5";
         const QString newId = "linux-x86_64-qt6.0";
         auto qt6 = manifest.variants.value(oldId);
+        manifest.variants[oldId].requirements.crossQtAbi = QJsonObject{{"format", 1}, {"qt", 5}};
         qt6.id = newId;
         qt6.supersedes = QStringList{oldId};
         qt6.requirements.qt = "6.0.0";
@@ -234,6 +235,13 @@ slots:
         system.probeAbi = [](const QJsonObject &abi) { return abi.value("format").toInt() == 1; };
         QCOMPARE(chooseVariant(manifest, oldId, QString(), system).variant.id, newId);
         QCOMPARE(chooseVariant(manifest, oldId, oldId, system).variant.id, oldId);
+
+        system.qt = "6.0.0";
+        QCOMPARE(chooseVariant(manifest, newId, QString(), system).variant.id, newId);
+        QCOMPARE(chooseVariant(manifest, newId, oldId, system).variant.id, oldId);
+
+        system.probeAbi = [](const QJsonObject &abi) { return abi.value("qt").toInt() != 5; };
+        QCOMPARE(chooseVariant(manifest, newId, oldId, system).variant.id, newId);
     }
 
 };

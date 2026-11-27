@@ -703,16 +703,20 @@ QStringList SystemRequirements::unmetRequirements(const Requirements &requiremen
 
         QVector<uint> required;
         QVector<uint> found;
-        if(!parseVersion(requirements.qt, required))
+        const bool validQtRequirement = parseVersion(requirements.qt, required);
+        const bool haveQt = parseVersion(system.qt, found);
+        const auto &abi = requirements.abi.isEmpty() && (!haveQt || found[0] != required.value(0))
+            ? requirements.crossQtAbi : requirements.abi;
+        if(!validQtRequirement)
         {
             incomplete(QString("qt %1").arg(requirements.qt));
         }
-        else if(!requirements.abi.isEmpty())
+        else if(!abi.isEmpty())
         {
-            if(out.isEmpty() && (!system.probeAbi || !system.probeAbi(requirements.abi)))
+            if(out.isEmpty() && (!system.probeAbi || !system.probeAbi(abi)))
                 out.append(QObject::tr("The required system libraries for Qt %1 could not be verified.").arg(requirements.qt));
         }
-        else if(!parseVersion(system.qt, found))
+        else if(!haveQt)
         {
             out.append(QObject::tr("The build needs Qt %1 or a newer Qt %2, and the version on this computer could not be found out.").arg(requirements.qt).arg(required[0]));
         }

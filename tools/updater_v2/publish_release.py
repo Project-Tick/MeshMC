@@ -368,13 +368,19 @@ def _variant_files(root: Path, variant: dict, build_number: int, assets: Path) -
     if not files:
         raise ValueError(f"variant {variant['id']} contains no regular files")
     _validate_variant_entries(files, links, variant)
-    return {
+    published = {
         "name": variant["name"],
         "supersedes": variant["supersedes"],
-        "requires": variant["requires"],
+        "requires": dict(variant["requires"]),
         "files": files,
         "links": links,
     }
+    # Older Qt 5 launchers reject unknown requirements. Readers that can
+    # probe the other Qt major use this signed ABI for a switch back to Qt 5.
+    requirements = published["requires"]
+    if requirements.get("qt", "").split(".", 1)[0] == "5" and "abi" in requirements:
+        published["linux_abi"] = requirements.pop("abi")
+    return published
 
 
 def make_build(payload_root: Path, build_number: int, commit: str, built: str, output: Path) -> tuple[bytes, Path]:

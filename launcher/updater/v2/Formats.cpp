@@ -216,7 +216,17 @@ Variant variant(const QString &id, const QJsonValue &value, const QString &where
     {
         fail(QString("%1: longer than %2 characters").arg(at(where, "name")).arg(MaxVariantName));
     }
-    out.requirements = requirements(obj.value("requires"), at(where, "requires"));
+    auto required = Json::requireIsType<QJsonObject>(obj.value("requires"), at(where, "requires"));
+    const auto linuxAbi = obj.value("linux_abi");
+    const bool crossQtAbi = required.value("os").toString() == "linux" && !required.contains("abi") && !linuxAbi.isUndefined();
+    if(crossQtAbi)
+        required.insert("abi", linuxAbi);
+    out.requirements = requirements(required, at(where, "requires"));
+    if(crossQtAbi)
+    {
+        out.requirements.crossQtAbi = out.requirements.abi;
+        out.requirements.abi = QJsonObject();
+    }
     QRegularExpression idParts(QString("\\A(?:%1)\\z").arg(VariantId));
     auto m = idParts.match(id);
     if(m.captured(1) != out.requirements.os || m.captured(2) != out.requirements.arch)

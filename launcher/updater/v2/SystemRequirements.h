@@ -65,6 +65,8 @@ struct Requirements
     QString qt;
     // Linux ELF requirements measured from the packaged binaries.
     QJsonObject abi;
+    // Optional ABI used to check a different Qt major from the one running.
+    QJsonObject crossQtAbi;
     // requirements this Launcher doesn't know, so it can't check them
     QStringList unknown;
 };
